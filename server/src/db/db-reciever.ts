@@ -487,7 +487,10 @@ export function* getStats(
 	}
 
 	const statsResult = yield* call([root.db, root.db.getUserStats], player.uuid)
-	const historyResult = yield* root.db.getUserGameHistory(player.uuid)
+	const historyResult = yield* call(
+		[root.db, root.db.getUserGameHistory],
+		player.uuid,
+	)
 
 	if (statsResult.type === 'success' && historyResult.type === 'success') {
 		broadcast([player], {
@@ -580,4 +583,16 @@ export function* getDeck(code: string) {
 
 	if (deck.type === 'failure') return null
 	return deck.body
+}
+
+export function* getGameReplay(gameId: number) {
+	if (!root.db?.connected) return
+
+	const replay = yield* root.db.getGameReplay(gameId)
+
+	if (replay.type === 'failure') {
+		console.log(replay.reason)
+		return null
+	}
+	return replay.body
 }

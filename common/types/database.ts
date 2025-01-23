@@ -1,7 +1,5 @@
-import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
-import {PlayerSetupDefs} from '../utils/state-gen'
 import {TypeT} from './cards'
-import {ApiDeck} from './deck'
+import {ApiDeck, Deck} from './deck'
 
 export type User = {
 	uuid: string
@@ -81,9 +79,18 @@ export type Achievement = {
 	total: string
 }
 
+export type GameHistoryPlayer =
+	| {
+			player: 'you'
+			name: string
+			minecraftName: string
+			deck: Deck | undefined
+			uuid: string
+	  }
+	| {player: 'opponent'; name: string; minecraftName: string; uuid: string}
+
 export type GameHistory = {
-	firstPlayer: PlayerSetupDefs & {uuid: string}
-	secondPlayer: PlayerSetupDefs & {uuid: string}
-	replay: Array<ReplayActionData>
-	seed: string
+	firstPlayer: GameHistoryPlayer
+	secondPlayer: GameHistoryPlayer
+	id: number
 }

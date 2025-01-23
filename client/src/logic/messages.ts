@@ -135,10 +135,7 @@ type Messages = [
 	{type: typeof localMessages.MATCHMAKING_BOSS_GAME_CREATE},
 	{
 		type: typeof localMessages.MATCHMAKING_REPLAY_GAME
-		firstPlayer: PlayerSetupDefs
-		secondPlayer: PlayerSetupDefs
-		replay: Array<ReplayActionData>
-		seed: string
+		id: number
 	},
 	{
 		type: typeof localMessages.MATCHMAKING_CODE_RECIEVED

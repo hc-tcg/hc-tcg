@@ -322,10 +322,7 @@ function* createReplayGameSaga(
 			// Send message to server to create the game
 			yield* sendMsg({
 				type: clientMessages.CREATE_REPLAY_GAME,
-				firstPlayer: action.firstPlayer,
-				secondPlayer: action.secondPlayer,
-				replay: action.replay,
-				seed: action.seed,
+				id: action.id,
 			})
 			const result = yield* race({
 				success: call(

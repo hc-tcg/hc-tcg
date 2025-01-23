@@ -30,10 +30,7 @@ function GameHistory({setMenuSection}: Props) {
 	const handleReplayGame = (game: GameHistoryT) => {
 		dispatch({
 			type: localMessages.MATCHMAKING_REPLAY_GAME,
-			firstPlayer: game.firstPlayer,
-			secondPlayer: game.secondPlayer,
-			replay: game.replay,
-			seed: game.seed,
+			id: game.id,
 		})
 	}
 
@@ -51,21 +48,28 @@ function GameHistory({setMenuSection}: Props) {
 							<div>
 								<img
 									className={css.playerHead}
-									src={`https://mc-heads.net/head/${game.firstPlayer.model.minecraftName}/left`}
+									src={`https://mc-heads.net/head/${game.firstPlayer.minecraftName}/left`}
 									alt="player head"
 								/>
 							</div>
 							<div>
 								{game.firstPlayer.uuid === database.userId
 									? 'You'
-									: game.firstPlayer.model.name}
-								{game.firstPlayer.uuid === database.userId && (
+									: game.firstPlayer.name}
+								{game.firstPlayer.player === 'you' && (
 									<Button
 										onClick={() => {
+											if (
+												game.firstPlayer.player !== 'you' ||
+												!game.firstPlayer.deck
+											)
+												return
 											setScreenshotDeckModalContents(
 												sortCards(
 													parseDeckCards(
-														game.firstPlayer.deck as Array<string>,
+														game.firstPlayer.deck.cards.map(
+															(card) => card.props.id,
+														),
 													),
 												),
 											)
@@ -78,14 +82,21 @@ function GameHistory({setMenuSection}: Props) {
 							<div>
 								{game.secondPlayer.uuid === database.userId
 									? 'You'
-									: game.secondPlayer.model.name}
-								{game.secondPlayer.uuid === database.userId && (
+									: game.secondPlayer.name}
+								{game.secondPlayer.player === 'you' && (
 									<Button
 										onClick={() => {
+											if (
+												game.secondPlayer.player !== 'you' ||
+												!game.secondPlayer.deck
+											)
+												return
 											setScreenshotDeckModalContents(
 												sortCards(
 													parseDeckCards(
-														game.secondPlayer.deck as Array<string>,
+														game.secondPlayer.deck.cards.map(
+															(card) => card.props.id,
+														),
 													),
 												),
 											)
@@ -98,7 +109,7 @@ function GameHistory({setMenuSection}: Props) {
 							<div>
 								<img
 									className={css.playerHead}
-									src={`https://mc-heads.net/head/${game.firstPlayer.model.minecraftName}/left`}
+									src={`https://mc-heads.net/head/${game.firstPlayer.minecraftName}/left`}
 									alt="player head"
 								/>
 							</div>
