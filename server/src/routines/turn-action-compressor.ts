@@ -7,7 +7,6 @@ import {
 import query from '../../../common/components/query'
 import {CardEntity} from '../../../common/entities'
 import {GameModel} from '../../../common/models/game-model'
-import {PlayerModel} from '../../../common/models/player-model'
 import {SlotTypeT} from '../../../common/types/cards'
 import {PlayCardAction, TurnAction} from '../../../common/types/game-state'
 import {WithoutFunctions} from '../../../common/types/server-requests'
@@ -145,9 +144,7 @@ const playCard: ReplayAction = {
 		const selectedSlot = unpackBoardSlot(game, buffer.readUint8(0))?.entity
 		if (!selectedSlot) return null
 		const selectedCardIndex = buffer.readUInt8(1)
-		console.log(game.currentPlayer.getHand().map((card) => card.props.id))
 		const selectedCard = game.currentPlayer.getHand()[selectedCardIndex]
-		console.log(selectedCard.props.id)
 		return {
 			type: replayActionsFromValues[this.value].turnAction as PlayCardAction,
 			slot: selectedSlot,
@@ -541,18 +538,9 @@ export function* turnActionsToBuffer(
 ): Generator<any, Buffer> {
 	const originalGame = controller.game as GameModel
 
-	const players: Array<PlayerModel> = controller.getPlayers()
-	if (!players[0].deck || !players[1].deck) return Buffer.from([0x00])
+	const firstPlayerSetupDefs: PlayerSetupDefs = controller.player1Defs
 
-	const firstPlayerSetupDefs: PlayerSetupDefs = {
-		model: players[0],
-		deck: players[0].deck.cards.map((card) => card.props.id),
-	}
-
-	const secondPlayerSetupDefs: PlayerSetupDefs = {
-		model: players[1],
-		deck: players[1].deck.cards.map((card) => card.props.id),
-	}
+	const secondPlayerSetupDefs: PlayerSetupDefs = controller.player2Defs
 
 	const newGameController = new GameController(
 		firstPlayerSetupDefs,
@@ -626,6 +614,7 @@ export function* bufferToTurnActions(
 			cursor += action.bytes
 			const turnAction = action.decompress(con.game, bytes)
 			if (turnAction) {
+				console.log(turnAction)
 				replayActions.push({
 					action: turnAction,
 					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
@@ -654,6 +643,8 @@ export function* bufferToTurnActions(
 			}
 		}
 	}
+
+	console.log(replayActions)
 
 	return replayActions
 }

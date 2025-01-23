@@ -14,7 +14,6 @@ import BalancedItem from 'common/cards/items/balanced-common'
 import BuilderDoubleItem from 'common/cards/items/builder-rare'
 import Fortune from 'common/cards/single-use/fortune'
 import {config} from 'dotenv'
-import {Database} from 'server/db/db'
 import {
 	applyEffect,
 	attack,
@@ -24,8 +23,14 @@ import {
 	playCardFromHand,
 	removeEffect,
 	testGame,
+	testReplayGame,
 } from '../unit/game/utils'
-import {turnActionsToBuffer} from 'server/routines/turn-action-compressor'
+import {
+	bufferToTurnActions,
+	turnActionsToBuffer,
+} from '../../server/src/routines/turn-action-compressor'
+import {Database} from 'server/db/db'
+import BalancedDoubleItem from 'common/cards/items/balanced-rare'
 
 describe('Test Replays', () => {
 	let database: Database
@@ -73,20 +78,33 @@ describe('Test Replays', () => {
 	})
 
 	test('Turn game into buffer', async () => {
-		testGame({
-			playerOneDeck: [EthosLabCommon],
-			playerTwoDeck: [EthosLabCommon],
-			saga: function* (game) {
+		testReplayGame({
+			playerOneDeck: [EthosLabCommon, BalancedDoubleItem],
+			playerTwoDeck: [EthosLabCommon, BalancedDoubleItem],
+			firstSaga: function* (con) {
+				const game = con.game
 				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 0)
 				yield* endTurn(game)
+
 				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 0)
 				yield* attack(game, 'primary')
 				yield* endTurn(game)
+
 				yield* attack(game, 'primary')
 				yield* forfeit(game.currentPlayer.entity)
 			},
-			then: function* (_game, controller) {
-				console.log(yield* turnActionsToBuffer(controller))
+			afterFirstsaga: function* (con) {
+				const turnActionsBuffer = yield* turnActionsToBuffer(con)
+				console.log(turnActionsBuffer)
+				const turnActions = yield* bufferToTurnActions(
+					con.player1Defs,
+					con.player2Defs,
+					con.game.rngSeed,
+					turnActionsBuffer,
+				)
+				console.log(turnActions)
 			},
 		})
 	})

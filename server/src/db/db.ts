@@ -22,7 +22,7 @@ import {
 } from 'common/types/database'
 import {GameOutcome} from 'common/types/game-state'
 import {NumberOrNull} from 'common/utils/database-codes'
-import {bufferToTurnActions} from 'routines/turn-action-compressor'
+import {bufferToTurnActions} from '../routines/turn-action-compressor'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {PlayerDefs} from 'common/components/player-component'
 import {call} from 'typed-redux-saga'

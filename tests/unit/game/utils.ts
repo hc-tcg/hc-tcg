@@ -24,7 +24,7 @@ import {
 	slotToPlayCardAction,
 } from 'common/types/turn-action-data'
 import {applyMiddleware, createStore} from 'redux'
-import createSagaMiddleware from 'redux-saga'
+import createSagaMiddleware, {SagaMiddleware} from 'redux-saga'
 import {GameController} from 'server/game-controller'
 import {LocalMessage, localMessages} from 'server/messages'
 import gameSaga, {figureOutGameResult} from 'server/routines/game'
@@ -226,12 +226,17 @@ export function getWinner(game: GameModel): PlayerComponent | null {
 	)
 }
 
-function testSagas(rootSaga: any, testingSaga: any) {
+function getSagaMiddleware(): SagaMiddleware<object> {
 	const sagaMiddleware = createSagaMiddleware({
 		// Prevent default behavior where redux saga logs errors to stderr. This is not useful to tests.
 		onError: (_err, {sagaStack: _}) => {},
 	})
 	createStore(() => {}, applyMiddleware(sagaMiddleware))
+	return sagaMiddleware
+}
+
+function testSagas(rootSaga: any, testingSaga: any) {
+	const sagaMiddleware = getSagaMiddleware()
 
 	let saga = sagaMiddleware.run(function* () {
 		yield* race([rootSaga, testingSaga])
@@ -498,5 +503,40 @@ export function* bossAttack(game: GameModel, ...attack: BOSS_ATTACK) {
 		action: {
 			type: attackType,
 		},
+	})
+}
+
+export function testReplayGame(options: {
+	firstSaga: (con: GameController) => any
+	afterFirstsaga: (con: GameController) => any
+	playerOneDeck: Array<Card>
+	playerTwoDeck: Array<Card>
+}) {
+	let controller = new GameController(
+		getTestPlayer('playerOne', options.playerOneDeck),
+		getTestPlayer('playerTwo', options.playerTwoDeck),
+		{
+			randomizeOrder: false,
+			// This seed always ensures player one goes first. Because how replays work, turn order needs to be random here
+			randomSeed: '1234567',
+			settings: {
+				...defaultGameSettings,
+			},
+		},
+	)
+
+	testSagas(
+		call(function* () {
+			yield* call(gameSaga, controller)
+		}),
+		call(function* () {
+			yield* call(options.firstSaga, controller)
+		}),
+	)
+
+	const sagaMiddleware = getSagaMiddleware()
+
+	sagaMiddleware.run(function* () {
+		yield* call(options.afterFirstsaga, controller)
 	})
 }
