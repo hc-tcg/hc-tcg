@@ -92,10 +92,7 @@ export type ClientMessages = [
 	},
 	{
 		type: typeof clientMessages.CREATE_REPLAY_GAME
-		firstPlayer: PlayerSetupDefs
-		secondPlayer: PlayerSetupDefs
-		replay: Array<ReplayActionData>
-		seed: string
+		id: number
 	},
 	{
 		type: typeof clientMessages.TURN_ACTION

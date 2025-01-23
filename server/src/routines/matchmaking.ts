@@ -18,7 +18,12 @@ import {Deck} from 'common/types/deck'
 import {formatText} from 'common/utils/formatting'
 import {OpponentDefs} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
-import {addGame, getDeck, updateAchievements} from 'db/db-reciever'
+import {
+	addGame,
+	getDeck,
+	updateAchievements,
+	getGameReplay,
+} from 'db/db-reciever'
 import {GameController} from 'game-controller'
 import {LocalMessageTable, localMessages} from 'messages'
 import {
@@ -829,11 +834,15 @@ export function* createReplayGame(
 		return
 	}
 
-	const con = new GameController(
-		msg.payload.firstPlayer,
-		msg.payload.secondPlayer,
-		{randomSeed: msg.payload.seed, randomizeOrder: true},
-	)
+	console.log(msg.payload.id)
+
+	const replay = yield* getGameReplay(msg.payload.id)
+	if (!replay) return
+
+	const con = new GameController(replay.player1Defs, replay.player2Defs, {
+		randomSeed: replay.seed,
+		randomizeOrder: true,
+	})
 	root.addGame(con)
 	root.hooks.newGame.call(con)
 
@@ -861,8 +870,10 @@ export function* createReplayGame(
 
 	yield* delay(2000)
 
-	for (let i = 0; i < msg.payload.replay.length; i++) {
-		const action = msg.payload.replay[i]
+	const replayActions = replay.replay
+
+	for (let i = 0; i < replayActions.length; i++) {
+		const action = replayActions[i]
 		yield* delay(action.millisecondsSinceLastAction)
 		yield* put({
 			type: clientMessages.TURN_ACTION,
