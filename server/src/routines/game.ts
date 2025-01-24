@@ -459,6 +459,7 @@ export function handleSingleTurnAction(
 		const currentTime = Date.now()
 		con.game.turnActions.push({
 			action: turnAction.action,
+			player: turnAction.playerEntity,
 			millisecondsSinceLastAction: con.game.lastActionTime
 				? currentTime - con.game.lastActionTime
 				: 0,

@@ -879,9 +879,9 @@ export function* createReplayGame(
 			type: clientMessages.TURN_ACTION,
 			payload: {
 				action: action.action,
-				playerEntity: con.game.currentPlayer.entity,
+				playerEntity: action.player,
 			},
-			playerEntity: con.game.currentPlayer.entity,
+			playerEntity: action.player,
 			action: action.action,
 		})
 	}

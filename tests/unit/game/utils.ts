@@ -530,7 +530,11 @@ export function testReplayGame(options: {
 
 	const sagaMiddleware = getSagaMiddleware()
 
-	sagaMiddleware.run(function* () {
+	const saga = sagaMiddleware.run(function* () {
 		yield* call(options.afterFirstsaga, controller)
 	})
+
+	if (saga.error()) {
+		throw saga.error()
+	}
 }
