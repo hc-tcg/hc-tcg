@@ -14,7 +14,7 @@ export class AchievementComponent<
 	readonly props: AchievementType
 	readonly entity: AchievementEntity
 
-	progress: Buffer<ArrayBuffer>
+	goals: Record<number, number>
 
 	observerEntity: ObserverEntity | null
 	player: PlayerEntity
@@ -27,7 +27,7 @@ export class AchievementComponent<
 		game: GameModel,
 		entity: AchievementEntity,
 		achievement: number | Achievement,
-		initialProgress: Buffer<ArrayBuffer>,
+		goals: Record<number, number>,
 		player: PlayerEntity,
 	) {
 		this.game = game
@@ -43,7 +43,7 @@ export class AchievementComponent<
 			onComplete: new GameHook(),
 		}
 
-		this.progress = initialProgress
+		this.goals = goals
 		this.player = player
 	}
 }

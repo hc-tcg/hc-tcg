@@ -18,6 +18,7 @@ import query from './query'
 import {RowComponent} from './row-component'
 import {SlotComponent} from './slot-component'
 import {StatusEffectComponent} from './status-effect-component'
+import {AchievementProgress} from '../models/player-model'
 
 /** The minimal information that must be known about a player to start a game */
 export type PlayerDefs = {
@@ -25,7 +26,7 @@ export type PlayerDefs = {
 	minecraftName: string
 	censoredName: string
 	disableDeckingOut?: true
-	achievementProgress?: {progress: Buffer<ArrayBuffer>}[]
+	achievementProgress?: AchievementProgress
 }
 
 export class PlayerComponent {

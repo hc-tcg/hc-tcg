@@ -7,8 +7,8 @@ export type Achievement = {
 	name: string
 	description: string
 	steps: number
-	bytes: number
-	getProgress: (data: Buffer<ArrayBuffer>) => number
+	goals: number
+	getProgress: (goals: Record<number, number>) => number
 	sidebarDescriptions?: Array<{type: string; name: string}>
 
 	onGameStart: (

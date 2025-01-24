@@ -194,9 +194,17 @@ function* gameManager(con: GameController) {
 				(_game, achievement) => achievement.player === playerEntity,
 			)
 			achievements.forEach((achievement) => {
-				// @TODO Add database bullshit here
-				achievement.props.id
+				const complete =
+					achievement.props.getProgress(achievement.goals) ===
+					achievement.props.steps
+				const previouslyComplete =
+					!!v.player.achievementProgress[achievement.props.numericId]
+						.completionTime
+				v.player.achievementProgress[achievement.props.numericId].goals = achievement.goals
+				if (complete && !previouslyComplete)
+					v.player.achievementProgress[achievement.props.numericId].completionTime = Date.now()
 			})
+			//@TODO actually send to database, do database-research or whatever it's called
 		})
 
 		const gameType = con.gameCode ? 'Private' : 'Public'

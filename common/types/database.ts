@@ -1,3 +1,4 @@
+import {AchievementProgress} from '../models/player-model'
 import {TypeT} from './cards'
 import {ApiDeck} from './deck'
 
@@ -72,8 +73,5 @@ export type GamesStats = {
 }
 
 export type AchievementData = {
-	achievementData: {
-		progress: Buffer<ArrayBuffer>
-		completedDate: number | null
-	}[]
+	achievementData: AchievementProgress
 }

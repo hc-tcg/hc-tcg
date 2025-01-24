@@ -4,6 +4,10 @@ import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
 
 export type PlayerId = string & {__player_id: never}
+export type AchievementProgress = Record<
+	number,
+	{goals: Record<number, number>; completionTime?: number}
+>
 
 export class PlayerModel {
 	private internalId: PlayerId
@@ -15,9 +19,7 @@ export class PlayerModel {
 	public socket: Socket
 	public uuid: string
 	public authenticated: boolean
-	public achievementProgress:
-		| {progress: Buffer<ArrayBuffer>; completedDate: number | null}[]
-		| undefined
+	public achievementProgress: AchievementProgress
 
 	constructor(playerName: string, minecraftName: string, socket: Socket) {
 		this.internalId = Math.random().toString() as PlayerId
@@ -31,6 +33,7 @@ export class PlayerModel {
 		this.socket = socket
 		this.uuid = ''
 		this.authenticated = false
+		this.achievementProgress = {}
 	}
 
 	public get id() {

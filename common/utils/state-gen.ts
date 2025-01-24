@@ -14,6 +14,7 @@ import {PlayerDefs} from '../components/player-component'
 import query from '../components/query'
 import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
+import {AchievementProgress} from '../models/player-model'
 import {Deck} from '../types/deck'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
@@ -59,7 +60,7 @@ export function setupComponents(
 		player1Component.entity,
 		player1.deck,
 		options,
-		player1.model.achievementProgress?.map((progress) => progress.progress),
+		player1.model.achievementProgress,
 	)
 	setupEcsForPlayer(
 		game,
@@ -67,7 +68,7 @@ export function setupComponents(
 		player2Component.entity,
 		player2.deck,
 		options,
-		player2.model.achievementProgress?.map((progress) => progress.progress),
+		player2.model.achievementProgress,
 	)
 	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
 }
@@ -78,7 +79,7 @@ function setupEcsForPlayer(
 	playerEntity: PlayerEntity,
 	deck: Array<number | string | Card>,
 	options: ComponentSetupOptions,
-	achievementProgress: Buffer<ArrayBuffer>[] | undefined,
+	achievementProgress: AchievementProgress | undefined,
 ) {
 	for (const card of deck) {
 		let slot = components.new(DeckSlotComponent, playerEntity, {
@@ -163,7 +164,7 @@ function setupEcsForPlayer(
 			const achievementComponent = components.new(
 				AchievementComponent,
 				achievement,
-				achievementProgress[achievement.numericId],
+				achievementProgress[achievement.numericId].goals,
 				playerEntity,
 			)
 			const achievementObserver = components.new(

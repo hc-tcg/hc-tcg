@@ -18,6 +18,7 @@ import {
 } from 'common/types/database'
 import {GameOutcome} from 'common/types/game-state'
 import {NumberOrNull} from 'common/utils/database-codes'
+import {AchievementProgress, PlayerModel} from 'common/models/player-model'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -115,11 +116,13 @@ export class Database {
 				CREATE TABLE IF NOT EXISTS achievements(
 					achievement_id integer PRIMARY KEY NOT NULL
 				);
-				CREATE TABLE IF NOT EXISTS user_achievements(
+				CREATE TABLE IF NOT EXISTS user_goals(
 					user_id uuid REFERENCES users(user_id),
 					achievement_id integer REFERENCES achievements(achievement_id),
-					progress bytea NOT NULL,
-					completion_time timestamp
+					goal_id integer,
+					progress integer NOT NULL,
+					completion_time timestamp,
+					PRIMARY KEY (user_id, achievement_id, goal_id)
 				);
 				`,
 			)
@@ -146,7 +149,6 @@ export class Database {
 			console.info('Running server without database...')
 		}
 	}
-
 	public async close() {
 		await this.pool.end()
 	}
@@ -1337,13 +1339,10 @@ export class Database {
 	): Promise<DatabaseResult> {
 		try {
 			await this.pool.query(
-				'INSERT INTO user_achievements (user_id, achievement_id, progress) SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::bytea[]);',
+				'INSERT INTO user_achievements (user_id, achievement_id) SELECT * FROM UNNEST ($1::uuid[], $2::int[]);',
 				[
 					this.allAchievements.map(() => playerId),
 					this.allAchievements.map((achievement) => achievement.numericId),
-					this.allAchievements.map((achievement) =>
-						Buffer.alloc(achievement.bytes),
-					),
 				],
 			)
 
@@ -1367,30 +1366,28 @@ export class Database {
 		try {
 			const result = await this.pool.query(
 				`
-			SELECT achievement_id, progress, completion_time
-			FROM user_achievements
-			WHERE user_id = $1
-			`,
+				SELECT achievement_id, progress, completion_time
+				FROM user_achievements
+				LEFT JOIN user_goals ON user_achievements.achievement_id = user_goals.achievement_id and user_achievements.user_id = user_goals.user_id
+				WHERE user_id = $1
+				`,
 				[playerId],
 			)
-			if (result.rowCount !== this.allAchievements.length) {
-				await this.initializeAchievements(playerId)
-				return await this.getAchievements(playerId)
-			}
-			const achievements = result.rows.toSorted(
-				(rowA: any, rowB: any) =>
-					rowA['achievement_id'] - rowB['achievement_id'],
-			)
+
+			const progress: AchievementProgress = {}
+			result.rows.forEach((row) => {
+				progress[row['achievement_id']] = {
+					goals: [],
+					completionTime: row['completion_time']
+						? row['completion_time']
+						: undefined,
+				}
+			})
 
 			return {
 				type: 'success',
 				body: {
-					achievementData: achievements.map((row: any) => {
-						return {
-							progress: row['progress'],
-							completedDate: row['completion_time'],
-						}
-					}),
+					achievementData: progress,
 				},
 			}
 		} catch (e) {
@@ -1402,5 +1399,58 @@ export class Database {
 	}
 
 	/**Update player achievements with their progress */
-	public async updateAchievements() {}
+	public async updateAchievements(
+		player: PlayerModel,
+	): Promise<DatabaseResult> {
+		try {
+			type GoalRow = {
+				achievment: number
+				goal: number
+				progress: number
+				completion_time: null | number
+			}
+			const goals: GoalRow[] = Object.keys(player.achievementProgress).flatMap(
+				(achievement_id) => {
+					const achievement = this.allAchievements.find(
+						(achievement) =>
+							achievement.numericId.toString() === achievement_id,
+					)
+					if (!achievement) return []
+					const goals: GoalRow[] = []
+					for (let goal_id = 0; goal_id < achievement.goals; goal_id++) {
+						const progress = player.achievementProgress[achievement.numericId]
+						goals.push({
+							achievment: achievement.numericId,
+							goal: goal_id,
+							progress: progress.goals[goal_id],
+							completion_time: progress.completionTime
+								? progress.completionTime
+								: null,
+						})
+					}
+					return goals
+				},
+			)
+			await this.pool.query(
+				`
+				INSERT INTO user_goals (user_id, achievement_id, goal_id, progress, completion_time)
+				VALUES (SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::int[], $4::int[], $5::timestamp[]))
+				ON CONFLICT UPDATE;
+				`,
+				[
+					goals.map(() => player.uuid),
+					goals.map((row) => row.achievment),
+					goals.map((row) => row.goal),
+					goals.map((row) => row.progress),
+					goals.map((row) => row.completion_time),
+				],
+			)
+			return {type: 'success', body: undefined}
+		} catch (e) {
+			return {
+				type: 'failure',
+				reason: `${e}`,
+			}
+		}
+	}
 }
