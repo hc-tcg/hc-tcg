@@ -1,10 +1,8 @@
-import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
 import {PlayerEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {Deck, Tag} from '../types/deck'
 import {AnyTurnActionData} from '../types/turn-action-data'
-import {PlayerSetupDefs} from '../utils/state-gen'
 
 export const clientMessages = messages('clientMessages', {
 	GET_UPDATES: null,

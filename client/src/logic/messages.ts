@@ -15,10 +15,8 @@ import {
 	SlotInfo,
 } from 'common/types/server-requests'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
-import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {Dispatch} from 'react'
 import {useDispatch} from 'react-redux'
-import {ReplayActionData} from 'server/src/routines/turn-action-compressor'
 import {LocalDatabase} from './game/database/database-reducer'
 import {MODAL_COMPONENTS} from './game/tasks/action-modals-saga'
 import {
