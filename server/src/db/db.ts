@@ -26,8 +26,8 @@ import {NumberOrNull} from 'common/utils/database-codes'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {call} from 'typed-redux-saga'
 import {
-	bufferToTurnActions,
 	ReplayActionData,
+	bufferToTurnActions,
 } from '../routines/turn-action-compressor'
 
 export type DatabaseResult<T = undefined> =

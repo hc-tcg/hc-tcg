@@ -506,13 +506,13 @@ export function testReplayGame(options: {
 	playerOneDeck: Array<Card>
 	playerTwoDeck: Array<Card>
 }) {
-	let controller = new GameController(
+	const controller = new GameController(
 		getTestPlayer('playerOne', options.playerOneDeck),
 		getTestPlayer('playerTwo', options.playerTwoDeck),
 		{
-			randomizeOrder: false,
+			randomizeOrder: true,
 			// This seed always ensures player one goes first. Because how replays work, turn order needs to be random here
-			randomSeed: '1234567',
+			randomSeed: '123456a',
 			settings: {
 				...defaultGameSettings,
 			},

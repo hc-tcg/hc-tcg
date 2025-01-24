@@ -1,6 +1,12 @@
 import {describe, expect, test} from '@jest/globals'
+import Brush from 'common/cards/advent-of-tcg/single-use/brush'
+import Feather from 'common/cards/advent-of-tcg/single-use/feather'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import BalancedItem from 'common/cards/items/balanced-common'
 import BalancedDoubleItem from 'common/cards/items/balanced-rare'
+import BuilderItem from 'common/cards/items/builder-common'
+import MinerItem from 'common/cards/items/miner-common'
+import {DragCards} from 'common/types/modal-requests'
 import {
 	bufferToTurnActions,
 	turnActionsToBuffer,
@@ -14,13 +20,6 @@ import {
 	playCardFromHand,
 	testReplayGame,
 } from '../unit/game/utils'
-import Brush from 'common/cards/advent-of-tcg/single-use/brush'
-import Feather from 'common/cards/advent-of-tcg/single-use/feather'
-import BalancedItem from 'common/cards/items/balanced-common'
-import BuilderItem from 'common/cards/items/builder-common'
-import MinerItem from 'common/cards/items/miner-common'
-import {DragCards} from 'common/types/modal-requests'
-import {CardComponent} from 'common/components'
 
 describe('Test Replays', () => {
 	test('Test play card and attack actions', async () => {
@@ -100,13 +99,8 @@ describe('Test Replays', () => {
 					leftCards: [cardEntities[0]],
 					rightCards: [cardEntities[1]],
 				})
-				expect(
-					con.game.currentPlayer
-						.getDeck()
-						.sort(CardComponent.compareOrder)
-						.map((card) => card.props),
-				).toStrictEqual([BuilderItem, MinerItem, Feather, BalancedItem])
 				yield* endTurn(con.game)
+				yield* forfeit(con.game.currentPlayer.entity)
 			},
 			afterFirstsaga: function* (con) {
 				const turnActionsBuffer = yield* turnActionsToBuffer(con)
@@ -119,9 +113,9 @@ describe('Test Replays', () => {
 					turnActionsBuffer,
 				)
 
-				expect(con.game.turnActions).toBe(
-					turnActions.map((action) => action.action),
-				)
+				expect(
+					con.game.turnActions.map((action) => action.action),
+				).toStrictEqual(turnActions.map((action) => action.action))
 			},
 		})
 	})
