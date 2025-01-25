@@ -2,6 +2,7 @@ import assert from 'assert'
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
 import type {GameModel} from '../models/game-model'
+import {AchievementProgress} from '../models/player-model'
 import {StatusEffect} from '../status-effects/status-effect'
 import type {HermitAttackType} from '../types/attack'
 import type {TypeT} from '../types/cards'
@@ -18,7 +19,6 @@ import query from './query'
 import {RowComponent} from './row-component'
 import {SlotComponent} from './slot-component'
 import {StatusEffectComponent} from './status-effect-component'
-import {AchievementProgress} from '../models/player-model'
 
 /** The minimal information that must be known about a player to start a game */
 export type PlayerDefs = {

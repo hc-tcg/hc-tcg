@@ -1,11 +1,12 @@
-import { Achievement } from 'common/achievements/types'
-import { Card } from 'common/cards/types'
-import { ApiDeck, Deck, Tag } from 'common/types/deck'
-import { toLocalCardInstance } from 'common/utils/cards'
+import {Achievement} from 'common/achievements/types'
+import {Card} from 'common/cards/types'
+import {ApiDeck, Deck, Tag} from 'common/types/deck'
+import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
-const { Pool } = pg
-import { CARDS } from 'common/cards'
-import { TypeT } from 'common/types/cards'
+const {Pool} = pg
+import {CARDS} from 'common/cards'
+import {AchievementProgress, PlayerModel} from 'common/models/player-model'
+import {TypeT} from 'common/types/cards'
 import {
 	AchievementData,
 	CardStats,
@@ -16,19 +17,18 @@ import {
 	User,
 	UserWithoutSecret,
 } from 'common/types/database'
-import { GameOutcome } from 'common/types/game-state'
-import { NumberOrNull } from 'common/utils/database-codes'
-import { AchievementProgress, PlayerModel } from 'common/models/player-model'
+import {GameOutcome} from 'common/types/game-state'
+import {NumberOrNull} from 'common/utils/database-codes'
 
 export type DatabaseResult<T = undefined> =
 	| {
-		type: 'success'
-		body: T
-	}
+			type: 'success'
+			body: T
+	  }
 	| {
-		type: 'failure'
-		reason?: string
-	}
+			type: 'failure'
+			reason?: string
+	  }
 
 export class Database {
 	public pool: pg.Pool
@@ -43,7 +43,7 @@ export class Database {
 		allAchievements: Array<Achievement>,
 		bfDepth: number,
 	) {
-		this.pool = new Pool({ connectionString: env.DATABASE_URL })
+		this.pool = new Pool({connectionString: env.DATABASE_URL})
 		this.allCards = allCards
 		this.allAchievements = allAchievements
 		this.bfDepth = bfDepth
@@ -175,7 +175,7 @@ export class Database {
 				},
 			}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -199,7 +199,7 @@ export class Database {
 				},
 			}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -220,13 +220,13 @@ export class Database {
 			)
 
 			const reformattedCards = cards.reduce(
-				(r: Array<{ id: number; copies: number }>, card) => {
+				(r: Array<{id: number; copies: number}>, card) => {
 					const index = r.findIndex((subcard) => subcard.id === card)
 					if (index >= 0) {
 						r[index].copies += 1
 						return r
 					}
-					return [...r, { id: card, copies: 1 }]
+					return [...r, {id: card, copies: 1}]
 				},
 				[],
 			)
@@ -254,7 +254,7 @@ export class Database {
 				body: code,
 			}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -288,7 +288,7 @@ export class Database {
 				body: code,
 			}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -334,7 +334,7 @@ export class Database {
 					return r
 				return [
 					...r,
-					{ name: row['tag_name'], color: row['tag_color'], key: row['tag_id'] },
+					{name: row['tag_name'], color: row['tag_color'], key: row['tag_id']},
 				]
 			}, [])
 
@@ -350,7 +350,7 @@ export class Database {
 				},
 			}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -396,7 +396,7 @@ export class Database {
 					return r
 				return [
 					...r,
-					{ name: row['tag_name'], color: row['tag_color'], key: row['tag_id'] },
+					{name: row['tag_name'], color: row['tag_color'], key: row['tag_id']},
 				]
 			}, [])
 
@@ -413,7 +413,7 @@ export class Database {
 				},
 			}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -450,10 +450,10 @@ export class Database {
 				const cards: Array<Card> =
 					cardId !== null
 						? [
-							...Array(row['copies']).fill(
-								this.allCards.find((card) => card.numericId === cardId),
-							),
-						]
+								...Array(row['copies']).fill(
+									this.allCards.find((card) => card.numericId === cardId),
+								),
+							]
 						: []
 
 				const foundDeck = allDecks.find((deck) => deck.code === code)
@@ -502,7 +502,7 @@ export class Database {
 				body: decks,
 			}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -540,9 +540,9 @@ export class Database {
 				)
 			}
 
-			return { type: 'success', body: undefined }
+			return {type: 'success', body: undefined}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -556,9 +556,9 @@ export class Database {
 				'UPDATE decks SET exported = TRUE WHERE deck_code = $1 AND user_id = $2',
 				[deckCode, user_id],
 			)
-			return { type: 'success', body: undefined }
+			return {type: 'success', body: undefined}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -572,9 +572,9 @@ export class Database {
 				'UPDATE decks SET show_info = $1 WHERE deck_code = $2 AND user_id = $3',
 				[newShowData, deckCode, user_id],
 			)
-			return { type: 'success', body: undefined }
+			return {type: 'success', body: undefined}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -600,7 +600,7 @@ export class Database {
 				},
 			}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -611,9 +611,9 @@ export class Database {
 				'DELETE FROM user_tags WHERE user_tags.tag_id = $1 AND user_id = $2',
 				[tagId, uuid],
 			)
-			return { type: 'success', body: undefined }
+			return {type: 'success', body: undefined}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -634,7 +634,7 @@ export class Database {
 				})),
 			}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -669,7 +669,7 @@ export class Database {
 				},
 			}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -704,7 +704,7 @@ export class Database {
 				},
 			}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -727,7 +727,7 @@ export class Database {
 				},
 			}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -749,9 +749,9 @@ export class Database {
 				'UPDATE users SET minecraft_name = $1 WHERE user_id = $2',
 				[newMinecraftName, uuid],
 			)
-			return { type: 'success', body: undefined }
+			return {type: 'success', body: undefined}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -819,9 +819,9 @@ export class Database {
 					opponentCode,
 				],
 			)
-			return { type: 'success', body: undefined }
+			return {type: 'success', body: undefined}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -834,15 +834,15 @@ export class Database {
 		before: number | null
 		after: number | null
 		orderBy:
-		| 'winrate'
-		| 'deckUsage'
-		| 'gameUsage'
-		| 'averageCopies'
-		| 'averagePlayers'
-		| 'encounterChance'
-		| 'adjustedWinrate'
-		| 'winrateDifference'
-		| null
+			| 'winrate'
+			| 'deckUsage'
+			| 'gameUsage'
+			| 'averageCopies'
+			| 'averagePlayers'
+			| 'encounterChance'
+			| 'adjustedWinrate'
+			| 'winrateDifference'
+			| null
 	}): Promise<DatabaseResult<Array<CardStats>>> {
 		try {
 			const stats = await this.pool.query({
@@ -964,7 +964,7 @@ export class Database {
 				}),
 			}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -1035,10 +1035,10 @@ export class Database {
 				const cards: Array<Card> =
 					cardId !== null
 						? [
-							...Array(row['copies']).fill(
-								this.allCards.find((card) => card.numericId === cardId),
-							),
-						]
+								...Array(row['copies']).fill(
+									this.allCards.find((card) => card.numericId === cardId),
+								),
+							]
 						: []
 
 				const winrate: string = row['winrate']
@@ -1087,7 +1087,7 @@ export class Database {
 				body: decks,
 			}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -1251,7 +1251,7 @@ export class Database {
 				} as TypeDistributionStats,
 			}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -1259,7 +1259,7 @@ export class Database {
 	public async getGamesStats({
 		before,
 		after,
-	}: { before: number | null; after: number | null }): Promise<
+	}: {before: number | null; after: number | null}): Promise<
 		DatabaseResult<GamesStats>
 	> {
 		try {
@@ -1329,33 +1329,7 @@ export class Database {
 				},
 			}
 		} catch (e) {
-			return { type: 'failure', reason: `${e}` }
-		}
-	}
-
-	/**Initialize player achievements */
-	public async initializeAchievements(
-		playerId: string,
-	): Promise<DatabaseResult> {
-		try {
-			await this.pool.query(
-				'INSERT INTO user_achievements (user_id, achievement_id) SELECT * FROM UNNEST ($1::uuid[], $2::int[]);',
-				[
-					this.allAchievements.map(() => playerId),
-					this.allAchievements.map((achievement) => achievement.numericId),
-				],
-			)
-
-			return {
-				type: 'success',
-				body: undefined,
-			}
-		} catch (e) {
-			console.log(e)
-			return {
-				type: 'failure',
-				reason: `${e}`,
-			}
+			return {type: 'failure', reason: `${e}`}
 		}
 	}
 
@@ -1366,22 +1340,24 @@ export class Database {
 		try {
 			const result = await this.pool.query(
 				`
-				SELECT achievement_id, progress, completion_time
-				FROM user_achievements
-				LEFT JOIN user_goals ON user_achievements.achievement_id = user_goals.achievement_id and user_achievements.user_id = user_goals.user_id
-				WHERE user_id = $1
+				SELECT achievement_id, goal_id, progress, completion_time
+				FROM user_goals
+				WHERE user_id = $1;
 				`,
 				[playerId],
 			)
 
 			const progress: AchievementProgress = {}
 			result.rows.forEach((row) => {
-				progress[row['achievement_id']] = {
-					goals: [],
-					completionTime: row['completion_time']
-						? row['completion_time']
-						: undefined,
+				if (!progress[row['achievement_id']]) {
+					progress[row['achievement_id']] = {
+						goals: [],
+						completionTime: row['completion_time']
+							? row['completion_time']
+							: undefined,
+					}
 				}
+				progress[row['achievement_id']].goals[row['goal_id']] = row['progress']
 			})
 
 			return {
@@ -1391,6 +1367,7 @@ export class Database {
 				},
 			}
 		} catch (e) {
+			console.log(e)
 			return {
 				type: 'failure',
 				reason: `${e}`,
@@ -1452,7 +1429,7 @@ export class Database {
 					goals.map((row) => row.completion_time),
 				],
 			)
-			return { type: 'success', body: undefined }
+			return {type: 'success', body: undefined}
 		} catch (e) {
 			console.log(e)
 			return {
