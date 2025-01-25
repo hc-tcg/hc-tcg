@@ -1,4 +1,4 @@
-export const COINS = [
-	{id: 0, name: 'Creeper', file: 'creeper.png'},
-	{id: 1, name: 'Pink Sheep', file: 'pink-sheep.png'},
-]
+export const COINS = {
+	creeper: {numericId: 0, name: 'Creeper', file: 'creeper.png'},
+	evilx: {numericId: 1, name: 'Evil X', file: 'evilx.png'},
+}
