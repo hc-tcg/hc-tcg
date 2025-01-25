@@ -4,20 +4,17 @@ import css from './coin-flip.module.scss'
 
 export type Props = {
 	name: string
+	headImage: string
 	tosses: Array<CoinFlip>
 	amount: number
 }
 
-const CoinFlipComponent = ({name, tosses, amount}: Props) => {
-	const pics = [
-		'/images/creeper.png',
-		'/images/tcg1.png',
-	]
-
+const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
 	const longestFlipIndex = Math.floor(Math.random() * tosses.length)
 
 	const coins = tosses.map((face, index) => {
-		const coinPics = pics.slice()
+		const coinPics = [`/images/coins/${headImage}`, '/images/tcg1.png']
+
 		const flipOffset =
 			index === longestFlipIndex
 				? 0
