@@ -6,6 +6,7 @@ const {Pool} = pg
 import {CARDS} from 'common/cards'
 import {TypeT} from 'common/types/cards'
 import {
+	ApiGame,
 	CardStats,
 	DeckStats,
 	GamesStats,
@@ -1312,6 +1313,40 @@ export class Database {
 						minimum: stats.rows[0]['minimum'],
 						maximum: stats.rows[0]['maximum'],
 					},
+				},
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/**Get the current stats of */
+	public async getGame({
+		opponentCode,
+	}: {opponentCode: string}): Promise<DatabaseResult<ApiGame>> {
+		try {
+			const game = await this.pool.query(
+				'SELECT * FROM games LEFT JOIN users ON games.winner = users.user_id OR games.loser = users.user_id WHERE opponent_code = $1',
+				[opponentCode],
+			)
+
+			const winner: string = game.rows[0]['username']
+			const loser: string = game.rows[1]['username']
+			const startTime: number = game.rows[0]['start_time']
+
+			const firstPlayerWon: boolean = game.rows[0]['first_player_won']
+			const tie: boolean = game.rows[0]['outcome'] === 'tie'
+
+			const firstPlayer = firstPlayerWon ? winner : loser
+			const secondPlayer = firstPlayerWon ? loser : winner
+
+			return {
+				type: 'success',
+				body: {
+					firstPlayerName: firstPlayer,
+					secondPlayerName: secondPlayer,
+					startTime: startTime,
+					winner: tie ? null : winner,
 				},
 			}
 		} catch (e) {
