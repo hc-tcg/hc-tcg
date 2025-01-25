@@ -5,7 +5,8 @@ import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
 import {CARDS} from 'common/cards'
-import {AchievementProgress, PlayerModel} from 'common/models/player-model'
+import {PlayerModel} from 'common/models/player-model'
+import {AchievementProgress} from 'common/types/achievements'
 import {TypeT} from 'common/types/cards'
 import {
 	AchievementData,

@@ -3,13 +3,14 @@ import {ACHIEVEMENTS_LIST} from 'common/achievements'
 import AchievementComponent from 'components/achievement'
 import MenuLayout from 'components/menu-layout'
 import css from './main-menu.module.scss'
+import { useSelector } from 'react-redux'
+import { getAchievements } from 'logic/game/database/database-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 function Achievements({setMenuSection}: Props) {
-	const data = Buffer.alloc(2)
-	data[1] = 180
+	const data = useSelector(getAchievements)
 
 	return (
 		<MenuLayout
@@ -22,9 +23,9 @@ function Achievements({setMenuSection}: Props) {
 			<div className={css.achievementsContainer}>
 				{ACHIEVEMENTS_LIST.map((achievement) => (
 					<AchievementComponent
+						key={achievement.numericId}
 						achievement={achievement}
-						progressData={data}
-						completionTime={1737557578 * 1000}
+						progressData={data[achievement.numericId]}
 					/>
 				))}
 			</div>

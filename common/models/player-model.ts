@@ -2,12 +2,9 @@ import {Socket} from 'socket.io'
 import {Deck} from '../../common/types/deck'
 import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
+import {AchievementProgress} from '../types/achievements'
 
 export type PlayerId = string & {__player_id: never}
-export type AchievementProgress = Record<
-	number,
-	{goals: Record<number, number>; completionTime?: number}
->
 
 export class PlayerModel {
 	private internalId: PlayerId

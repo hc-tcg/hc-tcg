@@ -1,4 +1,4 @@
-import {AchievementProgress} from '../models/player-model'
+import {AchievementProgress} from '../types/achievements'
 import {TypeT} from './cards'
 import {ApiDeck} from './deck'
 

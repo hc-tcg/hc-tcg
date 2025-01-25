@@ -1,3 +1,4 @@
+import {AchievementProgress} from '../types/achievements'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {Stats, User} from '../types/database'
 import {ApiDeck, Deck, Tag} from '../types/deck'
@@ -39,6 +40,7 @@ export const serverMessages = messages('serverMessages', {
 	AUTHENTICATED: null,
 	AUTHENTICATION_FAIL: null,
 	DECKS_RECIEVED: null,
+	ACHIEVEMENTS_RECIEVED: null,
 	STATS_RECIEVED: null,
 	CURRENT_IMPORT_RECIEVED: null,
 	DATABASE_FAILURE: null,
@@ -108,6 +110,10 @@ export type ServerMessages = [
 		decks: Array<Deck>
 		tags: Array<Tag>
 		newActiveDeck?: Deck
+	},
+	{
+		type: typeof serverMessages.ACHIEVEMENTS_RECIEVED
+		progress: AchievementProgress
 	},
 	{type: typeof serverMessages.STATS_RECIEVED; stats: Stats},
 	{type: typeof serverMessages.CURRENT_IMPORT_RECIEVED; deck: ApiDeck | null},

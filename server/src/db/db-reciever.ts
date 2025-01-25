@@ -1,11 +1,11 @@
-import {CARDS} from 'common/cards'
-import {PlayerModel} from 'common/models/player-model'
-import {serverMessages} from 'common/socket-messages/server-messages'
-import {GameOutcome} from 'common/types/game-state'
-import {generateDatabaseCode} from 'common/utils/database-codes'
+import { CARDS } from 'common/cards'
+import { PlayerModel } from 'common/models/player-model'
+import { serverMessages } from 'common/socket-messages/server-messages'
+import { GameOutcome } from 'common/types/game-state'
+import { generateDatabaseCode } from 'common/utils/database-codes'
 import root from 'serverRoot'
-import {call} from 'typed-redux-saga'
-import {broadcast} from 'utils/comm'
+import { call } from 'typed-redux-saga'
+import { broadcast } from 'utils/comm'
 import {
 	RecievedClientMessage,
 	clientMessages,
@@ -13,7 +13,7 @@ import {
 
 function* noDatabaseConnection(playerId: string) {
 	const player = root.players[playerId]
-	broadcast([player], {type: serverMessages.NO_DATABASE_CONNECTION})
+	broadcast([player], { type: serverMessages.NO_DATABASE_CONNECTION })
 }
 
 export function* addUser(
@@ -34,9 +34,13 @@ export function* addUser(
 	if (result.type === 'success') {
 		player.uuid = result.body.uuid
 		player.authenticated = true
-		broadcast([player], {type: serverMessages.AUTHENTICATED, user: result.body})
+		broadcast([player], {
+			type: serverMessages.ACHIEVEMENTS_RECIEVED,
+			progress: player.achievementProgress,
+		})
+		broadcast([player], { type: serverMessages.AUTHENTICATED, user: result.body })
 	} else {
-		broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})
+		broadcast([player], { type: serverMessages.AUTHENTICATION_FAIL })
 	}
 }
 
@@ -65,11 +69,15 @@ export function* authenticateUser(
 		)
 		if (achievementProgress.type === 'success') {
 			player.achievementProgress = achievementProgress.body.achievementData
+			broadcast([player], {
+				type: serverMessages.ACHIEVEMENTS_RECIEVED,
+				progress: player.achievementProgress,
+			})
 		}
 
-		broadcast([player], {type: serverMessages.AUTHENTICATED, user: result.body})
+		broadcast([player], { type: serverMessages.AUTHENTICATED, user: result.body })
 	} else {
-		broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})
+		broadcast([player], { type: serverMessages.AUTHENTICATION_FAIL })
 	}
 }
 
@@ -100,8 +108,8 @@ export function* getDecks(
 			tags: tagsResult.body,
 			newActiveDeck: action.payload.newActiveDeck
 				? decksResult.body.find(
-						(deck) => deck.code === action.payload.newActiveDeck,
-					)
+					(deck) => deck.code === action.payload.newActiveDeck,
+				)
 				: undefined,
 		})
 	} else if (decksResult.type !== 'success') {
@@ -571,10 +579,32 @@ export function* getDeck(code: string) {
 export function* updateAchievements(player: PlayerModel) {
 	if (!root.db?.connected) return
 
-	const {type: success} = yield* call(
+	const { type: success } = yield* call(
 		[root.db, root.db.updateAchievements],
 		player,
 	)
 	if (success === 'failure') return false
 	return true
+}
+
+export function* getAchievements(action: RecievedClientMessage<typeof clientMessages.GET_ACHIEVEMENTS>) {
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
+
+	const player = root.players[action.playerId]
+	const result = yield* call([root.db, root.db.getAchievements], player.uuid)
+
+	if (result.type === 'success') {
+		broadcast([player], {
+			type: serverMessages.ACHIEVEMENTS_RECIEVED,
+			progress: result.body.achievementData,
+		})
+	} else {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: result.reason,
+		})
+	}
 }

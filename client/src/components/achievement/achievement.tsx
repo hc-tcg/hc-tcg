@@ -1,18 +1,18 @@
 import {Achievement} from 'common/achievements/types'
 import css from './achievement.module.scss'
+import { ProgressionEntry } from 'common/types/achievements'
 
 type Props = {
 	achievement: Achievement
-	progressData: Buffer<ArrayBuffer>
-	completionTime: number | null
+	progressData: ProgressionEntry | undefined
 }
 export default function AchievementComponent({
 	achievement,
 	progressData,
-	completionTime,
 }: Props) {
 	const icon_url = `/images/achievements/${achievement.id}.png`
-	const progress = achievement.getProgress(progressData)
+	const progress = progressData ? achievement.getProgress(progressData.goals) : 0
+	const completionTime = progressData?.completionTime
 
 	return (
 		<div className={css.achievementContainer}>
