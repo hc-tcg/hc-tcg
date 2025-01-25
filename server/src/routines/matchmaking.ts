@@ -18,7 +18,7 @@ import {Deck} from 'common/types/deck'
 import {formatText} from 'common/utils/formatting'
 import {OpponentDefs} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
-import {addGame, getDeck} from 'db/db-reciever'
+import {addGame, getDeck, updateAchievements} from 'db/db-reciever'
 import {GameController} from 'game-controller'
 import {LocalMessageTable, localMessages} from 'messages'
 import {
@@ -186,26 +186,31 @@ function* gameManager(con: GameController) {
 		if (con.task) yield* cancel(con.task)
 		con.game.hooks.afterGameEnd.call()
 
-		con.viewers.forEach((v) => {
-			if (v.spectator) return
-			const playerEntity = v.playerOnLeft.entity
-			const achievements = con.game.components.filter(
-				AchievementComponent,
-				(_game, achievement) => achievement.player === playerEntity,
-			)
-			achievements.forEach((achievement) => {
-				const complete =
-					achievement.props.getProgress(achievement.goals) ===
-					achievement.props.steps
-				const previouslyComplete =
-					!!v.player.achievementProgress[achievement.props.numericId]
-						.completionTime
-				v.player.achievementProgress[achievement.props.numericId].goals = achievement.goals
-				if (complete && !previouslyComplete)
-					v.player.achievementProgress[achievement.props.numericId].completionTime = Date.now()
-			})
-			//@TODO actually send to database, do database-research or whatever it's called
-		})
+		yield* all(
+			con.viewers.map((v) => {
+				if (v.spectator) return
+				const playerEntity = v.playerOnLeft.entity
+				const achievements = con.game.components.filter(
+					AchievementComponent,
+					(_game, achievement) => achievement.player === playerEntity,
+				)
+				achievements.forEach((achievement) => {
+					const complete =
+						achievement.props.getProgress(achievement.goals) ===
+						achievement.props.steps
+					const previouslyComplete =
+						!!v.player.achievementProgress[achievement.props.numericId]
+							.completionTime
+					v.player.achievementProgress[achievement.props.numericId].goals =
+						achievement.goals
+					if (complete && !previouslyComplete)
+						v.player.achievementProgress[
+							achievement.props.numericId
+						].completionTime = Date.now()
+				})
+				return updateAchievements(v.player)
+			}),
+		)
 
 		const gameType = con.gameCode ? 'Private' : 'Public'
 		console.log(

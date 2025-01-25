@@ -567,3 +567,14 @@ export function* getDeck(code: string) {
 	if (deck.type === 'failure') return null
 	return deck.body
 }
+
+export function* updateAchievements(player: PlayerModel) {
+	if (!root.db?.connected) return
+
+	const {type: success} = yield* call(
+		[root.db, root.db.updateAchievements],
+		player,
+	)
+	if (success === 'failure') return false
+	return true
+}

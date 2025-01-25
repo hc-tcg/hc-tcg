@@ -161,10 +161,13 @@ function setupEcsForPlayer(
 
 	if (options.countAchievements && achievementProgress) {
 		ACHIEVEMENTS_LIST.forEach((achievement) => {
+			if (!achievementProgress[achievement.numericId]) {
+				achievementProgress[achievement.numericId] = {goals: {}}
+			}
 			const achievementComponent = components.new(
 				AchievementComponent,
 				achievement,
-				achievementProgress[achievement.numericId].goals,
+				achievementProgress[achievement.numericId]?.goals,
 				playerEntity,
 			)
 			const achievementObserver = components.new(

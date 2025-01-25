@@ -1,4 +1,5 @@
 import {CARDS_LIST} from '../cards'
+import {CardComponent} from '../components'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -18,9 +19,17 @@ const AllCards: Achievement = {
 		const playerComponent = game.components.get(component.player)
 		if (!playerComponent) return
 
+		const playedCards: CardComponent[] = []
+
 		observer.subscribe(playerComponent.hooks.onAttach, (card) => {
+			if (playedCards.includes(card)) return
+			playedCards.push(card)
 			const position = defaultCards.indexOf(card.props)
-			component.goals[position] += 1
+			if (position < 0) return
+			component.goals[position] =
+				component.goals[position] !== undefined
+					? component.goals[position] + 1
+					: 1
 		})
 	},
 }

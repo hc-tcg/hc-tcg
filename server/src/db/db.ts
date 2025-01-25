@@ -1416,26 +1416,32 @@ export class Database {
 							achievement.numericId.toString() === achievement_id,
 					)
 					if (!achievement) return []
-					const goals: GoalRow[] = []
-					for (let goal_id = 0; goal_id < achievement.goals; goal_id++) {
-						const progress = player.achievementProgress[achievement.numericId]
-						goals.push({
+					const progress = player.achievementProgress[achievement.numericId]
+					const achievementGoals: GoalRow[] = []
+					Object.keys(progress.goals).forEach((goal_id) => {
+						const goal_id_number = parseInt(goal_id)
+						achievementGoals.push({
 							achievment: achievement.numericId,
-							goal: goal_id,
-							progress: progress.goals[goal_id],
+							goal: progress.goals[goal_id],
+							progress:
+								progress.goals[goal_id_number] !== undefined
+									? progress.goals[goal_id_number]
+									: 0,
 							completion_time: progress.completionTime
 								? progress.completionTime
 								: null,
 						})
-					}
-					return goals
+					})
+					return achievementGoals
 				},
 			)
+			console.log(goals.filter((goal) => goal.progress > 0))
 			await this.pool.query(
 				`
 				INSERT INTO user_goals (user_id, achievement_id, goal_id, progress, completion_time)
-				VALUES (SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::int[], $4::int[], $5::timestamp[]))
-				ON CONFLICT UPDATE;
+				(SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::int[], $4::int[], $5::timestamp[]))
+				ON CONFLICT (user_id, achievement_id, goal_id) DO UPDATE
+				SET progress = EXCLUDED.progress, completion_time = EXCLUDED.completion_time;
 				`,
 				[
 					goals.map(() => player.uuid),
@@ -1447,6 +1453,7 @@ export class Database {
 			)
 			return {type: 'success', body: undefined}
 		} catch (e) {
+			console.log(e)
 			return {
 				type: 'failure',
 				reason: `${e}`,
