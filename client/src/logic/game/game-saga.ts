@@ -37,6 +37,7 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
+import { updateAchievements } from 'logic/session/session-saga'
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
@@ -252,6 +253,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 				type: localMessages.GAME_END_OVERLAY_SHOW,
 				outcome,
 			})
+			yield call(updateAchievements, socket)
 		}
 	} catch (err) {
 		console.error('Client error: ', err)

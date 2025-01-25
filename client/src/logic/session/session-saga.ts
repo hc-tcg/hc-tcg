@@ -188,7 +188,7 @@ function* setupDeckData(socket: any) {
 	})
 }
 
-function* updateAchievements(socket: any) {
+export function* updateAchievements(socket: any) {
 	yield* sendMsg({
 		type: clientMessages.GET_ACHIEVEMENTS,
 	})
