@@ -463,6 +463,7 @@ export function* createBossGame(
 		deck: [EvilXisumaBoss],
 		virtualAI: ExBossAI,
 		disableDeckingOut: true,
+		selectedCoinHead: 0,
 	})
 	newBossGameController.game.state.isBossGame = true
 

@@ -12,6 +12,7 @@ export class PlayerModel {
 	public name: string
 	public minecraftName: string
 	public censoredName: string
+	public selectedCoinHead: number
 	public socket: Socket
 	public uuid: string
 	public authenticated: boolean
@@ -24,6 +25,7 @@ export class PlayerModel {
 
 		this.name = playerName
 		this.minecraftName = minecraftName
+		this.selectedCoinHead = 0
 		this.censoredName = censorString(playerName)
 		this.socket = socket
 		this.uuid = ''

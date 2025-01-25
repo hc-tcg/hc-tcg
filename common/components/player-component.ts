@@ -25,6 +25,7 @@ export type PlayerDefs = {
 	minecraftName: string
 	censoredName: string
 	disableDeckingOut?: true
+	selectedCoinHead: number
 }
 
 export class PlayerComponent {
@@ -34,6 +35,7 @@ export class PlayerComponent {
 	readonly playerName: string
 	readonly minecraftName: string
 	readonly censoredPlayerName: string
+	readonly selectedCoinHead: number
 
 	coinFlips: Array<CurrentCoinFlip>
 	lives: number
@@ -127,6 +129,7 @@ export class PlayerComponent {
 		this.playerName = player.name
 		this.minecraftName = player.minecraftName
 		this.censoredPlayerName = player.censoredName
+		this.selectedCoinHead = player.selectedCoinHead
 		this.coinFlips = []
 		this.lives = 3
 		this.hasPlacedHermit = false
