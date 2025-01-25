@@ -1,8 +1,8 @@
 import {Socket} from 'socket.io'
 import {Deck} from '../../common/types/deck'
+import {COINS} from '../coins'
 import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
-import {COINS} from '../coins'
 
 export type PlayerId = string & {__player_id: never}
 

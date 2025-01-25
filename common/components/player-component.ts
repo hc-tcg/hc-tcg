@@ -1,4 +1,5 @@
 import assert from 'assert'
+import {COINS} from '../coins'
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
 import type {GameModel} from '../models/game-model'
@@ -18,7 +19,6 @@ import query from './query'
 import {RowComponent} from './row-component'
 import {SlotComponent} from './slot-component'
 import {StatusEffectComponent} from './status-effect-component'
-import {COINS} from '../coins'
 
 /** The minimal information that must be known about a player to start a game */
 export type PlayerDefs = {
@@ -37,7 +37,7 @@ export class PlayerComponent {
 	readonly minecraftName: string
 	readonly censoredPlayerName: string
 	readonly selectedCoinHead: keyof typeof COINS
-:w
+
 	coinFlips: Array<CurrentCoinFlip>
 	lives: number
 	hasPlacedHermit: boolean
