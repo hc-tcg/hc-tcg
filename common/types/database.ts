@@ -1,5 +1,5 @@
 import {TypeT} from './cards'
-import {ApiDeck} from './deck'
+import {ApiDeck, Deck} from './deck'
 
 export type User = {
 	uuid: string
@@ -84,4 +84,20 @@ export type Achievement = {
 	description: string
 	icon: string
 	total: string
+}
+
+export type GameHistoryPlayer =
+	| {
+			player: 'you'
+			name: string
+			minecraftName: string
+			deck: Deck | undefined
+			uuid: string
+	  }
+	| {player: 'opponent'; name: string; minecraftName: string; uuid: string}
+
+export type GameHistory = {
+	firstPlayer: GameHistoryPlayer
+	secondPlayer: GameHistoryPlayer
+	id: number
 }

@@ -1,5 +1,5 @@
 import {Message, MessageTable, messages} from '../redux-messages'
-import {Stats, User} from '../types/database'
+import {GameHistory, Stats, User} from '../types/database'
 import {ApiDeck, Deck, Tag} from '../types/deck'
 import {GameOutcome, LocalGameState} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
@@ -109,7 +109,11 @@ export type ServerMessages = [
 		tags: Array<Tag>
 		newActiveDeck?: Deck
 	},
-	{type: typeof serverMessages.STATS_RECIEVED; stats: Stats},
+	{
+		type: typeof serverMessages.STATS_RECIEVED
+		stats: Stats
+		gameHistory: Array<GameHistory>
+	},
 	{type: typeof serverMessages.CURRENT_IMPORT_RECIEVED; deck: ApiDeck | null},
 	{type: typeof serverMessages.DATABASE_FAILURE; error: string | undefined},
 ]

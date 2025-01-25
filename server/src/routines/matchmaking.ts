@@ -17,7 +17,7 @@ import {Deck} from 'common/types/deck'
 import {formatText} from 'common/utils/formatting'
 import {OpponentDefs} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
-import {addGame, getDeck} from 'db/db-reciever'
+import {addGame, getDeck, getGameReplay} from 'db/db-reciever'
 import {GameController} from 'game-controller'
 import {LocalMessageTable, localMessages} from 'messages'
 import {
@@ -26,6 +26,7 @@ import {
 	delay,
 	fork,
 	join,
+	put,
 	race,
 	spawn,
 	take,
@@ -35,6 +36,7 @@ import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
+import {turnActionsToBuffer} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
 
 function setupGame(
@@ -211,6 +213,8 @@ function* gameManager(con: GameController) {
 		}
 
 		const winner = winnerPlayerId ? root.players[winnerPlayerId] : null
+		const turnActionsBuffer = yield* turnActionsToBuffer(con)
+		console.log(turnActionsBuffer)
 
 		if (
 			gamePlayers.length >= 2 &&
@@ -227,7 +231,7 @@ function* gameManager(con: GameController) {
 				winner ? winner.uuid : null,
 				con.game.rngSeed,
 				con.game.state.turn.turnNumber,
-				Buffer.from([0x00]),
+				turnActionsBuffer,
 				con.gameCode,
 			)
 		}
@@ -772,6 +776,79 @@ export function* leavePrivateQueue(
 			)
 		}
 	}
+}
+
+//@Todo fix games from just timing out when player leaves
+export function* createReplayGame(
+	msg: RecievedClientMessage<typeof clientMessages.CREATE_REPLAY_GAME>,
+) {
+	const {playerId} = msg
+	const player = root.players[playerId]
+
+	if (inGame(playerId) || inQueue(playerId)) {
+		console.log(
+			'[Create private game] Player is already in game or queue:',
+			player.name,
+		)
+		broadcast([player], {type: serverMessages.CREATE_PRIVATE_GAME_FAILURE})
+		return
+	}
+
+	console.log(msg.payload.id)
+
+	const replay = yield* getGameReplay(msg.payload.id)
+	if (!replay) return
+
+	const con = new GameController(replay.player1Defs, replay.player2Defs, {
+		randomSeed: replay.seed,
+		randomizeOrder: true,
+	})
+	root.addGame(con)
+	root.hooks.newGame.call(con)
+
+	const viewer = con.addViewer({
+		player: root.players[playerId],
+		spectator: true,
+		playerOnLeft: con.game.state.order[0],
+	})
+	let gameState = getLocalGameState(con.game, viewer)
+
+	broadcast([root.players[playerId]], {
+		type: serverMessages.SPECTATE_PRIVATE_GAME_START,
+		localGameState: gameState,
+	})
+
+	con.task = yield* spawn(gameSaga, con)
+
+	console.info(
+		`${con.game.logHeader}`,
+		`Replay game started: ${con.id}`,
+		`Viewer: ${msg.playerId}.`,
+		'Total games:',
+		root.getGameIds().length,
+	)
+
+	yield* delay(2000)
+
+	const replayActions = replay.replay
+
+	for (let i = 0; i < replayActions.length; i++) {
+		const action = replayActions[i]
+		yield* delay(action.millisecondsSinceLastAction)
+		yield* put({
+			type: clientMessages.TURN_ACTION,
+			payload: {
+				action: action.action,
+				playerEntity: action.player,
+			},
+			playerEntity: action.player,
+			action: action.action,
+		})
+	}
+
+	delete root.games[con.id]
+	root.hooks.gameRemoved.call(con)
+	console.log(`Replay game ended: ${con.id}`)
 }
 
 function onPlayerLeft(player: PlayerModel) {
