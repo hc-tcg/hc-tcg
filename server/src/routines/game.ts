@@ -323,10 +323,15 @@ function checkHermitHealth(game: GameModel) {
 			}
 
 			// We wait to discard becuse you can not change from a row with no hermits to a new active row.
-			card.slot.row.health = null
-			card.slot.row.getAttach()?.discard()
-			card.slot.row.getItems(true).map((item) => item.discard())
+			let row = card.slot.row
+			row.health = null
+			row.getAttach()?.discard()
+			row.getItems(true).map((item) => item.discard())
 			card.discard()
+
+			if (card.isHealth()) {
+				card.slot.row.hooks.onKnockOut.call(card)
+			}
 
 			// Only hermit cards give points
 			if (card.props.category === 'hermit') {
