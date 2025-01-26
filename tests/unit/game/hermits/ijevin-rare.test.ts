@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import FarmerBeefCommon from 'common/cards/hermits/farmerbeef-common'
 import IJevinRare from 'common/cards/hermits/ijevin-rare'
-import Iskall85Common from 'common/cards/hermits/iskall85-common'
 import {printBoardState} from 'server/utils'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
@@ -10,14 +10,14 @@ describe('Test iJevin Peace Out', () => {
 		testGame(
 			{
 				playerOneDeck: [IJevinRare],
-				playerTwoDeck: [EthosLabCommon, Iskall85Common],
+				playerTwoDeck: [EthosLabCommon, FarmerBeefCommon],
 				saga: function* (game) {
 					yield* playCardFromHand(game, IJevinRare, 'hermit', 0)
 
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Iskall85Common, 'hermit', 2)
+					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 2)
 
 					yield* endTurn(game)
 

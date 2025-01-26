@@ -159,7 +159,7 @@ export function getGameState(
 	const playerEntities = game.components.filter(PlayerComponent)
 
 	if (randomizeOrder !== false) {
-		if (Math.random() >= 0.5) {
+		if (game.rng() >= 0.5) {
 			playerEntities.reverse()
 		}
 	}

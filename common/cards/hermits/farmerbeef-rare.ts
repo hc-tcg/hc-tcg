@@ -4,24 +4,26 @@ import {beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 
-const Iskall85Rare: Hermit = {
+const FarmerBeefRare: Hermit = {
 	...hermit,
-	id: 'iskall85_rare',
+	id: 'farmerbeef_rare',
 	numericId: 48,
-	name: 'Iskall',
-	expansion: 'default',
+	name: 'Farmer Beef',
+	expansion: 'alter_egos_iii',
+	background: 'alter_egos',
+	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 0,
 	type: 'farm',
 	health: 290,
 	primary: {
-		name: 'Of Doom',
+		name: 'Rustic',
 		cost: ['farm'],
 		damage: 50,
 		power: null,
 	},
 	secondary: {
-		name: 'Bird Poop',
+		name: 'Hoe down',
 		cost: ['farm', 'farm'],
 		damage: 80,
 		power: 'Attack damage doubles versus Builder types.',
@@ -48,4 +50,4 @@ const Iskall85Rare: Hermit = {
 	},
 }
 
-export default Iskall85Rare
+export default FarmerBeefRare

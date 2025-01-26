@@ -40,14 +40,52 @@ export type ClientMessages = [
 	{type: typeof clientMessages.GET_UPDATES},
 	{type: typeof clientMessages.SELECT_DECK; deck: Deck},
 	{type: typeof clientMessages.UPDATE_MINECRAFT_NAME; name: string},
-	{type: typeof clientMessages.CREATE_BOSS_GAME},
+	{
+		type: typeof clientMessages.CREATE_BOSS_GAME
+		databaseConnected: true
+		activeDeckCode: string
+	},
+	{
+		type: typeof clientMessages.CREATE_BOSS_GAME
+		databaseConnected: false
+		activeDeck: Deck
+	},
 	{type: typeof clientMessages.CANCEL_BOSS_GAME},
-	{type: typeof clientMessages.CREATE_PRIVATE_GAME},
+	{
+		type: typeof clientMessages.CREATE_PRIVATE_GAME
+		databaseConnected: true
+		activeDeckCode: string
+	},
+	{
+		type: typeof clientMessages.CREATE_PRIVATE_GAME
+		databaseConnected: false
+		activeDeck: Deck
+	},
 	{type: typeof clientMessages.CANCEL_PRIVATE_GAME},
-	{type: typeof clientMessages.JOIN_QUEUE},
+	{
+		type: typeof clientMessages.JOIN_QUEUE
+		databaseConnected: true
+		activeDeckCode: string
+	},
+	{
+		type: typeof clientMessages.JOIN_QUEUE
+		databaseConnected: false
+		activeDeck: Deck
+	},
 	{type: typeof clientMessages.LEAVE_QUEUE},
 	{type: typeof clientMessages.LEAVE_PRIVATE_QUEUE},
-	{type: typeof clientMessages.JOIN_PRIVATE_GAME; code: string},
+	{
+		type: typeof clientMessages.JOIN_PRIVATE_GAME
+		databaseConnected: true
+		activeDeckCode: string
+		code: string
+	},
+	{
+		type: typeof clientMessages.JOIN_PRIVATE_GAME
+		databaseConnected: false
+		activeDeck: Deck
+		code: string
+	},
 	{
 		type: typeof clientMessages.TURN_ACTION
 		playerEntity: PlayerEntity

@@ -1,7 +1,13 @@
-import {clientMessages} from 'common/socket-messages/client-messages'
+import {
+	ClientMessageTable,
+	clientMessages,
+} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {Deck} from 'common/types/deck'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import gameSaga from 'logic/game/game-saga'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
+import {getPlayerDeckCode} from 'logic/session/session-selectors'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {
@@ -16,13 +22,91 @@ import {
 	takeEvery,
 } from 'typed-redux-saga'
 
+type activeDeckSagaT =
+	| {
+			databaseConnected: true
+			activeDeckCode: string
+	  }
+	| {
+			databaseConnected: false
+			activeDeck: Deck
+	  }
+	| null
+
+function* getActiveDeckSaga(): Generator<any, activeDeckSagaT> {
+	const activeDeckCode = yield* select(getPlayerDeckCode)
+	const databaseInfo = yield* select(getLocalDatabaseInfo)
+
+	if (!activeDeckCode) return null
+
+	if (databaseInfo.noConnection) {
+		const activeDeck = databaseInfo.decks.find(
+			(deck) => deck.code === activeDeckCode,
+		)
+		if (!activeDeck) return null
+		return {databaseConnected: false, activeDeck}
+	}
+
+	return {databaseConnected: true, activeDeckCode}
+}
+
+function* sendJoinQueueMessage(
+	messageType:
+		| ClientMessageTable['CREATE_BOSS_GAME']['type']
+		| ClientMessageTable['CREATE_PRIVATE_GAME']['type']
+		| ClientMessageTable['JOIN_QUEUE']['type'],
+	activeDeckResult: activeDeckSagaT,
+) {
+	if (!activeDeckResult) return
+	if (activeDeckResult.databaseConnected) {
+		yield* sendMsg({
+			type: messageType,
+			databaseConnected: true,
+			activeDeckCode: activeDeckResult.activeDeckCode,
+		})
+	} else {
+		yield* sendMsg({
+			type: messageType,
+			databaseConnected: false,
+			activeDeck: activeDeckResult.activeDeck,
+		})
+	}
+}
+
+function* sendJoinPrivateGameMessage(
+	messageType: ClientMessageTable['JOIN_PRIVATE_GAME']['type'],
+	activeDeckResult: activeDeckSagaT,
+	code: string,
+) {
+	if (!activeDeckResult) return
+	if (activeDeckResult.databaseConnected) {
+		yield* sendMsg({
+			type: messageType,
+			databaseConnected: true,
+			activeDeckCode: activeDeckResult.activeDeckCode,
+			code,
+		})
+	} else {
+		yield* sendMsg({
+			type: messageType,
+			databaseConnected: false,
+			activeDeck: activeDeckResult.activeDeck,
+			code,
+		})
+	}
+}
+
 function* createBossGameSaga() {
 	function* matchmaking() {
 		const socket = yield* select(getSocket)
+		const activeDeckResult = yield* getActiveDeckSaga()
+
 		try {
 			// Send message to server to create the game
-			yield* sendMsg({type: clientMessages.CREATE_BOSS_GAME})
-
+			yield* sendJoinQueueMessage(
+				clientMessages.CREATE_BOSS_GAME,
+				activeDeckResult,
+			)
 			const createBossResponse = yield* race({
 				success: call(
 					receiveMsg(socket, serverMessages.CREATE_BOSS_GAME_SUCCESS),
@@ -69,8 +153,12 @@ function* createBossGameSaga() {
 function* privateLobbySaga() {
 	function* matchmaking() {
 		const socket = yield* select(getSocket)
+		const activeDeckResult = yield* getActiveDeckSaga()
 
-		yield* sendMsg({type: clientMessages.CREATE_PRIVATE_GAME})
+		yield* sendJoinQueueMessage(
+			clientMessages.CREATE_PRIVATE_GAME,
+			activeDeckResult,
+		)
 
 		const matchmakingCodeTask = yield* fork(function* () {
 			while (true) {
@@ -78,7 +166,11 @@ function* privateLobbySaga() {
 					LocalMessageTable[typeof localMessages.MATCHMAKING_CODE_SET]
 				>(localMessages.MATCHMAKING_CODE_SET)
 
-				yield* sendMsg({type: clientMessages.JOIN_PRIVATE_GAME, code})
+				yield* sendJoinPrivateGameMessage(
+					clientMessages.JOIN_PRIVATE_GAME,
+					activeDeckResult,
+					code,
+				)
 			}
 		})
 
@@ -223,9 +315,11 @@ function* privateLobbySaga() {
 function* joinQueueSaga() {
 	function* matchmaking() {
 		const socket = yield* select(getSocket)
+		const activeDeckResult = yield* getActiveDeckSaga()
+
 		try {
 			// Send message to server to join the queue
-			yield sendMsg({type: clientMessages.JOIN_QUEUE})
+			yield* sendJoinQueueMessage(clientMessages.JOIN_QUEUE, activeDeckResult)
 
 			// Wait for response
 			const joinResponse = yield* race({

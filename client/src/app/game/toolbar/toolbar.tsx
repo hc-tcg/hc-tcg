@@ -1,9 +1,10 @@
+import {sortCardInstances} from 'common/utils/cards'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {getGameState, getIsSpectator} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {getActiveDeck} from 'logic/saved-decks/saved-decks'
+import {getPlayerDeckCode} from 'logic/session/session-selectors'
 import {useSelector} from 'react-redux'
-import {sortCards} from './../../deck/deck-edit'
 import ChatItem from './chat-item'
 import ExitItem from './exit-item'
 import ForfeitItem from './forfeit-item'
@@ -15,16 +16,22 @@ function Toolbar() {
 	const gameState = useSelector(getGameState)
 	const settings = useSelector(getSettings)
 	const isSpectator = useSelector(getIsSpectator)
-	const activeDeck = useSelector(getActiveDeck)
+
+	const databaseInfo = useSelector(getLocalDatabaseInfo)
+	const activeDeckCode = useSelector(getPlayerDeckCode)
+	const activeDeck = databaseInfo.decks.find(
+		(deck) => deck.code === activeDeckCode,
+	)
+
 	const dispatch = useMessageDispatch()
 
 	const handleViewDeck = () => {
-		if (!gameState) return
+		if (!gameState || !activeDeck) return
 		gameState.currentModalData = {
 			type: 'selectCards',
 			name: 'Deck',
 			description: '',
-			cards: activeDeck ? sortCards(activeDeck.cards) : [],
+			cards: activeDeck ? sortCardInstances(activeDeck.cards) : [],
 			selectionSize: 0,
 			primaryButton: {
 				text: 'Close',

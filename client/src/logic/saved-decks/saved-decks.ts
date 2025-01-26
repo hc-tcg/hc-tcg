@@ -1,28 +1,16 @@
 import {CARDS} from 'common/cards'
 import {Deck, LegacyDeck, Tag} from 'common/types/deck'
 import {toLocalCardInstance} from 'common/utils/cards'
-import {generateDatabaseCode} from 'common/utils/database-codes'
+import {generateDatabaseCodeWithSeed} from 'common/utils/database-codes'
 
-export const getActiveDeck = (): Deck | null => {
+export const getActiveDeckCode = (): string | null => {
 	const deck = localStorage.getItem('activeDeck')
 	if (!deck) return null
-	try {
-		return JSON.parse(deck) as Deck
-	} catch {
-		return {
-			name: 'ERROR',
-			icon: 'shadee',
-			iconType: 'hermit',
-			code: '',
-			tags: [],
-			cards: [],
-			public: false,
-		}
-	}
+	return deck
 }
 
 export const setActiveDeck = (deck: Deck) => {
-	localStorage.setItem('activeDeck', JSON.stringify(deck))
+	localStorage.setItem('activeDeck', deck.code)
 }
 
 function getLocalStorageTags(): Array<Tag> {
@@ -53,7 +41,7 @@ function getLocalStorageTags(): Array<Tag> {
 	return tags
 }
 
-export function getLocalStorageDecks(devMode: boolean): Array<Deck> {
+export function getLocalStorageDecks(): Array<Deck> {
 	let lsKey
 	const decks: Array<Deck> = []
 	const tags = getLocalStorageTags()
@@ -67,10 +55,12 @@ export function getLocalStorageDecks(devMode: boolean): Array<Deck> {
 				try {
 					const parsedDeck = JSON.parse(key) as LegacyDeck
 					const newDeck: Deck = {
-						code:
-							parsedDeck.code && devMode
-								? parsedDeck.code
-								: generateDatabaseCode(),
+						code: parsedDeck.code
+							? parsedDeck.code
+							: generateDatabaseCodeWithSeed(
+									parsedDeck.name +
+										parsedDeck.cards.reduce((r, card) => r + card.cardId, ''),
+								),
 						name: parsedDeck.name,
 						iconType: 'item',
 						icon: parsedDeck.icon,

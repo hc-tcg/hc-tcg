@@ -3,10 +3,10 @@ import ArmorStand from 'common/cards/attach/armor-stand'
 import TurtleShell from 'common/cards/attach/turtle-shell'
 import Cubfan135Rare from 'common/cards/hermits/cubfan135-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import FarmerBeefCommon from 'common/cards/hermits/farmerbeef-common'
 import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
 import GrianRare from 'common/cards/hermits/grian-rare'
 import IJevinRare from 'common/cards/hermits/ijevin-rare'
-import Iskall85Common from 'common/cards/hermits/iskall85-common'
 import SkizzlemanRare from 'common/cards/hermits/skizzleman-rare'
 import TangoTekRare from 'common/cards/hermits/tangotek-rare'
 import ZombieCleoCommon from 'common/cards/hermits/zombiecleo-common'
@@ -36,11 +36,11 @@ describe('Test Turtle Shell', () => {
 	test('Turtle Shell applies to next turn', () => {
 		testGame(
 			{
-				playerOneDeck: [EthosLabCommon, Iskall85Common, TurtleShell],
+				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [ZombieCleoCommon],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Iskall85Common, 'hermit', 1)
+					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
 					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
 
 					yield* changeActiveHermit(game, 1)
@@ -53,7 +53,7 @@ describe('Test Turtle Shell', () => {
 					yield* endTurn(game)
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
-						Iskall85Common.health,
+						FarmerBeefCommon.health,
 					)
 					expect(
 						game.components.find(
@@ -72,11 +72,11 @@ describe('Test Turtle Shell', () => {
 	test('Turtle Shell protects against Gas Light and Egg, but not status-effect damage', () => {
 		testGame(
 			{
-				playerOneDeck: [EthosLabCommon, Iskall85Common, TurtleShell],
+				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [SkizzlemanRare, LavaBucket, Egg],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Iskall85Common, 'hermit', 1)
+					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
 
 					yield* endTurn(game)
 
@@ -121,11 +121,11 @@ describe('Test Turtle Shell', () => {
 	test('Turtle Shell is not discarded when row is activated by Knockback', () => {
 		testGame(
 			{
-				playerOneDeck: [EthosLabCommon, Iskall85Common, TurtleShell],
+				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [ZombieCleoCommon, Knockback],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Iskall85Common, 'hermit', 1)
+					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
 					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
 
 					yield* endTurn(game)
@@ -296,7 +296,7 @@ describe('Test Turtle Shell', () => {
 				playerOneDeck: [
 					ArmorStand,
 					EthosLabCommon,
-					Iskall85Common,
+					FarmerBeefCommon,
 					TurtleShell,
 					Mending,
 				],
@@ -304,7 +304,7 @@ describe('Test Turtle Shell', () => {
 				saga: function* (game) {
 					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Iskall85Common, 'hermit', 2)
+					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 2)
 					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
 
 					yield* endTurn(game)
@@ -349,11 +349,11 @@ describe('Test Turtle Shell', () => {
 	test('Turtle Shell is still discarded when row is deactivated by Knockback', () => {
 		testGame(
 			{
-				playerOneDeck: [EthosLabCommon, Iskall85Common, TurtleShell],
+				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [ZombieCleoCommon, Knockback],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Iskall85Common, 'hermit', 1)
+					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
 					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
 					yield* changeActiveHermit(game, 1)
 
@@ -392,7 +392,7 @@ describe('Test Turtle Shell', () => {
 				playerOneDeck: [
 					ArmorStand,
 					EthosLabCommon,
-					Iskall85Common,
+					FarmerBeefCommon,
 					TurtleShell,
 					TurtleShell,
 				],
@@ -400,7 +400,7 @@ describe('Test Turtle Shell', () => {
 				saga: function* (game) {
 					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Iskall85Common, 'hermit', 2)
+					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 2)
 					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
 					yield* playCardFromHand(game, TurtleShell, 'attach', 2)
 					yield* changeActiveHermit(game, 1)
@@ -465,7 +465,7 @@ describe('Test Turtle Shell', () => {
 	test("Turtle Shell works after previous active was KO'd by Extra Flee", () => {
 		testGame(
 			{
-				playerOneDeck: [EthosLabCommon, Iskall85Common, TurtleShell],
+				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [TangoTekRare],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
@@ -480,7 +480,7 @@ describe('Test Turtle Shell', () => {
 					yield* attack(game, 'secondary')
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Iskall85Common, 'hermit', 1)
+					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
 					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
 					yield* endTurn(game)
 
@@ -499,7 +499,7 @@ describe('Test Turtle Shell', () => {
 					yield* endTurn(game)
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
-						Iskall85Common.health,
+						FarmerBeefCommon.health,
 					)
 					expect(game.currentPlayer.activeRow?.getAttach()).toBe(null)
 				},

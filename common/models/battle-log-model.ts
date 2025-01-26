@@ -1,4 +1,3 @@
-import {broadcast} from '../../server/src/utils/comm'
 import {
 	CardComponent,
 	PlayerComponent,
@@ -13,9 +12,8 @@ import {
 	RowEntity,
 	StatusEffectEntity,
 } from '../entities'
-import {serverMessages} from '../socket-messages/server-messages'
 import {StatusEffectLog} from '../status-effects/status-effect'
-import {BattleLogT, CurrentCoinFlip} from '../types/game-state'
+import {BattleLogT, CurrentCoinFlip, Message} from '../types/game-state'
 import {LineNode, formatText} from '../utils/formatting'
 import {AttackModel} from './attack-model'
 import {GameModel} from './game-model'
@@ -77,6 +75,8 @@ export class BattleLogModel {
 	}
 
 	public async sendLogs() {
+		let logs: Array<Message> = []
+
 		while (this.logMessageQueue.length > 0) {
 			const firstEntry = this.logMessageQueue.shift()
 			if (!firstEntry) return
@@ -84,7 +84,7 @@ export class BattleLogModel {
 			let playerEntity = this.game.components.get(firstEntry.player)?.entity
 			if (!playerEntity) continue
 
-			this.game.chat.push({
+			logs.push({
 				sender: {
 					type: 'system',
 					id: playerEntity,
@@ -98,27 +98,11 @@ export class BattleLogModel {
 			}
 		}
 
-		// We skip waiting for the logs to send if there are no players. This is because
-		// the coin flip delay confuses jest. Additionally we don't want to wait longer
-		// than what is needed in tests.
-		if (this.game.getPlayers().length === 0) {
-			return
-		}
-
-		await new Promise((e) =>
-			setTimeout(
-				e,
-				this.game.currentPlayer.coinFlips.reduce(
-					(r, flip) => r + flip.delay,
-					0,
-				),
-			),
+		const timeout = this.game.currentPlayer.coinFlips.reduce(
+			(r, flip) => r + flip.delay,
+			0,
 		)
-
-		broadcast(this.game.getPlayers(), {
-			type: serverMessages.CHAT_UPDATE,
-			messages: this.game.chat,
-		})
+		this.game.publishBattleLog(logs, timeout)
 	}
 
 	private genCardName(
@@ -351,19 +335,19 @@ export class BattleLogModel {
 	}
 
 	public addTurnStartEntry() {
-		this.game.chat.push({
-			sender: {
-				type: 'system',
-				id: this.game.currentPlayer.entity,
-			},
-			createdAt: Date.now(),
-			message: LineNode(),
-		})
-
-		broadcast(this.game.getPlayers(), {
-			type: serverMessages.CHAT_UPDATE,
-			messages: this.game.chat,
-		})
+		this.game.publishBattleLog(
+			[
+				{
+					sender: {
+						type: 'system',
+						id: this.game.currentPlayer.entity,
+					},
+					createdAt: Date.now(),
+					message: LineNode(),
+				},
+			],
+			0,
+		)
 	}
 
 	public addStatusEffectEntry(

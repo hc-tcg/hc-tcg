@@ -7,9 +7,10 @@ import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
 import {TypeT} from 'common/types/cards'
 import {WithoutFunctions} from 'common/types/server-requests'
+import {sortCards} from 'common/utils/cards'
 import {getIconPath} from 'common/utils/state-gen'
 import Button from 'components/button'
-import Card from 'components/card'
+import CardComponent from 'components/card'
 import Checkbox from 'components/checkbox'
 import Dropdown from 'components/dropdown'
 import {ScreenshotDeckModal} from 'components/import-export'
@@ -44,25 +45,56 @@ const TYPE_COLORS: Record<TypeT, Array<number>> = {
 	any: [255, 255, 255],
 }
 
-const getTypeColor = (types: Array<string>) => {
+// Code modified from: https://stackoverflow.com/questions/28569667/fill-chart-js-bar-chart-with-diagonal-stripes-or-other-patterns
+const createDiagonalPattern = (types: Array<string>) => {
+	const color = getTypeColor(types)
+	const backgroundColor = getTypeColor(types, 0.5)
+
+	let shape = document.createElement('canvas')
+	shape.width = 10
+	shape.height = 10
+
+	let canvas = shape.getContext('2d')
+	if (!canvas) return null
+	canvas.strokeStyle = color
+	canvas.lineCap = 'square'
+	canvas.lineWidth = 5
+
+	canvas.fillStyle = backgroundColor
+	canvas.fillRect(0, 0, 10, 10)
+
+	canvas.beginPath()
+	canvas.moveTo(0, 5)
+	canvas.lineTo(5, 10)
+	canvas.stroke()
+
+	canvas.beginPath()
+	canvas.moveTo(5, 0)
+	canvas.lineTo(10, 5)
+	canvas.stroke()
+
+	return canvas.createPattern(shape, 'repeat')
+}
+
+const getTypeColor = (types: Array<string>, brightness: number = 1) => {
 	let r = 0
 	let g = 0
 	let b = 0
 	types.forEach((type) => {
 		const color = TYPE_COLORS[type as TypeT]
-		r += color[0]
-		g += color[1]
-		b += color[2]
+		r += color[0] * brightness
+		g += color[1] * brightness
+		b += color[2] * brightness
 	})
 	return (
 		'#' +
-		Math.round(r / types.length)
+		Math.round(Math.min(255, r / types.length))
 			.toString(16)
 			.padStart(2, '0') +
-		Math.round(g / types.length)
+		Math.round(Math.min(255, g / types.length))
 			.toString(16)
 			.padStart(2, '0') +
-		Math.round(b / types.length)
+		Math.round(Math.min(255, b / types.length))
 			.toString(16)
 			.padStart(2, '0')
 	)
@@ -72,7 +104,7 @@ type Props = {
 	setMenuSection: (section: string) => void
 }
 
-type Endpoints = 'decks' | 'cards' | 'game' | 'types'
+type Endpoints = 'decks' | 'cards' | 'games' | 'types' | 'private game'
 
 const cardOrderByOptions = {
 	winrate: 'Winrate',
@@ -129,12 +161,25 @@ function HallOfFame({setMenuSection}: Props) {
 	const [cardOrderBy, setCardOrderBy] =
 		useState<keyof typeof cardOrderByOptions>('winrate')
 
+	/**Decks */
 	const [decksOrderyBy, setDecksOrderBy] =
 		useState<keyof typeof decksOrderByOptions>('winrate')
+	const [showDecksWithDisabled, setShowDecksWithDisabled] =
+		useState<boolean>(false)
+	const [showDecksBelow50Winrate, setShowDecksBelow50Winrate] =
+		useState<boolean>(false)
+
+	/* Types */
+	const [showTypeWinrate, setShowTypeWinrate] = useState<boolean>(true)
+	const [showTypeFrequency, setShowTypeFrequency] = useState<boolean>(true)
+
+	/* Private Game */
+	const codeRef = useRef<any>()
+	const [privateGameCode, setPrivateGameCode] = useState<string | null>(null)
 
 	const endpoints: Record<Endpoints, () => string> = {
 		decks: () => {
-			let url = `decks?minimumWins=10&orderBy=${decksOrderyBy}`
+			let url = `decks?minimumWins=25&orderBy=${decksOrderyBy}`
 			if (endpointBefore !== null) {
 				url += `&before=${endpointBefore}`
 			}
@@ -153,7 +198,7 @@ function HallOfFame({setMenuSection}: Props) {
 			}
 			return url
 		},
-		game: () => {
+		games: () => {
 			if (endpointBefore !== null && endpointAfter !== null) {
 				return `games?after=${endpointAfter}&before=${endpointBefore}`
 			}
@@ -177,6 +222,10 @@ function HallOfFame({setMenuSection}: Props) {
 				return `type-distribution?after=${endpointAfter}`
 			}
 			return 'type-distribution'
+		},
+		'private game': () => {
+			if (!privateGameCode || privateGameCode.length !== 6) return ''
+			return `private-game/${privateGameCode}`
 		},
 	}
 
@@ -214,6 +263,24 @@ function HallOfFame({setMenuSection}: Props) {
 
 	const parseDecks = (decks: Array<Record<string, any>>) => {
 		if (!decks) return
+
+		if (!showDecksWithDisabled) {
+			decks = decks.filter((deck) =>
+				deck.deck.cards.every(
+					(card: string) =>
+						!(
+							EXPANSIONS[CARDS[card].expansion].disabled ||
+							serverConfig.limits.bannedCards.includes(card) ||
+							serverConfig.limits.disabledCards.includes(card)
+						),
+				),
+			)
+		}
+
+		if (!showDecksBelow50Winrate) {
+			decks = decks.filter((deck) => deck.winrate >= 0.5)
+		}
+
 		return (
 			<table className={css.hallOfFameTable}>
 				<tr>
@@ -236,7 +303,7 @@ function HallOfFame({setMenuSection}: Props) {
 								<Button
 									onClick={() => {
 										setScreenshotDeckModalContents(
-											parseDeckCards(deck.deck.cards),
+											sortCards(parseDeckCards(deck.deck.cards)),
 										)
 									}}
 								>
@@ -270,7 +337,8 @@ function HallOfFame({setMenuSection}: Props) {
 				(card) =>
 					!(
 						EXPANSIONS[CARDS[card.id].expansion].disabled ||
-						serverConfig.limits.bannedCards.includes(card.id)
+						serverConfig.limits.bannedCards.includes(card.id) ||
+						serverConfig.limits.disabledCards.includes(card.id)
 					),
 			)
 		}
@@ -308,7 +376,7 @@ function HallOfFame({setMenuSection}: Props) {
 									if (!card) return <td key={index}></td>
 									return (
 										<td key={index}>
-											<Card
+											<CardComponent
 												displayTokenCost={false}
 												card={card as WithoutFunctions<CardType>}
 											/>
@@ -396,14 +464,24 @@ function HallOfFame({setMenuSection}: Props) {
 	const parseGame = (game: Record<string, any>) => {
 		return (
 			<table className={css.hallOfFameTableNoHeader}>
-				<tr>
-					<th>All time games</th>
-					<td>{game.allTimeGames}</td>
-				</tr>
-				<tr>
-					<th>Games since 1.0</th>
-					<td>{game.games}</td>
-				</tr>
+				{endpointAfter === null && endpointBefore === null && (
+					<>
+						<tr>
+							<th>All time games</th>
+							<td>{game.allTimeGames}</td>
+						</tr>
+						<tr>
+							<th>Games since 1.0</th>
+							<td>{game.games}</td>
+						</tr>
+					</>
+				)}
+				{(endpointAfter !== null || endpointBefore !== null) && (
+					<tr>
+						<th>Games</th>
+						<td>{game.games}</td>
+					</tr>
+				)}
 				<tr>
 					<th>Tie rate</th>
 					<td>{padDecimal(game.tieRate, 3)}</td>
@@ -428,6 +506,29 @@ function HallOfFame({setMenuSection}: Props) {
 		)
 	}
 
+	const parsePrivateGame = (game: Record<string, any>) => {
+		return (
+			<table className={css.hallOfFameTableNoHeader}>
+				<tr>
+					<th>First Player</th>
+					<td>{game.firstPlayerName}</td>
+				</tr>
+				<tr>
+					<th>Second Player</th>
+					<td>{game.secondPlayerName}</td>
+				</tr>
+				<tr>
+					<th>Start Time</th>
+					<td>{game.startTime}</td>
+				</tr>
+				<tr>
+					<th>Winner</th>
+					<td>{game.winner}</td>
+				</tr>
+			</table>
+		)
+	}
+
 	const parseTypes = (
 		types: Record<string, number | Array<Record<string, any>>>,
 	) => {
@@ -443,13 +544,30 @@ function HallOfFame({setMenuSection}: Props) {
 						labels: typeList.map((type) => (type.type as string[]).join(', ')),
 						datasets: [
 							{
-								label: 'Types sorted by ' + sortBy,
+								label: 'Frequency',
 								data: typeList.map(
-									(type) => Math.round(type[sortBy] * 10000) / 100,
+									(type) => Math.round(type['frequency'] * 10000) / 100,
+								),
+								backgroundColor: typeList.map((value) => {
+									const pattern = createDiagonalPattern(value.type)
+									if (!pattern) return getTypeColor(value.type)
+									return pattern
+								}),
+								borderColor: typeList.map((value) =>
+									getTypeColor(value.type, 0.5),
+								),
+								borderWidth: 1,
+								hidden: !showTypeFrequency,
+							},
+							{
+								label: 'Winrate',
+								data: typeList.map(
+									(type) => Math.round(type['winrate'] * 10000) / 100,
 								),
 								backgroundColor: typeList.map((value) =>
 									getTypeColor(value.type),
 								),
+								hidden: !showTypeWinrate,
 							},
 						],
 					}}
@@ -458,6 +576,9 @@ function HallOfFame({setMenuSection}: Props) {
 							duration: 0,
 						},
 						plugins: {
+							legend: {
+								onClick: () => {},
+							},
 							tooltip: {
 								titleFont: () => {
 									return {size: 16}
@@ -534,10 +655,12 @@ function HallOfFame({setMenuSection}: Props) {
 			return parseDecks(data.body)
 		} else if (selectedEndpoint === 'cards') {
 			return parseCards(data)
-		} else if (selectedEndpoint === 'game') {
+		} else if (selectedEndpoint === 'games') {
 			return parseGame(data)
 		} else if (selectedEndpoint === 'types') {
 			return parseTypes(data)
+		} else if (selectedEndpoint === 'private game') {
+			return parsePrivateGame(data)
 		}
 	}
 
@@ -574,8 +697,9 @@ function HallOfFame({setMenuSection}: Props) {
 									options={[
 										{name: 'Decks'},
 										{name: 'Cards'},
-										{name: 'Game'},
+										{name: 'Games'},
 										{name: 'Types'},
+										{name: 'Private game'},
 									]}
 									showNames={true}
 									action={(option) => {
@@ -588,42 +712,48 @@ function HallOfFame({setMenuSection}: Props) {
 								<p>
 									<b>Parameters</b>
 								</p>
-								<div className={css.hofOption}>
-									<p style={{flexGrow: 1}}>After:</p>
-									<input
-										type="date"
-										ref={afterRef}
-										onChange={(_e) => {
-											if (!afterRef.current.valueAsNumber) {
-												setEndpointAfter(null)
-											} else {
-												setEndpointAfter(afterRef.current.valueAsNumber / 1000)
-											}
-											setDataRetrieved(false)
-										}}
-									/>
-								</div>
-								<div className={css.hofOption}>
-									<p style={{flexGrow: 1}}>Before:</p>
-									<input
-										type="date"
-										ref={beforeRef}
-										onChange={(_e) => {
-											if (!beforeRef.current.valueAsNumber) {
-												setEndpointBefore(null)
-											} else {
-												setEndpointBefore(
-													beforeRef.current.valueAsNumber / 1000,
-												)
-											}
-											setDataRetrieved(false)
-										}}
-									/>
-								</div>
+								{selectedEndpoint !== 'private game' && (
+									<>
+										<div className={css.hofOption}>
+											<p style={{flexGrow: 1}}>After:</p>
+											<input
+												type="date"
+												ref={afterRef}
+												onChange={(_e) => {
+													if (!afterRef.current.valueAsNumber) {
+														setEndpointAfter(null)
+													} else {
+														setEndpointAfter(
+															afterRef.current.valueAsNumber / 1000,
+														)
+													}
+													setDataRetrieved(false)
+												}}
+											/>
+										</div>
+										<div className={css.hofOption}>
+											<p style={{flexGrow: 1}}>Before:</p>
+											<input
+												type="date"
+												ref={beforeRef}
+												onChange={(_e) => {
+													if (!beforeRef.current.valueAsNumber) {
+														setEndpointBefore(null)
+													} else {
+														setEndpointBefore(
+															beforeRef.current.valueAsNumber / 1000,
+														)
+													}
+													setDataRetrieved(false)
+												}}
+											/>
+										</div>
+									</>
+								)}
 								{selectedEndpoint === 'decks' && (
 									<>
 										<div className={css.hofOption}>
-											<p style={{flexGrow: 1}}>Order By:</p>
+											<p style={{flexGrow: 1}}>Sort By:</p>
 											<Dropdown
 												button={
 													<DropDownButton>
@@ -646,19 +776,34 @@ function HallOfFame({setMenuSection}: Props) {
 												}}
 											/>
 										</div>
+										<div className={css.hofCheckBox}>
+											<p style={{flexGrow: 1}}>
+												Show decks that include disabled cards:
+											</p>
+											<Checkbox
+												defaultChecked={showDecksWithDisabled}
+												onCheck={() =>
+													setShowDecksWithDisabled(!showDecksWithDisabled)
+												}
+											></Checkbox>
+										</div>
+										<div className={css.hofCheckBox}>
+											<p style={{flexGrow: 1}}>
+												Show decks below a 50% winrate:
+											</p>
+											<Checkbox
+												defaultChecked={showDecksBelow50Winrate}
+												onCheck={() =>
+													setShowDecksBelow50Winrate(!showDecksBelow50Winrate)
+												}
+											></Checkbox>
+										</div>
 									</>
 								)}
 								{selectedEndpoint === 'cards' && (
 									<>
-										<div className={css.hofCheckBox}>
-											<p style={{flexGrow: 1}}>Show Disabled Cards:</p>
-											<Checkbox
-												defaultChecked={showDisabled}
-												onCheck={() => setShowDisabled(!showDisabled)}
-											></Checkbox>
-										</div>
 										<div className={css.hofOption}>
-											<p style={{flexGrow: 1}}>Order By:</p>
+											<p style={{flexGrow: 1}}>Sort By:</p>
 											<Dropdown
 												button={
 													<DropDownButton>
@@ -681,17 +826,57 @@ function HallOfFame({setMenuSection}: Props) {
 												}}
 											/>
 										</div>
+										<div className={css.hofCheckBox}>
+											<p style={{flexGrow: 1}}>Show Disabled Cards:</p>
+											<Checkbox
+												defaultChecked={showDisabled}
+												onCheck={() => setShowDisabled(!showDisabled)}
+											></Checkbox>
+										</div>
 									</>
 								)}
 								{selectedEndpoint === 'types' && (
-									<Button
-										onClick={() => {
-											setSortBy(sortBy === 'winrate' ? 'frequency' : 'winrate')
-											setDataRetrieved(false)
+									<>
+										<Button
+											onClick={() => {
+												setSortBy(
+													sortBy === 'winrate' ? 'frequency' : 'winrate',
+												)
+												setDataRetrieved(false)
+											}}
+										>
+											Sort by:{' '}
+											{sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
+										</Button>
+										<div className={css.hofCheckBox}>
+											<p style={{flexGrow: 1}}>Show Frequency:</p>
+											<Checkbox
+												defaultChecked={showTypeFrequency}
+												onCheck={() => setShowTypeFrequency(!showTypeFrequency)}
+											></Checkbox>
+										</div>
+										<div className={css.hofCheckBox}>
+											<p style={{flexGrow: 1}}>Show Winrate:</p>
+											<Checkbox
+												defaultChecked={showTypeWinrate}
+												onCheck={() => setShowTypeWinrate(!showTypeWinrate)}
+											></Checkbox>
+										</div>
+									</>
+								)}
+								{selectedEndpoint === 'private game' && (
+									<input
+										type="text"
+										ref={codeRef}
+										value={privateGameCode ? privateGameCode : ''}
+										onChange={(e) => {
+											setPrivateGameCode(e.target.value)
 										}}
-									>
-										Sort by: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
-									</Button>
+										maxLength={7}
+										placeholder="Enter Game Code..."
+										className={css.input}
+										data-focused={true}
+									/>
 								)}
 							</div>
 						</div>
