@@ -1,25 +1,25 @@
-import { getStarterPack } from 'common/cards/starter-decks'
-import { PlayerId } from 'common/models/player-model'
-import { clientMessages } from 'common/socket-messages/client-messages'
-import { serverMessages } from 'common/socket-messages/server-messages'
-import { Deck } from 'common/types/deck'
-import { PlayerInfo } from 'common/types/server-requests'
-import { toLocalCardInstance } from 'common/utils/cards'
-import { generateDatabaseCode } from 'common/utils/database-codes'
-import { getLocalDatabaseInfo } from 'logic/game/database/database-selectors'
+import {getStarterPack} from 'common/cards/starter-decks'
+import {PlayerId} from 'common/models/player-model'
+import {clientMessages} from 'common/socket-messages/client-messages'
+import {serverMessages} from 'common/socket-messages/server-messages'
+import {Deck} from 'common/types/deck'
+import {PlayerInfo} from 'common/types/server-requests'
+import {toLocalCardInstance} from 'common/utils/cards'
+import {generateDatabaseCode} from 'common/utils/database-codes'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import gameSaga from 'logic/game/game-saga'
-import { getMatchmaking } from 'logic/matchmaking/matchmaking-selectors'
-import { LocalMessage, LocalMessageTable, localMessages } from 'logic/messages'
+import {getMatchmaking} from 'logic/matchmaking/matchmaking-selectors'
+import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {
 	deleteDeckFromLocalStorage,
 	getActiveDeckCode,
 	getLocalStorageDecks,
 	saveDeckToLocalStorage,
 } from 'logic/saved-decks/saved-decks'
-import { receiveMsg, sendMsg } from 'logic/socket/socket-saga'
-import { getSocket } from 'logic/socket/socket-selectors'
-import { eventChannel } from 'redux-saga'
-import { call, delay, put, race, select, take, takeEvery } from 'typed-redux-saga'
+import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
+import {getSocket} from 'logic/socket/socket-selectors'
+import {eventChannel} from 'redux-saga'
+import {call, delay, put, race, select, take, takeEvery} from 'typed-redux-saga'
 
 const loadSession = () => {
 	const playerName = sessionStorage.getItem('playerName')
@@ -143,7 +143,7 @@ function* setupDeckData(socket: any) {
 			type: localMessages.DATABASE_SET,
 			data: {
 				key: 'decks',
-				value: localStorageDecks.map((deck) => ({ ...deck, public: false })),
+				value: localStorageDecks.map((deck) => ({...deck, public: false})),
 			},
 		})
 		yield* put<LocalMessage>({
@@ -193,7 +193,9 @@ export function* updateAchievements(socket: any) {
 		type: clientMessages.GET_ACHIEVEMENTS,
 	})
 	const result = yield* race({
-		achievements: call(receiveMsg(socket, serverMessages.ACHIEVEMENTS_RECIEVED)),
+		achievements: call(
+			receiveMsg(socket, serverMessages.ACHIEVEMENTS_RECIEVED),
+		),
 		failure: call(receiveMsg(socket, serverMessages.NO_DATABASE_CONNECTION)),
 	})
 
@@ -207,17 +209,17 @@ export function* updateAchievements(socket: any) {
 		})
 		return
 	}
-	
+
 	const {achievements} = result
 
 	if (!achievements) return
 
 	yield put<LocalMessage>({
-		type:localMessages.DATABASE_SET,
+		type: localMessages.DATABASE_SET,
 		data: {
 			key: 'achievements',
 			value: achievements.progress,
-		}
+		},
 	})
 }
 
@@ -227,16 +229,16 @@ export function* loginSaga() {
 
 	console.log('session saga: ', session)
 	if (!session) {
-		const { name } = yield* take<LocalMessageTable[typeof localMessages.LOGIN]>(
+		const {name} = yield* take<LocalMessageTable[typeof localMessages.LOGIN]>(
 			localMessages.LOGIN,
 		)
 
-		socket.auth = { playerName: name, version: getClientVersion() }
+		socket.auth = {playerName: name, version: getClientVersion()}
 	} else {
-		socket.auth = { ...session, version: getClientVersion() }
+		socket.auth = {...session, version: getClientVersion()}
 	}
 
-	yield* put<LocalMessage>({ type: localMessages.SOCKET_CONNECTING })
+	yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
 	socket.connect()
 	const connectErrorChan = createConnectErrorChannel(socket)
 
@@ -315,7 +317,7 @@ export function* loginSaga() {
 			// Only start a new game saga if the player is not in a game.
 			if (matchmakingStatus !== 'in_game') {
 				yield* call(gameSaga, result.playerReconnected.game)
-				yield* put<LocalMessage>({ type: localMessages.MATCHMAKING_LEAVE })
+				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
 			}
 		}
 	}
@@ -406,7 +408,7 @@ export function* databaseConnectionSaga() {
 				saveDeckToLocalStorage(action.deck)
 				return
 			}
-			yield* sendMsg({ type: clientMessages.INSERT_DECK, deck: action.deck })
+			yield* sendMsg({type: clientMessages.INSERT_DECK, deck: action.deck})
 		},
 	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.UPDATE_DECK]>(
@@ -416,7 +418,7 @@ export function* databaseConnectionSaga() {
 				saveDeckToLocalStorage(action.deck)
 				return
 			}
-			yield* sendMsg({ type: clientMessages.UPDATE_DECK, deck: action.deck })
+			yield* sendMsg({type: clientMessages.UPDATE_DECK, deck: action.deck})
 		},
 	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.IMPORT_DECK]>(
@@ -467,14 +469,14 @@ export function* databaseConnectionSaga() {
 				deleteDeckFromLocalStorage(action.deck)
 				return
 			}
-			yield* sendMsg({ type: clientMessages.DELETE_DECK, deck: action.deck })
+			yield* sendMsg({type: clientMessages.DELETE_DECK, deck: action.deck})
 		},
 	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.DELETE_TAG]>(
 		localMessages.DELETE_TAG,
 		function* (action) {
 			if (noConnection) return
-			yield* sendMsg({ type: clientMessages.DELETE_TAG, tag: action.tag })
+			yield* sendMsg({type: clientMessages.DELETE_TAG, tag: action.tag})
 		},
 	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.UPDATE_DECKS]>(
@@ -522,7 +524,7 @@ export function* logoutSaga() {
 	])
 	clearSession()
 	socket.disconnect()
-	yield put<LocalMessage>({ type: localMessages.DISCONNECT })
+	yield put<LocalMessage>({type: localMessages.DISCONNECT})
 }
 
 export function* newDecksSaga() {
@@ -623,7 +625,7 @@ export function* minecraftNameSaga() {
 
 export function* updatesSaga() {
 	const socket = yield* select(getSocket)
-	yield sendMsg({ type: clientMessages.GET_UPDATES })
+	yield sendMsg({type: clientMessages.GET_UPDATES})
 	const result = yield* call(receiveMsg(socket, serverMessages.LOAD_UPDATES))
 	yield put<LocalMessage>({
 		type: localMessages.UPDATES_LOAD,

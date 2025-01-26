@@ -46,4 +46,9 @@ export class AchievementComponent<
 		this.goals = goals
 		this.player = player
 	}
+
+	public incrementGoalProgress(goalId: number, amount: number = 1) {
+		this.goals[goalId] =
+			this.goals[goalId] === undefined ? amount : this.goals[goalId] + amount
+	}
 }

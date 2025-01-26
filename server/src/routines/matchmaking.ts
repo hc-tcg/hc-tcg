@@ -195,6 +195,7 @@ function* gameManager(con: GameController) {
 					(_game, achievement) => achievement.player === playerEntity,
 				)
 				achievements.forEach((achievement) => {
+					achievement.props.onGameEnd(achievement, outcome)
 					const complete =
 						achievement.props.getProgress(achievement.goals) ===
 						achievement.props.steps

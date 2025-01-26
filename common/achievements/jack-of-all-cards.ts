@@ -11,9 +11,8 @@ const AllCards: Achievement = {
 	id: 'all_cards',
 	numericId: 0,
 	name: 'Jack of all cards',
-	description: 'Play every original card',
+	description: 'Use every card from the base set',
 	steps: defaultCards.length,
-	goals: defaultCards.length,
 	onGameStart(component, observer) {
 		const {game} = component
 		const playerComponent = game.components.get(component.player)
@@ -26,10 +25,7 @@ const AllCards: Achievement = {
 			playedCards.push(card)
 			const position = defaultCards.indexOf(card.props)
 			if (position < 0) return
-			component.goals[position] =
-				component.goals[position] !== undefined
-					? component.goals[position] + 1
-					: 1
+			component.incrementGoalProgress(position)
 		})
 	},
 }

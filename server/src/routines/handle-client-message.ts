@@ -150,7 +150,7 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.GET_ACHIEVEMENTS:
 			return yield* getAchievements(
-				message as RecievedClientMessage<typeof message.type>
+				message as RecievedClientMessage<typeof message.type>,
 			)
 	}
 }

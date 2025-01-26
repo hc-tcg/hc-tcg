@@ -1,5 +1,5 @@
 import {AchievementComponent, ObserverComponent} from '../components'
-import {PlayerEntity} from '../entities'
+import {GameOutcome} from '../types/game-state'
 
 export type Achievement = {
 	id: string
@@ -7,7 +7,6 @@ export type Achievement = {
 	name: string
 	description: string
 	steps: number
-	goals: number
 	getProgress: (goals: Record<number, number>) => number
 	sidebarDescriptions?: Array<{type: string; name: string}>
 
@@ -15,5 +14,5 @@ export type Achievement = {
 		component: AchievementComponent,
 		observer: ObserverComponent,
 	) => void
-	onGameEnd: (component: AchievementComponent, player: PlayerEntity) => void
+	onGameEnd: (component: AchievementComponent, outcome: GameOutcome) => void
 }

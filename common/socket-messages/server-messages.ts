@@ -1,5 +1,5 @@
-import {AchievementProgress} from '../types/achievements'
 import {Message, MessageTable, messages} from '../redux-messages'
+import {AchievementProgress} from '../types/achievements'
 import {Stats, User} from '../types/database'
 import {ApiDeck, Deck, Tag} from '../types/deck'
 import {GameOutcome, LocalGameState} from '../types/game-state'

@@ -7,6 +7,7 @@ import {
 	ChangeActiveHermitActionData,
 } from 'common/types/turn-action-data'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
+import {updateAchievements} from 'logic/session/session-saga'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {
@@ -37,7 +38,6 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
-import { updateAchievements } from 'logic/session/session-saga'
 
 export function* sendTurnAction(
 	entity: PlayerEntity,

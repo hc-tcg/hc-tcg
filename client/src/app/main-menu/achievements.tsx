@@ -1,10 +1,9 @@
-import {Buffer} from 'buffer'
 import {ACHIEVEMENTS_LIST} from 'common/achievements'
 import AchievementComponent from 'components/achievement'
 import MenuLayout from 'components/menu-layout'
+import {getAchievements} from 'logic/game/database/database-selectors'
+import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
-import { useSelector } from 'react-redux'
-import { getAchievements } from 'logic/game/database/database-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void
