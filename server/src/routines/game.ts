@@ -153,6 +153,7 @@ function getAvailableActions(
 
 	// There is no action currently active for the opponent, clear the time
 	game.state.timer.opponentActionStartTime = null
+
 	const hasOtherHermit = game.components.exists(
 		CardComponent,
 		query.card.currentPlayer,
@@ -330,7 +331,7 @@ function checkHermitHealth(game: GameModel) {
 			card.discard()
 
 			if (card.isHealth()) {
-				card.slot.row.hooks.onKnockOut.call(card)
+				row.hooks.onKnockOut.call(card)
 			}
 
 			// Only hermit cards give points
