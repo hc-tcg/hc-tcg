@@ -340,7 +340,7 @@ function checkHermitHealth(game: GameModel) {
 
 				// prize card
 				if (game.settings.disableRewardCards) continue
-				let prizeCard = game.components
+				const prizeCard = game.components
 					.filter(
 						CardComponent,
 						query.card.slot(query.slot.deck),
