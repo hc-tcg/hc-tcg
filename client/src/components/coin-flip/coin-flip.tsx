@@ -15,8 +15,12 @@ const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
 
 	const coins = tosses.map((face, index) => {
 		const coinPics = [
-			`/images/coins/${COINS[headImage].file}`,
-			'/images/tcg1.png',
+			<img src={`/images/coins/${COINS[headImage].file}`} />,
+			<div style={{justifyContent: 'center', margin: 'auto'}}>
+				<div style={{transform: 'scale(.8)'}}>
+					<img src={'/images/tcg1.png'} />
+				</div>
+			</div>,
 		]
 
 		const flipOffset =
@@ -26,10 +30,13 @@ const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
 		const evenIterations = Math.floor((amount - flipOffset) / 2)
 		const extraFlip = (amount - flipOffset) % 2 !== 0
 
-		let isReversed = false
 		if ((face.result === 'tails') !== extraFlip) {
-			isReversed = true
 			coinPics.reverse()
+		}
+
+		const faceStyle = {
+			border: `border: calc($size / 30) solid ${COINS[headImage].borderColor}`,
+			boxShadow: `0 0 4px ${COINS[headImage].borderColor}`,
 		}
 
 		return (
@@ -48,29 +55,11 @@ const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
 							}
 				}
 			>
-				<div
-					className={classnames(css.face, css.front)}
-					style={
-						(!isReversed && {
-							borderColor: COINS[headImage].borderColor,
-							boxShadow: `0 0 4px ${COINS[headImage].borderColor}`,
-						}) ||
-						undefined
-					}
-				>
-					<img src={coinPics[0]} />
+				<div className={classnames(css.face, css.front)} style={faceStyle}>
+					{coinPics[0]}
 				</div>
-				<div
-					className={classnames(css.face, css.back)}
-					style={
-						(isReversed && {
-							borderColor: COINS[headImage].borderColor,
-							boxShadow: `0 0 4px ${COINS[headImage].borderColor}`,
-						}) ||
-						undefined
-					}
-				>
-					<img src={coinPics[1]} />
+				<div className={classnames(css.face, css.back)} style={faceStyle}>
+					{coinPics[1]}
 				</div>
 			</div>
 		)
