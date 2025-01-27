@@ -35,6 +35,7 @@ export function toLocalCardInstance(card: Card): LocalCardInstance {
 		slot: null,
 		attackHint: null,
 		turnedOver: false,
+		prizeCard: false,
 	}
 }
 

@@ -102,6 +102,7 @@ function getNextTurnAction(
 						slot: bossCard.slotEntity,
 						turnedOver: false,
 						attackHint: null,
+						prizeCard: false,
 					},
 				},
 			]

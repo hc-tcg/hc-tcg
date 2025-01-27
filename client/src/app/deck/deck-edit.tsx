@@ -244,6 +244,7 @@ const ALL_CARDS = sortCardInstances(
 			slot: null,
 			attackHint: null,
 			turnedOver: false,
+			prizeCard: false,
 		}),
 	),
 )

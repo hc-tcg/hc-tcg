@@ -36,6 +36,7 @@ function createUICardInstance(card: Card): LocalCardInstance {
 		entity: card.id as CardEntity,
 		slot: null,
 		turnedOver: false,
+		prizeCard: false,
 		attackHint: null,
 	} as const
 }
