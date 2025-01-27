@@ -25,16 +25,15 @@ const Ethogirl: Achievement = {
 	description:
 		'Place all 3 Etho cards and both Shade-e cards on your board at the same time',
 	steps: 5,
-	onGameStart(component, observer) {
-		const {game, player} = component
-		const playerComponent = game.components.get(player)
-		if (!playerComponent) return
+	onGameStart(game, playerEntity, component, observer) {
+		const player = game.components.get(playerEntity)
+		if (!player) return
 
-		observer.subscribe(playerComponent.hooks.onAttach, (card) => {
+		observer.subscribe(player.hooks.onAttach, (card) => {
 			if (!ETHO_CARDS.includes(card.props as Hermit)) return
 			const boardCards = game.components.filter(
 				SlotComponent,
-				query.slot.player(player),
+				query.slot.player(playerEntity),
 				query.slot.hermit,
 				(_game, slot) => ETHO_CARDS.includes(slot.getCard()?.props as Hermit),
 			)

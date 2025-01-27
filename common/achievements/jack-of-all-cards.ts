@@ -16,14 +16,13 @@ const AllCards: Achievement = {
 	getProgress(goals) {
 		return Object.values(goals).filter((goal) => goal > 0).length
 	},
-	onGameStart(component, observer) {
-		const {game} = component
-		const playerComponent = game.components.get(component.player)
-		if (!playerComponent) return
+	onGameStart(game, playerEntity, component, observer) {
+		const player = game.components.get(playerEntity)
+		if (!player) return
 
 		const playedCards: CardComponent[] = []
 
-		observer.subscribe(playerComponent.hooks.onAttach, (card) => {
+		observer.subscribe(player.hooks.onAttach, (card) => {
 			if (playedCards.includes(card)) return
 			playedCards.push(card)
 			const position = defaultCards.indexOf(card.props)

@@ -175,6 +175,8 @@ function setupEcsForPlayer(
 				achievementComponent.entity,
 			)
 			achievementComponent.props.onGameStart(
+				game,
+				playerEntity,
 				achievementComponent,
 				achievementObserver,
 			)

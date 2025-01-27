@@ -10,17 +10,16 @@ const Wipeout: Achievement = {
 	name: 'Wipeout',
 	description: 'Knockout 5 Hermits in the same turn',
 	steps: 5,
-	onGameStart(component, observer) {
-		const {game, player} = component
-		const playerComponent = game.components.get(player)
-		if (!playerComponent) return
+	onGameStart(game, playerEntity, component, observer) {
+		const player = game.components.get(playerEntity)
+		if (!player) return
 
 		let knockouts = 0
 
 		game.components
 			.filter(
 				RowComponent,
-				query.row.player(playerComponent.opponentPlayer.entity),
+				query.row.player(player.opponentPlayer.entity),
 			)
 			.forEach((row) => {
 				observer.subscribe(row.hooks.onKnockOut, () => {
@@ -28,7 +27,7 @@ const Wipeout: Achievement = {
 				})
 			})
 
-		observer.subscribe(playerComponent.hooks.onTurnStart, () => {
+		observer.subscribe(player.hooks.onTurnStart, () => {
 			if (!component.goals[0]) component.goals[0] = 0
 			component.goals[0] = Math.min(component.goals[0], knockouts)
 			knockouts = 0

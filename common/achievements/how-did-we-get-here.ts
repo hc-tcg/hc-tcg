@@ -11,10 +11,9 @@ const HowDidWeGetHere: Achievement = {
 	name: 'How Did We Get Here?',
 	description: 'Have 5 status effects applied to the same Hermit',
 	steps: 5,
-	onGameStart(component, observer) {
-		const {game, player} = component
-		const playerComponent = game.components.get(player)
-		if (!playerComponent) return
+	onGameStart(game, playerEntity, component, observer) {
+		const player = game.components.get(playerEntity)
+		if (!player) return
 
 		const checkStatusEffects = () => {
 			const statusEffects: Record<string, StatusEffectComponent[]> = {}
@@ -22,7 +21,7 @@ const HowDidWeGetHere: Achievement = {
 				.filter(
 					StatusEffectComponent,
 					query.effect.targetIsCardAnd(
-						query.card.player(player),
+						query.card.player(playerEntity),
 						query.card.onBoard,
 						query.card.isHermit,
 					),
@@ -39,9 +38,9 @@ const HowDidWeGetHere: Achievement = {
 			component.goals[0] = Math.max(component.goals[0], bestAttempt)
 		}
 
-		observer.subscribe(playerComponent.hooks.beforeApply, checkStatusEffects)
+		observer.subscribe(player.hooks.beforeApply, checkStatusEffects)
 		observer.subscribeWithPriority(
-			playerComponent.hooks.onTurnEnd,
+			player.hooks.onTurnEnd,
 			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
 			checkStatusEffects,
 		)

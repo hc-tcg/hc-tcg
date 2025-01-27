@@ -189,13 +189,13 @@ function* gameManager(con: GameController) {
 		yield* all(
 			con.viewers.map((v) => {
 				if (v.spectator) return
-				const playerEntity = v.playerOnLeft.entity
+				const playerEntity = v.playerOnLeftEntity
 				const achievements = con.game.components.filter(
 					AchievementComponent,
 					(_game, achievement) => achievement.player === playerEntity,
 				)
 				achievements.forEach((achievement) => {
-					achievement.props.onGameEnd(achievement, outcome)
+					achievement.props.onGameEnd(con.game, playerEntity, achievement, outcome)
 					const complete =
 						achievement.props.getProgress(achievement.goals) ===
 						achievement.props.steps

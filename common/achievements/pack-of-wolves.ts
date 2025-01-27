@@ -11,16 +11,15 @@ const PackOfWolves: Achievement = {
 	name: 'Pack Of Wolves',
 	description: 'Have 3 wolves attached to your hermits at the same time',
 	steps: 3,
-	onGameStart(component, observer) {
-		const {game, player} = component
-		const playerComponent = game.components.get(player)
-		if (!playerComponent) return
+	onGameStart(game, playerEntity, component, observer) {
+		const player = game.components.get(playerEntity)
+		if (!player) return
 
-		observer.subscribe(playerComponent.hooks.onAttach, (card) => {
+		observer.subscribe(player.hooks.onAttach, (card) => {
 			if (card.props !== Wolf) return
 			const boardCards = game.components.filter(
 				SlotComponent,
-				query.slot.player(player),
+				query.slot.player(playerEntity),
 				query.slot.attach,
 				(_game, slot) => slot.getCard()?.props === Wolf,
 			)

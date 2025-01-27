@@ -11,10 +11,9 @@ const British: Achievement = {
 	description:
 		"Use both Xisuma's Cup of Tea and Spooky Stress' Wa'a against the same Hermit",
 	steps: 1,
-	onGameStart(component, observer) {
-		const {game, player} = component
-		const componentPlayer = game.components.get(player)
-		if (!componentPlayer) return
+	onGameStart(game, playerEntity, component, observer) {
+		const player = game.components.get(playerEntity)
+		if (!player) return
 
 		const attackedHermits: Record<
 			CardEntity,
