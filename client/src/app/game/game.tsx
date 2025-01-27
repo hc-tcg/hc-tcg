@@ -66,7 +66,7 @@ function EndGameOverlayContainer() {
 	const [prevLives, setPrevLives] = useState(lives)
 	useEffect(() => {
 		if (!gameState) return
-		if (!gameState.isBossGame) return
+		if (!gameState.isEvilXBossGame) return
 		if (endGameOverlay) {
 			if (
 				endGameOverlay.outcome.type === 'player-won' &&

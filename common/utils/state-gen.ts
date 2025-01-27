@@ -1,5 +1,5 @@
-import {ACHIEVEMENTS_LIST} from '../achievements'
-import {Card} from '../cards/types'
+import { ACHIEVEMENTS_LIST } from '../achievements'
+import { Card } from '../cards/types'
 import {
 	AchievementComponent,
 	BoardSlotComponent,
@@ -10,16 +10,16 @@ import {
 	PlayerComponent,
 	RowComponent,
 } from '../components'
-import {PlayerDefs} from '../components/player-component'
+import { PlayerDefs } from '../components/player-component'
 import query from '../components/query'
-import {PlayerEntity} from '../entities'
-import {GameModel} from '../models/game-model'
-import {AchievementProgress} from '../types/achievements'
-import {Deck} from '../types/deck'
+import { PlayerEntity } from '../entities'
+import { GameModel } from '../models/game-model'
+import { AchievementProgress } from '../types/achievements'
+import { Deck } from '../types/deck'
 import ComponentTable from '../types/ecs'
-import {GameState} from '../types/game-state'
-import {VirtualAI} from '../types/virtual-ai'
-import {fisherYatesShuffle} from './fisher-yates'
+import { GameState } from '../types/game-state'
+import { VirtualAI } from '../types/virtual-ai'
+import { fisherYatesShuffle } from './fisher-yates'
 
 export type PlayerSetupDefs = {
 	model: PlayerDefs
@@ -70,7 +70,7 @@ export function setupComponents(
 		options,
 		player2.model.achievementProgress,
 	)
-	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
+	components.new(BoardSlotComponent, { type: 'single_use' }, null, null)
 }
 
 function setupEcsForPlayer(
@@ -93,31 +93,31 @@ function setupEcsForPlayer(
 
 		components.new(
 			BoardSlotComponent,
-			{player: playerEntity, type: 'item'},
+			{ player: playerEntity, type: 'item' },
 			0,
 			row.entity,
 		)
 		components.new(
 			BoardSlotComponent,
-			{player: playerEntity, type: 'item'},
+			{ player: playerEntity, type: 'item' },
 			1,
 			row.entity,
 		)
 		components.new(
 			BoardSlotComponent,
-			{player: playerEntity, type: 'item'},
+			{ player: playerEntity, type: 'item' },
 			2,
 			row.entity,
 		)
 		components.new(
 			BoardSlotComponent,
-			{player: playerEntity, type: 'attach'},
+			{ player: playerEntity, type: 'attach' },
 			3,
 			row.entity,
 		)
 		components.new(
 			BoardSlotComponent,
-			{player: playerEntity, type: 'hermit'},
+			{ player: playerEntity, type: 'hermit' },
 			4,
 			row.entity,
 		)
@@ -162,7 +162,7 @@ function setupEcsForPlayer(
 	if (options.countAchievements && achievementProgress) {
 		ACHIEVEMENTS_LIST.forEach((achievement) => {
 			if (!achievementProgress[achievement.numericId]) {
-				achievementProgress[achievement.numericId] = {goals: {}}
+				achievementProgress[achievement.numericId] = { goals: {} }
 			}
 			const achievementComponent = components.new(
 				AchievementComponent,
@@ -216,7 +216,7 @@ export function getGameState(
 			opponentActionStartTime: null,
 		},
 
-		isBossGame: false,
+		isEvilXBossGame: false,
 	}
 
 	return gameState

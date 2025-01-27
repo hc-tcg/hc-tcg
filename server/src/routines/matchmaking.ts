@@ -498,7 +498,7 @@ export function* createBossGame(
 		virtualAI: ExBossAI,
 		disableDeckingOut: true,
 	})
-	newBossGameController.game.state.isBossGame = true
+	newBossGameController.game.state.isEvilXBossGame = true
 
 	function destroyRow(row: RowComponent) {
 		newBossGameController.game.components

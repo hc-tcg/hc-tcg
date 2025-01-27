@@ -1,5 +1,5 @@
-import {achievement} from './defaults'
-import {Achievement} from './types'
+import { achievement } from './defaults'
+import { Achievement } from './types'
 
 const DefeatEvilX: Achievement = {
 	...achievement,
@@ -9,7 +9,7 @@ const DefeatEvilX: Achievement = {
 	description: 'Defeat Evil X',
 	steps: 1,
 	onGameEnd(game, playerEntity, component, outcome) {
-		if (!game.state.isBossGame) return
+		if (!game.state.isEvilXBossGame) return
 		if (outcome.type !== 'player-won') return
 		if (outcome.winner !== playerEntity) return
 		component.incrementGoalProgress(0)
