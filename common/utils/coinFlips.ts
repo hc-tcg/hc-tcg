@@ -79,7 +79,7 @@ export function flipCoin(
 		tosses: coinFlips,
 		amount: coinFlipAmount,
 		delay: coinFlipAmount * 350 + 1000,
-		headImage: COINS[player.selectedCoinHead].file,
+		headImage: player.selectedCoinHead,
 	})
 
 	return coinFlips.map((f) => f.result)
