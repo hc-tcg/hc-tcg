@@ -27,11 +27,6 @@
 	background-color: gray;
 	background-clip: content-box;
 
-	&:disabled {
-		filter: brightness(0.5);
-		cursor: not-allowed;
-	}
-
 	&:focus-visible {
 		outline: 4px solid white;
 		border: 2px solid black;
@@ -39,9 +34,14 @@
 	}
 }
 
-.noPointerEvents {
+.cardImageContainer {
 	@media (orientation: portrait) {
 		pointer-events: none;
+	}
+
+	&.disabled {
+		filter: saturate(0);
+		cursor: not-allowed;
 	}
 }
 
@@ -142,7 +142,8 @@
 	font-size: 1rem;
 	font-family: Unifont;
 	transform: translate(1.2rem, -0.8rem);
-	filter: drop-shadow(1px 0px 0 white) drop-shadow(-1px 0px 0 white) drop-shadow(0px 1px 0 white) drop-shadow(0px -1px 0 white);
+	filter: drop-shadow(1px 0px 0 white) drop-shadow(-1px 0px 0 white)
+		drop-shadow(0px 1px 0 white) drop-shadow(0px -1px 0 white);
 
 	&.rare::before {
 		color: rgb(241, 172, 33);
