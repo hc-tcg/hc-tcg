@@ -349,8 +349,8 @@ function checkHermitHealth(game: GameModel) {
 					.sort(CardComponent.compareOrder)
 					.at(0)
 				if (prizeCard) {
-					prizeCard.draw(playerState.opponentPlayer.entity)
 					prizeCard.prizeCard = true
+					prizeCard.draw(playerState.opponentPlayer.entity)
 				}
 			}
 		}
