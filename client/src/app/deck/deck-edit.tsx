@@ -372,6 +372,7 @@ function EditDeck({
 					slot: null,
 					turnedOver: false,
 					attackHint: null,
+					prizeCard: false,
 				},
 			],
 		}))
