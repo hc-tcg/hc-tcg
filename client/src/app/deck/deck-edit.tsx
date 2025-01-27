@@ -244,6 +244,7 @@ const ALL_CARDS = sortCardInstances(
 			slot: null,
 			attackHint: null,
 			turnedOver: false,
+			prizeCard: false,
 		}),
 	),
 )
@@ -371,6 +372,7 @@ function EditDeck({
 					slot: null,
 					turnedOver: false,
 					attackHint: null,
+					prizeCard: false,
 				},
 			],
 		}))

@@ -23,6 +23,7 @@ export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
 			slot: null,
 			turnedOver: false,
 			attackHint: null,
+			prizeCard: false,
 		})
 	}
 	return deck

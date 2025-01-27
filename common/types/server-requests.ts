@@ -39,6 +39,7 @@ export type LocalCardInstance<CardType extends Card = Card> = {
 	readonly slot: SlotEntity | null
 	readonly attackHint: string | null
 	readonly turnedOver: boolean
+	readonly prizeCard: boolean
 }
 
 export type LocalStatusEffectInstance<
