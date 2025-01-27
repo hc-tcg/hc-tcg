@@ -1,5 +1,3 @@
-import ExBossAI from "../../server/src/routines/virtual/exboss-ai";
-import { AIComponent } from "../components/ai-component";
 import { achievement } from "./defaults";
 import { Achievement } from "./types";
 
@@ -11,8 +9,7 @@ const DefeatEvilX: Achievement = {
     description: 'Defeat Evil X',
     steps: 1,
     onGameEnd(game, playerEntity, component, outcome) {
-        const ai = game.components.find(AIComponent, (_game, ai) => ai.ai.id === ExBossAI.id)
-        if (!ai) return
+        if (!game.state.isBossGame) return
         if (outcome.type !== 'player-won') return
         if (outcome.winner !== playerEntity) return
         component.incrementGoalProgress(0)
