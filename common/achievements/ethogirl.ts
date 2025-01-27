@@ -37,8 +37,7 @@ const Ethogirl: Achievement = {
 				query.slot.hermit,
 				(_game, slot) => ETHO_CARDS.includes(slot.getCard()?.props as Hermit),
 			)
-			if (!component.goals[0]) component.goals[0] = 0
-			component.goals[0] = Math.max(component.goals[0], boardCards.length)
+			component.bestGoalProgress(0, boardCards.length)
 		})
 	},
 }

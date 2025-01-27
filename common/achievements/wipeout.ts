@@ -17,10 +17,7 @@ const Wipeout: Achievement = {
 		let knockouts = 0
 
 		game.components
-			.filter(
-				RowComponent,
-				query.row.player(player.opponentPlayer.entity),
-			)
+			.filter(RowComponent, query.row.player(player.opponentPlayer.entity))
 			.forEach((row) => {
 				observer.subscribe(row.hooks.onKnockOut, () => {
 					knockouts += 1
@@ -28,8 +25,7 @@ const Wipeout: Achievement = {
 			})
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			if (!component.goals[0]) component.goals[0] = 0
-			component.goals[0] = Math.min(component.goals[0], knockouts)
+			component.bestGoalProgress(0, knockouts)
 			knockouts = 0
 		})
 	},
