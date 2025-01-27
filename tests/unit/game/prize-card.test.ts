@@ -25,6 +25,16 @@ describe('Test prize card.', () => {
 				],
 				playerTwoDeck: [GeminiTayCommon],
 				saga: function* (game) {
+					/** Make sure `prizeCard` does not start out as true */
+					expect(
+						game.components.find(
+							CardComponent,
+							query.card.currentPlayer,
+							query.card.slot(query.slot.hand),
+							query.card.prizeCard,
+						),
+					).toBeFalsy()
+
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					/** Play two hermits to prevent the game from finishing before the tests finish */
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
