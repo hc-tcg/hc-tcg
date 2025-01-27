@@ -16,10 +16,8 @@ const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
 	const coins = tosses.map((face, index) => {
 		const coinPics = [
 			<img src={`/images/coins/${COINS[headImage].file}`} />,
-			<div style={{justifyContent: 'center', margin: 'auto'}}>
-				<div style={{transform: 'scale(.8)'}}>
-					<img src={'/images/tcg1.png'} />
-				</div>
+			<div style={{transform: 'scale(.8)'}}>
+				<img src={'/images/tcg1.png'} />
 			</div>,
 		]
 
@@ -35,7 +33,7 @@ const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
 		}
 
 		const faceStyle = {
-			border: `border: calc($size / 30) solid ${COINS[headImage].borderColor}`,
+			borderColor: `${COINS[headImage].borderColor}`,
 			boxShadow: `0 0 4px ${COINS[headImage].borderColor}`,
 		}
 
