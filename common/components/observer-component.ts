@@ -15,7 +15,10 @@ export class ObserverComponent {
 	readonly game: GameModel
 	readonly entity: ObserverEntity
 	readonly wrappingEntity: Entity<
-		CardComponent | StatusEffectComponent | AchievementComponent | PlayerComponent
+		| CardComponent
+		| StatusEffectComponent
+		| AchievementComponent
+		| PlayerComponent
 	>
 	private hooks: Array<Hook<any, any> | PriorityHook<any, any>>
 
@@ -23,7 +26,10 @@ export class ObserverComponent {
 		game: GameModel,
 		entity: ObserverEntity,
 		wrappingEntity: Entity<
-			CardComponent | StatusEffectComponent | AchievementComponent | PlayerComponent
+			| CardComponent
+			| StatusEffectComponent
+			| AchievementComponent
+			| PlayerComponent
 		>,
 	) {
 		this.game = game

@@ -25,9 +25,6 @@ const Ethogirl: Achievement = {
 	description:
 		'Place all 3 Etho cards and both Shade-e cards on your board at the same time',
 	steps: 5,
-	getProgress(goals) {
-		return goals[0]
-	},
 	onGameStart(component, observer) {
 		const {game, player} = component
 		const playerComponent = game.components.get(player)

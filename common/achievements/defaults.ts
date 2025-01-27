@@ -5,7 +5,7 @@ export const achievement: Omit<
 	'id' | 'numericId' | 'name' | 'description' | 'steps'
 > = {
 	getProgress(goals: Record<number, number>) {
-		return Object.values(goals).filter((goal) => goal > 0).length
+		return goals[0]
 	},
 	onGameStart() {},
 	onGameEnd() {},

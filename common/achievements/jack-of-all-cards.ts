@@ -13,6 +13,9 @@ const AllCards: Achievement = {
 	name: 'Jack of all cards',
 	description: 'Use every card from the base set',
 	steps: defaultCards.length,
+	getProgress(goals) {
+		return Object.values(goals).filter((goal) => goal > 0).length
+	},
 	onGameStart(component, observer) {
 		const {game} = component
 		const playerComponent = game.components.get(component.player)
