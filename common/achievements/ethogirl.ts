@@ -15,7 +15,7 @@ const ETHO_CARDS = [
 	EthosLabUltraRare,
 	ShadEECommon,
 	ShadeEERare,
-].map(card => card.id)
+].map((card) => card.id)
 
 const Ethogirl: Achievement = {
 	...achievement,
@@ -35,7 +35,8 @@ const Ethogirl: Achievement = {
 				SlotComponent,
 				query.slot.player(playerEntity),
 				query.slot.hermit,
-				(_game, slot) => ETHO_CARDS.includes(slot.getCard()?.props.id as string),
+				(_game, slot) =>
+					ETHO_CARDS.includes(slot.getCard()?.props.id as string),
 			)
 			component.bestGoalProgress(0, boardCards.length)
 		})

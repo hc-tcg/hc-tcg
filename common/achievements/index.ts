@@ -9,6 +9,7 @@ import AllCards from './jack-of-all-cards'
 import NoDerpcoins from './no-derpcoins'
 import PackOfWolves from './pack-of-wolves'
 import {Achievement} from './types'
+import {Win1, Win10, Win100, Win1000, Win500} from './wins'
 import Wipeout from './wipeout'
 
 export const ACHIEVEMENTS_LIST: Array<Achievement> = [
@@ -23,6 +24,11 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	British,
 	HotTake,
 	DeceptiveSpectacles,
+	Win1,
+	Win10,
+	Win100,
+	Win500,
+	Win1000,
 ]
 
 export const ACHIEVEMENTS: Record<string | number, Achievement> =

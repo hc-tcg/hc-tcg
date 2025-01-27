@@ -36,8 +36,8 @@ const HotTake: Achievement = {
 				hermit.getAttackCost('secondary'),
 				game.settings.noItemRequirements,
 			)
-            if (!canPrimary || !canSecondary) return
-            component.incrementGoalProgress(0)
+			if (!canPrimary || !canSecondary) return
+			component.incrementGoalProgress(0)
 		})
 	},
 }
