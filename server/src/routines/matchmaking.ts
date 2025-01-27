@@ -205,9 +205,10 @@ function* gameManager(con: GameController) {
 					v.player.achievementProgress[achievement.props.numericId].goals =
 						achievement.goals
 					if (complete && !previouslyComplete)
+						// @TODO here is where we see what new achievements have been completed
 						v.player.achievementProgress[
 							achievement.props.numericId
-						].completionTime = Date.now()
+						].completionTime = new Date()
 				})
 				return updateAchievements(v.player)
 			}),

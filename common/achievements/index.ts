@@ -1,4 +1,6 @@
+import British from './british'
 import DeckedOut from './decked-out'
+import DefeatEvilX from './defeat-evil-x'
 import Ethogirl from './ethogirl'
 import HowDidWeGetHere from './how-did-we-get-here'
 import AllCards from './jack-of-all-cards'
@@ -13,4 +15,14 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	PackOfWolves,
 	HowDidWeGetHere,
 	Wipeout,
+	British,
+	DefeatEvilX,
 ]
+
+export const ACHIEVEMENTS: Record<string | number, Achievement> = ACHIEVEMENTS_LIST.reduce(
+	(result: Record<string | number, Achievement>, card) => {
+		result[card.numericId] = card
+		return result
+	},
+	{},
+)

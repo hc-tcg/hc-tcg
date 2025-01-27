@@ -1420,7 +1420,7 @@ export class Database {
 				achievment: number
 				goal: number
 				progress: number
-				completion_time: null | number
+				completion_time: Date | null
 			}
 			const goals: GoalRow[] = Object.keys(player.achievementProgress).flatMap(
 				(achievement_id) => {

@@ -3,8 +3,8 @@ import type {AchievementEntity, ObserverEntity, PlayerEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
 import {GameHook} from '../types/hooks'
 
-let ACHIEVEMENTS: Achievement[]
-import('../achievements').then((mod) => (ACHIEVEMENTS = mod.ACHIEVEMENTS_LIST))
+let ACHIEVEMENTS: Record<string | number, Achievement>
+import('../achievements').then((mod) => (ACHIEVEMENTS = mod.ACHIEVEMENTS))
 
 /** A component that represents a card in the game. Cards can be in the player's hand, deck, board or discard pile. */
 export class AchievementComponent<
