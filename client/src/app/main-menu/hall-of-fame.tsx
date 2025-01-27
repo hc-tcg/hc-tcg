@@ -104,7 +104,7 @@ type Props = {
 	setMenuSection: (section: string) => void
 }
 
-type Endpoints = 'decks' | 'cards' | 'games' | 'types'
+type Endpoints = 'decks' | 'cards' | 'games' | 'types' | 'private game'
 
 const cardOrderByOptions = {
 	winrate: 'Winrate',
@@ -173,6 +173,10 @@ function HallOfFame({setMenuSection}: Props) {
 	const [showTypeWinrate, setShowTypeWinrate] = useState<boolean>(true)
 	const [showTypeFrequency, setShowTypeFrequency] = useState<boolean>(true)
 
+	/* Private Game */
+	const codeRef = useRef<any>()
+	const [privateGameCode, setPrivateGameCode] = useState<string | null>(null)
+
 	const endpoints: Record<Endpoints, () => string> = {
 		decks: () => {
 			let url = `decks?minimumWins=25&orderBy=${decksOrderyBy}`
@@ -218,6 +222,10 @@ function HallOfFame({setMenuSection}: Props) {
 				return `type-distribution?after=${endpointAfter}`
 			}
 			return 'type-distribution'
+		},
+		'private game': () => {
+			if (!privateGameCode || privateGameCode.length !== 6) return ''
+			return `private-game/${privateGameCode}`
 		},
 	}
 
@@ -498,6 +506,29 @@ function HallOfFame({setMenuSection}: Props) {
 		)
 	}
 
+	const parsePrivateGame = (game: Record<string, any>) => {
+		return (
+			<table className={css.hallOfFameTableNoHeader}>
+				<tr>
+					<th>First Player</th>
+					<td>{game.firstPlayerName}</td>
+				</tr>
+				<tr>
+					<th>Second Player</th>
+					<td>{game.secondPlayerName}</td>
+				</tr>
+				<tr>
+					<th>Start Time</th>
+					<td>{game.startTime}</td>
+				</tr>
+				<tr>
+					<th>Winner</th>
+					<td>{game.winner}</td>
+				</tr>
+			</table>
+		)
+	}
+
 	const parseTypes = (
 		types: Record<string, number | Array<Record<string, any>>>,
 	) => {
@@ -628,6 +659,8 @@ function HallOfFame({setMenuSection}: Props) {
 			return parseGame(data)
 		} else if (selectedEndpoint === 'types') {
 			return parseTypes(data)
+		} else if (selectedEndpoint === 'private game') {
+			return parsePrivateGame(data)
 		}
 	}
 
@@ -666,6 +699,7 @@ function HallOfFame({setMenuSection}: Props) {
 										{name: 'Cards'},
 										{name: 'Games'},
 										{name: 'Types'},
+										{name: 'Private game'},
 									]}
 									showNames={true}
 									action={(option) => {
@@ -678,38 +712,44 @@ function HallOfFame({setMenuSection}: Props) {
 								<p>
 									<b>Parameters</b>
 								</p>
-								<div className={css.hofOption}>
-									<p style={{flexGrow: 1}}>After:</p>
-									<input
-										type="date"
-										ref={afterRef}
-										onChange={(_e) => {
-											if (!afterRef.current.valueAsNumber) {
-												setEndpointAfter(null)
-											} else {
-												setEndpointAfter(afterRef.current.valueAsNumber / 1000)
-											}
-											setDataRetrieved(false)
-										}}
-									/>
-								</div>
-								<div className={css.hofOption}>
-									<p style={{flexGrow: 1}}>Before:</p>
-									<input
-										type="date"
-										ref={beforeRef}
-										onChange={(_e) => {
-											if (!beforeRef.current.valueAsNumber) {
-												setEndpointBefore(null)
-											} else {
-												setEndpointBefore(
-													beforeRef.current.valueAsNumber / 1000,
-												)
-											}
-											setDataRetrieved(false)
-										}}
-									/>
-								</div>
+								{selectedEndpoint !== 'private game' && (
+									<>
+										<div className={css.hofOption}>
+											<p style={{flexGrow: 1}}>After:</p>
+											<input
+												type="date"
+												ref={afterRef}
+												onChange={(_e) => {
+													if (!afterRef.current.valueAsNumber) {
+														setEndpointAfter(null)
+													} else {
+														setEndpointAfter(
+															afterRef.current.valueAsNumber / 1000,
+														)
+													}
+													setDataRetrieved(false)
+												}}
+											/>
+										</div>
+										<div className={css.hofOption}>
+											<p style={{flexGrow: 1}}>Before:</p>
+											<input
+												type="date"
+												ref={beforeRef}
+												onChange={(_e) => {
+													if (!beforeRef.current.valueAsNumber) {
+														setEndpointBefore(null)
+													} else {
+														setEndpointBefore(
+															beforeRef.current.valueAsNumber / 1000,
+														)
+													}
+													setDataRetrieved(false)
+												}}
+											/>
+										</div>
+									</>
+								)}
 								{selectedEndpoint === 'decks' && (
 									<>
 										<div className={css.hofOption}>
@@ -823,6 +863,20 @@ function HallOfFame({setMenuSection}: Props) {
 											></Checkbox>
 										</div>
 									</>
+								)}
+								{selectedEndpoint === 'private game' && (
+									<input
+										type="text"
+										ref={codeRef}
+										value={privateGameCode ? privateGameCode : ''}
+										onChange={(e) => {
+											setPrivateGameCode(e.target.value)
+										}}
+										maxLength={7}
+										placeholder="Enter Game Code..."
+										className={css.input}
+										data-focused={true}
+									/>
 								)}
 							</div>
 						</div>

@@ -75,3 +75,10 @@ export type GamesStats = {
 export type AchievementData = {
 	achievementData: AchievementProgress
 }
+
+export type ApiGame = {
+	firstPlayerName: string
+	secondPlayerName: string
+	startTime: number
+	winner: string | null
+}

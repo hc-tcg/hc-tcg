@@ -19,6 +19,7 @@ import {
 	getCardStats,
 	getDeckStats,
 	getGamesStats,
+	getPrivateGame,
 	getStats,
 	getTypeDistributionStats,
 } from './stats'
@@ -117,6 +118,14 @@ export function addApi(app: Express) {
 		let ret = await getGamesStats({
 			before: NumberOrNull(query.before),
 			after: NumberOrNull(query.after),
+		})
+		res.statusCode = ret[0]
+		res.send(ret[1])
+	})
+
+	app.get('/api/stats/private-game/:code', async (req, res) => {
+		let ret = await getPrivateGame({
+			opponentCode: req.params.code,
 		})
 		res.statusCode = ret[0]
 		res.send(ret[1])
