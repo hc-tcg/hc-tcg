@@ -15,7 +15,7 @@ const ETHO_CARDS = [
 	EthosLabUltraRare,
 	ShadEECommon,
 	ShadeEERare,
-]
+].map(card => card.id)
 
 const Ethogirl: Achievement = {
 	...achievement,
@@ -30,12 +30,12 @@ const Ethogirl: Achievement = {
 		if (!player) return
 
 		observer.subscribe(player.hooks.onAttach, (card) => {
-			if (!ETHO_CARDS.includes(card.props as Hermit)) return
+			if (!ETHO_CARDS.includes(card.props.id)) return
 			const boardCards = game.components.filter(
 				SlotComponent,
 				query.slot.player(playerEntity),
 				query.slot.hermit,
-				(_game, slot) => ETHO_CARDS.includes(slot.getCard()?.props as Hermit),
+				(_game, slot) => ETHO_CARDS.includes(slot.getCard()?.props.id as string),
 			)
 			component.bestGoalProgress(0, boardCards.length)
 		})
