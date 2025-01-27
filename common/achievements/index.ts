@@ -3,6 +3,7 @@ import DeceptiveSpectacles from './deceptive-spectacles'
 import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
 import Ethogirl from './ethogirl'
+import HotTake from './hot-take'
 import HowDidWeGetHere from './how-did-we-get-here'
 import AllCards from './jack-of-all-cards'
 import NoDerpcoins from './no-derpcoins'
@@ -20,6 +21,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	DefeatEvilX,
 	NoDerpcoins,
 	British,
+	HotTake,
 	DeceptiveSpectacles,
 ]
 
