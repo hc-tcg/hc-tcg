@@ -9,6 +9,6 @@ export const COINS = {
 		numericId: 1,
 		name: 'Evil X',
 		file: 'evilx.png',
-		borderColor: '#cccccc',
+		borderColor: '#666666',
 	},
 }

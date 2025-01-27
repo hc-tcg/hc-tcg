@@ -1,7 +1,7 @@
 import classnames from 'classnames'
+import {COINS} from 'common/coins'
 import {CoinFlip} from 'common/types/game-state'
 import css from './coin-flip.module.scss'
-import {COINS} from 'common/coins'
 
 export type Props = {
 	name: string

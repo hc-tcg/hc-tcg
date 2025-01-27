@@ -1,4 +1,3 @@
-import {COINS} from '../coins'
 import {CardComponent, PlayerComponent} from '../components'
 import {GameModel} from '../models/game-model'
 import {CoinFlipResult} from '../types/game-state'
