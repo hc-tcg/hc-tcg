@@ -338,9 +338,9 @@ function checkHermitHealth(game: GameModel) {
 			if (card.props.category === 'hermit') {
 				playerState.lives -= 1
 
-				// reward card
+				// prize card
 				if (game.settings.disableRewardCards) continue
-				game.components
+				let prizeCard = game.components
 					.filter(
 						CardComponent,
 						query.card.slot(query.slot.deck),
@@ -348,7 +348,10 @@ function checkHermitHealth(game: GameModel) {
 					)
 					.sort(CardComponent.compareOrder)
 					.at(0)
-					?.draw(playerState.opponentPlayer.entity)
+				if (prizeCard) {
+					prizeCard.draw(playerState.opponentPlayer.entity)
+					prizeCard.prizeCard = true
+				}
 			}
 		}
 

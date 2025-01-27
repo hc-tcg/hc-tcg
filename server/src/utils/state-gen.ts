@@ -73,6 +73,7 @@ export function getLocalCard<CardType extends Card>(
 		entity: card.entity,
 		slot: card.slotEntity,
 		turnedOver: card.turnedOver,
+		prizeCard: card.prizeCard,
 		attackHint: attackPreview,
 	}
 }
