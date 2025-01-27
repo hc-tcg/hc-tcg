@@ -10,7 +10,7 @@ const FlintAndSteel: SingleUse = {
 	name: 'Flint & Steel',
 	expansion: 'default',
 	rarity: 'common',
-	tokens: 1,
+	tokens: 0,
 	description:
 		'Discard your hand. Draw 3 cards.\nCan be used even if you do not have any cards in your hand.',
 	showConfirmationModal: true,
