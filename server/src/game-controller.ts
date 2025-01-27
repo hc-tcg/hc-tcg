@@ -81,6 +81,7 @@ export class GameController {
 				publishBattleLog: (logs, timeout) =>
 					this.publishBattleLog(logs, timeout),
 				randomizeOrder: props.randomizeOrder ?? true,
+				countAchievements: !props.gameCode,
 			},
 		)
 

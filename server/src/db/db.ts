@@ -1,11 +1,15 @@
+import {Achievement} from 'common/achievements/types'
 import {Card} from 'common/cards/types'
 import {ApiDeck, Deck, Tag} from 'common/types/deck'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
 import {CARDS} from 'common/cards'
+import {PlayerModel} from 'common/models/player-model'
+import {AchievementProgress} from 'common/types/achievements'
 import {TypeT} from 'common/types/cards'
 import {
+	AchievementData,
 	ApiGame,
 	CardStats,
 	DeckStats,
@@ -31,12 +35,19 @@ export type DatabaseResult<T = undefined> =
 export class Database {
 	public pool: pg.Pool
 	public allCards: Array<Card>
+	public allAchievements: Array<Achievement>
 	public connected: boolean
 	private bfDepth: number
 
-	constructor(env: any, allCards: Array<Card>, bfDepth: number) {
+	constructor(
+		env: any,
+		allCards: Array<Card>,
+		allAchievements: Array<Achievement>,
+		bfDepth: number,
+	) {
 		this.pool = new Pool({connectionString: env.DATABASE_URL})
 		this.allCards = allCards
+		this.allAchievements = allAchievements
 		this.bfDepth = bfDepth
 		this.connected = false
 
@@ -105,16 +116,15 @@ export class Database {
 					FOREIGN KEY (tag_id) REFERENCES user_tags(tag_id) ON DELETE CASCADE
 				);
 				CREATE TABLE IF NOT EXISTS achievements(
-					achievement_id varchar(7) PRIMARY KEY NOT NULL,
-					achievement_name varchar(255) NOT NULL,
-					description varchar(65535) NOT NULL,
-					icon varchar(255) NOT NULL,
-					total integer NOT NULL 
+					achievement_id integer PRIMARY KEY NOT NULL
 				);
-				CREATE TABLE IF NOT EXISTS user_achievements(
+				CREATE TABLE IF NOT EXISTS user_goals(
 					user_id uuid REFERENCES users(user_id),
-					achievement_id varchar(7) REFERENCES achievements(achievement_id),
-					progress integer NOT NULL
+					achievement_id integer REFERENCES achievements(achievement_id),
+					goal_id integer,
+					progress integer NOT NULL,
+					completion_time timestamp,
+					PRIMARY KEY (user_id, achievement_id, goal_id)
 				);
 				`,
 			)
@@ -127,6 +137,12 @@ export class Database {
 			`,
 				[this.allCards.map((card) => card.numericId)],
 			)
+			await this.pool.query(
+				`
+				INSERT INTO achievements (achievement_id) SELECT * FROM UNNEST ($1::int[]) ON CONFLICT DO NOTHING;
+			`,
+				[this.allAchievements.map((achievement) => achievement.numericId)],
+			)
 			console.log('Database populated')
 
 			this.connected = true
@@ -135,7 +151,6 @@ export class Database {
 			console.info('Running server without database...')
 		}
 	}
-
 	public async close() {
 		await this.pool.end()
 	}
@@ -1351,6 +1366,112 @@ export class Database {
 			}
 		} catch (e) {
 			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/**Get player achievements */
+	public async getAchievements(
+		playerId: string,
+	): Promise<DatabaseResult<AchievementData>> {
+		try {
+			const result = await this.pool.query(
+				`
+				SELECT achievement_id, goal_id, progress, completion_time
+				FROM user_goals
+				WHERE user_id = $1;
+				`,
+				[playerId],
+			)
+
+			const progress: AchievementProgress = {}
+			result.rows.forEach((row) => {
+				if (!progress[row['achievement_id']]) {
+					progress[row['achievement_id']] = {
+						goals: [],
+						completionTime: row['completion_time']
+							? row['completion_time']
+							: undefined,
+					}
+				}
+				progress[row['achievement_id']].goals[row['goal_id']] = row['progress']
+			})
+
+			return {
+				type: 'success',
+				body: {
+					achievementData: progress,
+				},
+			}
+		} catch (e) {
+			console.log(e)
+			return {
+				type: 'failure',
+				reason: `${e}`,
+			}
+		}
+	}
+
+	/**Update player achievements with their progress */
+	public async updateAchievements(
+		player: PlayerModel,
+	): Promise<DatabaseResult> {
+		try {
+			type GoalRow = {
+				achievment: number
+				goal: number
+				progress: number
+				completion_time: Date | null
+			}
+			const goals: GoalRow[] = Object.keys(player.achievementProgress).flatMap(
+				(achievement_id) => {
+					const achievement = this.allAchievements.find(
+						(achievement) =>
+							achievement.numericId.toString() === achievement_id,
+					)
+					if (!achievement) return []
+					const progress = player.achievementProgress[achievement.numericId]
+					const achievementGoals: GoalRow[] = []
+					Object.keys(progress.goals).forEach((goal_id) => {
+						const goal_id_number = parseInt(goal_id)
+						if (Number.isNaN(goal_id_number)) return
+						achievementGoals.push({
+							achievment: achievement.numericId,
+							goal: goal_id_number,
+							progress:
+								progress.goals[goal_id_number] !== undefined
+									? progress.goals[goal_id_number]
+									: 0,
+							completion_time: progress.completionTime
+								? progress.completionTime
+								: null,
+						})
+					})
+					return achievementGoals
+				},
+			)
+			console.log(goals.filter((goal) => goal.progress > 0))
+			await this.pool.query(
+				`
+				INSERT INTO user_goals (user_id, achievement_id, goal_id, progress, completion_time)
+				(SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::int[], $4::int[], $5::timestamp[]))
+				ON CONFLICT (user_id, achievement_id, goal_id) DO UPDATE
+				SET progress = EXCLUDED.progress, completion_time = EXCLUDED.completion_time;
+				`,
+				[
+					goals.map(() => player.uuid),
+					goals.map((row) => row.achievment),
+					goals.map((row) => row.goal),
+					goals.map((row) => row.progress),
+					goals.map((row) => row.completion_time),
+				],
+			)
+			return {type: 'success', body: undefined}
+		} catch (e) {
+			console.log(e)
+			return {
+				type: 'failure',
+				reason: `${e}`,
+			}
 		}
 	}
 }

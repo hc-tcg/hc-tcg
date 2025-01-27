@@ -128,7 +128,7 @@ function* insertUser(socket: any) {
 	}
 }
 
-function* setupData(socket: any) {
+function* setupDeckData(socket: any) {
 	yield* sendMsg({
 		type: clientMessages.GET_DECKS,
 	})
@@ -184,6 +184,41 @@ function* setupData(socket: any) {
 		data: {
 			key: 'stats',
 			value: stats.stats,
+		},
+	})
+}
+
+export function* updateAchievements(socket: any) {
+	yield* sendMsg({
+		type: clientMessages.GET_ACHIEVEMENTS,
+	})
+	const result = yield* race({
+		achievements: call(
+			receiveMsg(socket, serverMessages.ACHIEVEMENTS_RECIEVED),
+		),
+		failure: call(receiveMsg(socket, serverMessages.NO_DATABASE_CONNECTION)),
+	})
+
+	if (result.failure) {
+		yield* put<LocalMessage>({
+			type: localMessages.DATABASE_SET,
+			data: {
+				key: 'noConnection',
+				value: true,
+			},
+		})
+		return
+	}
+
+	const {achievements} = result
+
+	if (!achievements) return
+
+	yield put<LocalMessage>({
+		type: localMessages.DATABASE_SET,
+		data: {
+			key: 'achievements',
+			value: achievements.progress,
 		},
 	})
 }
@@ -244,7 +279,8 @@ export function* loginSaga() {
 			type: localMessages.PLAYER_SESSION_SET,
 			player: session,
 		})
-		yield* setupData(socket)
+		yield* setupDeckData(socket)
+		yield* updateAchievements(socket)
 		yield put<LocalMessage>({
 			type: localMessages.CONNECTED,
 		})
@@ -331,7 +367,10 @@ export function* loginSaga() {
 				),
 			})
 
-			if (userInfo.success || userInfo.noConnection) yield* setupData(socket)
+			if (userInfo.success || userInfo.noConnection) {
+				yield* setupDeckData(socket)
+				yield* updateAchievements(socket)
+			}
 		}
 
 		yield put<LocalMessage>({

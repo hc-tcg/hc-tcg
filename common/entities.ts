@@ -1,4 +1,5 @@
 import type {
+	AchievementComponent,
 	CardComponent,
 	ObserverComponent,
 	PlayerComponent,
@@ -24,6 +25,7 @@ export type RowEntity = Entity<RowComponent>
 export type CardEntity = Entity<CardComponent>
 export type StatusEffectEntity = Entity<StatusEffectComponent>
 export type ObserverEntity = Entity<ObserverComponent>
+export type AchievementEntity = Entity<AchievementComponent>
 
 /** Create a new entity */
 export function newEntity<T>(entityName: string): Entity<T> {
