@@ -16,7 +16,7 @@ const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
 	const coins = tosses.map((face, index) => {
 		const coinPics = [
 			<img src={`/images/coins/${COINS[headImage].file}`} />,
-			<div style={{transform: 'scale(.8)'}}>
+			<div className={css.tcgFace}>
 				<img src={'/images/tcg1.png'} />
 			</div>,
 		]
