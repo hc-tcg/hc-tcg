@@ -8,6 +8,7 @@ import {
 	expect,
 	test,
 } from '@jest/globals'
+import {ACHIEVEMENTS_LIST} from 'common/achievements'
 import {CARDS, CARDS_LIST} from 'common/cards'
 import BdoubleO100Common from 'common/cards/hermits/bdoubleo100-common'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
@@ -46,6 +47,7 @@ describe('Test Database', () => {
 				...env,
 			},
 			CARDS_LIST,
+			ACHIEVEMENTS_LIST,
 			BF_DEPTH,
 		)
 	})
