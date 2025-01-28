@@ -1,6 +1,7 @@
 import assert from 'assert'
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
 import {
+	AchievementComponent,
 	BoardSlotComponent,
 	PlayerComponent,
 	RowComponent,
@@ -17,7 +18,7 @@ import {Deck} from 'common/types/deck'
 import {formatText} from 'common/utils/formatting'
 import {OpponentDefs} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
-import {addGame, getDeck} from 'db/db-reciever'
+import {addGame, getDeck, updateAchievements} from 'db/db-reciever'
 import {GameController} from 'game-controller'
 import {LocalMessageTable, localMessages} from 'messages'
 import {
@@ -184,6 +185,39 @@ function* gameManager(con: GameController) {
 
 		if (con.task) yield* cancel(con.task)
 		con.game.hooks.afterGameEnd.call()
+
+		yield* all(
+			con.viewers.map((v) => {
+				if (v.spectator) return
+				const playerEntity = v.playerOnLeftEntity
+				const achievements = con.game.components.filter(
+					AchievementComponent,
+					(_game, achievement) => achievement.player === playerEntity,
+				)
+				achievements.forEach((achievement) => {
+					achievement.props.onGameEnd(
+						con.game,
+						playerEntity,
+						achievement,
+						outcome,
+					)
+					const complete =
+						achievement.props.getProgress(achievement.goals) ===
+						achievement.props.steps
+					const previouslyComplete =
+						!!v.player.achievementProgress[achievement.props.numericId]
+							.completionTime
+					v.player.achievementProgress[achievement.props.numericId].goals =
+						achievement.goals
+					if (complete && !previouslyComplete)
+						// @TODO here is where we see what new achievements have been completed
+						v.player.achievementProgress[
+							achievement.props.numericId
+						].completionTime = new Date()
+				})
+				return updateAchievements(v.player)
+			}),
+		)
 
 		const gameType = con.gameCode ? 'Private' : 'Public'
 		console.log(
@@ -464,7 +498,7 @@ export function* createBossGame(
 		virtualAI: ExBossAI,
 		disableDeckingOut: true,
 	})
-	newBossGameController.game.state.isBossGame = true
+	newBossGameController.game.state.isEvilXBossGame = true
 
 	function destroyRow(row: RowComponent) {
 		newBossGameController.game.components

@@ -19,6 +19,7 @@ import Deck from './deck'
 import Game from './game'
 import Login from './login'
 import MainMenu from './main-menu'
+import Achievements from './main-menu/achievements'
 import BossLanding from './main-menu/boss-landing'
 import Credits from './main-menu/credits'
 import DataSettings from './main-menu/data-settings'
@@ -64,7 +65,8 @@ function App() {
 					return <DataSettings setMenuSection={setMenuSection} />
 				case 'hall-of-fame':
 					return <HallOfFame setMenuSection={setMenuSection} />
-
+				case 'achievements':
+					return <Achievements setMenuSection={setMenuSection} />
 				case 'credits':
 					return <Credits setMenuSection={setMenuSection} />
 				case 'boss-landing':

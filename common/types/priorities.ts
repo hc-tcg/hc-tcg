@@ -81,6 +81,8 @@ export const afterAttack = createPriorityDictionary({
 	HERMIT_REMOVE_SINGLE_USE: null,
 	/** All hermit attack logic should occur before this, to support mocking with Puppetry/Role Play */
 	DESTROY_MOCK_CARD: null,
+	/** All other actions have been done, achievements use the final state after an attack */
+	ACHIEVEMENTS: null,
 })
 
 export const onTurnEnd = createPriorityDictionary({
