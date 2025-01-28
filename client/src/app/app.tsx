@@ -24,9 +24,10 @@ import BossLanding from './main-menu/boss-landing'
 import Credits from './main-menu/credits'
 import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
-import PlaySelect from './main-menu/play-select'
-import More from './main-menu/settings'
-import Statistics from './main-menu/statistics'
+import HallOfFame from './main-menu/hall-of-fame'
+import Settings from './main-menu/settings'
+import MatchMaking from './match-making'
+import GameLanding from './main-menu/games-landing'
 
 function App() {
 	const section = useRouter()
@@ -67,10 +68,12 @@ function App() {
 					return <Achievements setMenuSection={setMenuSection} />
 				case 'credits':
 					return <Credits setMenuSection={setMenuSection} />
-				case 'play-select':
-					return <PlaySelect setMenuSection={setMenuSection} />
+				case 'boss-landing':
+					return <BossLanding setMenuSection={setMenuSection} />
+				case 'game-landing':
+					return <GameLanding setMenuSection={setMenuSection} />
 
-				case 'main-menu':
+				case 'mainmenu':
 				default:
 					return <MainMenu setMenuSection={setMenuSection} />
 			}

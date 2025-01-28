@@ -45,9 +45,7 @@
 }
 
 .mainMenuButton {
-	height: 5vh;
-	font-size: 1.8vh;
-	padding: 3vh;
+	height: 4.2rem;
 }
 
 .logo {
@@ -95,7 +93,7 @@
 nav {
 	width: 90%;
 	display: grid;
-	gap: 0.75vh;
+	gap: 2vh;
 	grid-template-areas:
 		"public"
 		"private-create"
@@ -386,6 +384,21 @@ nav {
 
 .input {
 	width: 50vh;
+}
+
+/* DESKTOP */
+@media (min-width: 80vh) {
+	nav {
+		margin-top: 6vh;
+		display: grid;
+		gap: 0.5vh;
+		grid-template-columns: 1fr 1fr;
+		grid-template-areas:
+			"public public"
+			"deck deck"
+			"achievements hof"
+			"settings settings";
+	}
 }
 
 @keyframes fadeIn {

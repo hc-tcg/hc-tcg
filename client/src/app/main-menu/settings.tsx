@@ -138,6 +138,13 @@ function More({setMenuSection}: Props) {
 					</Button>
 					<Button
 						variant="default"
+						onClick={handleGameSettings}
+						className={css.mainMenuButton}
+					>
+						Game Settings
+					</Button>
+					<Button
+						variant="default"
 						onClick={handleDataSettings}
 						className={css.mainMenuButton}
 					>
@@ -157,60 +164,6 @@ function More({setMenuSection}: Props) {
 					>
 						Updates
 					</Button>
-				</div>
-
-				<h2>Statistics</h2>
-				<div className={css.settingsBig}>
-					<div className={css.stats}>
-						<div className={css.stat}>
-							<span>Games Played</span>
-							<span>{stats?.gamesPlayed}</span>
-						</div>
-						<div className={css.stat}>
-							<span>Wins</span>
-							<span>{stats?.wins}</span>
-						</div>
-						<div className={css.stat}>
-							<span>Losses</span>
-							<span>{stats?.losses}</span>
-						</div>
-						<div className={css.stat}>
-							<span>Ties</span>
-							<span>{stats?.ties}</span>
-						</div>
-						<div className={css.stat}>
-							<span>Forfeit Wins</span>
-							<span>{stats?.forfeitWins}</span>
-						</div>
-						<div className={css.stat}>
-							<span>Forfeit Losses</span>
-							<span>{stats?.forfeitLosses}</span>
-						</div>
-						<div className={css.stat}>
-							<span>Winrate</span>
-							<span>
-								{stats !== null && stats.gamesPlayed > stats.ties
-									? winrate + '%'
-									: 'N/A'}
-							</span>
-						</div>
-						<div>
-							<Button
-								className={css.hofButton}
-								variant="stone"
-								onClick={handleHallOfFame}
-							>
-								Hall of Fame
-							</Button>
-							<Button
-								className={css.hofButton}
-								variant="stone"
-								onClick={handleAchievements}
-							>
-								Achievements
-							</Button>
-						</div>
-					</div>
 				</div>
 			</MenuLayout>
 		</>

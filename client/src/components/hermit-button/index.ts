@@ -1,1 +1,1 @@
-export {default} from './hermit-button'
+export {default} from './button'
