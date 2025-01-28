@@ -19,6 +19,7 @@ import {PlayerEntity} from 'common/entities'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {config} from 'dotenv'
 import {Database} from 'server/db/db'
+import {ACHIEVEMENTS_LIST} from 'common/achievements'
 
 describe('Test Database', () => {
 	let database: Database
@@ -46,6 +47,7 @@ describe('Test Database', () => {
 				...env,
 			},
 			CARDS_LIST,
+			ACHIEVEMENTS_LIST,
 			BF_DEPTH,
 		)
 	})
