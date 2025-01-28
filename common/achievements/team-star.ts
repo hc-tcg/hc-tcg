@@ -27,7 +27,7 @@ const members = [
 	ImpulseCards,
 	XisumavoidCards,
 	RendogCards,
-]
+].map((member) => member.map((memberCard) => memberCard.id))
 
 const TeamStar: Achievement = {
 	...achievement,
@@ -44,7 +44,7 @@ const TeamStar: Achievement = {
 		if (outcome.type !== 'player-won') return
 		if (outcome.winner !== playerEntity) return
 
-		const playerDeck = player.getDeck().map((card) => card.props)
+		const playerDeck = player.getDeck().map((card) => card.props.id)
 		let containsAllMembers = true
 		members.forEach((member) => {
 			let containsMember = false

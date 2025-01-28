@@ -29,12 +29,12 @@ const HotTake: Achievement = {
 			const canPrimary = hasEnoughEnergy(
 				energy,
 				hermit.getAttackCost('primary'),
-				game.settings.noItemRequirements,
+				false,
 			)
 			const canSecondary = hasEnoughEnergy(
 				energy,
 				hermit.getAttackCost('secondary'),
-				game.settings.noItemRequirements,
+				false,
 			)
 			if (!canPrimary || !canSecondary) return
 			component.incrementGoalProgress({goal: 0})
