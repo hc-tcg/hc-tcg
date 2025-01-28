@@ -86,7 +86,7 @@ export type GameState = {
 		opponentActionStartTime: number | null
 	}
 
-	isBossGame: boolean
+	isEvilXBossGame: boolean
 }
 
 export type PlayCardAction =
@@ -184,7 +184,7 @@ export type LocalGameState = {
 		turnRemaining: number
 	}
 
-	isBossGame: boolean
+	isEvilXBossGame: boolean
 
 	voiceLineQueue: Array<string>
 }

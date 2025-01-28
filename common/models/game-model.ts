@@ -152,6 +152,7 @@ export class GameModel {
 		options?: {
 			randomizeOrder?: boolean
 			publishBattleLog?: (logs: Array<Message>, timeout: number) => void
+			countAchievements?: boolean
 		},
 	) {
 		options = options ?? {}
@@ -188,6 +189,7 @@ export class GameModel {
 			startWithAllCards: settings.startWithAllCards,
 			unlimitedCards: settings.unlimitedCards,
 			extraStartingCards: settings.extraStartingCards,
+			countAchievements: !!options.countAchievements,
 		})
 
 		this.state = getGameState(this, options.randomizeOrder)

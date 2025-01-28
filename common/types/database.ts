@@ -1,3 +1,4 @@
+import {AchievementProgress} from '../types/achievements'
 import {TypeT} from './cards'
 import {ApiDeck} from './deck'
 
@@ -71,17 +72,13 @@ export type GamesStats = {
 	errorRate: number
 }
 
+export type AchievementData = {
+	achievementData: AchievementProgress
+}
+
 export type ApiGame = {
 	firstPlayerName: string
 	secondPlayerName: string
 	startTime: number
 	winner: string | null
-}
-
-export type Achievement = {
-	id: string
-	name: string
-	description: string
-	icon: string
-	total: string
 }
