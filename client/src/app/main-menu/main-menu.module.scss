@@ -44,6 +44,10 @@
 	}
 }
 
+.mainMenuButton {
+	height: 4.2rem;
+}
+
 .logo {
 	margin-inline: auto;
 }
@@ -86,7 +90,7 @@
 nav {
 	margin-top: 5vh;
 	display: grid;
-	gap: 1vh;
+	gap: 2vh;
 	grid-template-areas:
 		"public"
 		"private-create"
@@ -122,14 +126,20 @@ nav {
 	grid-area: logout;
 }
 
-#riddle {
-	grid-area: riddle;
-	height: 3.25rem;
-	font-size: 1.25rem;
+#tutorial {
+	grid-area: tutorial;
+}
 
-	@media screen and (max-width: 720px) {
-		height: 2.5rem;
-	}
+#achievements {
+	grid-area: achievements;
+}
+
+#gameHistory {
+	grid-area: game-history;
+}
+
+#hof {
+	grid-area: hof;
 }
 
 .body {
@@ -446,16 +456,20 @@ nav {
 /* DESKTOP */
 @media (min-width: 80vh) {
 	nav {
-		margin-top: 5vh;
+		margin-top: 6vh;
 		display: grid;
-		gap: 2vh;
+		gap: 0.5vh;
 		grid-template-columns: 1fr 1fr;
 		grid-template-areas:
 			"public public"
-			"private-create solo-game"
 			"deck deck"
+<<<<<<< HEAD
 			"riddle riddle"
 			"logout settings";
+=======
+			"achievements hof"
+			"settings settings";
+>>>>>>> 041ad189f (Menu changes)
 	}
 }
 

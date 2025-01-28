@@ -4,3 +4,6 @@ export type ButtonVariant =
 	| 'secondary'
 	| 'error'
 	| 'stone'
+	| 'gold'
+	| 'blue'
+	| 'pink'
