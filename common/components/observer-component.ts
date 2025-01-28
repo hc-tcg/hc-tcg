@@ -2,6 +2,7 @@ import {Entity, ObserverEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
 import type {Hook, PriorityHook, WaterfallHook} from '../types/hooks'
 import {PrioritiesT, Priority, PriorityDict} from '../types/priorities'
+import {AchievementComponent} from './achievement-component'
 import type {CardComponent} from './card-component'
 import {PlayerComponent} from './player-component'
 import type {StatusEffectComponent} from './status-effect-component'
@@ -14,7 +15,10 @@ export class ObserverComponent {
 	readonly game: GameModel
 	readonly entity: ObserverEntity
 	readonly wrappingEntity: Entity<
-		CardComponent | StatusEffectComponent | PlayerComponent
+		| CardComponent
+		| StatusEffectComponent
+		| AchievementComponent
+		| PlayerComponent
 	>
 	private hooks: Array<Hook<any, any> | PriorityHook<any, any>>
 
@@ -22,7 +26,10 @@ export class ObserverComponent {
 		game: GameModel,
 		entity: ObserverEntity,
 		wrappingEntity: Entity<
-			CardComponent | StatusEffectComponent | PlayerComponent
+			| CardComponent
+			| StatusEffectComponent
+			| AchievementComponent
+			| PlayerComponent
 		>,
 	) {
 		this.game = game

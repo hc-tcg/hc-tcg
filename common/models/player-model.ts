@@ -1,6 +1,7 @@
 import {Socket} from 'socket.io'
 import {Deck} from '../../common/types/deck'
 import {COINS} from '../coins'
+import {AchievementProgress} from '../types/achievements'
 import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
 
@@ -17,6 +18,7 @@ export class PlayerModel {
 	public socket: Socket
 	public uuid: string
 	public authenticated: boolean
+	public achievementProgress: AchievementProgress
 
 	constructor(playerName: string, minecraftName: string, socket: Socket) {
 		this.internalId = Math.random().toString() as PlayerId
@@ -31,6 +33,7 @@ export class PlayerModel {
 		this.socket = socket
 		this.uuid = ''
 		this.authenticated = false
+		this.achievementProgress = {}
 	}
 
 	public get id() {

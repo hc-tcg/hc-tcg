@@ -34,6 +34,10 @@ export function* addUser(
 	if (result.type === 'success') {
 		player.uuid = result.body.uuid
 		player.authenticated = true
+		broadcast([player], {
+			type: serverMessages.ACHIEVEMENTS_RECIEVED,
+			progress: player.achievementProgress,
+		})
 		broadcast([player], {type: serverMessages.AUTHENTICATED, user: result.body})
 	} else {
 		broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})
@@ -58,6 +62,19 @@ export function* authenticateUser(
 	if (player && result.type === 'success') {
 		player.uuid = result.body.uuid
 		player.authenticated = true
+
+		const achievementProgress = yield* call(
+			[root.db, root.db.getAchievements],
+			player.uuid,
+		)
+		if (achievementProgress.type === 'success') {
+			player.achievementProgress = achievementProgress.body.achievementData
+			broadcast([player], {
+				type: serverMessages.ACHIEVEMENTS_RECIEVED,
+				progress: player.achievementProgress,
+			})
+		}
+
 		broadcast([player], {type: serverMessages.AUTHENTICATED, user: result.body})
 	} else {
 		broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})
@@ -557,4 +574,39 @@ export function* getDeck(code: string) {
 
 	if (deck.type === 'failure') return null
 	return deck.body
+}
+
+export function* updateAchievements(player: PlayerModel) {
+	if (!root.db?.connected) return
+
+	const {type: success} = yield* call(
+		[root.db, root.db.updateAchievements],
+		player,
+	)
+	if (success === 'failure') return false
+	return true
+}
+
+export function* getAchievements(
+	action: RecievedClientMessage<typeof clientMessages.GET_ACHIEVEMENTS>,
+) {
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
+
+	const player = root.players[action.playerId]
+	const result = yield* call([root.db, root.db.getAchievements], player.uuid)
+
+	if (result.type === 'success') {
+		broadcast([player], {
+			type: serverMessages.ACHIEVEMENTS_RECIEVED,
+			progress: result.body.achievementData,
+		})
+	} else {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: result.reason,
+		})
+	}
 }
