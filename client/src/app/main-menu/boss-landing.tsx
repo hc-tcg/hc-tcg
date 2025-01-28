@@ -50,7 +50,7 @@ function BossLanding({setMenuSection}: Props) {
 	const [evilXOpen, setEvilXOpen] = useState<boolean>(false)
 
 	const handleCreateBossGame = () => {
-		setMenuSection('mainmenu')
+		setMenuSection('game-landing')
 		dispatch({type: localMessages.MATCHMAKING_BOSS_GAME_CREATE})
 	}
 
@@ -162,7 +162,7 @@ function BossLanding({setMenuSection}: Props) {
 				</Modal.Description>
 			</Modal>
 			<MenuLayout
-				back={() => setMenuSection('mainmenu')}
+				back={() => setMenuSection('game-landing')}
 				title="Single Player"
 				returnText="Main Menu"
 				className={css.bossLanding}
