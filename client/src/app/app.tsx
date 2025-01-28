@@ -27,6 +27,7 @@ import GameSettings from './main-menu/game-settings'
 import HallOfFame from './main-menu/hall-of-fame'
 import Settings from './main-menu/settings'
 import MatchMaking from './match-making'
+import GameLanding from './main-menu/games-landing'
 
 function App() {
 	const section = useRouter()
@@ -71,6 +72,9 @@ function App() {
 					return <Credits setMenuSection={setMenuSection} />
 				case 'boss-landing':
 					return <BossLanding setMenuSection={setMenuSection} />
+				case 'game-landing':
+					return <GameLanding setMenuSection={setMenuSection} />
+
 				case 'mainmenu':
 				default:
 					return <MainMenu setMenuSection={setMenuSection} />
