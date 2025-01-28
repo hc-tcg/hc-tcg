@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
-import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
 import {Win1} from 'common/achievements/wins'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
 
 describe('Test win achivement', () => {
 	test('Test win1 achivement', () => {

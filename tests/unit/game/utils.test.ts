@@ -1,6 +1,13 @@
 import {describe, expect, test} from '@jest/globals'
+import {Win1} from 'common/achievements/wins'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
+import {
+	attack,
+	endTurn,
+	playCardFromHand,
+	testAchivement,
+	testGame,
+} from './utils'
 
 describe('Test Game Utils', () => {
 	test('Test fails if game ends', () => {
@@ -22,5 +29,25 @@ describe('Test Game Utils', () => {
 				{oneShotMode: true},
 			),
 		).toThrow()
+	})
+	test('Test achievment tests run', () => {
+		let playedGame = false
+		let checkedAchievment = false
+		testAchivement(
+			{
+				achievement: Win1,
+				playerOneDeck: [EthosLabCommon],
+				playerTwoDeck: [EthosLabCommon],
+				playGame: function* (_game) {
+					playedGame = true
+				},
+				checkAchivement(_game, _achievement, _outcome) {
+					checkedAchievment = true
+				},
+			},
+			{oneShotMode: true},
+		)
+		expect(playedGame).toBeTruthy()
+		expect(checkedAchievment).toBeTruthy()
 	})
 })
