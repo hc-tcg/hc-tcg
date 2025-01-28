@@ -1,11 +1,15 @@
+import {achievement} from 'common/achievements/defaults'
+import {Achievement} from 'common/achievements/types'
 import EvilXisumaBoss, {
 	BOSS_ATTACK,
 	supplyBossAttack,
 } from 'common/cards/boss/hermits/evilxisuma_boss'
 import {Card} from 'common/cards/types'
 import {
+	AchievementComponent,
 	BoardSlotComponent,
 	CardComponent,
+	ObserverComponent,
 	PlayerComponent,
 	RowComponent,
 	SlotComponent,
@@ -402,6 +406,68 @@ export function testBossFight(
 	}
 
 	if (options.then) options.then(controller.game)
+}
+
+/** Test an achivement for player one in a game */
+export function testAchivement(
+	options: {
+		achievement: Achievement
+		playGame: (game: GameModel) => any
+		checkAchivement: (
+			game: GameModel,
+			achievement: AchievementComponent,
+			outcome: GameOutcome,
+		) => any
+		playerOneDeck: Array<Card>
+		playerTwoDeck: Array<Card>
+	},
+	settings: Partial<GameSettings> = {},
+) {
+	let achievementComponent: AchievementComponent
+	let player: PlayerComponent
+
+	let saga = function* (game: GameModel) {
+		player = game.currentPlayer
+		achievementComponent = game.components.new(
+			AchievementComponent,
+			options.achievement.numericId,
+			{},
+			player.entity,
+		)
+		const achievementObserver = game.components.new(
+			ObserverComponent,
+			achievementComponent.entity,
+		)
+
+		achievement.onGameStart(
+			game,
+			player.entity,
+			achievementComponent,
+			achievementObserver,
+		)
+
+		yield* options.playGame(game)
+	}
+
+	let then = function (game: GameModel, gameOutcome: GameOutcome) {
+		achievement.onGameEnd(
+			game,
+			player.entity,
+			achievementComponent,
+			gameOutcome,
+		)
+		options.checkAchivement(game, gameOutcome, achievementComponent)
+	}
+
+	testGame(
+		{
+			saga,
+			then,
+			playerOneDeck: options.playerOneDeck,
+			playerTwoDeck: options.playerTwoDeck,
+		},
+		settings,
+	)
 }
 
 export function* bossAttack(game: GameModel, ...attack: BOSS_ATTACK) {
