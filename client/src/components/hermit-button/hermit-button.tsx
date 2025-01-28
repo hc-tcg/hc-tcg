@@ -63,8 +63,10 @@ const HermitButton = ({
 		const background = backgroundRef.current
 		const rightOverlay = rightOverlayRef.current
 		const returnButton = returnButtonRef.current
-		if (!background || !rightOverlay || !returnButton) return
+		const button = buttonRef.current
+		if (!background || !rightOverlay || !returnButton || !button) return
 		setSelectedKey(type)
+		button.style.zIndex = '1000'
 		background.classList.remove(css.hover)
 		background.style.width = '60%'
 		background.style.transition = 'width 0.6s, left 0.6s'
@@ -79,6 +81,7 @@ const HermitButton = ({
 		const background = backgroundRef.current
 		const button = buttonRef.current
 		if (!background || !button) return
+		button.style.zIndex = '100'
 		background.style.transition = 'transform 0.3s, opacity 0.3s'
 		background.style.transform = 'scale(0%)'
 		background.style.opacity = '0%'
