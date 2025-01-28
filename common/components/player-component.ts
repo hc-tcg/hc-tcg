@@ -30,6 +30,7 @@ export type PlayerDefs = {
 	selectedCoinHead: keyof typeof COINS
 	achievementProgress?: AchievementProgress
 	selectedCoinHead: keyof typeof COINS
+	achievementProgress?: AchievementProgress
 }
 
 export class PlayerComponent {
