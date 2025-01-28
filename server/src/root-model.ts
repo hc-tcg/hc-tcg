@@ -1,3 +1,4 @@
+import {ACHIEVEMENTS_LIST} from 'common/achievements'
 import {CARDS_LIST} from 'common/cards'
 import {PlayerModel} from 'common/models/player-model'
 import {Update} from 'common/types/server-requests'
@@ -35,7 +36,12 @@ export class RootModel {
 
 	public constructor() {
 		const env = dotenv.config()
-		this.db = new Database({...env, ...process.env}, CARDS_LIST, 14)
+		this.db = new Database(
+			{...env, ...process.env},
+			CARDS_LIST,
+			ACHIEVEMENTS_LIST,
+			14,
+		)
 		this.db.new()
 	}
 
