@@ -39,7 +39,7 @@ describe('Test win achivement', () => {
 					yield* attack(game, 'secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
-					expect(Win1.getProgress(achievement.goals)).toBeLessThan(Win1.steps)
+					expect(Win1.getProgress(achievement.goals)).toBeFalsy()
 				},
 			},
 			{oneShotMode: true, noItemRequirements: true},
