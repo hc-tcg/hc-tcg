@@ -1,14 +1,16 @@
 name: CI
 
 on:
-    push:
-        branches:
-            - master
-            - ux-rework
-    pull_request:
-        branches:
-            - master
-            - ux-rework
+  push:
+    branches:
+      - master
+      - aotcgii
+      - achievements
+  pull_request:
+    branches:
+      - master
+      - aotcgii
+      - achievements
 
 permissions:
     checks: write

@@ -78,8 +78,8 @@ function More({setMenuSection}: Props) {
 		setMenuSection(section)
 	}
 	const handleDataSettings = () => changeMenuSection('data-settings')
-	const handleHallOfFame = () => changeMenuSection('hall-of-fame')
-	const handleAchievements = () => changeMenuSection('achievements')
+	const _handleHallOfFame = () => changeMenuSection('hall-of-fame')
+	const _handleAchievements = () => changeMenuSection('achievements')
 
 	const handleCredits = () => changeMenuSection('credits')
 
