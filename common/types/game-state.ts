@@ -1,10 +1,10 @@
-import type { Attach, Card, HasHealth } from '../cards/types'
-import type { CardComponent } from '../components'
-import type { CardEntity, PlayerEntity, RowEntity, SlotEntity } from '../entities'
-import type { PlayerId } from '../models/player-model'
-import type { FormattedTextNode } from '../utils/formatting'
-import type { HermitAttackType } from './attack'
-import { ModalRequest } from './modal-requests'
+import type {Attach, Card, HasHealth} from '../cards/types'
+import type {CardComponent} from '../components'
+import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
+import type {PlayerId} from '../models/player-model'
+import type {FormattedTextNode} from '../utils/formatting'
+import type {HermitAttackType} from './attack'
+import {ModalRequest} from './modal-requests'
 import type {
 	LocalCardInstance,
 	LocalModalData,
@@ -16,14 +16,14 @@ type NewType = SlotEntity
 
 export type LocalRowState = {
 	entity: RowEntity
-	hermit: { slot: SlotEntity; card: LocalCardInstance<HasHealth> | null }
-	attach: { slot: NewType; card: LocalCardInstance<Attach> | null }
-	items: Array<{ slot: SlotEntity; card: LocalCardInstance<Card> | null }>
+	hermit: {slot: SlotEntity; card: LocalCardInstance<HasHealth> | null}
+	attach: {slot: NewType; card: LocalCardInstance<Attach> | null}
+	items: Array<{slot: SlotEntity; card: LocalCardInstance<Card> | null}>
 	health: number | null
 }
 
 export type CoinFlipResult = 'heads' | 'tails'
-export type CoinFlip = { result: CoinFlipResult; forced: boolean }
+export type CoinFlip = {result: CoinFlipResult; forced: boolean}
 
 export type CurrentCoinFlip = {
 	card: CardEntity
@@ -48,7 +48,7 @@ export type BattleLogT = {
 	description: string
 }
 
-export type { LocalModalData as ModalData } from './server-requests'
+export type {LocalModalData as ModalData} from './server-requests'
 
 export type TurnState = {
 	turnNumber: number
@@ -115,14 +115,14 @@ export type GameRules = {
 export type TurnActions = Array<TurnAction>
 
 export type GameOutcome =
-	| { type: 'tie' }
-	| { type: 'timeout' }
-	| { type: 'game-crash'; error: string }
+	| {type: 'tie'}
+	| {type: 'timeout'}
+	| {type: 'game-crash'; error: string}
 	| {
-		type: 'player-won'
-		winner: PlayerEntity
-		victoryReason: GameVictoryReason
-	}
+			type: 'player-won'
+			winner: PlayerEntity
+			victoryReason: GameVictoryReason
+	  }
 
 export type GameVictoryReason =
 	| 'forfeit'
@@ -141,7 +141,7 @@ export type LocalPlayerState = {
 	lives: number
 	board: {
 		activeRow: RowEntity | null
-		singleUse: { slot: SlotEntity; card: LocalCardInstance | null }
+		singleUse: {slot: SlotEntity; card: LocalCardInstance | null}
 		singleUseCardUsed: boolean
 		rows: Array<LocalRowState>
 	}
@@ -184,13 +184,13 @@ export type LocalGameState = {
 
 type MessageSender =
 	| {
-		type: 'viewer'
-		id: PlayerId
-	}
+			type: 'viewer'
+			id: PlayerId
+	  }
 	| {
-		type: 'system'
-		id: PlayerEntity
-	}
+			type: 'system'
+			id: PlayerEntity
+	  }
 
 export type Message = {
 	sender: MessageSender

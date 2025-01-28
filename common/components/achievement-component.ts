@@ -48,12 +48,10 @@ export class AchievementComponent<
 	}
 
 	public incrementGoalProgress(goalId: number, amount: number = 1) {
-		this.goals[goalId] =
-			this.goals[goalId] === undefined ? amount : this.goals[goalId] + amount
+		this.goals[goalId] = (this.goals[goalId] || 0) + amount
 	}
 
 	public bestGoalProgress(goalId: number, attempt: number) {
-		if (!this.goals[goalId]) this.goals[goalId] = 0
-		this.goals[goalId] = Math.max(this.goals[goalId], attempt)
+		this.goals[goalId] = Math.max(this.goals[goalId] || 0, attempt)
 	}
 }

@@ -1,6 +1,6 @@
-import { getDeckCost } from '../utils/ranks'
-import { achievement } from './defaults'
-import { Achievement } from './types'
+import {getDeckCost} from '../utils/ranks'
+import {achievement} from './defaults'
+import {Achievement} from './types'
 
 const NoDerpcoins: Achievement = {
 	...achievement,

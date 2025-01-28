@@ -1,5 +1,5 @@
 import JoeHillsRare from 'common/cards/hermits/joehills-rare'
-import { Card } from 'common/cards/types'
+import {Card} from 'common/cards/types'
 import {
 	CardComponent,
 	PlayerComponent,
@@ -8,8 +8,8 @@ import {
 	StatusEffectComponent,
 } from 'common/components'
 import query from 'common/components/query'
-import { PlayerEntity } from 'common/entities'
-import { GameModel } from 'common/models/game-model'
+import {PlayerEntity} from 'common/entities'
+import {GameModel} from 'common/models/game-model'
 import {
 	MultiturnPrimaryAttackDisabledEffect,
 	MultiturnSecondaryAttackDisabledEffect,
@@ -25,14 +25,14 @@ import {
 	LocalGameState,
 	LocalPlayerState,
 } from 'common/types/game-state'
-import { ModalData } from 'common/types/modal-requests'
+import {ModalData} from 'common/types/modal-requests'
 import {
 	LocalCardInstance,
 	LocalModalData,
 	LocalStatusEffectInstance,
 	WithoutFunctions,
 } from 'common/types/server-requests'
-import { GameViewer } from '../game-controller'
+import {GameViewer} from '../game-controller'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -52,8 +52,8 @@ function getLocalStatusEffect(effect: StatusEffectComponent) {
 		instance: effect.entity,
 		target:
 			effect.target instanceof CardComponent
-				? { type: 'card', card: effect.target.entity }
-				: { type: 'global', player: effect.target.entity },
+				? {type: 'card', card: effect.target.entity}
+				: {type: 'global', player: effect.target.entity},
 		counter: effect.counter,
 		description: effect.description,
 	}
@@ -366,35 +366,35 @@ export function getLocalGameState(
 		hand: viewer.spectator
 			? []
 			: game.components
-				.filter(
-					CardComponent,
-					query.card.slot(
-						query.slot.player(playerState.entity),
-						query.slot.hand,
-					),
-				)
-				.sort(CardComponent.compareOrder)
-				.map((card) => getLocalCard(game, card)),
+					.filter(
+						CardComponent,
+						query.card.slot(
+							query.slot.player(playerState.entity),
+							query.slot.hand,
+						),
+					)
+					.sort(CardComponent.compareOrder)
+					.map((card) => getLocalCard(game, card)),
 		pileCount: viewer.spectator
 			? 0
 			: game.components.filter(
-				CardComponent,
-				query.card.slot(
-					query.slot.player(playerState.entity),
-					query.slot.deck,
-				),
-			).length,
-		discarded: viewer.spectator
-			? []
-			: game.components
-				.filter(
 					CardComponent,
 					query.card.slot(
 						query.slot.player(playerState.entity),
-						query.slot.discardPile,
+						query.slot.deck,
 					),
-				)
-				.map((card) => getLocalCard(game, card)),
+				).length,
+		discarded: viewer.spectator
+			? []
+			: game.components
+					.filter(
+						CardComponent,
+						query.card.slot(
+							query.slot.player(playerState.entity),
+							query.slot.discardPile,
+						),
+					)
+					.map((card) => getLocalCard(game, card)),
 
 		// The entity of the player on the left of the screen
 		playerEntity: players[viewer.playerOnLeft.entity].entity,

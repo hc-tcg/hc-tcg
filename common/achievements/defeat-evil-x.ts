@@ -1,5 +1,5 @@
-import { achievement } from './defaults'
-import { Achievement } from './types'
+import {achievement} from './defaults'
+import {Achievement} from './types'
 
 const DefeatEvilX: Achievement = {
 	...achievement,
