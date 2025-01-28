@@ -31,6 +31,7 @@ export type PlayerDefs = {
 	disableDeckingOut?: true
 	achievementProgress?: AchievementProgress
 	selectedCoinHead: keyof typeof COINS
+	achievementProgress?: AchievementProgress
 }
 
 export class PlayerComponent {
