@@ -27,7 +27,7 @@ const AllCards: Achievement = {
 			playedCards.push(card)
 			const position = defaultCards.indexOf(card.props)
 			if (position < 0) return
-			component.addGoalProgress({goal: position})
+			component.incrementGoalProgress({goal: position})
 		})
 	},
 }

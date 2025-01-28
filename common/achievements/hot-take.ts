@@ -37,7 +37,7 @@ const HotTake: Achievement = {
 				game.settings.noItemRequirements,
 			)
 			if (!canPrimary || !canSecondary) return
-			component.addGoalProgress({goal: 0})
+			component.incrementGoalProgress({goal: 0})
 		})
 	},
 }

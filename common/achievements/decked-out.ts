@@ -11,7 +11,7 @@ const DeckedOut: Achievement = {
 	onGameEnd(_game, playerEntity, component, outcome) {
 		if (outcome.type !== 'player-won' || outcome.winner !== playerEntity) return
 		if (outcome.victoryReason !== 'decked-out') return
-		component.addGoalProgress({goal: 0})
+		component.incrementGoalProgress({goal: 0})
 	},
 }
 

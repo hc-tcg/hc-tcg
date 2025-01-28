@@ -55,7 +55,7 @@ const TeamStar: Achievement = {
 			containsAllMembers &&= containsMember
 		})
 		if (!containsAllMembers) return
-		component.addGoalProgress({goal: 0})
+		component.incrementGoalProgress({goal: 0})
 	},
 }
 

@@ -47,7 +47,7 @@ export class AchievementComponent<
 		this.player = player
 	}
 
-	public addGoalProgress({
+	public incrementGoalProgress({
 		goal,
 		amount = 1,
 	}: {goal: number; amount?: number}) {

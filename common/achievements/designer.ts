@@ -16,7 +16,7 @@ const Designer: Achievement = {
         if (!player) return
 
         if (STARTER_DECK_IDS.includes(player.getDeck().map((card) => card.props.id))) return
-        component.addGoalProgress({goal: 0})
+        component.incrementGoalProgress({goal: 0})
     },
 }
 
