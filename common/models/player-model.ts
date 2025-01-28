@@ -3,6 +3,7 @@ import {Deck} from '../../common/types/deck'
 import {COINS} from '../coins'
 import {AchievementProgress} from '../types/achievements'
 import {COINS} from '../coins'
+import {AchievementProgress} from '../types/achievements'
 import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
 
