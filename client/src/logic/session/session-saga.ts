@@ -117,17 +117,13 @@ function getNonDatabaseUser(): User {
 	}
 }
 
-function* authenticateUser(
-	playerUuid: string,
-	secret: string,
-): Generator<any, User> {
-	const headers = {
-		userId: playerUuid,
-		secret: secret,
-	}
-
-	const auth = yield* call(fetch, 'http://localhost:9000/api/auth/', {
-		headers,
+function* setupDeckData(socket: any) {
+	yield* sendMsg({
+		type: clientMessages.GET_DECKS,
+	})
+	const result = yield* race({
+		decks: call(receiveMsg(socket, serverMessages.DECKS_RECIEVED)),
+		failure: call(receiveMsg(socket, serverMessages.NO_DATABASE_CONNECTION)),
 	})
 
 	if (auth.status === 500) {
@@ -246,6 +242,41 @@ export function* setupData(user: User) {
 	yield* put<LocalMessage>({
 		type: localMessages.MINECRAFT_NAME_SET,
 		name: user.minecraftName ? user.minecraftName : user.username,
+	})
+}
+
+export function* updateAchievements(socket: any) {
+	yield* sendMsg({
+		type: clientMessages.GET_ACHIEVEMENTS,
+	})
+	const result = yield* race({
+		achievements: call(
+			receiveMsg(socket, serverMessages.ACHIEVEMENTS_RECIEVED),
+		),
+		failure: call(receiveMsg(socket, serverMessages.NO_DATABASE_CONNECTION)),
+	})
+
+	if (result.failure) {
+		yield* put<LocalMessage>({
+			type: localMessages.DATABASE_SET,
+			data: {
+				key: 'noConnection',
+				value: true,
+			},
+		})
+		return
+	}
+
+	const {achievements} = result
+
+	if (!achievements) return
+
+	yield put<LocalMessage>({
+		type: localMessages.DATABASE_SET,
+		data: {
+			key: 'achievements',
+			value: achievements.progress,
+		},
 	})
 }
 
@@ -386,6 +417,8 @@ export function* loginSaga() {
 			type: localMessages.PLAYER_SESSION_SET,
 			player: session,
 		})
+		yield* setupDeckData(socket)
+		yield* updateAchievements(socket)
 		yield put<LocalMessage>({
 			type: localMessages.CONNECTED,
 		})
@@ -409,12 +442,34 @@ export function* loginSaga() {
 		saveSession(result.playerInfo.player)
 
 		// set user info for reconnects
-		socket.auth = {
-			...socket.auth,
-			playerUuid: localStorage.getItem('database:userId') as string,
-			playerName: result.playerInfo.player.playerName,
-			playerId: result.playerInfo.player.playerId,
-			playerSecret: result.playerInfo.player.playerSecret,
+		socket.auth.playerId = result.playerInfo.player.playerId
+		socket.auth.playerSecret = result.playerInfo.player.playerSecret
+
+		const secret = localStorage.getItem('databaseInfo:secret')
+		const userId = localStorage.getItem('databaseInfo:userId')
+
+		// Create new database user to connect
+		if (!secret || !userId) {
+			yield* insertUser(socket)
+		} else {
+			yield* sendMsg({
+				type: clientMessages.PG_AUTHENTICATE,
+				userId: userId,
+				secret: secret,
+			})
+
+			const userInfo = yield* race({
+				success: call(receiveMsg(socket, serverMessages.AUTHENTICATED)),
+				failure: call(receiveMsg(socket, serverMessages.AUTHENTICATION_FAIL)),
+				noConnection: call(
+					receiveMsg(socket, serverMessages.NO_DATABASE_CONNECTION),
+				),
+			})
+
+			if (userInfo.success || userInfo.noConnection) {
+				yield* setupDeckData(socket)
+				yield* updateAchievements(socket)
+			}
 		}
 
 		yield put<LocalMessage>({

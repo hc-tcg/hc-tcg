@@ -9,6 +9,7 @@ import {
 	deleteDeck,
 	deleteTag,
 	exportDeck,
+	getAchievements,
 	getDecks,
 	getOverview,
 	grabCurrentImport,
@@ -145,6 +146,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.REPLAY_OVERVIEW:
 			return yield* getOverview(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.GET_ACHIEVEMENTS:
+			return yield* getAchievements(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 	}

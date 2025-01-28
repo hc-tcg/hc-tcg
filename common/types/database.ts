@@ -96,26 +96,3 @@ export type ApiGame = {
 	startTime: number
 	winner: string | null
 }
-
-export type GameHistoryPlayer = {
-	player: 'you' | 'opponent'
-	name: string
-	minecraftName: string
-	uuid: string
-}
-
-export type GameHistory = {
-	firstPlayer: GameHistoryPlayer
-	secondPlayer: GameHistoryPlayer
-	hasReplay: boolean
-	startTime: Date
-	length: {
-		minutes: number
-		seconds: number
-		milliseconds: number
-	}
-	turns: number | null
-	winner: string
-	usedDeck: Deck
-	id: number
-}

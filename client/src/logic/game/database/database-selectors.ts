@@ -7,7 +7,3 @@ export const getLocalDatabaseInfo = (state: RootState) => {
 export const getAchievements = (state: RootState) => {
 	return getLocalDatabaseInfo(state).achievements
 }
-
-export const getAppearance = (state: RootState) => {
-	return getLocalDatabaseInfo(state).appearance
-}

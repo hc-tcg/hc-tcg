@@ -1,7 +1,5 @@
-import {defaultAppearance} from 'common/cosmetics/default'
-import {Appearance} from 'common/cosmetics/types'
 import {AchievementProgress} from 'common/types/achievements'
-import {GameHistory, PlayerStats} from 'common/types/database'
+import {Stats} from 'common/types/database'
 import {ApiDeck, Deck, Tag} from 'common/types/deck'
 import {Message} from 'common/types/game-state'
 import {LocalMessage, localMessages} from 'logic/messages'
@@ -14,7 +12,7 @@ export type DatabaseInfo = {
 	currentImport: ApiDeck | null
 	tags: Array<Tag>
 	achievements: AchievementProgress
-	stats: PlayerStats
+	stats: Stats
 	noConnection: boolean
 	invalidReplay: boolean
 	replayOverview: Array<Message>

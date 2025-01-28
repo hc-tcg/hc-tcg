@@ -6,7 +6,6 @@ const DefeatEvilX: Achievement = {
 	numericId: 6,
 	id: 'defeat_evil_x',
 	name: 'Evil X-terminated',
-	icon: '',
 	description: 'Defeat Evil X',
 	steps: 1,
 	onGameEnd(game, playerEntity, component, outcome) {

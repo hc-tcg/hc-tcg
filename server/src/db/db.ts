@@ -6,8 +6,6 @@ import pg from 'pg'
 const {Pool} = pg
 import assert from 'assert'
 import {CARDS} from 'common/cards'
-import {getStarterPack} from 'common/cards/starter-decks'
-import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerModel} from 'common/models/player-model'
 import {AchievementProgress} from 'common/types/achievements'
 import {TypeT} from 'common/types/cards'
@@ -1909,50 +1907,6 @@ export class Database {
 				],
 			)
 			return {type: 'success', body: undefined}
-		} catch (e) {
-			console.log(e)
-			return {
-				type: 'failure',
-				reason: `${e}`,
-			}
-		}
-	}
-
-	public async setAppearance(
-		playerId: string,
-		appearance: {
-			title: string | null
-			coin: string | null
-			heart: string | null
-			background: string | null
-			border: string | null
-		},
-	): Promise<DatabaseResult> {
-		try {
-			await this.pool.query(
-				`
-				UPDATE users
-				SET
-					title = $2,
-					coin = $3,
-					heart = $4,
-					background = $5,
-					border = $6
-				WHERE user_id = $1
-				`,
-				[
-					playerId,
-					appearance.title,
-					appearance.coin,
-					appearance.heart,
-					appearance.background,
-					appearance.border,
-				],
-			)
-			return {
-				type: 'success',
-				body: undefined,
-			}
 		} catch (e) {
 			console.log(e)
 			return {

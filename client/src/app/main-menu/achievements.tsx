@@ -1,6 +1,5 @@
 import {ACHIEVEMENTS_LIST} from 'common/achievements'
 import AchievementComponent from 'components/achievement'
-import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
 import {getAchievements} from 'logic/game/database/database-selectors'
 import {useSelector} from 'react-redux'
@@ -14,13 +13,12 @@ function Achievements({setMenuSection}: Props) {
 
 	return (
 		<MenuLayout
-			back={() => setMenuSection('main-menu')}
+			back={() => setMenuSection('settings')}
 			title="Achievements"
-			returnText="Main menu"
+			returnText="More"
 			className={css.settingsMenu}
 		>
 			<h2>Achievements</h2>
-			<Button onClick={() => setMenuSection('cosmetics')}>Cosmetics</Button>
 			<div className={css.achievementsContainer}>
 				{ACHIEVEMENTS_LIST.map((achievement) => (
 					<AchievementComponent

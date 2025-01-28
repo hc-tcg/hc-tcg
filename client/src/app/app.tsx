@@ -20,7 +20,7 @@ import Game from './game'
 import Login from './login'
 import MainMenu from './main-menu'
 import Achievements from './main-menu/achievements'
-import Cosmetics from './main-menu/cosmetics'
+import BossLanding from './main-menu/boss-landing'
 import Credits from './main-menu/credits'
 import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
@@ -61,12 +61,10 @@ function App() {
 					return <GameSettings setMenuSection={setMenuSection} />
 				case 'data-settings':
 					return <DataSettings setMenuSection={setMenuSection} />
-				case 'statistics':
-					return <Statistics setMenuSection={setMenuSection} />
+				case 'hall-of-fame':
+					return <HallOfFame setMenuSection={setMenuSection} />
 				case 'achievements':
 					return <Achievements setMenuSection={setMenuSection} />
-				case 'cosmetics':
-					return <Cosmetics setMenuSection={setMenuSection} />
 				case 'credits':
 					return <Credits setMenuSection={setMenuSection} />
 				case 'play-select':

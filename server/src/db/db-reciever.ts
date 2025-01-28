@@ -13,8 +13,75 @@ import {
 	clientMessages,
 } from '../../../common/socket-messages/client-messages'
 
-const CONNECTION_ASSERTION_MSG =
-	'The database should always be connected when this function is called.'
+function* noDatabaseConnection(playerId: string) {
+	const player = root.players[playerId]
+	broadcast([player], {type: serverMessages.NO_DATABASE_CONNECTION})
+}
+
+export function* addUser(
+	action: RecievedClientMessage<typeof clientMessages.PG_INSERT_USER>,
+) {
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
+	const result = yield* call(
+		[root.db, root.db.insertUser],
+		action.payload.username ? action.payload.username : '',
+		action.payload.minecraftName,
+	)
+
+	const player = root.players[action.playerId]
+
+	if (result.type === 'success') {
+		player.uuid = result.body.uuid
+		player.authenticated = true
+		broadcast([player], {
+			type: serverMessages.ACHIEVEMENTS_RECIEVED,
+			progress: player.achievementProgress,
+		})
+		broadcast([player], {type: serverMessages.AUTHENTICATED, user: result.body})
+	} else {
+		broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})
+	}
+}
+
+export function* authenticateUser(
+	action: RecievedClientMessage<typeof clientMessages.PG_AUTHENTICATE>,
+) {
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
+		return
+	}
+	const result = yield* call(
+		[root.db, root.db.authenticateUser],
+		action.payload.userId,
+		action.payload.secret,
+	)
+
+	const player = root.players[action.playerId]
+
+	if (player && result.type === 'success') {
+		player.uuid = result.body.uuid
+		player.authenticated = true
+
+		const achievementProgress = yield* call(
+			[root.db, root.db.getAchievements],
+			player.uuid,
+		)
+		if (achievementProgress.type === 'success') {
+			player.achievementProgress = achievementProgress.body.achievementData
+			broadcast([player], {
+				type: serverMessages.ACHIEVEMENTS_RECIEVED,
+				progress: player.achievementProgress,
+			})
+		}
+
+		broadcast([player], {type: serverMessages.AUTHENTICATED, user: result.body})
+	} else {
+		broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})
+	}
+}
 
 export function* getDecks(
 	action: RecievedClientMessage<typeof clientMessages.GET_DECKS>,
@@ -428,7 +495,7 @@ export function* getDeck(code: string) {
 }
 
 export function* updateAchievements(player: PlayerModel) {
-	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
+	if (!root.db?.connected) return
 
 	const {type: success} = yield* call(
 		[root.db, root.db.updateAchievements],
@@ -438,78 +505,26 @@ export function* updateAchievements(player: PlayerModel) {
 	return true
 }
 
-export function* getGameReplay(gameId: number) {
-	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
-
-	const replay = yield* root.db.getGameReplay(gameId)
-
-	if (replay.type === 'failure') {
-		console.log(replay.reason)
-		return null
-	}
-	return replay.body
-}
-
-export function* setUsername(playerUuid: string, username: string) {
-	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
-	yield* call([root.db, root.db.setUsername], playerUuid, username)
-}
-
-export function* setMinecraftName(playerUuid: string, username: string) {
-	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
-	yield* call([root.db, root.db.setMinecraftName], playerUuid, username)
-}
-
-export function* setAppearance(player: PlayerModel) {
-	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
-
-	const title =
-		player.appearance.title.id === defaultAppearance.title.id
-			? null
-			: player.appearance.title.id
-	const coin =
-		player.appearance.coin.id === defaultAppearance.coin.id
-			? null
-			: player.appearance.coin.id
-	const heart =
-		player.appearance.heart.id === defaultAppearance.heart.id
-			? null
-			: player.appearance.heart.id
-	const background =
-		player.appearance.background.id === defaultAppearance.background.id
-			? null
-			: player.appearance.background.id
-	const border =
-		player.appearance.border.id === defaultAppearance.border.id
-			? null
-			: player.appearance.border.id
-
-	yield* call([root.db, root.db.setAppearance], player.uuid, {
-		title: title,
-		coin: coin,
-		heart: heart,
-		background: background,
-		border: border,
-	})
-}
-
-export function* getOverview(
-	action: RecievedClientMessage<typeof clientMessages.REPLAY_OVERVIEW>,
+export function* getAchievements(
+	action: RecievedClientMessage<typeof clientMessages.GET_ACHIEVEMENTS>,
 ) {
-	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
-	const player = root.players[action.playerId]
-
-	const replay = yield* root.db.getGameReplay(action.payload.id)
-
-	if (replay.type === 'failure') {
-		broadcast([player], {
-			type: serverMessages.INVALID_REPLAY,
-		})
+	if (!root.db?.connected) {
+		yield* noDatabaseConnection(action.playerId)
 		return
 	}
 
-	broadcast([player], {
-		type: serverMessages.REPLAY_OVERVIEW_RECIEVED,
-		battleLog: replay.body.battleLog,
-	})
+	const player = root.players[action.playerId]
+	const result = yield* call([root.db, root.db.getAchievements], player.uuid)
+
+	if (result.type === 'success') {
+		broadcast([player], {
+			type: serverMessages.ACHIEVEMENTS_RECIEVED,
+			progress: result.body.achievementData,
+		})
+	} else {
+		broadcast([player], {
+			type: serverMessages.DATABASE_FAILURE,
+			error: result.reason,
+		})
+	}
 }

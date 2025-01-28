@@ -8,7 +8,6 @@ const Wipeout: Achievement = {
 	numericId: 5,
 	id: 'wipeout',
 	name: 'Wipeout',
-	icon: '',
 	description: 'Knockout 5 Hermits in the same turn',
 	steps: 5,
 	onGameStart(game, playerEntity, component, observer) {

@@ -19,7 +19,6 @@ const OreSnatcher: Achievement = {
 	numericId: 13,
 	id: 'ore_snatcher',
 	name: 'Ore Snatcher',
-	icon: '',
 	description:
 		"Use emerald to steal your opponent's gold, iron, diamond, or netherite armor 10 times.",
 	steps: 10,

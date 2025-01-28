@@ -1,7 +1,5 @@
 import {Socket} from 'socket.io'
 import {Deck} from '../../common/types/deck'
-import {defaultAppearance} from '../cosmetics/default'
-import {Appearance} from '../cosmetics/types'
 import {AchievementProgress} from '../types/achievements'
 import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
@@ -17,8 +15,8 @@ export class PlayerModel {
 	public censoredName: string
 	public socket: Socket
 	public uuid: string
+	public authenticated: boolean
 	public achievementProgress: AchievementProgress
-	public appearance: Appearance
 
 	constructor(
 		playerName: string,
@@ -35,9 +33,9 @@ export class PlayerModel {
 		this.minecraftName = minecraftName
 		this.censoredName = censorString(playerName)
 		this.socket = socket
-		this.uuid = uuid
+		this.uuid = ''
+		this.authenticated = false
 		this.achievementProgress = {}
-		this.appearance = {...defaultAppearance}
 	}
 
 	public get id() {

@@ -1,9 +1,12 @@
+import {ACHIEVEMENTS_LIST} from '../achievements'
 import {Card} from '../cards/types'
 import {
+	AchievementComponent,
 	BoardSlotComponent,
 	CardComponent,
 	DeckSlotComponent,
 	HandSlotComponent,
+	ObserverComponent,
 	PlayerComponent,
 	RowComponent,
 } from '../components'
@@ -11,6 +14,7 @@ import {PlayerDefs} from '../components/player-component'
 import query from '../components/query'
 import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
+import {AchievementProgress} from '../types/achievements'
 import {Deck} from '../types/deck'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
@@ -27,6 +31,7 @@ type ComponentSetupOptions = {
 	startWithAllCards: boolean
 	unlimitedCards: boolean
 	extraStartingCards: Array<string>
+	countAchievements: boolean
 }
 
 export type OpponentDefs = PlayerDefs & {
@@ -55,6 +60,7 @@ export function setupComponents(
 		player1Component.entity,
 		player1.deck,
 		options,
+		player1.model.achievementProgress,
 	)
 	setupEcsForPlayer(
 		game,
@@ -62,6 +68,7 @@ export function setupComponents(
 		player2Component.entity,
 		player2.deck,
 		options,
+		player2.model.achievementProgress,
 	)
 	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
 }
@@ -72,6 +79,7 @@ function setupEcsForPlayer(
 	playerEntity: PlayerEntity,
 	deck: Array<number | string | Card>,
 	options: ComponentSetupOptions,
+	achievementProgress: AchievementProgress | undefined,
 ) {
 	for (const card of deck) {
 		let slot = components.new(DeckSlotComponent, playerEntity, {
@@ -150,6 +158,30 @@ function setupEcsForPlayer(
 	cards.slice(0, amountOfStartingCards).forEach((card) => {
 		card.attach(components.new(HandSlotComponent, playerEntity))
 	})
+
+	if (options.countAchievements && achievementProgress) {
+		ACHIEVEMENTS_LIST.forEach((achievement) => {
+			if (!achievementProgress[achievement.numericId]) {
+				achievementProgress[achievement.numericId] = {goals: {}}
+			}
+			const achievementComponent = components.new(
+				AchievementComponent,
+				achievement,
+				achievementProgress[achievement.numericId]?.goals,
+				playerEntity,
+			)
+			const achievementObserver = components.new(
+				ObserverComponent,
+				achievementComponent.entity,
+			)
+			achievementComponent.props.onGameStart(
+				game,
+				playerEntity,
+				achievementComponent,
+				achievementObserver,
+			)
+		})
+	}
 }
 
 export function getGameState(game: GameModel, swapPlayers: boolean): GameState {

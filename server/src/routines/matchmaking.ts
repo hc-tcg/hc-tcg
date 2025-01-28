@@ -20,13 +20,7 @@ import {Deck} from 'common/types/deck'
 import {formatText} from 'common/utils/formatting'
 import {OpponentDefs} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
-import {
-	addGame,
-	getDeck,
-	getGameReplay,
-	sendAfterGameInfo,
-	updateAchievements,
-} from 'db/db-reciever'
+import {addGame, getDeck, updateAchievements} from 'db/db-reciever'
 import {GameController} from 'game-controller'
 import {LocalMessageTable, localMessages} from 'messages'
 import {

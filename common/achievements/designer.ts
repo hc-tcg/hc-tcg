@@ -11,7 +11,6 @@ const Designer: Achievement = {
 	numericId: 24,
 	id: 'designer',
 	name: 'Designer',
-	icon: '',
 	description: "Use a deck that isn't a starter deck in a game.",
 	steps: 1,
 	onGameEnd(game, playerEntity, component) {
