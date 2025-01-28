@@ -456,7 +456,7 @@ export function testAchivement(
 			achievementComponent,
 			gameOutcome,
 		)
-		options.checkAchivement(game, gameOutcome, achievementComponent)
+		options.checkAchivement(game, achievementComponent, gameOutcome)
 	}
 
 	testGame(
