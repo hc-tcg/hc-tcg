@@ -41,7 +41,7 @@ const British: Achievement = {
 					return
 				}
 
-				component.incrementGoalProgress(0)
+				component.incrementGoalProgress({goal: 0})
 				attackedHermits[targetHermit.entity] = 'both'
 			},
 		)

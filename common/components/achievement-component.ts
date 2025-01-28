@@ -47,11 +47,14 @@ export class AchievementComponent<
 		this.player = player
 	}
 
-	public incrementGoalProgress(goalId: number, amount: number = 1) {
-		this.goals[goalId] = (this.goals[goalId] || 0) + amount
+	public incrementGoalProgress({
+		goal,
+		amount = 1,
+	}: {goal: number; amount?: number}) {
+		this.goals[goal] = (this.goals[goal] || 0) + amount
 	}
 
-	public bestGoalProgress(goalId: number, attempt: number) {
-		this.goals[goalId] = Math.max(this.goals[goalId] || 0, attempt)
+	public bestGoalProgress({goal, attempt}: {goal: number; attempt: number}) {
+		this.goals[goal] = Math.max(this.goals[goal] || 0, attempt)
 	}
 }
