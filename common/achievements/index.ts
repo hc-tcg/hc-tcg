@@ -2,6 +2,7 @@ import British from './british'
 import DeceptiveSpectacles from './deceptive-spectacles'
 import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
+import Designer from './designer'
 import Ethogirl from './ethogirl'
 import HotTake from './hot-take'
 import HowDidWeGetHere from './how-did-we-get-here'
@@ -30,6 +31,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	Untouchable,
 	TeamStar,
 	OreSnatcher,
+	Designer,
 	Win1,
 	Win10,
 	Win100,
