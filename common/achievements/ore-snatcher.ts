@@ -36,7 +36,7 @@ const OreSnatcher: Achievement = {
 			if (SUSlot.getCard()?.props !== Emerald) return
 			if (!Armor.includes(player.activeRow?.getAttach()?.props.id || '')) return
 
-			component.incrementGoalProgress(0)
+			component.addGoalProgress({goal: 0})
 		})
 	},
 }

@@ -27,7 +27,7 @@ const Untouchable: Achievement = {
 					missedAttacks = 0
 				}
 				missedAttacks += 1
-				component.bestGoalProgress(0, missedAttacks)
+				component.bestGoalProgress({goal: 0, progress: missedAttacks})
 			},
 		)
 	},

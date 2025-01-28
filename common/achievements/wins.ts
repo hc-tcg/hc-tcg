@@ -16,7 +16,7 @@ function winAchievement(
 		onGameEnd(_game, playerEntity, component, outcome) {
 			if (outcome.type !== 'player-won' || outcome.winner !== playerEntity)
 				return
-			component.incrementGoalProgress(0)
+			component.addGoalProgress({goal: 0})
 		},
 	}
 }

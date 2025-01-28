@@ -38,7 +38,7 @@ const Ethogirl: Achievement = {
 				(_game, slot) =>
 					ETHO_CARDS.includes(slot.getCard()?.props.id as string),
 			)
-			component.bestGoalProgress(0, boardCards.length)
+			component.bestGoalProgress({goal: 0, progress: boardCards.length})
 		})
 	},
 }

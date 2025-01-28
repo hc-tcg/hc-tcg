@@ -47,14 +47,15 @@ export class AchievementComponent<
 		this.player = player
 	}
 
-	public incrementGoalProgress({
+	public addGoalProgress({
 		goal,
 		amount = 1,
 	}: {goal: number; amount?: number}) {
 		this.goals[goal] = (this.goals[goal] || 0) + amount
 	}
 
-	public bestGoalProgress({goal, attempt}: {goal: number; attempt: number}) {
-		this.goals[goal] = Math.max(this.goals[goal] || 0, attempt)
+	/** Set the goal progress to a number if it is higher than the current goal progress */
+	public bestGoalProgress({goal, progress}: {goal: number; progress: number}) {
+		this.goals[goal] = Math.max(this.goals[goal] || 0, progress)
 	}
 }

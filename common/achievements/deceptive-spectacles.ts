@@ -21,7 +21,7 @@ const DeceptiveSpectacles: Achievement = {
 				if (!newSlot.inDiscardPile()) return
 				if (game.currentPlayerEntity !== playerEntity) return
 				forcedDiscards += 1
-				component.bestGoalProgress(0, forcedDiscards)
+				component.bestGoalProgress({goal: 0, progress: forcedDiscards})
 			})
 		})
 	},

@@ -25,7 +25,7 @@ const Wipeout: Achievement = {
 			})
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			component.bestGoalProgress(0, knockouts)
+			component.bestGoalProgress({goal: 0, progress: knockouts})
 			knockouts = 0
 		})
 	},

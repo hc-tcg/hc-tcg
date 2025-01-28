@@ -34,7 +34,7 @@ const HowDidWeGetHere: Achievement = {
 			const bestAttempt = Math.max(
 				...Object.values(statusEffects).map((statuses) => statuses.length),
 			)
-			component.bestGoalProgress(0, bestAttempt)
+			component.bestGoalProgress({goal: 0, progress: bestAttempt})
 		}
 
 		observer.subscribe(player.hooks.beforeApply, checkStatusEffects)
