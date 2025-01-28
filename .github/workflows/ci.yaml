@@ -5,10 +5,12 @@ on:
     branches:
       - master
       - aotcgii
+      - achievements
   pull_request:
     branches:
       - master
       - aotcgii
+      - achievements
 
 permissions:
   checks: write
