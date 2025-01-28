@@ -8,6 +8,7 @@ import {
 	expect,
 	test,
 } from '@jest/globals'
+import {ACHIEVEMENTS_LIST} from 'common/achievements'
 import {CARDS, CARDS_LIST} from 'common/cards'
 import BdoubleO100Common from 'common/cards/hermits/bdoubleo100-common'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
@@ -19,7 +20,6 @@ import {PlayerEntity} from 'common/entities'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {config} from 'dotenv'
 import {Database} from 'server/db/db'
-import {ACHIEVEMENTS_LIST} from 'common/achievements'
 
 describe('Test Database', () => {
 	let database: Database
