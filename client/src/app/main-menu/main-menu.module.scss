@@ -44,6 +44,10 @@
 	}
 }
 
+.mainMenuButton {
+	height: 4.2rem;
+}
+
 .logo {
 	margin-inline: auto;
 }
@@ -86,7 +90,7 @@
 nav {
 	margin-top: 5vh;
 	display: grid;
-	gap: 1vh;
+	gap: 2vh;
 	grid-template-areas:
 		"public"
 		"private-create"
@@ -119,6 +123,22 @@ nav {
 
 #logout {
 	grid-area: logout;
+}
+
+#tutorial {
+	grid-area: tutorial;
+}
+
+#achievements {
+	grid-area: achievements;
+}
+
+#gameHistory {
+	grid-area: game-history;
+}
+
+#hof {
+	grid-area: hof;
 }
 
 .body {
@@ -237,7 +257,7 @@ nav {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: .8vh 0;
+	padding: 0.8vh 0;
 	color: var(--text-light);
 
 	> span {
@@ -435,15 +455,15 @@ nav {
 /* DESKTOP */
 @media (min-width: 80vh) {
 	nav {
-		margin-top: 5vh;
+		margin-top: 6vh;
 		display: grid;
-		gap: 2vh;
+		gap: 0.5vh;
 		grid-template-columns: 1fr 1fr;
 		grid-template-areas:
 			"public public"
-			"private-create solo-game"
 			"deck deck"
-			"logout settings";
+			"achievements hof"
+			"settings settings";
 	}
 }
 

@@ -38,6 +38,7 @@ function getTestPlayer(playerName: string, deck: Array<Card>) {
 			name: playerName,
 			minecraftName: playerName,
 			censoredName: playerName,
+			selectedCoinHead: 'creeper',
 		},
 		deck,
 	}

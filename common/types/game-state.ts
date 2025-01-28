@@ -1,4 +1,5 @@
 import type {Attach, Card, HasHealth} from '../cards/types'
+import {COINS} from '../coins'
 import type {CardComponent} from '../components'
 import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {PlayerId} from '../models/player-model'
@@ -23,7 +24,10 @@ export type LocalRowState = {
 }
 
 export type CoinFlipResult = 'heads' | 'tails'
-export type CoinFlip = {result: CoinFlipResult; forced: boolean}
+export type CoinFlip = {
+	result: CoinFlipResult
+	forced: boolean
+}
 
 export type CurrentCoinFlip = {
 	card: CardEntity
@@ -32,6 +36,7 @@ export type CurrentCoinFlip = {
 	tosses: Array<CoinFlip>
 	amount: number
 	delay: number
+	headImage: keyof typeof COINS
 }
 
 export type LocalCurrentCoinFlip = {
@@ -41,6 +46,7 @@ export type LocalCurrentCoinFlip = {
 	tosses: Array<CoinFlip>
 	amount: number
 	delay: number
+	headImage: keyof typeof COINS
 }
 
 export type BattleLogT = {
