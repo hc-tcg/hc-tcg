@@ -1,6 +1,7 @@
 import {Socket} from 'socket.io'
 import {Deck} from '../../common/types/deck'
 import {AchievementProgress} from '../types/achievements'
+import {COINS} from '../coins'
 import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
 
@@ -13,6 +14,7 @@ export class PlayerModel {
 	public name: string
 	public minecraftName: string
 	public censoredName: string
+	public selectedCoinHead: keyof typeof COINS
 	public socket: Socket
 	public uuid: string
 	public authenticated: boolean
@@ -31,6 +33,7 @@ export class PlayerModel {
 
 		this.name = playerName
 		this.minecraftName = minecraftName
+		this.selectedCoinHead = 'creeper'
 		this.censoredName = censorString(playerName)
 		this.socket = socket
 		this.uuid = ''

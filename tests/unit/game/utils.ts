@@ -40,8 +40,7 @@ function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 			name: playerName,
 			minecraftName: playerName,
 			censoredName: playerName,
-			appearance: defaultAppearance,
-			uuid: '',
+			selectedCoinHead: 'creeper',
 		},
 		deck,
 	}

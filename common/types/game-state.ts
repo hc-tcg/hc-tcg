@@ -1,4 +1,5 @@
 import type {Attach, Card, HasHealth} from '../cards/types'
+import {COINS} from '../coins'
 import type {CardComponent} from '../components'
 import {Appearance, Coin} from '../cosmetics/types'
 import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
@@ -36,7 +37,7 @@ export type CurrentCoinFlip = {
 	tosses: Array<CoinFlip>
 	amount: number
 	delay: number
-	headImage: Coin['id']
+	headImage: keyof typeof COINS
 }
 
 export type LocalCurrentCoinFlip = {
@@ -46,7 +47,7 @@ export type LocalCurrentCoinFlip = {
 	tosses: Array<CoinFlip>
 	amount: number
 	delay: number
-	headImage: Coin['id']
+	headImage: keyof typeof COINS
 }
 
 export type BattleLogT = {
