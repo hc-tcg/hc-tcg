@@ -408,7 +408,7 @@ export function testBossFight(
 	if (options.then) options.then(controller.game)
 }
 
-/** Test an achivement for player one in a game */
+/** Test an achievement for player one in a game */
 export function testAchivement(
 	options: {
 		achievement: Achievement
@@ -428,7 +428,7 @@ export function testAchivement(
 
 	let saga = function* (game: GameModel) {
 		player = game.currentPlayer
-		let achievementProgress: Record<number, number> = {hello: 'world'}
+		let achievementProgress: Record<number, number> = {}
 
 		achievementComponent = game.components.new(
 			AchievementComponent,
