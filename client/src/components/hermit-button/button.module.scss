@@ -1,13 +1,14 @@
 .buttonContainer {
 	width: 20rem;
 	height: 40rem;
+	transition-timing-function: ease-out;
 }
 
 .backgroundContainer {
 	position: absolute;
 	width: 20rem;
 	height: 40rem;
-	transition-timing-function: ease-in-out;
+	transition-timing-function: ease-out;
 	transform-origin: center;
 
 	&.hover:hover {
@@ -63,9 +64,10 @@
 	background-color: rgba(0, 0, 0, 0.637);
 	border-radius: 4px;
 	padding: 5px;
-	border: 0px black solid;
+	border: 1px rgba(0, 0, 0, 0) solid;
 	color: white;
 	opacity: 0%;
+	box-sizing: border-box;
 
 	> img {
 		padding-top: 0.85vh;
@@ -80,6 +82,14 @@
 		font-size: 1.5vh;
 		transform: translateY(1px);
 		padding-right: 0.5vh;
+	}
+
+	&:hover {
+		border: 1px var(--text-light) solid;
+	}
+
+	&:active {
+		transform: translateY(1px);
 	}
 }
 

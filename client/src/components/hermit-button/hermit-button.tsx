@@ -1,14 +1,7 @@
 import classNames from 'classnames'
-import React, {
-	ReactElement,
-	useEffect,
-	useReducer,
-	useRef,
-	useState,
-} from 'react'
-import css from './button.module.scss'
-import Button from 'components/button'
 import {Deck} from 'common/types/deck'
+import {ReactElement, useEffect, useReducer, useRef, useState} from 'react'
+import css from './button.module.scss'
 
 interface HermitbuttonProps {
 	image: string
@@ -69,11 +62,11 @@ const HermitButton = ({
 		button.style.zIndex = '1000'
 		background.classList.remove(css.hover)
 		background.style.width = '60%'
-		background.style.transition = 'width 0.6s, left 0.6s'
+		background.style.transition = 'width 0.3s, left 0.3s'
 		background.style.left = '20%'
-		rightOverlay.style.transition = 'opacity 1s'
+		rightOverlay.style.transition = 'opacity 0.5s'
 		rightOverlay.style.opacity = '100%'
-		returnButton.style.transition = 'opacity 1s'
+		returnButton.style.transition = 'opacity 0.5s'
 		returnButton.style.opacity = '100%'
 	}
 
@@ -82,7 +75,7 @@ const HermitButton = ({
 		const button = buttonRef.current
 		if (!background || !button) return
 		button.style.zIndex = '100'
-		background.style.transition = 'transform 0.3s, opacity 0.3s'
+		background.style.transition = 'transform 0.15s, opacity 0.15s'
 		background.style.transform = 'scale(0%)'
 		background.style.opacity = '0%'
 		button.style.pointerEvents = 'none'
@@ -108,9 +101,9 @@ const HermitButton = ({
 		background.style.top = `${buttonPosition.y}px`
 		background.style.width = `${buttonPosition.w}px`
 		background.style.transition =
-			'transform 0.6s, opacity 0.6s, width 0.6s, left 0.6s'
-		rightOverlay.style.transition = 'opacity 0.2s'
-		returnButton.style.transition = 'opacity 0.2s'
+			'transform 0.3s, opacity 0.3s, width 0.3s, left 0.3s'
+		rightOverlay.style.transition = 'opacity 0.1s'
+		returnButton.style.transition = 'opacity 0.1s'
 		rightOverlay.style.opacity = '0%'
 		returnButton.style.opacity = '0%'
 		background.classList.add(css.hover)
