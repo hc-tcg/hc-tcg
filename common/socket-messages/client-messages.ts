@@ -24,6 +24,7 @@ export const clientMessages = messages('clientMessages', {
 	PG_AUTHENTICATE: null,
 	PG_INSERT_USER: null,
 	GET_DECKS: null,
+	GET_ACHIEVEMENTS: null,
 	GET_STATS: null,
 	INSERT_DECK: null,
 	EXPORT_DECK: null,
@@ -105,6 +106,7 @@ export type ClientMessages = [
 	},
 	{type: typeof clientMessages.GET_DECKS; newActiveDeck?: string},
 	{type: typeof clientMessages.GET_STATS},
+	{type: typeof clientMessages.GET_ACHIEVEMENTS},
 	{
 		type: typeof clientMessages.INSERT_DECK
 		deck: Deck

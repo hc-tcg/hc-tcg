@@ -354,7 +354,7 @@ export function testBossFight(
 		},
 	)
 
-	controller.game.state.isBossGame = true
+	controller.game.state.isEvilXBossGame = true
 
 	function destroyRow(row: RowComponent) {
 		controller.game.components
