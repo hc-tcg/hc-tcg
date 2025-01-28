@@ -7,6 +7,8 @@ import {useSelector} from 'react-redux'
 import {getSession} from 'logic/session/session-selectors'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {validateDeck} from 'common/utils/validation'
+import {useState} from 'react'
+import {DeckSidebar} from 'app/deck/layout'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -17,6 +19,9 @@ function GameLanding({setMenuSection}: Props) {
 	const {playerDeck} = useSelector(getSession)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 	const deck = databaseInfo?.decks.find((deck) => deck.code === playerDeck)
+	const decks = databaseInfo?.decks
+
+	const [mode, setMode] = useState<string | null>(null)
 
 	const checkForValidation = (): boolean => {
 		if (!playerDeck || !deck) {
@@ -72,33 +77,69 @@ function GameLanding({setMenuSection}: Props) {
 						<div className={css.gamesLandingButtons}>
 							<HermitButton
 								image={'vintagebeef'}
-								background={'beef'}
+								backgroundImage={'gamemodes/public'}
 								title={'Public Game'}
 								description={'Challenge a random player to a game of HC-TCG!'}
-								onClick={handeJoinQueue}
-							></HermitButton>
+								type="public"
+								selectedKey={mode}
+								setSelectedKey={setMode}
+								selectedDeck={deck}
+							>
+								<div className={css.buttonMenu}>
+									<div>
+										{decks &&
+											decks.map((deck) => {
+												return <div>{deck.name}</div>
+											})}
+									</div>
+									<Button onClick={handeJoinQueue}>Join Queue</Button>
+								</div>
+							</HermitButton>
 							<HermitButton
 								image={'cubfan135'}
-								background={'cubfan'}
+								backgroundImage={'gamemodes/private'}
 								title={'Private Game'}
 								description={'Play against your friends in a private lobby.'}
-								onClick={handlePrivateGame}
-							></HermitButton>
+								type="private"
+								selectedKey={mode}
+								setSelectedKey={setMode}
+								selectedDeck={deck}
+							>
+								<div className={css.buttonMenu}>CHILD</div>
+							</HermitButton>
 							<HermitButton
 								image={'evilxisuma'}
-								background={'evilx'}
+								backgroundImage={'gamemodes/boss'}
 								title={'Boss Battle'}
 								description={'Challenge Evil X to a fight. Blah Blah Blah Blah'}
-								onClick={handleSoloGame}
-							></HermitButton>
+								type="boss"
+								selectedKey={mode}
+								setSelectedKey={setMode}
+								selectedDeck={deck}
+							>
+								<div className={css.buttonMenu}>CHILD</div>
+							</HermitButton>
+							<HermitButton
+								image={'geminitay'}
+								backgroundImage={'gamemodes/tutorial'}
+								title={'Tutorial'}
+								description={
+									'Play a game against the computer to learn the rules of HC-TCG.'
+								}
+								type="custom"
+								selectedKey={mode}
+								setSelectedKey={setMode}
+								selectedDeck={deck}
+							>
+								<div className={css.buttonMenu}>CHILD</div>
+							</HermitButton>
 						</div>
 					</div>
 				</div>
 				<div className={css.bottomButtons}>
 					<Button className={css.bigButton} variant="primary">
-						Select a Deck
+						This is where your user info would go
 					</Button>
-					<Button className={css.bigButton}>How to Play</Button>
 				</div>
 			</MenuLayout>
 		</>
