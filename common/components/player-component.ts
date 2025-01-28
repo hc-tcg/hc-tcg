@@ -1,4 +1,5 @@
 import assert from 'assert'
+import {COINS} from '../coins'
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
 import type {GameModel} from '../models/game-model'
@@ -27,6 +28,7 @@ export type PlayerDefs = {
 	censoredName: string
 	disableDeckingOut?: true
 	achievementProgress?: AchievementProgress
+	selectedCoinHead: keyof typeof COINS
 }
 
 export class PlayerComponent {
@@ -36,6 +38,7 @@ export class PlayerComponent {
 	readonly playerName: string
 	readonly minecraftName: string
 	readonly censoredPlayerName: string
+	readonly selectedCoinHead: keyof typeof COINS
 
 	coinFlips: Array<CurrentCoinFlip>
 	lives: number
@@ -129,6 +132,7 @@ export class PlayerComponent {
 		this.playerName = player.name
 		this.minecraftName = player.minecraftName
 		this.censoredPlayerName = player.censoredName
+		this.selectedCoinHead = player.selectedCoinHead
 		this.coinFlips = []
 		this.lives = 3
 		this.hasPlacedHermit = false
