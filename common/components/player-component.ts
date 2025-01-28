@@ -27,7 +27,6 @@ export type PlayerDefs = {
 	minecraftName: string
 	censoredName: string
 	disableDeckingOut?: true
-	achievementProgress?: AchievementProgress
 	selectedCoinHead: keyof typeof COINS
 	achievementProgress?: AchievementProgress
 }

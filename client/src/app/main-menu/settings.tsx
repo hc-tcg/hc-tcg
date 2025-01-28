@@ -79,8 +79,8 @@ function Settings({setMenuSection}: Props) {
 	}
 	const handleGameSettings = () => changeMenuSection('game-settings')
 	const handleDataSettings = () => changeMenuSection('data-settings')
-	const handleHallOfFame = () => changeMenuSection('hall-of-fame')
-	const handleAchievements = () => changeMenuSection('achievements')
+	const _handleHallOfFame = () => changeMenuSection('hall-of-fame')
+	const _handleAchievements = () => changeMenuSection('achievements')
 
 	const handleCredits = () => changeMenuSection('credits')
 
@@ -90,7 +90,7 @@ function Settings({setMenuSection}: Props) {
 		setUpdatesOpen(true)
 	}
 
-	const winrate =
+	const _winrate =
 		stats !== null &&
 		Math.round(
 			((stats.wins + stats.forfeitWins) / (stats.gamesPlayed - stats.ties)) *
