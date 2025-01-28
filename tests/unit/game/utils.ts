@@ -428,10 +428,15 @@ export function testAchivement(
 
 	let saga = function* (game: GameModel) {
 		player = game.currentPlayer
+		let achievementProgress: Record<number, number> = {}
+		for (let i = 0; i < options.achievement.steps; i++) {
+			achievementProgress[i] = 0
+		}
+
 		achievementComponent = game.components.new(
 			AchievementComponent,
 			options.achievement.numericId,
-			{},
+			achievementProgress,
 			player.entity,
 		)
 		const achievementObserver = game.components.new(
@@ -450,7 +455,7 @@ export function testAchivement(
 	}
 
 	let then = function (game: GameModel, gameOutcome: GameOutcome) {
-		achievement.onGameEnd(
+		options.achievement.onGameEnd(
 			game,
 			player.entity,
 			achievementComponent,
