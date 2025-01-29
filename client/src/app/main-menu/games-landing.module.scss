@@ -39,7 +39,7 @@
 .buttonMenu {
 	width: 100%;
 	height: 100%;
-	background-color: rgba(0, 0, 0, 0.534);
+	background-color: rgba(0, 0, 0, 0.7);
 	padding: 1rem;
 	color: white;
 	display: flex;
@@ -54,10 +54,17 @@
 /* Decks */
 .myDecksItem {
 	display: flex;
+	flex-direction: row;
 	align-items: center;
-	gap: 0.5rem;
-	padding: 0.5rem;
+	gap: 0.2rem;
+	padding: 0.3rem;
 	user-select: none;
+	cursor: pointer;
+
+	&:hover {
+		filter: brightness(1.2);
+		background-color: rgba(5, 5, 5, 0.5);
+	}
 }
 
 .selectedDeck {
@@ -140,14 +147,17 @@
 .top {
 	display: flex;
 	flex-direction: row;
-	width: 34vw;
 }
 
 .decksContainer {
+	height: 10%;
+
 	> ul {
 		overflow-y: scroll;
-		height: 25vw;
-		width: 15vw;
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		width: 100%;
 	}
 }
 

@@ -179,7 +179,11 @@ const HermitButton = ({
 							{selectedDeck && (
 								<>
 									<div className={css.selectedDeck}>
-										Selected - {selectedDeck.name}
+										<img
+											src="/images/card-icon.png"
+											className={css.infoIcon}
+										></img>
+										{selectedDeck.name}
 										<img
 											className={css.infoIcon}
 											src={

@@ -335,9 +335,11 @@ function GameLanding({setMenuSection}: Props) {
 								selectedDeck={loadedDeck}
 							>
 								<div className={css.buttonMenu}>
+									<p>Select a deck to use in this game mode.</p>
 									<div className={css.decksContainer}>
 										<ul>{decksList}</ul>
 									</div>
+									Deck filtering options should probably go here.
 									<Button onClick={handeJoinQueue}>Join Queue</Button>
 								</div>
 							</HermitButton>
