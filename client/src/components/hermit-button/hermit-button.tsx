@@ -81,6 +81,7 @@ const HermitButton = ({
 		background.style.width = `${buttonPosition.w}px`
 		background.style.transform = 'scale(100%)'
 		background.style.opacity = '100%'
+		button.style.pointerEvents = 'all'
 
 		background.style.width = '60%'
 		background.style.transition = 'width 0.3s, left 0.3s'
@@ -166,9 +167,7 @@ const HermitButton = ({
 							<div
 								className={css.returnButton}
 								ref={returnButtonRef}
-								onClick={() => {
-									setSelectedMode(null)
-								}}
+								onClick={() => setSelectedMode(null)}
 							>
 								<img src="../images/back_arrow.svg" alt="back-arrow" />
 								<p>Back</p>

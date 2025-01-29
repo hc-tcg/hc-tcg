@@ -1,13 +1,13 @@
 .buttonContainer {
-	width: 20rem;
-	height: 40rem;
+	width: 18vw;
+	height: 34vw;
 	transition-timing-function: ease-out;
 }
 
 .backgroundContainer {
 	position: absolute;
-	width: 20rem;
-	height: 40rem;
+	width: 18vw;
+	height: 34vw;
 	transition-timing-function: ease-out;
 	transform-origin: center;
 
@@ -15,7 +15,6 @@
 		transition: filter 0.2s, transform 0.2s;
 		filter: saturate(1.1) brightness(1.1);
 		transform: scale(1.01);
-		cursor: pointer;
 	}
 }
 
@@ -47,11 +46,12 @@
 
 .hermitImage {
 	filter: drop-shadow(0px 0px 15px black);
-	width: 20rem;
-	height: 30rem;
+	width: 18vw;
+	height: 27vw;
 	object-fit: scale-down;
 	position: absolute;
-	top: 3rem;
+	top: 1vw;
+	pointer-events: none;
 }
 
 .returnButton {

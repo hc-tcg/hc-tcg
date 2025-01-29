@@ -140,14 +140,14 @@
 .top {
 	display: flex;
 	flex-direction: row;
-	width: 20rem;
+	width: 34vw;
 }
 
 .decksContainer {
 	> ul {
 		overflow-y: scroll;
-		height: 30rem;
-		width: 15rem;
+		height: 25vw;
+		width: 15vw;
 	}
 }
 
