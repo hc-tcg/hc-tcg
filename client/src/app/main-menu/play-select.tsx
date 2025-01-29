@@ -327,7 +327,7 @@ function PlaySelect({setMenuSection}: Props) {
 				returnText="Main Menu"
 				className={css.playSelect}
 			>
-				<h2 className={css.heading}>Select a game type:</h2>
+				<h2>Select a game type:</h2>
 				<div className={css.gameTypes}>
 					<div className={css.gameTypesButtons}>
 						<HermitButton
@@ -415,20 +415,20 @@ function PlaySelect({setMenuSection}: Props) {
 							setSelectedMode={setMode}
 						>
 							<div className={css.buttonMenu}>
-								<div>
-									<p>
-										Join a game here to learn the rules of HC-TCG before facing
-										online opponents.
-									</p>
-								</div>
+								<p>
+									Join a game here to learn the rules of HC-TCG before facing
+									online opponents.
+								</p>
 								<Button onClick={handeJoinQueue}>Join Queue</Button>
 							</div>
 						</HermitButton>
 					</div>
 				</div>
+				<h3>Ingame Appearance</h3>
 				<div className={css.bottomButtons}>
-					<Button className={css.bigButton} variant="primary">
-						This is where your user info would go
+					<Button className={css.bigButton} variant="default">
+						This is where a copy of the in-game box with your name etc in would
+						go
 					</Button>
 				</div>
 			</MenuLayout>
