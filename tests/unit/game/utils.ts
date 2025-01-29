@@ -1,4 +1,3 @@
-import {achievement} from 'common/achievements/defaults'
 import {Achievement} from 'common/achievements/types'
 import EvilXisumaBoss, {
 	BOSS_ATTACK,
@@ -442,7 +441,7 @@ export function testAchivement(
 			achievementComponent.entity,
 		)
 
-		achievement.onGameStart(
+		options.achievement.onGameStart(
 			game,
 			player.entity,
 			achievementComponent,

@@ -119,6 +119,8 @@ export class GameModel {
 		 */
 		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
 		/** Hook called when the game ends for disposing references */
+		onGameEnd: GameHook<(outcome: GameOutcome) => void>
+		/** Hook called when the game ends for disposing references */
 		afterGameEnd: Hook<string, () => void>
 		/** Hook for reviving rows after all attacks are executed */
 		rowRevive: PriorityHook<
@@ -171,6 +173,7 @@ export class GameModel {
 			rowRevive: new PriorityHook(rowRevive),
 			afterAttack: new PriorityHook(afterAttack),
 			freezeSlots: new GameHook(),
+			onGameEnd: new GameHook(),
 			afterGameEnd: new Hook(),
 		}
 		setupComponents(this, this.components, player1, player2, {
