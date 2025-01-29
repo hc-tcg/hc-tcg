@@ -80,6 +80,7 @@ function GameLanding({setMenuSection}: Props) {
 	const handeJoinQueue = () => {
 		const valid = checkForValidation()
 		if (!valid) return
+		setQueing(true)
 		dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
 		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
 	}
@@ -354,12 +355,7 @@ function GameLanding({setMenuSection}: Props) {
 											<div className={css.deckSelector}>
 												<div className={css.decksContainer}>{decksList}</div>
 											</div>
-											<Button
-												onClick={() => {
-													handeJoinQueue()
-													setQueing(true)
-												}}
-											>
+											<Button onClick={() => handeJoinQueue()}>
 												Join Queue
 											</Button>
 										</div>
