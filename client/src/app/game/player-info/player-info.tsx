@@ -33,7 +33,7 @@ function PlayerInfo({player, direction}: Props) {
 		const hearts = new Array(3).fill(null).map((_, index) => {
 			const heartImg =
 				lives > index
-					? '/images/game/heart_full.png'
+					? '/images/cosmetics/hearts/red.png'
 					: '/images/game/heart_empty.png'
 			return (
 				<img
