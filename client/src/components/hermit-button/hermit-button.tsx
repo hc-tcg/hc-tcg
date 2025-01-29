@@ -1,11 +1,6 @@
 import classNames from 'classnames'
-import {Deck} from 'common/types/deck'
 import {ReactElement, useEffect, useReducer, useRef, useState} from 'react'
 import css from './button.module.scss'
-import {getIconPath} from 'common/utils/state-gen'
-import {getCardTypeIcon} from 'common/cards/card'
-import {ScreenshotDeckModal} from 'components/import-export'
-import {sortCards} from 'common/utils/cards'
 
 interface HermitbuttonProps {
 	image: string
@@ -14,7 +9,6 @@ interface HermitbuttonProps {
 	selectedMode: string | null
 	setSelectedMode: (key: string | null) => void
 	backgroundImage: string
-	selectedDeck: Deck | undefined
 	description: string
 	children: ReactElement
 	onReturn?: () => void
@@ -29,14 +23,12 @@ const HermitButton = ({
 	setSelectedMode,
 	backgroundImage,
 	children,
-	selectedDeck,
 	onReturn,
 }: HermitbuttonProps) => {
 	const buttonRef = useRef<HTMLDivElement>(null)
 	const backgroundRef = useRef<HTMLDivElement>(null)
 	const rightOverlayRef = useRef<HTMLDivElement>(null)
 	const returnButtonRef = useRef<HTMLDivElement>(null)
-	const viewDeckRef = useRef<HTMLButtonElement>(null)
 
 	const [buttonPosition, setButtonPosition] = useState<{
 		x: number
@@ -45,7 +37,6 @@ const HermitButton = ({
 		w: number
 	} | null>(null)
 	const [, reload] = useReducer((x) => x + 1, 0)
-	const [showDeck, setShowDeck] = useState<boolean>(false)
 
 	useEffect(() => {
 		if (!buttonPosition) {
@@ -65,13 +56,11 @@ const HermitButton = ({
 		const rightOverlay = rightOverlayRef.current
 		const returnButton = returnButtonRef.current
 		const button = buttonRef.current
-		const viewDeck = viewDeckRef.current
 		if (
 			!background ||
 			!rightOverlay ||
 			!returnButton ||
 			!button ||
-			!viewDeck ||
 			!buttonPosition
 		)
 			return
@@ -91,14 +80,10 @@ const HermitButton = ({
 		rightOverlay.style.opacity = '100%'
 		returnButton.style.transition = 'opacity 0.5s'
 		returnButton.style.opacity = '100%'
-		viewDeck.style.transition = 'opacity 0.5s'
-		viewDeck.style.opacity = '100%'
 		background.style.pointerEvents = 'all'
 	}
 
-	if (selectedMode === mode) getBig()
-
-	if (selectedMode && selectedMode !== mode) {
+	const shrink = () => {
 		const background = backgroundRef.current
 		const button = buttonRef.current
 		if (!background || !button || !buttonPosition) return
@@ -113,19 +98,17 @@ const HermitButton = ({
 		button.style.pointerEvents = 'none'
 	}
 
-	if (selectedMode === null && buttonPosition) {
+	const reset = () => {
 		const background = backgroundRef.current
 		const rightOverlay = rightOverlayRef.current
 		const returnButton = returnButtonRef.current
 		const button = buttonRef.current
-		const viewDeck = viewDeckRef.current
 		if (
 			!background ||
 			!rightOverlay ||
 			!returnButton ||
 			!buttonPosition ||
-			!button ||
-			!viewDeck
+			!button
 		)
 			return
 		button.classList.add(css.clickable)
@@ -140,91 +123,55 @@ const HermitButton = ({
 		rightOverlay.style.opacity = '0%'
 		returnButton.style.transition = 'opacity 0.1s'
 		returnButton.style.opacity = '0%'
-		viewDeck.style.transition = 'opacity 0.1s'
-		viewDeck.style.opacity = '0%'
 		button.style.pointerEvents = 'all'
 		background.style.pointerEvents = 'none'
 	}
 
+	if (selectedMode === mode) getBig()
+	else if (selectedMode && selectedMode !== mode) shrink()
+	else if (selectedMode === null && buttonPosition) reset()
+
 	return (
-		<>
-			<div
-				className={classNames(css.buttonContainer, css.clickable)}
-				onMouseDown={() => setSelectedMode(mode)}
-				ref={buttonRef}
-			>
-				<div className={css.backgroundContainer} ref={backgroundRef}>
-					<img
-						src={`images/backgrounds/${backgroundImage}.png`}
-						className={css.backgroundImage}
-					></img>
-					<div className={css.vingette}></div>
-					<div className={css.leftOverlay}>
-						<div className={classNames(css.button)}>
-							<div
-								className={css.returnButton}
-								ref={returnButtonRef}
-								onClick={() => {
-									if (onReturn) onReturn()
-									setSelectedMode(null)
-								}}
-							>
-								<img src="../images/back_arrow.svg" alt="back-arrow" />
-								<p>Back</p>
-							</div>
-							<img
-								src={`images/hermits-nobg/${image}.png`}
-								className={css.hermitImage}
-							></img>
-							<div className={css.spacer}></div>
-							<div className={css.text}>
-								<h1>{title}</h1>
-								<p>{description}</p>
-							</div>
-							{selectedDeck && (
-								<>
-									<div className={css.selectedDeck}>
-										<img
-											src="/images/card-icon.png"
-											className={css.infoIcon}
-										></img>
-										{selectedDeck.name}
-										<img
-											className={css.infoIcon}
-											src={
-												selectedDeck
-													? getIconPath(selectedDeck)
-													: getCardTypeIcon('any')
-											}
-											alt="deck-icon"
-										/>
-									</div>
-									<button
-										className={css.viewDeckButton}
-										onClick={() => setShowDeck(true)}
-										ref={viewDeckRef}
-									>
-										<img src="/images/toolbar/shulker.png" />
-									</button>
-								</>
-							)}
+		<div
+			className={classNames(css.buttonContainer, css.clickable)}
+			onMouseDown={() => setSelectedMode(mode)}
+			ref={buttonRef}
+		>
+			<div className={css.backgroundContainer} ref={backgroundRef}>
+				<img
+					src={`images/backgrounds/${backgroundImage}.png`}
+					className={css.backgroundImage}
+				></img>
+				<div className={css.vingette}></div>
+				<div className={css.leftOverlay}>
+					<div className={classNames(css.button)}>
+						<div
+							className={css.returnButton}
+							ref={returnButtonRef}
+							onClick={() => {
+								if (onReturn) onReturn()
+								setSelectedMode(null)
+							}}
+						>
+							<img src="../images/back_arrow.svg" alt="back-arrow" />
+							<p>Back</p>
+						</div>
+						<img
+							src={`images/hermits-nobg/${image}.png`}
+							className={css.hermitImage}
+						></img>
+						<div className={css.spacer}></div>
+						<div className={css.text}>
+							<h1>{title}</h1>
+							<p>{description}</p>
 						</div>
 					</div>
-					<div ref={rightOverlayRef} className={css.rightOverlay}>
-						{children}
-					</div>
+				</div>
+				<div ref={rightOverlayRef} className={css.rightOverlay}>
+					{children}
 				</div>
 			</div>
-			<ScreenshotDeckModal
-				setOpen={showDeck}
-				onClose={() => setShowDeck(false)}
-				cards={
-					selectedDeck
-						? sortCards(selectedDeck.cards.map((card) => card.props))
-						: []
-				}
-			></ScreenshotDeckModal>
-		</>
+		</div>
 	)
 }
 

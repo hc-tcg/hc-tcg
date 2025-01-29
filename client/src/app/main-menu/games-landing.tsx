@@ -35,7 +35,6 @@ import {CardEntity} from 'common/entities'
 import {EXPANSIONS} from 'common/const/expansions'
 import CardList from 'components/card-list'
 import Spinner from 'components/spinner'
-import {delay} from 'typed-redux-saga'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -106,16 +105,6 @@ function GameLanding({setMenuSection}: Props) {
 			type: localMessages.SOUND_PLAY,
 			path: pageTurn[Math.floor(Math.random() * pageTurn.length)],
 		})
-	}
-
-	const tutorialDeck: Deck = {
-		name: 'Tutorial Deck',
-		iconType: 'hermit',
-		icon: 'geminitay',
-		cards: [],
-		tags: [],
-		public: false,
-		code: '111111',
 	}
 
 	const decksHaveTags =
@@ -349,13 +338,12 @@ function GameLanding({setMenuSection}: Props) {
 								mode="public"
 								selectedMode={mode}
 								setSelectedMode={setMode}
-								selectedDeck={loadedDeck}
 								onReturn={handleLeaveQueue}
 							>
 								<div className={css.fullLeft}>
 									{!queing && (
 										<div className={css.buttonMenu}>
-											<p>Select a deck to use in this game mode.</p>
+											<p>Confirm your deck before entering a game.</p>
 											<div className={css.deckSelector}>
 												<div className={css.decksContainer}>{decksList}</div>
 											</div>
@@ -388,10 +376,9 @@ function GameLanding({setMenuSection}: Props) {
 								mode="private"
 								selectedMode={mode}
 								setSelectedMode={setMode}
-								selectedDeck={loadedDeck}
 							>
 								<div className={css.buttonMenu}>
-									<p>Select a deck to use in this game mode.</p>
+									<p>Confirm your deck before entering a game.</p>
 									<div className={css.deckSelector}>
 										<div className={css.decksContainer}>{decksList}</div>
 									</div>
@@ -406,10 +393,9 @@ function GameLanding({setMenuSection}: Props) {
 								mode="boss"
 								selectedMode={mode}
 								setSelectedMode={setMode}
-								selectedDeck={loadedDeck}
 							>
 								<div className={css.buttonMenu}>
-									<p>Select a deck to use in this game mode.</p>
+									<p>Confirm your deck before entering a game.</p>
 									<div className={css.deckSelector}>
 										<div className={css.decksContainer}>{decksList}</div>
 									</div>
@@ -427,7 +413,6 @@ function GameLanding({setMenuSection}: Props) {
 								mode="tutorial"
 								selectedMode={mode}
 								setSelectedMode={setMode}
-								selectedDeck={tutorialDeck}
 							>
 								<div className={css.buttonMenu}>
 									<div>
