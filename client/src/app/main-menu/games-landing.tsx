@@ -229,6 +229,10 @@ function GameLanding({setMenuSection}: Props) {
 	const order = ['public', 'private', 'boss', 'tutorial']
 	function handleKeyPress(e: any) {
 		if (e.key === 'Escape') {
+			if (mode === null) {
+				setMenuSection('main-menu')
+				return
+			}
 			if (queing) handleLeaveQueue()
 			setMode(null)
 		}
