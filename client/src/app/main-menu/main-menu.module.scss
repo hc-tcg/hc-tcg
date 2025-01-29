@@ -45,7 +45,8 @@
 }
 
 .mainMenuButton {
-	height: 4.2rem;
+	height: 5vh;
+	font-size: 1.8vh;
 }
 
 .logo {
@@ -57,8 +58,11 @@
 	inset: 0;
 	display: grid;
 	place-content: flex-start center;
-	padding-top: 10vh;
+	padding-bottom: 3vh;
 	margin-inline: auto;
+	justify-items: center;
+	align-content: center;
+	gap: 7vh;
 }
 
 .privateGameContent {
@@ -88,7 +92,7 @@
 }
 
 nav {
-	margin-top: 5vh;
+	width: 90%;
 	display: grid;
 	gap: 2vh;
 	grid-template-areas:
@@ -99,6 +103,20 @@ nav {
 		"settings"
 		"logout";
 	animation: fadeIn 250ms ease-in-out forwards;
+}
+
+/* DESKTOP */
+@media (min-width: 80vh) {
+	nav {
+		display: grid;
+		gap: 1.3vh;
+		grid-template-columns: 1fr 1fr;
+		grid-template-areas:
+			"public public"
+			"deck deck"
+			"achievements achievements"
+			"settings more";
+	}
 }
 
 #public {
@@ -414,21 +432,6 @@ nav {
 	width: 50vh;
 }
 
-/* DESKTOP */
-@media (min-width: 80vh) {
-	nav {
-		margin-top: 6vh;
-		display: grid;
-		gap: 0.5vh;
-		grid-template-columns: 1fr 1fr;
-		grid-template-areas:
-			"public public"
-			"deck deck"
-			"achievements hof"
-			"settings settings";
-	}
-}
-
 @keyframes fadeIn {
 	from {
 		opacity: 0;
@@ -517,11 +520,11 @@ nav {
 		background-color: var(--gray-400);
 	}
 
-	tr > td {
+	tr>td {
 		width: 10%;
 	}
 
-	tr > th {
+	tr>th {
 		color: var(--text-light);
 		background-color: black;
 		border-bottom: 1px white dashed;
@@ -556,13 +559,13 @@ nav {
 	}
 }
 
-.hallOfFameTable > tr > th {
+.hallOfFameTable>tr>th {
 	position: sticky;
 	top: 2px;
 	background-color: black;
 }
 
-.hallOfFameTable > tr > th::before {
+.hallOfFameTable>tr>th::before {
 	content: "";
 	background-color: black;
 	height: calc(1.5rem + 1px);
@@ -601,7 +604,7 @@ nav {
 	flex-shrink: 0;
 	cursor: pointer;
 
-	> img {
+	>img {
 		height: 1.5rem;
 		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
 	}
@@ -678,6 +681,7 @@ nav {
 }
 
 .achievementsContainer {
+	overflow: auto;
 	display: grid;
 	grid-template-columns: 50% 50%;
 	border-radius: 0.5vh;
