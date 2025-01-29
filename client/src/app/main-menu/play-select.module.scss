@@ -3,38 +3,13 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	color: var(--text-light);
-}
-
-h2,
-h3 {
-	filter: drop-shadow(2px 2px 0 var(--text-dark));
+	gap: 3vh;
 }
 
 h2 {
-	font-size: 2rem;
-}
-
-h3 {
-	font-size: 1.5rem;
-}
-
-.header {
-	margin-top: 2vh;
-	margin-bottom: 2vh;
-}
-
-.appearanceHeader {
-	margin-top: 4vh;
-	text-align: center;
-}
-
-.clickToChange {
-	margin-top: 0.5vh;
-	margin-bottom: 1.5vh;
-	font-size: 1rem;
+	color: var(--text-light);
+	font-size: 3vh;
 	filter: drop-shadow(2px 2px 0 var(--text-dark));
-	text-align: center;
 }
 
 .gameTypes {
@@ -52,31 +27,33 @@ h3 {
 	grid-gap: 2rem;
 }
 
+.bottomButtons {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 1rem;
+}
+
+.bigButton {
+	height: 3.8rem;
+	padding-left: 3rem;
+	padding-right: 3rem;
+}
+
 .buttonMenu {
+	width: 100%;
 	height: 100%;
-	max-height: 100%;
-	width: calc(min(max(45vw, 70vh), 80vw) - 16vw);
+	background-color: rgba(0, 0, 0, 0.7);
+	padding: 1rem;
 	color: white;
+	display: flex;
+	flex-direction: column;
+	white-space: nowrap;
 
-	.publicConfirm {
-		height: 100%;
-		width: 100%;
-
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		padding: 2vh;
-		background-color: rgba(0, 0, 0, 0.7);
-
-		.spacer {
-			flex-grow: 1;
-		}
-
-		.publicJoinButton {
-			height: 5vh;
-			width: 100%;
-		}
+	>div {
+		flex-grow: 1;
 	}
 }
 
@@ -90,18 +67,12 @@ h3 {
 	user-select: none;
 	cursor: pointer;
 	max-height: 4rem;
-	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
 
 	&:hover {
 		filter: brightness(1.2);
 		background-color: rgba(5, 5, 5, 0.5);
-	}
-
-	.deckName {
-		text-overflow: ellipsis;
-		overflow: hidden;
 	}
 }
 
@@ -134,7 +105,7 @@ h3 {
 	height: 2rem;
 	flex-shrink: 0;
 
-	> img {
+	>img {
 		height: 1.5rem;
 		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
 	}
@@ -188,18 +159,11 @@ h3 {
 }
 
 .decksContainer {
-	overflow-y: scroll;
+	overflow-y: auto;
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-columns: 33% 33% 33%;
 	grid-auto-flow: row;
 	width: 100%;
-	height: min-content;
-	flex-grow: 1;
-	overflow: hidden;
-}
-
-.deckSelector {
-	overflow-y: scroll;
 }
 
 .bossRules {
@@ -214,6 +178,10 @@ h3 {
 	}
 }
 
+.fullLeft {
+	height: 100%;
+}
+
 .queueMenu {
 	display: flex;
 	height: 100%;
@@ -222,7 +190,7 @@ h3 {
 	align-items: center;
 	justify-content: center;
 
-	> div {
+	>div {
 		background-color: rgba(0, 0, 0, 0.8);
 		padding: 1rem;
 		border-radius: 8px;
@@ -232,70 +200,5 @@ h3 {
 		justify-content: center;
 		gap: 1rem;
 		width: 50%;
-	}
-}
-
-.code {
-	font-size: 2vh;
-	cursor: pointer;
-}
-
-.privateGameCodeArea {
-	display: flex;
-	flex-direction: row;
-	width: 100%;
-
-	> input {
-		flex-grow: 1;
-		height: 2.7rem;
-	}
-}
-
-.bottomArea {
-	display: flex;
-	flex-direction: row;
-}
-
-.playerInfo {
-	position: absolute;
-	top: 6vh;
-	right: 1vh;
-	display: grid;
-	grid-template-areas:
-		"name icon"
-		"deck icon";
-	font-size: 1.5vh;
-	background-color: hsla(0deg, 0%, 0%, 35%);
-	padding: 0.75vh 1vh 0.75vh 1.5vh;
-	border-radius: 0.5vh;
-	user-select: none;
-	font-weight: normal;
-	text-align: right;
-	animation: fadeIn 250ms ease-in-out forwards;
-
-	> img {
-		height: 4vh;
-	}
-
-	#infoName {
-		grid-area: name;
-		font-weight: bold;
-		font-size: 1.8vh;
-	}
-
-	#infoDeck {
-		grid-area: deck;
-	}
-
-	#infoIcon {
-		grid-area: icon;
-		margin-left: 1vh;
-	}
-}
-
-.appearance {
-	cursor: pointer;
-	&:hover {
-		scale: 1.05;
 	}
 }

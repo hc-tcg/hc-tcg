@@ -2,7 +2,6 @@ import classNames from 'classnames'
 import BerryBush from 'common/cards/advent-of-tcg/attach/berry-bush'
 import Dropper from 'common/cards/advent-of-tcg/single-use/dropper'
 import Glowstone from 'common/cards/advent-of-tcg/single-use/glowstone'
-import {getCardTypeIcon} from 'common/cards/card'
 import PoePoeSkizzRare from 'common/cards/hermits/poepoeskizz-rare'
 import RenbobRare from 'common/cards/hermits/renbob-rare'
 import Anvil from 'common/cards/single-use/anvil'
@@ -23,26 +22,18 @@ import {Deck, Tag} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {getIconPath} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
-import Accordion from 'components/accordion'
 import Button from 'components/button'
 import CardList from 'components/card-list'
 import HermitButton from 'components/hermit-button'
 import MenuLayout from 'components/menu-layout'
 import {Modal} from 'components/modal'
 import Spinner from 'components/spinner'
-import {CopyIcon} from 'components/svgs'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
-import {
-	getGameCode,
-	getSpectatorCode,
-	getStatus,
-} from 'logic/matchmaking/matchmaking-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {setActiveDeck} from 'logic/saved-decks/saved-decks'
 import {getSession} from 'logic/session/session-selectors'
 import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
-import {CosmeticPreview} from './cosmetics'
 import css from './play-select.module.scss'
 
 type Props = {
@@ -51,22 +42,16 @@ type Props = {
 
 function PlaySelect({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
-	const status = useSelector(getStatus)
-	const gameCode = useSelector(getGameCode)
-	const spectatorCode = useSelector(getSpectatorCode)
-
-	const {playerDeck, playerName, newPlayer} = useSelector(getSession)
+	const {playerDeck} = useSelector(getSession)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 	const [loadedDeck, setLoadedDeck] = useState<Deck | undefined>(
 		databaseInfo?.decks.find((deck) => deck.code === playerDeck),
 	)
 
 	const decks = databaseInfo?.decks
-	const welcomeMessage = newPlayer ? 'Welcome' : 'Welcome Back'
 	const [mode, setMode] = useState<string | null>(null)
 	const selectedDeckRef = useRef<HTMLDivElement>(null)
-	const [lobbyCreated, setLobbyCreated] = useState<boolean>(false)
-	const inputRef = useRef<HTMLInputElement>(null)
+	const [queing, setQueing] = useState<boolean>(false)
 
 	const checkForValidation = (): boolean => {
 		if (!playerDeck || !loadedDeck) {
@@ -91,9 +76,10 @@ function PlaySelect({setMenuSection}: Props) {
 		return false
 	}
 
-	const handleJoinQueue = () => {
+	const handeJoinQueue = () => {
 		const valid = checkForValidation()
 		if (!valid) return
+		setQueing(true)
 		dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
 		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
 	}
@@ -104,44 +90,9 @@ function PlaySelect({setMenuSection}: Props) {
 		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
 	}
 
-	const handleCodeSubmit = (code: string) => {
-		if (code.length !== 6) {
-			dispatch({
-				type: localMessages.TOAST_OPEN,
-				open: true,
-				title: 'Invalid Code!',
-				description: 'The code you entered is invalid.',
-				image: '/images/types/type-any.png',
-			})
-			return
-		}
-		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
-		dispatch({type: localMessages.MATCHMAKING_CODE_SET, code})
-	}
-
-	const handleCodeClick = () => {
-		if (!gameCode) return
-		navigator.clipboard.writeText(gameCode)
-	}
-
-	const handleSpectatorCodeClick = () => {
-		if (!spectatorCode) return
-		navigator.clipboard.writeText(spectatorCode)
-	}
-
-	const queuingReason = (): string => {
-		if (status === 'in_game') return 'Starting game'
-		if (status === 'loading') return 'Loading'
-		if (status === 'private_lobby') return 'Loading'
-		if (status === 'random_waiting') return 'Waiting for opponent'
-		if (status === 'waiting_for_player') return 'Waiting for second player'
-		if (status === 'waiting_for_player_as_spectator')
-			return 'Waiting for game to begin'
-		return 'Loading'
-	}
-
 	const handleLeaveQueue = () => {
-		setTimeout(() => dispatch({type: localMessages.MATCHMAKING_LEAVE}), 200)
+		dispatch({type: localMessages.MATCHMAKING_LEAVE})
+		setTimeout(() => setQueing(false), 200)
 	}
 
 	const playSwitchDeckSFX = () => {
@@ -202,7 +153,7 @@ function PlaySelect({setMenuSection}: Props) {
 				>
 					<img src={getIconPath(deck)} alt={'deck-icon'} />
 				</div>
-				<div className={css.deckName}>{deck.name}</div>
+				{deck.name}
 			</div>
 		)
 	})
@@ -264,33 +215,24 @@ function PlaySelect({setMenuSection}: Props) {
 		}
 	}, [handleKeyPress])
 
+	const order = ['public', 'private', 'boss', 'tutorial']
 	function handleKeyPress(e: any) {
 		if (e.key === 'Escape') {
 			if (mode === null) {
 				setMenuSection('main-menu')
 				return
 			}
-			if (status) handleLeaveQueue()
+			if (queing) handleLeaveQueue()
 			setMode(null)
 		}
-	}
-
-	let header = 'Select a game type:'
-	switch (mode) {
-		case 'public':
-			header = 'Public Game'
-			break
-		case 'private':
-			header = 'Private Game'
-			break
-		case 'boss':
-			header = 'Boss Battle'
-			break
-		case 'tutorial':
-			header = 'Tutorial'
-			break
-		default:
-			break
+		if (e.key == 'Tab') {
+			if (!mode) {
+				setMode('public')
+				return
+			}
+			const currentModeIndex = order.findIndex((i) => i === mode)
+			setMode(order[(currentModeIndex + 1) % order.length])
+		}
 	}
 
 	return (
@@ -378,69 +320,43 @@ function PlaySelect({setMenuSection}: Props) {
 			</Modal>
 			<MenuLayout
 				back={() => {
-					if (status) handleLeaveQueue()
+					if (queing) handleLeaveQueue()
 					setMenuSection('main-menu')
 				}}
 				title="Play"
 				returnText="Main Menu"
 				className={css.playSelect}
 			>
-				<div className={css.playerInfo}>
-					<p id={css.infoName}>
-						{welcomeMessage}, {playerName}
-					</p>
-					<p id={css.infoDeck}>
-						{'Active Deck - ' + `${loadedDeck ? loadedDeck.name : 'None'}`}
-					</p>
-					<img
-						id={css.infoIcon}
-						src={loadedDeck ? getIconPath(loadedDeck) : getCardTypeIcon('any')}
-						alt="deck-icon"
-					/>
-				</div>
-				<h2 className={css.header}>{header}</h2>
+				<h2 className={css.heading}>Select a game type:</h2>
 				<div className={css.gameTypes}>
 					<div className={css.gameTypesButtons}>
 						<HermitButton
 							image={'vintagebeef'}
 							backgroundImage={'gamemodes/public'}
 							title={'Public Game'}
-							description={
-								'Challenge a random player to a game of HC-TCG Online!'
-							}
+							description={'Challenge a random player to a game of HC-TCG!'}
 							mode="public"
 							selectedMode={mode}
 							setSelectedMode={setMode}
 							onReturn={handleLeaveQueue}
 						>
-							<div className={css.buttonMenu}>
-								{!status ? (
-									<div className={css.publicConfirm}>
-										<p>
-											Confirm your deck before entering a game. If you don't
-											pick one here, your last selected deck will be used.
-										</p>
+							<div className={css.fullLeft}>
+								{!queing && (
+									<div className={css.buttonMenu}>
+										<p>Confirm your deck before entering a game.</p>
 										<div className={css.deckSelector}>
-											<Accordion header={'Deck Select'} defaultOpen={false}>
-												<div className={css.decksContainer}>{decksList}</div>
-											</Accordion>
+											<div className={css.decksContainer}>{decksList}</div>
 										</div>
-										<div className={css.spacer}></div>
-										<Button
-											className={css.publicJoinButton}
-											onClick={() => handleJoinQueue()}
-											variant="primary"
-										>
-											Join Queue
-										</Button>
+										<Button onClick={() => handeJoinQueue()}>Join Queue</Button>
 									</div>
-								) : (
+								)}
+								{queing && (
 									<div className={css.queueMenu}>
 										<div>
 											<div className={css.spinner}>
 												<Spinner />
 											</div>
-											<p>{queuingReason()}</p>
+											<p>Waiting For Opponent</p>
 											<p>
 												Having trouble finding a match? Feel free to join our
 												discord!
@@ -458,136 +374,60 @@ function PlaySelect({setMenuSection}: Props) {
 							mode="private"
 							selectedMode={mode}
 							setSelectedMode={setMode}
-							onReturn={() => {
-								handleLeaveQueue()
-								setTimeout(() => setLobbyCreated(false), 200)
-							}}
 						>
 							<div className={css.buttonMenu}>
-								{!lobbyCreated && !status && (
-									<div className={css.publicConfirm}>
-										<p>
-											Confirm your deck before entering a game. If you don't
-											pick one here, your last selected deck will be used.
-										</p>
-										<div className={css.deckSelector}>
-											<Accordion header={'Deck Select'} defaultOpen={false}>
-												<div className={css.decksContainer}>{decksList}</div>
-											</Accordion>
-										</div>
-										<div className={css.spacer}></div>
-										<p>
-											Enter an opponent code given to you by the player you're
-											facing, enter a spectator game to view a match, or create
-											your own private lobby.
-										</p>
-										<div className={css.privateGameCodeArea}>
-											<input ref={inputRef} placeholder={'Enter code'}></input>
-											<Button
-												onClick={() => {
-													if (inputRef.current)
-														handleCodeSubmit(inputRef.current.value)
-												}}
-												variant="primary"
-											>
-												Enter Game
-											</Button>
-										</div>
-										<Button
-											className={css.publicJoinButton}
-											onClick={() => {
-												setLobbyCreated(true)
-												handlePrivateGame()
-											}}
-											variant="primary"
-										>
-											Create Lobby
-										</Button>
-									</div>
-								)}
-								{lobbyCreated && (
-									<div className={css.queueMenu}>
-										<div>
-											<p>Opponent Code</p>
-											<div className={css.code} onClick={handleCodeClick}>
-												<CopyIcon /> {gameCode}
-											</div>
-											<p>Spectator Code</p>
-											<div
-												className={css.code}
-												onClick={handleSpectatorCodeClick}
-											>
-												<CopyIcon /> {spectatorCode}
-											</div>
-										</div>
-									</div>
-								)}
-								{status && (
-									<div className={css.queueMenu}>
-										<div>
-											<div className={css.spinner}>
-												<Spinner />
-											</div>
-											<p>{queuingReason()}</p>
-										</div>
-									</div>
-								)}
+								<p>Confirm your deck before entering a game.</p>
+								<div className={css.deckSelector}>
+									<div className={css.decksContainer}>{decksList}</div>
+								</div>
+								<Button onClick={handlePrivateGame}>Create Lobby</Button>
 							</div>
 						</HermitButton>
 						<HermitButton
 							image={'evilxisuma'}
 							backgroundImage={'gamemodes/boss'}
 							title={'Boss Battle'}
-							description={
-								'Prove your worth as an HC-TCG player by challenging Evil X to a fight.'
-							}
+							description={'Challenge Evil X to a fight. Blah Blah Blah Blah'}
 							mode="boss"
 							selectedMode={mode}
 							setSelectedMode={setMode}
 						>
 							<div className={css.buttonMenu}>
-								<div className={css.publicConfirm}>
-									<p>
-										Confirm your deck before entering a game. If you don't pick
-										one here, your last selected deck will be used.
-									</p>
-									<div className={css.deckSelector}>
-										<Accordion header={'Deck Select'} defaultOpen={false}>
-											<div className={css.decksContainer}>{decksList}</div>
-										</Accordion>
-									</div>
-									<div className={css.spacer}></div>
-									<Button
-										className={css.publicJoinButton}
-										onClick={() => setEvilXOpen(true)}
-									>
-										Show Rules
-									</Button>
-									<Button
-										className={css.publicJoinButton}
-										variant={'primary'}
-										onClick={handleCreateBossGame}
-									>
-										Fight Evil X
-									</Button>
+								<p>Confirm your deck before entering a game.</p>
+								<div className={css.deckSelector}>
+									<div className={css.decksContainer}>{decksList}</div>
 								</div>
+								<Button onClick={() => setEvilXOpen(true)}>Show Rules</Button>
+								<Button onClick={handleCreateBossGame}>Fight Evil X</Button>
+							</div>
+						</HermitButton>
+						<HermitButton
+							image={'geminitay'}
+							backgroundImage={'gamemodes/tutorial'}
+							title={'Tutorial'}
+							description={
+								'Play a game against the computer to learn the rules of HC-TCG.'
+							}
+							mode="tutorial"
+							selectedMode={mode}
+							setSelectedMode={setMode}
+						>
+							<div className={css.buttonMenu}>
+								<div>
+									<p>
+										Join a game here to learn the rules of HC-TCG before facing
+										online opponents.
+									</p>
+								</div>
+								<Button onClick={handeJoinQueue}>Join Queue</Button>
 							</div>
 						</HermitButton>
 					</div>
 				</div>
-				<div className={css.bottomArea}>
-					<div>
-						<h3 className={css.appearanceHeader}>In-game Appearance</h3>
-						<p className={css.clickToChange}>
-							<i>Click to change</i>
-						</p>
-						<div
-							className={css.appearance}
-							onClick={() => setMenuSection('cosmetics')}
-						>
-							<CosmeticPreview />
-						</div>
-					</div>
+				<div className={css.bottomButtons}>
+					<Button className={css.bigButton} variant="primary">
+						This is where your user info would go
+					</Button>
 				</div>
 			</MenuLayout>
 		</>

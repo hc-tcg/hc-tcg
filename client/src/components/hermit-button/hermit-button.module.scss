@@ -1,17 +1,14 @@
-$width: 16vw;
-$height: 25vw;
-$time: 0.25s;
+$width: 18vw;
+$height: 28vw;
 
 .buttonContainer {
 	width: $width;
 	height: $height;
+	transition-timing-function: ease-out;
+	transform-origin: center;
 
-	&.disablePointer {
-		animation: disablePointer $time forwards;
-	}
-
-	&.enablePointer {
-		animation: enablePointer $time forwards;
+	&.clickable {
+		cursor: pointer;
 	}
 }
 
@@ -19,52 +16,9 @@ $time: 0.25s;
 	position: absolute;
 	width: $width;
 	height: $height;
-	left: 0;
+	transition-timing-function: ease-out;
 	transform-origin: center;
 	overflow: hidden;
-	z-index: 90;
-
-	&.grow {
-		animation: grow $time forwards;
-		transition: translate $time ease-out;
-
-		.rightOverlay,
-		.returnButton {
-			animation: opacityGrow $time forwards;
-		}
-	}
-
-	&.shrink {
-		// Note this animation is not "forwards" as we want to be able to scale after
-		animation: shrink $time;
-		transition: translate $time ease-out;
-
-		.rightOverlay,
-		.returnButton {
-			pointer-events: none;
-			cursor: default;
-			animation: opacityShrink $time forwards;
-		}
-
-		&:hover {
-			scale: 1.05;
-		}
-	}
-
-	&.hide {
-		z-index: 80;
-		pointer-events: none;
-		animation: hideAnim $time forwards;
-	}
-
-	&.show {
-		// Note this animation is not "forwards" as we want to be able to scale after
-		animation: showAnim $time;
-
-		&:hover {
-			scale: 1.05;
-		}
-	}
 }
 
 .backgroundImage {
@@ -87,10 +41,10 @@ $time: 0.25s;
 .hermitImage {
 	filter: drop-shadow(0px 0px 15px black);
 	width: $width;
-	height: calc($height * 0.7);
-	object-fit: contain;
+	height: calc($height * 0.8);
+	object-fit: scale-down;
 	position: absolute;
-	top: 4vh;
+	top: 1vw;
 	pointer-events: none;
 	z-index: -1;
 }
@@ -109,8 +63,8 @@ $time: 0.25s;
 	position: absolute;
 	display: flex;
 	flex-direction: row;
-	top: 1vh;
-	left: 1vh;
+	top: 0.5rem;
+	left: 0.5rem;
 	font-size: 1.2rem;
 	align-items: center;
 	background-color: rgba(0, 0, 0, 0.637);
@@ -122,7 +76,7 @@ $time: 0.25s;
 	box-sizing: border-box;
 	cursor: pointer;
 
-	> img {
+	>img {
 		padding-top: 0.85vh;
 		padding-bottom: 0.85vh;
 		font-size: 1.75rem;
@@ -131,7 +85,7 @@ $time: 0.25s;
 		filter: invert(1);
 	}
 
-	> p {
+	>p {
 		font-size: 1.5vh;
 		transform: translateY(1px);
 		padding-right: 0.5vh;
@@ -148,13 +102,12 @@ $time: 0.25s;
 
 .text {
 	color: var(--text-light);
-	font-size: 1.3vh;
-	width: $width;
-	padding: 2vh 2vh 0;
+	font-size: 1rem;
+	width: 18vw;
+	padding: 1rem;
 
 	h1 {
-		font-size: 2vh;
-		padding-bottom: 0.5vh;
+		font-size: 1.5rem;
 	}
 }
 
@@ -164,7 +117,7 @@ $time: 0.25s;
 	display: flex;
 	flex-direction: row;
 	height: 100%;
-	padding-bottom: 2vh;
+	padding-bottom: 1rem;
 }
 
 .rightOverlay {
@@ -214,7 +167,7 @@ $time: 0.25s;
 	flex-shrink: 0;
 	cursor: pointer;
 
-	> img {
+	>img {
 		height: 1.5rem;
 		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
 	}
@@ -227,117 +180,4 @@ $time: 0.25s;
 
 .spacer {
 	flex-grow: 1;
-}
-
-/* ANIMATIONS */
-@keyframes grow {
-	from {
-		width: $width;
-		pointer-events: none;
-	}
-
-	99% {
-		pointer-events: none;
-	}
-
-	to {
-		width: min(max(45vw, 70vh), 80vw);
-		pointer-events: all;
-	}
-}
-
-@keyframes opacityGrow {
-	from {
-		opacity: 0%;
-	}
-
-	to {
-		opacity: 100%;
-	}
-}
-
-@keyframes shrink {
-	from {
-		scale: 1;
-		pointer-events: none;
-		width: min(max(45vw, 70vh), 80vw);
-	}
-
-	99% {
-		pointer-events: none;
-	}
-
-	to {
-		scale: 1;
-		pointer-events: all;
-		width: $width;
-	}
-}
-
-@keyframes opacityShrink {
-	from {
-		opacity: 100%;
-	}
-
-	to {
-		opacity: 0%;
-	}
-}
-
-@keyframes hideAnim {
-	from {
-		scale: 100%;
-		opacity: 100%;
-	}
-
-	to {
-		scale: 80%;
-		opacity: 0%;
-	}
-}
-
-@keyframes showAnim {
-	from {
-		z-index: 80;
-		scale: 80%;
-		opacity: 0%;
-	}
-
-	to {
-		z-index: 90;
-		scale: 100%;
-		opacity: 100%;
-	}
-}
-
-@keyframes disablePointer {
-	from {
-		pointer-events: all;
-		cursor: pointer;
-	}
-
-	1% {
-		pointer-events: none;
-		cursor: default;
-	}
-
-	to {
-		pointer-events: none;
-	}
-}
-
-@keyframes enablePointer {
-	from {
-		pointer-events: none;
-	}
-
-	99% {
-		pointer-events: none;
-		cursor: default;
-	}
-
-	to {
-		pointer-events: all;
-		cursor: pointer;
-	}
 }
