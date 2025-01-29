@@ -2,6 +2,11 @@
 	width: 18vw;
 	height: 34vw;
 	transition-timing-function: ease-out;
+	transform-origin: center;
+
+	&.clickable {
+		cursor: pointer;
+	}
 }
 
 .backgroundContainer {
@@ -10,11 +15,6 @@
 	height: 34vw;
 	transition-timing-function: ease-out;
 	transform-origin: center;
-}
-
-.clickable {
-	cursor: pointer;
-	z-index: 1000;
 }
 
 .backgroundImage {
