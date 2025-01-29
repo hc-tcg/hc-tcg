@@ -68,6 +68,7 @@
 	color: white;
 	opacity: 0%;
 	box-sizing: border-box;
+	cursor: pointer;
 
 	> img {
 		padding-top: 0.85vh;
@@ -127,8 +128,8 @@
 	flex-direction: row;
 	color: var(--text-light);
 	font-size: 1rem;
-	background-color: var(--gray-500);
-	width: 90%;
+	background-color: var(--gray-700);
+	width: 18rem;
 	height: 2.5rem;
 	align-self: center;
 	border-radius: 0.5vh;
@@ -136,6 +137,39 @@
 	font-weight: normal;
 	text-align: center;
 	justify-content: center;
+	align-items: center;
+
+	.infoIcon {
+		padding: 5px;
+		height: 100%;
+	}
+}
+
+.viewDeckButton {
+	position: absolute;
+	bottom: 1rem;
+	left: 20rem;
+	opacity: 0%;
+	place-content: center;
+	display: flex;
+	align-items: center;
+	justify-items: center;
+	background-color: var(--gray-700);
+	border-radius: 6px;
+	width: 2.5rem;
+	height: 2.5rem;
+	flex-shrink: 0;
+	cursor: pointer;
+
+	> img {
+		height: 1.5rem;
+		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
+	}
+
+	&:hover {
+		background: var(--gray-600);
+		filter: brightness(1.1);
+	}
 }
 
 .spacer {

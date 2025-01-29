@@ -8,6 +8,7 @@ import {getSession} from 'logic/session/session-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './games-landing.module.scss'
+import {Deck} from 'common/types/deck'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -61,6 +62,16 @@ function GameLanding({setMenuSection}: Props) {
 		const valid = checkForValidation()
 		if (!valid) return
 		setMenuSection('boss-landing')
+	}
+
+	const tutorialDeck: Deck = {
+		name: 'Tutorial Deck',
+		iconType: 'hermit',
+		icon: 'geminitay',
+		cards: [],
+		tags: [],
+		public: false,
+		code: '111111',
 	}
 
 	return (
@@ -128,7 +139,7 @@ function GameLanding({setMenuSection}: Props) {
 								type="custom"
 								selectedKey={mode}
 								setSelectedKey={setMode}
-								selectedDeck={deck}
+								selectedDeck={tutorialDeck}
 							>
 								<div className={css.buttonMenu}>CHILD</div>
 							</HermitButton>
