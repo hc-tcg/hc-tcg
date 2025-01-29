@@ -334,7 +334,9 @@ function PlaySelect({setMenuSection}: Props) {
 							image={'vintagebeef'}
 							backgroundImage={'gamemodes/public'}
 							title={'Public Game'}
-							description={'Challenge a random player to a game of HC-TCG!'}
+							description={
+								'Challenge a random player to a game of HC-TCG Online!'
+							}
 							mode="public"
 							selectedMode={mode}
 							setSelectedMode={setMode}

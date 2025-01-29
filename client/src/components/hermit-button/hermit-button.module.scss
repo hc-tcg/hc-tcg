@@ -102,12 +102,13 @@ $height: 25vw;
 
 .text {
 	color: var(--text-light);
-	font-size: 1rem;
-	width: 18vw;
-	padding: 1rem;
+	font-size: 1.3vh;
+	width: $width;
+	padding: 2vh 2vh 0;
 
 	h1 {
-		font-size: 1.5rem;
+		font-size: 2vh;
+		padding-bottom: 0.5vh;
 	}
 }
 
@@ -117,7 +118,7 @@ $height: 25vw;
 	display: flex;
 	flex-direction: row;
 	height: 100%;
-	padding-bottom: 1rem;
+	padding-bottom: 2vh;
 }
 
 .rightOverlay {
