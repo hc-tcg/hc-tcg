@@ -26,7 +26,6 @@ import GameSettings from './main-menu/game-settings'
 import GameLanding from './main-menu/games-landing'
 import HallOfFame from './main-menu/hall-of-fame'
 import Settings from './main-menu/settings'
-import MatchMaking from './match-making'
 
 function App() {
 	const section = useRouter()
@@ -50,8 +49,6 @@ function App() {
 	const router = () => {
 		if (section === 'game') {
 			return <Game />
-		} else if (section === 'matchmaking') {
-			return <MatchMaking />
 		} else if (connected && playerName) {
 			enableToast = true
 			switch (menuSection) {

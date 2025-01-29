@@ -17,6 +17,7 @@ interface HermitbuttonProps {
 	selectedDeck: Deck | undefined
 	description: string
 	children: ReactElement
+	onReturn?: () => void
 }
 
 const HermitButton = ({
@@ -29,6 +30,7 @@ const HermitButton = ({
 	backgroundImage,
 	children,
 	selectedDeck,
+	onReturn,
 }: HermitbuttonProps) => {
 	const buttonRef = useRef<HTMLDivElement>(null)
 	const backgroundRef = useRef<HTMLDivElement>(null)
@@ -162,7 +164,10 @@ const HermitButton = ({
 							<div
 								className={css.returnButton}
 								ref={returnButtonRef}
-								onClick={() => setSelectedMode(null)}
+								onClick={() => {
+									if (onReturn) onReturn()
+									setSelectedMode(null)
+								}}
 							>
 								<img src="../images/back_arrow.svg" alt="back-arrow" />
 								<p>Back</p>

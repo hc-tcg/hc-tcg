@@ -171,3 +171,28 @@
 		list-style-position: inside;
 	}
 }
+
+.fullLeft {
+	height: 100%;
+}
+
+.queueMenu {
+	display: flex;
+	height: 100%;
+	font-size: 1rem;
+	color: white;
+	align-items: center;
+	justify-content: center;
+
+	> div {
+		background-color: rgba(0, 0, 0, 0.8);
+		padding: 1rem;
+		border-radius: 8px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 1rem;
+		width: 50%;
+	}
+}

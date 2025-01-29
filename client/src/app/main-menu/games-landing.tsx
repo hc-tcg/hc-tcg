@@ -34,6 +34,8 @@ import {Card} from 'common/cards/types'
 import {CardEntity} from 'common/entities'
 import {EXPANSIONS} from 'common/const/expansions'
 import CardList from 'components/card-list'
+import Spinner from 'components/spinner'
+import {delay} from 'typed-redux-saga'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -50,6 +52,7 @@ function GameLanding({setMenuSection}: Props) {
 	const decks = databaseInfo?.decks
 	const [mode, setMode] = useState<string | null>(null)
 	const selectedDeckRef = useRef<HTMLDivElement>(null)
+	const [queing, setQueing] = useState<boolean>(false)
 
 	const checkForValidation = (): boolean => {
 		if (!playerDeck || !loadedDeck) {
@@ -85,6 +88,11 @@ function GameLanding({setMenuSection}: Props) {
 		if (!valid) return
 		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
 		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
+	}
+
+	const handleLeaveQueue = () => {
+		dispatch({type: localMessages.MATCHMAKING_LEAVE})
+		setTimeout(() => setQueing(false), 200)
 	}
 
 	const playSwitchDeckSFX = () => {
@@ -220,6 +228,7 @@ function GameLanding({setMenuSection}: Props) {
 	const order = ['public', 'private', 'boss', 'tutorial']
 	function handleKeyPress(e: any) {
 		if (e.key === 'Escape') {
+			if (queing) handleLeaveQueue()
 			setMode(null)
 		}
 		if (e.key == 'Tab') {
@@ -316,7 +325,10 @@ function GameLanding({setMenuSection}: Props) {
 				</Modal.Description>
 			</Modal>
 			<MenuLayout
-				back={() => setMenuSection('mainmenu')}
+				back={() => {
+					if (queing) handleLeaveQueue()
+					setMenuSection('mainmenu')
+				}}
 				title="Play"
 				returnText="Main Menu"
 				className={css.gamesPage}
@@ -333,13 +345,39 @@ function GameLanding({setMenuSection}: Props) {
 								selectedMode={mode}
 								setSelectedMode={setMode}
 								selectedDeck={loadedDeck}
+								onReturn={handleLeaveQueue}
 							>
-								<div className={css.buttonMenu}>
-									<p>Select a deck to use in this game mode.</p>
-									<div className={css.deckSelector}>
-										<div className={css.decksContainer}>{decksList}</div>
-									</div>
-									<Button onClick={handeJoinQueue}>Join Queue</Button>
+								<div className={css.fullLeft}>
+									{!queing && (
+										<div className={css.buttonMenu}>
+											<p>Select a deck to use in this game mode.</p>
+											<div className={css.deckSelector}>
+												<div className={css.decksContainer}>{decksList}</div>
+											</div>
+											<Button
+												onClick={() => {
+													handeJoinQueue()
+													setQueing(true)
+												}}
+											>
+												Join Queue
+											</Button>
+										</div>
+									)}
+									{queing && (
+										<div className={css.queueMenu}>
+											<div>
+												<div className={css.spinner}>
+													<Spinner />
+												</div>
+												<p>Waiting For Opponent</p>
+												<p>
+													Having trouble finding a match? Feel free to join our
+													discord!
+												</p>
+											</div>
+										</div>
+									)}
 								</div>
 							</HermitButton>
 							<HermitButton
