@@ -10,12 +10,11 @@
 	height: 34vw;
 	transition-timing-function: ease-out;
 	transform-origin: center;
+}
 
-	&.hover:hover {
-		transition: filter 0.2s, transform 0.2s;
-		filter: saturate(1.1) brightness(1.1);
-		transform: scale(1.01);
-	}
+.clickable {
+	cursor: pointer;
+	z-index: 1000;
 }
 
 .backgroundImage {
@@ -24,7 +23,7 @@
 	height: 100%;
 	border: 2px black solid;
 	object-fit: cover;
-	z-index: -1;
+	z-index: -2;
 }
 
 .vingette {
@@ -52,6 +51,7 @@
 	position: absolute;
 	top: 1vw;
 	pointer-events: none;
+	z-index: -1;
 }
 
 .returnButton {
@@ -98,7 +98,7 @@
 .text {
 	color: var(--text-light);
 	font-size: 1rem;
-	width: 20rem;
+	width: 18vw;
 	padding: 1rem;
 
 	h1 {
@@ -130,7 +130,7 @@
 	color: var(--text-light);
 	font-size: 1rem;
 	background-color: var(--gray-700);
-	width: 18rem;
+	width: 16vw;
 	height: 2.5rem;
 	align-self: center;
 	border-radius: 0.5vh;
@@ -149,7 +149,7 @@
 .viewDeckButton {
 	position: absolute;
 	bottom: 1rem;
-	left: 20rem;
+	left: 18vw;
 	opacity: 0%;
 	place-content: center;
 	display: flex;

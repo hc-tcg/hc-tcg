@@ -74,14 +74,13 @@ const HermitButton = ({
 		)
 			return
 		button.style.zIndex = '90'
-		background.classList.remove(css.hover)
+		button.classList.remove(css.clickable)
 		// Resets
 		background.style.left = `${buttonPosition.x}px`
 		background.style.top = `${buttonPosition.y}px`
 		background.style.width = `${buttonPosition.w}px`
 		background.style.transform = 'scale(100%)'
 		background.style.opacity = '100%'
-		button.style.pointerEvents = 'all'
 
 		background.style.width = '60%'
 		background.style.transition = 'width 0.3s, left 0.3s'
@@ -108,12 +107,11 @@ const HermitButton = ({
 		background.style.transition = 'transform 0.15s, opacity 0.15s'
 		background.style.transform = 'scale(0%)'
 		background.style.opacity = '0%'
-		button.style.pointerEvents = 'none'
 		background.style.pointerEvents = 'none'
+		button.style.pointerEvents = 'none'
 	}
 
 	if (selectedMode === null && buttonPosition) {
-		if (!buttonPosition) return
 		const background = backgroundRef.current
 		const rightOverlay = rightOverlayRef.current
 		const returnButton = returnButtonRef.current
@@ -128,6 +126,7 @@ const HermitButton = ({
 			!viewDeck
 		)
 			return
+		button.classList.add(css.clickable)
 		background.style.transform = 'scale(100%)'
 		background.style.opacity = '100%'
 		background.style.left = `${buttonPosition.x}px`
@@ -141,7 +140,6 @@ const HermitButton = ({
 		returnButton.style.opacity = '0%'
 		viewDeck.style.transition = 'opacity 0.1s'
 		viewDeck.style.opacity = '0%'
-		background.classList.add(css.hover)
 		button.style.pointerEvents = 'all'
 		background.style.pointerEvents = 'none'
 	}
@@ -149,14 +147,11 @@ const HermitButton = ({
 	return (
 		<>
 			<div
-				className={css.buttonContainer}
+				className={classNames(css.buttonContainer, css.clickable)}
 				onMouseDown={() => setSelectedMode(mode)}
 				ref={buttonRef}
 			>
-				<div
-					className={classNames(css.backgroundContainer, css.hover)}
-					ref={backgroundRef}
-				>
+				<div className={css.backgroundContainer} ref={backgroundRef}>
 					<img
 						src={`images/backgrounds/${backgroundImage}.png`}
 						className={css.backgroundImage}
