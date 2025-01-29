@@ -83,7 +83,7 @@ const HermitButton = ({
 		background.style.transform = 'scale(100%)'
 		background.style.opacity = '100%'
 
-		const width = 'min(max(50vw, 70vh), 80vw)'
+		const width = 'min(max(45vw, 70vh), 80vw)'
 		background.style.width = width
 		background.style.transition = 'width 0.3s, left 0.3s'
 		background.style.left = `calc((100vw - ${width}) / 2)`

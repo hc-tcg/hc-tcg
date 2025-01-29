@@ -1,5 +1,5 @@
-$width: 18vw;
-$height: 28vw;
+$width: 16vw;
+$height: 25vw;
 
 .buttonContainer {
 	width: $width;
@@ -41,10 +41,10 @@ $height: 28vw;
 .hermitImage {
 	filter: drop-shadow(0px 0px 15px black);
 	width: $width;
-	height: calc($height * 0.8);
-	object-fit: scale-down;
+	height: calc($height * 0.7);
+	object-fit: contain;
 	position: absolute;
-	top: 1vw;
+	top: 4vh;
 	pointer-events: none;
 	z-index: -1;
 }
