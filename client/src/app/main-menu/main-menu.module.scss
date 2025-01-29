@@ -47,6 +47,7 @@
 .mainMenuButton {
 	height: 5vh;
 	font-size: 1.8vh;
+	padding: 3vh;
 }
 
 .logo {
@@ -94,7 +95,7 @@
 nav {
 	width: 90%;
 	display: grid;
-	gap: 2vh;
+	gap: .75vh;
 	grid-template-areas:
 		"public"
 		"private-create"
@@ -109,7 +110,7 @@ nav {
 @media (min-width: 80vh) {
 	nav {
 		display: grid;
-		gap: 1.3vh;
+		gap: .75vh;
 		grid-template-columns: 1fr 1fr;
 		grid-template-areas:
 			"public public"
