@@ -60,6 +60,9 @@
 	padding: 0.3rem;
 	user-select: none;
 	cursor: pointer;
+	max-height: 4rem;
+	text-overflow: ellipsis;
+	overflow: hidden;
 
 	&:hover {
 		filter: brightness(1.2);
@@ -150,15 +153,11 @@
 }
 
 .decksContainer {
-	height: 10%;
-
-	> ul {
-		overflow-y: scroll;
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-		width: 100%;
-	}
+	overflow-y: auto;
+	display: grid;
+	grid-template-columns: 33% 33% 33%;
+	grid-auto-flow: row;
+	width: 100%;
 }
 
 .bossRules {

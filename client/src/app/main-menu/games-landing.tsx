@@ -49,7 +49,7 @@ function GameLanding({setMenuSection}: Props) {
 
 	const decks = databaseInfo?.decks
 	const [mode, setMode] = useState<string | null>(null)
-	const selectedDeckRef = useRef<HTMLLIElement>(null)
+	const selectedDeckRef = useRef<HTMLDivElement>(null)
 
 	const checkForValidation = (): boolean => {
 		if (!playerDeck || !loadedDeck) {
@@ -116,7 +116,7 @@ function GameLanding({setMenuSection}: Props) {
 
 	const decksList = decks.map((deck, i) => {
 		return (
-			<li
+			<div
 				className={classNames(
 					css.myDecksItem,
 					loadedDeck && deck.code === loadedDeck.code && css.selectedDeck,
@@ -156,7 +156,7 @@ function GameLanding({setMenuSection}: Props) {
 					<img src={getIconPath(deck)} alt={'deck-icon'} />
 				</div>
 				{deck.name}
-			</li>
+			</div>
 		)
 	})
 
@@ -336,10 +336,9 @@ function GameLanding({setMenuSection}: Props) {
 							>
 								<div className={css.buttonMenu}>
 									<p>Select a deck to use in this game mode.</p>
-									<div className={css.decksContainer}>
-										<ul>{decksList}</ul>
+									<div className={css.deckSelector}>
+										<div className={css.decksContainer}>{decksList}</div>
 									</div>
-									Deck filtering options should probably go here.
 									<Button onClick={handeJoinQueue}>Join Queue</Button>
 								</div>
 							</HermitButton>
@@ -354,8 +353,9 @@ function GameLanding({setMenuSection}: Props) {
 								selectedDeck={loadedDeck}
 							>
 								<div className={css.buttonMenu}>
-									<div className={css.decksContainer}>
-										<ul>{decksList}</ul>
+									<p>Select a deck to use in this game mode.</p>
+									<div className={css.deckSelector}>
+										<div className={css.decksContainer}>{decksList}</div>
 									</div>
 									<Button onClick={handlePrivateGame}>Create Lobby</Button>
 								</div>
@@ -371,8 +371,9 @@ function GameLanding({setMenuSection}: Props) {
 								selectedDeck={loadedDeck}
 							>
 								<div className={css.buttonMenu}>
-									<div className={css.decksContainer}>
-										<ul>{decksList}</ul>
+									<p>Select a deck to use in this game mode.</p>
+									<div className={css.deckSelector}>
+										<div className={css.decksContainer}>{decksList}</div>
 									</div>
 									<Button onClick={() => setEvilXOpen(true)}>Show Rules</Button>
 									<Button onClick={handleCreateBossGame}>Fight Evil X</Button>
