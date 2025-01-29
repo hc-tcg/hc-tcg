@@ -1,6 +1,9 @@
+$width: 18vw;
+$height: 28vw;
+
 .buttonContainer {
-	width: 18vw;
-	height: 34vw;
+	width: $width;
+	height: $height;
 	transition-timing-function: ease-out;
 	transform-origin: center;
 
@@ -11,10 +14,11 @@
 
 .backgroundContainer {
 	position: absolute;
-	width: 18vw;
-	height: 34vw;
+	width: $width;
+	height: $height;
 	transition-timing-function: ease-out;
 	transform-origin: center;
+	overflow: hidden;
 }
 
 .backgroundImage {
@@ -23,6 +27,7 @@
 	height: 100%;
 	border: 2px black solid;
 	object-fit: cover;
+	object-position: left;
 	z-index: -2;
 }
 
@@ -33,6 +38,17 @@
 	background: linear-gradient(0deg, black 20%, rgba(0, 0, 0, 0) 40%);
 }
 
+.hermitImage {
+	filter: drop-shadow(0px 0px 15px black);
+	width: $width;
+	height: calc($height * 0.8);
+	object-fit: scale-down;
+	position: absolute;
+	top: 1vw;
+	pointer-events: none;
+	z-index: -1;
+}
+
 .button {
 	display: flex;
 	flex-direction: column;
@@ -41,17 +57,6 @@
 	font-family: Minecraft;
 	width: 100%;
 	height: 100%;
-}
-
-.hermitImage {
-	filter: drop-shadow(0px 0px 15px black);
-	width: 18vw;
-	height: 27vw;
-	object-fit: scale-down;
-	position: absolute;
-	top: 1vw;
-	pointer-events: none;
-	z-index: -1;
 }
 
 .returnButton {
@@ -71,7 +76,7 @@
 	box-sizing: border-box;
 	cursor: pointer;
 
-	> img {
+	>img {
 		padding-top: 0.85vh;
 		padding-bottom: 0.85vh;
 		font-size: 1.75rem;
@@ -80,7 +85,7 @@
 		filter: invert(1);
 	}
 
-	> p {
+	>p {
 		font-size: 1.5vh;
 		transform: translateY(1px);
 		padding-right: 0.5vh;
@@ -121,7 +126,7 @@
 	right: 0%;
 	opacity: 0%;
 	height: 100%;
-	width: 60%;
+	width: calc(100% - $width);
 }
 
 .selectedDeck {
@@ -162,7 +167,7 @@
 	flex-shrink: 0;
 	cursor: pointer;
 
-	> img {
+	>img {
 		height: 1.5rem;
 		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
 	}

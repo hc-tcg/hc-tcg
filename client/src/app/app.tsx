@@ -23,7 +23,7 @@ import Achievements from './main-menu/achievements'
 import Credits from './main-menu/credits'
 import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
-import GameLanding from './main-menu/games-landing'
+import PlaySelect from './main-menu/play-select'
 import HallOfFame from './main-menu/hall-of-fame'
 import Settings from './main-menu/settings'
 
@@ -66,8 +66,8 @@ function App() {
 					return <Achievements setMenuSection={setMenuSection} />
 				case 'credits':
 					return <Credits setMenuSection={setMenuSection} />
-				case 'game-landing':
-					return <GameLanding setMenuSection={setMenuSection} />
+				case 'play-select':
+					return <PlaySelect setMenuSection={setMenuSection} />
 
 				case 'main-menu':
 				default:

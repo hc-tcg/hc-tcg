@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import {ReactElement, useEffect, useReducer, useRef, useState} from 'react'
-import css from './button.module.scss'
+import css from './hermit-button.module.scss'
 
 interface HermitbuttonProps {
 	image: string
@@ -38,15 +38,25 @@ const HermitButton = ({
 	} | null>(null)
 	const [, reload] = useReducer((x) => x + 1, 0)
 
+	const handleResize = () => {
+		if (!buttonRef.current || !backgroundRef.current) {
+			reload()
+		} else {
+			const pos = buttonRef.current.getBoundingClientRect()
+			setButtonPosition({x: pos.x, y: pos.y, h: pos.height, w: pos.width})
+			backgroundRef.current.style.left = `${pos.x}px`
+		}
+	}
+
 	useEffect(() => {
 		if (!buttonPosition) {
-			if (!buttonRef.current || !backgroundRef.current) {
-				reload()
-			} else {
-				const pos = buttonRef.current.getBoundingClientRect()
-				setButtonPosition({x: pos.x, y: pos.y, h: pos.height, w: pos.width})
-				backgroundRef.current.style.left = `${pos.x}px`
-			}
+			handleResize()
+		}
+		window.addEventListener('resize', handleResize)
+
+		// Clean up event listeners
+		return () => {
+			window.removeEventListener('resize', handleResize)
 		}
 	})
 
@@ -73,9 +83,9 @@ const HermitButton = ({
 		background.style.transform = 'scale(100%)'
 		background.style.opacity = '100%'
 
-		background.style.width = '60%'
+		background.style.width = '80vh'
 		background.style.transition = 'width 0.3s, left 0.3s'
-		background.style.left = '20%'
+		background.style.left = 'calc((100vw - 80vh) / 2)'
 		rightOverlay.style.transition = 'opacity 0.5s'
 		rightOverlay.style.opacity = '100%'
 		returnButton.style.transition = 'opacity 0.5s'
@@ -116,7 +126,7 @@ const HermitButton = ({
 		background.style.opacity = '100%'
 		background.style.left = `${buttonPosition.x}px`
 		background.style.top = `${buttonPosition.y}px`
-		background.style.width = `${buttonPosition.w}px`
+		background.style.width = ''
 		background.style.transition =
 			'transform 0.3s, opacity 0.3s, width 0.3s, left 0.3s'
 		rightOverlay.style.transition = 'opacity 0.1s'

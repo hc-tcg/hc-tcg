@@ -1,11 +1,18 @@
-.gamesLandingButtons {
-	display: grid;
-	grid-auto-flow: column;
+.playSelect {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 	justify-content: center;
-	grid-gap: 2rem;
+	gap: 3vh;
 }
 
-.gamesLanding {
+h2 {
+	color: var(--text-light);
+	font-size: 3vh;
+	filter: drop-shadow(2px 2px 0 var(--text-dark));
+}
+
+.gameTypes {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -13,11 +20,11 @@
 	gap: 6rem;
 }
 
-.gamesPage {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+.gameTypesButtons {
+	display: grid;
+	grid-auto-flow: column;
 	justify-content: center;
+	grid-gap: 2rem;
 }
 
 .bottomButtons {
@@ -27,7 +34,6 @@
 	align-items: center;
 	justify-content: center;
 	gap: 1rem;
-	margin-top: 2rem;
 }
 
 .bigButton {
@@ -46,7 +52,7 @@
 	flex-direction: column;
 	white-space: nowrap;
 
-	> div {
+	>div {
 		flex-grow: 1;
 	}
 }
@@ -99,7 +105,7 @@
 	height: 2rem;
 	flex-shrink: 0;
 
-	> img {
+	>img {
 		height: 1.5rem;
 		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
 	}
@@ -184,7 +190,7 @@
 	align-items: center;
 	justify-content: center;
 
-	> div {
+	>div {
 		background-color: rgba(0, 0, 0, 0.8);
 		padding: 1rem;
 		border-radius: 8px;

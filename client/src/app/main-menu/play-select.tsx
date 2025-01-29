@@ -34,13 +34,13 @@ import {setActiveDeck} from 'logic/saved-decks/saved-decks'
 import {getSession} from 'logic/session/session-selectors'
 import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
-import css from './games-landing.module.scss'
+import css from './play-select.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 
-function GameLanding({setMenuSection}: Props) {
+function PlaySelect({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 	const {playerDeck} = useSelector(getSession)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
@@ -321,110 +321,107 @@ function GameLanding({setMenuSection}: Props) {
 			<MenuLayout
 				back={() => {
 					if (queing) handleLeaveQueue()
-					setMenuSection('mainmenu')
+					setMenuSection('main-menu')
 				}}
 				title="Play"
 				returnText="Main Menu"
-				className={css.gamesPage}
+				className={css.playSelect}
 			>
-				<div className={css.gamesLanding}>
-					<div>
-						<div className={css.gamesLandingButtons}>
-							<HermitButton
-								image={'vintagebeef'}
-								backgroundImage={'gamemodes/public'}
-								title={'Public Game'}
-								description={'Challenge a random player to a game of HC-TCG!'}
-								mode="public"
-								selectedMode={mode}
-								setSelectedMode={setMode}
-								onReturn={handleLeaveQueue}
-							>
-								<div className={css.fullLeft}>
-									{!queing && (
-										<div className={css.buttonMenu}>
-											<p>Confirm your deck before entering a game.</p>
-											<div className={css.deckSelector}>
-												<div className={css.decksContainer}>{decksList}</div>
-											</div>
-											<Button onClick={() => handeJoinQueue()}>
-												Join Queue
-											</Button>
+				<h2 className={css.heading}>Select a game type:</h2>
+				<div className={css.gameTypes}>
+					<div className={css.gameTypesButtons}>
+						<HermitButton
+							image={'vintagebeef'}
+							backgroundImage={'gamemodes/public'}
+							title={'Public Game'}
+							description={'Challenge a random player to a game of HC-TCG!'}
+							mode="public"
+							selectedMode={mode}
+							setSelectedMode={setMode}
+							onReturn={handleLeaveQueue}
+						>
+							<div className={css.fullLeft}>
+								{!queing && (
+									<div className={css.buttonMenu}>
+										<p>Confirm your deck before entering a game.</p>
+										<div className={css.deckSelector}>
+											<div className={css.decksContainer}>{decksList}</div>
 										</div>
-									)}
-									{queing && (
-										<div className={css.queueMenu}>
-											<div>
-												<div className={css.spinner}>
-													<Spinner />
-												</div>
-												<p>Waiting For Opponent</p>
-												<p>
-													Having trouble finding a match? Feel free to join our
-													discord!
-												</p>
+										<Button onClick={() => handeJoinQueue()}>Join Queue</Button>
+									</div>
+								)}
+								{queing && (
+									<div className={css.queueMenu}>
+										<div>
+											<div className={css.spinner}>
+												<Spinner />
 											</div>
+											<p>Waiting For Opponent</p>
+											<p>
+												Having trouble finding a match? Feel free to join our
+												discord!
+											</p>
 										</div>
-									)}
-								</div>
-							</HermitButton>
-							<HermitButton
-								image={'cubfan135'}
-								backgroundImage={'gamemodes/private'}
-								title={'Private Game'}
-								description={'Play against your friends in a private lobby.'}
-								mode="private"
-								selectedMode={mode}
-								setSelectedMode={setMode}
-							>
-								<div className={css.buttonMenu}>
-									<p>Confirm your deck before entering a game.</p>
-									<div className={css.deckSelector}>
-										<div className={css.decksContainer}>{decksList}</div>
 									</div>
-									<Button onClick={handlePrivateGame}>Create Lobby</Button>
+								)}
+							</div>
+						</HermitButton>
+						<HermitButton
+							image={'cubfan135'}
+							backgroundImage={'gamemodes/private'}
+							title={'Private Game'}
+							description={'Play against your friends in a private lobby.'}
+							mode="private"
+							selectedMode={mode}
+							setSelectedMode={setMode}
+						>
+							<div className={css.buttonMenu}>
+								<p>Confirm your deck before entering a game.</p>
+								<div className={css.deckSelector}>
+									<div className={css.decksContainer}>{decksList}</div>
 								</div>
-							</HermitButton>
-							<HermitButton
-								image={'evilxisuma'}
-								backgroundImage={'gamemodes/boss'}
-								title={'Boss Battle'}
-								description={'Challenge Evil X to a fight. Blah Blah Blah Blah'}
-								mode="boss"
-								selectedMode={mode}
-								setSelectedMode={setMode}
-							>
-								<div className={css.buttonMenu}>
-									<p>Confirm your deck before entering a game.</p>
-									<div className={css.deckSelector}>
-										<div className={css.decksContainer}>{decksList}</div>
-									</div>
-									<Button onClick={() => setEvilXOpen(true)}>Show Rules</Button>
-									<Button onClick={handleCreateBossGame}>Fight Evil X</Button>
+								<Button onClick={handlePrivateGame}>Create Lobby</Button>
+							</div>
+						</HermitButton>
+						<HermitButton
+							image={'evilxisuma'}
+							backgroundImage={'gamemodes/boss'}
+							title={'Boss Battle'}
+							description={'Challenge Evil X to a fight. Blah Blah Blah Blah'}
+							mode="boss"
+							selectedMode={mode}
+							setSelectedMode={setMode}
+						>
+							<div className={css.buttonMenu}>
+								<p>Confirm your deck before entering a game.</p>
+								<div className={css.deckSelector}>
+									<div className={css.decksContainer}>{decksList}</div>
 								</div>
-							</HermitButton>
-							<HermitButton
-								image={'geminitay'}
-								backgroundImage={'gamemodes/tutorial'}
-								title={'Tutorial'}
-								description={
-									'Play a game against the computer to learn the rules of HC-TCG.'
-								}
-								mode="tutorial"
-								selectedMode={mode}
-								setSelectedMode={setMode}
-							>
-								<div className={css.buttonMenu}>
-									<div>
-										<p>
-											Join a game here to learn the rules of HC-TCG before
-											facing online opponents.
-										</p>
-									</div>
-									<Button onClick={handeJoinQueue}>Join Queue</Button>
+								<Button onClick={() => setEvilXOpen(true)}>Show Rules</Button>
+								<Button onClick={handleCreateBossGame}>Fight Evil X</Button>
+							</div>
+						</HermitButton>
+						<HermitButton
+							image={'geminitay'}
+							backgroundImage={'gamemodes/tutorial'}
+							title={'Tutorial'}
+							description={
+								'Play a game against the computer to learn the rules of HC-TCG.'
+							}
+							mode="tutorial"
+							selectedMode={mode}
+							setSelectedMode={setMode}
+						>
+							<div className={css.buttonMenu}>
+								<div>
+									<p>
+										Join a game here to learn the rules of HC-TCG before facing
+										online opponents.
+									</p>
 								</div>
-							</HermitButton>
-						</div>
+								<Button onClick={handeJoinQueue}>Join Queue</Button>
+							</div>
+						</HermitButton>
 					</div>
 				</div>
 				<div className={css.bottomButtons}>
@@ -437,4 +434,4 @@ function GameLanding({setMenuSection}: Props) {
 	)
 }
 
-export default GameLanding
+export default PlaySelect
