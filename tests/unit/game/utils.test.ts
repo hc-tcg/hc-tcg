@@ -4,6 +4,7 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {
 	attack,
 	endTurn,
+	forfeit,
 	playCardFromHand,
 	testAchivement,
 	testGame,
@@ -38,8 +39,9 @@ describe('Test Game Utils', () => {
 				achievement: Win1,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (_game) {
+				playGame: function* (game) {
 					playedGame = true
+					yield* forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, _achievement, _outcome) {
 					checkedAchievment = true
