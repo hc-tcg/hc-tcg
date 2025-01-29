@@ -20,7 +20,6 @@ import Game from './game'
 import Login from './login'
 import MainMenu from './main-menu'
 import Achievements from './main-menu/achievements'
-import BossLanding from './main-menu/boss-landing'
 import Credits from './main-menu/credits'
 import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
@@ -70,8 +69,6 @@ function App() {
 					return <Achievements setMenuSection={setMenuSection} />
 				case 'credits':
 					return <Credits setMenuSection={setMenuSection} />
-				case 'boss-landing':
-					return <BossLanding setMenuSection={setMenuSection} />
 				case 'game-landing':
 					return <GameLanding setMenuSection={setMenuSection} />
 

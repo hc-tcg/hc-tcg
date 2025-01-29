@@ -137,10 +137,28 @@
 	}
 }
 
+.top {
+	display: flex;
+	flex-direction: row;
+	width: 20rem;
+}
+
 .decksContainer {
 	> ul {
 		overflow-y: scroll;
 		height: 30rem;
 		width: 15rem;
+	}
+}
+
+.bossRules {
+	gap: 1vh;
+
+	color: var(--text-light);
+	max-height: 80vh;
+
+	ol li {
+		list-style-type: decimal;
+		list-style-position: inside;
 	}
 }

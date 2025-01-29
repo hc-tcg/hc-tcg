@@ -4,16 +4,15 @@ import {ReactElement, useEffect, useReducer, useRef, useState} from 'react'
 import css from './button.module.scss'
 import {getIconPath} from 'common/utils/state-gen'
 import {getCardTypeIcon} from 'common/cards/card'
-import Button from 'components/button'
 import {ScreenshotDeckModal} from 'components/import-export'
 import {sortCards} from 'common/utils/cards'
 
 interface HermitbuttonProps {
 	image: string
 	title: string
-	type: string
-	selectedKey: string | null
-	setSelectedKey: (key: string | null) => void
+	mode: string
+	selectedMode: string | null
+	setSelectedMode: (key: string | null) => void
 	backgroundImage: string
 	selectedDeck: Deck | undefined
 	description: string
@@ -24,9 +23,9 @@ const HermitButton = ({
 	image,
 	title,
 	description,
-	type,
-	selectedKey,
-	setSelectedKey,
+	mode,
+	selectedMode,
+	setSelectedMode,
 	backgroundImage,
 	children,
 	selectedDeck,
@@ -65,11 +64,24 @@ const HermitButton = ({
 		const returnButton = returnButtonRef.current
 		const button = buttonRef.current
 		const viewDeck = viewDeckRef.current
-		if (!background || !rightOverlay || !returnButton || !button || !viewDeck)
+		if (
+			!background ||
+			!rightOverlay ||
+			!returnButton ||
+			!button ||
+			!viewDeck ||
+			!buttonPosition
+		)
 			return
-		setSelectedKey(type)
 		button.style.zIndex = '90'
 		background.classList.remove(css.hover)
+		// Resets
+		background.style.left = `${buttonPosition.x}px`
+		background.style.top = `${buttonPosition.y}px`
+		background.style.width = `${buttonPosition.w}px`
+		background.style.transform = 'scale(100%)'
+		background.style.opacity = '100%'
+
 		background.style.width = '60%'
 		background.style.transition = 'width 0.3s, left 0.3s'
 		background.style.left = '20%'
@@ -79,20 +91,27 @@ const HermitButton = ({
 		returnButton.style.opacity = '100%'
 		viewDeck.style.transition = 'opacity 0.5s'
 		viewDeck.style.opacity = '100%'
+		background.style.pointerEvents = 'all'
 	}
 
-	if (selectedKey && selectedKey !== type) {
+	if (selectedMode === mode) getBig()
+
+	if (selectedMode && selectedMode !== mode) {
 		const background = backgroundRef.current
 		const button = buttonRef.current
-		if (!background || !button) return
+		if (!background || !button || !buttonPosition) return
+		background.style.left = `${buttonPosition.x}px`
+		background.style.top = `${buttonPosition.y}px`
+		background.style.width = `${buttonPosition.w}px`
 		button.style.zIndex = '80'
 		background.style.transition = 'transform 0.15s, opacity 0.15s'
 		background.style.transform = 'scale(0%)'
 		background.style.opacity = '0%'
 		button.style.pointerEvents = 'none'
+		background.style.pointerEvents = 'none'
 	}
 
-	if (selectedKey === null && buttonPosition) {
+	if (selectedMode === null && buttonPosition) {
 		if (!buttonPosition) return
 		const background = backgroundRef.current
 		const rightOverlay = rightOverlayRef.current
@@ -123,11 +142,16 @@ const HermitButton = ({
 		viewDeck.style.opacity = '0%'
 		background.classList.add(css.hover)
 		button.style.pointerEvents = 'all'
+		background.style.pointerEvents = 'none'
 	}
 
 	return (
 		<>
-			<div className={css.buttonContainer} onMouseDown={getBig} ref={buttonRef}>
+			<div
+				className={css.buttonContainer}
+				onMouseDown={() => setSelectedMode(mode)}
+				ref={buttonRef}
+			>
 				<div
 					className={classNames(css.backgroundContainer, css.hover)}
 					ref={backgroundRef}
@@ -143,7 +167,7 @@ const HermitButton = ({
 								className={css.returnButton}
 								ref={returnButtonRef}
 								onClick={() => {
-									setSelectedKey(null)
+									setSelectedMode(null)
 								}}
 							>
 								<img src="../images/back_arrow.svg" alt="back-arrow" />

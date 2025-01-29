@@ -5,13 +5,35 @@ import MenuLayout from 'components/menu-layout'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getSession} from 'logic/session/session-selectors'
-import {useRef, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './games-landing.module.scss'
 import {Deck, Tag} from 'common/types/deck'
 import classNames from 'classnames'
 import {getIconPath} from 'common/utils/state-gen'
 import {setActiveDeck} from 'logic/saved-decks/saved-decks'
+import {Modal} from 'components/modal'
+import Knockback from 'common/cards/single-use/knockback'
+import Lead from 'common/cards/single-use/lead'
+import Looting from 'common/cards/single-use/looting'
+import Spyglass from 'common/cards/single-use/spyglass'
+import Bow from 'common/cards/single-use/bow'
+import SplashPotionOfPoison from 'common/cards/single-use/splash-potion-of-poison'
+import LavaBucket from 'common/cards/single-use/lava-bucket'
+import Egg from 'common/cards/single-use/egg'
+import PotionOfSlowness from 'common/cards/single-use/potion-of-slowness'
+import TargetBlock from 'common/cards/single-use/target-block'
+import Dropper from 'common/cards/advent-of-tcg/single-use/dropper'
+import Glowstone from 'common/cards/advent-of-tcg/single-use/glowstone'
+import BerryBush from 'common/cards/advent-of-tcg/attach/berry-bush'
+import Anvil from 'common/cards/single-use/anvil'
+import RenbobRare from 'common/cards/hermits/renbob-rare'
+import PoePoeSkizzRare from 'common/cards/hermits/poepoeskizz-rare'
+import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
+import {Card} from 'common/cards/types'
+import {CardEntity} from 'common/entities'
+import {EXPANSIONS} from 'common/const/expansions'
+import CardList from 'components/card-list'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -64,10 +86,17 @@ function GameLanding({setMenuSection}: Props) {
 		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
 		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
 	}
-	const handleSoloGame = () => {
-		const valid = checkForValidation()
-		if (!valid) return
-		setMenuSection('boss-landing')
+
+	const playSwitchDeckSFX = () => {
+		const pageTurn = [
+			'/sfx/Page_turn1.ogg',
+			'/sfx/Page_turn2.ogg',
+			'/sfx/Page_turn3.ogg',
+		]
+		dispatch({
+			type: localMessages.SOUND_PLAY,
+			path: pageTurn[Math.floor(Math.random() * pageTurn.length)],
+		})
 	}
 
 	const tutorialDeck: Deck = {
@@ -101,6 +130,7 @@ function GameLanding({setMenuSection}: Props) {
 				onClick={() => {
 					setLoadedDeck(deck)
 					setActiveDeck(deck)
+					playSwitchDeckSFX()
 					dispatch({type: localMessages.UPDATE_DECK, deck: deck})
 				}}
 			>
@@ -130,8 +160,161 @@ function GameLanding({setMenuSection}: Props) {
 		)
 	})
 
+	/* Boss game stuff */
+	const [evilXOpen, setEvilXOpen] = useState<boolean>(false)
+
+	function createUICardInstance(card: Card): LocalCardInstance {
+		return {
+			props: WithoutFunctions(card),
+			entity: card.id as CardEntity,
+			slot: null,
+			turnedOver: false,
+			prizeCard: false,
+			attackHint: null,
+		} as const
+	}
+
+	function removeDisabledExpansions(card: Card) {
+		return !EXPANSIONS[card.expansion].disabled
+	}
+
+	const handleCreateBossGame = () => {
+		const valid = checkForValidation()
+		if (!valid) return
+		setMenuSection('game-landing')
+		dispatch({type: localMessages.MATCHMAKING_BOSS_GAME_CREATE})
+	}
+
+	const nonFunctionalCards = [
+		Knockback,
+		Lead,
+		Looting,
+		Spyglass,
+		Bow,
+		SplashPotionOfPoison,
+		LavaBucket,
+
+		Egg,
+		PotionOfSlowness,
+		TargetBlock,
+
+		Dropper,
+		Glowstone,
+		BerryBush,
+	]
+		.filter(removeDisabledExpansions)
+		.map(createUICardInstance)
+
+	/* Keys */
+	const directlyOppositeCards = [Anvil, RenbobRare, PoePoeSkizzRare]
+		.filter(removeDisabledExpansions)
+		.map(createUICardInstance)
+
+	useEffect(() => {
+		window.addEventListener('keydown', handleKeyPress)
+		return () => {
+			window.removeEventListener('keydown', handleKeyPress)
+		}
+	}, [handleKeyPress])
+
+	const order = ['public', 'private', 'boss', 'tutorial']
+	function handleKeyPress(e: any) {
+		if (e.key === 'Escape') {
+			setMode(null)
+		}
+		if (e.key == 'Tab') {
+			if (!mode) {
+				setMode('public')
+				return
+			}
+			const currentModeIndex = order.findIndex((i) => i === mode)
+			setMode(order[(currentModeIndex + 1) % order.length])
+		}
+	}
+
 	return (
 		<>
+			<Modal
+				setOpen={evilXOpen}
+				title="Rules"
+				onClose={() => setEvilXOpen(!evilXOpen)}
+			>
+				<Modal.Description className={css.bossRules}>
+					<p>
+						That's right, the Hermitcraft TCG has its first boss fight! This is
+						no challenge deck, Evil X cares not for the cards. He brings his own
+						moves, and they are vicious! If you think you can defeat him, you'll
+						need to bring your best game. Be sure to check your audio settings
+						to hear the voice commands during the battle.
+					</p>
+					<h1>Rules</h1>
+					<p>
+						You will always go first but can only have three rows to play on.
+					</p>
+					<p>
+						EX has only one row to play on and has no item slots to attach to
+						his boss card. However, his card has 300hp, comes back again at full
+						health when knocked out, and will perform harder attacks with every
+						life lost.
+					</p>
+					{directlyOppositeCards.length
+						? [
+								<p>
+									EX is always directly opposite your active Hermit for the
+									purposes of:
+								</p>,
+								<div>
+									<CardList
+										tooltipAboveModal={true}
+										cards={directlyOppositeCards}
+										wrap={true}
+										displayTokenCost={false}
+									/>
+								</div>,
+							]
+						: undefined}
+					<p>
+						EX is immune to and cannot be inflicted with Fire, Poison, and
+						Slowness.
+					</p>
+					<p>The following cards don't work in this battle:</p>
+					<div>
+						<CardList
+							tooltipAboveModal={true}
+							cards={nonFunctionalCards}
+							wrap={true}
+							displayTokenCost={false}
+						/>
+					</div>
+					<h1>EX's Moves & Special</h1>
+					<p>Evil X can attack for 50, 70 or 90 damage.</p>
+					<p>
+						After losing a life, EX can also either heal for 150hp, set your
+						active Hermit on fire, or double the damage of his main attack.
+					</p>
+					<p>
+						On his last life, EX can deal 20 damage to all AFK Hermits, discard
+						your active Hermit's attached effect card, or force you to discard
+						an item card from your active Hermit. Discarded effect cards act as
+						if <u>Curse of Vanishing</u> was used and do not trigger from his
+						attack.
+					</p>
+					<p>
+						If a special move disables EX's attack, this only prevents attack
+						damage, being set on fire and damage against AFK Hermits.
+					</p>
+					<p>
+						At the end of EX's ninth turn, even if he cannot attack, he will
+						perform one of two special moves:
+					</p>
+					<ol>
+						<li>Discard your whole hand and draw one new card.</li>
+						<li>
+							Remove all attached item and effect cards from your active Hermit.
+						</li>
+					</ol>
+				</Modal.Description>
+			</Modal>
 			<MenuLayout
 				back={() => setMenuSection('mainmenu')}
 				title="Play"
@@ -146,9 +329,9 @@ function GameLanding({setMenuSection}: Props) {
 								backgroundImage={'gamemodes/public'}
 								title={'Public Game'}
 								description={'Challenge a random player to a game of HC-TCG!'}
-								type="public"
-								selectedKey={mode}
-								setSelectedKey={setMode}
+								mode="public"
+								selectedMode={mode}
+								setSelectedMode={setMode}
 								selectedDeck={loadedDeck}
 							>
 								<div className={css.buttonMenu}>
@@ -163,9 +346,9 @@ function GameLanding({setMenuSection}: Props) {
 								backgroundImage={'gamemodes/private'}
 								title={'Private Game'}
 								description={'Play against your friends in a private lobby.'}
-								type="private"
-								selectedKey={mode}
-								setSelectedKey={setMode}
+								mode="private"
+								selectedMode={mode}
+								setSelectedMode={setMode}
 								selectedDeck={loadedDeck}
 							>
 								<div className={css.buttonMenu}>
@@ -180,16 +363,17 @@ function GameLanding({setMenuSection}: Props) {
 								backgroundImage={'gamemodes/boss'}
 								title={'Boss Battle'}
 								description={'Challenge Evil X to a fight. Blah Blah Blah Blah'}
-								type="boss"
-								selectedKey={mode}
-								setSelectedKey={setMode}
+								mode="boss"
+								selectedMode={mode}
+								setSelectedMode={setMode}
 								selectedDeck={loadedDeck}
 							>
 								<div className={css.buttonMenu}>
 									<div className={css.decksContainer}>
 										<ul>{decksList}</ul>
 									</div>
-									<Button onClick={handleSoloGame}>Join Queue</Button>
+									<Button onClick={() => setEvilXOpen(true)}>Show Rules</Button>
+									<Button onClick={handleCreateBossGame}>Fight Evil X</Button>
 								</div>
 							</HermitButton>
 							<HermitButton
@@ -199,9 +383,9 @@ function GameLanding({setMenuSection}: Props) {
 								description={
 									'Play a game against the computer to learn the rules of HC-TCG.'
 								}
-								type="custom"
-								selectedKey={mode}
-								setSelectedKey={setMode}
+								mode="tutorial"
+								selectedMode={mode}
+								setSelectedMode={setMode}
 								selectedDeck={tutorialDeck}
 							>
 								<div className={css.buttonMenu}>
