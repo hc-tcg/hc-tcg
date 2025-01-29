@@ -814,6 +814,7 @@ function* gameSaga(con: GameController) {
 		if (result === 'GAME_END') break
 	}
 	con.game.outcome = figureOutGameResult(con.game)
+	con.game.hooks.onGameEnd.call(con.game.outcome)
 }
 
 export default gameSaga
