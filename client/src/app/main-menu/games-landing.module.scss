@@ -35,3 +35,164 @@
 	padding-left: 3rem;
 	padding-right: 3rem;
 }
+
+.buttonMenu {
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.7);
+	padding: 1rem;
+	color: white;
+	display: flex;
+	flex-direction: column;
+	white-space: nowrap;
+
+	> div {
+		flex-grow: 1;
+	}
+}
+
+/* Decks */
+.myDecksItem {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.2rem;
+	padding: 0.3rem;
+	user-select: none;
+	cursor: pointer;
+	max-height: 4rem;
+	text-overflow: ellipsis;
+	overflow: hidden;
+
+	&:hover {
+		filter: brightness(1.2);
+		background-color: rgba(5, 5, 5, 0.5);
+	}
+}
+
+.selectedDeck {
+	font-size: 1rem;
+	color: gold;
+	text-indent: 3px;
+	transition: all 0.25s ease-in-out;
+}
+
+.multiColoredCircle {
+	width: 0.5rem;
+	height: 2rem;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.singleTag {
+	flex-grow: 1;
+	border-radius: 6px;
+}
+
+.deckImage {
+	display: grid;
+	place-content: center;
+	background-color: var(--gray-500);
+	border-radius: 6px;
+	width: 2rem;
+	height: 2rem;
+	flex-shrink: 0;
+
+	> img {
+		height: 1.5rem;
+		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
+	}
+}
+
+.usesIcon {
+	&.farm {
+		background-color: rgb(124, 204, 12);
+	}
+
+	&.redstone {
+		background-color: rgb(185, 33, 42);
+	}
+
+	&.prankster {
+		background-color: rgb(116, 55, 168);
+	}
+
+	&.explorer {
+		background-color: rgb(103, 138, 190);
+	}
+
+	&.balanced {
+		background-color: rgb(101, 124, 50);
+	}
+
+	&.builder {
+		background-color: rgb(184, 162, 154);
+	}
+
+	&.pvp {
+		background-color: rgb(85, 202, 194);
+	}
+
+	&.speedrunner {
+		background-color: rgb(223, 226, 36);
+	}
+
+	&.terraform {
+		background-color: rgb(217, 119, 147);
+	}
+
+	&.miner {
+		background-color: rgb(110, 105, 108);
+	}
+}
+
+.top {
+	display: flex;
+	flex-direction: row;
+}
+
+.decksContainer {
+	overflow-y: auto;
+	display: grid;
+	grid-template-columns: 33% 33% 33%;
+	grid-auto-flow: row;
+	width: 100%;
+}
+
+.bossRules {
+	gap: 1vh;
+
+	color: var(--text-light);
+	max-height: 80vh;
+
+	ol li {
+		list-style-type: decimal;
+		list-style-position: inside;
+	}
+}
+
+.fullLeft {
+	height: 100%;
+}
+
+.queueMenu {
+	display: flex;
+	height: 100%;
+	font-size: 1rem;
+	color: white;
+	align-items: center;
+	justify-content: center;
+
+	> div {
+		background-color: rgba(0, 0, 0, 0.8);
+		padding: 1rem;
+		border-radius: 8px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 1rem;
+		width: 50%;
+	}
+}

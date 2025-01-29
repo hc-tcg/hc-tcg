@@ -165,44 +165,6 @@ nav {
 	}
 }
 
-/* Boss Landing Page */
-
-.bossLanding {
-	margin-inline: auto;
-	padding: 1vh;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
-	overflow: hidden;
-}
-
-.bossRules {
-	gap: 1vh;
-
-	color: var(--text-light);
-	max-height: 80vh;
-
-	ol li {
-		list-style-type: decimal;
-		list-style-position: inside;
-	}
-}
-
-.singleBossArea {
-	display: grid;
-	width: 30vw;
-	align-items: center;
-	justify-content: center;
-	gap: 4px;
-}
-
-.bossImage {
-	max-height: 55vh;
-	filter: drop-shadow(0 0 1rem #1d1d1d);
-	padding-bottom: 2rem;
-}
-
 /* Settings Page */
 
 .settingsPage {

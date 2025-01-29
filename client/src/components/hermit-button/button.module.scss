@@ -1,33 +1,36 @@
 .buttonContainer {
-	width: 20rem;
-	height: 30rem;
+	width: 18vw;
+	height: 34vw;
+	transition-timing-function: ease-out;
+	transform-origin: center;
+
+	&.clickable {
+		cursor: pointer;
+	}
 }
 
 .backgroundContainer {
 	position: absolute;
-	width: 20rem;
-	height: 30rem;
-}
-
-.buttonContainer:hover {
-	transition: filter 0.2s, transform 0.2s;
-	filter: saturate(1.1) brightness(1.1);
-	transform: scale(1.01);
+	width: 18vw;
+	height: 34vw;
+	transition-timing-function: ease-out;
+	transform-origin: center;
 }
 
 .backgroundImage {
 	position: absolute;
-	width: 20rem;
-	height: 30rem;
-	z-index: -1000;
+	width: 100%;
+	height: 100%;
 	border: 2px black solid;
+	object-fit: cover;
+	z-index: -2;
 }
 
 .vingette {
-	width: 20rem;
-	height: 30rem;
+	width: 100%;
+	height: 100%;
 	box-shadow: inset 0 0 30px black;
-	background: linear-gradient(0deg, black 10%, rgba(0, 0, 0, 0) 40%);
+	background: linear-gradient(0deg, black 20%, rgba(0, 0, 0, 0) 40%);
 }
 
 .button {
@@ -35,7 +38,6 @@
 	flex-direction: column;
 	justify-content: center;
 	text-align: left;
-	padding: 1rem;
 	font-family: Minecraft;
 	width: 100%;
 	height: 100%;
@@ -43,15 +45,134 @@
 
 .hermitImage {
 	filter: drop-shadow(0px 0px 15px black);
-	z-index: -900;
+	width: 18vw;
+	height: 27vw;
+	object-fit: scale-down;
+	position: absolute;
+	top: 1vw;
+	pointer-events: none;
+	z-index: -1;
+}
+
+.returnButton {
+	position: absolute;
+	display: flex;
+	flex-direction: row;
+	top: 0.5rem;
+	left: 0.5rem;
+	font-size: 1.2rem;
+	align-items: center;
+	background-color: rgba(0, 0, 0, 0.637);
+	border-radius: 4px;
+	padding: 5px;
+	border: 1px rgba(0, 0, 0, 0) solid;
+	color: white;
+	opacity: 0%;
+	box-sizing: border-box;
+	cursor: pointer;
+
+	> img {
+		padding-top: 0.85vh;
+		padding-bottom: 0.85vh;
+		font-size: 1.75rem;
+		height: 3.2vh;
+		width: 3.2vh;
+		filter: invert(1);
+	}
+
+	> p {
+		font-size: 1.5vh;
+		transform: translateY(1px);
+		padding-right: 0.5vh;
+	}
+
+	&:hover {
+		border: 1px var(--text-light) solid;
+	}
+
+	&:active {
+		transform: translateY(1px);
+	}
 }
 
 .text {
 	color: var(--text-light);
-	z-index: 0;
 	font-size: 1rem;
+	width: 18vw;
+	padding: 1rem;
 
 	h1 {
 		font-size: 1.5rem;
 	}
+}
+
+.leftOverlay {
+	position: absolute;
+	top: 0%;
+	display: flex;
+	flex-direction: row;
+	height: 100%;
+	padding-bottom: 1rem;
+}
+
+.rightOverlay {
+	position: absolute;
+	top: 0%;
+	right: 0%;
+	opacity: 0%;
+	height: 100%;
+	width: 60%;
+}
+
+.selectedDeck {
+	display: flex;
+	flex-direction: row;
+	color: var(--text-light);
+	font-size: 1rem;
+	background-color: var(--gray-700);
+	width: 16vw;
+	height: 2.5rem;
+	align-self: center;
+	border-radius: 0.5vh;
+	user-select: none;
+	font-weight: normal;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+
+	.infoIcon {
+		padding: 5px;
+		height: 100%;
+	}
+}
+
+.viewDeckButton {
+	position: absolute;
+	bottom: 1rem;
+	left: 18vw;
+	opacity: 0%;
+	place-content: center;
+	display: flex;
+	align-items: center;
+	justify-items: center;
+	background-color: var(--gray-700);
+	border-radius: 6px;
+	width: 2.5rem;
+	height: 2.5rem;
+	flex-shrink: 0;
+	cursor: pointer;
+
+	> img {
+		height: 1.5rem;
+		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
+	}
+
+	&:hover {
+		background: var(--gray-600);
+		filter: brightness(1.1);
+	}
+}
+
+.spacer {
+	flex-grow: 1;
 }
