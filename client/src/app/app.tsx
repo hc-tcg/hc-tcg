@@ -36,7 +36,7 @@ function App() {
 	const toastMessage = useSelector(getToast)
 	const tooltip = useSelector(getTooltip)
 	const settings = useSelector(getSettings)
-	const [menuSection, setMenuSection] = useState<string>('mainmenu')
+	const [menuSection, setMenuSection] = useState<string>('main-menu')
 	let enableToast = false
 
 	useEffect(() => {
@@ -69,7 +69,7 @@ function App() {
 				case 'game-landing':
 					return <GameLanding setMenuSection={setMenuSection} />
 
-				case 'mainmenu':
+				case 'main-menu':
 				default:
 					return <MainMenu setMenuSection={setMenuSection} />
 			}

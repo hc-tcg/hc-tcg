@@ -111,7 +111,7 @@ function Settings({setMenuSection}: Props) {
 				/>
 			)}
 			<MenuLayout
-				back={() => changeMenuSection('mainmenu')}
+				back={() => changeMenuSection('main-menu')}
 				title="More"
 				returnText="Main Menu"
 				className={css.settingsMenu}
