@@ -357,7 +357,7 @@ function GameLanding({setMenuSection}: Props) {
 									<div className={css.decksContainer}>
 										<ul>{decksList}</ul>
 									</div>
-									<Button onClick={handlePrivateGame}>Join Queue</Button>
+									<Button onClick={handlePrivateGame}>Create Lobby</Button>
 								</div>
 							</HermitButton>
 							<HermitButton
