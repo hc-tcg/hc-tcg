@@ -6,10 +6,16 @@
 	gap: 3vh;
 }
 
-h2 {
+h2,
+h3 {
 	color: var(--text-light);
-	font-size: 3vh;
+	font-size: 2rem;
 	filter: drop-shadow(2px 2px 0 var(--text-dark));
+	margin-top: 2vh;
+}
+
+h3 {
+	font-size: 1.5rem;
 }
 
 .gameTypes {
