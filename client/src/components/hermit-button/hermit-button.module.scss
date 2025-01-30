@@ -1,14 +1,17 @@
 $width: 16vw;
 $height: 25vw;
+$time: 0.2s;
 
 .buttonContainer {
 	width: $width;
 	height: $height;
-	transition-timing-function: ease-out;
-	transform-origin: center;
 
-	&.clickable {
-		cursor: pointer;
+	&.disablePointer {
+		animation: disablePointer 0.3s forwards;
+	}
+
+	&.enablePointer {
+		animation: enablePointer 0.3s forwards;
 	}
 }
 
@@ -16,9 +19,41 @@ $height: 25vw;
 	position: absolute;
 	width: $width;
 	height: $height;
-	transition-timing-function: ease-out;
+	transition: left 0.3s ease-out;
 	transform-origin: center;
 	overflow: hidden;
+	z-index: 90;
+
+	&.grow {
+		animation: grow $time forwards;
+
+		.rightOverlay,
+		.returnButton {
+			animation: opacityGrow $time forwards;
+		}
+	}
+
+	&.shrink {
+		animation: shrink $time forwards;
+
+		.rightOverlay,
+		.returnButton {
+			pointer-events: none;
+			cursor: default;
+			animation: opacityShrink $time forwards;
+		}
+	}
+
+	&.hide {
+		z-index: 80;
+		pointer-events: none;
+		animation: hideAnim $time forwards;
+	}
+
+	&.show {
+		z-index: 80;
+		animation: showAnim $time forwards;
+	}
 }
 
 .backgroundImage {
@@ -181,4 +216,113 @@ $height: 25vw;
 
 .spacer {
 	flex-grow: 1;
+}
+
+/* ANIMATIONS */
+@keyframes grow {
+	from {
+		width: $width;
+		pointer-events: none;
+	}
+
+	99% {
+		pointer-events: none;
+	}
+
+	to {
+		width: min(max(45vw, 70vh), 80vw);
+		pointer-events: all;
+	}
+}
+
+@keyframes opacityGrow {
+	from {
+		opacity: 0%;
+	}
+
+	to {
+		opacity: 100%;
+	}
+}
+
+@keyframes shrink {
+	from {
+		pointer-events: none;
+		width: min(max(45vw, 70vh), 80vw);
+	}
+
+	99% {
+		pointer-events: none;
+	}
+
+	to {
+		pointer-events: all;
+		width: $width;
+	}
+}
+
+@keyframes opacityShrink {
+	from {
+		opacity: 100%;
+	}
+
+	to {
+		opacity: 0%;
+	}
+}
+
+@keyframes hideAnim {
+	from {
+		scale: 100%;
+		opacity: 100%;
+	}
+
+	to {
+		scale: 80%;
+		opacity: 0%;
+	}
+}
+
+@keyframes showAnim {
+	from {
+		scale: 80%;
+		opacity: 0%;
+	}
+
+	to {
+		scale: 100%;
+		opacity: 100%;
+	}
+}
+
+@keyframes disablePointer {
+	from {
+		pointer-events: all;
+		cursor: pointer;
+	}
+
+	1% {
+		pointer-events: none;
+		cursor: default;
+	}
+
+	to {
+		pointer-events: none;
+	}
+}
+
+@keyframes enablePointer {
+	from {
+		pointer-events: none;
+	}
+
+	99% {
+		pointer-events: none;
+		cursor: default;
+	}
+
+	to {
+		pointer-events: all;
+		cursor: pointer;
+	}
 }

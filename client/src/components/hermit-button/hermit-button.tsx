@@ -30,6 +30,8 @@ const HermitButton = ({
 	const rightOverlayRef = useRef<HTMLDivElement>(null)
 	const returnButtonRef = useRef<HTMLDivElement>(null)
 
+	const [lastMode, setLastMode] = useState<string | null>(null)
+
 	const [buttonPosition, setButtonPosition] = useState<{
 		x: number
 		y: number
@@ -59,92 +61,93 @@ const HermitButton = ({
 			window.removeEventListener('resize', handleResize)
 		}
 	})
-
-	const getBig = () => {
-		if (!buttonPosition) return
+	const grow = () => {
 		const background = backgroundRef.current
-		const rightOverlay = rightOverlayRef.current
-		const returnButton = returnButtonRef.current
 		const button = buttonRef.current
-		if (
-			!background ||
-			!rightOverlay ||
-			!returnButton ||
-			!button ||
-			!buttonPosition
-		)
-			return
-		button.style.zIndex = '90'
-		button.classList.remove(css.clickable)
-		// Resets
+		if (!background || !button || !buttonPosition) return
+
+		button.classList.remove(css.enablePointer)
+		button.classList.add(css.disablePointer)
+
 		background.style.left = `${buttonPosition.x}px`
 		background.style.top = `${buttonPosition.y}px`
-		background.style.width = `${buttonPosition.w}px`
-		background.style.transform = 'scale(100%)'
-		background.style.opacity = '100%'
 
 		const width = 'min(max(45vw, 70vh), 80vw)'
-		background.style.width = width
-		background.style.transition = 'width 0.3s, left 0.3s'
 		background.style.left = `calc((100vw - ${width}) / 2)`
-		rightOverlay.style.transition = 'opacity 0.5s'
-		rightOverlay.style.opacity = '100%'
-		returnButton.style.transition = 'opacity 0.5s'
-		returnButton.style.opacity = '100%'
-		background.style.pointerEvents = 'all'
+
+		background.classList.remove(css.shrink, css.show, css.hide)
+		background.classList.add(css.grow)
 	}
 
 	const shrink = () => {
 		const background = backgroundRef.current
 		const button = buttonRef.current
-		if (!background || !button || !buttonPosition) return
+		if (!background || !buttonPosition || !button) return
+
+		button.classList.remove(css.disablePointer)
+		button.classList.add(css.enablePointer)
+
+		background.classList.remove(css.grow, css.show, css.hide)
+		background.classList.add(css.shrink)
+
 		background.style.left = `${buttonPosition.x}px`
 		background.style.top = `${buttonPosition.y}px`
-		background.style.width = `${buttonPosition.w}px`
-		button.style.zIndex = '80'
-		background.style.transition = 'transform 0.15s, opacity 0.15s'
-		background.style.transform = 'scale(80%)'
-		background.style.opacity = '0%'
-		background.style.pointerEvents = 'none'
-		button.style.pointerEvents = 'none'
 	}
 
-	const reset = () => {
+	const hide = () => {
 		const background = backgroundRef.current
-		const rightOverlay = rightOverlayRef.current
-		const returnButton = returnButtonRef.current
 		const button = buttonRef.current
-		if (
-			!background ||
-			!rightOverlay ||
-			!returnButton ||
-			!buttonPosition ||
-			!button
-		)
-			return
-		button.classList.add(css.clickable)
-		background.style.transform = 'scale(100%)'
-		background.style.opacity = '100%'
+		if (!background || !button || !buttonPosition) return
+
+		button.classList.remove(css.enablePointer)
+		button.classList.add(css.disablePointer)
+
+		background.classList.remove(css.shrink, css.grow, css.show)
+		background.classList.add(css.hide)
+
 		background.style.left = `${buttonPosition.x}px`
 		background.style.top = `${buttonPosition.y}px`
-		background.style.width = ''
-		background.style.transition =
-			'transform 0.3s, opacity 0.3s, width 0.3s, left 0.3s'
-		rightOverlay.style.transition = 'opacity 0.1s'
-		rightOverlay.style.opacity = '0%'
-		returnButton.style.transition = 'opacity 0.1s'
-		returnButton.style.opacity = '0%'
-		button.style.pointerEvents = 'all'
-		background.style.pointerEvents = 'none'
+	}
+	const show = () => {
+		const background = backgroundRef.current
+		const button = buttonRef.current
+		if (!background || !button || !buttonPosition) return
+
+		button.classList.remove(css.disablePointer)
+		button.classList.add(css.enablePointer)
+
+		background.classList.remove(css.hide, css.grow, css.shrink)
+		background.classList.add(css.show)
+
+		background.style.left = `${buttonPosition.x}px`
+		background.style.top = `${buttonPosition.y}px`
 	}
 
-	if (selectedMode === mode) getBig()
-	else if (selectedMode && selectedMode !== mode) shrink()
-	else if (selectedMode === null && buttonPosition) reset()
+	if (selectedMode != lastMode) {
+		const background = backgroundRef.current
+		const button = buttonRef.current
+		if (buttonPosition && background && button) {
+			if (selectedMode === mode) {
+				// Only trigger a change when the selected mode changed
+
+				grow()
+			} else if (selectedMode && selectedMode !== mode) {
+				hide()
+			} else if (selectedMode === null) {
+				if (lastMode == mode) {
+					shrink()
+				} else {
+					show()
+				}
+			}
+
+			setLastMode(selectedMode)
+		}
+	}
 
 	return (
 		<div
-			className={classNames(css.buttonContainer, css.clickable)}
+			className={classNames(css.buttonContainer, css.enablePointer)}
 			onMouseDown={() => setSelectedMode(mode)}
 			ref={buttonRef}
 		>
