@@ -42,7 +42,7 @@ type Props = {
 
 function PlaySelect({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
-	const {playerDeck} = useSelector(getSession)
+	const {playerDeck, playerName, minecraftName} = useSelector(getSession)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 	const [loadedDeck, setLoadedDeck] = useState<Deck | undefined>(
 		databaseInfo?.decks.find((deck) => deck.code === playerDeck),
@@ -450,11 +450,11 @@ function PlaySelect({setMenuSection}: Props) {
 				<div className={css.appearanceContainer}>
 					<img
 						className={css.playerHead}
-						src={'https://mc-heads.net/head/steve/right'}
+						src={`https://mc-heads.net/head/${minecraftName}/right`}
 						alt="player head"
 					/>
 					<div className={css.playerName}>
-						<h1>Player Name</h1>
+						<h1>{playerName}</h1>
 						<p className={css.title}>No title</p>
 					</div>
 
