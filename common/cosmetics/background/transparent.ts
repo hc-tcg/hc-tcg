@@ -1,9 +1,9 @@
-import { Cosmetic } from "../types";
+import {Cosmetic} from '../types'
 
 const TransparentBackground: Cosmetic = {
-    type: 'background',
-    id: 'transparent',
-    name: 'Transparent',
+	type: 'background',
+	id: 'transparent',
+	name: 'Transparent',
 }
 
 export default TransparentBackground

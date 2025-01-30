@@ -1,4 +1,4 @@
-import { Cosmetic } from "../types";
+import {Cosmetic} from '../types'
 
 const BORDERS: Cosmetic[] = []
 

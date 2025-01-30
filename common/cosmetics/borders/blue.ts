@@ -1,7 +1,7 @@
-import { Cosmetic } from "../types";
+import {Cosmetic} from '../types'
 
 const BlueBorder: Cosmetic = {
-    type: 'border',
-    id: 'blue',
-    name: 'Blue',
+	type: 'border',
+	id: 'blue',
+	name: 'Blue',
 }
