@@ -235,6 +235,25 @@ function PlaySelect({setMenuSection}: Props) {
 		}
 	}
 
+	const health = (lives: number) => {
+		const hearts = new Array(3).fill(null).map((_, index) => {
+			const heartImg =
+				lives > index
+					? '/images/game/heart_full.png'
+					: '/images/game/heart_empty.png'
+			return (
+				<img
+					key={index}
+					className={css.heart}
+					src={heartImg}
+					width="32"
+					height="32"
+				/>
+			)
+		})
+		return hearts
+	}
+
 	return (
 		<>
 			<Modal
@@ -425,11 +444,21 @@ function PlaySelect({setMenuSection}: Props) {
 					</div>
 				</div>
 				<h3>Ingame Appearance</h3>
-				<div className={css.bottomButtons}>
-					<Button className={css.bigButton} variant="default">
-						This is where a copy of the in-game box with your name etc in would
-						go
-					</Button>
+				<p className={css.clickToChange}>
+					<i>Click to change</i>
+				</p>
+				<div className={css.appearanceContainer}>
+					<img
+						className={css.playerHead}
+						src={'https://mc-heads.net/head/steve/right'}
+						alt="player head"
+					/>
+					<div className={css.playerName}>
+						<h1>Player Name</h1>
+						<p className={css.title}>No title</p>
+					</div>
+
+					<div className={css.health}>{health(3)}</div>
 				</div>
 			</MenuLayout>
 		</>

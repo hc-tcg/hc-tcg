@@ -17,18 +17,14 @@
 	border-image-repeat: stretch stretch;
 	border-image-source: url("/images/game/border_frame.png");
 	border-style: solid;
-	background: linear-gradient(
-		-90deg,
-		hsla(195deg, 53%, 60%, 35%),
-		hsla(195deg, 100%, 60%, 50%)
-	);
+	background: linear-gradient(-90deg,
+			hsla(195deg, 53%, 60%, 35%),
+			hsla(195deg, 100%, 60%, 50%));
 
 	&.right {
-		background: linear-gradient(
-			90deg,
-			hsla(195deg, 53%, 60%, 35%),
-			hsla(195deg, 100%, 60%, 50%)
-		);
+		background: linear-gradient(90deg,
+				hsla(195deg, 53%, 60%, 35%),
+				hsla(195deg, 100%, 60%, 50%));
 	}
 }
 
@@ -41,10 +37,7 @@
 }
 
 .playerName {
-	> h1 {
-		// font-size: 32px;
-		// letter-spacing: 1px;
-		// font-family: Minecrafter, sans-serif;
+	>h1 {
 		font-family: MinecraftBold;
 		filter: drop-shadow(0 2px 0 hsla(0deg, 0%, 0%, 35%));
 		text-overflow: ellipsis;
@@ -57,7 +50,7 @@
 		}
 	}
 
-	> p {
+	>p {
 		letter-spacing: 1px;
 		font-family: Minecrafter, sans-serif;
 		text-transform: uppercase;
@@ -95,7 +88,7 @@
 	flex-direction: column-reverse;
 	margin-left: auto;
 
-	> img {
+	>img {
 		$size: 16px;
 
 		height: $size;
@@ -110,7 +103,7 @@
 
 @media (orientation: landscape) {
 	.playerName {
-		> h1 {
+		>h1 {
 			max-width: 25ch;
 		}
 	}
@@ -119,7 +112,7 @@
 		flex-direction: row-reverse;
 		gap: 4px;
 
-		> img {
+		>img {
 			$size: 32px;
 
 			height: $size;

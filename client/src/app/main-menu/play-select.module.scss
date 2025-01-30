@@ -3,19 +3,30 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 3vh;
+	color: var(--text-light);
 }
 
 h2,
 h3 {
-	color: var(--text-light);
-	font-size: 2rem;
 	filter: drop-shadow(2px 2px 0 var(--text-dark));
-	margin-top: 2vh;
+}
+
+h2 {
+	font-size: 2rem;
+	margin-top: 4vh;
+	margin-bottom: 3vh;
 }
 
 h3 {
 	font-size: 1.5rem;
+	margin-top: 4vh;
+}
+
+.clickToChange {
+	margin-top: 0.5vh;
+	margin-bottom: 1.5vh;
+	font-size: 1rem;
+	filter: drop-shadow(2px 2px 0 var(--text-dark));
 }
 
 .gameTypes {
@@ -33,19 +44,63 @@ h3 {
 	grid-gap: 2rem;
 }
 
-.bottomButtons {
-	width: 100%;
+.appearanceContainer {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	justify-content: center;
-	gap: 1rem;
-}
+	gap: 1vh;
+	font-weight: bold;
+	color: var(--text-light);
+	padding: 4px 16px;
+	border: 4px solid var(--gray-900);
+	background: hsla(210deg, 2%, 20%, 90%);
 
-.bigButton {
-	height: 3.8rem;
-	padding-left: 3rem;
-	padding-right: 3rem;
+	&:hover {
+		cursor: pointer;
+		transform: scale(1.05);
+	}
+
+	.playerHead {
+		background: var(--gray-800);
+		clip-path: polygon(50% 0, 100% 20%, 100% 80%, 50% 100%, 0 80%, 0 20%);
+		height: 52px;
+		aspect-ratio: 20/21;
+		padding: 5px;
+	}
+
+	.playerName {
+		>h1 {
+			font-family: MinecraftBold;
+			filter: drop-shadow(0 2px 0 hsla(0deg, 0%, 0%, 35%));
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			width: 40ch;
+			overflow: hidden;
+		}
+
+		>p {
+			letter-spacing: 1px;
+			font-family: Minecrafter, sans-serif;
+			text-transform: uppercase;
+			font-size: 10px;
+			font-weight: normal;
+			color: var(--gray-200);
+		}
+	}
+
+	.health {
+		display: flex;
+		flex-direction: row-reverse;
+		gap: 4px;
+		margin-left: auto;
+
+		>img {
+			$size: 32px;
+
+			height: $size;
+			width: $size;
+		}
+	}
 }
 
 .buttonMenu {
