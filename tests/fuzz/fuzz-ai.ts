@@ -139,7 +139,19 @@ function getNextTurnAction(
 		}
 	}
 
-	throw new Error('Should never reach here')
+	if (nextAction === 'PRIMARY_ATTACK') {
+		return {
+			type: 'PRIMARY_ATTACK',
+		}
+	}
+
+	if (nextAction === 'SECONDARY_ATTACK') {
+		return {
+			type: 'PRIMARY_ATTACK',
+		}
+	}
+
+	throw new Error('Should never reach here:' + nextAction)
 }
 
 export const FuzzAI: VirtualAI = {
