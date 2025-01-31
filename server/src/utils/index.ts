@@ -8,7 +8,7 @@ import {ObserverEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
 import {isCounter} from 'common/status-effects/status-effect'
 import {Hook, PriorityHook} from 'common/types/hooks'
-import {GameController} from 'game-controller'
+import {GameController} from '../game-controller'
 
 export const getOpponentId = (controller: GameController, playerId: string) => {
 	const players = controller.viewers

@@ -1,4 +1,5 @@
 import assert from 'assert'
+import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
 import {
 	CardComponent,
 	PlayerComponent,
@@ -92,6 +93,11 @@ export class GameModel {
 	public publishBattleLog: (logs: Array<Message>, timeout: number) => void
 
 	public battleLog: BattleLogModel
+	/**All past turn actions, saved for replays */
+	public turnActions: Array<ReplayActionData>
+	/**The time the last action has been recieved*/
+	public lastActionTime: number | null
+
 	public state: GameState
 	/** The seed for the random number generation for this game. WARNING: Must be under 15 characters or the database will break. */
 	public readonly rngSeed: string
@@ -161,6 +167,8 @@ export class GameModel {
 		this.rng = newRandomNumberGenerator(rngSeed)
 
 		this.battleLog = new BattleLogModel(this)
+		this.turnActions = []
+		this.lastActionTime = null
 
 		this.endInfo = {
 			deadPlayerEntities: [],

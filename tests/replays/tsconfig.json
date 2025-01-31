@@ -1,5 +1,12 @@
 {
 	"compilerOptions": {
+		"paths": {
+			"client/*": ["../../client/src/*"],
+			"common/*": ["../../common/*"],
+			"types/*": ["../../common/types/*"],
+			"server/*": ["../../server/src/*"]
+		},
+		"allowJs": true,
 		"target": "esnext",
 		"module": "esnext",
 		"moduleResolution": "node",
@@ -8,8 +15,6 @@
 		"strict": true,
 		"noEmit": true,
 		"noImplicitOverride": true,
-		"esModuleInterop": true,
-		"outDir": "./dist"
-	},
-	"include": [".", "../server/src/routines/turn-action-compressor.ts"]
+		"esModuleInterop": true
+	}
 }

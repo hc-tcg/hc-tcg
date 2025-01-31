@@ -454,7 +454,7 @@ describe('Test Database', () => {
 			returnedDeckWithData.body.cards.map((c) => CARDS[c].numericId),
 		).toStrictEqual(playerDeck.cards)
 
-		const allDecks = await database.getDecks(user.body.uuid)
+		const allDecks = await database.getDecksFromUuid(user.body.uuid)
 		assert(
 			allDecks.type === 'success',
 			'The deck should be retrieved successfully',
@@ -482,7 +482,7 @@ describe('Test Database', () => {
 
 		assert(deck1.type === 'success', 'Deck 1 was created successfully')
 
-		const allDecks = await database.getDecks(user.body.uuid)
+		const allDecks = await database.getDecksFromUuid(user.body.uuid)
 		const returnedDeckFromId = await database.getDeckFromID(code)
 
 		assert(
@@ -566,7 +566,7 @@ describe('Test Database', () => {
 		await database.deleteDeck(withExportedCode.body, user.body.uuid)
 
 		const withExportedDeck = await database.getDeckFromID(withExportedCode.body)
-		const userDecks = await database.getDecks(user.body.uuid)
+		const userDecks = await database.getDecksFromUuid(user.body.uuid)
 
 		assert(
 			withExportedDeck.type === 'success',

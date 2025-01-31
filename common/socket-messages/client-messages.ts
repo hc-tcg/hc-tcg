@@ -16,6 +16,7 @@ export const clientMessages = messages('clientMessages', {
 	LEAVE_QUEUE: null,
 	LEAVE_PRIVATE_QUEUE: null,
 	JOIN_PRIVATE_GAME: null,
+	CREATE_REPLAY_GAME: null,
 	TURN_ACTION: null,
 	FORFEIT: null,
 	SPECTATOR_LEAVE: null,
@@ -86,6 +87,10 @@ export type ClientMessages = [
 		databaseConnected: false
 		activeDeck: Deck
 		code: string
+	},
+	{
+		type: typeof clientMessages.CREATE_REPLAY_GAME
+		id: number
 	},
 	{
 		type: typeof clientMessages.TURN_ACTION

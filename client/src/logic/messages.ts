@@ -44,6 +44,7 @@ export const localMessages = messages('clientLocalMessages', {
 	MATCHMAKING_QUEUE_JOIN: null,
 	MATCHMAKING_QUEUE_JOIN_FAILURE: null,
 	MATCHMAKING_BOSS_GAME_CREATE: null,
+	MATCHMAKING_REPLAY_GAME: null,
 	MATCHMAKING_PRIVATE_GAME_LOBBY: null,
 	MATCHMAKING_CODE_RECIEVED: null,
 	MATCHMAKING_LEAVE: null,
@@ -130,6 +131,10 @@ type Messages = [
 	{type: typeof localMessages.MINECRAFT_NAME_NEW; name: string},
 	{type: typeof localMessages.MATCHMAKING_QUEUE_JOIN},
 	{type: typeof localMessages.MATCHMAKING_BOSS_GAME_CREATE},
+	{
+		type: typeof localMessages.MATCHMAKING_REPLAY_GAME
+		id: number
+	},
 	{
 		type: typeof localMessages.MATCHMAKING_CODE_RECIEVED
 		gameCode: string

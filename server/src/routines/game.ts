@@ -23,7 +23,7 @@ import {actionChannel, call, delay, fork, race, take} from 'typed-redux-saga'
 import {printBoardState, printHooksState} from '../utils'
 
 import assert from 'assert'
-import {GameController} from 'game-controller'
+import {GameController} from '../game-controller'
 import {LocalMessage, LocalMessageTable, localMessages} from '../messages'
 import {
 	applyEffectAction,
@@ -371,13 +371,14 @@ function checkHermitHealth(game: GameModel) {
 	return deadPlayers
 }
 
-function handleSingleTurnAction(
+export function handleSingleTurnAction(
 	con: GameController,
 	turnAction: LocalMessageTable[typeof localMessages.GAME_TURN_ACTION],
 ) {
 	const actionType = turnAction.action.type
 
 	let endTurn = false
+	let forfeit = false
 
 	const availableActions =
 		turnAction.playerEntity === con.game.currentPlayer.entity
@@ -444,20 +445,37 @@ function handleSingleTurnAction(
 				con.broadcastState()
 				break
 			case 'FORFEIT':
+				forfeit = true
 				con.game.endInfo.deadPlayerEntities = [turnAction.action.player]
-				return 'FORFEIT'
+				break
 			default:
 				// Unknown action type, ignore it completely
 				throw new Error(
 					`Recieved an action ${actionType} that does not exist. This is impossible.`,
 				)
 		}
+
+		// If no error has been thown, add the action to the game's history
+		const currentTime = Date.now()
+		con.game.turnActions.push({
+			action: turnAction.action,
+			player: turnAction.playerEntity,
+			millisecondsSinceLastAction: con.game.lastActionTime
+				? currentTime - con.game.lastActionTime
+				: 0,
+		})
+		con.game.lastActionTime = currentTime
 	} catch (e) {
 		if (con.game.settings.logErrorsToStderr) {
 			console.error(`${con.game.logHeader} ${(e as Error).stack}`.trimStart())
 		} else {
 			throw e
 		}
+	}
+
+	// Handle returning from forfeit here because everything else doesn't need to be run
+	if (forfeit) {
+		return 'FORFEIT'
 	}
 
 	// We log endTurn at the start of the turn so the state updates properly.
@@ -647,8 +665,7 @@ function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 
 		if (result === 'END_TURN') {
 			break
-		}
-		if (result === 'FORFEIT') {
+		} else if (result === 'FORFEIT') {
 			con.game.endInfo.victoryReason = 'forfeit'
 			return 'GAME_END'
 		}
