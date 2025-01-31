@@ -2,10 +2,15 @@ import {describe, expect, test} from '@jest/globals'
 import Brush from 'common/cards/advent-of-tcg/single-use/brush'
 import Feather from 'common/cards/advent-of-tcg/single-use/feather'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import EvilXisumaRare from 'common/cards/hermits/evilxisuma_rare'
+import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
+import TangoTekRare from 'common/cards/hermits/tangotek-rare'
 import BalancedItem from 'common/cards/items/balanced-common'
 import BalancedDoubleItem from 'common/cards/items/balanced-rare'
 import BuilderItem from 'common/cards/items/builder-common'
+import FarmDoubleItem from 'common/cards/items/farm-rare'
 import MinerItem from 'common/cards/items/miner-common'
+import query from 'common/components/query'
 import {DragCards} from 'common/types/modal-requests'
 import {
 	bufferToTurnActions,
@@ -21,11 +26,6 @@ import {
 	playCardFromHand,
 	testReplayGame,
 } from '../unit/game/utils'
-import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
-import TangoTekRare from 'common/cards/hermits/tangotek-rare'
-import query from 'common/components/query'
-import FarmDoubleItem from 'common/cards/items/farm-rare'
-import EvilXisumaRare from 'common/cards/hermits/evilxisuma_rare'
 
 describe('Test Replays', () => {
 	test('Test play card and attack actions', async () => {

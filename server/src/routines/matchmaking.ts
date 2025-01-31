@@ -21,8 +21,8 @@ import {validateDeck} from 'common/utils/validation'
 import {
 	addGame,
 	getDeck,
-	updateAchievements,
 	getGameReplay,
+	updateAchievements,
 } from 'db/db-reciever'
 import {GameController} from 'game-controller'
 import {LocalMessageTable, localMessages} from 'messages'
