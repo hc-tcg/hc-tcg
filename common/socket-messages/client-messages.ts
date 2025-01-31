@@ -5,7 +5,6 @@ import {Deck, Tag} from '../types/deck'
 import {AnyTurnActionData} from '../types/turn-action-data'
 
 export const clientMessages = messages('clientMessages', {
-	GET_UPDATES: null,
 	SELECT_DECK: null,
 	UPDATE_MINECRAFT_NAME: null,
 	CREATE_BOSS_GAME: null,
@@ -38,7 +37,6 @@ export const clientMessages = messages('clientMessages', {
 })
 
 export type ClientMessages = [
-	{type: typeof clientMessages.GET_UPDATES},
 	{type: typeof clientMessages.SELECT_DECK; deck: Deck},
 	{type: typeof clientMessages.UPDATE_MINECRAFT_NAME; name: string},
 	{

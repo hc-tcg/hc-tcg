@@ -141,18 +141,3 @@ export function* updateMinecraftNameSaga(
 		name: player.minecraftName,
 	})
 }
-
-export function* loadUpdatesSaga(action: any) {
-	const {playerId} = action
-	const player = root.players[playerId]
-
-	if (!player) {
-		console.error('Found undefined player with id:', player)
-		return
-	}
-
-	broadcast([player], {
-		type: serverMessages.LOAD_UPDATES,
-		updates: root.updates,
-	})
-}

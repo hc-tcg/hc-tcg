@@ -8,7 +8,7 @@ import UpdatesModal from 'components/updates'
 import debugOptions from 'debug'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {getSession, getUpdates} from 'logic/session/session-selectors'
+import {getSession} from 'logic/session/session-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
@@ -41,7 +41,6 @@ function MainMenu({setMenuSection}: Props) {
 	const handleSettings = () => setMenuSection('settings')
 	const handleAchievements = () => setMenuSection('achievements')
 
-	const updates = useSelector(getUpdates)
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(true)
 	const latestUpdateView = localStorage.getItem('latestUpdateView')
 
@@ -49,14 +48,7 @@ function MainMenu({setMenuSection}: Props) {
 
 	return (
 		<>
-			{!latestUpdateView ||
-			parseInt(updates['timestamps'] ? updates['timestamps'][0] : '0') >
-				parseInt(latestUpdateView) ? (
-				debugOptions.showUpdatesModal &&
-				updatesOpen && <UpdatesModal onClose={() => setUpdatesOpen(false)} />
-			) : (
-				<></>
-			)}
+			<UpdatesModal onClose={() => setUpdatesOpen(false)} />
 			<div className={css.mainmenu}>
 				<div className={css.playerInfo}>
 					<p id={css.infoName}>

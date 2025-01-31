@@ -35,7 +35,6 @@ export const localMessages = messages('clientLocalMessages', {
 	CONNECTED: null,
 	DISCONNECT: null,
 	LOGOUT: null,
-	UPDATES_LOAD: null,
 	TOAST_OPEN: null,
 	TOAST_CLOSE: null,
 	EVERY_TOAST_CLOSE: null,
@@ -116,7 +115,6 @@ type Messages = [
 	{type: typeof localMessages.CONNECTED},
 	{type: typeof localMessages.DISCONNECT; errorMessage?: string},
 	{type: typeof localMessages.LOGOUT},
-	{type: typeof localMessages.UPDATES_LOAD; updates: Record<string, string[]>},
 	{
 		type: typeof localMessages.TOAST_OPEN
 		open: boolean

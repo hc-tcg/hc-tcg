@@ -31,7 +31,6 @@ export class RootModel {
 		playerLeft: new Hook<string, (player: PlayerModel) => void>(),
 		privateCancelled: new Hook<string, (code: string) => void>(),
 	}
-	public updates: Record<string, Array<string>> = {}
 
 	public constructor() {
 		const env = dotenv.config()

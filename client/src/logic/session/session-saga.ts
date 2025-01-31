@@ -622,13 +622,3 @@ export function* minecraftNameSaga() {
 		})
 	}
 }
-
-export function* updatesSaga() {
-	const socket = yield* select(getSocket)
-	yield sendMsg({type: clientMessages.GET_UPDATES})
-	const result = yield* call(receiveMsg(socket, serverMessages.LOAD_UPDATES))
-	yield put<LocalMessage>({
-		type: localMessages.UPDATES_LOAD,
-		updates: result.updates,
-	})
-}

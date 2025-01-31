@@ -12,7 +12,6 @@ import {
 	newDecksSaga,
 	recieveCurrentImportSaga,
 	recieveStatsSaga,
-	updatesSaga,
 } from 'logic/session/session-saga'
 import socketSaga from 'logic/socket/socket-saga'
 import soundSaga from 'logic/sound/sound-saga'
@@ -30,7 +29,6 @@ function* appSaga(): SagaIterator {
 	yield fork(databaseErrorSaga)
 	yield fork(minecraftNameSaga)
 	yield fork(matchmakingSaga)
-	yield fork(updatesSaga)
 }
 
 function* rootSaga(): SagaIterator {

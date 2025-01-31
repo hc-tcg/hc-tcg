@@ -33,7 +33,6 @@ import {
 	leaveQueue,
 } from './matchmaking'
 import {
-	loadUpdatesSaga,
 	updateDeckSaga,
 	updateMinecraftNameSaga,
 } from './player'
@@ -46,10 +45,6 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.UPDATE_MINECRAFT_NAME:
 			return yield* updateMinecraftNameSaga(
-				message as RecievedClientMessage<typeof message.type>,
-			)
-		case clientMessages.GET_UPDATES:
-			return yield* loadUpdatesSaga(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.JOIN_QUEUE:

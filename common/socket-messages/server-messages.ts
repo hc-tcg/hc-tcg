@@ -12,7 +12,6 @@ export const serverMessages = messages('serverMessages', {
 	PLAYER_INFO: null,
 	NEW_DECK: null,
 	NEW_MINECRAFT_NAME: null,
-	LOAD_UPDATES: null,
 	OPPONENT_CONNECTION: null,
 	GAME_START: null,
 	GAME_END: null,
@@ -61,10 +60,6 @@ export type ServerMessages = [
 	},
 	{type: typeof serverMessages.NEW_DECK; deck: Deck},
 	{type: typeof serverMessages.NEW_MINECRAFT_NAME; name: string},
-	{
-		type: typeof serverMessages.LOAD_UPDATES
-		updates: Record<string, Array<string>>
-	},
 	{type: typeof serverMessages.OPPONENT_CONNECTION; isConnected: boolean},
 	{type: typeof serverMessages.GAME_START},
 	{
