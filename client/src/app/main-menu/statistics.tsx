@@ -713,55 +713,15 @@ function Statistics({setMenuSection}: Props) {
 											{game.firstPlayer.uuid === databaseInfo.userId
 												? 'You'
 												: game.firstPlayer.name}
-											{game.firstPlayer.player === 'you' && (
-												<Button
-													onClick={() => {
-														if (
-															game.firstPlayer.player !== 'you' ||
-															!game.firstPlayer.deck
-														)
-															return
-														setScreenshotDeckModalContents(
-															sortCards(
-																parseDeckCards(
-																	game.firstPlayer.deck.cards.map(
-																		(card) => card.props.id,
-																	),
-																),
-															),
-														)
-													}}
-												>
-													View
-												</Button>
-											)}
+										</div>
+										<div className={css.winAndLoss}>
+											<div className={css.win}>W</div>-
+											<div className={css.loss}>L</div>
 										</div>
 										<div>
 											{game.secondPlayer.uuid === databaseInfo.userId
 												? 'You'
 												: game.secondPlayer.name}
-											{game.secondPlayer.player === 'you' && (
-												<Button
-													onClick={() => {
-														if (
-															game.secondPlayer.player !== 'you' ||
-															!game.secondPlayer.deck
-														)
-															return
-														setScreenshotDeckModalContents(
-															sortCards(
-																parseDeckCards(
-																	game.secondPlayer.deck.cards.map(
-																		(card) => card.props.id,
-																	),
-																),
-															),
-														)
-													}}
-												>
-													View
-												</Button>
-											)}
 										</div>
 										<div>
 											<img
@@ -770,6 +730,29 @@ function Statistics({setMenuSection}: Props) {
 												alt="player head"
 											/>
 										</div>
+										<Button
+											onClick={() => {
+												setScreenshotDeckModalContents(
+													sortCards(
+														parseDeckCards(
+															game.secondPlayer.player === 'you' &&
+																game.secondPlayer.deck
+																? game.secondPlayer.deck.cards.map(
+																		(card) => card.props.id,
+																	)
+																: game.firstPlayer.player === 'you' &&
+																		game.firstPlayer.deck
+																	? game.firstPlayer.deck.cards.map(
+																			(card) => card.props.id,
+																		)
+																	: [],
+														),
+													),
+												)
+											}}
+										>
+											View
+										</Button>
 										<Button onClick={() => handleReplayGame(game)}>
 											Watch Replay
 										</Button>

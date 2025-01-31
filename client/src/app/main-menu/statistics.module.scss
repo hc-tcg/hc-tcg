@@ -269,8 +269,37 @@
 .gameHistoryBox {
 	display: flex;
 	flex-direction: row;
+	align-items: center;
+	justify-content: center;
 	background-color: black;
 	color: white;
+	gap: 1rem;
+}
+
+.playerHead {
+	height: 10vh;
+}
+
+.winAndLoss {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+	line-height: 2rem;
+
+	> div {
+		border-radius: 50%;
+		width: 2rem;
+		height: 2rem;
+		text-align: center;
+
+		&.win {
+			background-color: #63b45c;
+		}
+
+		&.loss {
+			background-color: #da5558;
+		}
+	}
 }
 
 // Mobile
