@@ -63,8 +63,7 @@ import UsedClockEffect from './used-clock'
 import WeaknessEffect from './weakness'
 
 export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
-
-	/* Regualr Status Effects */ //statusEffect
+	/* Regular Status Effects */ //statusEffect
 	FireEffect, //damageEffect
 	PoisonEffect, //damageEffect
 	SleepingEffect,
