@@ -98,7 +98,10 @@ export function* getDecks(
 		return
 	}
 
-	const decksResult = yield* call([root.db, root.db.getDecks], player.uuid)
+	const decksResult = yield* call(
+		[root.db, root.db.getDecksFromUuid],
+		player.uuid,
+	)
 	const tagsResult = yield* call([root.db, root.db.getTags], player.uuid)
 
 	if (decksResult.type === 'success' && tagsResult.type === 'success') {
@@ -495,22 +498,33 @@ export function* getStats(
 		broadcast([player], {
 			type: serverMessages.STATS_RECIEVED,
 			stats: defaultStats,
+			gameHistory: [],
 		})
 		return
 	}
 
-	const result = yield* call([root.db, root.db.getUserStats], player.uuid)
+	const statsResult = yield* call([root.db, root.db.getUserStats], player.uuid)
+	const historyResult = yield* call(
+		[root.db, root.db.getUserGameHistory],
+		player.uuid,
+	)
 
-	if (result.type === 'success') {
+	if (statsResult.type === 'success' && historyResult.type === 'success') {
 		broadcast([player], {
 			type: serverMessages.STATS_RECIEVED,
-			stats: result.body,
+			stats: statsResult.body,
+			gameHistory: historyResult.body,
 		})
 	} else {
-		if (result.type === 'failure') {
+		if (statsResult.type === 'failure') {
 			broadcast([player], {
 				type: serverMessages.DATABASE_FAILURE,
-				error: result.reason,
+				error: statsResult.reason,
+			})
+		} else if (historyResult.type === 'failure') {
+			broadcast([player], {
+				type: serverMessages.DATABASE_FAILURE,
+				error: historyResult.reason,
 			})
 		}
 	}
@@ -552,6 +566,10 @@ export function* addGame(
 		const player = players[i]
 		if (!player.uuid) continue
 		const stats = yield* call([root.db, root.db.getUserStats], player.uuid)
+		const gameHistory = yield* call(
+			[root.db, root.db.getUserGameHistory],
+			player.uuid,
+		)
 
 		if (stats.type !== 'success') {
 			broadcast([player], {
@@ -560,9 +578,17 @@ export function* addGame(
 			})
 			continue
 		}
+		if (gameHistory.type !== 'success') {
+			broadcast([player], {
+				type: serverMessages.DATABASE_FAILURE,
+				error: gameHistory.reason,
+			})
+			continue
+		}
 		broadcast([player], {
 			type: serverMessages.STATS_RECIEVED,
 			stats: stats.body,
+			gameHistory: gameHistory.body,
 		})
 	}
 }
@@ -609,4 +635,16 @@ export function* getAchievements(
 			error: result.reason,
 		})
 	}
+}
+
+export function* getGameReplay(gameId: number) {
+	if (!root.db?.connected) return
+
+	const replay = yield* root.db.getGameReplay(gameId)
+
+	if (replay.type === 'failure') {
+		console.log(replay.reason)
+		return null
+	}
+	return replay.body
 }
