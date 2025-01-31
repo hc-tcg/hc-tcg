@@ -665,8 +665,7 @@ function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 
 		if (result === 'END_TURN') {
 			break
-		}
-		if (result === 'FORFEIT') {
+		} else if (result === 'FORFEIT') {
 			con.game.endInfo.victoryReason = 'forfeit'
 			return 'GAME_END'
 		}

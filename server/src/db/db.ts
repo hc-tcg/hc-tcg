@@ -845,64 +845,81 @@ export class Database {
 			const gamesResult: any = yield* call(
 				[this.pool, this.pool.query],
 				`
+				WITH game AS (
 					SELECT * FROM games
-					LEFT JOIN users ON user_id = winner OR user_id = loser
 					WHERE game_id = $1
+				)
+				SELECT 
+					winner as user_id, winner_deck_code as deck_code, username, minecraft_name,
+					card_id, copies, replay, seed, first_player_won = TRUE as first
+					FROM game 
+					JOIN users ON users.user_id = winner
+					LEFT JOIN deck_cards ON deck_cards.deck_code = game.winner_deck_code
+				UNION (
+					SELECT 
+					loser as user_id, loser_deck_code as deck_code, username, minecraft_name,
+					card_id, copies, replay, seed, first_player_won = FALSE as first
+					FROM game 
+					JOIN users ON users.user_id = loser
+					LEFT JOIN deck_cards ON deck_cards.deck_code = game.winner_deck_code
+				)
 					`,
 				[gameId],
 			)
 
-			const game = gamesResult.rows[0]
+			const rows: Array<Record<string, any>> = gamesResult.rows
+			const game: Record<string, any> = rows[0]
 			const replay: Buffer = game['replay']
+			const seed: string = game['seed']
 
 			if (replay.length < 2 || replay.readUintBE(0, 1) !== 0x01)
 				return {type: 'failure', reason: 'The game requested has no replay.'}
 
-			const seed: string = game['seed']
-			const firstPlayerWon = game['first_player_won']
+			const firstPlayerRows = rows.filter((row) => row.first)
+			const secondPlayerRows = rows.filter((row) => !row.first)
 
-			const player1DeckCode: string = firstPlayerWon
-				? game['winner_deck_code']
-				: game['loser_deck_code']
-			const player2DeckCode: string = firstPlayerWon
-				? game['loser_deck_code']
-				: game['winner_deck_code']
-
-			const player1Id: string = firstPlayerWon ? game['winner'] : game['loser']
-
-			const player2Id: string = firstPlayerWon ? game['loser'] : game['winner']
-
-			const player1Deck = yield* call(
-				[this, this.getDeckFromID],
-				player1DeckCode,
+			const player1Deck: Array<string> = firstPlayerRows.reduce(
+				(r: Array<string>, row: any) => {
+					const newElements = Array(row['copies']).fill(
+						this.allCards.find((card) => card.numericId === row['card_id'])?.id,
+					)
+					if (newElements.includes(undefined)) return r
+					r.push(...newElements)
+					return r
+				},
+				[],
 			)
 
-			const player2Deck = yield* call(
-				[this, this.getDeckFromID],
-				player2DeckCode,
+			const player2Deck: Array<string> = secondPlayerRows.reduce(
+				(r: Array<string>, row: any) => {
+					const newElements = Array(row['copies']).fill(
+						this.allCards.find((card) => card.numericId === row['card_id'])?.id,
+					)
+					if (newElements.includes(undefined)) return r
+					r.push(...newElements)
+					return r
+				},
+				[],
 			)
-
-			if (player1Deck.type === 'failure' || player2Deck.type === 'failure')
-				return {type: 'failure', reason: 'A player used an invalid deck.'}
 
 			const player1Defs: PlayerSetupDefs & {uuid: string} = {
 				model: {
-					name: 'Player 1',
-					minecraftName: 'Player 1',
-					censoredName: 'Player 1',
+					name: firstPlayerRows[0].username,
+					minecraftName: firstPlayerRows[0].minecraft_name,
+					censoredName: firstPlayerRows[0].username,
 				},
-				deck: player1Deck.body.cards,
-				uuid: player1Id,
+				deck: player1Deck,
+				uuid: firstPlayerRows[0].user_id,
 			}
 
 			const player2Defs: PlayerSetupDefs & {uuid: string} = {
 				model: {
-					name: 'Player 1',
-					minecraftName: 'Player 1',
-					censoredName: 'Player 1',
+					name: secondPlayerRows[0].username,
+					minecraftName: secondPlayerRows[0].minecraft_name,
+					censoredName: secondPlayerRows[0].username,
 				},
-				deck: player2Deck.body.cards,
-				uuid: player2Id,
+				deck: player2Deck,
+				uuid: secondPlayerRows[0].user_id,
 			}
 
 			const replayActions = yield* bufferToTurnActions(

@@ -32,6 +32,7 @@ import gameSaga from './game'
 
 const VARIABLE_BYTE_MAX = 1 // 0xFF
 const REPLAY_VERSION = 0x01
+const INVALID_REPLAY = 0x00
 
 const SELECT_CARDS_TYPE = 1
 const COPY_ATTACK_TYPE = 2
@@ -134,13 +135,8 @@ function unpackBoardSlot(game: GameModel, byte: number): SlotComponent | null {
 }
 
 /**Returns two bytes representing a card's position anywhere. */
-function packupCardPosition(game: GameModel, card: CardEntity): Buffer {
-	const cardComponent = game.components.find(
-		CardComponent,
-		query.card.entity(card),
-	)
-	if (!cardComponent) return writeUIntToBuffer(0, 1)
-	const slot = cardComponent.slot
+function packupSlotPosition(game: GameModel, slot: SlotComponent): Buffer {
+	if (!slot) return writeUIntToBuffer(0, 1)
 	function getSlotType(slot: SlotComponent) {
 		if (slot.onBoard()) return 0b0001
 		if (slot.inHand() && slot.player) return 0b0000
@@ -158,10 +154,10 @@ function packupCardPosition(game: GameModel, card: CardEntity): Buffer {
 		getSlotType(slot) >> 3 === 1 ? game.opponentPlayer : game.currentPlayer
 
 	const handPosition = slot.inHand()
-		? targetPlayer.getHand().findIndex((c) => c.entity === cardComponent.entity)
+		? targetPlayer.getHand().findIndex((c) => c.slotEntity === slot.entity)
 		: 0
 	const deckPosition = slot.inDeck()
-		? targetPlayer.getDeck().findIndex((c) => c.entity === cardComponent.entity)
+		? targetPlayer.getDeck().findIndex((c) => c.slotEntity === slot.entity)
 		: 0
 
 	const finalBuffer = Buffer.concat([
@@ -171,10 +167,10 @@ function packupCardPosition(game: GameModel, card: CardEntity): Buffer {
 	return finalBuffer
 }
 
-function unpackCardPosition(
+function unpackSlotPosition(
 	game: GameModel,
 	bytes: number,
-): CardEntity | undefined {
+): SlotComponent | null {
 	const slotType = (bytes & 0xff00) >> 8
 	const position = bytes & 0x00ff
 
@@ -182,7 +178,7 @@ function unpackCardPosition(
 	const inDeck = (slotType & 0x02) >> 1 === 1
 	const opponentCard = (slotType & 0x08) >> 3 === 1
 
-	if (onBoard) return unpackBoardSlot(game, position)?.getCard()?.entity
+	if (onBoard) return unpackBoardSlot(game, position)
 
 	const targetPlayer = opponentCard ? game.opponentPlayer : game.currentPlayer
 
@@ -190,7 +186,7 @@ function unpackCardPosition(
 		? targetPlayer.getDeck()[position]
 		: targetPlayer.getHand()[position]
 
-	return selectedCard.entity
+	return selectedCard.slot
 }
 
 const playCard: ReplayAction = {
@@ -348,18 +344,21 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	},
 	PICK_REQUEST: {
 		value: 0x0b,
-		bytes: 'variable',
-		compress(_game, turnAction: PickSlotActionData) {
-			const buffer = Buffer.from(turnAction.entity)
-			return Buffer.concat([
-				writeUIntToBuffer(buffer.length, VARIABLE_BYTE_MAX),
-				buffer,
-			])
+		bytes: 2,
+		compress(game, turnAction: PickSlotActionData) {
+			const slot = game.components.find(
+				SlotComponent,
+				query.slot.entity(turnAction.entity),
+			)
+			assert(slot, 'An invalid slot entity was given')
+			return packupSlotPosition(game, slot)
 		},
-		decompress(_game, buffer) {
+		decompress(game, buffer) {
+			const slot = unpackSlotPosition(game, buffer.readInt16BE())
+			if (!slot) return null
 			return {
 				type: 'PICK_REQUEST',
-				entity: buffer.toString('utf-8'),
+				entity: slot.entity,
 			}
 		},
 	},
@@ -379,7 +378,14 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 					// Selected cards
 					return Buffer.concat([
 						buffer,
-						...result.cards.map((card) => packupCardPosition(game, card)),
+						...result.cards.map((card) => {
+							const component = game.components.find(
+								CardComponent,
+								query.card.entity(card),
+							)
+							assert(component, 'An invalid card entity was given')
+							return packupSlotPosition(game, component.slot)
+						}),
 					])
 				}
 				return buffer
@@ -413,7 +419,14 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 					// Selected cards
 					buffer = Buffer.concat([
 						buffer,
-						...result.leftCards.map((card) => packupCardPosition(game, card)),
+						...result.leftCards.map((card) => {
+							const component = game.components.find(
+								CardComponent,
+								query.card.entity(card),
+							)
+							assert(component, 'An invalid card entity was given')
+							return packupSlotPosition(game, component.slot)
+						}),
 					])
 				}
 
@@ -421,7 +434,14 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 					// Selected cards
 					buffer = Buffer.concat([
 						buffer,
-						...result.rightCards.map((card) => packupCardPosition(game, card)),
+						...result.rightCards.map((card) => {
+							const component = game.components.find(
+								CardComponent,
+								query.card.entity(card),
+							)
+							assert(component, 'An invalid card entity was given')
+							return packupSlotPosition(game, component.slot)
+						}),
 					])
 				}
 
@@ -440,9 +460,10 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 			function bufferToCards(cardsBuffer: Buffer) {
 				const cardEntities: Array<CardEntity> = []
 				for (let cursor = 0; cursor < cardsBuffer.length; cursor += 2) {
-					const card = unpackCardPosition(game, cardsBuffer.readInt16BE(cursor))
-					if (!card) throw Error('Invalid card position was given')
-					cardEntities.push(card)
+					const slot = unpackSlotPosition(game, cardsBuffer.readInt16BE(cursor))
+					const card = slot?.getCard()
+					if (!slot || !card) throw Error('Invalid slot position was given')
+					cardEntities.push(card.entity)
 				}
 				return cardEntities
 			}
@@ -669,21 +690,26 @@ export function* turnActionsToBuffer(
 
 	newGameController.task = yield* spawn(gameSaga, newGameController)
 
-	for (let i = 0; i < originalGame.turnActions.length; i++) {
-		const action = originalGame.turnActions[i]
-		buffers.push(
-			turnActionToBuffer(
-				newGame,
-				action.action,
-				action.player,
-				action.millisecondsSinceLastAction,
-			),
-		)
-		yield* put<LocalMessage>({
-			type: localMessages.GAME_TURN_ACTION,
-			playerEntity: action.player,
-			action: action.action,
-		})
+	try {
+		for (let i = 0; i < originalGame.turnActions.length; i++) {
+			const action = originalGame.turnActions[i]
+			buffers.push(
+				turnActionToBuffer(
+					newGame,
+					action.action,
+					action.player,
+					action.millisecondsSinceLastAction,
+				),
+			)
+			yield* put<LocalMessage>({
+				type: localMessages.GAME_TURN_ACTION,
+				playerEntity: action.player,
+				action: action.action,
+			})
+		}
+	} catch (e) {
+		console.error(e)
+		Buffer.from([INVALID_REPLAY])
 	}
 
 	return Buffer.concat([Buffer.from([REPLAY_VERSION]), ...buffers])

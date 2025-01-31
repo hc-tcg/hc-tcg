@@ -501,8 +501,8 @@ export function* bossAttack(game: GameModel, ...attack: BOSS_ATTACK) {
 }
 
 export function testReplayGame(options: {
-	firstSaga: (con: GameController) => any
-	afterFirstsaga: (con: GameController) => any
+	gameSaga: (con: GameController) => any
+	afterGame: (con: GameController) => any
 	playerOneDeck: Array<Card>
 	playerTwoDeck: Array<Card>
 }) {
@@ -524,14 +524,14 @@ export function testReplayGame(options: {
 			yield* call(gameSaga, controller)
 		}),
 		call(function* () {
-			yield* call(options.firstSaga, controller)
+			yield* call(options.gameSaga, controller)
 		}),
 	)
 
 	const sagaMiddleware = getSagaMiddleware()
 
 	const saga = sagaMiddleware.run(function* () {
-		yield* call(options.afterFirstsaga, controller)
+		yield* call(options.afterGame, controller)
 	})
 
 	if (saga.error()) {

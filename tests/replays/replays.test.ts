@@ -17,16 +17,22 @@ import {
 	endTurn,
 	finishModalRequest,
 	forfeit,
+	pick,
 	playCardFromHand,
 	testReplayGame,
 } from '../unit/game/utils'
+import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
+import TangoTekRare from 'common/cards/hermits/tangotek-rare'
+import query from 'common/components/query'
+import FarmDoubleItem from 'common/cards/items/farm-rare'
+import EvilXisumaRare from 'common/cards/hermits/evilxisuma_rare'
 
 describe('Test Replays', () => {
 	test('Test play card and attack actions', async () => {
 		testReplayGame({
 			playerOneDeck: [BalancedDoubleItem, EthosLabCommon],
 			playerTwoDeck: [EthosLabCommon, BalancedDoubleItem],
-			firstSaga: function* (con) {
+			gameSaga: function* (con) {
 				const game = con.game
 				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 0)
@@ -40,7 +46,7 @@ describe('Test Replays', () => {
 				yield* attack(game, 'primary')
 				yield* forfeit(game.currentPlayer.entity)
 			},
-			afterFirstsaga: function* (con) {
+			afterGame: function* (con) {
 				const turnActionsBuffer = yield* turnActionsToBuffer(con)
 				const turnActions = yield* bufferToTurnActions(
 					con.player1Defs,
@@ -77,7 +83,7 @@ describe('Test Replays', () => {
 				Feather,
 			],
 			playerTwoDeck: [EthosLabCommon],
-			firstSaga: function* (con) {
+			gameSaga: function* (con) {
 				yield* playCardFromHand(con.game, EthosLabCommon, 'hermit', 0)
 				yield* playCardFromHand(con.game, Brush, 'single_use')
 				yield* applyEffect(con.game)
@@ -102,7 +108,104 @@ describe('Test Replays', () => {
 				yield* endTurn(con.game)
 				yield* forfeit(con.game.currentPlayer.entity)
 			},
-			afterFirstsaga: function* (con) {
+			afterGame: function* (con) {
+				const turnActionsBuffer = yield* turnActionsToBuffer(con)
+
+				const turnActions = yield* bufferToTurnActions(
+					con.player1Defs,
+					con.player2Defs,
+					con.game.rngSeed,
+					con.props,
+					turnActionsBuffer,
+				)
+
+				expect(
+					con.game.turnActions.map((action) => action.action),
+				).toStrictEqual(turnActions.map((action) => action.action))
+			},
+		})
+	})
+
+	test('Test that pick selects properly work', () => {
+		testReplayGame({
+			playerOneDeck: [EthosLabCommon, GeminiTayCommon],
+			playerTwoDeck: [
+				TangoTekRare,
+				GeminiTayCommon,
+				FarmDoubleItem,
+				FarmDoubleItem,
+			],
+			gameSaga: function* (con) {
+				const game = con.game
+				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 1)
+
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
+				yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 1)
+				yield* playCardFromHand(game, FarmDoubleItem, 'item', 0, 0)
+				yield* endTurn(game)
+
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, FarmDoubleItem, 'item', 0, 1)
+				yield* attack(game, 'secondary')
+
+				yield* pick(
+					game,
+					query.slot.opponent,
+					query.slot.hermit,
+					query.slot.rowIndex(1),
+				)
+
+				yield* pick(
+					game,
+					query.slot.currentPlayer,
+					query.slot.hermit,
+					query.slot.rowIndex(1),
+				)
+
+				yield* forfeit(con.game.currentPlayer.entity)
+			},
+			afterGame: function* (con) {
+				const turnActionsBuffer = yield* turnActionsToBuffer(con)
+				const turnActions = yield* bufferToTurnActions(
+					con.player1Defs,
+					con.player2Defs,
+					con.game.rngSeed,
+					con.props,
+					turnActionsBuffer,
+				)
+
+				expect(
+					con.game.turnActions.map((action) => action.action),
+				).toStrictEqual(turnActions.map((action) => action.action))
+			},
+		})
+	})
+
+	test('Test select attack modal works properly', () => {
+		testReplayGame({
+			playerOneDeck: [EvilXisumaRare, BalancedDoubleItem],
+			playerTwoDeck: [EthosLabCommon],
+			gameSaga: function* (con) {
+				const game = con.game
+
+				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 0)
+				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 0)
+				yield* attack(game, 'secondary')
+				yield* finishModalRequest(game, {
+					pick: 'secondary',
+				})
+				yield* endTurn(game)
+
+				yield* forfeit(con.game.currentPlayer.entity)
+			},
+			afterGame: function* (con) {
 				const turnActionsBuffer = yield* turnActionsToBuffer(con)
 
 				const turnActions = yield* bufferToTurnActions(
