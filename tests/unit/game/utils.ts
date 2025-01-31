@@ -23,6 +23,7 @@ import {
 	attackToAttackAction,
 	slotToPlayCardAction,
 } from 'common/types/turn-action-data'
+import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware, {SagaMiddleware} from 'redux-saga'
 import {GameController} from 'server/game-controller'
@@ -31,7 +32,7 @@ import gameSaga, {figureOutGameResult} from 'server/routines/game'
 import {getLocalCard} from 'server/utils/state-gen'
 import {call, put, race} from 'typed-redux-saga'
 
-function getTestPlayer(playerName: string, deck: Array<Card>) {
+function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 	return {
 		model: {
 			name: playerName,
@@ -351,6 +352,7 @@ export function testBossFight(
 				name: 'Evil Xisuma',
 				censoredName: 'Evil Xisuma',
 				minecraftName: 'EvilXisuma',
+				selectedCoinHead: 'evilx',
 				disableDeckingOut: true,
 			},
 			deck: [EvilXisumaBoss],
