@@ -30,8 +30,9 @@ function getTestPlayer(playerName: string, deck: Array<Card>) {
 
 function testSaga(rootSaga: any) {
 	const sagaMiddleware = createSagaMiddleware({
-		// Prevent default behavior where redux saga logs errors to stderr. This is not useful to tests.
-		onError: (_err, {sagaStack: _}) => {},
+		onError: (err, {sagaStack: _}) => {
+			throw err
+		},
 	})
 	createStore(() => {}, applyMiddleware(sagaMiddleware))
 
