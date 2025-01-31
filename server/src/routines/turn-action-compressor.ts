@@ -223,6 +223,7 @@ const playCard: ReplayAction = {
 				slot: selectedCard.slotEntity,
 				attackHint: null,
 				turnedOver: selectedCard.turnedOver,
+				prizeCard: selectedCard.prizeCard,
 			},
 		}
 	},

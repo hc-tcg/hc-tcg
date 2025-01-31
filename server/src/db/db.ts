@@ -756,6 +756,7 @@ export class Database {
 					name: row['username'],
 					censoredName: row['username'],
 					minecraftName: row['minecraft_name'],
+					selectedCoinHead: 'creeper',
 				}
 			})
 
@@ -907,6 +908,7 @@ export class Database {
 					name: firstPlayerRows[0].username,
 					minecraftName: firstPlayerRows[0].minecraft_name,
 					censoredName: firstPlayerRows[0].username,
+					selectedCoinHead: 'creeper',
 				},
 				deck: player1Deck,
 				uuid: firstPlayerRows[0].user_id,
@@ -917,6 +919,7 @@ export class Database {
 					name: secondPlayerRows[0].username,
 					minecraftName: secondPlayerRows[0].minecraft_name,
 					censoredName: secondPlayerRows[0].username,
+					selectedCoinHead: 'creeper',
 				},
 				deck: player2Deck,
 				uuid: secondPlayerRows[0].user_id,
