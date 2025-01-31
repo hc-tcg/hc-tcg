@@ -302,6 +302,34 @@
 	}
 }
 
+.stats {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	padding: 1vh 2vh;
+	color: white;
+	font-size: 1rem;
+}
+
+.filters {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	padding: 1vh 2vh;
+	color: white;
+	font-size: 1rem;
+}
+
+.stat {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+}
+
+.statName {
+	flex-grow: 1;
+}
+
 // Mobile
 @media (max-width: 720px) {
 	.bigHallOfFameArea {

@@ -791,15 +791,36 @@ function Statistics({setMenuSection}: Props) {
 										Hall of Fame
 									</div>
 								</div>
-								<div>
-									<p>Summary</p>
-									<div>{stats.wins}</div>
-									<div>{stats.losses}</div>
-									<div>{stats.forfeitWins}</div>
-									<div>{stats.forfeitLosses}</div>
-									<div>{stats.ties}</div>
-									<div>{stats.gamesPlayed}</div>
-									<p>Filter Games</p>
+								<div className={css.stats}>
+									<b>Summary</b>
+									<div className={css.stat}>
+										<p className={css.statName}>Wins</p>
+										<p>{stats.wins}</p>
+									</div>
+									<div className={css.stat}>
+										<p className={css.statName}>Losses</p>
+										<p>{stats.losses}</p>
+									</div>
+									<div className={css.stat}>
+										<p className={css.statName}>Forfeit Wins</p>
+										<p>{stats.forfeitWins}</p>
+									</div>
+									<div className={css.stat}>
+										<p className={css.statName}>Forfeit Losses</p>
+										<p>{stats.forfeitLosses}</p>
+									</div>
+									<div className={css.stat}>
+										<p className={css.statName}>Ties</p>
+										<p>{stats.ties}</p>
+									</div>
+									<div className={css.stat}>
+										<p className={css.statName}>Games Played</p>
+										<p>{stats.gamesPlayed}</p>
+									</div>
+								</div>
+								<div className={css.filters}>
+									<b>Filters</b>
+									<p>There's nothing here yet but there will be</p>
 								</div>
 							</div>
 						)}
