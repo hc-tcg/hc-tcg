@@ -63,17 +63,18 @@ import UsedClockEffect from './used-clock'
 import WeaknessEffect from './weakness'
 
 export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
-	/* Regular Status Effects */ //statusEffect
-	FireEffect, //damageEffect
-	PoisonEffect, //damageEffect
+	/* Regular Status Effects */
 	SleepingEffect,
 	BadOmenEffect,
 	RoyalProtectionEffect,
 	FrozenEffect,
 	MiningFatigueEffect,
 	SingleTurnMiningFatigueEffect,
+	/* Damage Effects */
+	FireEffect,
+	PoisonEffect,
 
-	/* System Status Effects */ //systemStatusEffect
+	/* System Status Effects */
 	ExBossNineEffect,
 	UsedClockEffect,
 	DeathloopReady,
@@ -84,7 +85,6 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	AussiePingImmuneEffect,
 	InvisibilityPotionHeadsEffect,
 	InvisibilityPotionTailsEffect,
-	TurnSkippedEffect, //hiddenStatusEffect
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 	TrapHoleEffect,
@@ -95,19 +95,15 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	ChromaKeyedEffect,
 	GoMiningEffect,
 	TargetBlockEffect,
-	GasLightEffect, //hiddenStatusEffect
 	GasLightTriggeredEffect,
-	GasLightPotentialEffect, //hiddenStatusEffect
 	IgnoreAttachSlotEffect,
 	EfficiencyEffect,
 	LooseShellEffect,
-	TFCDiscardedFromEffect, //hiddenStatusEffect
 	TimeSkipDisabledEffect,
 	SoulmateEffect,
 	NaughtyRegiftEffect,
 	SpentFortuneEffect,
 	PoisonQuiverEffect,
-	SculkCatalystTriggeredEffect, //hiddenStatusEffect
 	SmithingTableEffect,
 	PostInspectorEffect,
 	SlownessEffect,
@@ -117,6 +113,12 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	MuseumCollectionEffect,
 	SmeltingEffect,
 	MelodyEffect,
+	/* Hidden Status Effects */
+	TurnSkippedEffect,
+	GasLightEffect,
+	GasLightPotentialEffect,
+	TFCDiscardedFromEffect,
+	SculkCatalystTriggeredEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =
