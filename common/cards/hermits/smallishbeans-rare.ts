@@ -17,7 +17,7 @@ const SmallishbeansRare: Hermit = {
 	name: 'Joel',
 	expansion: 'season_x',
 	rarity: 'rare',
-	tokens: 0,
+	tokens: 1,
 	type: 'explorer',
 	health: 260,
 	primary: {

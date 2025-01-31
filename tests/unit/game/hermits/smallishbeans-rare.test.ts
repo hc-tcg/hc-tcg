@@ -16,7 +16,7 @@ describe('Test Smallishbeans Rare', () => {
 
 					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 0)
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 1)
+					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 2)
 					yield* attack(game, 'secondary')
 
 					expect(game.opponentPlayer.activeRow?.health).toBe(
