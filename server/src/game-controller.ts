@@ -1,3 +1,5 @@
+import {ACHIEVEMENTS_LIST} from 'common/achievements'
+import {AchievementComponent, ObserverComponent} from 'common/components'
 import {PlayerEntity} from 'common/entities'
 import {
 	GameModel,
@@ -21,6 +23,7 @@ export type GameControllerProps = {
 	randomizeOrder?: boolean
 	randomSeed?: any
 	settings?: GameSettings
+	countAchievements?: boolean
 }
 
 type GameViewerProps = {
@@ -86,7 +89,6 @@ export class GameController {
 				publishBattleLog: (logs, timeout) =>
 					this.publishBattleLog(logs, timeout),
 				randomizeOrder: props.randomizeOrder ?? true,
-				countAchievements: !props.gameCode,
 			},
 		)
 
@@ -100,6 +102,41 @@ export class GameController {
 
 		this.player1Defs = player1
 		this.player2Defs = player2
+
+		if (props.countAchievements) {
+			if (this.player1Defs instanceof PlayerModel) {
+				this.addAchievements(this.player1Defs, this.game.currentPlayerEntity)
+			}
+			if (this.player2Defs instanceof PlayerModel) {
+				this.addAchievements(this.player2Defs, this.game.opponentPlayerEntity)
+			}
+		}
+	}
+
+	public addAchievements(player: PlayerModel, playerEntity: PlayerEntity) {
+		if (player.achievementProgress) {
+			ACHIEVEMENTS_LIST.forEach((achievement) => {
+				if (!player.achievementProgress[achievement.numericId]) {
+					player.achievementProgress[achievement.numericId] = {goals: {}}
+				}
+				const achievementComponent = this.game.components.new(
+					AchievementComponent,
+					achievement,
+					player.achievementProgress[achievement.numericId]?.goals,
+					playerEntity,
+				)
+				const achievementObserver = this.game.components.new(
+					ObserverComponent,
+					achievementComponent.entity,
+				)
+				achievementComponent.props.onGameStart(
+					this.game,
+					playerEntity,
+					achievementComponent,
+					achievementObserver,
+				)
+			})
+		}
 	}
 
 	public addViewer(viewer: GameViewerProps) {
