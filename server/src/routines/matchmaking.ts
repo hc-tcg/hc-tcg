@@ -63,7 +63,7 @@ function setupGame(
 			model: player2,
 			deck: player2Deck.cards.map((card) => card.props.numericId),
 		},
-		{gameCode, spectatorCode, apiSecret},
+		{gameCode, spectatorCode, apiSecret, countAchievements: true},
 	)
 
 	let playerEntities = con.game.components.filterEntities(PlayerComponent)
