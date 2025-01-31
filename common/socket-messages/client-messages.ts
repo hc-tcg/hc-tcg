@@ -17,7 +17,6 @@ export const clientMessages = messages('clientMessages', {
 	LEAVE_PRIVATE_QUEUE: null,
 	JOIN_PRIVATE_GAME: null,
 	CREATE_REPLAY_GAME: null,
-	REPLAY_OVERVIEW: null,
 	TURN_ACTION: null,
 	FORFEIT: null,
 	SPECTATOR_LEAVE: null,
@@ -93,7 +92,6 @@ export type ClientMessages = [
 	{
 		type: typeof clientMessages.CREATE_REPLAY_GAME
 		id: number
-		uuid: string
 	},
 	{
 		type: typeof clientMessages.TURN_ACTION

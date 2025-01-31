@@ -355,8 +355,7 @@ export function testBossFight(
 				name: 'Evil Xisuma',
 				censoredName: 'Evil Xisuma',
 				minecraftName: 'EvilXisuma',
-				appearance: {...defaultAppearance, coin: EvilXCoin},
-				uuid: '',
+				selectedCoinHead: 'evilx',
 				disableDeckingOut: true,
 			},
 			deck: [EvilXisumaBoss],
@@ -518,7 +517,7 @@ export function testReplayGame(options: {
 		{
 			randomizeOrder: true,
 			// This seed always ensures player one goes first. Because how replays work, turn order needs to be random here
-			randomSeed: '1234567',
+			randomSeed: '123456a',
 			settings: {
 				...defaultGameSettings,
 			},

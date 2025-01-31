@@ -416,6 +416,56 @@ export function* deleteTag(
 	}
 }
 
+export function* getStats(
+	action: RecievedClientMessage<typeof clientMessages.GET_STATS>,
+) {
+	if (!root.db?.connected) return
+	const defaultStats = {
+		gamesPlayed: 0,
+		wins: 0,
+		losses: 0,
+		forfeitWins: 0,
+		forfeitLosses: 0,
+		ties: 0,
+	}
+
+	const player = root.players[action.playerId]
+	if (!player.authenticated || !player.uuid) {
+		broadcast([player], {
+			type: serverMessages.STATS_RECIEVED,
+			stats: defaultStats,
+			gameHistory: [],
+		})
+		return
+	}
+
+	const statsResult = yield* call([root.db, root.db.getUserStats], player.uuid)
+	const historyResult = yield* call(
+		[root.db, root.db.getUserGameHistory],
+		player.uuid,
+	)
+
+	if (statsResult.type === 'success' && historyResult.type === 'success') {
+		broadcast([player], {
+			type: serverMessages.STATS_RECIEVED,
+			stats: statsResult.body,
+			gameHistory: historyResult.body,
+		})
+	} else {
+		if (statsResult.type === 'failure') {
+			broadcast([player], {
+				type: serverMessages.DATABASE_FAILURE,
+				error: statsResult.reason,
+			})
+		} else if (historyResult.type === 'failure') {
+			broadcast([player], {
+				type: serverMessages.DATABASE_FAILURE,
+				error: historyResult.reason,
+			})
+		}
+	}
+}
+
 export function* addGame(
 	firstPlayerModel: PlayerModel,
 	secondPlayerModel: PlayerModel,
@@ -455,29 +505,25 @@ export function* sendAfterGameInfo(players: Array<PlayerModel>) {
 			[root.db, root.db.getUserGameHistory],
 			player.uuid,
 		)
-		const achievements = yield* call(
-			[root.db, root.db.getAchievements],
-			player.uuid,
-		)
 
-		assert(
-			stats.type === 'success',
-			`Retrieving stats should be successful for user ${player.uuid}.`,
-		)
-		assert(
-			gameHistory.type === 'success',
-			`Retrieving game history should be successful for user ${player.uuid}.`,
-		)
-		assert(
-			achievements.type === 'success',
-			`Retrieving achievements should be successful for user ${player.uuid}.`,
-		)
-
+		if (stats.type !== 'success') {
+			broadcast([player], {
+				type: serverMessages.DATABASE_FAILURE,
+				error: stats.reason,
+			})
+			continue
+		}
+		if (gameHistory.type !== 'success') {
+			broadcast([player], {
+				type: serverMessages.DATABASE_FAILURE,
+				error: gameHistory.reason,
+			})
+			continue
+		}
 		broadcast([player], {
 			type: serverMessages.AFTER_GAME_INFO,
 			stats: stats.body,
 			gameHistory: gameHistory.body,
-			achievements: achievements.body,
 		})
 	}
 }
@@ -527,4 +573,16 @@ export function* getAchievements(
 			error: result.reason,
 		})
 	}
+}
+
+export function* getGameReplay(gameId: number) {
+	if (!root.db?.connected) return
+
+	const replay = yield* root.db.getGameReplay(gameId)
+
+	if (replay.type === 'failure') {
+		console.log(replay.reason)
+		return null
+	}
+	return replay.body
 }

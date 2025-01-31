@@ -1,6 +1,5 @@
 import assert from 'assert'
 import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
-import JoeHillsRare from '../cards/hermits/joehills-rare'
 import {
 	CardComponent,
 	PlayerComponent,

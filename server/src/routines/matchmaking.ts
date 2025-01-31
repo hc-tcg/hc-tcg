@@ -20,7 +20,12 @@ import {Deck} from 'common/types/deck'
 import {formatText} from 'common/utils/formatting'
 import {OpponentDefs} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
-import {addGame, getDeck, updateAchievements} from 'db/db-reciever'
+import {
+	addGame,
+	getDeck,
+	getGameReplay,
+	updateAchievements,
+} from 'db/db-reciever'
 import {GameController} from 'game-controller'
 import {LocalMessageTable, localMessages} from 'messages'
 import {
@@ -378,7 +383,7 @@ export function* joinQueue(
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	yield* updateDeckSaga(player, msg.payload)
+	updateDeckSaga(player, msg.payload)
 
 	if (!player) {
 		console.info('[Join queue] Player not found: ', playerId)
@@ -840,13 +845,9 @@ export function* createReplayGame(
 		broadcast([player], {type: serverMessages.CREATE_PRIVATE_GAME_FAILURE})
 		return
 	}
+
 	const replay = yield* getGameReplay(msg.payload.id)
-	if (!replay) {
-		broadcast([root.players[playerId]], {
-			type: serverMessages.INVALID_REPLAY,
-		})
-		return
-	}
+	if (!replay) return
 
 	const con = new GameController(replay.player1Defs, replay.player2Defs, {
 		randomSeed: replay.seed,
@@ -855,16 +856,10 @@ export function* createReplayGame(
 	root.addGame(con)
 	root.hooks.newGame.call(con)
 
-	const viewerEntity = con.game.components.findEntity(
-		PlayerComponent,
-		query.player.uuid(msg.payload.uuid),
-	)
-
 	const viewer = con.addViewer({
 		player: root.players[playerId],
 		spectator: true,
-		playerOnLeft: viewerEntity ? viewerEntity : con.game.state.order[0],
-		replayer: true,
+		playerOnLeft: con.game.state.order[0],
 	})
 	let gameState = getLocalGameState(con.game, viewer)
 
@@ -888,10 +883,7 @@ export function* createReplayGame(
 	const replayActions = replay.replay
 
 	for (let i = 0; i < replayActions.length; i++) {
-		if (con.game.outcome) break
-
 		const action = replayActions[i]
-
 		yield* delay(action.millisecondsSinceLastAction)
 		yield* put({
 			type: clientMessages.TURN_ACTION,
@@ -904,6 +896,8 @@ export function* createReplayGame(
 		})
 	}
 
+	yield* delay(1000)
+
 	gameState.timer.turnRemaining = 0
 	gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
 	if (!con.game.endInfo.victoryReason) {
@@ -913,8 +907,6 @@ export function* createReplayGame(
 			.filter(PlayerComponent)
 			.forEach((player) => (gameState.players[player.entity].coinFlips = []))
 	}
-
-	yield* delay(10)
 
 	broadcast([viewer.player], {
 		type: serverMessages.GAME_END,

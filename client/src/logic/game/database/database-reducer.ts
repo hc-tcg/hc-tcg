@@ -1,5 +1,5 @@
 import {AchievementProgress} from 'common/types/achievements'
-import {Stats} from 'common/types/database'
+import {GameHistory, Stats} from 'common/types/database'
 import {ApiDeck, Deck, Tag} from 'common/types/deck'
 import {Message} from 'common/types/game-state'
 import {LocalMessage, localMessages} from 'logic/messages'

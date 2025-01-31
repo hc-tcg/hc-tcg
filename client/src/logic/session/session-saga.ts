@@ -219,29 +219,12 @@ export function* setupData(user: User) {
 			value: user.stats,
 		},
 	})
-	yield* put<LocalMessage>({
-		type: localMessages.COSMETICS_SET,
-		appearance: appearance,
-	})
-
-	// Set active deck
-	const activeDeckCode = getActiveDeckCode()
-	const activeDeck = user.decks.find((deck) => deck.code === activeDeckCode)
-	if (activeDeck && activeDeck.code) {
-		yield* put<LocalMessage>({
-			type: localMessages.SELECT_DECK,
-			deck: activeDeck,
-		})
-	}
-
-	yield* put<LocalMessage>({
-		type: localMessages.USERNAME_SET,
-		name: user.username,
-	})
-
-	yield* put<LocalMessage>({
-		type: localMessages.MINECRAFT_NAME_SET,
-		name: user.minecraftName ? user.minecraftName : user.username,
+	yield put<LocalMessage>({
+		type: localMessages.DATABASE_SET,
+		data: {
+			key: 'gameHistory',
+			value: stats.gameHistory,
+		},
 	})
 }
 
