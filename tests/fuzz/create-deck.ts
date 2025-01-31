@@ -6,10 +6,7 @@ import {
 } from 'common/cards'
 import WildItem from 'common/cards/items/wild-common'
 import {Card, Hermit, Item} from 'common/cards/types'
-
-function choose<T>(a: Array<T>) {
-	return a[Math.floor(Math.random() * a.length)]
-}
+import {choose} from './utils'
 
 /** Create a deck for fuzz testing. This may NOT be a valid deck */
 export function createDeck(): Array<Card['id']> {
