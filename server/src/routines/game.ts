@@ -557,7 +557,9 @@ function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 		con.game.battleLog.sendLogs()
 
 		const playerAI = getPlayerAI(con.game)
-		if (playerAI && !playerAISagaRunning) {
+		// @todo Make sure evilx doesn't crash
+		// if (playerAI && !playerAISagaRunning) {
+		if (playerAI) {
 			yield* fork(function* () {
 				playerAISagaRunning = true
 				yield* call(virtualPlayerActionSaga, con, playerAI)

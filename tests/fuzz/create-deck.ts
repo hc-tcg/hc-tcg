@@ -1,6 +1,6 @@
 import {
-	hermitCardClasses,
 	attachCardClasses,
+	hermitCardClasses,
 	itemCardClasses,
 	singleUseCardClasses,
 } from 'common/cards'
@@ -9,12 +9,12 @@ import {Card, Hermit, Item} from 'common/cards/types'
 import {choose} from './utils'
 
 /** Create a deck for fuzz testing. This may NOT be a valid deck */
-export function createDeck(): Array<Card['id']> {
-	let cards: Array<Card['id']> = []
+export function createDeck(random: () => number): Array<Card> {
+	let cards: Array<Card> = []
 
-	let hermitCount = Math.floor(Math.random() * 10) + 5
+	let hermitCount = Math.floor(random() * 10) + 5
 
-	let firstHermit = choose(hermitCardClasses) as Card & Hermit
+	let firstHermit = choose(hermitCardClasses, random) as Card & Hermit
 	let type = firstHermit.type
 
 	let pickHermitsFrom = hermitCardClasses.filter(
@@ -26,18 +26,18 @@ export function createDeck(): Array<Card['id']> {
 	]
 
 	for (let i = 0; i < hermitCount; i++) {
-		cards.push(choose(pickHermitsFrom).id)
+		cards.push(choose(pickHermitsFrom, random))
 	}
 
 	while (cards.length < 42) {
-		let pick = Math.floor(Math.random() * 3)
+		let pick = Math.floor(random() * 3)
 
 		if (pick === 0) {
-			cards.push(choose(attachCardClasses).id)
+			cards.push(choose(attachCardClasses, random))
 		} else if (pick === 1) {
-			cards.push(choose(singleUseCardClasses).id)
+			cards.push(choose(singleUseCardClasses, random))
 		} else if (pick === 2) {
-			cards.push(choose(pickItemsFrom).id)
+			cards.push(choose(pickItemsFrom, random))
 		}
 	}
 
