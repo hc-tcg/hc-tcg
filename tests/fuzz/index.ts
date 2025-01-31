@@ -3,7 +3,10 @@
 import { createDeck } from "./create-deck"
 
 function performFuzzTest() {
-	console.log(createDeck())
+	let playerOneDeck = createDeck()
+	let playerTwoDeck = createDeck()
+
+	testGame()
 
 
 }
