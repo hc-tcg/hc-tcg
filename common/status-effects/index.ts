@@ -63,20 +63,18 @@ import UsedClockEffect from './used-clock'
 import WeaknessEffect from './weakness'
 
 export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
-	/* Regualr status effects */
-	FireEffect,
-	PoisonEffect,
+
+	/* Regualr Status Effects */ //statusEffect
+	FireEffect, //damageEffect
+	PoisonEffect, //damageEffect
 	SleepingEffect,
 	BadOmenEffect,
-	SlownessEffect,
-	WeaknessEffect,
-	ProtectedEffect,
-	DyedEffect,
-	MuseumCollectionEffect,
-	SmeltingEffect,
-	MelodyEffect,
+	RoyalProtectionEffect,
+	FrozenEffect,
+	MiningFatigueEffect,
+	SingleTurnMiningFatigueEffect,
 
-	/* System Status Effect */
+	/* System Status Effects */ //systemStatusEffect
 	ExBossNineEffect,
 	UsedClockEffect,
 	DeathloopReady,
@@ -87,7 +85,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	AussiePingImmuneEffect,
 	InvisibilityPotionHeadsEffect,
 	InvisibilityPotionTailsEffect,
-	TurnSkippedEffect,
+	TurnSkippedEffect, //hiddenStatusEffect
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 	TrapHoleEffect,
@@ -97,26 +95,29 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	MultiturnSecondaryAttackDisabledEffect,
 	ChromaKeyedEffect,
 	GoMiningEffect,
-	RoyalProtectionEffect,
 	TargetBlockEffect,
-	GasLightEffect,
+	GasLightEffect, //hiddenStatusEffect
 	GasLightTriggeredEffect,
-	GasLightPotentialEffect,
+	GasLightPotentialEffect, //hiddenStatusEffect
 	IgnoreAttachSlotEffect,
 	EfficiencyEffect,
 	LooseShellEffect,
-	TFCDiscardedFromEffect,
+	TFCDiscardedFromEffect, //hiddenStatusEffect
 	TimeSkipDisabledEffect,
 	SoulmateEffect,
 	NaughtyRegiftEffect,
 	SpentFortuneEffect,
 	PoisonQuiverEffect,
-	SculkCatalystTriggeredEffect,
-	FrozenEffect,
-	MiningFatigueEffect,
-	SingleTurnMiningFatigueEffect,
+	SculkCatalystTriggeredEffect, //hiddenStatusEffect
 	SmithingTableEffect,
 	PostInspectorEffect,
+	SlownessEffect,
+	WeaknessEffect,
+	ProtectedEffect,
+	DyedEffect,
+	MuseumCollectionEffect,
+	SmeltingEffect,
+	MelodyEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =

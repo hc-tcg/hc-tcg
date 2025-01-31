@@ -6,10 +6,10 @@ import {
 } from '../components'
 import {GameModel} from '../models/game-model'
 import {beforeAttack} from '../types/priorities'
-import {Counter, statusEffect} from './status-effect'
+import {Counter, systemStatusEffect} from './status-effect'
 
 const WeaknessEffect: Counter<PlayerComponent> = {
-	...statusEffect,
+	...systemStatusEffect,
 	id: 'weakness',
 	icon: 'weakness',
 	name: 'Weakness',
