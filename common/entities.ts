@@ -8,6 +8,7 @@ import type {
 	StatusEffectComponent,
 } from './components'
 import {AIComponent} from './components/ai-component'
+import {GameModel} from './models/game-model'
 
 /** A unique identifier for a component in the component table. This value is safe to
  *  be send to the client and should be used for that purpose.
@@ -28,8 +29,9 @@ export type ObserverEntity = Entity<ObserverComponent>
 export type AchievementEntity = Entity<AchievementComponent>
 
 /** Create a new entity */
-export function newEntity<T>(entityName: string): Entity<T> {
+export function newEntity<T>(entityName: string, game?: GameModel): Entity<T> {
+	const randomNumber = game ? game.rng() : Math.random()
 	return `${entityName}-${Math.floor(
-		Math.random() * Number.MAX_SAFE_INTEGER,
+		randomNumber * Number.MAX_SAFE_INTEGER,
 	).toString(16)}` as Entity<T>
 }
