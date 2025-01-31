@@ -20,7 +20,8 @@ import {localMessages} from 'logic/messages'
 import {useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import {useDispatch} from 'react-redux'
-import css from './main-menu.module.scss'
+import css from './statistics.module.scss'
+import classNames from 'classnames'
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 
@@ -140,7 +141,7 @@ function DropDownButton({children}: {children: React.ReactChild}) {
 	return <Button>{children} ▼</Button>
 }
 
-function HallOfFame({setMenuSection}: Props) {
+function Statistics({setMenuSection}: Props) {
 	const dispatch = useDispatch()
 
 	const [screenshotDeckModalContents, setScreenshotDeckModalContents] =
@@ -157,6 +158,7 @@ function HallOfFame({setMenuSection}: Props) {
 	const afterRef = useRef<any>()
 	const [endpointBefore, setEndpointBefore] = useState<number | null>(null)
 	const [endpointAfter, setEndpointAfter] = useState<number | null>(null)
+	const [showDropdown, setShowDropdown] = useState<boolean>(false)
 
 	const [cardOrderBy, setCardOrderBy] =
 		useState<keyof typeof cardOrderByOptions>('winrate')
@@ -668,12 +670,18 @@ function HallOfFame({setMenuSection}: Props) {
 		<>
 			<MenuLayout
 				back={() => setMenuSection('settings')}
-				title="Hall of Fame"
+				title="Statistics"
 				returnText="More"
 				className={css.settingsMenu}
 			>
 				<div className={css.bigHallOfFameArea}>
 					<div className={css.mainHallOfFameArea}>
+						<div className={classNames(css.hallOfFameHeader, css.showOnMobile)}>
+							Hall of Fame
+							<Button onClick={() => setShowDropdown(!showDropdown)}>
+								Show dropdown
+							</Button>
+						</div>
 						<div className={css.tableArea}>
 							{dataRetrieved && getTable()}
 							{!dataRetrieved && (
@@ -683,8 +691,17 @@ function HallOfFame({setMenuSection}: Props) {
 								</div>
 							)}
 						</div>
-						<div className={css.hofSidebar}>
-							<div className={css.hallOfFameHeader}>Hall of Fame</div>
+						<div
+							className={classNames(
+								css.hofSidebar,
+								!showDropdown && css.hideOnMobile,
+							)}
+						>
+							<div
+								className={classNames(css.hallOfFameHeader, css.mobileHeader)}
+							>
+								Hall of Fame
+							</div>
 							<div className={css.hofOptions}>
 								<p>
 									<b>Statistic</b>
@@ -894,4 +911,4 @@ function HallOfFame({setMenuSection}: Props) {
 	)
 }
 
-export default HallOfFame
+export default Statistics
