@@ -19,9 +19,11 @@ import Spinner from 'components/spinner'
 import {localMessages} from 'logic/messages'
 import {useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import css from './statistics.module.scss'
 import classNames from 'classnames'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
+import {GameHistory} from 'common/types/database'
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 
@@ -144,6 +146,19 @@ function DropDownButton({children}: {children: React.ReactChild}) {
 function Statistics({setMenuSection}: Props) {
 	const dispatch = useDispatch()
 
+	// Stats stuff
+	const databaseInfo = useSelector(getLocalDatabaseInfo)
+	const stats = databaseInfo.stats
+	const gameHistory = databaseInfo.gameHistory
+	const [tab, setTab] = useState<'stats' | 'hof'>('stats')
+	const handleReplayGame = (game: GameHistory) => {
+		dispatch({
+			type: localMessages.MATCHMAKING_REPLAY_GAME,
+			id: game.id,
+		})
+	}
+
+	// Hall of fame stuff
 	const [screenshotDeckModalContents, setScreenshotDeckModalContents] =
 		useState<Array<CardType> | null>(null)
 
@@ -232,6 +247,7 @@ function Statistics({setMenuSection}: Props) {
 	}
 
 	async function getData() {
+		if (tab !== 'hof') return
 		let url = `${STATS_URL}/${endpoints[selectedEndpoint]()}`
 		try {
 			const response = await fetch(url)
@@ -682,221 +698,348 @@ function Statistics({setMenuSection}: Props) {
 								Show dropdown
 							</Button>
 						</div>
-						<div className={css.tableArea}>
-							{dataRetrieved && getTable()}
-							{!dataRetrieved && (
-								<div className={css.loadingIndicator}>
-									<Spinner></Spinner>
-									Loading...
-								</div>
-							)}
-						</div>
-						<div
-							className={classNames(
-								css.hofSidebar,
-								!showDropdown && css.hideOnMobile,
-							)}
-						>
-							<div
-								className={classNames(css.hallOfFameHeader, css.mobileHeader)}
-							>
-								Hall of Fame
-							</div>
-							<div className={css.hofOptions}>
-								<p>
-									<b>Statistic</b>
-								</p>
-								<Dropdown
-									button={
-										<DropDownButton>{title(selectedEndpoint)}</DropDownButton>
-									}
-									label="Selected statistic"
-									options={[
-										{name: 'Decks'},
-										{name: 'Cards'},
-										{name: 'Games'},
-										{name: 'Types'},
-										{name: 'Private game'},
-									]}
-									showNames={true}
-									action={(option) => {
-										if (option === selectedEndpoint) return
-										setData(null)
-										setDataRetrieved(false)
-										setSelectedEndpoint(option.toLocaleLowerCase() as Endpoints)
-									}}
-								/>
-								<p>
-									<b>Parameters</b>
-								</p>
-								{selectedEndpoint !== 'private game' && (
-									<>
-										<div className={css.hofOption}>
-											<p style={{flexGrow: 1}}>After:</p>
-											<input
-												type="date"
-												ref={afterRef}
-												onChange={(_e) => {
-													if (!afterRef.current.valueAsNumber) {
-														setEndpointAfter(null)
-													} else {
-														setEndpointAfter(
-															afterRef.current.valueAsNumber / 1000,
+						{tab === 'stats' && (
+							<div className={css.tableArea}>
+								{gameHistory.map((game) => (
+									<div className={css.gameHistoryBox}>
+										<div>
+											<img
+												className={css.playerHead}
+												src={`https://mc-heads.net/head/${game.firstPlayer.minecraftName}/right`}
+												alt="player head"
+											/>
+										</div>
+										<div>
+											{game.firstPlayer.uuid === databaseInfo.userId
+												? 'You'
+												: game.firstPlayer.name}
+											{game.firstPlayer.player === 'you' && (
+												<Button
+													onClick={() => {
+														if (
+															game.firstPlayer.player !== 'you' ||
+															!game.firstPlayer.deck
 														)
-													}
-													setDataRetrieved(false)
-												}}
-											/>
-										</div>
-										<div className={css.hofOption}>
-											<p style={{flexGrow: 1}}>Before:</p>
-											<input
-												type="date"
-												ref={beforeRef}
-												onChange={(_e) => {
-													if (!beforeRef.current.valueAsNumber) {
-														setEndpointBefore(null)
-													} else {
-														setEndpointBefore(
-															beforeRef.current.valueAsNumber / 1000,
+															return
+														setScreenshotDeckModalContents(
+															sortCards(
+																parseDeckCards(
+																	game.firstPlayer.deck.cards.map(
+																		(card) => card.props.id,
+																	),
+																),
+															),
 														)
-													}
-													setDataRetrieved(false)
-												}}
+													}}
+												>
+													View
+												</Button>
+											)}
+										</div>
+										<div>
+											{game.secondPlayer.uuid === databaseInfo.userId
+												? 'You'
+												: game.secondPlayer.name}
+											{game.secondPlayer.player === 'you' && (
+												<Button
+													onClick={() => {
+														if (
+															game.secondPlayer.player !== 'you' ||
+															!game.secondPlayer.deck
+														)
+															return
+														setScreenshotDeckModalContents(
+															sortCards(
+																parseDeckCards(
+																	game.secondPlayer.deck.cards.map(
+																		(card) => card.props.id,
+																	),
+																),
+															),
+														)
+													}}
+												>
+													View
+												</Button>
+											)}
+										</div>
+										<div>
+											<img
+												className={css.playerHead}
+												src={`https://mc-heads.net/head/${game.firstPlayer.minecraftName}/left`}
+												alt="player head"
 											/>
 										</div>
-									</>
-								)}
-								{selectedEndpoint === 'decks' && (
-									<>
-										<div className={css.hofOption}>
-											<p style={{flexGrow: 1}}>Sort By:</p>
-											<Dropdown
-												button={
-													<DropDownButton>
-														{decksOrderByOptions[decksOrderyBy]}
-													</DropDownButton>
-												}
-												label="Order By"
-												options={Object.entries(decksOrderByOptions).map(
-													([k, v]) => ({
-														name: v,
-														key: k,
-													}),
-												)}
-												showNames={true}
-												action={(option) => {
-													setDataRetrieved(false)
-													setDecksOrderBy(
-														option as keyof typeof decksOrderByOptions,
-													)
-												}}
-											/>
-										</div>
-										<div className={css.hofCheckBox}>
-											<p style={{flexGrow: 1}}>
-												Show decks that include disabled cards:
-											</p>
-											<Checkbox
-												defaultChecked={showDecksWithDisabled}
-												onCheck={() =>
-													setShowDecksWithDisabled(!showDecksWithDisabled)
-												}
-											></Checkbox>
-										</div>
-										<div className={css.hofCheckBox}>
-											<p style={{flexGrow: 1}}>
-												Show decks below a 50% winrate:
-											</p>
-											<Checkbox
-												defaultChecked={showDecksBelow50Winrate}
-												onCheck={() =>
-													setShowDecksBelow50Winrate(!showDecksBelow50Winrate)
-												}
-											></Checkbox>
-										</div>
-									</>
-								)}
-								{selectedEndpoint === 'cards' && (
-									<>
-										<div className={css.hofOption}>
-											<p style={{flexGrow: 1}}>Sort By:</p>
-											<Dropdown
-												button={
-													<DropDownButton>
-														{cardOrderByOptions[cardOrderBy]}
-													</DropDownButton>
-												}
-												label="Order By"
-												options={Object.entries(cardOrderByOptions).map(
-													([k, v]) => ({
-														name: v,
-														key: k,
-													}),
-												)}
-												showNames={true}
-												action={(option) => {
-													setDataRetrieved(false)
-													setCardOrderBy(
-														option as keyof typeof cardOrderByOptions,
-													)
-												}}
-											/>
-										</div>
-										<div className={css.hofCheckBox}>
-											<p style={{flexGrow: 1}}>Show Disabled Cards:</p>
-											<Checkbox
-												defaultChecked={showDisabled}
-												onCheck={() => setShowDisabled(!showDisabled)}
-											></Checkbox>
-										</div>
-									</>
-								)}
-								{selectedEndpoint === 'types' && (
-									<>
-										<Button
-											onClick={() => {
-												setSortBy(
-													sortBy === 'winrate' ? 'frequency' : 'winrate',
-												)
-												setDataRetrieved(false)
-											}}
-										>
-											Sort by:{' '}
-											{sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
+										<Button onClick={() => handleReplayGame(game)}>
+											Watch Replay
 										</Button>
-										<div className={css.hofCheckBox}>
-											<p style={{flexGrow: 1}}>Show Frequency:</p>
-											<Checkbox
-												defaultChecked={showTypeFrequency}
-												onCheck={() => setShowTypeFrequency(!showTypeFrequency)}
-											></Checkbox>
-										</div>
-										<div className={css.hofCheckBox}>
-											<p style={{flexGrow: 1}}>Show Winrate:</p>
-											<Checkbox
-												defaultChecked={showTypeWinrate}
-												onCheck={() => setShowTypeWinrate(!showTypeWinrate)}
-											></Checkbox>
-										</div>
-									</>
-								)}
-								{selectedEndpoint === 'private game' && (
-									<input
-										type="text"
-										ref={codeRef}
-										value={privateGameCode ? privateGameCode : ''}
-										onChange={(e) => {
-											setPrivateGameCode(e.target.value)
-										}}
-										maxLength={7}
-										placeholder="Enter Game Code..."
-										className={css.input}
-										data-focused={true}
-									/>
+									</div>
+								))}
+							</div>
+						)}
+						{tab === 'hof' && (
+							<div className={css.tableArea}>
+								{dataRetrieved && getTable()}
+								{!dataRetrieved && (
+									<div className={css.loadingIndicator}>
+										<Spinner></Spinner>
+										Loading...
+									</div>
 								)}
 							</div>
-						</div>
+						)}
+						{tab === 'stats' && (
+							<div
+								className={classNames(
+									css.hofSidebar,
+									!showDropdown && css.hideOnMobile,
+								)}
+							>
+								<div
+									className={classNames(css.hallOfFameHeader, css.mobileHeader)}
+								>
+									<div className={classNames(css.tab, css.selected)}>
+										My Stats
+									</div>
+									<div
+										className={classNames(css.tab, css.deselected)}
+										onClick={() => setTab('hof')}
+									>
+										Hall of Fame
+									</div>
+								</div>
+								<div>
+									<p>Summary</p>
+									<div>{stats.wins}</div>
+									<div>{stats.losses}</div>
+									<div>{stats.forfeitWins}</div>
+									<div>{stats.forfeitLosses}</div>
+									<div>{stats.ties}</div>
+									<div>{stats.gamesPlayed}</div>
+									<p>Filter Games</p>
+								</div>
+							</div>
+						)}
+						{tab === 'hof' && (
+							<div
+								className={classNames(
+									css.hofSidebar,
+									!showDropdown && css.hideOnMobile,
+								)}
+							>
+								<div
+									className={classNames(css.hallOfFameHeader, css.mobileHeader)}
+								>
+									<div
+										className={classNames(css.tab, css.deselected)}
+										onClick={() => setTab('stats')}
+									>
+										My Stats
+									</div>
+									<div className={classNames(css.tab, css.selected)}>
+										Hall of Fame
+									</div>
+								</div>
+								<div className={css.hofOptions}>
+									<p>
+										<b>Statistic</b>
+									</p>
+									<Dropdown
+										button={
+											<DropDownButton>{title(selectedEndpoint)}</DropDownButton>
+										}
+										label="Selected statistic"
+										options={[
+											{name: 'Decks'},
+											{name: 'Cards'},
+											{name: 'Games'},
+											{name: 'Types'},
+											{name: 'Private game'},
+										]}
+										showNames={true}
+										action={(option) => {
+											if (option === selectedEndpoint) return
+											setData(null)
+											setDataRetrieved(false)
+											setSelectedEndpoint(
+												option.toLocaleLowerCase() as Endpoints,
+											)
+										}}
+									/>
+									<p>
+										<b>Parameters</b>
+									</p>
+									{selectedEndpoint !== 'private game' && (
+										<>
+											<div className={css.hofOption}>
+												<p style={{flexGrow: 1}}>After:</p>
+												<input
+													type="date"
+													ref={afterRef}
+													onChange={(_e) => {
+														if (!afterRef.current.valueAsNumber) {
+															setEndpointAfter(null)
+														} else {
+															setEndpointAfter(
+																afterRef.current.valueAsNumber / 1000,
+															)
+														}
+														setDataRetrieved(false)
+													}}
+												/>
+											</div>
+											<div className={css.hofOption}>
+												<p style={{flexGrow: 1}}>Before:</p>
+												<input
+													type="date"
+													ref={beforeRef}
+													onChange={(_e) => {
+														if (!beforeRef.current.valueAsNumber) {
+															setEndpointBefore(null)
+														} else {
+															setEndpointBefore(
+																beforeRef.current.valueAsNumber / 1000,
+															)
+														}
+														setDataRetrieved(false)
+													}}
+												/>
+											</div>
+										</>
+									)}
+									{selectedEndpoint === 'decks' && (
+										<>
+											<div className={css.hofOption}>
+												<p style={{flexGrow: 1}}>Sort By:</p>
+												<Dropdown
+													button={
+														<DropDownButton>
+															{decksOrderByOptions[decksOrderyBy]}
+														</DropDownButton>
+													}
+													label="Order By"
+													options={Object.entries(decksOrderByOptions).map(
+														([k, v]) => ({
+															name: v,
+															key: k,
+														}),
+													)}
+													showNames={true}
+													action={(option) => {
+														setDataRetrieved(false)
+														setDecksOrderBy(
+															option as keyof typeof decksOrderByOptions,
+														)
+													}}
+												/>
+											</div>
+											<div className={css.hofCheckBox}>
+												<p style={{flexGrow: 1}}>
+													Show decks that include disabled cards:
+												</p>
+												<Checkbox
+													defaultChecked={showDecksWithDisabled}
+													onCheck={() =>
+														setShowDecksWithDisabled(!showDecksWithDisabled)
+													}
+												></Checkbox>
+											</div>
+											<div className={css.hofCheckBox}>
+												<p style={{flexGrow: 1}}>
+													Show decks below a 50% winrate:
+												</p>
+												<Checkbox
+													defaultChecked={showDecksBelow50Winrate}
+													onCheck={() =>
+														setShowDecksBelow50Winrate(!showDecksBelow50Winrate)
+													}
+												></Checkbox>
+											</div>
+										</>
+									)}
+									{selectedEndpoint === 'cards' && (
+										<>
+											<div className={css.hofOption}>
+												<p style={{flexGrow: 1}}>Sort By:</p>
+												<Dropdown
+													button={
+														<DropDownButton>
+															{cardOrderByOptions[cardOrderBy]}
+														</DropDownButton>
+													}
+													label="Order By"
+													options={Object.entries(cardOrderByOptions).map(
+														([k, v]) => ({
+															name: v,
+															key: k,
+														}),
+													)}
+													showNames={true}
+													action={(option) => {
+														setDataRetrieved(false)
+														setCardOrderBy(
+															option as keyof typeof cardOrderByOptions,
+														)
+													}}
+												/>
+											</div>
+											<div className={css.hofCheckBox}>
+												<p style={{flexGrow: 1}}>Show Disabled Cards:</p>
+												<Checkbox
+													defaultChecked={showDisabled}
+													onCheck={() => setShowDisabled(!showDisabled)}
+												></Checkbox>
+											</div>
+										</>
+									)}
+									{selectedEndpoint === 'types' && (
+										<>
+											<Button
+												onClick={() => {
+													setSortBy(
+														sortBy === 'winrate' ? 'frequency' : 'winrate',
+													)
+													setDataRetrieved(false)
+												}}
+											>
+												Sort by:{' '}
+												{sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}
+											</Button>
+											<div className={css.hofCheckBox}>
+												<p style={{flexGrow: 1}}>Show Frequency:</p>
+												<Checkbox
+													defaultChecked={showTypeFrequency}
+													onCheck={() =>
+														setShowTypeFrequency(!showTypeFrequency)
+													}
+												></Checkbox>
+											</div>
+											<div className={css.hofCheckBox}>
+												<p style={{flexGrow: 1}}>Show Winrate:</p>
+												<Checkbox
+													defaultChecked={showTypeWinrate}
+													onCheck={() => setShowTypeWinrate(!showTypeWinrate)}
+												></Checkbox>
+											</div>
+										</>
+									)}
+									{selectedEndpoint === 'private game' && (
+										<input
+											type="text"
+											ref={codeRef}
+											value={privateGameCode ? privateGameCode : ''}
+											onChange={(e) => {
+												setPrivateGameCode(e.target.value)
+											}}
+											maxLength={7}
+											placeholder="Enter Game Code..."
+											className={css.input}
+											data-focused={true}
+										/>
+									)}
+								</div>
+							</div>
+						)}
 					</div>
 				</div>
 			</MenuLayout>
