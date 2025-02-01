@@ -1,4 +1,5 @@
 import assert from 'assert'
+import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
 import {
 	CardComponent,
 	PlayerComponent,
@@ -92,6 +93,11 @@ export class GameModel {
 	public publishBattleLog: (logs: Array<Message>, timeout: number) => void
 
 	public battleLog: BattleLogModel
+	/**All past turn actions, saved for replays */
+	public turnActions: Array<ReplayActionData>
+	/**The time the last action has been recieved*/
+	public lastActionTime: number | null
+
 	public state: GameState
 	/** The seed for the random number generation for this game. WARNING: Must be under 15 characters or the database will break. */
 	public readonly rngSeed: string
@@ -119,6 +125,8 @@ export class GameModel {
 		 */
 		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
 		/** Hook called when the game ends for disposing references */
+		onGameEnd: GameHook<(outcome: GameOutcome) => void>
+		/** Hook called when the game ends for disposing references */
 		afterGameEnd: Hook<string, () => void>
 		/** Hook for reviving rows after all attacks are executed */
 		rowRevive: PriorityHook<
@@ -141,7 +149,6 @@ export class GameModel {
 		options?: {
 			randomizeOrder?: boolean
 			publishBattleLog?: (logs: Array<Message>, timeout: number) => void
-			countAchievements?: boolean
 		},
 	) {
 		options = options ?? {}
@@ -159,6 +166,8 @@ export class GameModel {
 		this.rng = newRandomNumberGenerator(rngSeed)
 
 		this.battleLog = new BattleLogModel(this)
+		this.turnActions = []
+		this.lastActionTime = null
 
 		this.endInfo = {
 			deadPlayerEntities: [],
@@ -171,6 +180,7 @@ export class GameModel {
 			rowRevive: new PriorityHook(rowRevive),
 			afterAttack: new PriorityHook(afterAttack),
 			freezeSlots: new GameHook(),
+			onGameEnd: new GameHook(),
 			afterGameEnd: new Hook(),
 		}
 		setupComponents(this, this.components, player1, player2, {
@@ -178,7 +188,6 @@ export class GameModel {
 			startWithAllCards: settings.startWithAllCards,
 			unlimitedCards: settings.unlimitedCards,
 			extraStartingCards: settings.extraStartingCards,
-			countAchievements: !!options.countAchievements,
 		})
 
 		this.state = getGameState(this, options.randomizeOrder)
