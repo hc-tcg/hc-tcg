@@ -9,7 +9,7 @@ export type Achievement = {
 	numericId: number
 	name: string
 	description: string
-	
+
 	steps: number
 	getProgress: (goals: Record<number, number>) => number
 

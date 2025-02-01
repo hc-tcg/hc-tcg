@@ -39,6 +39,7 @@ function MainMenu({setMenuSection}: Props) {
 	}
 	const handleDeck = () => setMenuSection('deck')
 	const handleSettings = () => setMenuSection('settings')
+	const handleAchievements = () => setMenuSection('achievements')
 
 	const updates = useSelector(getUpdates)
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(true)
@@ -102,7 +103,7 @@ function MainMenu({setMenuSection}: Props) {
 						<Button
 							variant="default"
 							id={css.achievements}
-							onClick={handleLogOut}
+							onClick={handleAchievements}
 							className={css.mainMenuButton}
 						>
 							Achievements

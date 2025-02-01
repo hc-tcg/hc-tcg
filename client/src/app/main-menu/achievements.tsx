@@ -4,6 +4,7 @@ import MenuLayout from 'components/menu-layout'
 import {getAchievements} from 'logic/game/database/database-selectors'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
+import Button from 'components/button'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -19,6 +20,7 @@ function Achievements({setMenuSection}: Props) {
 			className={css.settingsMenu}
 		>
 			<h2>Achievements</h2>
+			<Button onClick={() => setMenuSection('cosmetics')}>Cosmetics</Button>
 			<div className={css.achievementsContainer}>
 				{ACHIEVEMENTS_LIST.map((achievement) => (
 					<AchievementComponent
