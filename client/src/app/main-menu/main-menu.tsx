@@ -30,15 +30,13 @@ function MainMenu({setMenuSection}: Props) {
 	)
 
 	const handleGame = () => {
-		setMenuSection('game-landing')
+		setMenuSection('play-select')
 	}
 
-	const handleLogOut = () => {
-		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
-		dispatch({type: localMessages.LOGOUT})
-	}
 	const handleDeck = () => setMenuSection('deck')
 	const handleSettings = () => setMenuSection('settings')
+	const handleAchievements = () => setMenuSection('achievements')
+	const handleStatistics = () => setMenuSection('statistics')
 	const handleAchievements = () => setMenuSection('achievements')
 
 	const updates = useSelector(getUpdates)
@@ -94,14 +92,6 @@ function MainMenu({setMenuSection}: Props) {
 						</Button>
 						<Button
 							variant="default"
-							id={css.settings}
-							onClick={handleSettings}
-							className={css.mainMenuButton}
-						>
-							More
-						</Button>
-						<Button
-							variant="default"
 							id={css.achievements}
 							onClick={handleAchievements}
 							className={css.mainMenuButton}
@@ -110,11 +100,19 @@ function MainMenu({setMenuSection}: Props) {
 						</Button>
 						<Button
 							variant="default"
-							id={css.hof}
-							onClick={handleLogOut}
+							id={css.settings}
+							onClick={handleSettings}
 							className={css.mainMenuButton}
 						>
-							Profile
+							Settings
+						</Button>
+						<Button
+							variant="default"
+							id={css.more}
+							onClick={handleStatistics}
+							className={css.mainMenuButton}
+						>
+							More
 						</Button>
 					</nav>
 					<Beef />
