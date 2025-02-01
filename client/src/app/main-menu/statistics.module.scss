@@ -1,0 +1,394 @@
+.bigHallOfFameArea {
+	width: 100vw;
+	height: 100vh;
+	right: 0px;
+	top: 0px;
+	position: absolute;
+	display: flex;
+}
+
+.mainHallOfFameArea {
+	width: 80%;
+	margin-left: 10%;
+	margin-right: 10%;
+	margin-top: 5%;
+	margin-bottom: 1%;
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+}
+
+.hofSidebar {
+	background-color: var(--gray-700);
+	border: 2px black solid;
+	width: 20%;
+}
+
+.hallOfFameTable {
+	background-color: #000;
+	color: var(--text-light);
+
+	tr {
+		color: black;
+		text-align: center;
+	}
+
+	tr:nth-child(odd) {
+		background-color: var(--gray-200);
+	}
+
+	tr:nth-child(even) {
+		background-color: var(--gray-400);
+	}
+
+	tr:first-child {
+		background-color: black;
+		color: white;
+	}
+
+	tr th {
+		width: 10%;
+	}
+
+	tr td button {
+		margin-top: 0.2vh;
+		margin-bottom: 0.2vh;
+	}
+}
+
+.hallOfFameTableGrid {
+	background-color: #000;
+	color: var(--text-light);
+	margin-bottom: -2px;
+
+	tr {
+		color: black;
+		text-align: center;
+	}
+
+	tr:nth-child(odd) {
+		background-color: var(--gray-200);
+	}
+
+	tr:nth-child(even) {
+		background-color: var(--gray-400);
+	}
+
+	tr > td {
+		width: 10%;
+	}
+
+	tr > th {
+		color: var(--text-light);
+		background-color: black;
+		border-bottom: 1px white dashed;
+	}
+}
+
+.hallOfFameTableNoHeader {
+	background-color: #000;
+	color: var(--text-light);
+	margin-bottom: -2px;
+	width: 100%;
+
+	th {
+		font-weight: normal;
+	}
+
+	tr {
+		color: black;
+		text-align: center;
+	}
+
+	tr:nth-child(odd) {
+		background-color: var(--gray-200);
+	}
+
+	tr:nth-child(even) {
+		background-color: var(--gray-400);
+	}
+
+	td {
+		width: 80%;
+	}
+}
+
+.hallOfFameTable > tr > th {
+	position: sticky;
+	top: 2px;
+	background-color: black;
+}
+
+.hallOfFameTable > tr > th::before {
+	content: "";
+	background-color: black;
+	height: calc(1.5rem + 1px);
+	width: 100%;
+	position: absolute;
+	top: -3px;
+	left: 0px;
+	z-index: -1;
+}
+
+.actionColumn {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 10px;
+}
+
+.tableArea {
+	overflow-y: scroll;
+	flex-grow: 1;
+	overflow-x: hidden;
+	width: 90%;
+	border: 2px black solid;
+	background-color: var(--gray-700);
+}
+
+.dropdownButton {
+	place-content: center;
+	display: flex;
+	align-items: center;
+	justify-items: center;
+	background-color: var(--gray-400);
+	border-radius: 6px;
+	width: 2rem;
+	height: 2rem;
+	flex-shrink: 0;
+	cursor: pointer;
+
+	> img {
+		height: 1.5rem;
+		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
+	}
+
+	&:hover {
+		background: var(--gray-600);
+		filter: brightness(1.1);
+	}
+}
+
+.hofOptions {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	margin-bottom: 0.5rem;
+	color: var(--text-light);
+	padding: 5px;
+}
+
+.loadingIndicator {
+	background-color: black;
+	color: var(--text-light);
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	display: flex;
+	padding: 1rem;
+	gap: 1rem;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.2rem;
+}
+
+.hallOfFameHeader {
+	background-color: var(--gray-600);
+	color: var(--text-light);
+	font-family: Minecrafter;
+	font-size: 0.9rem;
+	height: 5%;
+	align-items: center;
+	display: flex;
+	justify-content: center;
+}
+
+.hofCheckBox {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
+}
+
+.hofOption {
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	width: 100%;
+}
+
+.barContainer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+}
+
+.typeGraph {
+	background-color: var(--gray-700);
+	color: white;
+	margin: 1vh;
+	width: 100%;
+}
+
+.achievementsContainer {
+	display: grid;
+	grid-template-columns: 50% 50%;
+	border-radius: 0.5vh;
+	padding: 1vh 2vh;
+	gap: 1vh;
+}
+
+.showOnMobile {
+	display: none;
+}
+
+.tab {
+	width: 50%;
+	text-align: center;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	background-color: var(--gray-700);
+	box-shadow: inset 0 -4px 1px var(--gray-700),
+		inset 1px 1px 0 1px var(--gray-400),
+		inset -1px 0px 0 1px var(--gray-500);
+
+	&.deselected {
+		cursor: pointer;
+		background-color: var(--gray-900);
+		box-shadow: inset 0 -4px 1px black, inset 1px 1px 0 1px var(--gray-600),
+			inset -1px -5px 0 1px var(--gray-600);
+	}
+}
+
+.gameHistoryBox {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	background-color: black;
+	color: white;
+	gap: 1rem;
+}
+
+.playerHead {
+	height: 10vh;
+}
+
+.winAndLoss {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+	line-height: 2rem;
+
+	> div {
+		border-radius: 50%;
+		width: 2rem;
+		height: 2rem;
+		text-align: center;
+
+		&.win {
+			background-color: #63b45c;
+		}
+
+		&.loss {
+			background-color: #da5558;
+		}
+	}
+}
+
+.stats {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	padding: 1vh 2vh;
+	color: white;
+	font-size: 1rem;
+}
+
+.filters {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	padding: 1vh 2vh;
+	color: white;
+	font-size: 1rem;
+}
+
+.stat {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+}
+
+.statName {
+	flex-grow: 1;
+}
+
+// Mobile
+@media (max-width: 720px) {
+	.bigHallOfFameArea {
+		width: 100%;
+		height: 100%;
+		left: 0px;
+		top: 0px;
+		position: absolute;
+		display: flex;
+		overflow: hidden;
+	}
+
+	.mainHallOfFameArea {
+		margin-top: 10%;
+		margin-left: 2%;
+		margin-right: 2%;
+		margin-bottom: 2%;
+		gap: 0px;
+		height: auto;
+		width: auto;
+		border: 0px;
+		height: 93%;
+		width: 96%;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.hofSidebar {
+		width: 96vw;
+		height: 85vh;
+		position: absolute;
+		top: 14vh;
+		border: 2px black solid;
+	}
+
+	.showOnMobile {
+		display: flex;
+	}
+
+	.hideOnMobile {
+		display: none;
+	}
+
+	.hallOfFameHeader {
+		height: 10%;
+		border: 2px black solid;
+
+		&.mobileHeader {
+			display: none;
+		}
+	}
+
+	.tableArea {
+		height: 100%;
+		width: 100%;
+		overflow: scroll;
+	}
+
+	.actionColumn {
+		flex-direction: column;
+	}
+}
