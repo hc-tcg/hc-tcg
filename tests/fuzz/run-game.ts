@@ -5,7 +5,7 @@ import {GameSettings} from 'common/models/game-model'
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import {GameController} from 'server/game-controller'
-import gameSaga from 'server/routines/game'
+import gameSaga, {figureOutGameResult} from 'server/routines/game'
 import {call} from 'typed-redux-saga'
 import {FuzzAI} from './fuzz-ai'
 import {CurrentCoinFlip} from 'common/types/game-state'
@@ -28,7 +28,7 @@ function getTestPlayer(playerName: string, deck: Array<Card>) {
 	}
 }
 
-function testSaga(rootSaga: any) {
+async function testSaga(rootSaga: any) {
 	const sagaMiddleware = createSagaMiddleware({
 		onError: (err, {sagaStack: _}) => {
 			throw err
@@ -43,6 +43,8 @@ function testSaga(rootSaga: any) {
 	if (saga.error()) {
 		throw saga.error()
 	}
+
+	await saga.toPromise()
 }
 
 const defaultGameSettings = {
@@ -62,8 +64,8 @@ const defaultGameSettings = {
 	extraStartingCards: [],
 	disableDamage: false,
 	noItemRequirements: false,
-	forceCoinFlip: true,
-	shuffleDeck: false,
+	forceCoinFlip: false,
+	shuffleDeck: true,
 	logErrorsToStderr: false,
 	verboseLogging: !!process.env.UNIT_VERBOSE,
 	disableRewardCards: false,
@@ -73,7 +75,7 @@ const defaultGameSettings = {
  * Test a saga against a game. The game is created with default settings similar to what would be found in production.
  * Note that decks are not shuffled in test games.
  */
-export function testGame(options: {
+export async function testGame(options: {
 	playerOneDeck: Array<Card>
 	playerTwoDeck: Array<Card>
 	seed: string
@@ -101,9 +103,7 @@ export function testGame(options: {
 		FuzzAI,
 	)
 
-	testSaga(
-		call(function* () {
-			yield* call(gameSaga, controller)
-		}),
-	)
+	await testSaga(call(gameSaga, controller))
+
+	return figureOutGameResult(controller.game)
 }

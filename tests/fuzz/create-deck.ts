@@ -13,6 +13,7 @@ export function createDeck(random: () => number): Array<Card> {
 	let cards: Array<Card> = []
 
 	let hermitCount = Math.floor(random() * 10) + 5
+	let itemCount = Math.floor(random() * 12) + 8
 
 	let firstHermit = choose(hermitCardClasses, random) as Card & Hermit
 	let type = firstHermit.type
@@ -28,6 +29,9 @@ export function createDeck(random: () => number): Array<Card> {
 	for (let i = 0; i < hermitCount; i++) {
 		cards.push(choose(pickHermitsFrom, random))
 	}
+	for (let i = 0; i < itemCount; i++) {
+		cards.push(choose(pickItemsFrom, random))
+	}
 
 	while (cards.length < 42) {
 		let pick = Math.floor(random() * 3)
@@ -36,8 +40,6 @@ export function createDeck(random: () => number): Array<Card> {
 			cards.push(choose(attachCardClasses, random))
 		} else if (pick === 1) {
 			cards.push(choose(singleUseCardClasses, random))
-		} else if (pick === 2) {
-			cards.push(choose(pickItemsFrom, random))
 		}
 	}
 

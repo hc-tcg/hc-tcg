@@ -4,7 +4,7 @@ import {newRandomNumberGenerator} from 'common/utils/random'
 import {createDeck} from './create-deck'
 import {testGame} from './run-game'
 
-function performFuzzTest(seed: string) {
+async function performFuzzTest(seed: string) {
 	let randomNumberGenerator = newRandomNumberGenerator(seed)
 
 	let playerOneDeck = createDeck(randomNumberGenerator)
@@ -12,11 +12,19 @@ function performFuzzTest(seed: string) {
 
 	let gameSeed = randomNumberGenerator().toString().slice(16)
 
-	testGame({
+	let gameResult = await testGame({
 		playerOneDeck,
 		playerTwoDeck,
 		seed: gameSeed,
 	})
+	console.log(gameResult)
+	console.log(gameResult)
 }
 
-performFuzzTest(Math.random().toString())
+performFuzzTest(Math.random().toString()).then(() => {
+	console.log('hello world')
+})
+
+setTimeout(() => {
+	console.log('timeout finsihed')
+}, 1000)
