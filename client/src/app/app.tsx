@@ -25,7 +25,7 @@ import Credits from './main-menu/credits'
 import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
 import GameLanding from './main-menu/games-landing'
-import HallOfFame from './main-menu/hall-of-fame'
+import Statistics from './main-menu/statistics'
 import Settings from './main-menu/settings'
 import MatchMaking from './match-making'
 
@@ -64,8 +64,8 @@ function App() {
 					return <GameSettings setMenuSection={setMenuSection} />
 				case 'data-settings':
 					return <DataSettings setMenuSection={setMenuSection} />
-				case 'hall-of-fame':
-					return <HallOfFame setMenuSection={setMenuSection} />
+				case 'statistics':
+					return <Statistics setMenuSection={setMenuSection} />
 				case 'achievements':
 					return <Achievements setMenuSection={setMenuSection} />
 				case 'credits':
