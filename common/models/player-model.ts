@@ -4,12 +4,8 @@ import {COINS} from '../coins'
 import {AchievementProgress} from '../types/achievements'
 import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
-import {appearance} from '../cosmetics/types'
-import EmptyTitle from '../cosmetics/titles/empty'
-import CreeperCoin from '../cosmetics/coins/creeper'
-import RedHearts from '../cosmetics/hearts/red'
-import TransparentBackground from '../cosmetics/background/transparent'
-import BlueBorder from '../cosmetics/borders/blue'
+import {Appearance} from '../cosmetics/types'
+import {defaultAppearance} from '../cosmetics/default'
 
 export type PlayerId = string & {__player_id: never}
 
@@ -24,7 +20,7 @@ export class PlayerModel {
 	public uuid: string
 	public authenticated: boolean
 	public achievementProgress: AchievementProgress
-	public appearance: appearance
+	public appearance: Appearance
 
 	constructor(playerName: string, minecraftName: string, socket: Socket) {
 		this.internalId = Math.random().toString() as PlayerId
@@ -39,13 +35,7 @@ export class PlayerModel {
 		this.uuid = ''
 		this.authenticated = false
 		this.achievementProgress = {}
-		this.appearance = {
-			title: EmptyTitle,
-			coin: CreeperCoin,
-			heart: RedHearts,
-			background: TransparentBackground,
-			border: BlueBorder,
-		}
+		this.appearance = defaultAppearance
 	}
 
 	public get id() {

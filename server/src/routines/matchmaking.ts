@@ -44,6 +44,8 @@ import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import {turnActionsToBuffer} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
+import { defaultAppearance } from 'common/cosmetics/default'
+import EvilXCoin from 'common/cosmetics/coins/evilx'
 
 function setupGame(
 	player1: PlayerModel,
@@ -506,7 +508,7 @@ export function* createBossGame(
 		deck: [EvilXisumaBoss],
 		virtualAI: ExBossAI,
 		disableDeckingOut: true,
-		selectedCoinHead: 'evilx',
+		appearance: {...defaultAppearance, coin: EvilXCoin},
 	})
 	newBossGameController.game.state.isEvilXBossGame = true
 

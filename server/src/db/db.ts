@@ -29,6 +29,7 @@ import {
 	ReplayActionData,
 	bufferToTurnActions,
 } from '../routines/turn-action-compressor'
+import { defaultAppearance } from 'common/cosmetics/default'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -756,7 +757,7 @@ export class Database {
 					name: row['username'],
 					censoredName: row['username'],
 					minecraftName: row['minecraft_name'],
-					selectedCoinHead: 'creeper',
+					appearance: defaultAppearance,
 				}
 			})
 
@@ -908,7 +909,7 @@ export class Database {
 					name: firstPlayerRows[0].username,
 					minecraftName: firstPlayerRows[0].minecraft_name,
 					censoredName: firstPlayerRows[0].username,
-					selectedCoinHead: 'creeper',
+					appearance: defaultAppearance,
 				},
 				deck: player1Deck,
 				uuid: firstPlayerRows[0].user_id,
@@ -919,7 +920,7 @@ export class Database {
 					name: secondPlayerRows[0].username,
 					minecraftName: secondPlayerRows[0].minecraft_name,
 					censoredName: secondPlayerRows[0].username,
-					selectedCoinHead: 'creeper',
+					appearance: defaultAppearance,
 				},
 				deck: player2Deck,
 				uuid: secondPlayerRows[0].user_id,

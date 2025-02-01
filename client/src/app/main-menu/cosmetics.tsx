@@ -7,6 +7,7 @@ import {Cosmetic} from 'common/cosmetics/types'
 import {ALL_COSMETICS} from 'common/cosmetics'
 import {ACHIEVEMENTS} from 'common/achievements'
 import cn from 'classnames'
+import Button from 'components/button'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -23,7 +24,7 @@ function Cosmetics({setMenuSection}: Props) {
 		let unlocked = true
 		if (cosmetic.requires && ACHIEVEMENTS[cosmetic.requires]) {
 			const achievement = ACHIEVEMENTS[cosmetic.requires]
-			unlocked = !!achievementProgress[achievement.numericId].completionTime
+			unlocked = !!achievementProgress[achievement.numericId]?.completionTime
 		}
 		return (
 			<div className={cn(css.cosmeticItem, {[css.unlocked]: unlocked})}>
@@ -45,6 +46,7 @@ function Cosmetics({setMenuSection}: Props) {
 			className={css.cosmeticsLayout}
 		>
 			<h2>Cosmetics</h2>
+			<Button onClick={() => setSelectedCosmetic('coin')}>Switch cosmetic</Button>
 			<div className={css.itemSelector}>
 				{cosmetics.map((cosmetic) => (
 					<CosmeticItem cosmetic={cosmetic} />

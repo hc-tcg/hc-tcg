@@ -20,7 +20,7 @@ export type Background = Cosmetic & {type: 'background'}
 
 export type Border = Cosmetic & {type: 'border'}
 
-export type appearance = {
+export type Appearance = {
 	title: Title
 	coin: Coin
 	heart: Heart
