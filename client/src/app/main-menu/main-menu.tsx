@@ -37,7 +37,6 @@ function MainMenu({setMenuSection}: Props) {
 	const handleSettings = () => setMenuSection('settings')
 	const handleAchievements = () => setMenuSection('achievements')
 	const handleStatistics = () => setMenuSection('statistics')
-	const handleAchievements = () => setMenuSection('achievements')
 
 	const updates = useSelector(getUpdates)
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(true)

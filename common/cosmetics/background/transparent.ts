@@ -1,6 +1,6 @@
-import {Cosmetic} from '../types'
+import {Background} from '../types'
 
-const TransparentBackground: Cosmetic = {
+const TransparentBackground: Background = {
 	type: 'background',
 	id: 'transparent',
 	name: 'Transparent',

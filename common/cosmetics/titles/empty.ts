@@ -1,6 +1,6 @@
-import {Cosmetic} from '../types'
+import {Title} from '../types'
 
-const EmptyTitle: Cosmetic = {
+const EmptyTitle: Title = {
 	type: 'title',
 	id: 'no_title',
 	name: '',

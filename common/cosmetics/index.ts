@@ -1,16 +1,16 @@
-import BACKGROUNDS from './background'
-import BORDERS from './borders'
-import COINS from './coins'
-import HEARTS from './hearts'
-import TITLES from './titles'
+import {ALL_BACKGROUNDS} from './background'
+import {ALL_BORDERS} from './borders'
+import {ALL_COINS} from './coins'
+import {ALL_HEARTS} from './hearts'
+import {ALL_TITLES} from './titles'
 import {Cosmetic} from './types'
 
 export const ALL_COSMETICS = [
-	...TITLES,
-	...COINS,
-	...HEARTS,
-	...BACKGROUNDS,
-	...BORDERS,
+	...ALL_TITLES,
+	...ALL_COINS,
+	...ALL_HEARTS,
+	...ALL_BACKGROUNDS,
+	...ALL_BORDERS,
 ]
 
 export const COSMETICS: Record<string | number, Cosmetic> =

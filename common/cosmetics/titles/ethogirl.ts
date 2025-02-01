@@ -1,7 +1,7 @@
 import Ethogirl from '../../achievements/ethogirl'
-import {Cosmetic} from '../types'
+import {Title} from '../types'
 
-const EthogirlTitle: Cosmetic = {
+const EthogirlTitle: Title = {
 	type: 'title',
 	id: 'ethogirl',
 	name: 'Ethogirl',

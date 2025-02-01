@@ -1,6 +1,6 @@
-import {Cosmetic} from '../types'
+import {Heart} from '../types'
 
-const RedHearts: Cosmetic = {
+const RedHearts: Heart = {
 	type: 'heart',
 	id: 'red',
 	name: 'Default',

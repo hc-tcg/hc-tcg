@@ -521,9 +521,22 @@ nav {
 	}
 }
 
+.selected {
+	background-color: var(--gray-500);
+}
+
 .lockOverlay {
 	position: absolute;
 	width: 10vh;
 	height: 10vh;
 	opacity: 50%;
+}
+
+.achievementsContainer {
+	display: grid;
+	grid-template-columns: 50% 50%;
+	border-radius: 0.5vh;
+	padding: 1vh 2vh;
+	gap: 1vh;
+	overflow-y: scroll;
 }

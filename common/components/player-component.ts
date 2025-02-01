@@ -20,6 +20,7 @@ import query from './query'
 import {RowComponent} from './row-component'
 import {SlotComponent} from './slot-component'
 import {StatusEffectComponent} from './status-effect-component'
+import {appearance} from '../cosmetics/types'
 
 /** The minimal information that must be known about a player to start a game */
 export type PlayerDefs = {
@@ -27,7 +28,7 @@ export type PlayerDefs = {
 	minecraftName: string
 	censoredName: string
 	disableDeckingOut?: true
-	selectedCoinHead: keyof typeof COINS
+	appearance: appearance
 	achievementProgress?: AchievementProgress
 }
 
@@ -38,7 +39,7 @@ export class PlayerComponent {
 	readonly playerName: string
 	readonly minecraftName: string
 	readonly censoredPlayerName: string
-	readonly selectedCoinHead: keyof typeof COINS
+	readonly appearance: appearance
 
 	coinFlips: Array<CurrentCoinFlip>
 	lives: number
@@ -132,7 +133,7 @@ export class PlayerComponent {
 		this.playerName = player.name
 		this.minecraftName = player.minecraftName
 		this.censoredPlayerName = player.censoredName
-		this.selectedCoinHead = player.selectedCoinHead
+		this.appearance = player.appearance
 		this.coinFlips = []
 		this.lives = 3
 		this.hasPlacedHermit = false

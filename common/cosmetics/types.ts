@@ -7,7 +7,23 @@ export type Cosmetic = {
 	requires?: Achievement['id']
 }
 
+export type Title = Cosmetic & {type: 'title'}
+
 export type Coin = Cosmetic & {
 	type: 'coin'
 	borderColor: string
+}
+
+export type Heart = Cosmetic & {type: 'heart'}
+
+export type Background = Cosmetic & {type: 'background'}
+
+export type Border = Cosmetic & {type: 'border'}
+
+export type appearance = {
+	title: Title
+	coin: Coin
+	heart: Heart
+	background: Background
+	border: Border
 }

@@ -5,7 +5,7 @@ import css from './main-menu.module.scss'
 import {useState} from 'react'
 import {Cosmetic} from 'common/cosmetics/types'
 import {ALL_COSMETICS} from 'common/cosmetics'
-import { ACHIEVEMENTS } from 'common/achievements'
+import {ACHIEVEMENTS} from 'common/achievements'
 import cn from 'classnames'
 
 type Props = {
@@ -14,25 +14,28 @@ type Props = {
 function Cosmetics({setMenuSection}: Props) {
 	const [selectedCosmetic, setSelectedCosmetic] =
 		useState<Cosmetic['type']>('title')
-    const achievementProgress = useSelector(getAchievements)
-    console.log(achievementProgress)
+	const achievementProgress = useSelector(getAchievements)
 	const cosmetics = ALL_COSMETICS.filter(
 		(cosmetic) => cosmetic.type === selectedCosmetic,
 	)
 
-    const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
-        let unlocked = true
-        if (cosmetic.requires && ACHIEVEMENTS[cosmetic.requires]) {
-            const achievement = ACHIEVEMENTS[cosmetic.requires]
-            unlocked = !!achievementProgress[achievement.numericId].completionTime
-        }
-        return (
-            <div className={cn(css.cosmeticItem, {[css.unlocked]: unlocked})}>
-                <p>{cosmetic.name}</p>
-                {unlocked ? <></> : <img className={css.lockOverlay} src='/images/lock.png'/>}
-            </div>
-        )
-    }
+	const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
+		let unlocked = true
+		if (cosmetic.requires && ACHIEVEMENTS[cosmetic.requires]) {
+			const achievement = ACHIEVEMENTS[cosmetic.requires]
+			unlocked = !!achievementProgress[achievement.numericId].completionTime
+		}
+		return (
+			<div className={cn(css.cosmeticItem, {[css.unlocked]: unlocked})}>
+				<p>{cosmetic.name}</p>
+				{unlocked ? (
+					<></>
+				) : (
+					<img className={css.lockOverlay} src="/images/lock.png" />
+				)}
+			</div>
+		)
+	}
 
 	return (
 		<MenuLayout
@@ -42,9 +45,11 @@ function Cosmetics({setMenuSection}: Props) {
 			className={css.cosmeticsLayout}
 		>
 			<h2>Cosmetics</h2>
-			<div className={css.itemSelector}>{cosmetics.map(cosmetic => 
-                <CosmeticItem cosmetic={cosmetic} />
-            )}</div>
+			<div className={css.itemSelector}>
+				{cosmetics.map((cosmetic) => (
+					<CosmeticItem cosmetic={cosmetic} />
+				))}
+			</div>
 		</MenuLayout>
 	)
 }

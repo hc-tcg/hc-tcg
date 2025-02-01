@@ -1,8 +1,18 @@
-import {Cosmetic} from '../types'
+import {Title} from '../types'
 import EmptyTitle from './empty'
 import EthogirlTitle from './ethogirl'
 import EvilXTerminatorTitle from './evil-xterminator'
 
-const TITLES: Cosmetic[] = [EmptyTitle, EthogirlTitle, EvilXTerminatorTitle]
+export const ALL_TITLES: Title[] = [
+	EmptyTitle,
+	EthogirlTitle,
+	EvilXTerminatorTitle,
+]
 
-export default TITLES
+export const TITLES: Record<string | number, Title> = ALL_TITLES.reduce(
+	(result: Record<string | number, Title>, card) => {
+		result[card.id] = card
+		return result
+	},
+	{},
+)

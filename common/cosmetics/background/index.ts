@@ -1,5 +1,13 @@
-import {Cosmetic} from '../types'
+import {Background} from '../types'
+import TransparentBackground from './transparent'
 
-const BACKGROUNDS: Cosmetic[] = []
+export const ALL_BACKGROUNDS: Background[] = [TransparentBackground]
 
-export default BACKGROUNDS
+export const BACKGROUNDS: Record<string | number, Background> =
+	ALL_BACKGROUNDS.reduce(
+		(result: Record<string | number, Background>, card) => {
+			result[card.id] = card
+			return result
+		},
+		{},
+	)

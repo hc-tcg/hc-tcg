@@ -1,7 +1,9 @@
-import {Cosmetic} from '../types'
+import {Border} from '../types'
 
-const BlueBorder: Cosmetic = {
+const BlueBorder: Border = {
 	type: 'border',
 	id: 'blue',
 	name: 'Blue',
 }
+
+export default BlueBorder

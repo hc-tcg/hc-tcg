@@ -1,6 +1,12 @@
-import {Cosmetic} from '../types'
+import {Heart} from '../types'
 import RedHearts from './red'
 
-const HEARTS: Cosmetic[] = [RedHearts]
+export const ALL_HEARTS: Heart[] = [RedHearts]
 
-export default HEARTS
+export const HEARTS: Record<string | number, Heart> = ALL_HEARTS.reduce(
+	(result: Record<string | number, Heart>, card) => {
+		result[card.id] = card
+		return result
+	},
+	{},
+)
