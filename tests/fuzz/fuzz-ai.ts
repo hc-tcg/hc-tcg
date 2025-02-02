@@ -48,7 +48,6 @@ function getNextTurnAction(
 	}
 
 	let nextAction = choose(availableActions, game.rng)
-	console.log(availableActions)
 
 	if (game.rng() < 0.6 && availableActions.includes('PRIMARY_ATTACK')) {
 		nextAction = 'PRIMARY_ATTACK'
@@ -164,6 +163,12 @@ function getNextTurnAction(
 	if (nextAction === 'SECONDARY_ATTACK') {
 		return {
 			type: 'SECONDARY_ATTACK',
+		}
+	}
+
+	if (nextAction === 'SINGLE_USE_ATTACK') {
+		return {
+			type: 'SINGLE_USE_ATTACK',
 		}
 	}
 
