@@ -1,4 +1,8 @@
-import {BoardSlotComponent, CardComponent} from 'common/components'
+import {
+	BoardSlotComponent,
+	CardComponent,
+	SlotComponent,
+} from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
@@ -9,6 +13,12 @@ import {choose} from './utils'
 import assert from 'assert'
 import {printBoardState} from 'server/utils'
 import {TurnAction} from 'common/types/game-state'
+
+function cardIsPlayable(game: GameModel, card: CardComponent) {
+	return (
+		game.components.find(SlotComponent, card.props.attachCondition) !== null
+	)
+}
 
 function getNextTurnAction(
 	game: GameModel,
@@ -53,6 +63,7 @@ function getNextTurnAction(
 				query.card.player(player.entity),
 				query.card.slot(query.slot.hand),
 				query.card.isHermit,
+				cardIsPlayable,
 			),
 			game.rng,
 		)
@@ -76,6 +87,7 @@ function getNextTurnAction(
 				query.card.player(player.entity),
 				query.card.slot(query.slot.hand),
 				query.card.isAttach,
+				cardIsPlayable,
 			),
 			game.rng,
 		)
@@ -99,6 +111,7 @@ function getNextTurnAction(
 				query.card.player(player.entity),
 				query.card.slot(query.slot.hand),
 				query.card.isItem,
+				cardIsPlayable,
 			),
 			game.rng,
 		)
@@ -116,19 +129,23 @@ function getNextTurnAction(
 	}
 
 	if (nextAction === 'PLAY_SINGLE_USE_CARD') {
-		const slot = game.components.find(BoardSlotComponent, query.slot.singleUse)
-
-		assert(slot, 'There is always a single use slot')
-
 		const card = choose(
 			game.components.filter(
 				CardComponent,
 				query.card.player(player.entity),
 				query.card.slot(query.slot.hand),
 				query.card.isSingleUse,
+				cardIsPlayable,
 			),
 			game.rng,
 		)
+
+		const slot = game.components.find(
+			BoardSlotComponent,
+			card.props.attachCondition,
+		)
+
+		assert(slot, 'There is always a single use slot')
 
 		return {
 			type: 'PLAY_SINGLE_USE_CARD',
