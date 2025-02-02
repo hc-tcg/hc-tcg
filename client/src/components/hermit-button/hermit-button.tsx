@@ -46,7 +46,13 @@ const HermitButton = ({
 		} else {
 			const pos = buttonRef.current.getBoundingClientRect()
 			setButtonPosition({x: pos.x, y: pos.y, h: pos.height, w: pos.width})
-			backgroundRef.current.style.translate = `${pos.x}px 0`
+
+			if (selectedMode === mode) {
+				const width = 'min(max(45vw, 70vh), 80vw)'
+				backgroundRef.current.style.translate = `calc((100vw - ${width}) / 2) 0`
+			} else {
+				backgroundRef.current.style.translate = `${pos.x}px 0`
+			}
 		}
 	}
 
