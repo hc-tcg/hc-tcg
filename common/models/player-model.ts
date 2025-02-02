@@ -35,7 +35,7 @@ export class PlayerModel {
 		this.uuid = ''
 		this.authenticated = false
 		this.achievementProgress = {}
-		this.appearance = defaultAppearance
+		this.appearance = {...defaultAppearance}
 	}
 
 	public get id() {

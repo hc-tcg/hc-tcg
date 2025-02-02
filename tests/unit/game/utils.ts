@@ -14,7 +14,7 @@ import {
 	SlotComponent,
 } from 'common/components'
 import query, {ComponentQuery} from 'common/components/query'
-import { defaultAppearance } from 'common/cosmetics/default'
+import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerEntity} from 'common/entities'
 import {GameModel, GameSettings} from 'common/models/game-model'
 import {SlotTypeT} from 'common/types/cards'

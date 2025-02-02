@@ -7,6 +7,11 @@ export type User = {
 	secret: string
 	username: string
 	minecraftName: string | null
+	title: string | null
+	coin: string | null
+	heart: string | null
+	background: string | null
+	border: string | null
 }
 
 export type UserWithoutSecret = {

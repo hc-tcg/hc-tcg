@@ -27,8 +27,8 @@ export type PlayerDefs = {
 	name: string
 	minecraftName: string
 	censoredName: string
-	disableDeckingOut?: true
 	appearance: Appearance
+	disableDeckingOut?: true
 	achievementProgress?: AchievementProgress
 }
 

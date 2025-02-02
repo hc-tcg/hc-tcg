@@ -1,7 +1,7 @@
 import type {Attach, Card, HasHealth} from '../cards/types'
 import {COINS} from '../coins'
 import type {CardComponent} from '../components'
-import {Coin} from '../cosmetics/types'
+import {Appearance, Coin} from '../cosmetics/types'
 import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {PlayerId} from '../models/player-model'
 import type {FormattedTextNode} from '../utils/formatting'
@@ -152,6 +152,7 @@ export type LocalPlayerState = {
 		singleUseCardUsed: boolean
 		rows: Array<LocalRowState>
 	}
+	appearance: Appearance
 }
 
 export type LocalGameState = {

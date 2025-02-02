@@ -29,7 +29,7 @@ import {
 	ReplayActionData,
 	bufferToTurnActions,
 } from '../routines/turn-action-compressor'
-import { defaultAppearance } from 'common/cosmetics/default'
+import {defaultAppearance} from 'common/cosmetics/default'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -76,7 +76,12 @@ export class Database {
 					user_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 					secret varchar(255) NOT NULL,
 					username varchar(255) NOT NULL,
-					minecraft_name varchar(255)
+					minecraft_name varchar(255),
+					title varchar(255),
+					coin varchar(255),
+					heart varchar(255),
+					background varchar(255),
+					border varchar(255)
 				);
 				CREATE TABLE IF NOT EXISTS decks(
 					user_id uuid REFERENCES users(user_id),
@@ -184,6 +189,11 @@ export class Database {
 					secret: secret,
 					username: username,
 					minecraftName: minecraftName,
+					title: null,
+					coin: null,
+					heart: null,
+					background: null,
+					border: null,
 				},
 			}
 		} catch (e) {
@@ -208,6 +218,11 @@ export class Database {
 					secret: secret,
 					username: user.rows[0]['username'],
 					minecraftName: user.rows[0]['minecraft_name'],
+					title: user.rows[0]['title'],
+					coin: user.rows[0]['coin'],
+					heart: user.rows[0]['heart'],
+					background: user.rows[0]['background'],
+					border: user.rows[0]['border'],
 				},
 			}
 		} catch (e) {

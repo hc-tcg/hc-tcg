@@ -75,7 +75,7 @@ function App() {
 					return <Credits setMenuSection={setMenuSection} />
 				case 'boss-landing':
 					return <BossLanding setMenuSection={setMenuSection} />
-				case 'game-landing':
+				case 'play-select':
 					return <GameLanding setMenuSection={setMenuSection} />
 
 				case 'mainmenu':

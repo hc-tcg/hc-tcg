@@ -14,7 +14,7 @@ export const ALL_COSMETICS = [
 ]
 
 export const COSMETICS: Record<string | number, Cosmetic> =
-	ALL_COSMETICS.reduce((result: Record<string | number, Cosmetic>, card) => {
+	ALL_COSMETICS.reduce((result: Record<string, Cosmetic>, card) => {
 		result[card.id] = card
 		return result
 	}, {})
