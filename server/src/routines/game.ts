@@ -722,12 +722,8 @@ export function* turnSaga(con: GameController) {
 		buffers.dropping(10),
 	)
 
-	let result
-	try {
-		result = yield* call(turnActionsSaga, con, turnActionChannel)
-	} finally {
-		turnActionChannel.close()
-	}
+	let result = yield* call(turnActionsSaga, con, turnActionChannel)
+	turnActionChannel.close()
 
 	if (result === 'GAME_END') return 'GAME_END'
 

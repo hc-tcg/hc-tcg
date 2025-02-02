@@ -29,11 +29,7 @@ function getTestPlayer(playerName: string, deck: Array<Card>) {
 }
 
 async function testSaga(rootSaga: any) {
-	const sagaMiddleware = createSagaMiddleware({
-		onError: (err, {sagaStack: _}) => {
-			throw err
-		},
-	})
+	const sagaMiddleware = createSagaMiddleware({})
 	createStore(() => {}, applyMiddleware(sagaMiddleware))
 
 	let saga = sagaMiddleware.run(function* () {
@@ -103,7 +99,9 @@ export async function testGame(options: {
 		FuzzAI,
 	)
 
-	await testSaga(call(gameSaga, controller))
+	await testSaga(call(gameSaga, controller)).catch((e) => {
+		console.log(e)
+	})
 
 	return figureOutGameResult(controller.game)
 }

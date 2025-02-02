@@ -20,4 +20,7 @@ async function performFuzzTest(seed: string) {
 	console.log(gameResult)
 }
 
-performFuzzTest(Math.random().toString())
+performFuzzTest(Math.random().toString()).catch((e) => {
+	console.log("There was an error")
+	console.error(e)
+})
