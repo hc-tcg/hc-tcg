@@ -13,6 +13,7 @@ import {choose} from './utils'
 import assert from 'assert'
 import {printBoardState} from 'server/utils'
 import {TurnAction} from 'common/types/game-state'
+import ArmorStand from 'common/cards/attach/armor-stand'
 
 function cardIsPlayable(game: GameModel, card: CardComponent) {
 	return (
@@ -62,7 +63,7 @@ function getNextTurnAction(
 				CardComponent,
 				query.card.player(player.entity),
 				query.card.slot(query.slot.hand),
-				query.card.isHermit,
+				query.some(query.card.isHermit, query.card.is(ArmorStand)),
 				cardIsPlayable,
 			),
 			game.rng,
