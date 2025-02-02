@@ -47,15 +47,6 @@ function getNextTurnAction(
 	}
 
 	if (nextAction === 'PLAY_HERMIT_CARD') {
-		const slot = choose(
-			game.components.filter(
-				BoardSlotComponent,
-				query.slot.player(player.entity),
-				query.slot.hermit,
-				query.slot.empty,
-			),
-			game.rng,
-		)
 		const card = choose(
 			game.components.filter(
 				CardComponent,
@@ -66,29 +57,19 @@ function getNextTurnAction(
 			game.rng,
 		)
 
-		if (slot) {
-			return {
-				type: 'PLAY_HERMIT_CARD',
-				slot: slot.entity,
-				card: getLocalCard(game, card),
-			}
-		} else {
-			nextAction = 'END_TURN'
+		const slot = choose(
+			game.components.filter(BoardSlotComponent, card.props.attachCondition),
+			game.rng,
+		)
+
+		return {
+			type: 'PLAY_HERMIT_CARD',
+			slot: slot.entity,
+			card: getLocalCard(game, card),
 		}
 	}
 
 	if (nextAction === 'PLAY_EFFECT_CARD') {
-		const slot = choose(
-			game.components.filter(
-				BoardSlotComponent,
-				query.slot.player(player.entity),
-				query.slot.attach,
-				query.slot.row(query.row.hasHermit),
-				query.slot.empty,
-			),
-			game.rng,
-		)
-
 		const card = choose(
 			game.components.filter(
 				CardComponent,
@@ -99,29 +80,19 @@ function getNextTurnAction(
 			game.rng,
 		)
 
-		if (slot) {
-			return {
-				type: 'PLAY_EFFECT_CARD',
-				slot: slot.entity,
-				card: getLocalCard(game, card),
-			}
-		} else {
-			nextAction = 'END_TURN'
+		const slot = choose(
+			game.components.filter(BoardSlotComponent, card.props.attachCondition),
+			game.rng,
+		)
+
+		return {
+			type: 'PLAY_EFFECT_CARD',
+			slot: slot.entity,
+			card: getLocalCard(game, card),
 		}
 	}
 
 	if (nextAction === 'PLAY_ITEM_CARD') {
-		const slot = choose(
-			game.components.filter(
-				BoardSlotComponent,
-				query.slot.player(player.entity),
-				query.slot.item,
-				query.slot.row(query.row.hasHermit),
-				query.slot.empty,
-			),
-			game.rng,
-		)
-
 		const card = choose(
 			game.components.filter(
 				CardComponent,
@@ -132,23 +103,20 @@ function getNextTurnAction(
 			game.rng,
 		)
 
-		if (slot) {
-			return {
-				type: 'PLAY_ITEM_CARD',
-				slot: slot.entity,
-				card: getLocalCard(game, card),
-			}
-		} else {
-			nextAction = 'END_TURN'
+		const slot = choose(
+			game.components.filter(BoardSlotComponent, card.props.attachCondition),
+			game.rng,
+		)
+
+		return {
+			type: 'PLAY_ITEM_CARD',
+			slot: slot.entity,
+			card: getLocalCard(game, card),
 		}
 	}
 
 	if (nextAction === 'PLAY_SINGLE_USE_CARD') {
-		const slot = game.components.find(
-			BoardSlotComponent,
-			query.slot.singleUse,
-			query.slot.empty,
-		)
+		const slot = game.components.find(BoardSlotComponent, query.slot.singleUse)
 
 		assert(slot, 'There is always a single use slot')
 
@@ -162,14 +130,10 @@ function getNextTurnAction(
 			game.rng,
 		)
 
-		if (slot) {
-			return {
-				type: 'PLAY_SINGLE_USE_CARD',
-				slot: slot.entity,
-				card: getLocalCard(game, card),
-			}
-		} else {
-			nextAction = 'END_TURN'
+		return {
+			type: 'PLAY_SINGLE_USE_CARD',
+			slot: slot.entity,
+			card: getLocalCard(game, card),
 		}
 	}
 
@@ -191,6 +155,7 @@ function getNextTurnAction(
 				BoardSlotComponent,
 				query.slot.hermit,
 				query.slot.row(query.row.hasHermit),
+				query.slot.player(player.entity),
 				query.not(query.slot.active),
 			),
 			game.rng,
