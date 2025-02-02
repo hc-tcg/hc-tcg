@@ -52,6 +52,7 @@ function getNextTurnAction(
 				BoardSlotComponent,
 				query.slot.player(player.entity),
 				query.slot.hermit,
+				query.slot.empty,
 			),
 			game.rng,
 		)
@@ -83,6 +84,7 @@ function getNextTurnAction(
 				query.slot.player(player.entity),
 				query.slot.attach,
 				query.slot.row(query.row.hasHermit),
+				query.slot.empty,
 			),
 			game.rng,
 		)
@@ -115,6 +117,7 @@ function getNextTurnAction(
 				query.slot.player(player.entity),
 				query.slot.item,
 				query.slot.row(query.row.hasHermit),
+				query.slot.empty,
 			),
 			game.rng,
 		)
@@ -145,6 +148,7 @@ function getNextTurnAction(
 			BoardSlotComponent,
 			query.slot.player(player.entity),
 			query.slot.singleUse,
+			query.slot.empty,
 		)
 
 		assert(slot, 'There is always a single use slot')
