@@ -13,11 +13,10 @@ import {PlayerComponent} from './player-component'
 // let STATUS_EFFECTS: Record<any, StatusEffect<any>>
 // import('../status-effects').then((mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS))
 
-import { STATUS_EFFECTS  } from '../status-effects' 
+import {STATUS_EFFECTS} from '../status-effects'
 
 if (!STATUS_EFFECTS) {
-	throw new Error("Should be defined")
-
+	throw new Error('Should be defined')
 }
 
 export class StatusEffectComponent<

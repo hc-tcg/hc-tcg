@@ -1,3 +1,4 @@
+import assert from 'assert'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -6,14 +7,12 @@ import {
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
+import {TurnAction} from 'common/types/game-state'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
+import {printBoardState} from 'server/utils'
 import {getLocalCard} from 'server/utils/state-gen'
 import {choose} from './utils'
-import assert from 'assert'
-import {printBoardState} from 'server/utils'
-import {TurnAction} from 'common/types/game-state'
-import ArmorStand from 'common/cards/attach/armor-stand'
 
 function cardIsPlayable(game: GameModel, card: CardComponent) {
 	return (
@@ -255,9 +254,7 @@ export const FuzzAI: VirtualAI = {
 	id: 'fuzz_ai',
 	getTurnActions: function* (game, component) {
 		while (true) {
-			printBoardState(game)
 			let next = getNextTurnAction(game, component)
-			console.log(next)
 			yield next
 		}
 	},

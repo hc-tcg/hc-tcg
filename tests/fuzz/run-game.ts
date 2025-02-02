@@ -2,13 +2,13 @@ import {Card} from 'common/cards/types'
 import {COINS} from 'common/coins'
 import {AIComponent} from 'common/components/ai-component'
 import {GameSettings} from 'common/models/game-model'
+import {CurrentCoinFlip} from 'common/types/game-state'
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import {GameController} from 'server/game-controller'
 import gameSaga, {figureOutGameResult} from 'server/routines/game'
 import {call} from 'typed-redux-saga'
 import {FuzzAI} from './fuzz-ai'
-import {CurrentCoinFlip} from 'common/types/game-state'
 
 class FuzzyGameController extends GameController {
 	public override getRandomDelayForAI(_flips: Array<CurrentCoinFlip>) {

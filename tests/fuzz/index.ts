@@ -12,15 +12,35 @@ async function performFuzzTest(seed: string) {
 
 	let gameSeed = randomNumberGenerator().toString().slice(16)
 
-	let gameResult = await testGame({
+	await testGame({
 		playerOneDeck,
 		playerTwoDeck,
 		seed: gameSeed,
 	})
-	console.log(gameResult)
 }
 
-performFuzzTest(Math.random().toString()).catch((e) => {
-	console.log("There was an error")
-	console.error(e)
-})
+async function runTest(seed: string) {
+	let success = true
+	try {
+		await performFuzzTest(seed)
+	} catch (_e) {
+		success = false
+	}
+
+	if (success) {
+		console.log(`${seed}: SUCCESS`)
+	} else {
+		console.log(`${seed}: FAILURE`)
+	}
+}
+
+async function manyTests(num: number) {
+	let seeds = Array(num)
+		.fill(0)
+		.map((_) => Math.random().toString().slice(16))
+
+	await Promise.all(seeds.map((x) => runTest(x)))
+}
+
+await manyTests(10)
+console.log('tests complete!')
