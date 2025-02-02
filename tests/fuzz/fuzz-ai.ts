@@ -12,7 +12,8 @@ import {TurnAction} from 'common/types/game-state'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
 import {getLocalCard} from 'server/utils/state-gen'
-import {choose} from './utils'
+import {choose, chooseN} from './utils'
+import {CardEntity} from 'common/entities'
 
 function cardIsPlayable(game: GameModel, card: CardComponent) {
 	return (
@@ -216,11 +217,35 @@ function getNextTurnAction(
 	if (nextAction === 'MODAL_REQUEST') {
 		let modal = game.state.modalRequests[0].modal
 		if (modal.type === 'selectCards') {
+			let rng = game.rng()
+			if (modal.cancelable && rng < 0.3) {
+				return {
+					type: 'MODAL_REQUEST',
+					modalResult: {
+						result: false,
+						cards: null,
+					},
+				}
+			}
+
+			let selectionSize
+			if (typeof modal.selectionSize === 'number') {
+				selectionSize = [modal.selectionSize, modal.selectionSize]
+			} else {
+				selectionSize = modal.selectionSize
+			}
+
+			let cards = chooseN(
+				modal.cards,
+				Math.floor(game.rng() + selectionSize[0] * selectionSize[1]),
+				game.rng,
+			)
+
 			return {
 				type: 'MODAL_REQUEST',
 				modalResult: {
-					result: false,
-					cards: null,
+					result: true,
+					cards: cards,
 				},
 			}
 		} else if (modal.type === 'copyAttack') {
@@ -251,12 +276,44 @@ function getNextTurnAction(
 				}
 			}
 		} else if (modal.type === 'dragCards') {
+			let rng = game.rng()
+			if (rng < 0.3) {
+				return {
+					type: 'MODAL_REQUEST',
+					modalResult: {
+						result: false,
+						leftCards: null,
+						rightCards: null,
+					},
+				}
+			}
+
+			let cards = [...modal.leftCards, ...modal.rightCards]
+			let outputLeft = []
+			let outputRight = []
+
+			while (outputLeft.length + outputRight.length < cards.length) {
+				const card: CardEntity =
+					cards[outputLeft.length + outputRight.length - 1]
+				if (
+					modal.leftAreaMax === null ||
+					outputLeft.length < modal.leftAreaMax
+				) {
+					outputLeft.push(card)
+				} else if (
+					modal.rightAreaMax === null ||
+					outputRight.length < modal.rightAreaMax
+				) {
+					outputRight.push(card)
+				}
+			}
+
 			return {
 				type: 'MODAL_REQUEST',
 				modalResult: {
-					result: false,
-					leftCards: null,
-					rightCards: null,
+					result: true,
+					leftCards: outputLeft,
+					rightCards: outputRight,
 				},
 			}
 		}
