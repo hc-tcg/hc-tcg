@@ -207,6 +207,35 @@ function getNextTurnAction(
 		}
 	}
 
+	/** For simplicity, we answer no for all these requests */
+	if (nextAction === 'MODAL_REQUEST') {
+		if (game.state.modalRequests[0].modal.type === 'selectCards') {
+			return {
+				type: 'MODAL_REQUEST',
+				modalResult: {
+					result: false,
+					cards: null,
+				},
+			}
+		} else if (game.state.modalRequests[0].modal.type === 'copyAttack') {
+			return {
+				type: 'MODAL_REQUEST',
+				modalResult: {
+					cancel: true,
+				},
+			}
+		} else if (game.state.modalRequests[0].modal.type === 'dragCards') {
+			return {
+				type: 'MODAL_REQUEST',
+				modalResult: {
+					result: false,
+					leftCards: null,
+					rightCards: null,
+				},
+			}
+		}
+	}
+
 	if (nextAction === 'APPLY_EFFECT') {
 		return {
 			type: 'APPLY_EFFECT',
