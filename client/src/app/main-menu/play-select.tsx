@@ -51,7 +51,7 @@ function PlaySelect({setMenuSection}: Props) {
 	const decks = databaseInfo?.decks
 	const [mode, setMode] = useState<string | null>(null)
 	const selectedDeckRef = useRef<HTMLDivElement>(null)
-	const [queing, setQueing] = useState<boolean>(false)
+	const [queuing, setQueuing] = useState<boolean>(false)
 
 	const checkForValidation = (): boolean => {
 		if (!playerDeck || !loadedDeck) {
@@ -76,10 +76,10 @@ function PlaySelect({setMenuSection}: Props) {
 		return false
 	}
 
-	const handeJoinQueue = () => {
+	const handleJoinQueue = () => {
 		const valid = checkForValidation()
 		if (!valid) return
-		setQueing(true)
+		setQueuing(true)
 		dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
 		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
 	}
@@ -92,7 +92,7 @@ function PlaySelect({setMenuSection}: Props) {
 
 	const handleLeaveQueue = () => {
 		dispatch({type: localMessages.MATCHMAKING_LEAVE})
-		setTimeout(() => setQueing(false), 200)
+		setTimeout(() => setQueuing(false), 200)
 	}
 
 	const playSwitchDeckSFX = () => {
@@ -222,7 +222,7 @@ function PlaySelect({setMenuSection}: Props) {
 				setMenuSection('main-menu')
 				return
 			}
-			if (queing) handleLeaveQueue()
+			if (queuing) handleLeaveQueue()
 			setMode(null)
 		}
 		if (e.key == 'Tab') {
@@ -252,6 +252,24 @@ function PlaySelect({setMenuSection}: Props) {
 			)
 		})
 		return hearts
+	}
+
+	let header = 'Select a game type:'
+	switch (mode) {
+		case 'public':
+			header = 'Public Game'
+			break
+		case 'private':
+			header = 'Private Game'
+			break
+		case 'boss':
+			header = 'Boss Battle'
+			break
+		case 'tutorial':
+			header = 'Tutorial'
+			break
+		default:
+			break
 	}
 
 	return (
@@ -339,14 +357,14 @@ function PlaySelect({setMenuSection}: Props) {
 			</Modal>
 			<MenuLayout
 				back={() => {
-					if (queing) handleLeaveQueue()
+					if (queuing) handleLeaveQueue()
 					setMenuSection('main-menu')
 				}}
 				title="Play"
 				returnText="Main Menu"
 				className={css.playSelect}
 			>
-				<h2>Select a game type:</h2>
+				<h2 className={css.header}>{header}</h2>
 				<div className={css.gameTypes}>
 					<div className={css.gameTypesButtons}>
 						<HermitButton
@@ -361,17 +379,23 @@ function PlaySelect({setMenuSection}: Props) {
 							setSelectedMode={setMode}
 							onReturn={handleLeaveQueue}
 						>
-							<div className={css.fullLeft}>
-								{!queing && (
-									<div className={css.buttonMenu}>
+							<div className={css.buttonMenu}>
+								{!queuing ? (
+									<div className={css.publicConfirm}>
 										<p>Confirm your deck before entering a game.</p>
 										<div className={css.deckSelector}>
 											<div className={css.decksContainer}>{decksList}</div>
 										</div>
-										<Button onClick={() => handeJoinQueue()}>Join Queue</Button>
+										<div className={css.spacer}></div>
+										<Button
+											className={css.publicJoinButton}
+											onClick={() => handleJoinQueue()}
+											variant="primary"
+										>
+											Join Queue
+										</Button>
 									</div>
-								)}
-								{queing && (
+								) : (
 									<div className={css.queueMenu}>
 										<div>
 											<div className={css.spinner}>
@@ -438,12 +462,12 @@ function PlaySelect({setMenuSection}: Props) {
 									Join a game here to learn the rules of HC-TCG before facing
 									online opponents.
 								</p>
-								<Button onClick={handeJoinQueue}>Join Queue</Button>
+								<Button onClick={handleJoinQueue}>Join Queue</Button>
 							</div>
 						</HermitButton>
 					</div>
 				</div>
-				<h3>Ingame Appearance</h3>
+				<h3 className={css.appearanceHeader}>Ingame Appearance</h3>
 				<p className={css.clickToChange}>
 					<i>Click to change</i>
 				</p>
