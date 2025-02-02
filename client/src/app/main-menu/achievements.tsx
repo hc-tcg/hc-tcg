@@ -14,9 +14,9 @@ function Achievements({setMenuSection}: Props) {
 
 	return (
 		<MenuLayout
-			back={() => setMenuSection('settings')}
+			back={() => setMenuSection('main-menu')}
 			title="Achievements"
-			returnText="More"
+			returnText="Main menu"
 			className={css.settingsMenu}
 		>
 			<h2>Achievements</h2>

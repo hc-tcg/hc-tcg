@@ -4,7 +4,7 @@ import {
 	getAppearance,
 } from 'logic/game/database/database-selectors'
 import {useDispatch, useSelector} from 'react-redux'
-import css from './main-menu.module.scss'
+import css from './cosmsetics.module.scss'
 import {useState} from 'react'
 import {
 	Appearance,
@@ -89,27 +89,32 @@ function Cosmetics({setMenuSection}: Props) {
 			returnText="Achievements"
 			className={css.cosmeticsLayout}
 		>
-			<h2>Cosmetics</h2>
-			<Dropdown
-				button={<Button>Change cosmetic</Button>}
-				label={'Change cosmetic'}
-				showNames={true}
-				options={[
-					{name: 'title'},
-					{name: 'coin'},
-					{name: 'heart'},
-					{name: 'background'},
-					{name: 'border'},
-				]}
-				action={(action) => {
-					setSelectedCosmetic(action as Cosmetic['type'])
-				}}
-			/>
-			<div className={css.itemSelector}>
-				{cosmetics.map((cosmetic) => (
-					<CosmeticItem cosmetic={cosmetic} />
-				))}
+			<div className={css.cosmeticContainer}>
+				<Dropdown
+					button={<Button>Change cosmetic</Button>}
+					label={'Change cosmetic'}
+					showNames={true}
+					options={[
+						{name: 'title'},
+						{name: 'coin'},
+						{name: 'heart'},
+						{name: 'background'},
+						{name: 'border'},
+					]}
+					action={(action) => {
+						setSelectedCosmetic(action as Cosmetic['type'])
+					}}
+				/>
+				<div className={css.cosmeticPreview}>
+
+				</div>
+				<div className={css.itemSelector}>
+					{cosmetics.map((cosmetic) => (
+						<CosmeticItem cosmetic={cosmetic} />
+					))}
+				</div>
 			</div>
+			
 		</MenuLayout>
 	)
 }
