@@ -18,13 +18,6 @@ async function performFuzzTest(seed: string) {
 		seed: gameSeed,
 	})
 	console.log(gameResult)
-	console.log(gameResult)
 }
 
-performFuzzTest(Math.random().toString()).then(() => {
-	console.log('hello world')
-})
-
-setTimeout(() => {
-	console.log('timeout finsihed')
-}, 1000)
+performFuzzTest(Math.random().toString())

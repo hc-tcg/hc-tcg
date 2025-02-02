@@ -65,10 +65,14 @@ function getNextTurnAction(
 			game.rng,
 		)
 
-		return {
-			type: 'PLAY_HERMIT_CARD',
-			slot: slot.entity,
-			card: getLocalCard(game, card),
+		if (slot) {
+			return {
+				type: 'PLAY_HERMIT_CARD',
+				slot: slot.entity,
+				card: getLocalCard(game, card),
+			}
+		} else {
+			nextAction = 'END_TURN'
 		}
 	}
 
@@ -93,10 +97,14 @@ function getNextTurnAction(
 			game.rng,
 		)
 
-		return {
-			type: 'PLAY_EFFECT_CARD',
-			slot: slot.entity,
-			card: getLocalCard(game, card),
+		if (slot) {
+			return {
+				type: 'PLAY_EFFECT_CARD',
+				slot: slot.entity,
+				card: getLocalCard(game, card),
+			}
+		} else {
+			nextAction = 'END_TURN'
 		}
 	}
 
@@ -121,10 +129,14 @@ function getNextTurnAction(
 			game.rng,
 		)
 
-		return {
-			type: 'PLAY_ITEM_CARD',
-			slot: slot.entity,
-			card: getLocalCard(game, card),
+		if (slot) {
+			return {
+				type: 'PLAY_ITEM_CARD',
+				slot: slot.entity,
+				card: getLocalCard(game, card),
+			}
+		} else {
+			nextAction = 'END_TURN'
 		}
 	}
 
@@ -147,10 +159,14 @@ function getNextTurnAction(
 			game.rng,
 		)
 
-		return {
-			type: 'PLAY_SINGLE_USE_CARD',
-			slot: slot.entity,
-			card: getLocalCard(game, card),
+		if (slot) {
+			return {
+				type: 'PLAY_SINGLE_USE_CARD',
+				slot: slot.entity,
+				card: getLocalCard(game, card),
+			}
+		} else {
+			nextAction = 'END_TURN'
 		}
 	}
 
@@ -194,6 +210,23 @@ function getNextTurnAction(
 		}
 	}
 
+	if (nextAction === 'PICK_REQUEST') {
+		let slot = choose(
+			game.getPickableSlots(game.state.pickRequests[0].canPick),
+			game.rng,
+		)
+		return {
+			type: 'PICK_REQUEST',
+			entity: slot,
+		}
+	}
+
+	if (nextAction === 'APPLY_EFFECT') {
+		return {
+			type: 'APPLY_EFFECT',
+		}
+	}
+
 	throw new Error('Should never reach here: ' + nextAction)
 }
 
@@ -203,6 +236,7 @@ export const FuzzAI: VirtualAI = {
 		while (true) {
 			printBoardState(game)
 			let next = getNextTurnAction(game, component)
+			console.log(next)
 			yield next
 		}
 	},
