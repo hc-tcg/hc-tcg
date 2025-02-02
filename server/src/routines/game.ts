@@ -491,8 +491,6 @@ function getPlayerAI(game: GameModel) {
 function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 	const {opponentPlayer, currentPlayer} = con.game
 
-	let playerAISagaRunning: boolean = false
-
 	while (true) {
 		if (con.game.settings.showHooksState.enabled) printHooksState(con.game)
 
@@ -557,13 +555,9 @@ function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 		con.game.battleLog.sendLogs()
 
 		const playerAI = getPlayerAI(con.game)
-		// @todo Make sure evilx doesn't crash
-		// if (playerAI && !playerAISagaRunning) {
 		if (playerAI) {
 			yield* fork(function* () {
-				playerAISagaRunning = true
 				yield* call(virtualPlayerActionSaga, con, playerAI)
-				playerAISagaRunning = false
 			})
 		}
 
