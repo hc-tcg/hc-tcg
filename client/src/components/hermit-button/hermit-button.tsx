@@ -46,7 +46,7 @@ const HermitButton = ({
 		} else {
 			const pos = buttonRef.current.getBoundingClientRect()
 			setButtonPosition({x: pos.x, y: pos.y, h: pos.height, w: pos.width})
-			backgroundRef.current.style.left = `${pos.x}px`
+			backgroundRef.current.style.translate = `${pos.x}px 0`
 		}
 	}
 
@@ -69,14 +69,11 @@ const HermitButton = ({
 		button.classList.remove(css.enablePointer)
 		button.classList.add(css.disablePointer)
 
-		background.style.left = `${buttonPosition.x}px`
-		background.style.top = `${buttonPosition.y}px`
-
-		const width = 'min(max(45vw, 70vh), 80vw)'
-		background.style.left = `calc((100vw - ${width}) / 2)`
-
 		background.classList.remove(css.shrink, css.show, css.hide)
 		background.classList.add(css.grow)
+
+		const width = 'min(max(45vw, 70vh), 80vw)'
+		background.style.translate = `calc((100vw - ${width}) / 2) 0`
 	}
 
 	const shrink = () => {
@@ -90,8 +87,7 @@ const HermitButton = ({
 		background.classList.remove(css.grow, css.show, css.hide)
 		background.classList.add(css.shrink)
 
-		background.style.left = `${buttonPosition.x}px`
-		background.style.top = `${buttonPosition.y}px`
+		background.style.translate = `${buttonPosition.x}px 0`
 	}
 
 	const hide = () => {
@@ -105,8 +101,7 @@ const HermitButton = ({
 		background.classList.remove(css.shrink, css.grow, css.show)
 		background.classList.add(css.hide)
 
-		background.style.left = `${buttonPosition.x}px`
-		background.style.top = `${buttonPosition.y}px`
+		background.style.translate = `${buttonPosition.x}px 0`
 	}
 	const show = () => {
 		const background = backgroundRef.current
@@ -119,8 +114,7 @@ const HermitButton = ({
 		background.classList.remove(css.hide, css.grow, css.shrink)
 		background.classList.add(css.show)
 
-		background.style.left = `${buttonPosition.x}px`
-		background.style.top = `${buttonPosition.y}px`
+		background.style.translate = `${buttonPosition.x}px 0`
 	}
 
 	if (selectedMode != lastMode) {
@@ -148,10 +142,16 @@ const HermitButton = ({
 	return (
 		<div
 			className={classNames(css.buttonContainer, css.enablePointer)}
-			onMouseDown={() => setSelectedMode(mode)}
+			onMouseDown={(ev) => {
+				if (ev.button !== 0) return
+				setSelectedMode(mode)
+			}}
 			ref={buttonRef}
 		>
-			<div className={css.backgroundContainer} ref={backgroundRef}>
+			<div
+				className={classNames(css.backgroundContainer, css.show)}
+				ref={backgroundRef}
+			>
 				<img
 					src={`images/backgrounds/${backgroundImage}.png`}
 					className={css.backgroundImage}
@@ -162,7 +162,8 @@ const HermitButton = ({
 						<div
 							className={css.returnButton}
 							ref={returnButtonRef}
-							onClick={() => {
+							onClick={(ev) => {
+								if (ev.button !== 0) return
 								if (onReturn) onReturn()
 								setSelectedMode(null)
 							}}

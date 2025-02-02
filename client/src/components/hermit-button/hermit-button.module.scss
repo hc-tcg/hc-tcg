@@ -1,17 +1,17 @@
 $width: 16vw;
 $height: 25vw;
-$time: 0.2s;
+$time: 0.25s;
 
 .buttonContainer {
 	width: $width;
 	height: $height;
 
 	&.disablePointer {
-		animation: disablePointer 0.3s forwards;
+		animation: disablePointer $time forwards;
 	}
 
 	&.enablePointer {
-		animation: enablePointer 0.3s forwards;
+		animation: enablePointer $time forwards;
 	}
 }
 
@@ -19,13 +19,14 @@ $time: 0.2s;
 	position: absolute;
 	width: $width;
 	height: $height;
-	transition: left 0.3s ease-out;
+	left: 0;
 	transform-origin: center;
 	overflow: hidden;
 	z-index: 90;
 
 	&.grow {
 		animation: grow $time forwards;
+		transition: translate $time ease-out;
 
 		.rightOverlay,
 		.returnButton {
@@ -34,13 +35,19 @@ $time: 0.2s;
 	}
 
 	&.shrink {
-		animation: shrink $time forwards;
+		// Note this animation is not "forwards" as we want to be able to scale after
+		animation: shrink $time;
+		transition: translate $time ease-out;
 
 		.rightOverlay,
 		.returnButton {
 			pointer-events: none;
 			cursor: default;
 			animation: opacityShrink $time forwards;
+		}
+
+		&:hover {
+			scale: 1.05;
 		}
 	}
 
@@ -51,8 +58,12 @@ $time: 0.2s;
 	}
 
 	&.show {
-		z-index: 80;
-		animation: showAnim $time forwards;
+		// Note this animation is not "forwards" as we want to be able to scale after
+		animation: showAnim $time;
+
+		&:hover {
+			scale: 1.05;
+		}
 	}
 }
 
@@ -247,6 +258,7 @@ $time: 0.2s;
 
 @keyframes shrink {
 	from {
+		scale: 1;
 		pointer-events: none;
 		width: min(max(45vw, 70vh), 80vw);
 	}
@@ -256,6 +268,7 @@ $time: 0.2s;
 	}
 
 	to {
+		scale: 1;
 		pointer-events: all;
 		width: $width;
 	}
@@ -285,11 +298,13 @@ $time: 0.2s;
 
 @keyframes showAnim {
 	from {
+		z-index: 80;
 		scale: 80%;
 		opacity: 0%;
 	}
 
 	to {
+		z-index: 90;
 		scale: 100%;
 		opacity: 100%;
 	}
