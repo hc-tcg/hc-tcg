@@ -67,6 +67,7 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 						key={currentCoinFlip.name}
 						{...currentCoinFlip}
 						amount={currentCoinFlip.amount}
+						headImage={currentCoinFlip.headImage}
 					/>
 				</div>
 			)

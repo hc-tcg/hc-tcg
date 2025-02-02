@@ -16,7 +16,7 @@ const Totem: Attach = {
 	name: 'Totem',
 	expansion: 'default',
 	rarity: 'ultra_rare',
-	tokens: 3,
+	tokens: 2,
 	description:
 		'If the Hermit this card is attached to is knocked out, they are revived with 10hp.\nDoes not count as a knockout. Discard after use.',
 	sidebarDescriptions: [

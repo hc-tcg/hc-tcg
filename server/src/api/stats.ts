@@ -173,3 +173,28 @@ export async function getGamesStats(params: {
 		},
 	]
 }
+
+export async function getPrivateGame(params: {
+	opponentCode: string
+}): Promise<[number, Record<string, any>]> {
+	let game = await root.db.getGame(params)
+
+	if (game.type === 'failure') {
+		return [
+			500,
+			{
+				error: game.reason,
+			},
+		]
+	}
+
+	return [
+		200,
+		{
+			firstPlayerName: game.body.firstPlayerName,
+			secondPlayerName: game.body.secondPlayerName,
+			startTime: game.body.startTime,
+			winner: game.body.winner,
+		},
+	]
+}

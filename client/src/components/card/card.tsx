@@ -1,7 +1,10 @@
 import cn from 'classnames'
+import classNames from 'classnames'
 import {getRenderedCardImage} from 'common/cards/card'
 import {Card as CardObject} from 'common/cards/types'
 import debugConfig from 'common/config/debug-config'
+import serverConfig from 'common/config/server-config'
+import {EXPANSIONS} from 'common/const/expansions'
 import {WithoutFunctions} from 'common/types/server-requests'
 import Tooltip from 'components/tooltip'
 import CardInstanceTooltip from './card-tooltip'
@@ -60,6 +63,12 @@ const Card = (props: CardReactProps) => {
 		)
 	else throw new Error('Unsupported card category: ' + category)
 
+	const disabled =
+		EXPANSIONS[props.card.expansion].disabled === true ||
+		serverConfig.limits.disabledCards.includes(props.card.id)
+			? 'disabled'
+			: 'enabled'
+
 	return (
 		<Tooltip
 			tooltip={
@@ -82,7 +91,12 @@ const Card = (props: CardReactProps) => {
 				{debugConfig.renderCardsDynamically ? (
 					<div className={cn(css.noPointerEvents, css.card)}>{card}</div>
 				) : (
-					<div className={css.noPointerEvents}>
+					<div
+						className={classNames(
+							css.cardImageContainer,
+							disabled === 'disabled' && css.disabled,
+						)}
+					>
 						<img
 							className={css.renderedCardImage}
 							src={getRenderedCardImage(props.card, displayTokenCost)}

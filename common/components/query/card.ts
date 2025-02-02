@@ -20,6 +20,10 @@ export const isItem: ComponentQuery<CardComponent> = (_game, card) =>
 export const isSingleUse: ComponentQuery<CardComponent> = (_game, card) =>
 	card.isSingleUse()
 
+/** Return true if this card is a prize card */
+export const prizeCard: ComponentQuery<CardComponent> = (_game, card) =>
+	card.prizeCard
+
 /** Return true if the card is on the board */
 export const attached: ComponentQuery<CardComponent> = (_game, card) =>
 	card.slot !== null &&

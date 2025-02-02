@@ -8,7 +8,6 @@ import {
 	StatusEffectComponent,
 } from 'common/components'
 import query from 'common/components/query'
-import {ViewerComponent} from 'common/components/viewer-component'
 import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
 import {
@@ -33,6 +32,7 @@ import {
 	LocalStatusEffectInstance,
 	WithoutFunctions,
 } from 'common/types/server-requests'
+import {GameViewer} from '../game-controller'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -74,6 +74,7 @@ export function getLocalCard<CardType extends Card>(
 		entity: card.entity,
 		slot: card.slotEntity,
 		turnedOver: card.turnedOver,
+		prizeCard: card.prizeCard,
 		attackHint: attackPreview,
 	}
 }
@@ -179,6 +180,7 @@ function getLocalCoinFlip(
 function getLocalPlayerState(
 	game: GameModel,
 	playerState: PlayerComponent,
+	viewer: GameViewer,
 ): LocalPlayerState {
 	let singleUseSlot = game.components.find(
 		SlotComponent,
@@ -187,12 +189,6 @@ function getLocalPlayerState(
 	let singleUseCard = game.components.find(
 		CardComponent,
 		query.card.slotEntity(singleUseSlot),
-	)
-
-	let viewerForPlayer = game.components.find(
-		ViewerComponent,
-		(_game, viewer) =>
-			!viewer.spectator && viewer.playerOnLeft.entity === playerState.entity,
 	)
 
 	if (!singleUseSlot) {
@@ -256,7 +252,7 @@ function getLocalPlayerState(
 
 	const localPlayerState: LocalPlayerState = {
 		entity: playerState.entity,
-		playerId: viewerForPlayer?.playerId,
+		playerId: viewer?.player.id,
 		playerName: playerState.playerName,
 		minecraftName: playerState.minecraftName,
 		censoredPlayerName: playerState.censoredPlayerName,
@@ -271,7 +267,7 @@ function getLocalPlayerState(
 
 export function getLocalGameState(
 	game: GameModel,
-	viewer: ViewerComponent,
+	viewer: GameViewer,
 ): LocalGameState {
 	const playerState = game.components.find(
 		PlayerComponent,
@@ -291,10 +287,15 @@ export function getLocalGameState(
 
 	// convert player states
 	const players: Record<PlayerEntity, LocalPlayerState> = {}
-	players[viewer.playerOnLeft.entity] = getLocalPlayerState(game, playerState)
+	players[viewer.playerOnLeft.entity] = getLocalPlayerState(
+		game,
+		playerState,
+		viewer,
+	)
 	players[viewer.playerOnRight.entity] = getLocalPlayerState(
 		game,
 		opponentState,
+		viewer,
 	)
 
 	// Pick message or modal id

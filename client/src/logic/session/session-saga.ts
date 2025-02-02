@@ -12,7 +12,7 @@ import {getMatchmaking} from 'logic/matchmaking/matchmaking-selectors'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {
 	deleteDeckFromLocalStorage,
-	getActiveDeck,
+	getActiveDeckCode,
 	getLocalStorageDecks,
 	saveDeckToLocalStorage,
 } from 'logic/saved-decks/saved-decks'
@@ -86,7 +86,7 @@ function* insertUser(socket: any) {
 		failure: call(receiveMsg(socket, serverMessages.AUTHENTICATION_FAIL)),
 	})
 
-	const localStorageDecks = getLocalStorageDecks(false)
+	const localStorageDecks = getLocalStorageDecks()
 
 	if (userInfo.success?.user) {
 		yield* put<LocalMessage>({
@@ -118,7 +118,7 @@ function* insertUser(socket: any) {
 				newActiveDeck: starterDeck.code,
 			})
 
-			localStorage.setItem('activeDeck', JSON.stringify(starterDeck))
+			localStorage.setItem('activeDeck', starterDeck.code)
 
 			yield* put<LocalMessage>({
 				type: localMessages.SELECT_DECK,
@@ -138,7 +138,7 @@ function* setupData(socket: any) {
 	})
 
 	if (result.failure) {
-		const localStorageDecks = getLocalStorageDecks(true)
+		const localStorageDecks = getLocalStorageDecks()
 		yield* put<LocalMessage>({
 			type: localMessages.DATABASE_SET,
 			data: {
@@ -248,7 +248,11 @@ export function* loginSaga() {
 		yield put<LocalMessage>({
 			type: localMessages.CONNECTED,
 		})
-		let activeDeck = getActiveDeck()
+		const activeDeckCode = getActiveDeckCode()
+		const localDatabase = yield* select(getLocalDatabaseInfo)
+		const activeDeck = localDatabase.decks.find(
+			(deck) => deck.code === activeDeckCode,
+		)
 		if (activeDeck) {
 			console.log(`Selected previous active deck: ${activeDeck.name}`)
 			yield* put<LocalMessage>({
@@ -302,21 +306,6 @@ export function* loginSaga() {
 			})
 		}
 
-		// Set active deck
-		const activeDeck = getActiveDeck()
-
-		if (activeDeck) {
-			console.log(`Selected previous active deck: ${activeDeck.name}`)
-			yield* put<LocalMessage>({
-				type: localMessages.SELECT_DECK,
-				deck: activeDeck,
-			})
-			yield* sendMsg({
-				type: clientMessages.SELECT_DECK,
-				deck: activeDeck,
-			})
-		}
-
 		// set user info for reconnects
 		socket.auth.playerId = result.playerInfo.player.playerId
 		socket.auth.playerSecret = result.playerInfo.player.playerSecret
@@ -348,6 +337,23 @@ export function* loginSaga() {
 		yield put<LocalMessage>({
 			type: localMessages.CONNECTED,
 		})
+
+		// Set active deck
+		const activeDeckCode = getActiveDeckCode()
+		const localDatabase = yield* select(getLocalDatabaseInfo)
+		const activeDeck = localDatabase.decks.find(
+			(deck) => deck.code === activeDeckCode,
+		)
+		if (activeDeck) {
+			yield* put<LocalMessage>({
+				type: localMessages.SELECT_DECK,
+				deck: activeDeck,
+			})
+			yield* sendMsg({
+				type: clientMessages.SELECT_DECK,
+				deck: activeDeck,
+			})
+		}
 	}
 }
 
@@ -437,13 +443,13 @@ export function* databaseConnectionSaga() {
 	yield* takeEvery<LocalMessageTable[typeof localMessages.UPDATE_DECKS]>(
 		localMessages.UPDATE_DECKS,
 		function* (action) {
-			if (noConnection && action.newActiveDeck) {
+			if (action.newActiveDeck) {
 				yield* put<LocalMessage>({
 					type: localMessages.SELECT_DECK,
 					deck: action.newActiveDeck,
 				})
-				return
 			}
+			if (!noConnection) return
 			yield* sendMsg({
 				type: clientMessages.GET_DECKS,
 				newActiveDeck: action.newActiveDeck?.code,
@@ -482,7 +488,7 @@ export function* logoutSaga() {
 	yield put<LocalMessage>({type: localMessages.DISCONNECT})
 }
 
-export function* newDeckSaga() {
+export function* newDecksSaga() {
 	const socket = yield* select(getSocket)
 	while (true) {
 		const result = yield* call(
@@ -504,12 +510,21 @@ export function* newDeckSaga() {
 		})
 		if (result.newActiveDeck) {
 			// Select new active deck
-			localStorage.setItem('activeDeck', JSON.stringify(result.newActiveDeck))
 			yield* put<LocalMessage>({
 				type: localMessages.SELECT_DECK,
 				deck: result.newActiveDeck,
 			})
 		}
+	}
+}
+
+export function* newDeckSaga() {
+	const socket = yield* select(getSocket)
+	while (true) {
+		const result = yield* call(receiveMsg(socket, serverMessages.NEW_DECK))
+
+		// Select new active deck
+		localStorage.setItem('activeDeck', result.deck.code)
 	}
 }
 

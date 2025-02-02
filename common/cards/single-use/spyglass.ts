@@ -74,7 +74,7 @@ const Spyglass: SingleUse = {
 					if (canDiscard) {
 						// Discard a random card from the opponent's hand
 						let opponentHand = opponentPlayer.getHand()
-						const slotIndex = Math.floor(Math.random() * opponentHand.length)
+						const slotIndex = Math.floor(game.rng() * opponentHand.length)
 						game.battleLog.addEntry(
 							player.entity,
 							getEntry(opponentHand[slotIndex]),

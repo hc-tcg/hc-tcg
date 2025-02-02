@@ -1,5 +1,7 @@
+import {HasHealth} from '../cards/types'
 import {PlayerEntity, RowEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
+import {GameHook} from '../types/hooks'
 import {CardComponent} from './card-component'
 import {PlayerComponent} from './player-component'
 import query from './query'
@@ -13,6 +15,11 @@ export class RowComponent {
 	/* The health of the hermit. Health is null then there is no hermit residing in this row */
 	health: number | null
 
+	hooks: {
+		/** Hook called when card in the health slot in this row is knocked out */
+		onKnockOut: GameHook<(card: CardComponent<HasHealth>) => void>
+	}
+
 	constructor(
 		game: GameModel,
 		entity: RowEntity,
@@ -24,6 +31,9 @@ export class RowComponent {
 		this.playerId = playerId
 		this.index = index
 		this.health = null
+		this.hooks = {
+			onKnockOut: new GameHook(),
+		}
 	}
 
 	get player(): PlayerComponent {
@@ -107,6 +117,9 @@ export class RowComponent {
 		)
 		if (this.health === null) return
 		if (!hermit?.isHealth()) return
-		this.health = Math.min(this.health + amount, hermit.props.health)
+		this.health = Math.min(
+			this.health + amount,
+			Math.max(this.health, hermit.props.health),
+		)
 	}
 }

@@ -2,7 +2,8 @@ import {describe, expect, test} from '@jest/globals'
 import LightningRod from 'common/cards/attach/lightning-rod'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import Bow from 'common/cards/single-use/bow'
-import {RowComponent} from 'common/components'
+import TargetBlock from 'common/cards/single-use/target-block'
+import {CardComponent, RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
@@ -65,5 +66,39 @@ describe('Test Lightning Rod', () => {
 			},
 			{startWithAllCards: true, noItemRequirements: true},
 		)
-	})
+	}),
+		test('Lightning Rod is not discarded when overridden', () => {
+			testGame(
+				{
+					playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
+					playerTwoDeck: [EthosLabCommon, TargetBlock],
+					saga: function* (game) {
+						yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+						yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+						yield* playCardFromHand(game, LightningRod, 'attach', 1)
+						yield* endTurn(game)
+
+						yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+						yield* playCardFromHand(game, TargetBlock, 'single_use')
+						yield* pick(
+							game,
+							query.slot.opponent,
+							query.slot.hermit,
+							query.slot.rowIndex(1),
+						)
+						yield* attack(game, 'primary')
+
+						expect(
+							game.components.find(
+								CardComponent,
+								query.card.is(LightningRod),
+								query.card.opponentPlayer,
+								query.card.afk,
+							),
+						).not.toBe(null)
+					},
+				},
+				{startWithAllCards: true, noItemRequirements: true},
+			)
+		})
 })

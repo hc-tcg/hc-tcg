@@ -18,30 +18,30 @@ import {WithoutFunctions} from 'common/types/server-requests'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
 
-const fireDropper = () => {
-	return Math.floor(Math.random() * 9)
+const fireDropper = (game: GameModel) => {
+	return Math.floor(game.rng() * 9)
 }
 
-function getBossAttack(player: PlayerComponent) {
+function getBossAttack(player: PlayerComponent, game: GameModel) {
 	const lives = player.lives
 
 	const attackIndexes: {
 		damage: number
 		secondary?: number
 		tertiary?: number
-	} = {damage: fireDropper()}
+	} = {damage: fireDropper(game)}
 
 	if (lives === 3) {
 		attackIndexes.damage = [0, 0, 1, 1, 1, 2, 2, 2, 2][attackIndexes.damage]
 	} else {
-		let secondary = fireDropper()
+		let secondary = fireDropper(game)
 		if (lives === 2) {
 			attackIndexes.damage = [0, 0, 0, 1, 1, 1, 2, 2, 2][attackIndexes.damage]
 			attackIndexes.secondary = [0, 0, 0, 1, 1, 1, 2, 2, 2][secondary]
 		} else {
 			attackIndexes.damage = [0, 0, 0, 0, 1, 1, 1, 2, 2][attackIndexes.damage]
 			attackIndexes.secondary = [0, 0, 0, 0, 1, 1, 1, 2, 2][secondary]
-			attackIndexes.tertiary = [0, 0, 0, 0, 1, 1, 1, 2, 2][fireDropper()]
+			attackIndexes.tertiary = [0, 0, 0, 0, 1, 1, 1, 2, 2][fireDropper(game)]
 		}
 	}
 
@@ -102,6 +102,7 @@ function getNextTurnAction(
 						slot: bossCard.slotEntity,
 						turnedOver: false,
 						attackHint: null,
+						prizeCard: false,
 					},
 				},
 			]
@@ -120,7 +121,7 @@ function getNextTurnAction(
 		)
 		if (bossCard === null)
 			throw new Error(`EX's active hermit cannot be found, please report`)
-		const bossAttack = getBossAttack(component.player)
+		const bossAttack = getBossAttack(component.player, game)
 		supplyBossAttack(bossCard, bossAttack)
 		for (const sound of bossAttack) {
 			game.voiceLineQueue.push(`/voice/${sound}.ogg`)
@@ -140,7 +141,7 @@ function getNextTurnAction(
 		query.effect.targetIsCardAnd(query.card.player(player.entity)),
 	)
 	if (nineEffect && nineEffect.counter === 0) {
-		const nineSpecial = Math.random() > 0.5 ? 'NINEDISCARD' : 'NINEATTACHED'
+		const nineSpecial = game.rng() > 0.5 ? 'NINEDISCARD' : 'NINEATTACHED'
 		supplyNineSpecial(nineEffect, nineSpecial)
 		game.voiceLineQueue.push(`/voice/${nineSpecial}.ogg`)
 		return [{type: 'DELAY', delay: 10600}, {type: 'END_TURN'}]

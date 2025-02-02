@@ -3,6 +3,8 @@
 Hermitcraft TCG uses four types of tests:
 
 - Unit Tests: `npm run test:unit`
+- Starer Deck Tests: `npm run test:starter-decks`
+- Database Tests: `npm run test:db`
 - Component Tests: `npm run test:ct`
 - End To End Tests: `npm run test:e2e`
 - Shell Script Tests: `npm run test:api`

@@ -50,15 +50,12 @@ function Timer() {
 		}
 	}, [remainingSeconds])
 
-	// Format time as M:SS
-	const timeInfo = new Date(remainingTime)
-
 	return (
 		<div className={cn(css.timer, css.white)}>
 			<p className={css.timeLeft}>Time Left:</p>
 			<span>
-				{timeInfo.getMinutes()}:
-				{timeInfo.getSeconds().toString().padStart(2, '0')}
+				{Math.floor(remainingSeconds / 60)}:
+				{(remainingSeconds % 60).toString().padStart(2, '0')}
 			</span>
 		</div>
 	)

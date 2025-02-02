@@ -313,6 +313,7 @@ describe('Test Powder Snow Bucket', () => {
 					yield* attack(game, 'secondary')
 					expect(game.opponentPlayer.lives).toBe(2)
 					expect(game.opponentPlayer.activeRow).toBe(null)
+
 					yield* pick(
 						game,
 						query.slot.opponent,

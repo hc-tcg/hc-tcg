@@ -6,6 +6,7 @@ const {Pool} = pg
 import {CARDS} from 'common/cards'
 import {TypeT} from 'common/types/cards'
 import {
+	ApiGame,
 	CardStats,
 	DeckStats,
 	GamesStats,
@@ -75,7 +76,10 @@ export class Database {
 					loser_deck_code varchar(7) REFERENCES decks(deck_code),
 					outcome varchar(31) NOT NULL,
 					seed varchar(15) NOT NULL,
-					replay bytea NOT NULL
+					turns integer,
+					first_player_won boolean,
+					replay bytea NOT NULL,
+					opponent_code varchar(15)
 				);
 				CREATE TABLE IF NOT EXISTS cards(
 					card_id integer PRIMARY KEY NOT NULL
@@ -275,7 +279,7 @@ export class Database {
 		}
 	}
 
-	/** Return the deck with a specific ID. */
+	/** Return the deck with a specific ID, for use in the API. */
 	public async getDeckFromID(
 		deckCode: string,
 	): Promise<DatabaseResult<ApiDeck>> {
@@ -330,6 +334,69 @@ export class Database {
 					iconType,
 					cards: cards.map((card) => card.id),
 					tags,
+				},
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/** Return the deck with a specific ID. */
+	public async getPlayerDeckFromID(
+		deckCode: string,
+	): Promise<DatabaseResult<Deck>> {
+		try {
+			const deck = (
+				await this.pool.query(
+					`SELECT
+						decks.user_id,decks.deck_code,decks.name,decks.icon,decks.icon_type,decks.show_info,
+						deck_cards.card_id,deck_cards.copies,
+						user_tags.tag_id,user_tags.tag_name,user_tags.tag_color FROM decks
+						LEFT JOIN deck_cards ON decks.deck_code = deck_cards.deck_code
+						LEFT JOIN deck_tags ON decks.deck_code = deck_tags.deck_code
+						LEFT JOIN user_tags ON deck_tags.tag_id = user_tags.tag_id
+						WHERE decks.deck_code = $1
+					`,
+					[deckCode],
+				)
+			).rows
+			const code = deck[0]['deck_code']
+			const name = deck[0]['name']
+			const icon = deck[0]['icon']
+			const iconType = deck[0]['icon_type']
+			const showInfo: boolean = deck[0]['show_info']
+			const cards: Array<Card> = deck.reduce((r: Array<Card>, row) => {
+				if (
+					row['card_id'] === null ||
+					r.find((card) => card.numericId === row['card_id'])
+				)
+					return r
+				return [
+					...r,
+					...Array(row['copies']).fill(
+						this.allCards.find((card) => card.numericId === row['card_id']),
+					),
+				]
+			}, [])
+			const tags: Array<Tag> = deck.reduce((r: Array<Tag>, row) => {
+				if (!row['tag_id'] || r.find((tag) => tag.key === row['tag_id']))
+					return r
+				return [
+					...r,
+					{name: row['tag_name'], color: row['tag_color'], key: row['tag_id']},
+				]
+			}, [])
+
+			return {
+				type: 'success',
+				body: {
+					code,
+					name,
+					icon,
+					iconType,
+					cards: cards.map((card) => toLocalCardInstance(card)),
+					tags,
+					public: showInfo,
 				},
 			}
 		} catch (e) {
@@ -685,7 +752,9 @@ export class Database {
 		gameLength: number,
 		winningPlayerUuid: string | null,
 		seed: string,
+		turns: number,
 		replay: Buffer,
+		opponentCode: string | null,
 	): Promise<DatabaseResult> {
 		try {
 			const replayBytes = replay.reduce((r, c) => (r << 8) & c, 0)
@@ -719,8 +788,10 @@ export class Database {
 				losingDeck = firstPlayerDeckCode
 			}
 
+			const firstPlayerWon = winner === firstPlayerUuid
+
 			await this.pool.query(
-				"INSERT INTO games (start_time, completion_time, winner, loser, winner_deck_code, loser_deck_code, outcome, seed, replay) VALUES(CURRENT_TIMESTAMP - $1 * '1 millisecond'::interval,CURRENT_TIMESTAMP,$2,$3,$4,$5,$6,$7,$8)",
+				"INSERT INTO games (start_time, completion_time, winner, loser, winner_deck_code, loser_deck_code, outcome, seed, turns, first_player_won, replay, opponent_code) VALUES(CURRENT_TIMESTAMP - $1 * '1 millisecond'::interval,CURRENT_TIMESTAMP,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
 				[
 					gameLength,
 					winner,
@@ -729,7 +800,10 @@ export class Database {
 					losingDeck,
 					dbOutcome,
 					seed,
+					turns,
+					firstPlayerWon,
 					replayBytes,
+					opponentCode,
 				],
 			)
 			return {type: 'success', body: undefined}
@@ -972,7 +1046,7 @@ export class Database {
 						},
 						winrate: winrate ? Number(winrate) : null,
 						wins: Number(wins),
-						lossses: Number(losses),
+						losses: Number(losses),
 					}
 					return [...allDecks, newDeck]
 				}
@@ -1239,6 +1313,40 @@ export class Database {
 						minimum: stats.rows[0]['minimum'],
 						maximum: stats.rows[0]['maximum'],
 					},
+				},
+			}
+		} catch (e) {
+			return {type: 'failure', reason: `${e}`}
+		}
+	}
+
+	/**Get the current stats of */
+	public async getGame({
+		opponentCode,
+	}: {opponentCode: string}): Promise<DatabaseResult<ApiGame>> {
+		try {
+			const game = await this.pool.query(
+				'SELECT * FROM games LEFT JOIN users ON games.winner = users.user_id OR games.loser = users.user_id WHERE opponent_code = $1',
+				[opponentCode],
+			)
+
+			const winner: string = game.rows[0]['username']
+			const loser: string = game.rows[1]['username']
+			const startTime: number = game.rows[0]['start_time']
+
+			const firstPlayerWon: boolean = game.rows[0]['first_player_won']
+			const tie: boolean = game.rows[0]['outcome'] === 'tie'
+
+			const firstPlayer = firstPlayerWon ? winner : loser
+			const secondPlayer = firstPlayerWon ? loser : winner
+
+			return {
+				type: 'success',
+				body: {
+					firstPlayerName: firstPlayer,
+					secondPlayerName: secondPlayer,
+					startTime: startTime,
+					winner: tie ? null : winner,
 				},
 			}
 		} catch (e) {

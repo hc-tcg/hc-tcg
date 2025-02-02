@@ -1,12 +1,13 @@
 import classNames from 'classnames'
-import {LocalCardInstance} from 'common/types/server-requests'
+import type {Card as CardType} from 'common/cards/types'
+import {WithoutFunctions} from 'common/types/server-requests'
 import Card from 'components/card'
 import {Modal} from 'components/modal'
 import css from './import-export.module.scss'
 
 type Props = {
 	setOpen: boolean
-	cards: Array<LocalCardInstance>
+	cards: Array<CardType>
 	onClose: () => void
 }
 
@@ -28,12 +29,12 @@ export function ScreenshotDeckModal({setOpen, cards, onClose}: Props) {
 						gridTemplateColumns: `repeat(${Math.ceil(maxLength / (maxLength / 6))}, ${(42 - (maxLength - 42) / 3) / 3}vw)`,
 					}}
 				>
-					{cards.map((card) => {
+					{cards.map((card, i) => {
 						return (
 							<Card
-								card={card.props}
+								card={WithoutFunctions(card)}
 								displayTokenCost={false}
-								key={card.entity}
+								key={i}
 								tooltipAboveModal={true}
 							/>
 						)
@@ -46,12 +47,12 @@ export function ScreenshotDeckModal({setOpen, cards, onClose}: Props) {
 						gridTemplateColumns: `repeat(${Math.ceil(maxLength / (maxLength / 9))}, ${((42 - (maxLength - 42)) * 1) / 5.25}vw)`,
 					}}
 				>
-					{cards.map((card) => {
+					{cards.map((card, i) => {
 						return (
 							<Card
-								card={card.props}
+								card={WithoutFunctions(card)}
 								displayTokenCost={false}
-								key={card.entity}
+								key={i}
 								tooltipAboveModal={true}
 							/>
 						)

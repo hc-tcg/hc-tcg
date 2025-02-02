@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import MilkBucket from 'common/cards/attach/milk-bucket'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import Iskall85Common from 'common/cards/hermits/iskall85-common'
+import FarmerBeefCommon from 'common/cards/hermits/farmerbeef-common'
 import BadOmen from 'common/cards/single-use/bad-omen'
 import SplashPotionOfPoison from 'common/cards/single-use/splash-potion-of-poison'
 import {StatusEffectComponent} from 'common/components'
@@ -13,10 +13,10 @@ import {applyEffect, endTurn, pick, playCardFromHand, testGame} from '../utils'
 describe('Test Milk Bucket', () => {
 	test('Single Use Functionality', () => {
 		testGame({
-			playerOneDeck: [Iskall85Common, MilkBucket],
+			playerOneDeck: [FarmerBeefCommon, MilkBucket],
 			playerTwoDeck: [EthosLabCommon, BadOmen, SplashPotionOfPoison],
 			saga: function* (game) {
-				yield* playCardFromHand(game, Iskall85Common, 'hermit', 0)
+				yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 0)
 				yield* endTurn(game)
 
 				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)

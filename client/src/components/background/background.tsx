@@ -86,7 +86,7 @@ const Panorama = ({panorama, camera, disabled}: Props) => {
 	}
 
 	return (
-		<Canvas linear flat className={css.canvas}>
+		<Canvas linear flat className={css.canvas} dpr={[1, 1]}>
 			<Skybox />
 			<Camera {...camera} />
 		</Canvas>

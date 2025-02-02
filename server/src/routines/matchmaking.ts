@@ -7,8 +7,6 @@ import {
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
-import {ViewerComponent} from 'common/components/viewer-component'
-import {GameModel, gameSettingsFromEnv} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
@@ -19,7 +17,8 @@ import {Deck} from 'common/types/deck'
 import {formatText} from 'common/utils/formatting'
 import {OpponentDefs} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
-import {addGame} from 'db/db-reciever'
+import {addGame, getDeck} from 'db/db-reciever'
+import {GameController} from 'game-controller'
 import {LocalMessageTable, localMessages} from 'messages'
 import {
 	all,
@@ -43,12 +42,11 @@ function setupGame(
 	player2: PlayerModel,
 	player1Deck: Deck,
 	player2Deck: Deck,
-	code?: string,
+	gameCode?: string,
 	spectatorCode?: string,
 	apiSecret?: string,
-): GameModel {
-	let game = new GameModel(
-		GameModel.newGameSeed(),
+): GameController {
+	let con = new GameController(
 		{
 			model: player1,
 			deck: player1Deck.cards.map((card) => card.props.numericId),
@@ -57,53 +55,52 @@ function setupGame(
 			model: player2,
 			deck: player2Deck.cards.map((card) => card.props.numericId),
 		},
-		gameSettingsFromEnv(),
-		{gameCode: code, spectatorCode, apiSecret},
+		{gameCode, spectatorCode, apiSecret},
 	)
 
-	let playerEntities = game.components.filterEntities(PlayerComponent)
+	let playerEntities = con.game.components.filterEntities(PlayerComponent)
 
 	// Note player one must be added before player two to make sure each player has the right deck.
-	game.components.new(ViewerComponent, {
+	con.addViewer({
 		player: player1,
-		spectator: false,
 		playerOnLeft: playerEntities[0],
-	})
-
-	game.components.new(ViewerComponent, {
-		player: player2,
 		spectator: false,
-		playerOnLeft: playerEntities[1],
 	})
 
-	return game
+	con.addViewer({
+		player: player2,
+		playerOnLeft: playerEntities[1],
+		spectator: false,
+	})
+
+	return con
 }
 
-function* gameManager(game: GameModel) {
+function* gameManager(con: GameController) {
 	// @TODO this one method needs cleanup still
 	try {
-		const viewers = game.viewers
+		const viewers = con.viewers
 		const playerIds = viewers.map((viewer) => viewer.player.id)
 
 		const gameType =
-			playerIds.length === 2 ? (game.gameCode ? 'Private' : 'Public') : 'PvE'
+			playerIds.length === 2 ? (con.gameCode ? 'Private' : 'Public') : 'PvE'
 
 		console.info(
-			`${game.logHeader}`,
+			`${con.game.logHeader}`,
 			`${gameType} game started.`,
 			`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
 			'Total games:',
 			root.getGameIds().length,
 		)
 
-		game.broadcastToViewers({type: serverMessages.GAME_START})
-		root.hooks.newGame.call(game)
-		game.task = yield* spawn(gameSaga, game)
+		con.broadcastToViewers({type: serverMessages.GAME_START})
+		root.hooks.newGame.call(con)
+		con.task = yield* spawn(gameSaga, con)
 
 		// Kill game on timeout or when user leaves for long time + cleanup after game
 		const result = yield* race({
 			// game ended (or crashed -> catch)
-			gameEnd: join(game.task),
+			gameEnd: join(con.task),
 			// kill a game after one hour
 			timeout: delay(1000 * 60 * 60),
 			// kill game when a player is disconnected for too long
@@ -120,34 +117,34 @@ function* gameManager(game: GameModel) {
 		})
 
 		if (result.timeout) {
-			game.outcome = {type: 'timeout'}
+			con.game.outcome = {type: 'timeout'}
 		}
 
 		if (result.playerRemoved) {
-			let playerThatLeft = game.viewers.find(
-				(v) => v.playerId === result.playerRemoved?.player.id,
+			let playerThatLeft = con.viewers.find(
+				(v) => v.player.id === result.playerRemoved?.player.id,
 			)?.playerOnLeft.entity
-			let remainingPlayer = game.components.find(
+			let remainingPlayer = con.game.components.find(
 				PlayerComponent,
 				(_g, c) => c.entity !== playerThatLeft,
 			)?.entity
 			assert(remainingPlayer, 'There is no way there is no remaining player.')
-			game.outcome = {
+			con.game.outcome = {
 				type: 'player-won',
 				victoryReason: 'forfeit',
 				winner: remainingPlayer,
 			}
 		}
 
-		for (const viewer of game.viewers) {
-			const gameState = getLocalGameState(game, viewer)
+		for (const viewer of con.viewers) {
+			const gameState = getLocalGameState(con.game, viewer)
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
-				gameState.timer.turnStartTime = getTimerForSeconds(game, 0)
-				if (!game.endInfo.victoryReason) {
+				gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
+				if (!con.game.endInfo.victoryReason) {
 					// Remove coin flips from state if game was terminated before game end to prevent
 					// clients replaying animations after a forfeit, disconnect, or excessive game duration
-					game.components
+					con.game.components
 						.filter(PlayerComponent)
 						.forEach(
 							(player) => (gameState.players[player.entity].coinFlips = []),
@@ -157,21 +154,21 @@ function* gameManager(game: GameModel) {
 		}
 	} catch (err) {
 		console.log('Error: ', err)
-		game.outcome = {type: 'game-crash', error: `${(err as Error).stack}`}
+		con.game.outcome = {type: 'game-crash', error: `${(err as Error).stack}`}
 	} finally {
-		const outcome = game.outcome
+		const outcome = con.game.outcome
 
 		assert(outcome, 'All games should have an outcome after they end')
 
-		for (const viewer of game.viewers) {
-			const gameState = getLocalGameState(game, viewer)
+		for (const viewer of con.viewers) {
+			const gameState = getLocalGameState(con.game, viewer)
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
-				gameState.timer.turnStartTime = getTimerForSeconds(game, 0)
-				if (!game.endInfo.victoryReason) {
+				gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
+				if (!con.game.endInfo.victoryReason) {
 					// Remove coin flips from state if game was terminated before game end to prevent
 					// clients replaying animations after a forfeit, disconnect, or excessive game duration
-					game.components
+					con.game.components
 						.filter(PlayerComponent)
 						.forEach(
 							(player) => (gameState.players[player.entity].coinFlips = []),
@@ -185,26 +182,26 @@ function* gameManager(game: GameModel) {
 			})
 		}
 
-		if (game.task) yield* cancel(game.task)
-		game.hooks.afterGameEnd.call()
+		if (con.task) yield* cancel(con.task)
+		con.game.hooks.afterGameEnd.call()
 
-		const gameType = game.gameCode ? 'Private' : 'Public'
+		const gameType = con.gameCode ? 'Private' : 'Public'
 		console.log(
 			`${gameType} game ended. Total games:`,
 			root.getGameIds().length - 1,
 		)
 
-		const gamePlayers = game.getPlayers()
+		const gamePlayers = con.getPlayers()
 
 		const winnerEntity = outcome.type === 'player-won' ? outcome.winner : null
 
-		const winnerPlayerId = game.viewers.find(
+		const winnerPlayerId = con.viewers.find(
 			(viewer) =>
 				!viewer.spectator && viewer.playerOnLeftEntity === winnerEntity,
-		)?.playerId
+		)?.player.id
 
-		delete root.games[game.id]
-		root.hooks.gameRemoved.call(game)
+		delete root.games[con.id]
+		root.hooks.gameRemoved.call(con)
 
 		if (!winnerPlayerId && outcome.type === 'player-won') {
 			console.error(
@@ -226,10 +223,12 @@ function* gameManager(game: GameModel) {
 				gamePlayers[0],
 				gamePlayers[1],
 				outcome,
-				Date.now() - game.createdTime,
+				Date.now() - con.createdTime,
 				winner ? winner.uuid : null,
-				game.rngSeed,
+				con.game.rngSeed,
+				con.game.state.turn.turnNumber,
 				Buffer.from([0x00]),
+				con.gameCode,
 			)
 		}
 	}
@@ -306,11 +305,37 @@ function* cleanUpSaga() {
 	}
 }
 
+function* updateDeckSaga(
+	player: PlayerModel,
+	payload:
+		| {
+				databaseConnected: true
+				activeDeckCode: string
+		  }
+		| {
+				databaseConnected: false
+				activeDeck: Deck
+		  },
+) {
+	if (payload.databaseConnected) {
+		const newDeck = yield* getDeck(payload.activeDeckCode)
+		if (!newDeck) return
+		player.setPlayerDeck(newDeck)
+		return
+	}
+
+	player.setPlayerDeck(payload.activeDeck)
+}
+
 export function* joinQueue(
 	msg: RecievedClientMessage<typeof clientMessages.JOIN_QUEUE>,
 ) {
 	const {playerId} = msg
 	const player = root.players[playerId]
+
+	updateDeckSaga(player, msg.payload)
+
+	console.log(player.deck)
 
 	if (!player) {
 		console.log('[Join queue] Player not found: ', playerId)
@@ -370,9 +395,8 @@ function setupSolitareGame(
 	player: PlayerModel,
 	playerDeck: Deck,
 	opponent: OpponentDefs,
-): GameModel {
-	const game = new GameModel(
-		GameModel.newGameSeed(),
+): GameController {
+	const con = new GameController(
 		{
 			model: player,
 			deck: playerDeck.cards.map((card) => card.props.numericId),
@@ -381,20 +405,19 @@ function setupSolitareGame(
 			model: opponent,
 			deck: opponent.deck,
 		},
-		gameSettingsFromEnv(),
-		{gameCode: 'solitare', randomizeOrder: false},
+		{randomizeOrder: false},
 	)
 
-	const playerEntities = game.components.filterEntities(PlayerComponent)
-	game.components.new(ViewerComponent, {
+	const playerEntities = con.game.components.filterEntities(PlayerComponent)
+	con.addViewer({
 		player,
-		spectator: false,
 		playerOnLeft: playerEntities[0],
+		spectator: false,
 	})
 
-	game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
+	con.game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
 
-	return game
+	return con
 }
 
 export function* createBossGame(
@@ -402,6 +425,9 @@ export function* createBossGame(
 ) {
 	const {playerId} = msg
 	const player = root.players[playerId]
+
+	updateDeckSaga(player, msg.payload)
+
 	if (!player) {
 		console.log('[Create Boss game] Player not found: ', playerId)
 		return
@@ -430,25 +456,28 @@ export function* createBossGame(
 
 	broadcast([player], {type: serverMessages.CREATE_BOSS_GAME_SUCCESS})
 
-	const newBossGame = setupSolitareGame(player, player.deck, {
+	const newBossGameController = setupSolitareGame(player, player.deck, {
 		name: 'Evil Xisuma',
 		minecraftName: 'EvilXisuma',
 		censoredName: 'Evil Xisuma',
 		deck: [EvilXisumaBoss],
 		virtualAI: ExBossAI,
 		disableDeckingOut: true,
+		selectedCoinHead: 'evilx',
 	})
-	newBossGame.state.isBossGame = true
+	newBossGameController.game.state.isBossGame = true
 
 	function destroyRow(row: RowComponent) {
-		newBossGame.components
+		newBossGameController.game.components
 			.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
-			.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
-		newBossGame.components.delete(row.entity)
+			.forEach((slotEntity) =>
+				newBossGameController.game.components.delete(slotEntity),
+			)
+		newBossGameController.game.components.delete(row.entity)
 	}
 
 	// Remove challenger's rows other than indexes 0, 1, and 2
-	newBossGame.components
+	newBossGameController.game.components
 		.filter(
 			RowComponent,
 			query.row.opponentPlayer,
@@ -456,7 +485,7 @@ export function* createBossGame(
 		)
 		.forEach(destroyRow)
 	// Remove boss' rows other than index 0
-	newBossGame.components
+	newBossGameController.game.components
 		.filter(
 			RowComponent,
 			query.row.currentPlayer,
@@ -464,19 +493,21 @@ export function* createBossGame(
 		)
 		.forEach(destroyRow)
 	// Remove boss' item slots
-	newBossGame.components
+	newBossGameController.game.components
 		.filterEntities(
 			BoardSlotComponent,
 			query.slot.currentPlayer,
 			query.slot.item,
 		)
-		.forEach((slotEntity) => newBossGame.components.delete(slotEntity))
+		.forEach((slotEntity) =>
+			newBossGameController.game.components.delete(slotEntity),
+		)
 
-	newBossGame.settings.disableRewardCards = true
+	newBossGameController.game.settings.disableRewardCards = true
 
-	root.addGame(newBossGame)
+	root.addGame(newBossGameController)
 
-	yield* safeCall(fork, gameManager, newBossGame)
+	yield* safeCall(fork, gameManager, newBossGameController)
 }
 
 export function* createPrivateGame(
@@ -484,6 +515,9 @@ export function* createPrivateGame(
 ) {
 	const {playerId} = msg
 	const player = root.players[playerId]
+
+	updateDeckSaga(player, msg.payload)
+
 	if (!player) {
 		console.log('[Create private game] Player not found: ', playerId)
 		return
@@ -523,6 +557,9 @@ export function* joinPrivateGame(
 		payload: {code},
 	} = msg
 	const player = root.players[playerId]
+
+	updateDeckSaga(player, msg.payload)
+
 	if (!player) {
 		console.log('[Join private game] Player not found: ', playerId)
 		return
@@ -555,10 +592,10 @@ export function* joinPrivateGame(
 	)
 
 	if (spectatorGame) {
-		const viewer = spectatorGame.components.new(ViewerComponent, {
+		const viewer = spectatorGame.addViewer({
 			player: player,
+			playerOnLeft: spectatorGame.game.state.order[0],
 			spectator: true,
-			playerOnLeft: spectatorGame.state.order[0],
 		})
 
 		console.log(
@@ -574,14 +611,11 @@ export function* joinPrivateGame(
 			createdAt: Date.now(),
 		})
 
-		broadcast(spectatorGame.getPlayers(), {
-			type: serverMessages.CHAT_UPDATE,
-			messages: spectatorGame.chat,
-		})
+		spectatorGame.chatUpdate()
 
 		broadcast([player], {
 			type: serverMessages.SPECTATE_PRIVATE_GAME_START,
-			localGameState: getLocalGameState(spectatorGame, viewer),
+			localGameState: getLocalGameState(spectatorGame.game, viewer),
 		})
 
 		return
@@ -666,12 +700,12 @@ export function* joinPrivateGame(
 		}
 
 		for (const playerId of root.privateQueue[code].spectatorsWaiting) {
-			const viewer = newGame.components.new(ViewerComponent, {
+			const viewer = newGame.addViewer({
 				player: root.players[playerId],
 				spectator: true,
-				playerOnLeft: newGame.state.order[0],
+				playerOnLeft: newGame.game.state.order[0],
 			})
-			let gameState = getLocalGameState(newGame, viewer)
+			let gameState = getLocalGameState(newGame.game, viewer)
 
 			broadcast([root.players[playerId]], {
 				type: serverMessages.SPECTATE_PRIVATE_GAME_START,

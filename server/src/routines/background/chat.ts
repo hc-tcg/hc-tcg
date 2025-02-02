@@ -1,9 +1,7 @@
-import {ViewerComponent} from 'common/components/viewer-component'
 import {
 	RecievedClientMessage,
 	clientMessages,
 } from 'common/socket-messages/client-messages'
-import {serverMessages} from 'common/socket-messages/server-messages'
 import {
 	FormatNode,
 	PlaintextNode,
@@ -12,7 +10,6 @@ import {
 } from 'common/utils/formatting'
 import {getGame} from 'selectors'
 import {select} from 'typed-redux-saga'
-import {broadcast} from '../../utils/comm'
 
 export function* chatMessage(
 	action: RecievedClientMessage<typeof clientMessages.CHAT_MESSAGE>,
@@ -28,9 +25,8 @@ export function* chatMessage(
 	if (message.length < 1) return
 	if (message.length > 140) return
 
-	const isSpectator = game.components.find(
-		ViewerComponent,
-		(_game, component) => component.player.id === playerId,
+	const isSpectator = game.viewers.find(
+		(viewer) => viewer.player.id === playerId,
 	)?.spectator
 
 	game.chat.push({
@@ -50,8 +46,6 @@ export function* chatMessage(
 		),
 		createdAt: Date.now(),
 	})
-	broadcast(game.getPlayers(), {
-		type: serverMessages.CHAT_UPDATE,
-		messages: game.chat,
-	})
+
+	game.chatUpdate()
 }

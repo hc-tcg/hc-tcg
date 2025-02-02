@@ -38,7 +38,7 @@ export type CardStats = {
 export type DeckStats = {
 	deck: ApiDeck
 	wins: number
-	lossses: number
+	losses: number
 	winrate: number | null
 }
 
@@ -69,6 +69,13 @@ export type GamesStats = {
 	tieRate: number
 	forfeitRate: number
 	errorRate: number
+}
+
+export type ApiGame = {
+	firstPlayerName: string
+	secondPlayerName: string
+	startTime: number
+	winner: string | null
 }
 
 export type Achievement = {
