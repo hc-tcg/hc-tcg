@@ -3,6 +3,7 @@
 import {newRandomNumberGenerator} from 'common/utils/random'
 import {createDeck} from './create-deck'
 import {testGame} from './run-game'
+import {fail} from 'assert'
 
 async function performFuzzTest(seed: string) {
 	let randomNumberGenerator = newRandomNumberGenerator(seed)
@@ -29,8 +30,10 @@ async function runTest(seed: string) {
 
 	if (success) {
 		console.log(`${seed}: SUCCESS`)
+		return [seed, true]
 	} else {
-		console.log(`${seed}: FAILURE`)
+		console.error(`${seed}: FAILURE`)
+		return [seed, false]
 	}
 }
 
@@ -39,10 +42,19 @@ async function manyTests(num: number) {
 		.fill(0)
 		.map((_) => Math.random())
 
-	await Promise.all(seeds.map((x) => runTest(x.toString().slice(2, 18))))
+	let results = await Promise.all(
+		seeds.map((x) => runTest(x.toString().slice(2, 18))),
+	)
+
+	let failures = results.filter(([_seed, result]) => !result)
+	if (failures.length === 0) {
+		console.log('All tests passed!')
+	} else {
+		failures.forEach(([seed, _result]) => console.error(`${seed}: FAILURE`))
+	}
 }
 
-await manyTests(100)
+await manyTests(1000)
 // await performFuzzTest('1901657291281036')
 
 console.log('tests complete!')
