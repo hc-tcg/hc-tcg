@@ -274,9 +274,9 @@ export function sortCards(
 				TYPE_ORDER[a.props.category] - TYPE_ORDER[b.props.category],
 				isHermit(a.props) &&
 					isHermit(b.props) &&
-					a.props.type &&
-					b.props.type &&
-					a.props.type[0].localeCompare(b.props.type[0]),
+					(a.type
+						? a.type[0].localeCompare(b.type ? b.type[0] : 'NA')
+						: 'NA'.localeCompare(b.type ? b.type[0] : 'NA')),
 				isItem(a.props) &&
 					isItem(b.props) &&
 					a.props.name.localeCompare(b.props.name),
@@ -320,6 +320,7 @@ const ALL_CARDS = sortCards(
 			slot: null,
 			attackHint: null,
 			turnedOver: false,
+			prizeCard: false,
 		}),
 	),
 )
@@ -448,6 +449,7 @@ function EditDeck({
 					slot: null,
 					turnedOver: false,
 					attackHint: null,
+					prizeCard: false,
 				},
 			],
 		}))

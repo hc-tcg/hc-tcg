@@ -9,7 +9,7 @@ const FarmerBeefRare: Hermit = {
 	id: 'farmerbeef_rare',
 	numericId: 26,
 	name: 'Farmer Beef',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',

@@ -17,15 +17,8 @@ export default {
 		maxCards: 42,
 		maxDuplicates: 3,
 		maxDeckCost: 42,
-		bannedCards: [
-			'evilxisuma_boss',
-			'feather',
-			'item_any_rare',
-			'cyberpunkimpulse_rare',
-			'cyberpunkimpulse_common',
-			'postmasterpearl_rare',
-			'postmasterpearl_common',
-		],
+		bannedCards: ['evilxisuma_boss', 'feather', 'item_any_rare'],
+		disabledCards: ['iskallman_common', 'iskallman_rare'],
 	},
 	logoSubText: 'Scuffed!',
 }
