@@ -146,7 +146,6 @@ function getNextTurnAction(
 	if (nextAction === 'PLAY_SINGLE_USE_CARD') {
 		const slot = game.components.find(
 			BoardSlotComponent,
-			query.slot.player(player.entity),
 			query.slot.singleUse,
 			query.slot.empty,
 		)
@@ -191,6 +190,7 @@ function getNextTurnAction(
 			game.components.filter(
 				BoardSlotComponent,
 				query.slot.hermit,
+				query.slot.row(query.row.hasHermit),
 				query.not(query.slot.active),
 			),
 			game.rng,
