@@ -37,10 +37,12 @@ async function runTest(seed: string) {
 async function manyTests(num: number) {
 	let seeds = Array(num)
 		.fill(0)
-		.map((_) => Math.random().toString().slice(16))
+		.map((_) => Math.random())
 
-	await Promise.all(seeds.map((x) => runTest(x)))
+	await Promise.all(seeds.map((x) => runTest(x.toString().slice(2, 18))))
 }
 
-await manyTests(10)
+await manyTests(100)
+// await performFuzzTest('1901657291281036')
+
 console.log('tests complete!')

@@ -10,9 +10,9 @@ import {GameModel} from 'common/models/game-model'
 import {TurnAction} from 'common/types/game-state'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
-import {printBoardState} from 'server/utils'
 import {getLocalCard} from 'server/utils/state-gen'
 import {choose} from './utils'
+import FrozenEffect from 'common/status-effects/frozen'
 
 function cardIsPlayable(game: GameModel, card: CardComponent) {
 	return (
@@ -176,9 +176,10 @@ function getNextTurnAction(
 			game.components.filter(
 				BoardSlotComponent,
 				query.slot.hermit,
-				query.slot.row(query.row.hasHermit),
+				query.slot.row(query.row.hermitSlotOccupied),
 				query.slot.player(player.entity),
 				query.not(query.slot.active),
+				query.not(query.slot.hasStatusEffect(FrozenEffect)),
 			),
 			game.rng,
 		)
@@ -212,9 +213,9 @@ function getNextTurnAction(
 		}
 	}
 
-	/** For simplicity, we answer no for all these requests */
 	if (nextAction === 'MODAL_REQUEST') {
-		if (game.state.modalRequests[0].modal.type === 'selectCards') {
+		let modal = game.state.modalRequests[0].modal
+		if (modal.type === 'selectCards') {
 			return {
 				type: 'MODAL_REQUEST',
 				modalResult: {
@@ -222,14 +223,34 @@ function getNextTurnAction(
 					cards: null,
 				},
 			}
-		} else if (game.state.modalRequests[0].modal.type === 'copyAttack') {
-			return {
-				type: 'MODAL_REQUEST',
-				modalResult: {
-					cancel: true,
-				},
+		} else if (modal.type === 'copyAttack') {
+			let rng = game.rng()
+			if (modal.cancelable && rng < 0.3) {
+				return {
+					type: 'MODAL_REQUEST',
+					modalResult: {
+						cancel: true,
+					},
+				}
+			} else {
+				let rng = game.rng()
+				if (modal.cancelable && rng < 0.5) {
+					return {
+						type: 'MODAL_REQUEST',
+						modalResult: {
+							pick: 'primary',
+						},
+					}
+				} else {
+					return {
+						type: 'MODAL_REQUEST',
+						modalResult: {
+							pick: 'secondary',
+						},
+					}
+				}
 			}
-		} else if (game.state.modalRequests[0].modal.type === 'dragCards') {
+		} else if (modal.type === 'dragCards') {
 			return {
 				type: 'MODAL_REQUEST',
 				modalResult: {
@@ -239,6 +260,7 @@ function getNextTurnAction(
 				},
 			}
 		}
+		throw new Error('Unknown modal type: ' + (modal as any).type)
 	}
 
 	if (nextAction === 'APPLY_EFFECT') {
