@@ -62,7 +62,7 @@ function getNextTurnAction(
 				CardComponent,
 				query.card.player(player.entity),
 				query.card.slot(query.slot.hand),
-				query.some(query.card.isHermit, query.card.is(ArmorStand)),
+				query.card.isHealth,
 				cardIsPlayable,
 			),
 			game.rng,
