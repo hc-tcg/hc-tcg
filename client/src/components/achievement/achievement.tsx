@@ -1,6 +1,7 @@
 import {Achievement} from 'common/achievements/types'
 import {ProgressionEntry} from 'common/types/achievements'
 import css from './achievement.module.scss'
+import { COSMETICS } from 'common/cosmetics'
 
 type Props = {
 	achievement: Achievement
@@ -10,7 +11,13 @@ export default function AchievementComponent({
 	achievement,
 	progressData,
 }: Props) {
-	const icon_url = `/images/achievements/${achievement.id}.png`
+	const iconCosmetic = COSMETICS[achievement.icon]
+	let icon_url = ''
+	if (iconCosmetic && iconCosmetic.type === 'title') {
+		icon_url = '/images/cosmetics/title.png'
+	} else if (iconCosmetic) {
+		icon_url = `/images/cosmetics/${iconCosmetic.type}/${iconCosmetic.id}.png`
+	}
 	const progress = progressData
 		? achievement.getProgress(progressData.goals)
 		: 0
