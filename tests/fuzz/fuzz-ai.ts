@@ -294,8 +294,7 @@ function getNextTurnAction(
 			let outputRight = []
 
 			while (outputLeft.length + outputRight.length < cards.length) {
-				const card: CardEntity =
-					cards[outputLeft.length + outputRight.length - 1]
+				const card: CardEntity = cards[outputLeft.length + outputRight.length]
 				if (
 					modal.leftAreaMax === null ||
 					outputLeft.length < modal.leftAreaMax

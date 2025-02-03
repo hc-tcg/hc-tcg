@@ -19,7 +19,7 @@ async function performFuzzTest(seed: string) {
 	})
 }
 
-async function runTest(seed: string) {
+async function runTest(seed: string, progress: any) {
 	let success = true
 	try {
 		await performFuzzTest(seed)
@@ -27,8 +27,9 @@ async function runTest(seed: string) {
 		success = false
 	}
 
+	progress.progress += 1
 	if (success) {
-		console.log(`${seed}: SUCCESS`)
+		console.log(`${progress.progress} - ${seed}: SUCCESS`)
 		return [seed, true]
 	} else {
 		console.error(`${seed}: FAILURE`)
@@ -37,12 +38,14 @@ async function runTest(seed: string) {
 }
 
 async function manyTests(num: number) {
+	let progress = {progress: 0}
+
 	let seeds = Array(num)
 		.fill(0)
 		.map((_) => Math.random())
 
 	let results = await Promise.all(
-		seeds.map((x) => runTest(x.toString().slice(2, 18))),
+		seeds.map((x) => runTest(x.toString().slice(2, 18), progress)),
 	)
 
 	let failures = results.filter(([_seed, result]) => !result)
@@ -59,6 +62,7 @@ async function main() {
 	argv = argv.slice(argv.indexOf('--') - 1)
 
 	if (argv[0] === 'fuzz') {
+		console.log(`Fuzzing ${argv[1]} times`)
 		await manyTests(parseInt(argv[1]))
 		return
 	}
