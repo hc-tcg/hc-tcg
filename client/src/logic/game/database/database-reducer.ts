@@ -1,5 +1,5 @@
 import {AchievementProgress} from 'common/types/achievements'
-import {GameHistory, Stats} from 'common/types/database'
+import {GameHistory, PlayerStats} from 'common/types/database'
 import {ApiDeck, Deck, Tag} from 'common/types/deck'
 import {LocalMessage, localMessages} from 'logic/messages'
 
@@ -11,7 +11,7 @@ export type DatabaseInfo = {
 	currentImport: ApiDeck | null
 	tags: Array<Tag>
 	achievements: AchievementProgress
-	stats: Stats
+	stats: PlayerStats
 	noConnection: boolean
 }
 
@@ -34,6 +34,8 @@ const defaultInfo: DatabaseInfo = {
 		ties: 0,
 		forfeitWins: 0,
 		forfeitLosses: 0,
+		topCards: [],
+		uniquePlayersEncountered: 0,
 	},
 	currentImport: null,
 }

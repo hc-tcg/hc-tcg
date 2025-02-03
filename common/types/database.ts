@@ -24,6 +24,11 @@ export type Stats = {
 	forfeitLosses: number
 }
 
+export type PlayerStats = Stats & {
+	uniquePlayersEncountered: number
+	topCards: Array<string>
+}
+
 export type CardStats = {
 	id: number
 	winrate: number | null
