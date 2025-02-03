@@ -60,7 +60,7 @@ function Cosmetics({setMenuSection}: Props) {
 					})
 				}
 			>
-				<p>{cosmetic.name}</p>
+				{cosmetic.name}
 				{isUnlocked ? (
 					<></>
 				) : (
@@ -107,38 +107,44 @@ function Cosmetics({setMenuSection}: Props) {
 			returnText="Achievements"
 			className={css.cosmeticsLayout}
 		>
-			<div className={css.cosmeticContainer}>
+			<div className={css.cosmeticPreview}>
+				<div className={css.appearanceContainer} style={previewStyle}>
+					<img
+						className={css.playerHead}
+						src={`https://mc-heads.net/head/${minecraftName}/right`}
+						alt="player head"
+					/>
+					<div className={css.playerName}>
+						<h1>{playerName}</h1>
+						<p className={css.title}>{appearance.title.name}</p>
+					</div>
+
+					<div className={css.health}>{health(3)}</div>
+				</div>
+			</div>
+			<div className={css.itemSelector}>
 				<Dropdown
-					button={<Button>Cosmetic type</Button>}
+					button={
+						<Button>
+							{selectedCosmetic.charAt(0).toUpperCase() +
+								selectedCosmetic.slice(1) +
+								's'}
+						</Button>
+					}
 					label={'Change cosmetic'}
 					showNames={true}
 					options={[
-						{name: 'title'},
-						{name: 'coin'},
-						{name: 'heart'},
-						{name: 'background'},
-						{name: 'border'},
+						{name: 'Titles', key: 'title'},
+						{name: 'Coins', key: 'coin'},
+						{name: 'Hearts', key: 'heart'},
+						{name: 'Backgrounds', key: 'background'},
+						{name: 'Borders', key: 'border'},
 					]}
 					action={(action) => {
 						setSelectedCosmetic(action as Cosmetic['type'])
 					}}
 				/>
-				<div className={css.cosmeticPreview}>
-					<div className={css.appearanceContainer} style={previewStyle}>
-						<img
-							className={css.playerHead}
-							src={`https://mc-heads.net/head/${minecraftName}/right`}
-							alt="player head"
-						/>
-						<div className={css.playerName}>
-							<h1>{playerName}</h1>
-							<p className={css.title}>{appearance.title.name}</p>
-						</div>
-
-						<div className={css.health}>{health(3)}</div>
-					</div>
-				</div>
-				<div className={css.itemSelector}>
+				<div className={css.cosmetics}>
 					{slectableCosmetics.map((cosmetic) => (
 						<CosmeticItem cosmetic={cosmetic} />
 					))}

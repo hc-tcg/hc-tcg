@@ -685,8 +685,7 @@ export function* cosmeticSaga() {
 				isUnlocked =
 					!!achievementProgress[achievement.numericId]?.completionTime
 			}
-			if (!isUnlocked || selected)
-				return
+			if (!isUnlocked || selected) return
 			yield* sendMsg({
 				type: clientMessages.SET_COSMETIC,
 				cosmetic: action.cosmetic.id,

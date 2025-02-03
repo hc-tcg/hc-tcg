@@ -1,15 +1,8 @@
-.selector {
-    overflow-y: scroll;
-    flex-grow: 1;
-    overflow-x: hidden;
-    width: 90%;
-    border: 2px black solid;
-    background-color: var(--gray-700);
-}
-
 .cosmeticsLayout {
 	padding: 1vh;
 	display: block;
+	display: flex;
+	flex-direction: column;
 
 	h2 {
 		font-size: 3vh;
@@ -20,12 +13,6 @@
 	}
 }
 
-.cosmeticContainer {
-	display: flex;
-	flex-direction: column;
-	height: 100%;
-}
-
 .cosmeticPreview {
 	flex-grow: 1;
 	display: flex;
@@ -34,15 +21,18 @@
 }
 
 .itemSelector {
+	flex-grow: 1;
+	border: 2px black solid;
+	background-color: var(--gray-700);
+	padding: 1vh;
+}
+
+.cosmetics {
 	margin-top: auto;
 	display: flex;
 	flex-wrap: wrap;
 	gap: .5vh;
 	overflow-y: scroll;
-	flex-grow: 1;
-	overflow-x: hidden;
-	border: 2px black solid;
-	background-color: var(--gray-700);
 }
 
 .cosmeticItem {
