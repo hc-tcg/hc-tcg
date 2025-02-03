@@ -5,10 +5,10 @@ import {fileURLToPath} from 'url'
 import {CONFIG} from 'common/config'
 import cors from 'cors'
 import express from 'express'
-import {addApi} from './api'
-import startSocketIO from './sockets'
-import {loadUpdates} from './load-updates'
 import root from 'serverRoot'
+import {addApi} from './api'
+import {loadUpdates} from './load-updates'
+import startSocketIO from './sockets'
 
 const port = process.env.PORT || CONFIG.port || 9000
 
