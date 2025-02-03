@@ -30,7 +30,7 @@ export function UpdatesModal({onClose}: UpdatesModalProps) {
 						For more updates, visit the HC-TCG discord.
 					</li>
 					{updates ? (
-						Object.entries(updates).map(([key, text], i) => {
+						updates.map(({tag, description, link}, i) => {
 							return (
 								<>
 									<li
@@ -38,9 +38,13 @@ export function UpdatesModal({onClose}: UpdatesModalProps) {
 										key={i + 1}
 										ref={i === 0 ? latestUpdateElement : undefined}
 									>
-										<h1 className={css.updateName}> Update {key} </h1>
+										<a href={link} target="_blank">
+											<h1 className={css.updateName}> Update {tag} </h1>
+										</a>
 										<div
-											dangerouslySetInnerHTML={{__html: sanitize(toHTML(text))}}
+											dangerouslySetInnerHTML={{
+												__html: sanitize(toHTML(description)),
+											}}
 										/>
 									</li>
 									<hr key={-i} className={css.updateSeperator} />

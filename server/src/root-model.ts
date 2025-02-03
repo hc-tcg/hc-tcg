@@ -4,6 +4,7 @@ import {Database} from 'db/db'
 import dotenv from 'dotenv'
 import {GameController} from 'game-controller'
 import {Hook} from '../../common/types/hooks'
+import {Update} from 'common/types/server-requests'
 
 export class RootModel {
 	public players: Record<string, PlayerModel> = {}
@@ -30,7 +31,7 @@ export class RootModel {
 		playerLeft: new Hook<string, (player: PlayerModel) => void>(),
 		privateCancelled: new Hook<string, (code: string) => void>(),
 	}
-	public updates: Record<string, string> = {}
+	public updates: Array<Update> = []
 
 	public constructor() {
 		const env = dotenv.config()
