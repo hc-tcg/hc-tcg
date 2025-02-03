@@ -2,8 +2,8 @@
 
 import {newRandomNumberGenerator} from 'common/utils/random'
 import {createDeck} from './create-deck'
-import {testGame} from './run-game'
 import {FuzzAI} from './fuzz-ai'
+import {testGame} from './run-game'
 
 async function performFuzzTest(seed: string, debug: boolean) {
 	let randomNumberGenerator = newRandomNumberGenerator(seed)
