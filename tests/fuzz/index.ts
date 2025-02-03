@@ -49,15 +49,27 @@ async function manyTests(num: number) {
 	if (failures.length === 0) {
 		console.log('All tests passed!')
 	} else {
+		console.log('Found some failed tests...')
 		failures.forEach(([seed, _result]) => console.error(`${seed}: FAILURE`))
 	}
 }
 
-// await manyTests(1000)
+async function main() {
+	let argv = process.argv
+	argv = argv.slice(argv.indexOf('--') - 1)
 
-// 2988809406925183
-// 2693242631813806
+	if (argv[0] === 'fuzz') {
+		await manyTests(parseInt(argv[1]))
+		return
+	}
 
-await performFuzzTest('2988809406925183')
+	if (argv[0] === 'check') {
+		await performFuzzTest(argv[1])
+		console.log('Completed!')
+		return
+	}
 
-console.log('tests complete!')
+	console.log("Inpropper command, please refer to docs in  'tests/README.md'")
+}
+
+await main()

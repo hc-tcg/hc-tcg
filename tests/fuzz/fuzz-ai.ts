@@ -334,9 +334,7 @@ export const FuzzAI: VirtualAI = {
 	id: 'fuzz_ai',
 	getTurnActions: function* (game, component) {
 		while (true) {
-			printBoardState(game)
 			let next = getNextTurnAction(game, component)
-			console.log(next)
 			yield next
 		}
 	},
