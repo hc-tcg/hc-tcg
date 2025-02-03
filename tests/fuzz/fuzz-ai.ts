@@ -176,19 +176,21 @@ function getNextTurnAction(
 	if (nextAction === 'CHANGE_ACTIVE_HERMIT') {
 		const inactiveHermit = choose(
 			game.components.filter(
-				BoardSlotComponent,
-				query.slot.hermit,
-				query.slot.row(query.row.hermitSlotOccupied),
-				query.slot.player(player.entity),
-				query.not(query.slot.active),
-				query.not(query.slot.hasStatusEffect(FrozenEffect)),
+				CardComponent,
+				query.card.currentPlayer,
+				query.card.slot(query.slot.hermit),
+				query.card.slot(query.not(query.slot.active)),
+				(_game, value) =>
+					player.hooks.beforeActiveRowChange
+						.call(player.getActiveHermit(), value)
+						.every(Boolean),
 			),
 			game.rng,
 		)
 
 		return {
 			type: 'CHANGE_ACTIVE_HERMIT',
-			entity: inactiveHermit?.entity,
+			entity: inactiveHermit.slot.entity,
 		}
 	}
 
@@ -333,7 +335,9 @@ export const FuzzAI: VirtualAI = {
 	id: 'fuzz_ai',
 	getTurnActions: function* (game, component) {
 		while (true) {
+			printBoardState(game)
 			let next = getNextTurnAction(game, component)
+			console.log(next)
 			yield next
 		}
 	},
