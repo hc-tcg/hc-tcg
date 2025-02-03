@@ -21,7 +21,7 @@ const HumanCleoRare: Hermit = {
 	rarity: 'rare',
 	tokens: 2,
 	type: 'pvp',
-	health: 270,
+	health: 290,
 	primary: {
 		name: 'Humanity',
 		cost: ['pvp'],
