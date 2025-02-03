@@ -8,11 +8,9 @@ import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {CardEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
-import FrozenEffect from 'common/status-effects/frozen'
 import {TurnAction} from 'common/types/game-state'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
-import {printBoardState} from 'server/utils'
 import {getLocalCard} from 'server/utils/state-gen'
 import {choose, chooseN} from './utils'
 
@@ -335,10 +333,7 @@ export const FuzzAI: VirtualAI = {
 	id: 'fuzz_ai',
 	getTurnActions: function* (game, component) {
 		while (true) {
-			printBoardState(game)
-			let next = getNextTurnAction(game, component)
-			console.log(next)
-			yield next
+			yield getNextTurnAction(game, component)
 		}
 	},
 }
