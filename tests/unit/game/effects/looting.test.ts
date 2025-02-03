@@ -1,9 +1,9 @@
 import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
 import BalancedItem from 'common/cards/items/balanced-common'
 import Looting from 'common/cards/single-use/looting'
-import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
+import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Looting.', () => {
 	test('Test looting does not brick game after knocking out opponent', () => {
