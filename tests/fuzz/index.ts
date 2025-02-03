@@ -1,8 +1,8 @@
 /** The entrypoint for fuzz testing */
 
 import {newRandomNumberGenerator} from 'common/utils/random'
-import {createDeck} from './create-deck'
 import {testGame} from './run-game'
+import {createDeck} from './create-deck'
 
 async function performFuzzTest(seed: string) {
 	let randomNumberGenerator = newRandomNumberGenerator(seed)
@@ -53,11 +53,11 @@ async function manyTests(num: number) {
 	}
 }
 
-await manyTests(1000)
+// await manyTests(1000)
 
 // 2988809406925183
 // 2693242631813806
 
-// await performFuzzTest('8899226946887226')
+await performFuzzTest('2988809406925183')
 
 console.log('tests complete!')

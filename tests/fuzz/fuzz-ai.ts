@@ -14,6 +14,7 @@ import {VirtualAI} from 'common/types/virtual-ai'
 import {getLocalCard} from 'server/utils/state-gen'
 import {choose, chooseN} from './utils'
 import {CardEntity} from 'common/entities'
+import { printBoardState } from 'server/utils'
 
 function cardIsPlayable(game: GameModel, card: CardComponent) {
 	return (
@@ -333,7 +334,9 @@ export const FuzzAI: VirtualAI = {
 	id: 'fuzz_ai',
 	getTurnActions: function* (game, component) {
 		while (true) {
+			printBoardState(game)
 			let next = getNextTurnAction(game, component)
+			console.log(next)
 			yield next
 		}
 	},
