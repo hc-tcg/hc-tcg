@@ -15,6 +15,7 @@ import {broadcast} from '../utils/comm'
 import {COSMETICS} from 'common/cosmetics'
 import {ACHIEVEMENTS} from 'common/achievements'
 import {Background, Border, Coin, Heart, Title} from 'common/cosmetics/types'
+import {setAppearance} from 'db/db-reciever'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 
@@ -192,7 +193,7 @@ export function* updateCosmeticSaga(
 			player.appearance.border = cosmetic as Border
 			break
 	}
-	// @TODO update cosmetics row in psql
+	yield* setAppearance(player)
 	broadcast([player], {
 		type: serverMessages.COSMETICS_UPDATE,
 		appearance: player.appearance,

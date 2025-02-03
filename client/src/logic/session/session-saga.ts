@@ -406,6 +406,28 @@ export function* loginSaga() {
 				yield* setupDeckData(socket)
 				yield* updateAchievements(socket)
 			}
+			if (userInfo.success) {
+				const appearance: Appearance = {
+					title:
+						TITLES[userInfo.success.user.title || ''] ||
+						defaultAppearance.title,
+					coin:
+						COINS[userInfo.success.user.coin || ''] || defaultAppearance.coin,
+					heart:
+						HEARTS[userInfo.success.user.heart || ''] ||
+						defaultAppearance.heart,
+					background:
+						BACKGROUNDS[userInfo.success.user.title || ''] ||
+						defaultAppearance.background,
+					border:
+						BORDERS[userInfo.success.user.title || ''] ||
+						defaultAppearance.border,
+				}
+				yield* put<LocalMessage>({
+					type: localMessages.COSMETICS_SET,
+					appearance: appearance,
+				})
+			}
 		}
 
 		yield put<LocalMessage>({
