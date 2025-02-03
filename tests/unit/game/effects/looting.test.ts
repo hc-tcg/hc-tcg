@@ -6,7 +6,7 @@ import Looting from 'common/cards/single-use/looting'
 import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
 
 describe('Test Looting.', () => {
-	test('Test prize card is gained after knockout', () => {
+	test('Test looting does not brick game after knocking out opponent', () => {
 		testGame(
 			{
 				playerOneDeck: [EthosLabCommon, GeminiTayCommon, BalancedItem],
