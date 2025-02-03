@@ -106,6 +106,7 @@ npm run test:ct             # run component tests with playwright.
 npm run test:ct-update      # update component snapshots.
 npm run test:api            # run tests for the hc-tcg API.
 npm run test:e2e            # run end-to-end tests with Playwright.
+npm run test:fuzz           # run fuzz tests (see tests/README.md for more details).
 ```
 
 # Building & Self Hosting
