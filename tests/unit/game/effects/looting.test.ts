@@ -1,28 +1,26 @@
 import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
 import BalancedItem from 'common/cards/items/balanced-common'
 import Looting from 'common/cards/single-use/looting'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {applyEffect, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Looting.', () => {
-	test('Test looting does not brick game after knocking out opponent', () => {
+	test('Test looting works as expected', () => {
 		testGame(
 			{
-				playerOneDeck: [EthosLabCommon, GeminiTayCommon, BalancedItem],
+				playerOneDeck: [EthosLabCommon, BalancedItem],
 				playerTwoDeck: [EthosLabCommon, Looting],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
-					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 1)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* playCardFromHand(game, Looting, 'single_use')
-					yield* attack(game, 'secondary')
+					yield* applyEffect(game)
 
 					expect(
-						game.getPickableSlots(Looting.attachCondition).length,
+						game.getPickableSlots(game.state.pickRequests[0].canPick).length,
 					).toBeGreaterThanOrEqual(1)
 				},
 			},
