@@ -143,6 +143,8 @@ function DropDownButton({children}: {children: React.ReactChild}) {
 	return <Button>{children} ▼</Button>
 }
 
+type tabs = 'stats' | 'hof' | 'games'
+
 function Statistics({setMenuSection}: Props) {
 	const dispatch = useDispatch()
 
@@ -150,7 +152,7 @@ function Statistics({setMenuSection}: Props) {
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 	const stats = databaseInfo.stats
 	const gameHistory = databaseInfo.gameHistory
-	const [tab, setTab] = useState<'stats' | 'hof'>('stats')
+	const [tab, setTab] = useState<tabs>('stats')
 	const handleReplayGame = (game: GameHistory) => {
 		dispatch({
 			type: localMessages.MATCHMAKING_REPLAY_GAME,
@@ -244,6 +246,47 @@ function Statistics({setMenuSection}: Props) {
 			if (!privateGameCode || privateGameCode.length !== 6) return ''
 			return `private-game/${privateGameCode}`
 		},
+	}
+
+	function Tabs({selected}: {selected: tabs}) {
+		return (
+			<div className={classNames(css.tabs, css.mobileHeader)}>
+				<div
+					className={classNames(
+						css.tab,
+						selected === 'stats' ? css.selected : css.deselected,
+					)}
+					onClick={() => {
+						if (selected !== 'stats') setTab('stats')
+					}}
+				>
+					My Stats
+				</div>
+				<div
+					className={classNames(
+						css.tab,
+						selected === 'games' ? css.selected : css.deselected,
+					)}
+					onClick={() => {
+						if (selected !== 'games') setTab('games')
+					}}
+				>
+					My Games
+				</div>
+				<div
+					className={classNames(
+						css.tab,
+						selected === 'hof' ? css.selected : css.deselected,
+					)}
+					onClick={() => {
+						if (selected !== 'hof') setTab('hof')
+					}}
+				>
+					Hall of Fame
+				</div>
+				<div className={css.afterTabs}></div>
+			</div>
+		)
 	}
 
 	async function getData() {
@@ -692,135 +735,201 @@ function Statistics({setMenuSection}: Props) {
 			>
 				<div className={css.bigHallOfFameArea}>
 					<div className={css.mainHallOfFameArea}>
-						<div className={classNames(css.hallOfFameHeader, css.showOnMobile)}>
-							Hall of Fame
-							<Button onClick={() => setShowDropdown(!showDropdown)}>
-								Show dropdown
-							</Button>
+						<div className={classNames(css.tabs, css.showOnMobile)}>
+							<Tabs selected={'hof'}></Tabs>
 						</div>
 						{tab === 'stats' && (
-							<div className={css.tableArea}>
-								{gameHistory.map((game) => (
-									<div className={css.gameHistoryBox}>
+							<div className={css.fullLeftArea}>
+								<Tabs selected={'stats'} />
+								<div className={css.tableArea}>
+									<div className={css.stats}>
+										<div className={css.stat}>
+											<b className={css.statName}>Summary</b>
+											<p>Amount</p>
+											<p>Rate</p>
+										</div>
+										<div className={css.stat}>
+											<p className={css.statName}>Wins</p>
+											<p>{stats.wins}</p>
+											<p>{padDecimal(stats.wins / stats.gamesPlayed, 2)}</p>
+										</div>
+										<div className={css.stat}>
+											<p className={css.statName}>Forfeit Wins</p>
+											<p>{stats.forfeitWins}</p>
+											<p>
+												{padDecimal(stats.forfeitWins / stats.gamesPlayed, 2)}
+											</p>
+										</div>
+										<div className={css.stat}>
+											<p className={css.statName}>Total Wins</p>
+											<p>{stats.wins + stats.forfeitWins}</p>
+											<p>
+												{padDecimal(
+													(stats.wins + stats.forfeitWins) / stats.gamesPlayed,
+													2,
+												)}
+											</p>
+										</div>
+										<div className={css.stat}>
+											<p className={css.statName}>Losses</p>
+											<p>{stats.losses}</p>
+											<p>{padDecimal(stats.losses / stats.gamesPlayed, 2)}</p>
+										</div>
+										<div className={css.stat}>
+											<p className={css.statName}>Forfeit Losses</p>
+											<p>{stats.forfeitLosses}</p>
+											<p>
+												{padDecimal(stats.forfeitLosses / stats.gamesPlayed, 2)}
+											</p>
+										</div>
+										<div className={css.stat}>
+											<p className={css.statName}>Total Losses</p>
+											<p>{stats.wins + stats.forfeitWins}</p>
+											<p>
+												{padDecimal(
+													(stats.losses + stats.forfeitLosses) /
+														stats.gamesPlayed,
+													2,
+												)}
+											</p>
+										</div>
+										<div className={css.stat}>
+											<p className={css.statName}>Ties</p>
+											<p>{stats.ties}</p>
+											<p>{padDecimal(stats.ties / stats.gamesPlayed, 2)}</p>
+										</div>
+										<div className={css.stat}>
+											<p className={css.statName}>Unique Players Encountered</p>
+											<p>{stats.uniquePlayersEncountered}</p>
+											<p></p>
+										</div>
+										<div className={css.stat}>
+											<p className={css.statName}>Games Played</p>
+											<p>{stats.gamesPlayed}</p>
+											<p></p>
+										</div>
+									</div>
+									<div className={css.stats}>
+										<div className={css.stat}>
+											<b className={css.statName}>Overall Winrate</b>
+										</div>
+										<div className={css.wtlBar}>
+											<div
+												className={css.win}
+												style={{
+													width: `${((stats.wins + stats.forfeitWins) / stats.gamesPlayed) * 100}%`,
+												}}
+											>
+												{padDecimal(
+													(stats.wins + stats.forfeitWins) / stats.gamesPlayed,
+													2,
+												)}
+											</div>
+											<div
+												className={css.tie}
+												style={{
+													width: `${(stats.ties / stats.gamesPlayed) * 100}%`,
+												}}
+											></div>
+											<div
+												className={css.loss}
+												style={{
+													width: `${((stats.losses + stats.forfeitLosses) / stats.gamesPlayed) * 100}%`,
+												}}
+											>
+												{padDecimal(
+													(stats.losses + stats.forfeitLosses) /
+														stats.gamesPlayed,
+													2,
+												)}
+											</div>
+										</div>
+									</div>
+									<div className={css.filters}>
 										<div>
-											<img
-												className={css.playerHead}
-												src={`https://mc-heads.net/head/${game.firstPlayer.minecraftName}/right`}
-												alt="player head"
-											/>
+											<b className={css.filterHeader}>Filters</b>
 										</div>
-										<div>
-											{game.firstPlayer.uuid === databaseInfo.userId
-												? 'You'
-												: game.firstPlayer.name}
-										</div>
-										<div className={css.winAndLoss}>
-											<div className={css.win}>W</div>-
-											<div className={css.loss}>L</div>
-										</div>
-										<div>
-											{game.secondPlayer.uuid === databaseInfo.userId
-												? 'You'
-												: game.secondPlayer.name}
-										</div>
-										<div>
-											<img
-												className={css.playerHead}
-												src={`https://mc-heads.net/head/${game.firstPlayer.minecraftName}/left`}
-												alt="player head"
-											/>
-										</div>
-										<Button
-											onClick={() => {
-												setScreenshotDeckModalContents(
-													sortCards(
-														parseDeckCards(
-															game.secondPlayer.player === 'you' &&
-																game.secondPlayer.deck
-																? game.secondPlayer.deck.cards.map(
-																		(card) => card.props.id,
-																	)
-																: game.firstPlayer.player === 'you' &&
-																		game.firstPlayer.deck
-																	? game.firstPlayer.deck.cards.map(
+										<p>There's nothing here yet but there will be</p>
+									</div>
+								</div>
+							</div>
+						)}
+						{tab === 'games' && (
+							<div className={css.fullLeftArea}>
+								<Tabs selected={'games'} />
+								<div className={css.tableArea}>
+									{gameHistory.map((game) => (
+										<div className={css.gameHistoryBox}>
+											<div>
+												<img
+													className={css.playerHead}
+													src={`https://mc-heads.net/head/${game.firstPlayer.minecraftName}/right`}
+													alt="player head"
+												/>
+											</div>
+											<div>
+												{game.firstPlayer.uuid === databaseInfo.userId
+													? 'You'
+													: game.firstPlayer.name}
+											</div>
+											<div className={css.winAndLoss}>
+												<div className={css.win}>W</div>-
+												<div className={css.loss}>L</div>
+											</div>
+											<div>
+												{game.secondPlayer.uuid === databaseInfo.userId
+													? 'You'
+													: game.secondPlayer.name}
+											</div>
+											<div>
+												<img
+													className={css.playerHead}
+													src={`https://mc-heads.net/head/${game.firstPlayer.minecraftName}/left`}
+													alt="player head"
+												/>
+											</div>
+											<Button
+												onClick={() => {
+													setScreenshotDeckModalContents(
+														sortCards(
+															parseDeckCards(
+																game.secondPlayer.player === 'you' &&
+																	game.secondPlayer.deck
+																	? game.secondPlayer.deck.cards.map(
 																			(card) => card.props.id,
 																		)
-																	: [],
+																	: game.firstPlayer.player === 'you' &&
+																			game.firstPlayer.deck
+																		? game.firstPlayer.deck.cards.map(
+																				(card) => card.props.id,
+																			)
+																		: [],
+															),
 														),
-													),
-												)
-											}}
-										>
-											View
-										</Button>
-										<Button onClick={() => handleReplayGame(game)}>
-											Watch Replay
-										</Button>
-									</div>
-								))}
+													)
+												}}
+											>
+												View
+											</Button>
+											<Button onClick={() => handleReplayGame(game)}>
+												Watch Replay
+											</Button>
+										</div>
+									))}
+								</div>
 							</div>
 						)}
 						{tab === 'hof' && (
-							<div className={css.tableArea}>
-								{dataRetrieved && getTable()}
-								{!dataRetrieved && (
-									<div className={css.loadingIndicator}>
-										<Spinner></Spinner>
-										Loading...
-									</div>
-								)}
-							</div>
-						)}
-						{tab === 'stats' && (
-							<div
-								className={classNames(
-									css.hofSidebar,
-									!showDropdown && css.hideOnMobile,
-								)}
-							>
-								<div
-									className={classNames(css.hallOfFameHeader, css.mobileHeader)}
-								>
-									<div className={classNames(css.tab, css.selected)}>
-										My Stats
-									</div>
-									<div
-										className={classNames(css.tab, css.deselected)}
-										onClick={() => setTab('hof')}
-									>
-										Hall of Fame
-									</div>
-								</div>
-								<div className={css.stats}>
-									<b>Summary</b>
-									<div className={css.stat}>
-										<p className={css.statName}>Wins</p>
-										<p>{stats.wins}</p>
-									</div>
-									<div className={css.stat}>
-										<p className={css.statName}>Losses</p>
-										<p>{stats.losses}</p>
-									</div>
-									<div className={css.stat}>
-										<p className={css.statName}>Forfeit Wins</p>
-										<p>{stats.forfeitWins}</p>
-									</div>
-									<div className={css.stat}>
-										<p className={css.statName}>Forfeit Losses</p>
-										<p>{stats.forfeitLosses}</p>
-									</div>
-									<div className={css.stat}>
-										<p className={css.statName}>Ties</p>
-										<p>{stats.ties}</p>
-									</div>
-									<div className={css.stat}>
-										<p className={css.statName}>Games Played</p>
-										<p>{stats.gamesPlayed}</p>
-									</div>
-								</div>
-								<div className={css.filters}>
-									<b>Filters</b>
-									<p>There's nothing here yet but there will be</p>
+							<div className={css.fullLeftArea}>
+								<Tabs selected={'hof'} />
+								<div className={css.tableArea}>
+									{dataRetrieved && getTable()}
+									{!dataRetrieved && (
+										<div className={css.loadingIndicator}>
+											<Spinner></Spinner>
+											Loading...
+										</div>
+									)}
 								</div>
 							</div>
 						)}
@@ -831,19 +940,7 @@ function Statistics({setMenuSection}: Props) {
 									!showDropdown && css.hideOnMobile,
 								)}
 							>
-								<div
-									className={classNames(css.hallOfFameHeader, css.mobileHeader)}
-								>
-									<div
-										className={classNames(css.tab, css.deselected)}
-										onClick={() => setTab('stats')}
-									>
-										My Stats
-									</div>
-									<div className={classNames(css.tab, css.selected)}>
-										Hall of Fame
-									</div>
-								</div>
+								<div className={css.sidebarHeader}></div>
 								<div className={css.hofOptions}>
 									<p>
 										<b>Statistic</b>

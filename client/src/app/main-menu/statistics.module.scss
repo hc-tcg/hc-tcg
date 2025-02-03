@@ -11,7 +11,7 @@
 	width: 80%;
 	margin-left: 10%;
 	margin-right: 10%;
-	margin-top: 5%;
+	margin-top: 6vh;
 	margin-bottom: 1%;
 	display: flex;
 	flex-direction: row;
@@ -19,9 +19,14 @@
 }
 
 .hofSidebar {
-	background-color: var(--gray-700);
-	border: 2px black solid;
 	width: 20%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.sidebarHeader {
+	height: 44px;
 }
 
 .hallOfFameTable {
@@ -137,12 +142,20 @@
 	gap: 10px;
 }
 
-.tableArea {
-	overflow-y: scroll;
-	flex-grow: 1;
-	overflow-x: hidden;
+.fullLeftArea {
 	width: 90%;
+	overflow-x: hidden;
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.tableArea {
+	width: 100%;
+	flex-grow: 1;
+	overflow-y: scroll;
 	border: 2px black solid;
+	border-top: 0px;
 	background-color: var(--gray-700);
 }
 
@@ -173,9 +186,11 @@
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
-	margin-bottom: 0.5rem;
 	color: var(--text-light);
 	padding: 5px;
+	background-color: var(--gray-700);
+	border: 2px black solid;
+	flex-grow: 1;
 }
 
 .loadingIndicator {
@@ -193,15 +208,22 @@
 	font-size: 1.2rem;
 }
 
-.hallOfFameHeader {
-	background-color: var(--gray-600);
+.tabs {
 	color: var(--text-light);
 	font-family: Minecrafter;
 	font-size: 0.9rem;
-	height: 5%;
+	height: 45px;
+	min-height: 5%;
+	width: 100%;
 	align-items: center;
 	display: flex;
 	justify-content: center;
+}
+
+.afterTabs {
+	flex-grow: 1;
+	height: 100%;
+	border-bottom: 2px black solid;
 }
 
 .hofCheckBox {
@@ -246,17 +268,20 @@
 }
 
 .tab {
-	width: 50%;
 	text-align: center;
 	display: flex;
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
 	height: 100%;
+	width: 180px;
 	background-color: var(--gray-700);
 	box-shadow: inset 0 -4px 1px var(--gray-700),
 		inset 1px 1px 0 1px var(--gray-400),
 		inset -1px 0px 0 1px var(--gray-500);
+
+	border: 2px black solid;
+	border-bottom: 0px;
 
 	&.deselected {
 		cursor: pointer;
@@ -274,6 +299,7 @@
 	background-color: black;
 	color: white;
 	gap: 1rem;
+	margin: 2rem;
 }
 
 .playerHead {
@@ -305,29 +331,95 @@
 .stats {
 	display: flex;
 	flex-direction: column;
-	width: 100%;
-	padding: 1vh 2vh;
+	margin-left: 12.5%;
+	margin-right: 12.5%;
+	width: 75%;
+	padding-top: 2rem;
+	padding-bottom: 0rem;
 	color: white;
-	font-size: 1rem;
+	font-size: 1.1rem;
+
+	div:nth-child(odd) {
+		background-color: var(--gray-700);
+	}
+
+	div:nth-child(even) {
+		background-color: var(--gray-600);
+	}
 }
 
 .filters {
+	margin-left: 12.5%;
+	margin-right: 12.5%;
+	width: 75%;
 	display: flex;
 	flex-direction: column;
-	width: 100%;
-	padding: 1vh 2vh;
 	color: white;
-	font-size: 1rem;
+	font-size: 1.1rem;
+	padding: 0.5rem;
+	padding-top: 2rem;
 }
 
 .stat {
 	display: flex;
 	flex-direction: row;
 	width: 100%;
+	padding: 0.5rem;
+
+	> p:not(.statName) {
+		min-width: 10%;
+		text-align: center;
+	}
 }
 
 .statName {
 	flex-grow: 1;
+}
+
+.wtlBar {
+	height: 50px;
+	line-height: 50px;
+	background-color: blue;
+	display: flex;
+	flex-direction: row;
+	border: 2px black solid;
+	width: 100%;
+	font-weight: bold;
+
+	.win {
+		height: 100%;
+		padding-left: 1rem;
+		color: #325a2f;
+		background: linear-gradient(
+			0deg,
+			#325a2f 15%,
+			#63b45c 15% 90%,
+			rgb(147, 207, 141) 90%
+		);
+	}
+
+	.loss {
+		height: 100%;
+		padding-right: 1rem;
+		text-align: right;
+		color: #72282a;
+		background: linear-gradient(
+			0deg,
+			#72282a 15%,
+			#da5558 15% 90%,
+			#eb9192 90%
+		);
+	}
+
+	.tie {
+		height: 100%;
+		background: linear-gradient(
+			0deg,
+			#396079 15%,
+			#6fabd0 15% 90%,
+			#97d6fd 90%
+		);
+	}
 }
 
 // Mobile
@@ -373,9 +465,8 @@
 		display: none;
 	}
 
-	.hallOfFameHeader {
+	.tabs {
 		height: 10%;
-		border: 2px black solid;
 
 		&.mobileHeader {
 			display: none;
@@ -390,5 +481,9 @@
 
 	.actionColumn {
 		flex-direction: column;
+	}
+
+	.fullLeftArea {
+		width: 100%;
 	}
 }
