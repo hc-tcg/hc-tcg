@@ -177,7 +177,7 @@ function getNextTurnAction(
 		const inactiveHermit = choose(
 			game.components.filter(
 				CardComponent,
-				query.card.currentPlayer,
+				query.card.player(player.entity),
 				query.card.slot(query.slot.hermit),
 				query.card.slot(query.not(query.slot.active)),
 				(_game, value) =>
