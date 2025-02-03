@@ -9,6 +9,8 @@ import {GameController} from 'server/game-controller'
 import gameSaga, {figureOutGameResult} from 'server/routines/game'
 import {call} from 'typed-redux-saga'
 import {FuzzAI} from './fuzz-ai'
+import ExBossAI from 'server/routines/virtual/exboss-ai'
+import {VirtualAI} from 'common/types/virtual-ai'
 
 class FuzzyGameController extends GameController {
 	public override getRandomDelayForAI(_flips: Array<CurrentCoinFlip>) {
@@ -72,36 +74,44 @@ const defaultGameSettings = {
  * Note that decks are not shuffled in test games.
  */
 export async function testGame(options: {
-	playerOneDeck: Array<Card>
-	playerTwoDeck: Array<Card>
+	playerOne: {
+		deck: Array<Card>
+		AI: VirtualAI
+	}
+	playerTwo: {
+		deck: Array<Card>
+		AI: VirtualAI
+	}
 	seed: string
+	debug: boolean
 }) {
 	let controller = new FuzzyGameController(
-		getTestPlayer('playerOne', options.playerOneDeck),
-		getTestPlayer('playerTwo', options.playerTwoDeck),
+		getTestPlayer('playerOne', options.playerOne.deck),
+		getTestPlayer('playerTwo', options.playerTwo.deck),
 		{
 			randomizeOrder: false,
 			randomSeed: options.seed,
 			settings: {
 				...defaultGameSettings,
+				verboseLogging: options.debug,
 			},
 		},
 	)
 
-	controller.game.components.new(
-		AIComponent,
-		controller.game.currentPlayer.entity,
-		FuzzAI,
-	)
+	// Player One
 	controller.game.components.new(
 		AIComponent,
 		controller.game.opponentPlayer.entity,
-		FuzzAI,
+		options.playerOne.AI,
+	)
+	// Player Two
+	controller.game.components.new(
+		AIComponent,
+		controller.game.currentPlayer.entity,
+		options.playerTwo.AI,
 	)
 
-	await testSaga(call(gameSaga, controller)).catch((e) => {
-		console.log(e)
-	})
+	await testSaga(call(gameSaga, controller))
 
 	return figureOutGameResult(controller.game)
 }

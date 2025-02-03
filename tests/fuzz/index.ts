@@ -3,26 +3,28 @@
 import {newRandomNumberGenerator} from 'common/utils/random'
 import {createDeck} from './create-deck'
 import {testGame} from './run-game'
+import {FuzzAI} from './fuzz-ai'
 
-async function performFuzzTest(seed: string) {
+async function performFuzzTest(seed: string, debug: boolean) {
 	let randomNumberGenerator = newRandomNumberGenerator(seed)
 
-	let playerOneDeck = createDeck(randomNumberGenerator)
-	let playerTwoDeck = createDeck(randomNumberGenerator)
+	let playerOne = {deck: createDeck(randomNumberGenerator), AI: FuzzAI}
+	let playerTwo = {deck: createDeck(randomNumberGenerator), AI: FuzzAI}
 
 	let gameSeed = randomNumberGenerator().toString().slice(16)
 
 	await testGame({
-		playerOneDeck,
-		playerTwoDeck,
+		playerOne,
+		playerTwo,
 		seed: gameSeed,
+		debug: debug,
 	})
 }
 
-async function runTest(seed: string, progress: any) {
+async function runTest(seed: string, debug: boolean, progress: any) {
 	let success = true
 	try {
-		await performFuzzTest(seed)
+		await performFuzzTest(seed, debug)
 	} catch (_e) {
 		success = false
 	}
@@ -32,12 +34,12 @@ async function runTest(seed: string, progress: any) {
 		console.log(`${progress.progress} - ${seed}: SUCCESS`)
 		return [seed, true]
 	} else {
-		console.error(`${seed}: FAILURE`)
+		console.error(`${progress.progress} - ${seed}: FAILURE`)
 		return [seed, false]
 	}
 }
 
-async function manyTests(num: number) {
+async function manyTests(num: number, debug: boolean) {
 	let progress = {progress: 0}
 
 	let seeds = Array(num)
@@ -45,7 +47,7 @@ async function manyTests(num: number) {
 		.map((_) => Math.random())
 
 	let results = await Promise.all(
-		seeds.map((x) => runTest(x.toString().slice(2, 18), progress)),
+		seeds.map((x) => runTest(x.toString().slice(2, 18), debug, progress)),
 	)
 
 	let failures = results.filter(([_seed, result]) => !result)
@@ -59,16 +61,18 @@ async function manyTests(num: number) {
 
 async function main() {
 	let argv = process.argv
-	argv = argv.slice(argv.indexOf('--') - 1)
+	argv = argv.slice(2)
+	const debug = argv.includes('--debug')
+	console.log(argv)
 
 	if (argv[0] === 'fuzz') {
 		console.log(`Fuzzing ${argv[1]} times`)
-		await manyTests(parseInt(argv[1]))
+		await manyTests(parseInt(argv[1]), debug)
 		return
 	}
 
 	if (argv[0] === 'check') {
-		await performFuzzTest(argv[1])
+		await performFuzzTest(argv[1], debug)
 		console.log('Completed!')
 		return
 	}
