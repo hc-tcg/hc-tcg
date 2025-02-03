@@ -12,8 +12,7 @@ type UpdatesModalProps = {
 }
 
 export function UpdatesModal({onClose}: UpdatesModalProps) {
-	const updates = Object.values(useSelector(getUpdates))
-	console.log(updates)
+	const updates = useSelector(getUpdates)
 	const latestUpdateElement = useRef<HTMLLIElement>(null)
 	useEffect(() => {
 		latestUpdateElement.current?.scrollIntoView({
@@ -22,29 +21,32 @@ export function UpdatesModal({onClose}: UpdatesModalProps) {
 		})
 	})
 
+	console.log(updates)
 	return (
 		<Modal setOpen title="Latest Updates" onClose={onClose} disableCloseButton>
 			<Modal.Description>
 				<ul className={css.updatesList}>
-					<li key={20} className={css.updateItem}>
+					<li key={15} className={css.updateItem}>
 						For more updates, visit the HC-TCG discord.
 					</li>
-					{updates.length ? (
-						Object.values(updates)
-							.flatMap((value) => value)
-							.map((text, i) => {
-								return (
-									<>
-										<li
-											className={css.updateItem}
-											key={i + 1}
+					{updates ? (
+						Object.entries(updates).map(([key, text], i) => {
+							return (
+								<>
+									<li
+										className={css.updateItem}
+										key={i + 1}
+										ref={i === 0 ? latestUpdateElement : undefined}
+									>
+										<h1 className={css.updateName}> Update {key} </h1>
+										<div
 											dangerouslySetInnerHTML={{__html: sanitize(toHTML(text))}}
-											ref={i === 0 ? latestUpdateElement : undefined}
 										/>
-										<hr key={-i} className={css.updateSeperator} />
-									</>
-								)
-							})
+									</li>
+									<hr key={-i} className={css.updateSeperator} />
+								</>
+							)
+						})
 					) : (
 						<li className={css.updateItem}>Failed to load updates.</li>
 					)}

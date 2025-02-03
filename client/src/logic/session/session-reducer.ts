@@ -25,7 +25,7 @@ type SessionState = {
 		tooltipWidth: number
 	} | null
 	toast: Array<ToastData>
-	updates: Record<string, Array<string>>
+	updates: Record<string, string>
 	newPlayer: boolean //If the account was created this session
 }
 
@@ -80,7 +80,7 @@ const loginReducer = (
 		case localMessages.UPDATES_LOAD:
 			return {
 				...state,
-				...action.updates,
+				updates: action.updates,
 			}
 		case localMessages.INSERT_DECK:
 		case localMessages.UPDATE_DECK:

@@ -116,7 +116,7 @@ type Messages = [
 	{type: typeof localMessages.CONNECTED},
 	{type: typeof localMessages.DISCONNECT; errorMessage?: string},
 	{type: typeof localMessages.LOGOUT},
-	{type: typeof localMessages.UPDATES_LOAD; updates: Record<string, string[]>},
+	{type: typeof localMessages.UPDATES_LOAD; updates: Record<string, string>},
 	{
 		type: typeof localMessages.TOAST_OPEN
 		open: boolean

@@ -7,6 +7,8 @@ import cors from 'cors'
 import express from 'express'
 import {addApi} from './api'
 import startSocketIO from './sockets'
+import {loadUpdates} from './load-updates'
+import root from 'serverRoot'
 
 const port = process.env.PORT || CONFIG.port || 9000
 
@@ -46,4 +48,9 @@ addApi(app)
 
 server.listen(port, () => {
 	console.log(`Server listening on port ${port}`)
+})
+
+loadUpdates().then((updates) => {
+	if (!updates) return
+	root.updates = updates
 })
