@@ -16,6 +16,7 @@ import {
 	DeckStats,
 	GameHistory,
 	GamesStats,
+	PlayerStats,
 	Stats,
 	TypeDistributionStats,
 	User,
@@ -689,7 +690,9 @@ export class Database {
 	}
 
 	/**Get a user's stats */
-	public async getUserStats(uuid: string): Promise<DatabaseResult<Stats>> {
+	public async getUserStats(
+		uuid: string,
+	): Promise<DatabaseResult<PlayerStats>> {
 		try {
 			const stats = await this.pool.query(
 				`
@@ -700,7 +703,12 @@ export class Database {
 			(SELECT count(*) FROM games WHERE loser = $1 AND outcome='forfeit') as forfeit_losses,
 			(SELECT count(*) FROM games WHERE winner = $1 OR loser = $1) as total,
 			(SELECT count(*) FROM games WHERE (winner = $1 OR loser = $1) 
-				AND outcome != 'player_won' AND outcome != 'forfeit') as ties
+				AND outcome != 'player_won' AND outcome != 'forfeit') as ties,
+			(SELECT count(*) FROM (
+				SELECT DISTINCT winner as opponent FROM games WHERE loser = $1
+				UNION SELECT DISTINCT loser as opponent FROM games WHERE winner = $1
+				GROUP BY opponent
+			)) as unique_players
 			`,
 				[uuid],
 			)
@@ -716,6 +724,8 @@ export class Database {
 					forfeitWins: Number(statRows['forfeit_wins']),
 					forfeitLosses: Number(statRows['forfeit_losses']),
 					ties: Number(statRows['ties']),
+					topCards: [],
+					uniquePlayersEncountered: Number(statRows['unique_players']),
 				},
 			}
 		} catch (e) {
