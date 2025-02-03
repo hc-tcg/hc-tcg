@@ -685,15 +685,8 @@ export function* cosmeticSaga() {
 				isUnlocked =
 					!!achievementProgress[achievement.numericId]?.completionTime
 			}
-			if (!isUnlocked || selected) {
-				yield put<LocalMessage>({
-					type: localMessages.TOAST_OPEN,
-					open: true,
-					title: 'Invalid',
-					description: "Can't set this cosmetic as selected",
-				})
+			if (!isUnlocked || selected)
 				return
-			}
 			yield* sendMsg({
 				type: clientMessages.SET_COSMETIC,
 				cosmetic: action.cosmetic.id,

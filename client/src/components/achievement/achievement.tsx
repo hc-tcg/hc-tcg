@@ -1,7 +1,7 @@
 import {Achievement} from 'common/achievements/types'
 import {ProgressionEntry} from 'common/types/achievements'
 import css from './achievement.module.scss'
-import { COSMETICS } from 'common/cosmetics'
+import {COSMETICS} from 'common/cosmetics'
 
 type Props = {
 	achievement: Achievement

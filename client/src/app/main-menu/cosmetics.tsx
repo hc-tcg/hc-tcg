@@ -21,6 +21,7 @@ import cn from 'classnames'
 import Button from 'components/button'
 import {localMessages} from 'logic/messages'
 import Dropdown from 'components/dropdown'
+import {getSession} from 'logic/session/session-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -28,11 +29,13 @@ type Props = {
 function Cosmetics({setMenuSection}: Props) {
 	const dispatch = useDispatch()
 
+	const {playerName, minecraftName} = useSelector(getSession)
+
 	const [selectedCosmetic, setSelectedCosmetic] =
 		useState<Cosmetic['type']>('title')
 	const achievementProgress = useSelector(getAchievements)
 	const appearance = useSelector(getAppearance)
-	const cosmetics = ALL_COSMETICS.filter(
+	const slectableCosmetics = ALL_COSMETICS.filter(
 		(cosmetic) => cosmetic.type === selectedCosmetic,
 	)
 	const selected = appearance[selectedCosmetic]
@@ -67,19 +70,34 @@ function Cosmetics({setMenuSection}: Props) {
 		)
 	}
 
-	function setCosmetic(cosmetic: Cosmetic): Appearance {
-		switch (selectedCosmetic) {
-			case 'title':
-				return {...appearance, title: cosmetic as Title}
-			case 'coin':
-				return {...appearance, coin: cosmetic as Coin}
-			case 'heart':
-				return {...appearance, heart: cosmetic as Heart}
-			case 'background':
-				return {...appearance, background: cosmetic as Background}
-			case 'border':
-				return {...appearance, border: cosmetic as Border}
-		}
+	const health = (lives: number) => {
+		const hearts = new Array(3).fill(null).map((_, index) => {
+			const heartImg =
+				lives > index
+					? `/images/cosmetics/heart/${appearance.heart.id}.png`
+					: '/images/game/heart_empty.png'
+			return (
+				<img
+					key={index}
+					className={css.heart}
+					src={heartImg}
+					width="32"
+					height="32"
+				/>
+			)
+		})
+		return hearts
+	}
+
+	const previewStyle = {
+		borderImageSource:
+			appearance.border.id === 'blue'
+				? undefined
+				: `url(/images/cosmetics/border/${appearance.border.id}.png)`,
+		backgroundImage:
+			appearance.background.id === 'transparent'
+				? undefined
+				: `url(/images/cosmetics/background/${appearance.background.id}.png)`,
 	}
 
 	return (
@@ -91,7 +109,7 @@ function Cosmetics({setMenuSection}: Props) {
 		>
 			<div className={css.cosmeticContainer}>
 				<Dropdown
-					button={<Button>Change cosmetic</Button>}
+					button={<Button>Cosmetic type</Button>}
 					label={'Change cosmetic'}
 					showNames={true}
 					options={[
@@ -106,15 +124,26 @@ function Cosmetics({setMenuSection}: Props) {
 					}}
 				/>
 				<div className={css.cosmeticPreview}>
+					<div className={css.appearanceContainer} style={previewStyle}>
+						<img
+							className={css.playerHead}
+							src={`https://mc-heads.net/head/${minecraftName}/right`}
+							alt="player head"
+						/>
+						<div className={css.playerName}>
+							<h1>{playerName}</h1>
+							<p className={css.title}>{appearance.title.name}</p>
+						</div>
 
+						<div className={css.health}>{health(3)}</div>
+					</div>
 				</div>
 				<div className={css.itemSelector}>
-					{cosmetics.map((cosmetic) => (
+					{slectableCosmetics.map((cosmetic) => (
 						<CosmeticItem cosmetic={cosmetic} />
 					))}
 				</div>
 			</div>
-			
 		</MenuLayout>
 	)
 }
