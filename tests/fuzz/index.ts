@@ -62,17 +62,15 @@ async function manyTests(num: number, debug: boolean) {
 async function main() {
 	let argv = process.argv
 	argv = argv.slice(2)
-	const debug = argv.includes('--debug')
-	console.log(argv)
 
 	if (argv[0] === 'fuzz') {
 		console.log(`Fuzzing ${argv[1]} times`)
-		await manyTests(parseInt(argv[1]), debug)
+		await manyTests(parseInt(argv[1]), false)
 		return
 	}
 
-	if (argv[0] === 'check') {
-		await performFuzzTest(argv[1], debug)
+	if (argv[0] === 'debug') {
+		await performFuzzTest(argv[1], true)
 		console.log('Completed!')
 		return
 	}

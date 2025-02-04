@@ -41,7 +41,7 @@ Shell scripts are used to test the hc-tcg API. `curl` and `jq` must be installed
 ### Fuzz Tests
 Commands:
 - Run many tests: `npm run test:fuzz -- fuzz <number of times>`
-- Run a test with a specific seed and debug logs: `npm run test:fuzz -- check <the seed> --debug`
+- Run a test with a specific seed and debug logs: `npm run test:fuzz -- debug <the seed>`
 
 Fuzz tests run random AI players against each other to attempt to find bugs.
 This type of test focuses on two specific bug categories:
