@@ -33,7 +33,7 @@ function PlayerInfo({player, direction}: Props) {
 		const hearts = new Array(3).fill(null).map((_, index) => {
 			const heartImg =
 				lives > index
-					? '/images/game/heart_full.png'
+					? `/images/cosmetics/heart/${player.appearance.heart.id}.png`
 					: '/images/game/heart_empty.png'
 			return (
 				<img
@@ -52,13 +52,23 @@ function PlayerInfo({player, direction}: Props) {
 		player.entity === playerEntity ? playerConnected : opponentConnected
 	const thisPlayer = gameState.turn.currentPlayerEntity === player.entity
 	const headDirection = direction === 'left' ? 'right' : 'left'
-	const playerTag = '' // TODO: Implement player tags...
-	// Player tags ideally would be a list of predetermined phrases
-	// or attack moves that users would select from the main menu.
+	const playerTag = player.appearance.title.name
+
+	const playerStyle = {
+		borderImageSource:
+			player.appearance.border.id === 'blue'
+				? undefined
+				: `url(/images/cosmetics/border/${player.appearance.border.id}.png)`,
+		backgroundImage:
+			player.appearance.background.id === 'transparent'
+				? undefined
+				: `url(/images/cosmetics/background/${player.appearance.background.id}.png)`,
+	}
 
 	return (
 		<div
 			className={cn(css.playerInfo, css[direction], {[css.active]: thisPlayer})}
+			style={playerStyle}
 		>
 			<img
 				className={css.playerHead}

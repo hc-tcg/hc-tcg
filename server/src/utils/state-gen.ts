@@ -194,6 +194,7 @@ function getLocalPlayerState(
 		),
 		lives: playerState.lives,
 		board: board,
+		appearance: playerState.appearance,
 	}
 	return localPlayerState
 }
