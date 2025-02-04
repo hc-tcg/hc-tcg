@@ -42,6 +42,7 @@ import {
 	getStatus,
 } from 'logic/matchmaking/matchmaking-selectors'
 import {CopyIcon} from 'components/svgs'
+import {getCardTypeIcon} from 'common/cards/card'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -53,13 +54,15 @@ function PlaySelect({setMenuSection}: Props) {
 	const gameCode = useSelector(getGameCode)
 	const spectatorCode = useSelector(getSpectatorCode)
 
-	const {playerDeck, playerName, minecraftName} = useSelector(getSession)
+	const {playerDeck, playerName, minecraftName, newPlayer} =
+		useSelector(getSession)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 	const [loadedDeck, setLoadedDeck] = useState<Deck | undefined>(
 		databaseInfo?.decks.find((deck) => deck.code === playerDeck),
 	)
 
 	const decks = databaseInfo?.decks
+	const welcomeMessage = newPlayer ? 'Welcome' : 'Welcome Back'
 	const [mode, setMode] = useState<string | null>(null)
 	const selectedDeckRef = useRef<HTMLDivElement>(null)
 	const [lobbyCreated, setLobbyCreated] = useState<boolean>(false)
@@ -401,6 +404,19 @@ function PlaySelect({setMenuSection}: Props) {
 				returnText="Main Menu"
 				className={css.playSelect}
 			>
+				<div className={css.playerInfo}>
+					<p id={css.infoName}>
+						{welcomeMessage}, {playerName}
+					</p>
+					<p id={css.infoDeck}>
+						{'Active Deck - ' + `${loadedDeck ? loadedDeck.name : 'None'}`}
+					</p>
+					<img
+						id={css.infoIcon}
+						src={loadedDeck ? getIconPath(loadedDeck) : getCardTypeIcon('any')}
+						alt="deck-icon"
+					/>
+				</div>
 				<h2 className={css.header}>{header}</h2>
 				<div className={css.gameTypes}>
 					<div className={css.gameTypesButtons}>
@@ -576,22 +592,26 @@ function PlaySelect({setMenuSection}: Props) {
 						</HermitButton>
 					</div>
 				</div>
-				<h3 className={css.appearanceHeader}>In-game Appearance</h3>
-				<p className={css.clickToChange}>
-					<i>Click to change</i>
-				</p>
-				<div className={css.appearanceContainer}>
-					<img
-						className={css.playerHead}
-						src={`https://mc-heads.net/head/${minecraftName}/right`}
-						alt="player head"
-					/>
-					<div className={css.playerName}>
-						<h1>{playerName}</h1>
-						<p className={css.title}>No title</p>
-					</div>
+				<div className={css.bottomArea}>
+					<div>
+						<h3 className={css.appearanceHeader}>In-game Appearance</h3>
+						<p className={css.clickToChange}>
+							<i>Click to change</i>
+						</p>
+						<div className={css.appearanceContainer}>
+							<img
+								className={css.playerHead}
+								src={`https://mc-heads.net/head/${minecraftName}/right`}
+								alt="player head"
+							/>
+							<div className={css.playerName}>
+								<h1>{playerName}</h1>
+								<p className={css.title}>No title</p>
+							</div>
 
-					<div className={css.health}>{health(3)}</div>
+							<div className={css.health}>{health(3)}</div>
+						</div>
+					</div>
 				</div>
 			</MenuLayout>
 		</>
