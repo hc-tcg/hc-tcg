@@ -1,9 +1,9 @@
+import {defaultAppearance} from 'common/cosmetics/default'
+import {Appearance} from 'common/cosmetics/types'
 import {AchievementProgress} from 'common/types/achievements'
 import {GameHistory, PlayerStats} from 'common/types/database'
 import {ApiDeck, Deck, Tag} from 'common/types/deck'
-import {Appearance} from 'common/cosmetics/types'
 import {LocalMessage, localMessages} from 'logic/messages'
-import {defaultAppearance} from 'common/cosmetics/default'
 
 export type DatabaseInfo = {
 	userId: string | null

@@ -1,27 +1,19 @@
+import cn from 'classnames'
+import {ACHIEVEMENTS} from 'common/achievements'
+import {ALL_COSMETICS} from 'common/cosmetics'
+import {Cosmetic} from 'common/cosmetics/types'
+import Button from 'components/button'
+import Dropdown from 'components/dropdown'
 import MenuLayout from 'components/menu-layout'
 import {
 	getAchievements,
 	getAppearance,
 } from 'logic/game/database/database-selectors'
+import {localMessages} from 'logic/messages'
+import {getSession} from 'logic/session/session-selectors'
+import {useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './cosmsetics.module.scss'
-import {useState} from 'react'
-import {
-	Appearance,
-	Background,
-	Border,
-	Coin,
-	Cosmetic,
-	Heart,
-	Title,
-} from 'common/cosmetics/types'
-import {ALL_COSMETICS} from 'common/cosmetics'
-import {ACHIEVEMENTS} from 'common/achievements'
-import cn from 'classnames'
-import Button from 'components/button'
-import {localMessages} from 'logic/messages'
-import Dropdown from 'components/dropdown'
-import {getSession} from 'logic/session/session-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void

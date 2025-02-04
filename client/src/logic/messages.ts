@@ -1,3 +1,4 @@
+import {Appearance, Cosmetic} from 'common/cosmetics/types'
 import {PlayerEntity} from 'common/entities'
 import {PlayerId} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
@@ -23,7 +24,6 @@ import {
 	LocalSetting,
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
-import {Appearance, Cosmetic} from 'common/cosmetics/types'
 
 export const localMessages = messages('clientLocalMessages', {
 	SOCKET_CONNECTING: null,

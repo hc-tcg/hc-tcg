@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import BerryBush from 'common/cards/advent-of-tcg/attach/berry-bush'
 import Dropper from 'common/cards/advent-of-tcg/single-use/dropper'
 import Glowstone from 'common/cards/advent-of-tcg/single-use/glowstone'
+import {getCardTypeIcon} from 'common/cards/card'
 import PoePoeSkizzRare from 'common/cards/hermits/poepoeskizz-rare'
 import RenbobRare from 'common/cards/hermits/renbob-rare'
 import Anvil from 'common/cards/single-use/anvil'
@@ -22,27 +23,26 @@ import {Deck, Tag} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {getIconPath} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
+import Accordion from 'components/accordion'
 import Button from 'components/button'
 import CardList from 'components/card-list'
 import HermitButton from 'components/hermit-button'
 import MenuLayout from 'components/menu-layout'
 import {Modal} from 'components/modal'
 import Spinner from 'components/spinner'
+import {CopyIcon} from 'components/svgs'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
+import {
+	getGameCode,
+	getSpectatorCode,
+	getStatus,
+} from 'logic/matchmaking/matchmaking-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {setActiveDeck} from 'logic/saved-decks/saved-decks'
 import {getSession} from 'logic/session/session-selectors'
 import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './play-select.module.scss'
-import Accordion from 'components/accordion'
-import {
-	getGameCode,
-	getSpectatorCode,
-	getStatus,
-} from 'logic/matchmaking/matchmaking-selectors'
-import {CopyIcon} from 'components/svgs'
-import {getCardTypeIcon} from 'common/cards/card'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -557,7 +557,9 @@ function PlaySelect({setMenuSection}: Props) {
 							image={'evilxisuma'}
 							backgroundImage={'gamemodes/boss'}
 							title={'Boss Battle'}
-							description={'Challenge Evil X to a fight. Blah Blah Blah Blah'}
+							description={
+								'Prove your worth as an HC-TCG player by challenging Evil X to a fight.'
+							}
 							mode="boss"
 							selectedMode={mode}
 							setSelectedMode={setMode}

@@ -20,13 +20,13 @@ import Game from './game'
 import Login from './login'
 import MainMenu from './main-menu'
 import Achievements from './main-menu/achievements'
+import Cosmetics from './main-menu/cosmetics'
 import Credits from './main-menu/credits'
 import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
 import PlaySelect from './main-menu/play-select'
 import More from './main-menu/settings'
 import Statistics from './main-menu/statistics'
-import Cosmetics from './main-menu/cosmetics'
 
 function App() {
 	const section = useRouter()
