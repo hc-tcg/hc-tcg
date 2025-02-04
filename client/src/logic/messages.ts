@@ -24,6 +24,7 @@ import {
 	LocalSetting,
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
+import {Appearance, Cosmetic} from 'common/cosmetics/types'
 
 export const localMessages = messages('clientLocalMessages', {
 	SOCKET_CONNECTING: null,
@@ -97,6 +98,8 @@ export const localMessages = messages('clientLocalMessages', {
 	NEW_PLAYER: null,
 	SHOW_TOOLTIP: null,
 	HIDE_TOOLTIP: null,
+	COSMETICS_SET: null,
+	COSMETIC_UPDATE: null,
 })
 
 type Messages = [
@@ -254,6 +257,11 @@ type Messages = [
 		tooltipWidth: number
 	},
 	{type: typeof localMessages.HIDE_TOOLTIP},
+	{
+		type: typeof localMessages.COSMETICS_SET
+		appearance: Appearance
+	},
+	{type: typeof localMessages.COSMETIC_UPDATE; cosmetic: Cosmetic},
 ]
 
 /** A message used locally on the client to update global state */

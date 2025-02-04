@@ -15,6 +15,8 @@ import {
 	SlotComponent,
 } from 'common/components'
 import query, {ComponentQuery} from 'common/components/query'
+import EvilXCoin from 'common/cosmetics/coins/evilx'
+import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerEntity} from 'common/entities'
 import {GameModel, GameSettings} from 'common/models/game-model'
 import {SlotTypeT} from 'common/types/cards'
@@ -39,7 +41,7 @@ function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 			name: playerName,
 			minecraftName: playerName,
 			censoredName: playerName,
-			selectedCoinHead: 'creeper' as keyof typeof COINS,
+			appearance: defaultAppearance,
 		},
 		deck,
 	}
@@ -353,9 +355,8 @@ export function testBossFight(
 				name: 'Evil Xisuma',
 				censoredName: 'Evil Xisuma',
 				minecraftName: 'EvilXisuma',
-				selectedCoinHead: 'evilx',
+				appearance: {...defaultAppearance, coin: EvilXCoin},
 				disableDeckingOut: true,
-				selectedCoinHead: 'evilx',
 			},
 			deck: [EvilXisumaBoss],
 		},

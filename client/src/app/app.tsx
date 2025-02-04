@@ -28,6 +28,7 @@ import GameLanding from './main-menu/games-landing'
 import Statistics from './main-menu/statistics'
 import Settings from './main-menu/settings'
 import MatchMaking from './match-making'
+import Cosmetics from './main-menu/cosmetics'
 
 function App() {
 	const section = useRouter()
@@ -68,11 +69,13 @@ function App() {
 					return <Statistics setMenuSection={setMenuSection} />
 				case 'achievements':
 					return <Achievements setMenuSection={setMenuSection} />
+				case 'cosmetics':
+					return <Cosmetics setMenuSection={setMenuSection} />
 				case 'credits':
 					return <Credits setMenuSection={setMenuSection} />
 				case 'boss-landing':
 					return <BossLanding setMenuSection={setMenuSection} />
-				case 'game-landing':
+				case 'play-select':
 					return <GameLanding setMenuSection={setMenuSection} />
 
 				case 'mainmenu':
