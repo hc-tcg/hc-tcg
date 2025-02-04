@@ -25,7 +25,7 @@ import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
 import PlaySelect from './main-menu/play-select'
 import HallOfFame from './main-menu/hall-of-fame'
-import Settings from './main-menu/settings'
+import More from './main-menu/settings'
 
 function App() {
 	const section = useRouter()
@@ -54,9 +54,9 @@ function App() {
 			switch (menuSection) {
 				case 'deck':
 					return <Deck setMenuSection={setMenuSection} />
+				case 'more':
+					return <More setMenuSection={setMenuSection} />
 				case 'settings':
-					return <Settings setMenuSection={setMenuSection} />
-				case 'game-settings':
 					return <GameSettings setMenuSection={setMenuSection} />
 				case 'data-settings':
 					return <DataSettings setMenuSection={setMenuSection} />

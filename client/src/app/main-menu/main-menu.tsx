@@ -38,6 +38,7 @@ function MainMenu({setMenuSection}: Props) {
 		dispatch({type: localMessages.LOGOUT})
 	}
 	const handleDeck = () => setMenuSection('deck')
+	const handleMore = () => setMenuSection('more')
 	const handleSettings = () => setMenuSection('settings')
 	const handleAchievements = () => setMenuSection('achievements')
 
@@ -111,7 +112,7 @@ function MainMenu({setMenuSection}: Props) {
 						<Button
 							variant="default"
 							id={css.more}
-							onClick={handleLogOut}
+							onClick={handleMore}
 							className={css.mainMenuButton}
 						>
 							More
