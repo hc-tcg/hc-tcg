@@ -35,6 +35,14 @@ import {getSession} from 'logic/session/session-selectors'
 import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './play-select.module.scss'
+import Accordion from 'components/accordion'
+import {
+	getGameCode,
+	getInvalidCode,
+	getSpectatorCode,
+	getStatus,
+} from 'logic/matchmaking/matchmaking-selectors'
+import {CopyIcon} from 'components/svgs'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -42,6 +50,11 @@ type Props = {
 
 function PlaySelect({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
+	const status = useSelector(getStatus)
+	const gameCode = useSelector(getGameCode)
+	const spectatorCode = useSelector(getSpectatorCode)
+	const invalidCode = useSelector(getInvalidCode)
+
 	const {playerDeck, playerName, minecraftName} = useSelector(getSession)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 	const [loadedDeck, setLoadedDeck] = useState<Deck | undefined>(
@@ -52,6 +65,8 @@ function PlaySelect({setMenuSection}: Props) {
 	const [mode, setMode] = useState<string | null>(null)
 	const selectedDeckRef = useRef<HTMLDivElement>(null)
 	const [queuing, setQueuing] = useState<boolean>(false)
+	const [lobbyCreated, setLobbyCreated] = useState<boolean>(false)
+	const inputRef = useRef<HTMLInputElement>(null)
 
 	const checkForValidation = (): boolean => {
 		if (!playerDeck || !loadedDeck) {
@@ -88,6 +103,53 @@ function PlaySelect({setMenuSection}: Props) {
 		if (!valid) return
 		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
 		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
+	}
+
+	const handleCodeSubmit = (code: string) => {
+		if (code.length !== 6) {
+			dispatch({
+				type: localMessages.TOAST_OPEN,
+				open: true,
+				title: 'Invalid Code!',
+				description: 'The code you entered is invalid.',
+				image: '/images/types/type-any.png',
+			})
+			return
+		}
+		if (invalidCode) {
+			dispatch({
+				type: localMessages.TOAST_OPEN,
+				open: true,
+				title: 'Invalid Code!',
+				description: 'The code you entered is invalid.',
+				image: '/images/types/type-any.png',
+			})
+			return
+		}
+		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
+		dispatch({type: localMessages.MATCHMAKING_CODE_SET, code})
+		setQueuing(true)
+	}
+
+	const handleCodeClick = () => {
+		if (!gameCode) return
+		navigator.clipboard.writeText(gameCode)
+	}
+
+	const handleSpectatorCodeClick = () => {
+		if (!spectatorCode) return
+		navigator.clipboard.writeText(spectatorCode)
+	}
+
+	const queingReason = (): string => {
+		if (status === 'in_game') return 'Starting game'
+		if (status === 'loading') return 'Loading'
+		if (status === 'private_lobby') return 'Loading'
+		if (status === 'random_waiting') return 'Waiting for opponent'
+		if (status === 'waiting_for_player') return 'Waiting for second player'
+		if (status === 'waiting_for_player_as_spectator')
+			return 'Waiting for game to begin'
+		return 'Loading'
 	}
 
 	const handleLeaveQueue = () => {
@@ -153,7 +215,7 @@ function PlaySelect({setMenuSection}: Props) {
 				>
 					<img src={getIconPath(deck)} alt={'deck-icon'} />
 				</div>
-				{deck.name}
+				<div className={css.deckName}>{deck.name}</div>
 			</div>
 		)
 	})
@@ -373,9 +435,14 @@ function PlaySelect({setMenuSection}: Props) {
 							<div className={css.buttonMenu}>
 								{!queuing ? (
 									<div className={css.publicConfirm}>
-										<p>Confirm your deck before entering a game.</p>
+										<p>
+											Confirm your deck before entering a game. If you don't
+											pick one here, your last selected deck will be used.
+										</p>
 										<div className={css.deckSelector}>
-											<div className={css.decksContainer}>{decksList}</div>
+											<Accordion header={'Deck Select'} defaultOpen={false}>
+												<div className={css.decksContainer}>{decksList}</div>
+											</Accordion>
 										</div>
 										<div className={css.spacer}></div>
 										<Button
@@ -392,7 +459,7 @@ function PlaySelect({setMenuSection}: Props) {
 											<div className={css.spinner}>
 												<Spinner />
 											</div>
-											<p>Waiting For Opponent</p>
+											<p>{queingReason()}</p>
 											<p>
 												Having trouble finding a match? Feel free to join our
 												discord!
@@ -410,13 +477,80 @@ function PlaySelect({setMenuSection}: Props) {
 							mode="private"
 							selectedMode={mode}
 							setSelectedMode={setMode}
+							onReturn={() => {
+								handleLeaveQueue()
+								setTimeout(() => setLobbyCreated(false), 200)
+							}}
 						>
 							<div className={css.buttonMenu}>
-								<p>Confirm your deck before entering a game.</p>
-								<div className={css.deckSelector}>
-									<div className={css.decksContainer}>{decksList}</div>
-								</div>
-								<Button onClick={handlePrivateGame}>Create Lobby</Button>
+								{!lobbyCreated && !queuing && (
+									<div className={css.publicConfirm}>
+										<p>
+											Confirm your deck before entering a game. If you don't
+											pick one here, your last selected deck will be used.
+										</p>
+										<div className={css.deckSelector}>
+											<Accordion header={'Deck Select'} defaultOpen={false}>
+												<div className={css.decksContainer}>{decksList}</div>
+											</Accordion>
+										</div>
+										<div className={css.spacer}></div>
+										<p>
+											Enter an opponent code given to you by the player you're
+											facing, enter a spectator game to view a match, or create
+											your own private lobby.
+										</p>
+										<div className={css.privateGameCodeArea}>
+											<input ref={inputRef} placeholder={'Enter code'}></input>
+											<Button
+												onClick={() => {
+													if (inputRef.current)
+														handleCodeSubmit(inputRef.current.value)
+												}}
+												variant="primary"
+											>
+												Enter Game
+											</Button>
+										</div>
+										<Button
+											className={css.publicJoinButton}
+											onClick={() => {
+												setLobbyCreated(true)
+												handlePrivateGame()
+											}}
+											variant="primary"
+										>
+											Create Lobby
+										</Button>
+									</div>
+								)}
+								{lobbyCreated && (
+									<div className={css.queueMenu}>
+										<div>
+											<p>Opponent Code</p>
+											<div className={css.code} onClick={handleCodeClick}>
+												<CopyIcon /> {gameCode}
+											</div>
+											<p>Spectator Code</p>
+											<div
+												className={css.code}
+												onClick={handleSpectatorCodeClick}
+											>
+												<CopyIcon /> {spectatorCode}
+											</div>
+										</div>
+									</div>
+								)}
+								{queuing && (
+									<div className={css.queueMenu}>
+										<div>
+											<div className={css.spinner}>
+												<Spinner />
+											</div>
+											<p>{queingReason()}</p>
+										</div>
+									</div>
+								)}
 							</div>
 						</HermitButton>
 						<HermitButton
@@ -430,9 +564,7 @@ function PlaySelect({setMenuSection}: Props) {
 						>
 							<div className={css.buttonMenu}>
 								<p>Confirm your deck before entering a game.</p>
-								<div className={css.deckSelector}>
-									<div className={css.decksContainer}>{decksList}</div>
-								</div>
+								<div className={css.decksContainer}>{decksList}</div>
 								<Button onClick={() => setEvilXOpen(true)}>Show Rules</Button>
 								<Button onClick={handleCreateBossGame}>Fight Evil X</Button>
 							</div>

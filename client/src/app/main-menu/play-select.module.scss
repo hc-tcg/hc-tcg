@@ -20,8 +20,8 @@ h3 {
 }
 
 .header {
-	margin-top: 4vh;
-	margin-bottom: 3vh;
+	margin-top: 2vh;
+	margin-bottom: 2vh;
 }
 
 .appearanceHeader {
@@ -52,10 +52,9 @@ h3 {
 
 .buttonMenu {
 	height: 100%;
-	width: 100%;
-	white-space: nowrap;
+	max-height: 100%;
+	width: calc(min(max(45vw, 70vh), 80vw) - 16vw);
 	color: white;
-	background-color: rgba(0, 0, 0, 0.7);
 
 	.publicConfirm {
 		height: 100%;
@@ -66,6 +65,7 @@ h3 {
 		justify-content: center;
 		align-items: center;
 		padding: 2vh;
+		background-color: rgba(0, 0, 0, 0.7);
 
 		.spacer {
 			flex-grow: 1;
@@ -92,9 +92,11 @@ h3 {
 	border-image-repeat: stretch stretch;
 	border-image-source: url("/images/game/border_frame.png");
 	border-style: solid;
-	background: linear-gradient(-90deg,
-			hsla(195deg, 53%, 60%, 35%),
-			hsla(195deg, 100%, 60%, 50%));
+	background: linear-gradient(
+		-90deg,
+		hsla(195deg, 53%, 60%, 35%),
+		hsla(195deg, 100%, 60%, 50%)
+	);
 
 	&:hover {
 		cursor: pointer;
@@ -110,7 +112,7 @@ h3 {
 	}
 
 	.playerName {
-		>h1 {
+		> h1 {
 			font-family: MinecraftBold;
 			filter: drop-shadow(0 2px 0 hsla(0deg, 0%, 0%, 35%));
 			text-overflow: ellipsis;
@@ -119,7 +121,7 @@ h3 {
 			overflow: hidden;
 		}
 
-		>p {
+		> p {
 			letter-spacing: 1px;
 			font-family: Minecrafter, sans-serif;
 			text-transform: uppercase;
@@ -135,7 +137,7 @@ h3 {
 		gap: 4px;
 		margin-left: auto;
 
-		>img {
+		> img {
 			$size: 32px;
 
 			height: $size;
@@ -154,12 +156,18 @@ h3 {
 	user-select: none;
 	cursor: pointer;
 	max-height: 4rem;
+	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
 
 	&:hover {
 		filter: brightness(1.2);
 		background-color: rgba(5, 5, 5, 0.5);
+	}
+
+	.deckName {
+		text-overflow: ellipsis;
+		overflow: hidden;
 	}
 }
 
@@ -192,7 +200,7 @@ h3 {
 	height: 2rem;
 	flex-shrink: 0;
 
-	>img {
+	> img {
 		height: 1.5rem;
 		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
 	}
@@ -246,11 +254,18 @@ h3 {
 }
 
 .decksContainer {
-	overflow-y: auto;
+	overflow-y: scroll;
 	display: grid;
-	grid-template-columns: 33% 33% 33%;
+	grid-template-columns: 1fr 1fr 1fr;
 	grid-auto-flow: row;
 	width: 100%;
+	height: min-content;
+	flex-grow: 1;
+	overflow: hidden;
+}
+
+.deckSelector {
+	overflow-y: scroll;
 }
 
 .bossRules {
@@ -273,7 +288,7 @@ h3 {
 	align-items: center;
 	justify-content: center;
 
-	>div {
+	> div {
 		background-color: rgba(0, 0, 0, 0.8);
 		padding: 1rem;
 		border-radius: 8px;
@@ -283,5 +298,21 @@ h3 {
 		justify-content: center;
 		gap: 1rem;
 		width: 50%;
+	}
+}
+
+.code {
+	font-size: 2vh;
+	cursor: pointer;
+}
+
+.privateGameCodeArea {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+
+	> input {
+		flex-grow: 1;
+		height: 2.7rem;
 	}
 }

@@ -1,14 +1,17 @@
 import classNames from 'classnames'
-import {ReactNode, useState} from 'react'
-import css from './accordion.module.css'
+import {ReactNode, useRef, useState} from 'react'
+import css from './accordion.module.scss'
 
 type Props = {
 	header: ReactNode
 	children: ReactNode
+	defaultOpen?: boolean
 }
 
-function Accordion({header, children}: Props) {
-	const [isOpen, setIsOpen] = useState<boolean>(true)
+function Accordion({header, children, defaultOpen}: Props) {
+	const [isOpen, setIsOpen] = useState<boolean>(
+		defaultOpen === undefined ? true : defaultOpen,
+	)
 
 	return (
 		<div className={css.accordion}>
