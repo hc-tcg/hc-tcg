@@ -215,7 +215,6 @@ function PlaySelect({setMenuSection}: Props) {
 		}
 	}, [handleKeyPress])
 
-	const order = ['public', 'private', 'boss', 'tutorial']
 	function handleKeyPress(e: any) {
 		if (e.key === 'Escape') {
 			if (mode === null) {
@@ -224,14 +223,6 @@ function PlaySelect({setMenuSection}: Props) {
 			}
 			if (queuing) handleLeaveQueue()
 			setMode(null)
-		}
-		if (e.key == 'Tab') {
-			if (!mode) {
-				setMode('public')
-				return
-			}
-			const currentModeIndex = order.findIndex((i) => i === mode)
-			setMode(order[(currentModeIndex + 1) % order.length])
 		}
 	}
 
@@ -467,7 +458,7 @@ function PlaySelect({setMenuSection}: Props) {
 						</HermitButton>
 					</div>
 				</div>
-				<h3 className={css.appearanceHeader}>Ingame Appearance</h3>
+				<h3 className={css.appearanceHeader}>In-game Appearance</h3>
 				<p className={css.clickToChange}>
 					<i>Click to change</i>
 				</p>
