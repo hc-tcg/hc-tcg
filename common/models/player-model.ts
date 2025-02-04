@@ -4,6 +4,8 @@ import {COINS} from '../coins'
 import {AchievementProgress} from '../types/achievements'
 import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
+import {Appearance} from '../cosmetics/types'
+import {defaultAppearance} from '../cosmetics/default'
 
 export type PlayerId = string & {__player_id: never}
 
@@ -14,11 +16,11 @@ export class PlayerModel {
 	public name: string
 	public minecraftName: string
 	public censoredName: string
-	public selectedCoinHead: keyof typeof COINS
 	public socket: Socket
 	public uuid: string
 	public authenticated: boolean
 	public achievementProgress: AchievementProgress
+	public appearance: Appearance
 
 	constructor(playerName: string, minecraftName: string, socket: Socket) {
 		this.internalId = Math.random().toString() as PlayerId
@@ -28,12 +30,12 @@ export class PlayerModel {
 
 		this.name = playerName
 		this.minecraftName = minecraftName
-		this.selectedCoinHead = 'creeper'
 		this.censoredName = censorString(playerName)
 		this.socket = socket
 		this.uuid = ''
 		this.authenticated = false
 		this.achievementProgress = {}
+		this.appearance = {...defaultAppearance}
 	}
 
 	public get id() {
