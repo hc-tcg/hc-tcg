@@ -548,29 +548,31 @@ function PlaySelect({setMenuSection}: Props) {
 							setSelectedMode={setMode}
 						>
 							<div className={css.buttonMenu}>
-								<p>Confirm your deck before entering a game.</p>
-								<div className={css.decksContainer}>{decksList}</div>
-								<Button onClick={() => setEvilXOpen(true)}>Show Rules</Button>
-								<Button onClick={handleCreateBossGame}>Fight Evil X</Button>
-							</div>
-						</HermitButton>
-						<HermitButton
-							image={'geminitay'}
-							backgroundImage={'gamemodes/tutorial'}
-							title={'Tutorial'}
-							description={
-								'Play a game against the computer to learn the rules of HC-TCG.'
-							}
-							mode="tutorial"
-							selectedMode={mode}
-							setSelectedMode={setMode}
-						>
-							<div className={css.buttonMenu}>
-								<p>
-									Join a game here to learn the rules of HC-TCG before facing
-									online opponents.
-								</p>
-								<Button onClick={handleJoinQueue}>Join Queue</Button>
+								<div className={css.publicConfirm}>
+									<p>
+										Confirm your deck before entering a game. If you don't pick
+										one here, your last selected deck will be used.
+									</p>
+									<div className={css.deckSelector}>
+										<Accordion header={'Deck Select'} defaultOpen={false}>
+											<div className={css.decksContainer}>{decksList}</div>
+										</Accordion>
+									</div>
+									<div className={css.spacer}></div>
+									<Button
+										className={css.publicJoinButton}
+										onClick={() => setEvilXOpen(true)}
+									>
+										Show Rules
+									</Button>
+									<Button
+										className={css.publicJoinButton}
+										variant={'primary'}
+										onClick={handleCreateBossGame}
+									>
+										Fight Evil X
+									</Button>
+								</div>
 							</div>
 						</HermitButton>
 					</div>
