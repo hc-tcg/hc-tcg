@@ -16,6 +16,7 @@ export async function loadUpdates(): Promise<Array<Update> | null> {
 			tag: release.tag_name,
 			description: release.body,
 			link: release.html_url,
+			timestamp: new Date(release.created_at).valueOf(),
 		})
 	}
 
