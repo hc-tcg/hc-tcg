@@ -31,7 +31,7 @@
 	margin-top: auto;
 	display: flex;
 	flex-wrap: wrap;
-	gap: .5vh;
+	gap: 0.5vh;
 	overflow-y: scroll;
 }
 
@@ -69,8 +69,14 @@
 	opacity: 50%;
 }
 
-.appearanceContainer {
+.appearance {
 	width: 80%;
+	margin: 4rem;
+	align-self: center;
+}
+
+.appearanceContainer {
+	width: 100%;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -84,9 +90,11 @@
 	border-image-repeat: stretch stretch;
 	border-image-source: url("/images/cosmetics/border/blue.png");
 	border-style: solid;
-	background: linear-gradient(-90deg,
-			hsla(195deg, 53%, 60%, 35%),
-			hsla(195deg, 100%, 60%, 50%));
+	background: linear-gradient(
+		-90deg,
+		hsla(195deg, 53%, 60%, 35%),
+		hsla(195deg, 100%, 60%, 50%)
+	);
 	background-size: cover;
 
 	.playerHead {
@@ -98,7 +106,7 @@
 	}
 
 	.playerName {
-		>h1 {
+		> h1 {
 			font-family: MinecraftBold;
 			filter: drop-shadow(0 2px 0 hsla(0deg, 0%, 0%, 35%));
 			text-overflow: ellipsis;
@@ -107,7 +115,7 @@
 			overflow: hidden;
 		}
 
-		>p {
+		> p {
 			letter-spacing: 1px;
 			font-family: Minecrafter, sans-serif;
 			text-transform: uppercase;
@@ -123,7 +131,7 @@
 		gap: 4px;
 		margin-left: auto;
 
-		>img {
+		> img {
 			$size: 32px;
 
 			height: $size;

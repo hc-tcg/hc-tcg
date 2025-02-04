@@ -43,6 +43,7 @@ import {getSession} from 'logic/session/session-selectors'
 import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './play-select.module.scss'
+import {CosmeticPreview} from './cosmetics'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -54,8 +55,7 @@ function PlaySelect({setMenuSection}: Props) {
 	const gameCode = useSelector(getGameCode)
 	const spectatorCode = useSelector(getSpectatorCode)
 
-	const {playerDeck, playerName, minecraftName, newPlayer} =
-		useSelector(getSession)
+	const {playerDeck, playerName, newPlayer} = useSelector(getSession)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 	const [loadedDeck, setLoadedDeck] = useState<Deck | undefined>(
 		databaseInfo?.decks.find((deck) => deck.code === playerDeck),
@@ -273,25 +273,6 @@ function PlaySelect({setMenuSection}: Props) {
 			if (status) handleLeaveQueue()
 			setMode(null)
 		}
-	}
-
-	const health = (lives: number) => {
-		const hearts = new Array(3).fill(null).map((_, index) => {
-			const heartImg =
-				lives > index
-					? '/images/game/heart_full.png'
-					: '/images/game/heart_empty.png'
-			return (
-				<img
-					key={index}
-					className={css.heart}
-					src={heartImg}
-					width="32"
-					height="32"
-				/>
-			)
-		})
-		return hearts
 	}
 
 	let header = 'Select a game type:'
@@ -600,18 +581,11 @@ function PlaySelect({setMenuSection}: Props) {
 						<p className={css.clickToChange}>
 							<i>Click to change</i>
 						</p>
-						<div className={css.appearanceContainer}>
-							<img
-								className={css.playerHead}
-								src={`https://mc-heads.net/head/${minecraftName}/right`}
-								alt="player head"
-							/>
-							<div className={css.playerName}>
-								<h1>{playerName}</h1>
-								<p className={css.title}>No title</p>
-							</div>
-
-							<div className={css.health}>{health(3)}</div>
+						<div
+							className={css.appearance}
+							onClick={() => setMenuSection('cosmetics')}
+						>
+							<CosmeticPreview />
 						</div>
 					</div>
 				</div>
