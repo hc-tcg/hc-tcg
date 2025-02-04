@@ -53,7 +53,6 @@ function PlaySelect({setMenuSection}: Props) {
 	const status = useSelector(getStatus)
 	const gameCode = useSelector(getGameCode)
 	const spectatorCode = useSelector(getSpectatorCode)
-	const invalidCode = useSelector(getInvalidCode)
 
 	const {playerDeck, playerName, minecraftName} = useSelector(getSession)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
@@ -64,7 +63,6 @@ function PlaySelect({setMenuSection}: Props) {
 	const decks = databaseInfo?.decks
 	const [mode, setMode] = useState<string | null>(null)
 	const selectedDeckRef = useRef<HTMLDivElement>(null)
-	const [queuing, setQueuing] = useState<boolean>(false)
 	const [lobbyCreated, setLobbyCreated] = useState<boolean>(false)
 	const inputRef = useRef<HTMLInputElement>(null)
 
@@ -94,7 +92,6 @@ function PlaySelect({setMenuSection}: Props) {
 	const handleJoinQueue = () => {
 		const valid = checkForValidation()
 		if (!valid) return
-		setQueuing(true)
 		dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
 		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
 	}
@@ -116,19 +113,8 @@ function PlaySelect({setMenuSection}: Props) {
 			})
 			return
 		}
-		if (invalidCode) {
-			dispatch({
-				type: localMessages.TOAST_OPEN,
-				open: true,
-				title: 'Invalid Code!',
-				description: 'The code you entered is invalid.',
-				image: '/images/types/type-any.png',
-			})
-			return
-		}
 		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
 		dispatch({type: localMessages.MATCHMAKING_CODE_SET, code})
-		setQueuing(true)
 	}
 
 	const handleCodeClick = () => {
@@ -154,7 +140,6 @@ function PlaySelect({setMenuSection}: Props) {
 
 	const handleLeaveQueue = () => {
 		dispatch({type: localMessages.MATCHMAKING_LEAVE})
-		setTimeout(() => setQueuing(false), 200)
 	}
 
 	const playSwitchDeckSFX = () => {
@@ -283,7 +268,7 @@ function PlaySelect({setMenuSection}: Props) {
 				setMenuSection('main-menu')
 				return
 			}
-			if (queuing) handleLeaveQueue()
+			if (status) handleLeaveQueue()
 			setMode(null)
 		}
 	}
@@ -410,7 +395,7 @@ function PlaySelect({setMenuSection}: Props) {
 			</Modal>
 			<MenuLayout
 				back={() => {
-					if (queuing) handleLeaveQueue()
+					if (status) handleLeaveQueue()
 					setMenuSection('main-menu')
 				}}
 				title="Play"
@@ -433,7 +418,7 @@ function PlaySelect({setMenuSection}: Props) {
 							onReturn={handleLeaveQueue}
 						>
 							<div className={css.buttonMenu}>
-								{!queuing ? (
+								{!status ? (
 									<div className={css.publicConfirm}>
 										<p>
 											Confirm your deck before entering a game. If you don't
@@ -483,7 +468,7 @@ function PlaySelect({setMenuSection}: Props) {
 							}}
 						>
 							<div className={css.buttonMenu}>
-								{!lobbyCreated && !queuing && (
+								{!lobbyCreated && !status && (
 									<div className={css.publicConfirm}>
 										<p>
 											Confirm your deck before entering a game. If you don't
@@ -541,7 +526,7 @@ function PlaySelect({setMenuSection}: Props) {
 										</div>
 									</div>
 								)}
-								{queuing && (
+								{status && (
 									<div className={css.queueMenu}>
 										<div>
 											<div className={css.spinner}>

@@ -48,7 +48,6 @@ export const localMessages = messages('clientLocalMessages', {
 	MATCHMAKING_CODE_RECIEVED: null,
 	MATCHMAKING_LEAVE: null,
 	MATCHMAKING_CODE_SET: null,
-	MATCHMAKING_CODE_INVALID: null,
 	MATCHMAKING_WAITING_FOR_PLAYER: null,
 	MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR: null,
 	GAME_LOCAL_STATE_RECIEVED: null,
@@ -141,7 +140,6 @@ type Messages = [
 		type: typeof localMessages.MATCHMAKING_CODE_SET
 		code: string
 	},
-	{type: typeof localMessages.MATCHMAKING_CODE_INVALID},
 	{type: typeof localMessages.MATCHMAKING_WAITING_FOR_PLAYER},
 	{type: typeof localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR},
 	{type: typeof localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY},

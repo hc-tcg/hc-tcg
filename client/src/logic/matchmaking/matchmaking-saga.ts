@@ -207,7 +207,14 @@ function* privateLobbySaga() {
 
 				if (result.invalidCode) {
 					yield* put<LocalMessage>({
-						type: localMessages.MATCHMAKING_CODE_INVALID,
+						type: localMessages.TOAST_OPEN,
+						open: true,
+						title: 'Invalid Code!',
+						description: 'The code you entered is invalid.',
+						image: '/images/types/type-any.png',
+					})
+					yield* put<LocalMessage>({
+						type: localMessages.MATCHMAKING_LEAVE,
 					})
 					continue
 				} else if (result.createPrivateGameSuccess) {
