@@ -1,10 +1,10 @@
 import {CARDS_LIST} from 'common/cards'
 import {PlayerModel} from 'common/models/player-model'
+import {Update} from 'common/types/server-requests'
 import {Database} from 'db/db'
 import dotenv from 'dotenv'
 import {GameController} from 'game-controller'
 import {Hook} from '../../common/types/hooks'
-import {Update} from 'common/types/server-requests'
 
 export class RootModel {
 	public players: Record<string, PlayerModel> = {}
