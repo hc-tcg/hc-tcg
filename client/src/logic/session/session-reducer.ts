@@ -39,7 +39,7 @@ const defaultState: SessionState = {
 	connected: false,
 	tooltip: null,
 	toast: [],
-	updates: {},
+	updates: [],
 	newPlayer: false,
 }
 
