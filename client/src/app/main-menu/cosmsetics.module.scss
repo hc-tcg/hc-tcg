@@ -1,0 +1,133 @@
+.cosmeticsLayout {
+	padding: 1vh;
+	display: block;
+	display: flex;
+	flex-direction: column;
+
+	h2 {
+		font-size: 3vh;
+		color: var(--text-light);
+		margin-bottom: 2vh;
+		margin-top: 2vh;
+		filter: drop-shadow(1px 1px 0 var(--text-dark));
+	}
+}
+
+.cosmeticPreview {
+	flex-grow: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.itemSelector {
+	flex-grow: 1;
+	border: 2px black solid;
+	background-color: var(--gray-700);
+	padding: 1vh;
+}
+
+.cosmetics {
+	margin-top: auto;
+	display: flex;
+	flex-wrap: wrap;
+	gap: .5vh;
+	overflow-y: scroll;
+}
+
+.cosmeticItem {
+	height: 12vh;
+	width: 12vh;
+	padding: 1vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	flex-direction: column;
+	color: var(--text-light);
+
+	border: 5px var(--gray-700) solid;
+	border-radius: 1vh;
+
+	background-color: var(--gray-600);
+}
+
+.unlocked {
+	&:hover {
+		background-color: var(--gray-400);
+	}
+}
+
+.selected {
+	background-color: var(--gray-500);
+}
+
+.lockOverlay {
+	position: absolute;
+	width: 10vh;
+	height: 10vh;
+	opacity: 50%;
+}
+
+.appearanceContainer {
+	width: 80%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 1vh;
+	font-weight: bold;
+	color: var(--text-light);
+	padding: 4px 16px;
+	border: 4px solid var(--gray-900);
+	border-image-slice: 30;
+	border-image-width: 20px;
+	border-image-repeat: stretch stretch;
+	border-image-source: url("/images/cosmetics/border/blue.png");
+	border-style: solid;
+	background: linear-gradient(-90deg,
+			hsla(195deg, 53%, 60%, 35%),
+			hsla(195deg, 100%, 60%, 50%));
+	background-size: cover;
+
+	.playerHead {
+		background: var(--gray-800);
+		clip-path: polygon(50% 0, 100% 20%, 100% 80%, 50% 100%, 0 80%, 0 20%);
+		height: 52px;
+		aspect-ratio: 20/21;
+		padding: 5px;
+	}
+
+	.playerName {
+		>h1 {
+			font-family: MinecraftBold;
+			filter: drop-shadow(0 2px 0 hsla(0deg, 0%, 0%, 35%));
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			width: 40ch;
+			overflow: hidden;
+		}
+
+		>p {
+			letter-spacing: 1px;
+			font-family: Minecrafter, sans-serif;
+			text-transform: uppercase;
+			font-size: 10px;
+			font-weight: normal;
+			color: var(--gray-200);
+		}
+	}
+
+	.health {
+		display: flex;
+		flex-direction: row-reverse;
+		gap: 4px;
+		margin-left: auto;
+
+		>img {
+			$size: 32px;
+
+			height: $size;
+			width: $size;
+		}
+	}
+}

@@ -43,6 +43,7 @@ export const ACHIEVEMENTS: Record<string | number, Achievement> =
 	ACHIEVEMENTS_LIST.reduce(
 		(result: Record<string | number, Achievement>, card) => {
 			result[card.numericId] = card
+			result[card.id] = card
 			return result
 		},
 		{},

@@ -8,10 +8,14 @@ import {LocalGameState} from 'common/types/game-state'
 import {GameController} from 'game-controller'
 import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
 import {getGame} from 'selectors'
-import {delay, put, race, select, take} from 'typed-redux-saga'
+import {cps, delay, put, race, select, take} from 'typed-redux-saga'
 import {getLocalGameState} from 'utils/state-gen'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
+import {COSMETICS} from 'common/cosmetics'
+import {ACHIEVEMENTS} from 'common/achievements'
+import {Background, Border, Coin, Heart, Title} from 'common/cosmetics/types'
+import {setAppearance} from 'db/db-reciever'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 
@@ -154,5 +158,44 @@ export function* loadUpdatesSaga(action: any) {
 	broadcast([player], {
 		type: serverMessages.LOAD_UPDATES,
 		updates: root.updates,
+	})
+}
+
+export function* updateCosmeticSaga(
+	action: RecievedClientMessage<typeof clientMessages.SET_COSMETIC>,
+) {
+	const player = root.players[action.playerId]
+	const cosmetic = COSMETICS[action.payload.cosmetic]
+	if (!player) return
+	let isUnlocked = true
+	if (cosmetic?.requires && ACHIEVEMENTS[cosmetic?.requires]) {
+		const achievement = ACHIEVEMENTS[cosmetic?.requires]
+		isUnlocked =
+			!!player.achievementProgress[achievement?.numericId]?.completionTime
+	}
+	if (!cosmetic || !isUnlocked) {
+		broadcast([player], {type: serverMessages.COSMETICS_INVALID})
+	}
+	switch (cosmetic.type) {
+		case 'title':
+			player.appearance.title = cosmetic as Title
+			break
+		case 'coin':
+			player.appearance.coin = cosmetic as Coin
+			break
+		case 'heart':
+			player.appearance.heart = cosmetic as Heart
+			break
+		case 'background':
+			player.appearance.background = cosmetic as Background
+			break
+		case 'border':
+			player.appearance.border = cosmetic as Border
+			break
+	}
+	yield* setAppearance(player)
+	broadcast([player], {
+		type: serverMessages.COSMETICS_UPDATE,
+		appearance: player.appearance,
 	})
 }

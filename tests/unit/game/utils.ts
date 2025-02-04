@@ -14,6 +14,7 @@ import {
 	SlotComponent,
 } from 'common/components'
 import query, {ComponentQuery} from 'common/components/query'
+import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerEntity} from 'common/entities'
 import {GameModel, GameSettings} from 'common/models/game-model'
 import {SlotTypeT} from 'common/types/cards'
@@ -31,6 +32,7 @@ import {LocalMessage, localMessages} from 'server/messages'
 import gameSaga, {figureOutGameResult} from 'server/routines/game'
 import {getLocalCard} from 'server/utils/state-gen'
 import {call, put, race} from 'typed-redux-saga'
+import EvilXCoin from 'common/cosmetics/coins/evilx'
 
 function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 	return {
@@ -38,7 +40,7 @@ function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 			name: playerName,
 			minecraftName: playerName,
 			censoredName: playerName,
-			selectedCoinHead: 'creeper',
+			appearance: defaultAppearance,
 		},
 		deck,
 	}
@@ -352,7 +354,7 @@ export function testBossFight(
 				name: 'Evil Xisuma',
 				censoredName: 'Evil Xisuma',
 				minecraftName: 'EvilXisuma',
-				selectedCoinHead: 'evilx',
+				appearance: {...defaultAppearance, coin: EvilXCoin},
 				disableDeckingOut: true,
 			},
 			deck: [EvilXisumaBoss],
