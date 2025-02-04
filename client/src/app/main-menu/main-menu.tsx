@@ -86,7 +86,7 @@ function MainMenu({setMenuSection}: Props) {
 
 	let showUpdateModal =
 		!latestUpdateView ||
-		(updates.length && updates[0].timestamp < parseInt(latestUpdateView))
+		(updates.length && updates[0].timestamp > parseInt(latestUpdateView))
 
 	return (
 		<>

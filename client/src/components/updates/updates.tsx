@@ -21,7 +21,6 @@ export function UpdatesModal({onClose}: UpdatesModalProps) {
 		})
 	})
 
-	console.log(updates)
 	return (
 		<Modal setOpen title="Latest Updates" onClose={onClose} disableCloseButton>
 			<Modal.Description>
