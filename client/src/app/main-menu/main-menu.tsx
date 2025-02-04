@@ -90,7 +90,7 @@ function MainMenu({setMenuSection}: Props) {
 
 	return (
 		<>
-			{!latestUpdateView || showUpdateModal ? (
+			{showUpdateModal ? (
 				debugOptions.showUpdatesModal !== false &&
 				updatesOpen && <UpdatesModal onClose={() => setUpdatesOpen(false)} />
 			) : (
