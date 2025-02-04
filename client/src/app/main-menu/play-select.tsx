@@ -38,7 +38,6 @@ import css from './play-select.module.scss'
 import Accordion from 'components/accordion'
 import {
 	getGameCode,
-	getInvalidCode,
 	getSpectatorCode,
 	getStatus,
 } from 'logic/matchmaking/matchmaking-selectors'
@@ -127,7 +126,7 @@ function PlaySelect({setMenuSection}: Props) {
 		navigator.clipboard.writeText(spectatorCode)
 	}
 
-	const queingReason = (): string => {
+	const queuingReason = (): string => {
 		if (status === 'in_game') return 'Starting game'
 		if (status === 'loading') return 'Loading'
 		if (status === 'private_lobby') return 'Loading'
@@ -139,7 +138,7 @@ function PlaySelect({setMenuSection}: Props) {
 	}
 
 	const handleLeaveQueue = () => {
-		dispatch({type: localMessages.MATCHMAKING_LEAVE})
+		setTimeout(() => dispatch({type: localMessages.MATCHMAKING_LEAVE}), 200)
 	}
 
 	const playSwitchDeckSFX = () => {
@@ -444,7 +443,7 @@ function PlaySelect({setMenuSection}: Props) {
 											<div className={css.spinner}>
 												<Spinner />
 											</div>
-											<p>{queingReason()}</p>
+											<p>{queuingReason()}</p>
 											<p>
 												Having trouble finding a match? Feel free to join our
 												discord!
@@ -532,7 +531,7 @@ function PlaySelect({setMenuSection}: Props) {
 											<div className={css.spinner}>
 												<Spinner />
 											</div>
-											<p>{queingReason()}</p>
+											<p>{queuingReason()}</p>
 										</div>
 									</div>
 								)}
