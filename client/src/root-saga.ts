@@ -3,6 +3,7 @@ import localSettingsSaga from 'logic/local-settings/local-settings-saga'
 import matchmakingSaga from 'logic/matchmaking/matchmaking-saga'
 import {localMessages} from 'logic/messages'
 import {
+	cosmeticSaga,
 	databaseConnectionSaga,
 	databaseErrorSaga,
 	loginSaga,
@@ -31,6 +32,7 @@ function* appSaga(): SagaIterator {
 	yield fork(minecraftNameSaga)
 	yield fork(matchmakingSaga)
 	yield fork(updatesSaga)
+	yield fork(cosmeticSaga)
 }
 
 function* rootSaga(): SagaIterator {

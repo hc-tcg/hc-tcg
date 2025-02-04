@@ -1,0 +1,481 @@
+.bigHallOfFameArea {
+	width: 100vw;
+	height: 100vh;
+	right: 0px;
+	top: 0px;
+	position: absolute;
+	display: flex;
+}
+
+.mainHallOfFameArea {
+	width: 80%;
+	margin-left: 10%;
+	margin-right: 10%;
+	margin-top: 6vh;
+	margin-bottom: 1%;
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+}
+
+.hofSidebar {
+	width: 20%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.sidebarHeader {
+	height: 44px;
+}
+
+.hallOfFameTable {
+	background-color: #000;
+	color: var(--text-light);
+
+	tr {
+		color: black;
+		text-align: center;
+	}
+
+	tr:nth-child(odd) {
+		background-color: var(--gray-200);
+	}
+
+	tr:nth-child(even) {
+		background-color: var(--gray-400);
+	}
+
+	tr:first-child {
+		background-color: black;
+		color: white;
+	}
+
+	tr th {
+		width: 10%;
+	}
+
+	tr td button {
+		margin-top: 0.2vh;
+		margin-bottom: 0.2vh;
+	}
+}
+
+.hallOfFameTableGrid {
+	background-color: #000;
+	color: var(--text-light);
+	margin-bottom: -2px;
+
+	tr {
+		color: black;
+		text-align: center;
+	}
+
+	tr:nth-child(odd) {
+		background-color: var(--gray-200);
+	}
+
+	tr:nth-child(even) {
+		background-color: var(--gray-400);
+	}
+
+	tr > td {
+		width: 10%;
+	}
+
+	tr > th {
+		color: var(--text-light);
+		background-color: black;
+		border-bottom: 1px white dashed;
+	}
+}
+
+.hallOfFameTableNoHeader {
+	background-color: #000;
+	color: var(--text-light);
+	margin-bottom: -2px;
+	width: 100%;
+
+	th {
+		font-weight: normal;
+	}
+
+	tr {
+		color: black;
+		text-align: center;
+	}
+
+	tr:nth-child(odd) {
+		background-color: var(--gray-200);
+	}
+
+	tr:nth-child(even) {
+		background-color: var(--gray-400);
+	}
+
+	td {
+		width: 80%;
+	}
+}
+
+.hallOfFameTable > tr > th {
+	position: sticky;
+	top: 2px;
+	background-color: black;
+}
+
+.hallOfFameTable > tr > th::before {
+	content: "";
+	background-color: black;
+	height: calc(1.5rem + 1px);
+	width: 100%;
+	position: absolute;
+	top: -3px;
+	left: 0px;
+	z-index: -1;
+}
+
+.actionColumn {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 10px;
+}
+
+.fullLeftArea {
+	width: 90%;
+	overflow-x: hidden;
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.tableArea {
+	width: 100%;
+	flex-grow: 1;
+	overflow-y: scroll;
+	border: 2px black solid;
+	border-top: 0px;
+	background-color: var(--gray-700);
+}
+
+.dropdownButton {
+	place-content: center;
+	display: flex;
+	align-items: center;
+	justify-items: center;
+	background-color: var(--gray-400);
+	border-radius: 6px;
+	width: 2rem;
+	height: 2rem;
+	flex-shrink: 0;
+	cursor: pointer;
+
+	> img {
+		height: 1.5rem;
+		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
+	}
+
+	&:hover {
+		background: var(--gray-600);
+		filter: brightness(1.1);
+	}
+}
+
+.hofOptions {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	color: var(--text-light);
+	padding: 5px;
+	background-color: var(--gray-700);
+	border: 2px black solid;
+	flex-grow: 1;
+}
+
+.loadingIndicator {
+	background-color: black;
+	color: var(--text-light);
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	display: flex;
+	padding: 1rem;
+	gap: 1rem;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.2rem;
+}
+
+.tabs {
+	color: var(--text-light);
+	font-family: Minecrafter;
+	font-size: 0.9rem;
+	height: 45px;
+	min-height: 5%;
+	width: 100%;
+	align-items: center;
+	display: flex;
+	justify-content: center;
+}
+
+.afterTabs {
+	flex-grow: 1;
+	height: 100%;
+	border-bottom: 2px black solid;
+}
+
+.hofCheckBox {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
+}
+
+.hofOption {
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	width: 100%;
+}
+
+.barContainer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+}
+
+.typeGraph {
+	background-color: var(--gray-700);
+	color: white;
+	margin: 1vh;
+	width: 100%;
+}
+
+.showOnMobile {
+	display: none;
+}
+
+.tab {
+	text-align: center;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	height: 100%;
+	width: 180px;
+	background-color: var(--gray-700);
+	box-shadow: inset 0 -4px 1px var(--gray-700),
+		inset 1px 1px 0 1px var(--gray-400),
+		inset -1px 0px 0 1px var(--gray-500);
+
+	border: 2px black solid;
+	border-bottom: 0px;
+
+	&.deselected {
+		cursor: pointer;
+		background-color: var(--gray-900);
+		box-shadow: inset 0 -4px 1px black, inset 1px 1px 0 1px var(--gray-600),
+			inset -1px -5px 0 1px var(--gray-600);
+	}
+}
+
+.gameHistoryBox {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	background-color: black;
+	color: white;
+	gap: 1rem;
+	margin: 2rem;
+}
+
+.playerHead {
+	height: 10vh;
+}
+
+.winAndLoss {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+	line-height: 2rem;
+
+	> div {
+		border-radius: 50%;
+		width: 2rem;
+		height: 2rem;
+		text-align: center;
+
+		&.win {
+			background-color: #63b45c;
+		}
+
+		&.loss {
+			background-color: #da5558;
+		}
+	}
+}
+
+.stats {
+	display: flex;
+	flex-direction: column;
+	margin-left: 12.5%;
+	margin-right: 12.5%;
+	width: 75%;
+	padding-top: 2rem;
+	padding-bottom: 0rem;
+	color: white;
+	font-size: 1.1rem;
+
+	div:nth-child(odd) {
+		background-color: var(--gray-700);
+	}
+
+	div:nth-child(even) {
+		background-color: var(--gray-600);
+	}
+}
+
+.filters {
+	margin-left: 12.5%;
+	margin-right: 12.5%;
+	width: 75%;
+	display: flex;
+	flex-direction: column;
+	color: white;
+	font-size: 1.1rem;
+	padding: 0.5rem;
+	padding-top: 2rem;
+}
+
+.stat {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	padding: 0.5rem;
+
+	> p:not(.statName) {
+		min-width: 10%;
+		text-align: center;
+	}
+}
+
+.statName {
+	flex-grow: 1;
+}
+
+.wtlBar {
+	height: 50px;
+	line-height: 50px;
+	background-color: blue;
+	display: flex;
+	flex-direction: row;
+	border: 2px black solid;
+	width: 100%;
+	font-weight: bold;
+
+	.win {
+		height: 100%;
+		padding-left: 1rem;
+		color: #325a2f;
+		background: linear-gradient(
+			0deg,
+			#325a2f 15%,
+			#63b45c 15% 90%,
+			rgb(147, 207, 141) 90%
+		);
+	}
+
+	.loss {
+		height: 100%;
+		padding-right: 1rem;
+		text-align: right;
+		color: #72282a;
+		background: linear-gradient(
+			0deg,
+			#72282a 15%,
+			#da5558 15% 90%,
+			#eb9192 90%
+		);
+	}
+
+	.tie {
+		height: 100%;
+		background: linear-gradient(
+			0deg,
+			#396079 15%,
+			#6fabd0 15% 90%,
+			#97d6fd 90%
+		);
+	}
+}
+
+// Mobile
+@media (max-width: 720px) {
+	.bigHallOfFameArea {
+		width: 100%;
+		height: 100%;
+		left: 0px;
+		top: 0px;
+		position: absolute;
+		display: flex;
+		overflow: hidden;
+	}
+
+	.mainHallOfFameArea {
+		margin-top: 10%;
+		margin-left: 2%;
+		margin-right: 2%;
+		margin-bottom: 2%;
+		gap: 0px;
+		height: auto;
+		width: auto;
+		border: 0px;
+		height: 93%;
+		width: 96%;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.hofSidebar {
+		width: 96vw;
+		height: 85vh;
+		position: absolute;
+		top: 14vh;
+		border: 2px black solid;
+	}
+
+	.showOnMobile {
+		display: flex;
+	}
+
+	.hideOnMobile {
+		display: none;
+	}
+
+	.tabs {
+		height: 10%;
+
+		&.mobileHeader {
+			display: none;
+		}
+	}
+
+	.tableArea {
+		height: 100%;
+		width: 100%;
+		overflow: scroll;
+	}
+
+	.actionColumn {
+		flex-direction: column;
+	}
+
+	.fullLeftArea {
+		width: 100%;
+	}
+}

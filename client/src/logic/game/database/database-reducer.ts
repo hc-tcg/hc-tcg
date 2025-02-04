@@ -1,17 +1,21 @@
 import {AchievementProgress} from 'common/types/achievements'
-import {Stats} from 'common/types/database'
+import {GameHistory, PlayerStats} from 'common/types/database'
 import {ApiDeck, Deck, Tag} from 'common/types/deck'
+import {Appearance} from 'common/cosmetics/types'
 import {LocalMessage, localMessages} from 'logic/messages'
+import {defaultAppearance} from 'common/cosmetics/default'
 
 export type DatabaseInfo = {
 	userId: string | null
 	secret: string | null
 	decks: Array<Deck>
+	gameHistory: Array<GameHistory>
 	currentImport: ApiDeck | null
 	tags: Array<Tag>
 	achievements: AchievementProgress
-	stats: Stats
+	stats: PlayerStats
 	noConnection: boolean
+	appearance: Appearance
 }
 
 export type LocalDatabase = {
@@ -23,6 +27,7 @@ const defaultInfo: DatabaseInfo = {
 	userId: null,
 	secret: null,
 	decks: [],
+	gameHistory: [],
 	tags: [],
 	achievements: {},
 	stats: {
@@ -32,8 +37,11 @@ const defaultInfo: DatabaseInfo = {
 		ties: 0,
 		forfeitWins: 0,
 		forfeitLosses: 0,
+		topCards: [],
+		uniquePlayersEncountered: 0,
 	},
 	currentImport: null,
+	appearance: defaultAppearance,
 }
 
 const getDatabaseInfo = (): DatabaseInfo => {
@@ -63,6 +71,8 @@ const databaseReducer = (
 			return {...state, userId: action.userId, secret: action.secret}
 		case localMessages.RESET_ID_AND_SECRET:
 			return {...state, userId: null, secret: null}
+		case localMessages.COSMETICS_SET:
+			return {...state, appearance: action.appearance}
 		case localMessages.DATABASE_SET:
 			return {...state, [action.data.key]: action.data.value}
 		default:

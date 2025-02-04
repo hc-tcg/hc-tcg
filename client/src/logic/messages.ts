@@ -23,6 +23,7 @@ import {
 	LocalSetting,
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
+import {Appearance, Cosmetic} from 'common/cosmetics/types'
 
 export const localMessages = messages('clientLocalMessages', {
 	SOCKET_CONNECTING: null,
@@ -44,6 +45,7 @@ export const localMessages = messages('clientLocalMessages', {
 	MATCHMAKING_QUEUE_JOIN: null,
 	MATCHMAKING_QUEUE_JOIN_FAILURE: null,
 	MATCHMAKING_BOSS_GAME_CREATE: null,
+	MATCHMAKING_REPLAY_GAME: null,
 	MATCHMAKING_PRIVATE_GAME_LOBBY: null,
 	MATCHMAKING_CODE_RECIEVED: null,
 	MATCHMAKING_LEAVE: null,
@@ -94,6 +96,8 @@ export const localMessages = messages('clientLocalMessages', {
 	NEW_PLAYER: null,
 	SHOW_TOOLTIP: null,
 	HIDE_TOOLTIP: null,
+	COSMETICS_SET: null,
+	COSMETIC_UPDATE: null,
 })
 
 type Messages = [
@@ -129,6 +133,10 @@ type Messages = [
 	{type: typeof localMessages.MINECRAFT_NAME_NEW; name: string},
 	{type: typeof localMessages.MATCHMAKING_QUEUE_JOIN},
 	{type: typeof localMessages.MATCHMAKING_BOSS_GAME_CREATE},
+	{
+		type: typeof localMessages.MATCHMAKING_REPLAY_GAME
+		id: number
+	},
 	{
 		type: typeof localMessages.MATCHMAKING_CODE_RECIEVED
 		gameCode: string
@@ -246,6 +254,11 @@ type Messages = [
 		tooltipWidth: number
 	},
 	{type: typeof localMessages.HIDE_TOOLTIP},
+	{
+		type: typeof localMessages.COSMETICS_SET
+		appearance: Appearance
+	},
+	{type: typeof localMessages.COSMETIC_UPDATE; cosmetic: Cosmetic},
 ]
 
 /** A message used locally on the client to update global state */

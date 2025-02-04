@@ -27,6 +27,7 @@ import {
 	cancelPrivateGame,
 	createBossGame,
 	createPrivateGame,
+	createReplayGame,
 	joinPrivateGame,
 	joinQueue,
 	leavePrivateQueue,
@@ -34,6 +35,7 @@ import {
 } from './matchmaking'
 import {
 	loadUpdatesSaga,
+	updateCosmeticSaga,
 	updateDeckSaga,
 	updateMinecraftNameSaga,
 } from './player'
@@ -82,6 +84,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.LEAVE_PRIVATE_QUEUE:
 			return yield* leavePrivateQueue(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.CREATE_REPLAY_GAME:
+			return yield* createReplayGame(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.CHAT_MESSAGE:
@@ -150,6 +156,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.GET_ACHIEVEMENTS:
 			return yield* getAchievements(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.SET_COSMETIC:
+			return yield* updateCosmeticSaga(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 	}

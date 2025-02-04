@@ -1,4 +1,12 @@
+import {ACHIEVEMENTS} from 'common/achievements'
 import {getStarterPack} from 'common/cards/starter-decks'
+import {BACKGROUNDS} from 'common/cosmetics/background'
+import {BORDERS} from 'common/cosmetics/borders'
+import {COINS} from 'common/cosmetics/coins'
+import {defaultAppearance} from 'common/cosmetics/default'
+import {HEARTS} from 'common/cosmetics/hearts'
+import {TITLES} from 'common/cosmetics/titles'
+import {Appearance} from 'common/cosmetics/types'
 import {PlayerId} from 'common/models/player-model'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
@@ -6,7 +14,11 @@ import {Deck} from 'common/types/deck'
 import {PlayerInfo} from 'common/types/server-requests'
 import {toLocalCardInstance} from 'common/utils/cards'
 import {generateDatabaseCode} from 'common/utils/database-codes'
-import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
+import {
+	getAchievements,
+	getAppearance,
+	getLocalDatabaseInfo,
+} from 'logic/game/database/database-selectors'
 import gameSaga from 'logic/game/game-saga'
 import {getMatchmaking} from 'logic/matchmaking/matchmaking-selectors'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
@@ -93,6 +105,22 @@ function* insertUser(socket: any) {
 			type: localMessages.SET_ID_AND_SECRET,
 			userId: userInfo.success.user.uuid,
 			secret: userInfo.success.user.secret,
+		})
+		const appearance: Appearance = {
+			title:
+				TITLES[userInfo.success.user.title || ''] || defaultAppearance.title,
+			coin: COINS[userInfo.success.user.coin || ''] || defaultAppearance.coin,
+			heart:
+				HEARTS[userInfo.success.user.heart || ''] || defaultAppearance.heart,
+			background:
+				BACKGROUNDS[userInfo.success.user.title || ''] ||
+				defaultAppearance.background,
+			border:
+				BORDERS[userInfo.success.user.title || ''] || defaultAppearance.border,
+		}
+		yield* put<LocalMessage>({
+			type: localMessages.COSMETICS_SET,
+			appearance: appearance,
 		})
 
 		if (localStorageDecks.length > 0) {
@@ -184,6 +212,13 @@ function* setupDeckData(socket: any) {
 		data: {
 			key: 'stats',
 			value: stats.stats,
+		},
+	})
+	yield put<LocalMessage>({
+		type: localMessages.DATABASE_SET,
+		data: {
+			key: 'gameHistory',
+			value: stats.gameHistory,
 		},
 	})
 }
@@ -370,6 +405,28 @@ export function* loginSaga() {
 			if (userInfo.success || userInfo.noConnection) {
 				yield* setupDeckData(socket)
 				yield* updateAchievements(socket)
+			}
+			if (userInfo.success) {
+				const appearance: Appearance = {
+					title:
+						TITLES[userInfo.success.user.title || ''] ||
+						defaultAppearance.title,
+					coin:
+						COINS[userInfo.success.user.coin || ''] || defaultAppearance.coin,
+					heart:
+						HEARTS[userInfo.success.user.heart || ''] ||
+						defaultAppearance.heart,
+					background:
+						BACKGROUNDS[userInfo.success.user.title || ''] ||
+						defaultAppearance.background,
+					border:
+						BORDERS[userInfo.success.user.title || ''] ||
+						defaultAppearance.border,
+				}
+				yield* put<LocalMessage>({
+					type: localMessages.COSMETICS_SET,
+					appearance: appearance,
+				})
 			}
 		}
 
@@ -631,4 +688,50 @@ export function* updatesSaga() {
 		type: localMessages.UPDATES_LOAD,
 		updates: result.updates,
 	})
+}
+
+export function* cosmeticSaga() {
+	yield* takeEvery<LocalMessageTable[typeof localMessages.COSMETIC_UPDATE]>(
+		localMessages.COSMETIC_UPDATE,
+		function* (action) {
+			const socket = yield* select(getSocket)
+			const appearance = yield* select(getAppearance)
+			const achievementProgress = yield* select(getAchievements)
+
+			const selected = Object.values(appearance)
+				.map((cos) => cos.id)
+				.includes(action.cosmetic.id)
+			let isUnlocked = true
+			if (action.cosmetic.requires && ACHIEVEMENTS[action.cosmetic.requires]) {
+				const achievement = ACHIEVEMENTS[action.cosmetic.requires]
+				isUnlocked =
+					!!achievementProgress[achievement.numericId]?.completionTime
+			}
+			if (!isUnlocked || selected) return
+			yield* sendMsg({
+				type: clientMessages.SET_COSMETIC,
+				cosmetic: action.cosmetic.id,
+			})
+
+			const result = yield* race({
+				success: call(receiveMsg(socket, serverMessages.COSMETICS_UPDATE)),
+				failure: call(receiveMsg(socket, serverMessages.COSMETICS_INVALID)),
+			})
+
+			if (result.success) {
+				yield put<LocalMessage>({
+					type: localMessages.COSMETICS_SET,
+					appearance: result.success.appearance,
+				})
+				return
+			}
+
+			yield put<LocalMessage>({
+				type: localMessages.TOAST_OPEN,
+				open: true,
+				title: 'Invalid',
+				description: "Can't set this cosmetic as selected",
+			})
+		},
+	)
 }

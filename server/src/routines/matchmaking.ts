@@ -18,7 +18,12 @@ import {Deck} from 'common/types/deck'
 import {formatText} from 'common/utils/formatting'
 import {OpponentDefs} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
-import {addGame, getDeck, updateAchievements} from 'db/db-reciever'
+import {
+	addGame,
+	getDeck,
+	getGameReplay,
+	updateAchievements,
+} from 'db/db-reciever'
 import {GameController} from 'game-controller'
 import {LocalMessageTable, localMessages} from 'messages'
 import {
@@ -27,6 +32,7 @@ import {
 	delay,
 	fork,
 	join,
+	put,
 	race,
 	spawn,
 	take,
@@ -36,7 +42,10 @@ import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
+import {turnActionsToBuffer} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
+import {defaultAppearance} from 'common/cosmetics/default'
+import EvilXCoin from 'common/cosmetics/coins/evilx'
 
 function setupGame(
 	player1: PlayerModel,
@@ -56,7 +65,7 @@ function setupGame(
 			model: player2,
 			deck: player2Deck.cards.map((card) => card.props.numericId),
 		},
-		{gameCode, spectatorCode, apiSecret},
+		{gameCode, spectatorCode, apiSecret, countAchievements: true},
 	)
 
 	let playerEntities = con.game.components.filterEntities(PlayerComponent)
@@ -154,7 +163,7 @@ function* gameManager(con: GameController) {
 			}
 		}
 	} catch (err) {
-		console.log('Error: ', err)
+		console.info('Error: ', err)
 		con.game.outcome = {type: 'game-crash', error: `${(err as Error).stack}`}
 	} finally {
 		const outcome = con.game.outcome
@@ -220,7 +229,7 @@ function* gameManager(con: GameController) {
 		)
 
 		const gameType = con.gameCode ? 'Private' : 'Public'
-		console.log(
+		console.info(
 			`${gameType} game ended. Total games:`,
 			root.getGameIds().length - 1,
 		)
@@ -245,6 +254,7 @@ function* gameManager(con: GameController) {
 		}
 
 		const winner = winnerPlayerId ? root.players[winnerPlayerId] : null
+		const turnActionsBuffer = yield* turnActionsToBuffer(con)
 
 		if (
 			gamePlayers.length >= 2 &&
@@ -261,7 +271,7 @@ function* gameManager(con: GameController) {
 				winner ? winner.uuid : null,
 				con.game.rngSeed,
 				con.game.state.turn.turnNumber,
-				Buffer.from([0x00]),
+				turnActionsBuffer,
 				con.gameCode,
 			)
 		}
@@ -369,10 +379,8 @@ export function* joinQueue(
 
 	updateDeckSaga(player, msg.payload)
 
-	console.log(player.deck)
-
 	if (!player) {
-		console.log('[Join queue] Player not found: ', playerId)
+		console.info('[Join queue] Player not found: ', playerId)
 		return
 	}
 
@@ -380,7 +388,7 @@ export function* joinQueue(
 		!player.deck ||
 		!validateDeck(player.deck.cards.map((card) => card.props)).valid
 	) {
-		console.log(
+		console.info(
 			'[Join queue] Player tried to join queue with an invalid deck:',
 			player.name,
 		)
@@ -388,7 +396,10 @@ export function* joinQueue(
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log('[Join queue] Player is already in game or queue:', player.name)
+		console.info(
+			'[Join queue] Player is already in game or queue:',
+			player.name,
+		)
 		broadcast([player], {type: serverMessages.JOIN_QUEUE_FAILURE})
 		return
 	}
@@ -396,7 +407,7 @@ export function* joinQueue(
 	// Add them to the queue
 	root.queue.push(playerId)
 	broadcast([player], {type: serverMessages.JOIN_QUEUE_SUCCESS})
-	console.log(`Joining queue: ${player.name}`)
+	console.info(`Joining queue: ${player.name}`)
 }
 
 export function* leaveQueue(
@@ -406,7 +417,7 @@ export function* leaveQueue(
 	const player = root.players[playerId]
 
 	if (!player) {
-		console.log('[Leave queue] Player not found: ', playerId)
+		console.info('[Leave queue] Player not found: ', playerId)
 		return
 	}
 
@@ -415,10 +426,10 @@ export function* leaveQueue(
 	if (queueIndex >= 0) {
 		root.queue.splice(queueIndex, 1)
 		broadcast([player], {type: serverMessages.LEAVE_QUEUE_SUCCESS})
-		console.log(`Left queue: ${player.name}`)
+		console.info(`Left queue: ${player.name}`)
 	} else {
 		broadcast([player], {type: serverMessages.LEAVE_QUEUE_FAILURE})
-		console.log(
+		console.info(
 			'[Leave queue]: Player tried to leave queue when not there:',
 			player.name,
 		)
@@ -463,7 +474,7 @@ export function* createBossGame(
 	updateDeckSaga(player, msg.payload)
 
 	if (!player) {
-		console.log('[Create Boss game] Player not found: ', playerId)
+		console.info('[Create Boss game] Player not found: ', playerId)
 		return
 	}
 
@@ -471,7 +482,7 @@ export function* createBossGame(
 		!player.deck ||
 		!validateDeck(player.deck.cards.map((card) => card.props)).valid
 	) {
-		console.log(
+		console.info(
 			'[Join private game] Player tried to join private game with an invalid deck: ',
 			playerId,
 		)
@@ -480,7 +491,7 @@ export function* createBossGame(
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log(
+		console.info(
 			'[Create Boss game] Player is already in game or queue:',
 			player.name,
 		)
@@ -497,7 +508,7 @@ export function* createBossGame(
 		deck: [EvilXisumaBoss],
 		virtualAI: ExBossAI,
 		disableDeckingOut: true,
-		selectedCoinHead: 'evilx',
+		appearance: {...defaultAppearance, coin: EvilXCoin},
 	})
 	newBossGameController.game.state.isEvilXBossGame = true
 
@@ -553,12 +564,12 @@ export function* createPrivateGame(
 	updateDeckSaga(player, msg.payload)
 
 	if (!player) {
-		console.log('[Create private game] Player not found: ', playerId)
+		console.info('[Create private game] Player not found: ', playerId)
 		return
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log(
+		console.info(
 			'[Create private game] Player is already in game or queue:',
 			player.name,
 		)
@@ -576,7 +587,7 @@ export function* createPrivateGame(
 		spectatorCode: spectatorCode,
 	})
 
-	console.log(
+	console.info(
 		`Private game created by ${player.name}.`,
 		`Code: ${gameCode}`,
 		`Spectator Code: ${spectatorCode}`,
@@ -595,7 +606,7 @@ export function* joinPrivateGame(
 	updateDeckSaga(player, msg.payload)
 
 	if (!player) {
-		console.log('[Join private game] Player not found: ', playerId)
+		console.info('[Join private game] Player not found: ', playerId)
 		return
 	}
 
@@ -603,7 +614,7 @@ export function* joinPrivateGame(
 		!player.deck ||
 		!validateDeck(player.deck.cards.map((card) => card.props)).valid
 	) {
-		console.log(
+		console.info(
 			'[Join private game] Player tried to join private game with an invalid deck: ',
 			playerId,
 		)
@@ -612,7 +623,7 @@ export function* joinPrivateGame(
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log(
+		console.info(
 			'[Join private game] Player is already in game or queue:',
 			player.name,
 		)
@@ -632,7 +643,7 @@ export function* joinPrivateGame(
 			spectator: true,
 		})
 
-		console.log(
+		console.info(
 			`Spectator ${player.name} Joined private game. Code: ${spectatorGame.gameCode}`,
 		)
 
@@ -689,7 +700,7 @@ export function* joinPrivateGame(
 		// Create new game for these 2 players
 		const existingPlayer = root.players[info.playerId]
 		if (!existingPlayer) {
-			console.log(
+			console.info(
 				'[Join private game]: Player waiting in queue no longer exists! Code: ' +
 					code,
 			)
@@ -700,7 +711,7 @@ export function* joinPrivateGame(
 		}
 
 		if (!existingPlayer.deck) {
-			console.log(
+			console.info(
 				'[Join private game]: Player waiting in queue has no deck! Code: ' +
 					code,
 			)
@@ -747,7 +758,7 @@ export function* joinPrivateGame(
 			})
 		}
 
-		console.log(`Joining private game: ${player.name}.`, `Code: ${code}`)
+		console.info(`Joining private game: ${player.name}.`, `Code: ${code}`)
 
 		// Remove this game from the queue, it's started
 		let tmpQueue = root.privateQueue[code]
@@ -766,7 +777,7 @@ export function* joinPrivateGame(
 		root.privateQueue[code].playerId = playerId
 		broadcast([player], {type: serverMessages.WAITING_FOR_PLAYER})
 
-		console.log(`Joining empty private game: ${player.name}.`, `Code: ${code}`)
+		console.info(`Joining empty private game: ${player.name}.`, `Code: ${code}`)
 	}
 }
 
@@ -785,7 +796,7 @@ export function* cancelPrivateGame(
 
 			root.hooks.privateCancelled.call(code)
 			delete root.privateQueue[code]
-			console.log(`Private game cancelled. Code: ${code}`)
+			console.info(`Private game cancelled. Code: ${code}`)
 		}
 	}
 }
@@ -809,6 +820,97 @@ export function* leavePrivateQueue(
 	}
 }
 
+//@Todo fix games from just timing out when player leaves
+export function* createReplayGame(
+	msg: RecievedClientMessage<typeof clientMessages.CREATE_REPLAY_GAME>,
+) {
+	const {playerId} = msg
+	const player = root.players[playerId]
+
+	if (inGame(playerId) || inQueue(playerId)) {
+		console.info(
+			'[Create private game] Player is already in game or queue:',
+			player.name,
+		)
+		broadcast([player], {type: serverMessages.CREATE_PRIVATE_GAME_FAILURE})
+		return
+	}
+
+	const replay = yield* getGameReplay(msg.payload.id)
+	if (!replay) return
+
+	const con = new GameController(replay.player1Defs, replay.player2Defs, {
+		randomSeed: replay.seed,
+		randomizeOrder: true,
+	})
+	root.addGame(con)
+	root.hooks.newGame.call(con)
+
+	const viewer = con.addViewer({
+		player: root.players[playerId],
+		spectator: true,
+		playerOnLeft: con.game.state.order[0],
+	})
+	let gameState = getLocalGameState(con.game, viewer)
+
+	broadcast([root.players[playerId]], {
+		type: serverMessages.SPECTATE_PRIVATE_GAME_START,
+		localGameState: gameState,
+	})
+
+	con.task = yield* spawn(gameSaga, con)
+
+	console.info(
+		`${con.game.logHeader}`,
+		`Replay game started: ${con.id}`,
+		`Viewer: ${msg.playerId}.`,
+		'Total games:',
+		root.getGameIds().length,
+	)
+
+	yield* delay(1000)
+
+	const replayActions = replay.replay
+
+	for (let i = 0; i < replayActions.length; i++) {
+		const action = replayActions[i]
+		yield* delay(action.millisecondsSinceLastAction)
+		yield* put({
+			type: clientMessages.TURN_ACTION,
+			payload: {
+				action: action.action,
+				playerEntity: action.player,
+			},
+			playerEntity: action.player,
+			action: action.action,
+		})
+	}
+
+	yield* delay(1000)
+
+	gameState.timer.turnRemaining = 0
+	gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
+	if (!con.game.endInfo.victoryReason) {
+		// Remove coin flips from state if game was terminated before game end to prevent
+		// clients replaying animations after a forfeit, disconnect, or excessive game duration
+		con.game.components
+			.filter(PlayerComponent)
+			.forEach((player) => (gameState.players[player.entity].coinFlips = []))
+	}
+
+	broadcast([viewer.player], {
+		type: serverMessages.GAME_END,
+		gameState,
+		outcome: con.game.outcome
+			? con.game.outcome
+			: {type: 'game-crash', error: 'The replay game did not save properly.'},
+	})
+
+	delete root.games[con.id]
+	root.hooks.gameRemoved.call(con)
+	console.info(`Replay game ended: ${con.id}`)
+}
+
 function onPlayerLeft(player: PlayerModel) {
 	// Remove player from all queues
 
@@ -817,7 +919,7 @@ function onPlayerLeft(player: PlayerModel) {
 		const queueIndex = root.queue.indexOf(player.id)
 		if (queueIndex >= 0) {
 			root.queue.splice(queueIndex, 1)
-			console.log(`Left queue: ${player.name}`)
+			console.info(`Left queue: ${player.name}`)
 		}
 	}
 
@@ -826,7 +928,7 @@ function onPlayerLeft(player: PlayerModel) {
 		const info = root.privateQueue[code]
 		if (info.playerId && info.playerId === player.id) {
 			delete root.privateQueue[code]
-			console.log(`Private game cancelled. Code: ${code}`)
+			console.info(`Private game cancelled. Code: ${code}`)
 		}
 		if (info.spectatorsWaiting.includes(player.id)) {
 			info.spectatorsWaiting = info.spectatorsWaiting.filter(

@@ -1,3 +1,4 @@
+import {Cosmetic} from '../cosmetics/types'
 import {PlayerEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
 import {Message, MessageTable, messages} from '../redux-messages'
@@ -16,6 +17,7 @@ export const clientMessages = messages('clientMessages', {
 	LEAVE_QUEUE: null,
 	LEAVE_PRIVATE_QUEUE: null,
 	JOIN_PRIVATE_GAME: null,
+	CREATE_REPLAY_GAME: null,
 	TURN_ACTION: null,
 	FORFEIT: null,
 	SPECTATOR_LEAVE: null,
@@ -35,6 +37,7 @@ export const clientMessages = messages('clientMessages', {
 	UPDATE_DECK: null,
 	DELETE_DECK: null,
 	DELETE_TAG: null,
+	SET_COSMETIC: null,
 })
 
 export type ClientMessages = [
@@ -86,6 +89,10 @@ export type ClientMessages = [
 		databaseConnected: false
 		activeDeck: Deck
 		code: string
+	},
+	{
+		type: typeof clientMessages.CREATE_REPLAY_GAME
+		id: number
 	},
 	{
 		type: typeof clientMessages.TURN_ACTION
@@ -142,6 +149,7 @@ export type ClientMessages = [
 	},
 	{type: typeof clientMessages.DELETE_DECK; deck: Deck},
 	{type: typeof clientMessages.DELETE_TAG; tag: Tag},
+	{type: typeof clientMessages.SET_COSMETIC; cosmetic: Cosmetic['id']},
 ]
 
 export type ClientMessage = Message<ClientMessages>

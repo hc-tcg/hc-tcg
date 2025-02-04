@@ -1,6 +1,7 @@
+import {Appearance} from '../cosmetics/types'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {AchievementProgress} from '../types/achievements'
-import {Stats, User} from '../types/database'
+import {GameHistory, Stats, User} from '../types/database'
 import {ApiDeck, Deck, Tag} from '../types/deck'
 import {GameOutcome, LocalGameState} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
@@ -35,6 +36,8 @@ export const serverMessages = messages('serverMessages', {
 	GAME_OVER_STAT: null,
 	GAME_STATE: null,
 	CHAT_UPDATE: null,
+	COSMETICS_INVALID: null,
+	COSMETICS_UPDATE: null,
 	/**Postgres */
 	NO_DATABASE_CONNECTION: null,
 	AUTHENTICATED: null,
@@ -115,9 +118,15 @@ export type ServerMessages = [
 		type: typeof serverMessages.ACHIEVEMENTS_RECIEVED
 		progress: AchievementProgress
 	},
-	{type: typeof serverMessages.STATS_RECIEVED; stats: Stats},
+	{
+		type: typeof serverMessages.STATS_RECIEVED
+		stats: Stats
+		gameHistory: Array<GameHistory>
+	},
 	{type: typeof serverMessages.CURRENT_IMPORT_RECIEVED; deck: ApiDeck | null},
 	{type: typeof serverMessages.DATABASE_FAILURE; error: string | undefined},
+	{type: typeof serverMessages.COSMETICS_INVALID},
+	{type: typeof serverMessages.COSMETICS_UPDATE; appearance: Appearance},
 ]
 
 export type ServerMessage = Message<ServerMessages>

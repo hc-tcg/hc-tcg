@@ -24,8 +24,9 @@ import Credits from './main-menu/credits'
 import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
 import PlaySelect from './main-menu/play-select'
-import HallOfFame from './main-menu/hall-of-fame'
 import More from './main-menu/settings'
+import Statistics from './main-menu/statistics'
+import Cosmetics from './main-menu/cosmetics'
 
 function App() {
 	const section = useRouter()
@@ -60,10 +61,12 @@ function App() {
 					return <GameSettings setMenuSection={setMenuSection} />
 				case 'data-settings':
 					return <DataSettings setMenuSection={setMenuSection} />
-				case 'hall-of-fame':
-					return <HallOfFame setMenuSection={setMenuSection} />
+				case 'statistics':
+					return <Statistics setMenuSection={setMenuSection} />
 				case 'achievements':
 					return <Achievements setMenuSection={setMenuSection} />
+				case 'cosmetics':
+					return <Cosmetics setMenuSection={setMenuSection} />
 				case 'credits':
 					return <Credits setMenuSection={setMenuSection} />
 				case 'play-select':
