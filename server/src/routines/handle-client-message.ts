@@ -34,6 +34,7 @@ import {
 import {
 	loadUpdatesSaga,
 	updateCosmeticSaga,
+	updateDeckSaga,
 	updateMinecraftNameSaga,
 	updateUsernameSaga,
 } from './player'
@@ -150,6 +151,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.GET_ACHIEVEMENTS:
 			return yield* getAchievements(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.SET_COSMETIC:
+			return yield* updateCosmeticSaga(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 	}

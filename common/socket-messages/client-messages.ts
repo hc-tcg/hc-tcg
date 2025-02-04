@@ -139,7 +139,6 @@ export type ClientMessages = [
 	{type: typeof clientMessages.DELETE_DECK; deck: Deck},
 	{type: typeof clientMessages.DELETE_TAG; tag: Tag},
 	{type: typeof clientMessages.SET_COSMETIC; cosmetic: Cosmetic['id']},
-	{type: typeof clientMessages.REPLAY_OVERVIEW; id: number},
 ]
 
 export type ClientMessage = Message<ClientMessages>

@@ -12,10 +12,6 @@ export type User = {
 	heart: string | null
 	background: string | null
 	border: string | null
-	decks: Array<Deck>
-	achievements: AchievementData
-	stats: PlayerStats
-	gameHistory: Array<GameHistory>
 }
 
 export type UserWithoutSecret = {

@@ -37,7 +37,7 @@ export type CurrentCoinFlip = {
 	tosses: Array<CoinFlip>
 	amount: number
 	delay: number
-	headImage: keyof typeof COINS
+	headImage: Coin['id']
 }
 
 export type LocalCurrentCoinFlip = {
@@ -47,7 +47,7 @@ export type LocalCurrentCoinFlip = {
 	tosses: Array<CoinFlip>
 	amount: number
 	delay: number
-	headImage: keyof typeof COINS
+	headImage: Coin['id']
 }
 
 export type BattleLogT = {

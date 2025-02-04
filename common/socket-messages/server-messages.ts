@@ -37,8 +37,6 @@ export const serverMessages = messages('serverMessages', {
 	CHAT_UPDATE: null,
 	COSMETICS_INVALID: null,
 	COSMETICS_UPDATE: null,
-	INVALID_REPLAY: null,
-	REPLAY_OVERVIEW_RECIEVED: null,
 	/**Postgres */
 	AUTHENTICATED: null,
 	AUTHENTICATION_FAIL: null,
@@ -125,11 +123,6 @@ export type ServerMessages = [
 	{type: typeof serverMessages.DATABASE_FAILURE; error: string | undefined},
 	{type: typeof serverMessages.COSMETICS_INVALID},
 	{type: typeof serverMessages.COSMETICS_UPDATE; appearance: Appearance},
-	{type: typeof serverMessages.INVALID_REPLAY},
-	{
-		type: typeof serverMessages.REPLAY_OVERVIEW_RECIEVED
-		battleLog: Array<ChatMessage>
-	},
 ]
 
 export type ServerMessage = Message<ServerMessages>

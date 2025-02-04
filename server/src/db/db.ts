@@ -31,6 +31,7 @@ import {
 	ReplayActionData,
 	bufferToTurnActions,
 } from '../routines/turn-action-compressor'
+import {defaultAppearance} from 'common/cosmetics/default'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -211,26 +212,12 @@ export class Database {
 					uuid: playerUuid,
 					secret: secret,
 					username: username,
-					minecraftName: username,
+					minecraftName: minecraftName,
 					title: null,
 					coin: null,
 					heart: null,
 					background: null,
 					border: null,
-					stats: {
-						gamesPlayed: 0,
-						wins: 0,
-						losses: 0,
-						forfeitWins: 0,
-						forfeitLosses: 0,
-						ties: 0,
-						topCards: [],
-						uniquePlayersEncountered: 0,
-					},
-					//@ts-ignore
-					decks: [deckInfo],
-					achievements: {achievementData: {}},
-					gameHistory: [],
 				},
 			}
 		} catch (e) {
@@ -286,10 +273,6 @@ export class Database {
 					heart: user.rows[0]['heart'],
 					background: user.rows[0]['background'],
 					border: user.rows[0]['border'],
-					decks: decks.body,
-					achievements: achievements.body,
-					stats: stats.body,
-					gameHistory: gameHistory.body,
 				},
 			}
 		} catch (e) {
@@ -1138,7 +1121,7 @@ export class Database {
 					name: row['username'],
 					censoredName: row['username'],
 					minecraftName: row['minecraft_name'],
-					selectedCoinHead: 'creeper',
+					appearance: defaultAppearance,
 				}
 			})
 
@@ -1290,7 +1273,7 @@ export class Database {
 					name: firstPlayerRows[0].username,
 					minecraftName: firstPlayerRows[0].minecraft_name,
 					censoredName: firstPlayerRows[0].username,
-					selectedCoinHead: 'creeper',
+					appearance: defaultAppearance,
 				},
 				deck: player1Deck,
 				uuid: firstPlayerRows[0].user_id,
@@ -1301,7 +1284,7 @@ export class Database {
 					name: secondPlayerRows[0].username,
 					minecraftName: secondPlayerRows[0].minecraft_name,
 					censoredName: secondPlayerRows[0].username,
-					selectedCoinHead: 'creeper',
+					appearance: defaultAppearance,
 				},
 				deck: player2Deck,
 				uuid: secondPlayerRows[0].user_id,
@@ -2129,6 +2112,50 @@ export class Database {
 				],
 			)
 			return {type: 'success', body: undefined}
+		} catch (e) {
+			console.log(e)
+			return {
+				type: 'failure',
+				reason: `${e}`,
+			}
+		}
+	}
+
+	public async setAppearance(
+		playerId: string,
+		appearance: {
+			title: string | null
+			coin: string | null
+			heart: string | null
+			background: string | null
+			border: string | null
+		},
+	): Promise<DatabaseResult> {
+		try {
+			await this.pool.query(
+				`
+				UPDATE users
+				SET
+					title = $2,
+					coin = $3,
+					heart = $4,
+					background = $5,
+					border = $6
+				WHERE user_id = $1
+				`,
+				[
+					playerId,
+					appearance.title,
+					appearance.coin,
+					appearance.heart,
+					appearance.background,
+					appearance.border,
+				],
+			)
+			return {
+				type: 'success',
+				body: undefined,
+			}
 		} catch (e) {
 			console.log(e)
 			return {

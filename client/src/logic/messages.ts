@@ -25,6 +25,7 @@ import {
 	LocalSetting,
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
+import {Appearance, Cosmetic} from 'common/cosmetics/types'
 
 export const localMessages = messages('clientLocalMessages', {
 	SOCKET_CONNECTING: null,
@@ -101,7 +102,6 @@ export const localMessages = messages('clientLocalMessages', {
 	HIDE_TOOLTIP: null,
 	COSMETICS_SET: null,
 	COSMETIC_UPDATE: null,
-	OVERVIEW: null,
 })
 
 type Messages = [

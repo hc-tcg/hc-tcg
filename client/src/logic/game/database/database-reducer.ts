@@ -1,8 +1,9 @@
 import {AchievementProgress} from 'common/types/achievements'
 import {GameHistory, Stats} from 'common/types/database'
 import {ApiDeck, Deck, Tag} from 'common/types/deck'
-import {Message} from 'common/types/game-state'
+import {Appearance} from 'common/cosmetics/types'
 import {LocalMessage, localMessages} from 'logic/messages'
+import {defaultAppearance} from 'common/cosmetics/default'
 
 export type DatabaseInfo = {
 	userId: string | null
@@ -14,8 +15,6 @@ export type DatabaseInfo = {
 	achievements: AchievementProgress
 	stats: Stats
 	noConnection: boolean
-	invalidReplay: boolean
-	replayOverview: Array<Message>
 	appearance: Appearance
 }
 
@@ -42,8 +41,6 @@ const defaultInfo: DatabaseInfo = {
 		uniquePlayersEncountered: 0,
 	},
 	currentImport: null,
-	invalidReplay: false,
-	replayOverview: [],
 	appearance: defaultAppearance,
 }
 

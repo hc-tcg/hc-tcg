@@ -12,6 +12,7 @@ import {
 	RecievedClientMessage,
 	clientMessages,
 } from '../../../common/socket-messages/client-messages'
+import {defaultAppearance} from 'common/cosmetics/default'
 
 function* noDatabaseConnection(playerId: string) {
 	const player = root.players[playerId]
@@ -585,4 +586,37 @@ export function* getGameReplay(gameId: number) {
 		return null
 	}
 	return replay.body
+}
+
+export function* setAppearance(player: PlayerModel) {
+	if (!root.db?.connected) return
+
+	const title =
+		player.appearance.title.id === defaultAppearance.title.id
+			? null
+			: player.appearance.title.id
+	const coin =
+		player.appearance.coin.id === defaultAppearance.coin.id
+			? null
+			: player.appearance.coin.id
+	const heart =
+		player.appearance.heart.id === defaultAppearance.heart.id
+			? null
+			: player.appearance.heart.id
+	const background =
+		player.appearance.background.id === defaultAppearance.background.id
+			? null
+			: player.appearance.background.id
+	const border =
+		player.appearance.border.id === defaultAppearance.border.id
+			? null
+			: player.appearance.border.id
+
+	yield* call([root.db, root.db.setAppearance], player.uuid, {
+		title: title,
+		coin: coin,
+		heart: heart,
+		background: background,
+		border: border,
+	})
 }

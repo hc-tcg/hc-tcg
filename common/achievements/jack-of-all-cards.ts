@@ -1,5 +1,6 @@
 import {CARDS_LIST} from '../cards'
-import {CardComponent} from '../components'
+import {Card} from '../cards/types'
+import OldMenuBackground from '../cosmetics/background/old-menu'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -16,6 +17,7 @@ const AllCards: Achievement = {
 	getProgress(goals) {
 		return Object.values(goals).filter((goal) => goal > 0).length
 	},
+	icon: 'old_menu',
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		if (!player) return
