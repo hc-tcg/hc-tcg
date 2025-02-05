@@ -25,12 +25,13 @@ jobs:
 
       - name: Run Fuzz Tests
         run: |
-            FUZZ_RESULT=$(npm run test:fuzz -- fuzz 5 --fail-fast 2>&1 | tail -n 1)
-            echo $FUZZ_RESULT
+        	echo "Starting fuzz tests...";
+            FUZZ_RESULT=$(npm run test:fuzz -- fuzz 5 --fail-fast 2>&1 | tail -n 1);
+            echo $FUZZ_RESULT;
             if echo "$FUZZ_RESULT" | grep 'FAILURE'; then
-              SEED=$(echo $FUZZ_RESULT | cut -d ":" -f1)
-              echo "$SEED" >> "$GITHUB_OUTPUT"
-            fi
+              SEED=$(echo $FUZZ_RESULT | cut -d ":" -f1);
+              echo "$SEED" >> "$GITHUB_OUTPUT";
+            fi;
 
   make_issue:
     name: Make Issue If Neccesary
