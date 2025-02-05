@@ -46,7 +46,7 @@ jobs:
             echo $FUZZ_RESULT;
             LAST_ITEM=$(echo $FUZZ_RESULT | jq 'map(select(.type=="failure")) | last');
             echo $LAST_ITEM;
-            if [ $LAST_ITEM != null ]; then
+            if [ "$LAST_ITEM" != null ]; then
               SEED=$(echo $LAST_ITEM | jq -r ".seed");
               echo "test=$SEED" >> $GITHUB_OUTPUT
               TRACEBACK=$(echo $LAST_ITEM | jq -r ".traceback")
