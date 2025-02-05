@@ -30,7 +30,7 @@ jobs:
               echo "$SEED" >> "$GITHUB_OUTPUT"
             fi
 
-  make-issue:
+  make_issue:
     runs-on: ubuntu-latest
     needs: fuzz
     if: "${{ needs.fuzz.outputs.failed_test }}"
