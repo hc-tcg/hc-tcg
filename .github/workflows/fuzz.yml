@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: read
-  issues: write 
+  issues: write
 
 jobs:
   fuzz:
