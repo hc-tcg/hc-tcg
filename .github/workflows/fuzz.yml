@@ -15,7 +15,7 @@ jobs:
     permissions:
       contents: write
     outputs:
-      failed_test: ${{ steps.step1.outputs.test }}
+      failed_test: ${{ steps.step4.outputs.test }}
 
     steps:
       - name: Check out repo
@@ -38,6 +38,7 @@ jobs:
             echo $FUZZ_RESULT;
             if echo $FUZZ_RESULT | grep 'FAIL'; then
               SEED=$(echo $FUZZ_RESULT | cut -d ":" -f1);
+              echo "$SEED"
               echo "test=$SEED" >> "$GITHUB_OUTPUT";
             else
                echo "No tests failed... doing nothing";
@@ -66,4 +67,51 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           filename: .github/ISSUE_TEMPLATE/fuzz-testing-failure.md
+
+  create_issue:
+    name: Create team sync issue
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Create team sync issue
+        run: |
+          if [[ $CLOSE_PREVIOUS == true ]]; then
+            previous_issue_number=$(gh issue list \
+              --label "$LABELS" \
+              --json number \
+              --jq '.[0].number')
+            if [[ -n $previous_issue_number ]]; then
+              gh issue close "$previous_issue_number"
+              gh issue unpin "$previous_issue_number"
+            fi
+          fi
+          new_issue_url=$(gh issue create \
+            --title "$TITLE" \
+            --assignee "$ASSIGNEES" \
+            --label "$LABELS" \
+            --body "$BODY")
+          if [[ $PINNED == true ]]; then
+            gh issue pin "$new_issue_url"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          TITLE: Team sync
+          ASSIGNEES: monalisa,doctocat,hubot
+          LABELS: weekly sync,docs-team
+          BODY: |
+            ### Agenda
+
+            - [ ] Start the recording
+            - [ ] Check-ins
+            - [ ] Discussion points
+            - [ ] Post the recording
+
+            ### Discussion Points
+            Add things to discuss below
+
+            - [Work this week](https://github.com/orgs/github/projects/3)
+          PINNED: false
+          CLOSE_PREVIOUS: false
 
