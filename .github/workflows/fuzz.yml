@@ -20,6 +20,7 @@ jobs:
       contents: write
     outputs:
       failed_test: ${{ steps.fuzz.outputs.test }}
+    if: (github.event_name == 'schedule' && github.repository == 'hc-tcg/hc-tcg') || (github.event_name != 'schedule')
 
     steps:
       - name: Check out repo
