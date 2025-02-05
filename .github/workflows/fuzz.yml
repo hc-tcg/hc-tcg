@@ -20,6 +20,7 @@ jobs:
       contents: write
     outputs:
       failed_test: ${{ steps.fuzz.outputs.test }}
+      traceback: ${{ steps.fuzz.outputs.traceback }}
     if: (github.event_name == 'schedule' && github.repository == 'hc-tcg/hc-tcg') || (github.event_name != 'schedule')
 
     steps:
@@ -40,15 +41,18 @@ jobs:
         id: fuzz
         run: |
             echo "Starting fuzz tests...";
-            FUZZ_RESULT=$(npm run test:fuzz -- fuzz 50 --fail-fast 2>&1 | tail -n 1);
+            FUZZ_RESULT=$(npm run test:fuzz -- fuzz 50 --fail-fast --json);
             echo $FUZZ_RESULT;
-            if echo $FUZZ_RESULT | grep 'FAIL'; then
-              SEED=$(echo $FUZZ_RESULT | cut -d ":" -f1);
-              echo "$SEED"
+            LAST_ITEM=$(echo $FUZZ_RESULT | jq '.[].type="failure" | last');
+            TYPE=$(echo $LAST_ITEM | jq ".type")
+            if $TYPE = "failure"; then
+              SEED=$(echo $LAST_ITEM | jq ".seed");
               echo "test=$SEED" >> "$GITHUB_OUTPUT";
+              TRACEBACK=$(echo $LAST_ITEM | jq ".traceback");
+              echo "traceback=$TRACEBACK" >> "$GITHUB_OUTPUT";
             else
-               echo "No tests failed... doing nothing";
-               echo "test=NOTHING" >> "$GITHUB_OUTPUT";
+              echo "No tests failed... doing nothing";
+              echo "test=NOTHING" >> "$GITHUB_OUTPUT";
             fi;
 
   make_issue:
@@ -89,6 +93,11 @@ jobs:
             Fuzz Testing Failure Detected. Check with the folliwng command:
             ```sh
             npm run test:fuzz -- debug ${{ needs.fuzz.outputs.failed_test }}
+            ```
+
+            \#\#\# Traceback:
+            ```
+            ${{ needs.fuzz.outputs.failed_test }}
             ```
           PINNED: false
           CLOSE_PREVIOUS: false

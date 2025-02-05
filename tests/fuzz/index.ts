@@ -25,26 +25,38 @@ async function runTest(
 	seed: string,
 	debug: boolean,
 	progress: any,
-): Promise<[string, boolean]> {
+	json_output: boolean,
+): Promise<[string, Error | null]> {
 	let success = true
+	let error: Error | null = null
+
 	try {
 		await performFuzzTest(seed, debug)
-	} catch (_e) {
-		success = false
+	} catch (e) {
+		error = e as Error
 	}
 
 	progress.progress += 1
 	if (success) {
-		console.log(`${progress.progress} - ${seed}: SUCCESS`)
-		return [seed, true]
+		if (!json_output) {
+			console.log(`${progress.progress} - ${seed}: SUCCESS`)
+		}
+		return [seed, error]
 	} else {
-		console.error(`${progress.progress} - ${seed}: FAILURE`)
-		return [seed, false]
+		if (!json_output) {
+			console.error(`${progress.progress} - ${seed}: FAILURE`)
+		}
+		return [seed, error]
 	}
 }
 
 /** Run tests and return the failures */
-async function manyTests(num: number, debug: boolean, fail_fast: boolean) {
+async function manyTests(
+	num: number,
+	debug: boolean,
+	fail_fast: boolean,
+	json_output: boolean,
+) {
 	let progress = {progress: 0}
 
 	let seeds = Array(num)
@@ -55,11 +67,13 @@ async function manyTests(num: number, debug: boolean, fail_fast: boolean) {
 
 	let results
 	if (!fail_fast) {
-		results = await Promise.all(tests.map((x) => runTest(x, debug, progress)))
+		results = await Promise.all(
+			tests.map((x) => runTest(x, debug, progress, json_output)),
+		)
 	} else {
 		results = []
 		for (const test of tests) {
-			let test_result = await runTest(test, debug, progress)
+			let test_result = await runTest(test, debug, progress, json_output)
 			results.push(test_result)
 			if (!test_result[1]) {
 				break
@@ -67,13 +81,34 @@ async function manyTests(num: number, debug: boolean, fail_fast: boolean) {
 		}
 	}
 
-	let failures = results.filter(([_seed, result]) => !result)
+	if (json_output) {
+		jsonPrintOutput(results)
+		return
+	}
+
+	let failures = results.filter(([_seed, error]) => error !== null)
 	if (failures.length === 0) {
 		console.log('All tests passed!')
 	} else {
 		console.log('Found some failed tests...')
-		failures.forEach(([seed, _result]) => console.error(`${seed}: FAILURE`))
+		failures.forEach(([seed, _error]) => {
+			console.log(`${seed}: FAILURE`)
+		})
 	}
+}
+
+function jsonPrintOutput(tests: Array<[string, Error | null]>) {
+	let output = []
+
+	for (const [seed, error] of tests) {
+		if (error) {
+			output.push({type: 'failure', seed, traceback: error.stack})
+		} else {
+			output.push({type: 'success', seed})
+		}
+	}
+
+	console.debug(JSON.stringify(output))
 }
 
 async function main() {
@@ -81,16 +116,17 @@ async function main() {
 
 	argv = argv.slice(2)
 	const fail_fast = argv.includes('--fail-fast')
+	const json_output = argv.includes('--json')
 
 	if (argv[0] === 'fuzz') {
-		console.log(`Fuzzing ${argv[1]} times`)
-		await manyTests(parseInt(argv[1]), false, fail_fast)
+		if (!json_output) console.log(`Fuzzing ${argv[1]} times`)
+		await manyTests(parseInt(argv[1]), false, fail_fast, json_output)
 		return
 	}
 
 	if (argv[0] === 'debug') {
 		await performFuzzTest(argv[1], true)
-		console.log('Completed!')
+		if (!json_output) console.log('Completed!')
 		return
 	}
 

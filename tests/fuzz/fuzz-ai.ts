@@ -333,6 +333,7 @@ export const FuzzAI: VirtualAI = {
 	id: 'fuzz_ai',
 	getTurnActions: function* (game, component) {
 		while (true) {
+			throw new Error("HELLO")
 			yield getNextTurnAction(game, component)
 		}
 	},
