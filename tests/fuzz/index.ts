@@ -75,7 +75,7 @@ async function manyTests(
 		for (const test of tests) {
 			let test_result = await runTest(test, debug, progress, json_output)
 			results.push(test_result)
-			if (test_result[1] === null) {
+			if (test_result[1] !== null) {
 				break
 			}
 		}
@@ -101,7 +101,7 @@ function jsonPrintOutput(tests: Array<[string, Error | null]>) {
 	let output = []
 
 	for (const [seed, error] of tests) {
-		if (error) {
+		if (error !== null) {
 			output.push({type: 'failure', seed, traceback: error.stack})
 		} else {
 			output.push({type: 'success', seed})
