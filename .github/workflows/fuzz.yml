@@ -35,13 +35,15 @@ jobs:
             if echo "$FUZZ_RESULT" | grep 'FAILURE'; then
               SEED=$(echo $FUZZ_RESULT | cut -d ":" -f1);
               echo "test=$SEED" >> "$GITHUB_OUTPUT";
+            else
+               echo "test=NOTHING";
             fi;
 
   make_issue:
     name: Make Issue If Neccesary
     runs-on: ubuntu-latest
     needs: fuzz
-    if: "${{ needs.fuzz.outputs.failed_test }}"
+    if: "${{ needs.fuzz.outputs.failed_test != 'NOTHING' }}"
     steps:
       - run: echo "$SEED"
 
