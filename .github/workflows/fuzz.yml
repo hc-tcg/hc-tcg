@@ -49,13 +49,10 @@ jobs:
             echo $TYPE;
             if [ $TYPE = "failure" ]; then
               SEED=$(echo $LAST_ITEM | jq ".seed");
-              echo "test=$SEED" >> "$GITHUB_OUTPUT";
-              TRACEBACK=$(cat <<EOF
-              $(echo $LAST_ITEM | jq -r ".traceback")
-              EOF
-              )
-              EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
-              echo "traceback<<EOF"$'\n'"$TRACEBACK"$'\n'EOF >> $GITHUB_OUTPUT
+              TRACEBACK=$(echo $LAST_ITEM | jq -r ".traceback")
+              echo "traceback<<EOF" >> $GITHUB_OUTPUT
+              echo "$TRACEBACK" >> $GITHUB_OUTPUT
+              echo "EOF" >> $GITHUB_OUTPUT
             else
               echo "No tests failed... doing nothing";
               echo "test=NOTHING" >> "$GITHUB_OUTPUT";
