@@ -93,6 +93,7 @@
 		"test:e2e": "playwright test",
 		"test:ct": "playwright test -c playwright-ct.config.ts",
 		"test:ct-update": "npm run test:ct -- -u",
+		"test:fuzz": "cd tests/fuzz && npx tsx index.ts",
 		"lint": "biome check .",
 		"fix": "biome check --write .",
 		"format": "biome format --write ."

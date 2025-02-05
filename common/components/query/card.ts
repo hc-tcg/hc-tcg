@@ -13,6 +13,8 @@ import {TypeT} from '../../types/cards'
 
 export const isHermit: ComponentQuery<CardComponent> = (_game, card) =>
 	card.isHermit()
+export const isHealth: ComponentQuery<CardComponent> = (_game, card) =>
+	card.isHealth()
 export const isAttach: ComponentQuery<CardComponent> = (_game, card) =>
 	card.isAttach()
 export const isItem: ComponentQuery<CardComponent> = (_game, card) =>

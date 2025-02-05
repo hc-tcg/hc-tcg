@@ -3,6 +3,7 @@ import EvilXisumaBoss, {
 	supplyBossAttack,
 } from 'common/cards/boss/hermits/evilxisuma_boss'
 import {Card} from 'common/cards/types'
+import {COINS} from 'common/coins'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -34,7 +35,7 @@ function getTestPlayer(playerName: string, deck: Array<Card>) {
 			name: playerName,
 			minecraftName: playerName,
 			censoredName: playerName,
-			selectedCoinHead: 'creeper',
+			selectedCoinHead: 'creeper' as keyof typeof COINS,
 		},
 		deck,
 	}
@@ -342,6 +343,7 @@ export function testBossFight(
 				censoredName: 'Evil Xisuma',
 				minecraftName: 'EvilXisuma',
 				disableDeckingOut: true,
+				selectedCoinHead: 'evilx',
 			},
 			deck: [EvilXisumaBoss],
 		},
