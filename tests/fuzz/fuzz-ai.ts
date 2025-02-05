@@ -170,7 +170,6 @@ function getNextTurnAction(
 			type: 'SINGLE_USE_ATTACK',
 		}
 	}
-	throw new Error("HERE")
 
 	if (nextAction === 'CHANGE_ACTIVE_HERMIT') {
 		const inactiveHermit = choose(
