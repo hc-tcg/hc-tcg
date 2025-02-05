@@ -1,0 +1,343 @@
+$width: 16vw;
+$height: 25vw;
+$time: 0.25s;
+
+.buttonContainer {
+	width: $width;
+	height: $height;
+
+	&.disablePointer {
+		animation: disablePointer $time forwards;
+	}
+
+	&.enablePointer {
+		animation: enablePointer $time forwards;
+	}
+}
+
+.backgroundContainer {
+	position: absolute;
+	width: $width;
+	height: $height;
+	left: 0;
+	transform-origin: center;
+	overflow: hidden;
+	z-index: 90;
+
+	&.grow {
+		animation: grow $time forwards;
+		transition: translate $time ease-out;
+
+		.rightOverlay,
+		.returnButton {
+			animation: opacityGrow $time forwards;
+		}
+	}
+
+	&.shrink {
+		// Note this animation is not "forwards" as we want to be able to scale after
+		animation: shrink $time;
+		transition: translate $time ease-out;
+
+		.rightOverlay,
+		.returnButton {
+			pointer-events: none;
+			cursor: default;
+			animation: opacityShrink $time forwards;
+		}
+
+		&:hover {
+			scale: 1.05;
+		}
+	}
+
+	&.hide {
+		z-index: 80;
+		pointer-events: none;
+		animation: hideAnim $time forwards;
+	}
+
+	&.show {
+		// Note this animation is not "forwards" as we want to be able to scale after
+		animation: showAnim $time;
+
+		&:hover {
+			scale: 1.05;
+		}
+	}
+}
+
+.backgroundImage {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	border: 2px black solid;
+	object-fit: cover;
+	object-position: left;
+	z-index: -2;
+}
+
+.vingette {
+	width: 100%;
+	height: 100%;
+	box-shadow: inset 0 0 30px black;
+	background: linear-gradient(0deg, black 20%, rgba(0, 0, 0, 0) 40%);
+}
+
+.hermitImage {
+	filter: drop-shadow(0px 0px 15px black);
+	width: $width;
+	height: calc($height * 0.7);
+	object-fit: contain;
+	position: absolute;
+	top: 4vh;
+	pointer-events: none;
+	z-index: -1;
+}
+
+.button {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	text-align: left;
+	font-family: Minecraft;
+	width: 100%;
+	height: 100%;
+}
+
+.returnButton {
+	position: absolute;
+	display: flex;
+	flex-direction: row;
+	top: 1vh;
+	left: 1vh;
+	font-size: 1.2rem;
+	align-items: center;
+	background-color: rgba(0, 0, 0, 0.637);
+	border-radius: 4px;
+	padding: 5px;
+	border: 1px rgba(0, 0, 0, 0) solid;
+	color: white;
+	opacity: 0%;
+	box-sizing: border-box;
+	cursor: pointer;
+
+	> img {
+		padding-top: 0.85vh;
+		padding-bottom: 0.85vh;
+		font-size: 1.75rem;
+		height: 3.2vh;
+		width: 3.2vh;
+		filter: invert(1);
+	}
+
+	> p {
+		font-size: 1.5vh;
+		transform: translateY(1px);
+		padding-right: 0.5vh;
+	}
+
+	&:hover {
+		border: 1px var(--text-light) solid;
+	}
+
+	&:active {
+		transform: translateY(1px);
+	}
+}
+
+.text {
+	color: var(--text-light);
+	font-size: 1.3vh;
+	width: $width;
+	padding: 2vh 2vh 0;
+
+	h1 {
+		font-size: 2vh;
+		padding-bottom: 0.5vh;
+	}
+}
+
+.leftOverlay {
+	position: absolute;
+	top: 0%;
+	display: flex;
+	flex-direction: row;
+	height: 100%;
+	padding-bottom: 2vh;
+}
+
+.rightOverlay {
+	position: absolute;
+	top: 0%;
+	right: 0%;
+	opacity: 0%;
+	height: 100%;
+	width: calc(100% - $width);
+}
+
+.selectedDeck {
+	display: flex;
+	flex-direction: row;
+	color: var(--text-light);
+	font-size: 1rem;
+	background-color: var(--gray-700);
+	width: 16vw;
+	height: 2.5rem;
+	align-self: center;
+	border-radius: 0.5vh;
+	user-select: none;
+	font-weight: normal;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+
+	.infoIcon {
+		padding: 5px;
+		height: 100%;
+	}
+}
+
+.viewDeckButton {
+	position: absolute;
+	bottom: 1rem;
+	left: 18vw;
+	opacity: 0%;
+	place-content: center;
+	display: flex;
+	align-items: center;
+	justify-items: center;
+	background-color: var(--gray-700);
+	border-radius: 6px;
+	width: 2.5rem;
+	height: 2.5rem;
+	flex-shrink: 0;
+	cursor: pointer;
+
+	> img {
+		height: 1.5rem;
+		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
+	}
+
+	&:hover {
+		background: var(--gray-600);
+		filter: brightness(1.1);
+	}
+}
+
+.spacer {
+	flex-grow: 1;
+}
+
+/* ANIMATIONS */
+@keyframes grow {
+	from {
+		width: $width;
+		pointer-events: none;
+	}
+
+	99% {
+		pointer-events: none;
+	}
+
+	to {
+		width: min(max(45vw, 70vh), 80vw);
+		pointer-events: all;
+	}
+}
+
+@keyframes opacityGrow {
+	from {
+		opacity: 0%;
+	}
+
+	to {
+		opacity: 100%;
+	}
+}
+
+@keyframes shrink {
+	from {
+		scale: 1;
+		pointer-events: none;
+		width: min(max(45vw, 70vh), 80vw);
+	}
+
+	99% {
+		pointer-events: none;
+	}
+
+	to {
+		scale: 1;
+		pointer-events: all;
+		width: $width;
+	}
+}
+
+@keyframes opacityShrink {
+	from {
+		opacity: 100%;
+	}
+
+	to {
+		opacity: 0%;
+	}
+}
+
+@keyframes hideAnim {
+	from {
+		scale: 100%;
+		opacity: 100%;
+	}
+
+	to {
+		scale: 80%;
+		opacity: 0%;
+	}
+}
+
+@keyframes showAnim {
+	from {
+		z-index: 80;
+		scale: 80%;
+		opacity: 0%;
+	}
+
+	to {
+		z-index: 90;
+		scale: 100%;
+		opacity: 100%;
+	}
+}
+
+@keyframes disablePointer {
+	from {
+		pointer-events: all;
+		cursor: pointer;
+	}
+
+	1% {
+		pointer-events: none;
+		cursor: default;
+	}
+
+	to {
+		pointer-events: none;
+	}
+}
+
+@keyframes enablePointer {
+	from {
+		pointer-events: none;
+	}
+
+	99% {
+		pointer-events: none;
+		cursor: default;
+	}
+
+	to {
+		pointer-events: all;
+		cursor: pointer;
+	}
+}

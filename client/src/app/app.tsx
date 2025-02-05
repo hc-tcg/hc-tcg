@@ -20,15 +20,13 @@ import Game from './game'
 import Login from './login'
 import MainMenu from './main-menu'
 import Achievements from './main-menu/achievements'
-import BossLanding from './main-menu/boss-landing'
+import Cosmetics from './main-menu/cosmetics'
 import Credits from './main-menu/credits'
 import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
-import GameLanding from './main-menu/games-landing'
+import PlaySelect from './main-menu/play-select'
+import More from './main-menu/settings'
 import Statistics from './main-menu/statistics'
-import Settings from './main-menu/settings'
-import MatchMaking from './match-making'
-import Cosmetics from './main-menu/cosmetics'
 
 function App() {
 	const section = useRouter()
@@ -39,7 +37,7 @@ function App() {
 	const toastMessage = useSelector(getToast)
 	const tooltip = useSelector(getTooltip)
 	const settings = useSelector(getSettings)
-	const [menuSection, setMenuSection] = useState<string>('mainmenu')
+	const [menuSection, setMenuSection] = useState<string>('main-menu')
 	let enableToast = false
 
 	useEffect(() => {
@@ -52,16 +50,14 @@ function App() {
 	const router = () => {
 		if (section === 'game') {
 			return <Game />
-		} else if (section === 'matchmaking') {
-			return <MatchMaking />
 		} else if (connected && playerName) {
 			enableToast = true
 			switch (menuSection) {
 				case 'deck':
 					return <Deck setMenuSection={setMenuSection} />
+				case 'more':
+					return <More setMenuSection={setMenuSection} />
 				case 'settings':
-					return <Settings setMenuSection={setMenuSection} />
-				case 'game-settings':
 					return <GameSettings setMenuSection={setMenuSection} />
 				case 'data-settings':
 					return <DataSettings setMenuSection={setMenuSection} />
@@ -73,12 +69,10 @@ function App() {
 					return <Cosmetics setMenuSection={setMenuSection} />
 				case 'credits':
 					return <Credits setMenuSection={setMenuSection} />
-				case 'boss-landing':
-					return <BossLanding setMenuSection={setMenuSection} />
 				case 'play-select':
-					return <GameLanding setMenuSection={setMenuSection} />
+					return <PlaySelect setMenuSection={setMenuSection} />
 
-				case 'mainmenu':
+				case 'main-menu':
 				default:
 					return <MainMenu setMenuSection={setMenuSection} />
 			}

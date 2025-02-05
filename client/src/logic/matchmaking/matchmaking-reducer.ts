@@ -53,12 +53,6 @@ const matchmakingReducer = (
 				spectatorCode: action.spectatorCode,
 				status: 'private_lobby',
 			}
-		case localMessages.MATCHMAKING_CODE_INVALID:
-			return {
-				...state,
-				status: 'private_lobby',
-				invalidCode: true,
-			}
 		case localMessages.MATCHMAKING_CODE_SET:
 			return {
 				...state,
