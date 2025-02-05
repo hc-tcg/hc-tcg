@@ -1,11 +1,10 @@
 import {Socket} from 'socket.io'
 import {Deck} from '../../common/types/deck'
-import {COINS} from '../coins'
+import {defaultAppearance} from '../cosmetics/default'
+import {Appearance} from '../cosmetics/types'
 import {AchievementProgress} from '../types/achievements'
 import {PlayerInfo} from '../types/server-requests'
 import {censorString} from '../utils/formatting'
-import {Appearance} from '../cosmetics/types'
-import {defaultAppearance} from '../cosmetics/default'
 
 export type PlayerId = string & {__player_id: never}
 

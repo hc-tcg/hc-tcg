@@ -95,9 +95,9 @@ function GameSettings({setMenuSection}: Props) {
 
 	return (
 		<MenuLayout
-			back={() => setMenuSection('settings')}
+			back={() => setMenuSection('main-menu')}
 			title="Game Settings"
-			returnText="More"
+			returnText="Main Menu"
 			className={css.settingsMenu}
 		>
 			<h2>Game Settings</h2>
