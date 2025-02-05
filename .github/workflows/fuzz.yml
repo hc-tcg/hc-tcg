@@ -35,7 +35,7 @@ jobs:
     needs: fuzz
     if: "${{ needs.fuzz.outputs.failed_test }}"
     steps:
-        run: echo "$SEED"
+      - run: echo "$SEED"
       - uses: actions/checkout@v3
       - uses: JasonEtco/create-an-issue@v2
         env:
@@ -43,3 +43,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           filename: .github/fuzz-testing-failure.md
+
