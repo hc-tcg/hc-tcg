@@ -50,7 +50,7 @@ jobs:
             if [ $TYPE = "failure" ]; then
               SEED=$(echo $LAST_ITEM | jq ".seed");
               echo "test=$SEED" >> "$GITHUB_OUTPUT";
-              TRACEBACK=$(echo $LAST_ITEM | jq ".traceback");
+              TRACEBACK=$(echo $LAST_ITEM | jq -r ".traceback");
               echo "traceback=$TRACEBACK" >> "$GITHUB_OUTPUT";
             else
               echo "No tests failed... doing nothing";
