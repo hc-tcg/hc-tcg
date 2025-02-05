@@ -11,6 +11,7 @@ const HowDidWeGetHere: Achievement = {
 	name: 'How Did We Get Here?',
 	description: 'Have 5 status effects applied to the same Hermit',
 	steps: 5,
+	icon: '',
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		if (!player) return

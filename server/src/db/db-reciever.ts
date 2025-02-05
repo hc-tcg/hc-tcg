@@ -2,6 +2,7 @@ import {CARDS} from 'common/cards'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerModel} from 'common/models/player-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {PlayerStats} from 'common/types/database'
 import {GameOutcome} from 'common/types/game-state'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import root from 'serverRoot'
@@ -485,13 +486,15 @@ export function* getStats(
 	action: RecievedClientMessage<typeof clientMessages.GET_STATS>,
 ) {
 	if (!root.db?.connected) return
-	const defaultStats = {
+	const defaultStats: PlayerStats = {
 		gamesPlayed: 0,
 		wins: 0,
 		losses: 0,
 		forfeitWins: 0,
 		forfeitLosses: 0,
 		ties: 0,
+		uniquePlayersEncountered: 0,
+		topCards: [],
 	}
 
 	const player = root.players[action.playerId]
