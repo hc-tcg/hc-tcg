@@ -1,0 +1,46 @@
+name: Render Cards
+
+on: workflow_dispatch
+
+permissions:
+  checks: write
+  contents: write
+
+jobs:
+  fuzz:
+    name: Fuzz Tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      failed_test: ${{ steps.step1.outputs.test }}
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 2
+
+      - name: Run Fuzz Tests
+        run: |
+            FUZZ_RESULT=$(npm run test:fuzz -- fuzz 5 --fail-fast 2>&1 | tail -n 1)
+
+            if echo "$FUZZ_RESULT" | grep 'FAILURE'; then
+              SEED=$(echo $FUZZ_RESULT | cut -d ":" -f1)
+              echo "$SEED" >> "$GITHUB_OUTPUT"
+            fi
+
+  make-issue:
+    runs-on: ubuntu-latest
+    needs: fuzz
+    if: "${{ needs.fuzz.outputs.failed_test }}"
+    steps:
+        run: echo "$SEED"
+      - uses: actions/checkout@v3
+      - uses: JasonEtco/create-an-issue@v2
+        env:
+          SEED: ${{ needs.fuzz.outputs.failed_test }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          filename: .github/fuzz-testing-failure.md
