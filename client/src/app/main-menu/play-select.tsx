@@ -42,8 +42,8 @@ import {setActiveDeck} from 'logic/saved-decks/saved-decks'
 import {getSession} from 'logic/session/session-selectors'
 import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
-import css from './play-select.module.scss'
 import {CosmeticPreview} from './cosmetics'
+import css from './play-select.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void

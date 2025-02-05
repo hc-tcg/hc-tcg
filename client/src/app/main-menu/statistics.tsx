@@ -175,7 +175,7 @@ function Statistics({setMenuSection}: Props) {
 	const afterRef = useRef<any>()
 	const [endpointBefore, setEndpointBefore] = useState<number | null>(null)
 	const [endpointAfter, setEndpointAfter] = useState<number | null>(null)
-	const [showDropdown, setShowDropdown] = useState<boolean>(false)
+	const [showDropdown, _setShowDropdown] = useState<boolean>(false)
 
 	const [cardOrderBy, setCardOrderBy] =
 		useState<keyof typeof cardOrderByOptions>('winrate')
