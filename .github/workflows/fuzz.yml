@@ -4,6 +4,10 @@ on:
   workflow_dispatch:
   push:
 
+permissions:
+  contents: read
+  issues: write 
+
 jobs:
   fuzz:
     name: Fuzz Tests
