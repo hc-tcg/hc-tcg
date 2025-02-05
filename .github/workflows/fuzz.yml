@@ -24,6 +24,9 @@ jobs:
         run: |
           npm install
 
+      - name: Create debug config
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
+
       - name: Run Fuzz Tests
         run: |
             echo "Starting fuzz tests...";
