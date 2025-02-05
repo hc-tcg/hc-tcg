@@ -21,7 +21,11 @@ async function performFuzzTest(seed: string, debug: boolean) {
 	})
 }
 
-async function runTest(seed: string, debug: boolean, progress: any) {
+async function runTest(
+	seed: string,
+	debug: boolean,
+	progress: any,
+): Promise<[string, boolean]> {
 	let success = true
 	try {
 		await performFuzzTest(seed, debug)
@@ -39,16 +43,29 @@ async function runTest(seed: string, debug: boolean, progress: any) {
 	}
 }
 
-async function manyTests(num: number, debug: boolean) {
+/** Run tests and return the failures */
+async function manyTests(num: number, debug: boolean, fail_fast: boolean) {
 	let progress = {progress: 0}
 
 	let seeds = Array(num)
 		.fill(0)
 		.map((_) => Math.random())
 
-	let results = await Promise.all(
-		seeds.map((x) => runTest(x.toString().slice(2, 18), debug, progress)),
-	)
+	const tests = seeds.map((x) => x.toString().slice(2, 18))
+
+	let results
+	if (!fail_fast) {
+		results = await Promise.all(tests.map((x) => runTest(x, debug, progress)))
+	} else {
+		results = []
+		for (const test of tests) {
+			let test_result = await runTest(test, debug, progress)
+			results.push(test_result)
+			if (!test_result[1]) {
+				break
+			}
+		}
+	}
 
 	let failures = results.filter(([_seed, result]) => !result)
 	if (failures.length === 0) {
@@ -61,11 +78,13 @@ async function manyTests(num: number, debug: boolean) {
 
 async function main() {
 	let argv = process.argv
+
 	argv = argv.slice(2)
+	const fail_fast = argv.includes('--fail-fast')
 
 	if (argv[0] === 'fuzz') {
 		console.log(`Fuzzing ${argv[1]} times`)
-		await manyTests(parseInt(argv[1]), false)
+		await manyTests(parseInt(argv[1]), false, fail_fast)
 		return
 	}
 
