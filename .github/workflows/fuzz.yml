@@ -1,8 +1,12 @@
+# This workflow automatically runs up to 50 fuzz tests, and creates a github issue for the first failure found.
+
 name: Fuzz Tests
 
 on:
   workflow_dispatch:
-  push:
+  schedule:
+    - cron: 0 * * * *
+
 
 permissions:
   contents: read
@@ -35,7 +39,7 @@ jobs:
         id: fuzz
         run: |
             echo "Starting fuzz tests...";
-            FUZZ_RESULT=$(npm run test:fuzz -- fuzz 20 --fail-fast 2>&1 | tail -n 1);
+            FUZZ_RESULT=$(npm run test:fuzz -- fuzz 50 --fail-fast 2>&1 | tail -n 1);
             echo $FUZZ_RESULT;
             if echo $FUZZ_RESULT | grep 'FAIL'; then
               SEED=$(echo $FUZZ_RESULT | cut -d ":" -f1);
