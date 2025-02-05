@@ -44,7 +44,7 @@ jobs:
             echo "Starting fuzz tests...";
             FUZZ_RESULT=$(npm run --silent test:fuzz -- fuzz 50 --fail-fast --json);
             echo $FUZZ_RESULT;
-            LAST_ITEM=$(echo $FUZZ_RESULT | jq '.[] | select(.type=="failure") | last');
+            LAST_ITEM=$(echo $FUZZ_RESULT | jq 'map(select(.type=="failure")) | last');
             echo $LAST_ITEM;
             if [ -n $LAST_ITEM ]; then
               SEED=$(echo $LAST_ITEM | jq -r ".seed");
