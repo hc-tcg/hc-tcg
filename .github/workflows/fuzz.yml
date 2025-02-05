@@ -54,27 +54,7 @@ jobs:
     if: "${{ needs.fuzz.outputs.failed_test != 'NOTHING' }}"
     steps:
       - run: echo "$SEED"
-
-      - name: Check out repo
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 2
-
-      - uses: JasonEtco/create-an-issue@v2
-        env:
-          SEED: ${{ needs.fuzz.outputs.failed_test }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          filename: .github/ISSUE_TEMPLATE/fuzz-testing-failure.md
-
-  create_issue:
-    name: Create team sync issue
-    runs-on: ubuntu-latest
-    permissions:
-      issues: write
-    steps:
-      - name: Create team sync issue
+      - name: Create issue
         run: |
           if [[ $CLOSE_PREVIOUS == true ]]; then
             previous_issue_number=$(gh issue list \
@@ -97,21 +77,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          TITLE: Team sync
-          ASSIGNEES: monalisa,doctocat,hubot
-          LABELS: weekly sync,docs-team
+          TITLE: Fuzz Testing Failure Detected ({{ env.SEED }})
+          LABELS: fuzz testing
           BODY: |
-            ### Agenda
-
-            - [ ] Start the recording
-            - [ ] Check-ins
-            - [ ] Discussion points
-            - [ ] Post the recording
-
-            ### Discussion Points
-            Add things to discuss below
-
-            - [Work this week](https://github.com/orgs/github/projects/3)
+            Fuzz Testing Failure Detected. Check with the folliwng command:
+            ```sh
+            npm run test:fuzz -- debug {{ env.SEED }}
+            ```
           PINNED: false
           CLOSE_PREVIOUS: false
 
