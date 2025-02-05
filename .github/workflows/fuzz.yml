@@ -97,9 +97,9 @@ jobs:
             npm run test:fuzz -- debug ${{ needs.fuzz.outputs.failed_test }}
             ```
 
-            \#\#\# Traceback:
+            **Traceback:**
             ```
-            ${{ needs.fuzz.outputs.failed_test }}
+            ${{ needs.fuzz.outputs.traceback }}
             ```
           PINNED: false
           CLOSE_PREVIOUS: false
