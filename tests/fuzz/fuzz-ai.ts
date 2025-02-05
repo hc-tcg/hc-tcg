@@ -203,6 +203,7 @@ function getNextTurnAction(
 			type: 'END_TURN',
 		}
 	}
+	throw Error("HELLO")
 
 	if (nextAction === 'PICK_REQUEST') {
 		let slot = choose(
