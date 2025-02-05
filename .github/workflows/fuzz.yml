@@ -1,6 +1,7 @@
 name: Render Cards
 
-on: workflow_dispatch
+on:
+    workflow_dispatch:
 
 permissions:
   checks: write
