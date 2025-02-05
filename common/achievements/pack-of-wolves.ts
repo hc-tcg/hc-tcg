@@ -9,6 +9,7 @@ const PackOfWolves: Achievement = {
 	numericId: 3,
 	id: 'pack_of_wolves',
 	name: 'Pack Of Wolves',
+	icon: '',
 	description: 'Have 3 wolves attached to your hermits at the same time',
 	steps: 3,
 	onGameStart(game, playerEntity, component, observer) {

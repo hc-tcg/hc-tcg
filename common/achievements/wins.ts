@@ -11,6 +11,7 @@ function winAchievement(
 		numericId: numericId,
 		id: `wins_${winCount}`,
 		name: name,
+		icon: '',
 		description: `Win ${winCount} games.`,
 		steps: winCount,
 		onGameEnd(_game, playerEntity, component, outcome) {
