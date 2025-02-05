@@ -15,7 +15,7 @@ jobs:
     permissions:
       contents: write
     outputs:
-      failed_test: ${{ steps.step4.outputs.test }}
+      failed_test: ${{ steps.fuzz.outputs.test }}
 
     steps:
       - name: Check out repo
@@ -32,6 +32,7 @@ jobs:
         run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
 
       - name: Run Fuzz Tests
+        id: fuzz
         run: |
             echo "Starting fuzz tests...";
             FUZZ_RESULT=$(npm run test:fuzz -- fuzz 20 --fail-fast 2>&1 | tail -n 1);
