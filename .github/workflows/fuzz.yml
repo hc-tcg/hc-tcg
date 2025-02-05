@@ -25,7 +25,7 @@ jobs:
 
       - name: Run Fuzz Tests
         run: |
-        	echo "Starting fuzz tests...";
+            echo "Starting fuzz tests...";
             FUZZ_RESULT=$(npm run test:fuzz -- fuzz 5 --fail-fast 2>&1 | tail -n 1);
             echo $FUZZ_RESULT;
             if echo "$FUZZ_RESULT" | grep 'FAILURE'; then
