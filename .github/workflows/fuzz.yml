@@ -45,8 +45,11 @@ jobs:
             FUZZ_RESULT=$(npm run --silent test:fuzz -- fuzz 50 --fail-fast --json);
             echo $FUZZ_RESULT;
             LAST_ITEM=$(echo $FUZZ_RESULT | jq '.[].type="failure" | last');
-            TYPE=$(echo $LAST_ITEM | jq ".type")
-            if [ [$TYPE = "failure"] ]; then
+            TYPE=$(echo $LAST_ITEM | jq -r ".type");
+            echo $FUZZ_RESULT;
+            LAST_ITEM=$(echo $FUZZ_RESULT | jq -r '.[].type="failure" | last');
+            TYPE=$(echo $LAST_ITEM | jq ".type");
+            if [ $TYPE = "failure" ]; then
               SEED=$(echo $LAST_ITEM | jq ".seed");
               echo "test=$SEED" >> "$GITHUB_OUTPUT";
               TRACEBACK=$(echo $LAST_ITEM | jq ".traceback");
