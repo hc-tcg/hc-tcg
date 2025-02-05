@@ -39,7 +39,6 @@ function MainMenu({setMenuSection}: Props) {
 	const handleMore = () => setMenuSection('more')
 	const handleSettings = () => setMenuSection('settings')
 	const handleAchievements = () => setMenuSection('achievements')
-	const handleStatistics = () => setMenuSection('statistics')
 
 	const updates = useSelector(getUpdates)
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(true)
@@ -112,8 +111,8 @@ function MainMenu({setMenuSection}: Props) {
 						</Button>
 						<Button
 							variant="default"
-							id={css.hof}
-							onClick={handleLogOut}
+							id={css.more}
+							onClick={handleMore}
 							className={css.mainMenuButton}
 						>
 							Profile

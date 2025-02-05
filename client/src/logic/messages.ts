@@ -25,7 +25,6 @@ import {
 	LocalSetting,
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
-import {Appearance, Cosmetic} from 'common/cosmetics/types'
 
 export const localMessages = messages('clientLocalMessages', {
 	SOCKET_CONNECTING: null,

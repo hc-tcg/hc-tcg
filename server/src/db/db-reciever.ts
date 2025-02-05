@@ -12,7 +12,6 @@ import {
 	RecievedClientMessage,
 	clientMessages,
 } from '../../../common/socket-messages/client-messages'
-import {defaultAppearance} from 'common/cosmetics/default'
 
 function* noDatabaseConnection(playerId: string) {
 	const player = root.players[playerId]

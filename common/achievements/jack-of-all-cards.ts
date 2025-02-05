@@ -1,6 +1,5 @@
 import {CARDS_LIST} from '../cards'
 import {Card} from '../cards/types'
-import OldMenuBackground from '../cosmetics/background/old-menu'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 

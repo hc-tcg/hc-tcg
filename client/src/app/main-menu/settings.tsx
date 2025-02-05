@@ -138,13 +138,6 @@ function More({setMenuSection}: Props) {
 					</Button>
 					<Button
 						variant="default"
-						onClick={handleGameSettings}
-						className={css.mainMenuButton}
-					>
-						Game Settings
-					</Button>
-					<Button
-						variant="default"
 						onClick={handleDataSettings}
 						className={css.mainMenuButton}
 					>

@@ -8,19 +8,14 @@ import {
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalGameState} from 'common/types/game-state'
-import {censorString} from 'common/utils/formatting'
-import {setAppearance, setMinecraftName, setUsername} from 'db/db-reciever'
+import {setAppearance} from 'db/db-reciever'
 import {GameController} from 'game-controller'
 import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
 import {getGame} from 'selectors'
-import {cps, delay, put, race, select, take} from 'typed-redux-saga'
+import {delay, put, race, select, take} from 'typed-redux-saga'
 import {getLocalGameState} from 'utils/state-gen'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
-import {COSMETICS} from 'common/cosmetics'
-import {ACHIEVEMENTS} from 'common/achievements'
-import {Background, Border, Coin, Heart, Title} from 'common/cosmetics/types'
-import {setAppearance} from 'db/db-reciever'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 

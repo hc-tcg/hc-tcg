@@ -20,15 +20,13 @@ import Game from './game'
 import Login from './login'
 import MainMenu from './main-menu'
 import Achievements from './main-menu/achievements'
-import BossLanding from './main-menu/boss-landing'
+import Cosmetics from './main-menu/cosmetics'
 import Credits from './main-menu/credits'
 import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
-import GameLanding from './main-menu/games-landing'
-import HallOfFame from './main-menu/hall-of-fame'
-import Settings from './main-menu/settings'
-import MatchMaking from './match-making'
-import Cosmetics from './main-menu/cosmetics'
+import PlaySelect from './main-menu/play-select'
+import More from './main-menu/settings'
+import Statistics from './main-menu/statistics'
 
 function App() {
 	const section = useRouter()
@@ -71,12 +69,10 @@ function App() {
 					return <Cosmetics setMenuSection={setMenuSection} />
 				case 'credits':
 					return <Credits setMenuSection={setMenuSection} />
-				case 'boss-landing':
-					return <BossLanding setMenuSection={setMenuSection} />
 				case 'play-select':
-					return <GameLanding setMenuSection={setMenuSection} />
+					return <PlaySelect setMenuSection={setMenuSection} />
 
-				case 'mainmenu':
+				case 'main-menu':
 				default:
 					return <MainMenu setMenuSection={setMenuSection} />
 			}
