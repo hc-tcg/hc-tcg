@@ -7,6 +7,7 @@ const DeceptiveSpectacles: Achievement = {
 	numericId: 10,
 	id: 'deceptive_spectacles',
 	name: 'Deceptive Spectacles',
+	icon: '',
 	description: 'Force your opponent to discard 7 cards in one game',
 	steps: 7,
 	onGameStart(game, playerEntity, component, observer) {

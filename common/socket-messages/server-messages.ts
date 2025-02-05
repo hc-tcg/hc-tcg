@@ -1,7 +1,7 @@
 import {Appearance} from '../cosmetics/types'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {AchievementProgress} from '../types/achievements'
-import {GameHistory, Stats, User} from '../types/database'
+import {GameHistory, PlayerStats, User} from '../types/database'
 import {ApiDeck, Deck, Tag} from '../types/deck'
 import {GameOutcome, LocalGameState} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
@@ -120,7 +120,7 @@ export type ServerMessages = [
 	},
 	{
 		type: typeof serverMessages.STATS_RECIEVED
-		stats: Stats
+		stats: PlayerStats
 		gameHistory: Array<GameHistory>
 	},
 	{type: typeof serverMessages.CURRENT_IMPORT_RECIEVED; deck: ApiDeck | null},
