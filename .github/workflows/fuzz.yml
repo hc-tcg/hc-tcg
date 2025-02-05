@@ -1,7 +1,6 @@
 name: Fuzz Tests
 
 on:
-  push:
   workflow_dispatch:
 
 jobs:
@@ -19,6 +18,10 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 2
+
+      - name: Setup Node
+        run: |
+          npm install
 
       - name: Run Fuzz Tests
         run: |
