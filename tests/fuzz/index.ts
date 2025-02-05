@@ -75,7 +75,7 @@ async function manyTests(
 		for (const test of tests) {
 			let test_result = await runTest(test, debug, progress, json_output)
 			results.push(test_result)
-			if (!test_result[1]) {
+			if (test_result[1] === null) {
 				break
 			}
 		}
