@@ -8,6 +8,7 @@ const Untouchable: Achievement = {
 	numericId: 11,
 	id: 'untouchabble',
 	name: 'Untouchable',
+	icon: '',
 	description: 'Take 0 damage from 3 consecutive opponent attacks',
 	steps: 3,
 	onGameStart(game, playerEntity, component, observer) {
