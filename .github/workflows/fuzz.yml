@@ -49,6 +49,7 @@ jobs:
             echo $TYPE;
             if [ $TYPE = "failure" ]; then
               SEED=$(echo $LAST_ITEM | jq ".seed");
+              echo "test=$SEED" >> $GITHUB_OUTPUT
               TRACEBACK=$(echo $LAST_ITEM | jq -r ".traceback")
               echo "traceback<<EOF" >> $GITHUB_OUTPUT
               echo "$TRACEBACK" >> $GITHUB_OUTPUT
