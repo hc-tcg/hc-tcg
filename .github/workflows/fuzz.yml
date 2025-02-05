@@ -4,6 +4,7 @@ name: Fuzz Tests
 
 on:
   workflow_dispatch:
+  push:
   schedule:
     - cron: 0 * * * *
 
