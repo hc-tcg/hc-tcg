@@ -1,4 +1,4 @@
-name: Render Cards
+name: Fuzz Tests
 
 on:
   push:
