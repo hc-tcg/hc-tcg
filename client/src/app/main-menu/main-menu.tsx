@@ -8,7 +8,6 @@ import TcgLogo from 'components/tcg-logo'
 import UpdatesModal from 'components/updates'
 import debugOptions from 'debug'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
-import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getSession, getUpdates} from 'logic/session/session-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
@@ -19,7 +18,6 @@ type Props = {
 }
 
 function MainMenu({setMenuSection}: Props) {
-	const dispatch = useMessageDispatch()
 	const {
 		playerName,
 		playerDeck: playerDeckCode,
@@ -35,9 +33,9 @@ function MainMenu({setMenuSection}: Props) {
 	}
 
 	const handleDeck = () => setMenuSection('deck')
+	const handleMore = () => setMenuSection('more')
 	const handleSettings = () => setMenuSection('settings')
 	const handleAchievements = () => setMenuSection('achievements')
-	const handleStatistics = () => setMenuSection('statistics')
 
 	const updates = useSelector(getUpdates)
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(true)
@@ -150,7 +148,7 @@ function MainMenu({setMenuSection}: Props) {
 						<Button
 							variant="default"
 							id={css.more}
-							onClick={handleStatistics}
+							onClick={handleMore}
 							className={css.mainMenuButton}
 						>
 							More

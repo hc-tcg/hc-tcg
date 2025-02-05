@@ -1,4 +1,5 @@
 import {CARDS} from 'common/cards'
+import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerModel} from 'common/models/player-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {GameOutcome} from 'common/types/game-state'
@@ -10,7 +11,6 @@ import {
 	RecievedClientMessage,
 	clientMessages,
 } from '../../../common/socket-messages/client-messages'
-import {defaultAppearance} from 'common/cosmetics/default'
 
 function* noDatabaseConnection(playerId: string) {
 	const player = root.players[playerId]
