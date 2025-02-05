@@ -2,6 +2,7 @@ name: Fuzz Tests
 
 on:
   workflow_dispatch:
+  push:
 
 jobs:
   fuzz:
