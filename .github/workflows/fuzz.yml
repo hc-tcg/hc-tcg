@@ -46,6 +46,8 @@ jobs:
 
   make_issue:
     name: Make Issue If Neccesary
+    permissions:
+      issues: write
     runs-on: ubuntu-latest
     needs: fuzz
     if: "${{ needs.fuzz.outputs.failed_test != 'NOTHING' }}"
