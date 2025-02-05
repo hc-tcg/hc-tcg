@@ -64,7 +64,7 @@ export const active: ComponentQuery<SlotComponent> = (_game, pos) => {
 	return pos.onBoard() && pos.player?.activeRowEntity === pos.rowEntity
 }
 
-/* Return true if the slot is in a player's hand */
+/* Return true if the slot is in the current player's hand */
 export const hand: ComponentQuery<SlotComponent> = (_game, pos) => {
 	return pos.type === 'hand'
 }
