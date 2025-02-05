@@ -46,9 +46,7 @@ jobs:
             echo $FUZZ_RESULT;
             LAST_ITEM=$(echo $FUZZ_RESULT | jq '.[].type="failure" | last');
             TYPE=$(echo $LAST_ITEM | jq -r ".type");
-            echo $FUZZ_RESULT;
-            LAST_ITEM=$(echo $FUZZ_RESULT | jq -r '.[].type="failure" | last');
-            TYPE=$(echo $LAST_ITEM | jq ".type");
+            echo $TYPE;
             if [ $TYPE = "failure" ]; then
               SEED=$(echo $LAST_ITEM | jq ".seed");
               echo "test=$SEED" >> "$GITHUB_OUTPUT";
