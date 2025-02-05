@@ -45,7 +45,9 @@
 }
 
 .mainMenuButton {
-	height: 4.2rem;
+	height: 5vh;
+	font-size: 1.8vh;
+	padding: 3vh;
 }
 
 .logo {
@@ -57,8 +59,11 @@
 	inset: 0;
 	display: grid;
 	place-content: flex-start center;
-	padding-top: 10vh;
+	padding-bottom: 3vh;
 	margin-inline: auto;
+	justify-items: center;
+	align-content: center;
+	gap: 7vh;
 }
 
 .privateGameContent {
@@ -88,9 +93,9 @@
 }
 
 nav {
-	margin-top: 5vh;
+	width: 90%;
 	display: grid;
-	gap: 2vh;
+	gap: 0.75vh;
 	grid-template-areas:
 		"public"
 		"private-create"
@@ -99,6 +104,20 @@ nav {
 		"settings"
 		"logout";
 	animation: fadeIn 250ms ease-in-out forwards;
+}
+
+/* DESKTOP */
+@media (min-width: 80vh) {
+	nav {
+		display: grid;
+		gap: 0.75vh;
+		grid-template-columns: 1fr 1fr;
+		grid-template-areas:
+			"public public"
+			"deck deck"
+			"achievements achievements"
+			"settings more";
+	}
 }
 
 #public {
@@ -163,44 +182,6 @@ nav {
 		height: 5vh;
 		font-size: 2vh;
 	}
-}
-
-/* Boss Landing Page */
-
-.bossLanding {
-	margin-inline: auto;
-	padding: 1vh;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
-	overflow: hidden;
-}
-
-.bossRules {
-	gap: 1vh;
-
-	color: var(--text-light);
-	max-height: 80vh;
-
-	ol li {
-		list-style-type: decimal;
-		list-style-position: inside;
-	}
-}
-
-.singleBossArea {
-	display: grid;
-	width: 30vw;
-	align-items: center;
-	justify-content: center;
-	gap: 4px;
-}
-
-.bossImage {
-	max-height: 55vh;
-	filter: drop-shadow(0 0 1rem #1d1d1d);
-	padding-bottom: 2rem;
 }
 
 /* Settings Page */
@@ -452,21 +433,6 @@ nav {
 	width: 50vh;
 }
 
-/* DESKTOP */
-@media (min-width: 80vh) {
-	nav {
-		margin-top: 6vh;
-		display: grid;
-		gap: 0.5vh;
-		grid-template-columns: 1fr 1fr;
-		grid-template-areas:
-			"public public"
-			"deck deck"
-			"achievements hof"
-			"settings settings";
-	}
-}
-
 @keyframes fadeIn {
 	from {
 		opacity: 0;
@@ -478,6 +444,7 @@ nav {
 }
 
 .achievementsContainer {
+	overflow: auto;
 	display: grid;
 	grid-template-columns: 50% 50%;
 	border-radius: 0.5vh;

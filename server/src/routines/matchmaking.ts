@@ -8,6 +8,8 @@ import {
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
+import EvilXCoin from 'common/cosmetics/coins/evilx'
+import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
@@ -44,8 +46,6 @@ import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import {turnActionsToBuffer} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
-import {defaultAppearance} from 'common/cosmetics/default'
-import EvilXCoin from 'common/cosmetics/coins/evilx'
 
 function setupGame(
 	player1: PlayerModel,

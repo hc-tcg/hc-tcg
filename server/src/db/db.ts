@@ -6,6 +6,7 @@ import pg from 'pg'
 const {Pool} = pg
 import {CARDS} from 'common/cards'
 import {PlayerDefs} from 'common/components/player-component'
+import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerModel} from 'common/models/player-model'
 import {AchievementProgress} from 'common/types/achievements'
 import {TypeT} from 'common/types/cards'
@@ -30,7 +31,6 @@ import {
 	ReplayActionData,
 	bufferToTurnActions,
 } from '../routines/turn-action-compressor'
-import {defaultAppearance} from 'common/cosmetics/default'
 
 export type DatabaseResult<T = undefined> =
 	| {

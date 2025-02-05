@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {COINS} from '../coins'
+import {Appearance} from '../cosmetics/types'
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
 import type {GameModel} from '../models/game-model'
@@ -20,7 +20,6 @@ import query from './query'
 import {RowComponent} from './row-component'
 import {SlotComponent} from './slot-component'
 import {StatusEffectComponent} from './status-effect-component'
-import {Appearance} from '../cosmetics/types'
 
 /** The minimal information that must be known about a player to start a game */
 export type PlayerDefs = {
