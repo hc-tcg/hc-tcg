@@ -63,7 +63,6 @@ export type OtherTurnActions = {
 		| 'END_TURN'
 		| 'APPLY_EFFECT'
 		| 'REMOVE_EFFECT'
-		| 'PICK_REQUEST'
 		| 'WAIT_FOR_TURN'
 		| 'WAIT_FOR_OPPONENT_ACTION'
 }
