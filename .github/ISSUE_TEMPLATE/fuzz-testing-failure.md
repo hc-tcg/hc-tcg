@@ -1,5 +1,5 @@
 ---
-title: Fuzz Testing Failure Detected: `{{ env.SEED }}`
+title: Fuzz Testing Failure Detected (`{{ env.SEED }}`)
 assignees: JasonEtco, matchai
 labels: fuzz
 ---
