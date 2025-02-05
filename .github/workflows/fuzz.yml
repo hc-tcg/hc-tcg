@@ -42,7 +42,7 @@ jobs:
         id: fuzz
         run: |
             echo "Starting fuzz tests...";
-            FUZZ_RESULT=$(npm run test:fuzz -- fuzz 50 --fail-fast --json);
+            FUZZ_RESULT=$(npm run --silent test:fuzz -- fuzz 50 --fail-fast --json);
             echo $FUZZ_RESULT;
             LAST_ITEM=$(echo $FUZZ_RESULT | jq '.[].type="failure" | last');
             TYPE=$(echo $LAST_ITEM | jq ".type")

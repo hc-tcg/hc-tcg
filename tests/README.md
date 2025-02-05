@@ -48,3 +48,9 @@ This type of test focuses on two specific bug categories:
 - Assertion failures
 - The game getting in a "stuck" state. For example a pick request having no pickable slots.
 
+Other Flags:
+| Flag | Description |
+| ---      | ----        |
+| `--fail-fast` | Fail after the first error is found. |
+| `--json` | Print the output in JSON. |
+
