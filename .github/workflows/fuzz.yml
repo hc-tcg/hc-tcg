@@ -32,11 +32,12 @@ jobs:
             echo "Starting fuzz tests...";
             FUZZ_RESULT=$(npm run test:fuzz -- fuzz 5 --fail-fast 2>&1 | tail -n 1);
             echo $FUZZ_RESULT;
-            if echo "$FUZZ_RESULT" | grep 'FAILURE'; then
+            if echo $FUZZ_RESULT | grep 'FAIL'; then
               SEED=$(echo $FUZZ_RESULT | cut -d ":" -f1);
               echo "test=$SEED" >> "$GITHUB_OUTPUT";
             else
-               echo "test=NOTHING";
+               echo "No tests failed... doing nothing";
+               echo "test=NOTHING" >> "$GITHUB_OUTPUT";
             fi;
 
   make_issue:
