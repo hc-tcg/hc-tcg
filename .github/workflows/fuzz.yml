@@ -1,4 +1,4 @@
-# This workflow automatically runs up to 50 fuzz tests, and creates a github issue for the first failure found.
+# This workflow automatically runs up to 500 fuzz tests every hour, and creates a github issue for the first failure found.
 
 name: Fuzz Tests
 
@@ -41,7 +41,7 @@ jobs:
         id: fuzz
         run: |
             echo "Starting fuzz tests...";
-            FUZZ_RESULT=$(npm run --silent test:fuzz -- fuzz 50 --fail-fast --json);
+            FUZZ_RESULT=$(npm run --silent test:fuzz -- fuzz 500 --fail-fast --json);
             echo $FUZZ_RESULT;
             LAST_ITEM=$(echo $FUZZ_RESULT | jq 'map(select(.type=="failure")) | last');
             echo $LAST_ITEM;
