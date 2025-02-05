@@ -1,5 +1,4 @@
 import type {Attach, Card, HasHealth} from '../cards/types'
-import {COINS} from '../coins'
 import type {CardComponent} from '../components'
 import {Appearance, Coin} from '../cosmetics/types'
 import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
