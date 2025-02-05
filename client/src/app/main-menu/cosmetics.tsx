@@ -1,35 +1,78 @@
+import cn from 'classnames'
+import {ACHIEVEMENTS} from 'common/achievements'
+import {ALL_COSMETICS} from 'common/cosmetics'
+import {Cosmetic} from 'common/cosmetics/types'
+import Button from 'components/button'
+import Dropdown from 'components/dropdown'
 import MenuLayout from 'components/menu-layout'
 import {
 	getAchievements,
 	getAppearance,
 } from 'logic/game/database/database-selectors'
+import {localMessages} from 'logic/messages'
+import {getSession} from 'logic/session/session-selectors'
+import {useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './cosmsetics.module.scss'
-import {useState} from 'react'
-import {
-	Appearance,
-	Background,
-	Border,
-	Coin,
-	Cosmetic,
-	Heart,
-	Title,
-} from 'common/cosmetics/types'
-import {ALL_COSMETICS} from 'common/cosmetics'
-import {ACHIEVEMENTS} from 'common/achievements'
-import cn from 'classnames'
-import Button from 'components/button'
-import {localMessages} from 'logic/messages'
-import Dropdown from 'components/dropdown'
-import {getSession} from 'logic/session/session-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
+
+export function CosmeticPreview() {
+	const {playerName, minecraftName} = useSelector(getSession)
+	const appearance = useSelector(getAppearance)
+	const health = (lives: number) => {
+		const hearts = new Array(3).fill(null).map((_, index) => {
+			const heartImg =
+				lives > index
+					? `/images/cosmetics/heart/${appearance.heart.id}.png`
+					: '/images/game/heart_empty.png'
+			return (
+				<img
+					key={index}
+					className={css.heart}
+					src={heartImg}
+					width="32"
+					height="32"
+				/>
+			)
+		})
+		return hearts
+	}
+
+	const previewStyle = {
+		borderImageSource:
+			appearance.border.id === 'blue'
+				? undefined
+				: `url(/images/cosmetics/border/${appearance.border.id}.png)`,
+		backgroundImage:
+			appearance.background.id === 'transparent'
+				? undefined
+				: `url(/images/cosmetics/background/${appearance.background.id}.png)`,
+	}
+
+	return (
+		<div className={css.cosmeticPreview}>
+			<div className={css.appearanceContainer} style={previewStyle}>
+				<img
+					className={css.playerHead}
+					src={`https://mc-heads.net/head/${minecraftName}/right`}
+					alt="player head"
+				/>
+				<div className={css.playerName}>
+					<h1>{playerName}</h1>
+					<p className={css.title}>{appearance.title.name}</p>
+				</div>
+
+				<div className={css.health}>{health(3)}</div>
+			</div>
+		</div>
+	)
+}
+
 function Cosmetics({setMenuSection}: Props) {
 	const dispatch = useDispatch()
-
-	const {playerName, minecraftName} = useSelector(getSession)
 
 	const [selectedCosmetic, setSelectedCosmetic] =
 		useState<Cosmetic['type']>('title')
@@ -70,36 +113,6 @@ function Cosmetics({setMenuSection}: Props) {
 		)
 	}
 
-	const health = (lives: number) => {
-		const hearts = new Array(3).fill(null).map((_, index) => {
-			const heartImg =
-				lives > index
-					? `/images/cosmetics/heart/${appearance.heart.id}.png`
-					: '/images/game/heart_empty.png'
-			return (
-				<img
-					key={index}
-					className={css.heart}
-					src={heartImg}
-					width="32"
-					height="32"
-				/>
-			)
-		})
-		return hearts
-	}
-
-	const previewStyle = {
-		borderImageSource:
-			appearance.border.id === 'blue'
-				? undefined
-				: `url(/images/cosmetics/border/${appearance.border.id}.png)`,
-		backgroundImage:
-			appearance.background.id === 'transparent'
-				? undefined
-				: `url(/images/cosmetics/background/${appearance.background.id}.png)`,
-	}
-
 	return (
 		<MenuLayout
 			back={() => setMenuSection('achievements')}
@@ -107,20 +120,8 @@ function Cosmetics({setMenuSection}: Props) {
 			returnText="Achievements"
 			className={css.cosmeticsLayout}
 		>
-			<div className={css.cosmeticPreview}>
-				<div className={css.appearanceContainer} style={previewStyle}>
-					<img
-						className={css.playerHead}
-						src={`https://mc-heads.net/head/${minecraftName}/right`}
-						alt="player head"
-					/>
-					<div className={css.playerName}>
-						<h1>{playerName}</h1>
-						<p className={css.title}>{appearance.title.name}</p>
-					</div>
-
-					<div className={css.health}>{health(3)}</div>
-				</div>
+			<div className={css.appearance}>
+				<CosmeticPreview />
 			</div>
 			<div className={css.itemSelector}>
 				<Dropdown

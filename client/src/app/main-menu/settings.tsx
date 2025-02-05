@@ -12,7 +12,7 @@ import css from './main-menu.module.scss'
 type Props = {
 	setMenuSection: (section: string) => void
 }
-function Settings({setMenuSection}: Props) {
+function More({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
@@ -77,7 +77,6 @@ function Settings({setMenuSection}: Props) {
 		dispatch({type: localMessages.SOUND_SECTION_CHANGE, section: section})
 		setMenuSection(section)
 	}
-	const handleGameSettings = () => changeMenuSection('game-settings')
 	const handleDataSettings = () => changeMenuSection('data-settings')
 	const _handleHallOfFame = () => changeMenuSection('statistics')
 	const _handleAchievements = () => changeMenuSection('achievements')
@@ -107,7 +106,7 @@ function Settings({setMenuSection}: Props) {
 				/>
 			)}
 			<MenuLayout
-				back={() => changeMenuSection('mainmenu')}
+				back={() => changeMenuSection('main-menu')}
 				title="More"
 				returnText="Main Menu"
 				className={css.settingsMenu}
@@ -139,13 +138,6 @@ function Settings({setMenuSection}: Props) {
 					</Button>
 					<Button
 						variant="default"
-						onClick={handleGameSettings}
-						className={css.mainMenuButton}
-					>
-						Game Settings
-					</Button>
-					<Button
-						variant="default"
 						onClick={handleDataSettings}
 						className={css.mainMenuButton}
 					>
@@ -171,4 +163,4 @@ function Settings({setMenuSection}: Props) {
 	)
 }
 
-export default Settings
+export default More
