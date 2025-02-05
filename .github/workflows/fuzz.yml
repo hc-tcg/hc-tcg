@@ -1,6 +1,7 @@
 name: Render Cards
 
 on:
+    push:
     workflow_dispatch:
 
 permissions:
