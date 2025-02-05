@@ -30,7 +30,7 @@ jobs:
       - name: Run Fuzz Tests
         run: |
             echo "Starting fuzz tests...";
-            FUZZ_RESULT=$(npm run test:fuzz -- fuzz 5 --fail-fast 2>&1 | tail -n 1);
+            FUZZ_RESULT=$(npm run test:fuzz -- fuzz 20 --fail-fast 2>&1 | tail -n 1);
             echo $FUZZ_RESULT;
             if echo $FUZZ_RESULT | grep 'FAIL'; then
               SEED=$(echo $FUZZ_RESULT | cut -d ":" -f1);
