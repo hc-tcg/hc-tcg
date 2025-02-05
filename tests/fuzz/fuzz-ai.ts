@@ -205,6 +205,7 @@ function getNextTurnAction(
 	}
 
 	if (nextAction === 'PICK_REQUEST') {
+		throw new Error("HELLO")
 		let slot = choose(
 			game.getPickableSlots(game.state.pickRequests[0].canPick),
 			game.rng,
