@@ -78,12 +78,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          TITLE: Fuzz Testing Failure Detected ({{ env.SEED }})
+          TITLE: Fuzz Testing Failure Detected ({{ needs.fuzz.outputs.failed_test }})
           LABELS: fuzz testing
           BODY: |
             Fuzz Testing Failure Detected. Check with the folliwng command:
             ```sh
-            npm run test:fuzz -- debug {{ env.SEED }}
+            npm run test:fuzz -- debug {{ needs.fuzz.outputs.failed_test }}
             ```
           PINNED: false
           CLOSE_PREVIOUS: false
