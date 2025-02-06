@@ -624,7 +624,7 @@ export function* newDeckSaga() {
 	}
 }
 
-export function* recieveStatsSaga() {
+export function* recieveCurrentImportSaga() {
 	const socket = yield* select(getSocket)
 	while (true) {
 		const result = yield* call(
@@ -641,19 +641,30 @@ export function* recieveStatsSaga() {
 	}
 }
 
-export function* recieveCurrentImportSaga() {
+export function* recieveStatsSaga() {
 	const socket = yield* select(getSocket)
 	while (true) {
-		const result = yield* call(
-			receiveMsg(socket, serverMessages.STATS_RECIEVED),
-		)
-		yield put<LocalMessage>({
-			type: localMessages.DATABASE_SET,
-			data: {
-				key: 'stats',
-				value: result.stats,
-			},
+		const result = yield* race({
+			statsRecieved: call(receiveMsg(socket, serverMessages.STATS_RECIEVED)),
+			invalidReplay: call(receiveMsg(socket, serverMessages.INVALID_REPLAY)),
 		})
+		if (result.statsRecieved) {
+			yield put<LocalMessage>({
+				type: localMessages.DATABASE_SET,
+				data: {
+					key: 'stats',
+					value: result.statsRecieved.stats,
+				},
+			})
+		} else if (result.invalidReplay) {
+			yield put<LocalMessage>({
+				type: localMessages.DATABASE_SET,
+				data: {
+					key: 'invalidReplay',
+					value: true,
+				},
+			})
+		}
 	}
 }
 

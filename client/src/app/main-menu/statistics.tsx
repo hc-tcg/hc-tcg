@@ -24,6 +24,7 @@ import {useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './statistics.module.scss'
+import {Modal} from 'components/modal'
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 
@@ -153,11 +154,19 @@ function Statistics({setMenuSection}: Props) {
 	const stats = databaseInfo.stats
 	const gameHistory = databaseInfo.gameHistory.toReversed()
 	const [tab, setTab] = useState<tabs>('stats')
+	const [showInvalidReplayModal, setShowInvalidReplayModal] =
+		useState<boolean>(false)
 	const handleReplayGame = (game: GameHistory) => {
 		dispatch({
 			type: localMessages.MATCHMAKING_REPLAY_GAME,
 			id: game.id,
 		})
+	}
+
+	const invalidReplay = databaseInfo.invalidReplay
+
+	if (invalidReplay && !showInvalidReplayModal) {
+		setShowInvalidReplayModal(true)
 	}
 
 	// Hall of fame stuff
@@ -912,9 +921,11 @@ function Statistics({setMenuSection}: Props) {
 												>
 													View
 												</Button>
-												<Button onClick={() => handleReplayGame(game)}>
-													Watch Replay
-												</Button>
+												{game.hasReplay && (
+													<Button onClick={() => handleReplayGame(game)}>
+														Watch Replay
+													</Button>
+												)}
 											</div>
 										))}
 									</div>
@@ -1152,6 +1163,27 @@ function Statistics({setMenuSection}: Props) {
 					cards={screenshotDeckModalContents}
 					onClose={() => setScreenshotDeckModalContents(null)}
 				/>
+			)}
+			{showInvalidReplayModal && (
+				<Modal
+					setOpen
+					title={'Invalid Replay Requeted'}
+					onClose={() => {
+						setShowInvalidReplayModal(false)
+						dispatch({
+							type: localMessages.DATABASE_SET,
+							data: {
+								key: 'invalidReplay',
+								value: false,
+							},
+						})
+					}}
+				>
+					<Modal.Description>
+						The replay you requested was not decoded properly. Please inform a
+						developer.
+					</Modal.Description>
+				</Modal>
 			)}
 		</>
 	)

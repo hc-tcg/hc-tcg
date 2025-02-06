@@ -15,6 +15,7 @@ export type DatabaseInfo = {
 	achievements: AchievementProgress
 	stats: PlayerStats
 	noConnection: boolean
+	invalidReplay: boolean
 	appearance: Appearance
 }
 
@@ -41,6 +42,7 @@ const defaultInfo: DatabaseInfo = {
 		uniquePlayersEncountered: 0,
 	},
 	currentImport: null,
+	invalidReplay: false,
 	appearance: defaultAppearance,
 }
 

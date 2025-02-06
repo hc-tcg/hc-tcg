@@ -802,9 +802,18 @@ export class Database {
 				const game = gamesRows[i]
 				const firstPlayerWon = game['first_player_won']
 
-				const replay: Buffer = game['replay']
+				const replay: Buffer | null = game['replay']
+				let hasReplay = false
 
-				if (replay.length < 2 || replay.readUintBE(0, 1) !== 0x01) continue
+				if (replay && replay.length > 2) {
+					const decompressedReplay = huffmanDecompress(replay)
+					if (
+						decompressedReplay &&
+						decompressedReplay.readUintBE(0, 1) === 0x01
+					) {
+						hasReplay = true
+					}
+				}
 
 				const player1Id: string = firstPlayerWon
 					? game['winner']
@@ -848,6 +857,7 @@ export class Database {
 						minecraftName: players[player2Id].minecraftName,
 					},
 					id: game['game_id'],
+					hasReplay: hasReplay,
 				})
 			}
 
@@ -901,10 +911,15 @@ export class Database {
 			const seed: string = game['seed']
 
 			const replay: Buffer = game['replay']
-			const decompressedReplay: Buffer = huffmanDecompress(replay)
+			const decompressedReplay: Buffer | null = huffmanDecompress(replay)
 
-			if (replay.length < 2 || replay.readUintBE(0, 1) !== 0x01)
+			if (
+				!decompressedReplay ||
+				decompressedReplay.length < 2 ||
+				decompressedReplay.readUintBE(0, 1) !== 0x01
+			) {
 				return {type: 'failure', reason: 'The game requested has no replay.'}
+			}
 
 			const firstPlayerRows = rows.filter((row) => row.first)
 			const secondPlayerRows = rows.filter((row) => !row.first)

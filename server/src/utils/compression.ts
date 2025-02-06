@@ -134,25 +134,33 @@ function getNextEntry(
 	return null
 }
 
-export function huffmanDecompress(bytes: Buffer) {
-	let byteString = ''
-	for (let i = 0; i < bytes.length; i++) {
-		const byte = bytes.readUint8(i)
-		byteString += byte.toString(2).padStart(8, '0')
-	}
-
-	const output: Array<string> = []
-	let byte = 0
-	while (byte < byteString.length) {
-		const entry = getNextEntry(byteString, byte)
-		if (!entry) continue
-		if (entry.symbol === 'EOF') {
-			break
+export function huffmanDecompress(bytes: Buffer): Buffer | null {
+	try {
+		let byteString = ''
+		for (let i = 0; i < bytes.length; i++) {
+			const byte = bytes.readUint8(i)
+			byteString += byte.toString(2).padStart(8, '0')
 		}
-		byte += entry.code.length
-		output.push(entry.symbol)
-	}
 
-	const dataBuffer = Buffer.from(output.map((w) => Number(`0x${w}`)))
-	return dataBuffer
+		const output: Array<string> = []
+		let byte = 0
+		while (byte < byteString.length) {
+			const entry = getNextEntry(byteString, byte)
+			if (!entry)
+				throw new Error(
+					'Invalid byte sequence encountered while decoding replay.',
+				)
+			if (entry.symbol === 'EOF') {
+				break
+			}
+			byte += entry.code.length
+			output.push(entry.symbol)
+		}
+
+		const dataBuffer = Buffer.from(output.map((w) => Number(`0x${w}`)))
+		return dataBuffer
+	} catch (e) {
+		console.log(e)
+		return null
+	}
 }

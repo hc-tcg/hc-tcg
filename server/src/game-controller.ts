@@ -28,6 +28,7 @@ export type GameControllerProps = {
 
 type GameViewerProps = {
 	spectator: boolean
+	replayer: boolean
 	playerOnLeft: PlayerEntity
 	player: PlayerModel
 }
@@ -38,6 +39,7 @@ export class GameViewer {
 	spectator: boolean
 	playerOnLeftEntity: PlayerEntity
 	player: PlayerModel
+	replayer: boolean
 
 	public constructor(game: GameModel, props: GameViewerProps) {
 		this.id = `${Math.random()}`
@@ -45,6 +47,7 @@ export class GameViewer {
 		this.spectator = props.spectator
 		this.playerOnLeftEntity = props.playerOnLeft
 		this.player = props.player
+		this.replayer = props.replayer
 	}
 
 	get playerOnLeft() {

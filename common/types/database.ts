@@ -106,5 +106,6 @@ export type GameHistoryPlayer =
 export type GameHistory = {
 	firstPlayer: GameHistoryPlayer
 	secondPlayer: GameHistoryPlayer
+	hasReplay: boolean
 	id: number
 }

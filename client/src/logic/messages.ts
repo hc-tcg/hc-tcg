@@ -46,6 +46,7 @@ export const localMessages = messages('clientLocalMessages', {
 	MATCHMAKING_QUEUE_JOIN_FAILURE: null,
 	MATCHMAKING_BOSS_GAME_CREATE: null,
 	MATCHMAKING_REPLAY_GAME: null,
+	INVALID_REPLAY: null,
 	MATCHMAKING_PRIVATE_GAME_LOBBY: null,
 	MATCHMAKING_CODE_RECIEVED: null,
 	MATCHMAKING_LEAVE: null,
@@ -137,6 +138,7 @@ type Messages = [
 		type: typeof localMessages.MATCHMAKING_REPLAY_GAME
 		id: number
 	},
+	{type: typeof localMessages.INVALID_REPLAY},
 	{
 		type: typeof localMessages.MATCHMAKING_CODE_RECIEVED
 		gameCode: string

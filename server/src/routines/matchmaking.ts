@@ -79,12 +79,14 @@ function setupGame(
 		player: player1,
 		playerOnLeft: playerEntities[0],
 		spectator: false,
+		replayer: false,
 	})
 
 	con.addViewer({
 		player: player2,
 		playerOnLeft: playerEntities[1],
 		spectator: false,
+		replayer: false,
 	})
 
 	return con
@@ -462,6 +464,7 @@ function setupSolitareGame(
 		player,
 		playerOnLeft: playerEntities[0],
 		spectator: false,
+		replayer: false,
 	})
 
 	con.game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
@@ -646,6 +649,7 @@ export function* joinPrivateGame(
 			player: player,
 			playerOnLeft: spectatorGame.game.state.order[0],
 			spectator: true,
+			replayer: false,
 		})
 
 		console.info(
@@ -754,6 +758,7 @@ export function* joinPrivateGame(
 				player: root.players[playerId],
 				spectator: true,
 				playerOnLeft: newGame.game.state.order[0],
+				replayer: false,
 			})
 			let gameState = getLocalGameState(newGame.game, viewer)
 
@@ -840,9 +845,13 @@ export function* createReplayGame(
 		broadcast([player], {type: serverMessages.CREATE_PRIVATE_GAME_FAILURE})
 		return
 	}
-
 	const replay = yield* getGameReplay(msg.payload.id)
-	if (!replay) return
+	if (!replay) {
+		broadcast([root.players[playerId]], {
+			type: serverMessages.INVALID_REPLAY,
+		})
+		return
+	}
 
 	const con = new GameController(replay.player1Defs, replay.player2Defs, {
 		randomSeed: replay.seed,
@@ -860,6 +869,7 @@ export function* createReplayGame(
 		player: root.players[playerId],
 		spectator: true,
 		playerOnLeft: viewerEntity ? viewerEntity : con.game.state.order[0],
+		replayer: true,
 	})
 	let gameState = getLocalGameState(con.game, viewer)
 
