@@ -221,14 +221,6 @@ function getAvailableActions(
 
 	// Play card actions require an active row unless it's the players first turn
 	if (activeRowId !== null || turnState.turnNumber <= 2) {
-		// Temporarily add these to see if any slots are available
-		game.state.turn.availableActions = [
-			...actions,
-			'PLAY_HERMIT_CARD',
-			'PLAY_EFFECT_CARD',
-			'PLAY_ITEM_CARD',
-			'PLAY_SINGLE_USE_CARD',
-		]
 		const desiredActions = game.components
 			.filter(
 				CardComponent,
@@ -238,24 +230,41 @@ function getAvailableActions(
 				),
 			)
 			.reduce((reducer: TurnActions, card: CardComponent): TurnActions => {
-				const pickableSlots = game.components.filter(
-					SlotComponent,
-					card.props.attachCondition,
-				)
-
-				if (pickableSlots.length === 0) return reducer
-
+				// See Issue #1205
 				if (card.isHealth() && !reducer.includes('PLAY_HERMIT_CARD')) {
-					reducer.push('PLAY_HERMIT_CARD')
+					game.state.turn.availableActions = [...actions, 'PLAY_HERMIT_CARD']
+					const pickableSlots = game.components.filter(
+						SlotComponent,
+						card.props.attachCondition,
+					)
+					if (pickableSlots.length !== 0) reducer.push('PLAY_HERMIT_CARD')
 				}
 				if (card.isAttach() && !reducer.includes('PLAY_EFFECT_CARD')) {
-					reducer.push('PLAY_EFFECT_CARD')
+					game.state.turn.availableActions = [...actions, 'PLAY_EFFECT_CARD']
+					const pickableSlots = game.components.filter(
+						SlotComponent,
+						card.props.attachCondition,
+					)
+					if (pickableSlots.length !== 0) reducer.push('PLAY_EFFECT_CARD')
 				}
 				if (card.isItem() && !reducer.includes('PLAY_ITEM_CARD')) {
-					reducer.push('PLAY_ITEM_CARD')
+					game.state.turn.availableActions = [...actions, 'PLAY_ITEM_CARD']
+					const pickableSlots = game.components.filter(
+						SlotComponent,
+						card.props.attachCondition,
+					)
+					if (pickableSlots.length !== 0) reducer.push('PLAY_ITEM_CARD')
 				}
 				if (card.isSingleUse() && !reducer.includes('PLAY_SINGLE_USE_CARD')) {
-					reducer.push('PLAY_SINGLE_USE_CARD')
+					game.state.turn.availableActions = [
+						...actions,
+						'PLAY_SINGLE_USE_CARD',
+					]
+					const pickableSlots = game.components.filter(
+						SlotComponent,
+						card.props.attachCondition,
+					)
+					if (pickableSlots.length !== 0) reducer.push('PLAY_SINGLE_USE_CARD')
 				}
 				return reducer
 			}, [] as TurnActions)
