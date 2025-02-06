@@ -93,6 +93,7 @@ export type ClientMessages = [
 	{
 		type: typeof clientMessages.CREATE_REPLAY_GAME
 		id: number
+		uuid: string
 	},
 	{
 		type: typeof clientMessages.TURN_ACTION

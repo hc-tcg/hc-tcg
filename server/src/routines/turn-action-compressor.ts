@@ -689,9 +689,9 @@ export function* turnActionsToBuffer(
 
 	const buffers: Array<Buffer> = []
 
-	newGameController.task = yield* spawn(gameSaga, newGameController)
-
 	try {
+		newGameController.task = yield* spawn(gameSaga, newGameController)
+
 		for (let i = 0; i < originalGame.turnActions.length; i++) {
 			const action = originalGame.turnActions[i]
 			buffers.push(

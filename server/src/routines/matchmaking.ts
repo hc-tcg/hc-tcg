@@ -59,11 +59,15 @@ function setupGame(
 	let con = new GameController(
 		{
 			model: player1,
-			deck: player1Deck.cards.map((card) => card.props.numericId),
+			deck: player1Deck.cards
+				.map((card) => card.props.numericId)
+				.sort((a, b) => a - b),
 		},
 		{
 			model: player2,
-			deck: player2Deck.cards.map((card) => card.props.numericId),
+			deck: player2Deck.cards
+				.map((card) => card.props.numericId)
+				.sort((a, b) => a - b),
 		},
 		{gameCode, spectatorCode, apiSecret, countAchievements: true},
 	)
@@ -502,6 +506,7 @@ export function* createBossGame(
 	broadcast([player], {type: serverMessages.CREATE_BOSS_GAME_SUCCESS})
 
 	const newBossGameController = setupSolitareGame(player, player.deck, {
+		uuid: '',
 		name: 'Evil Xisuma',
 		minecraftName: 'EvilXisuma',
 		censoredName: 'Evil Xisuma',
@@ -846,10 +851,15 @@ export function* createReplayGame(
 	root.addGame(con)
 	root.hooks.newGame.call(con)
 
+	const viewerEntity = con.game.components.findEntity(
+		PlayerComponent,
+		query.player.uuid(msg.payload.uuid),
+	)
+
 	const viewer = con.addViewer({
 		player: root.players[playerId],
 		spectator: true,
-		playerOnLeft: con.game.state.order[0],
+		playerOnLeft: viewerEntity ? viewerEntity : con.game.state.order[0],
 	})
 	let gameState = getLocalGameState(con.game, viewer)
 
@@ -874,6 +884,7 @@ export function* createReplayGame(
 
 	for (let i = 0; i < replayActions.length; i++) {
 		const action = replayActions[i]
+
 		yield* delay(action.millisecondsSinceLastAction)
 		yield* put({
 			type: clientMessages.TURN_ACTION,
@@ -886,8 +897,6 @@ export function* createReplayGame(
 		})
 	}
 
-	yield* delay(1000)
-
 	gameState.timer.turnRemaining = 0
 	gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
 	if (!con.game.endInfo.victoryReason) {
@@ -897,6 +906,8 @@ export function* createReplayGame(
 			.filter(PlayerComponent)
 			.forEach((player) => (gameState.players[player.entity].coinFlips = []))
 	}
+
+	yield* delay(10)
 
 	broadcast([viewer.player], {
 		type: serverMessages.GAME_END,

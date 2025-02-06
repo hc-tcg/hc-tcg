@@ -779,6 +779,7 @@ export class Database {
 
 			playersInGames.rows.forEach((row: Record<string, any>) => {
 				players[row['user_id']] = {
+					uuid: row['user_id'],
 					name: row['username'],
 					censoredName: row['username'],
 					minecraftName: row['minecraft_name'],
@@ -877,18 +878,18 @@ export class Database {
 					WHERE game_id = $1
 				)
 				SELECT 
-					winner as user_id, winner_deck_code as deck_code, username, minecraft_name,
+					winner as user_id, winner_deck_code as selected_deck_code, username, minecraft_name,
 					card_id, copies, replay, seed, first_player_won = TRUE as first
 					FROM game 
 					JOIN users ON users.user_id = winner
-					LEFT JOIN deck_cards ON deck_cards.deck_code = game.winner_deck_code
+					LEFT JOIN deck_cards ON deck_cards.deck_code = winner_deck_code
 				UNION (
 					SELECT 
-					loser as user_id, loser_deck_code as deck_code, username, minecraft_name,
+					loser as user_id, loser_deck_code as selected_deck_code, username, minecraft_name,
 					card_id, copies, replay, seed, first_player_won = FALSE as first
 					FROM game 
 					JOIN users ON users.user_id = loser
-					LEFT JOIN deck_cards ON deck_cards.deck_code = game.winner_deck_code
+					LEFT JOIN deck_cards ON deck_cards.deck_code = loser_deck_code
 				)
 					`,
 				[gameId],
@@ -905,10 +906,11 @@ export class Database {
 			const firstPlayerRows = rows.filter((row) => row.first)
 			const secondPlayerRows = rows.filter((row) => !row.first)
 
-			const player1Deck: Array<string> = firstPlayerRows.reduce(
-				(r: Array<string>, row: any) => {
+			const player1Deck: Array<number> = firstPlayerRows.reduce(
+				(r: Array<number>, row: any) => {
 					const newElements = Array(row['copies']).fill(
-						this.allCards.find((card) => card.numericId === row['card_id'])?.id,
+						this.allCards.find((card) => card.numericId === row['card_id'])
+							?.numericId,
 					)
 					if (newElements.includes(undefined)) return r
 					r.push(...newElements)
@@ -917,10 +919,11 @@ export class Database {
 				[],
 			)
 
-			const player2Deck: Array<string> = secondPlayerRows.reduce(
-				(r: Array<string>, row: any) => {
+			const player2Deck: Array<number> = secondPlayerRows.reduce(
+				(r: Array<number>, row: any) => {
 					const newElements = Array(row['copies']).fill(
-						this.allCards.find((card) => card.numericId === row['card_id'])?.id,
+						this.allCards.find((card) => card.numericId === row['card_id'])
+							?.numericId,
 					)
 					if (newElements.includes(undefined)) return r
 					r.push(...newElements)
@@ -931,23 +934,25 @@ export class Database {
 
 			const player1Defs: PlayerSetupDefs & {uuid: string} = {
 				model: {
+					uuid: firstPlayerRows[0].user_id,
 					name: firstPlayerRows[0].username,
 					minecraftName: firstPlayerRows[0].minecraft_name,
 					censoredName: firstPlayerRows[0].username,
 					appearance: defaultAppearance,
 				},
-				deck: player1Deck,
+				deck: player1Deck.sort((a, b) => a - b),
 				uuid: firstPlayerRows[0].user_id,
 			}
 
 			const player2Defs: PlayerSetupDefs & {uuid: string} = {
 				model: {
+					uuid: secondPlayerRows[0].user_id,
 					name: secondPlayerRows[0].username,
 					minecraftName: secondPlayerRows[0].minecraft_name,
 					censoredName: secondPlayerRows[0].username,
 					appearance: defaultAppearance,
 				},
-				deck: player2Deck,
+				deck: player2Deck.sort((a, b) => a - b),
 				uuid: secondPlayerRows[0].user_id,
 			}
 
