@@ -1,4 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
+import BrewingStand from 'common/cards/advent-of-tcg/attach/brewing-stand'
+import Furnace from 'common/cards/advent-of-tcg/attach/furnace'
 import CyberpunkImpulseRare from 'common/cards/advent-of-tcg/hermits/cyberpunkimpulse-rare'
 import SmallishbeansAdventRare from 'common/cards/advent-of-tcg/hermits/smallishbeans-rare'
 import String from 'common/cards/attach/string'
@@ -6,14 +8,18 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import HumanCleoRare from 'common/cards/hermits/humancleo-rare'
 import HypnotizdRare from 'common/cards/hermits/hypnotizd-rare'
 import FarmItem from 'common/cards/items/farm-common'
+import FarmDoubleItem from 'common/cards/items/farm-rare'
 import RedstoneItem from 'common/cards/items/redstone-common'
 import WildItem from 'common/cards/items/wild-common'
 import Efficiency from 'common/cards/single-use/efficiency'
+import {SlotComponent} from 'common/components'
+import query from 'common/components/query'
 import {getAvailableEnergy} from 'server/routines/game'
 import {
 	applyEffect,
 	attack,
 	endTurn,
+	pick,
 	playCardFromHand,
 	testGame,
 } from '../../utils'
@@ -146,5 +152,122 @@ describe('Test Cyberpunk Impulse', () => {
 			},
 			{noItemRequirements: true},
 		)
+	})
+
+	test('Brewing Stand does not include items attached to adjacent Cyberpunk Impulse', () => {
+		testGame(
+			{
+				playerOneDeck: [
+					EthosLabCommon,
+					CyberpunkImpulseRare,
+					BrewingStand,
+					FarmItem,
+					FarmItem,
+				],
+				playerTwoDeck: [EthosLabCommon],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, CyberpunkImpulseRare, 'hermit', 1)
+					yield* playCardFromHand(game, BrewingStand, 'attach', 0)
+					yield* playCardFromHand(game, FarmItem, 'item', 1, 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					expect(game.currentPlayer.coinFlips).toStrictEqual([])
+					expect(game.state.pickRequests).toStrictEqual([])
+					yield* playCardFromHand(game, FarmItem, 'item', 0, 0)
+					yield* endTurn(game)
+
+					yield* endTurn(game)
+
+					expect(game.currentPlayer.coinFlips).toHaveLength(1)
+					expect(
+						game.components.filter(
+							SlotComponent,
+							game.state.pickRequests[0].canPick,
+						),
+					).toHaveLength(1)
+					expect(game.currentPlayer.activeRow?.health).toBe(
+						EthosLabCommon.health - EthosLabCommon.secondary.damage,
+					)
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.item,
+						query.slot.rowIndex(0),
+						query.slot.index(0),
+					)
+					expect(game.currentPlayer.activeRow?.health).toBe(
+						EthosLabCommon.health -
+							EthosLabCommon.secondary.damage +
+							50 /** Brewing Stand */,
+					)
+					expect(game.currentPlayer.activeRow?.getItems(true)).toHaveLength(0)
+				},
+			},
+			{noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+
+	test('Furnace does not include items attached to adjacent Cyberpunk Impulse', () => {
+		testGame({
+			playerOneDeck: [
+				EthosLabCommon,
+				CyberpunkImpulseRare,
+				Furnace,
+				FarmItem,
+				FarmItem,
+			],
+			playerTwoDeck: [EthosLabCommon],
+			saga: function* (game) {
+				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				yield* playCardFromHand(game, CyberpunkImpulseRare, 'hermit', 1)
+				yield* playCardFromHand(game, Furnace, 'attach', 0)
+				yield* playCardFromHand(game, FarmItem, 'item', 1, 0)
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, FarmItem, 'item', 0, 0)
+				yield* endTurn(game)
+				yield* endTurn(game)
+
+				yield* endTurn(game)
+				yield* endTurn(game)
+
+				yield* endTurn(game)
+				yield* endTurn(game)
+
+				expect(
+					game.components
+						.find(
+							SlotComponent,
+							query.slot.currentPlayer,
+							query.slot.item,
+							query.slot.rowIndex(0),
+							query.slot.index(0),
+						)
+						?.getCard()?.props,
+				).toStrictEqual(FarmDoubleItem)
+				expect(
+					game.components
+						.find(
+							SlotComponent,
+							query.slot.currentPlayer,
+							query.slot.item,
+							query.slot.rowIndex(1),
+							query.slot.index(0),
+						)
+						?.getCard()?.props,
+				).toStrictEqual(FarmItem)
+				expect(
+					game.currentPlayer.getDiscarded().map((card) => card.props),
+				).toStrictEqual([Furnace])
+			},
+		})
 	})
 })

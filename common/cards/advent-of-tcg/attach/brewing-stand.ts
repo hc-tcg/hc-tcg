@@ -31,6 +31,7 @@ const BrewingStand: Attach = {
 
 			if (component.slot.row.entity !== player.activeRowEntity) return
 
+			/** @todo This flip does not get logged, may have to be added manually */
 			const flip = flipCoin(game, player, component)[0]
 			if (flip !== 'heads') return
 
