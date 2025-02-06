@@ -101,65 +101,9 @@ export function getLocalModalData(
 		}
 	} else if (modal.type === 'copyAttack') {
 		let hermitCard = game.components.get(modal.hermitCard)!
-		let blockedActions = hermitCard.player.hooks.blockedActions.callSome(
-			[[]],
-			(observerEntity) => {
-				let observer = game.components.get(observerEntity)
-				return observer?.wrappingEntity === hermitCard.entity
-			},
-		)
-
-		/* Due to an issue with the blocked actions system, we have to check if our target has thier action
-		 * blocked by status effects here.
-		 */
-		if (
-			game.components.exists(
-				StatusEffectComponent,
-				query.effect.is(
-					PrimaryAttackDisabledEffect,
-					MultiturnPrimaryAttackDisabledEffect,
-				),
-				query.effect.targetIsCardAnd(
-					query.card.entity(hermitCard.entity),
-					query.card.currentPlayer,
-				),
-			) ||
-			(hermitCard.isHermit() && hermitCard.props.primary.passive)
-		) {
-			blockedActions.push('PRIMARY_ATTACK')
-		}
-
-		if (
-			game.components.exists(
-				StatusEffectComponent,
-				query.effect.is(
-					SecondaryAttackDisabledEffect,
-					MultiturnSecondaryAttackDisabledEffect,
-				),
-				query.effect.targetIsCardAnd(
-					query.card.entity(hermitCard.entity),
-					query.card.currentPlayer,
-				),
-			) ||
-			(hermitCard.isHermit() && hermitCard.props.secondary.passive)
-		) {
-			blockedActions.push('SECONDARY_ATTACK')
-		}
-
-		if (
-			game.components.exists(
-				StatusEffectComponent,
-				query.effect.is(TimeSkipDisabledEffect),
-				query.effect.targetIsPlayerAnd(query.player.currentPlayer),
-			) &&
-			query.card.is(JoeHillsRare)(game, hermitCard)
-		)
-			blockedActions.push('SECONDARY_ATTACK')
-
 		return {
 			...modal,
 			hermitCard: getLocalCard(game, hermitCard),
-			blockedActions: blockedActions,
 		}
 	}
 
