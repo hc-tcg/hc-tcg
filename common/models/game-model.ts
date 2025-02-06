@@ -1,4 +1,5 @@
 import assert from 'assert'
+import JoeHillsRare from '../cards/hermits/joehills-rare'
 import {
 	CardComponent,
 	PlayerComponent,
@@ -9,6 +10,15 @@ import {
 import query, {ComponentQuery} from '../components/query'
 import {CONFIG, DEBUG_CONFIG} from '../config'
 import {PlayerEntity, SlotEntity} from '../entities'
+import {
+	MultiturnPrimaryAttackDisabledEffect,
+	MultiturnSecondaryAttackDisabledEffect,
+} from '../status-effects/multiturn-attack-disabled'
+import {
+	PrimaryAttackDisabledEffect,
+	SecondaryAttackDisabledEffect,
+} from '../status-effects/singleturn-attack-disabled'
+import TimeSkipDisabledEffect from '../status-effects/time-skip-disabled'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
@@ -37,16 +47,6 @@ import {
 } from '../utils/state-gen'
 import {AttackModel, ReadonlyAttackModel} from './attack-model'
 import {BattleLogModel} from './battle-log-model'
-import {
-	PrimaryAttackDisabledEffect,
-	SecondaryAttackDisabledEffect,
-} from '../status-effects/singleturn-attack-disabled'
-import {
-	MultiturnPrimaryAttackDisabledEffect,
-	MultiturnSecondaryAttackDisabledEffect,
-} from '../status-effects/multiturn-attack-disabled'
-import TimeSkipDisabledEffect from '../status-effects/time-skip-disabled'
-import JoeHillsRare from '../cards/hermits/joehills-rare'
 
 export type GameSettings = {
 	maxTurnTime: number

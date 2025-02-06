@@ -1,4 +1,3 @@
-import JoeHillsRare from 'common/cards/hermits/joehills-rare'
 import {Card} from 'common/cards/types'
 import {
 	CardComponent,
@@ -10,15 +9,6 @@ import {
 import query from 'common/components/query'
 import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
-import {
-	MultiturnPrimaryAttackDisabledEffect,
-	MultiturnSecondaryAttackDisabledEffect,
-} from 'common/status-effects/multiturn-attack-disabled'
-import {
-	PrimaryAttackDisabledEffect,
-	SecondaryAttackDisabledEffect,
-} from 'common/status-effects/singleturn-attack-disabled'
-import TimeSkipDisabledEffect from 'common/status-effects/time-skip-disabled'
 import {
 	CurrentCoinFlip,
 	LocalCurrentCoinFlip,
