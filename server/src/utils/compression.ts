@@ -1,4 +1,4 @@
-import {dataHuffmanTree} from '../../../common/config/huffman-tree'
+import {huffmanTree} from '../../../common/config/huffman-tree'
 
 type HuffmanNode = {
 	firstChild: HuffmanNode | string
@@ -95,9 +95,7 @@ export function createHuffmanTree(bytes: Array<string>) {
 		treeAsArray.push({symbol: entry[0], code: entry[1]}),
 	)
 	treeAsArray.sort((a, b) => Number(a.code) - Number(b.code))
-	// console.log(treeAsArray.slice(0, 100))
-	// console.log(treeAsArray.slice(100, 200))
-	// console.log(treeAsArray.slice(200))
+	return treeAsArray
 }
 
 export function huffmanCompress(buffer: Buffer) {
@@ -109,9 +107,9 @@ export function huffmanCompress(buffer: Buffer) {
 	let dataString = ''
 	for (let i = 0; i < bytes.length; i++) {
 		const byte = bytes[i]
-		dataString += dataHuffmanTree.find((e) => e.symbol === byte)?.code
+		dataString += huffmanTree.find((e) => e.symbol === byte)?.code
 	}
-	dataString += dataHuffmanTree.find((e) => e.symbol === 'EOF')?.code
+	dataString += huffmanTree.find((e) => e.symbol === 'EOF')?.code
 	const dataNumbers: Array<number> = []
 
 	while (dataString.length) {
@@ -130,7 +128,7 @@ function getNextEntry(
 	let currentCode = ''
 	for (let i = start; i < byteString.length; i++) {
 		currentCode += byteString[i]
-		const entry = dataHuffmanTree.find((c) => c.code === currentCode)
+		const entry = huffmanTree.find((c) => c.code === currentCode)
 		if (entry) return entry
 	}
 	return null

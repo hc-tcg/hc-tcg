@@ -31,6 +31,7 @@ import {
 	ReplayActionData,
 	bufferToTurnActions,
 } from '../routines/turn-action-compressor'
+import {huffmanCompress, huffmanDecompress} from '../../src/utils/compression'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -897,8 +898,10 @@ export class Database {
 
 			const rows: Array<Record<string, any>> = gamesResult.rows
 			const game: Record<string, any> = rows[0]
-			const replay: Buffer = game['replay']
 			const seed: string = game['seed']
+
+			const replay: Buffer = game['replay']
+			const decompressedReplay: Buffer = huffmanDecompress(replay)
 
 			if (replay.length < 2 || replay.readUintBE(0, 1) !== 0x01)
 				return {type: 'failure', reason: 'The game requested has no replay.'}
@@ -961,7 +964,7 @@ export class Database {
 				player2Defs,
 				seed,
 				{},
-				replay,
+				decompressedReplay,
 			)
 
 			return {
@@ -1107,6 +1110,8 @@ export class Database {
 
 			const firstPlayerWon = winner === firstPlayerUuid
 
+			const compressedReplay = huffmanCompress(replay)
+
 			await this.pool.query(
 				"INSERT INTO games (start_time, completion_time, winner, loser, winner_deck_code, loser_deck_code, outcome, seed, turns, first_player_won, replay, opponent_code) VALUES(CURRENT_TIMESTAMP - $1 * '1 millisecond'::interval,CURRENT_TIMESTAMP,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
 				[
@@ -1119,7 +1124,7 @@ export class Database {
 					seed,
 					turns,
 					firstPlayerWon,
-					replay,
+					compressedReplay,
 					opponentCode,
 				],
 			)
