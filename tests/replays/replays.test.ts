@@ -26,6 +26,10 @@ import {
 	playCardFromHand,
 	testReplayGame,
 } from '../unit/game/utils'
+import {
+	huffmanDecompress,
+	huffmanCompress,
+} from '../../server/src/utils/compression'
 
 describe('Test Replays', () => {
 	test('Test play card and attack actions', async () => {
@@ -221,5 +225,29 @@ describe('Test Replays', () => {
 				).toStrictEqual(turnActions.map((action) => action.action))
 			},
 		})
+	})
+
+	test('DEFLATE Algorithm', () => {
+		// Generated from replay data
+		let hexString =
+			'0100001000010ad0010709000a10010109d000030780010b0400030b030001000e1801053007050118d20302125604060a070602155e01012ad202060b0b070118070706150708061c0b0f01180705031680050b080110060e070800102002010ee001060b0b1b01200705062b0706060f0100001002010ad002070c001210010109d0010512070702155605010cd20300190800050a0706011bd202000a1800061b0b15011007070119d402060907070113d800030d80020b060110060f0b090110070502184e030126c80206090708061d0b14011807070a1201010cca02050a07050110da03030a80040b040110060e0707052e070706b507070116cc03060c070703138005080600100801010bc802060d'
+		// Just log every bit once
+		// for (let i = 0; i < 255; i++) {
+		// 	hexString += i.toString(16).padStart(2, '0')
+		// }
+
+		const replayNumbers: Array<number> = []
+		while (hexString.length) {
+			replayNumbers.push(Number(`0x${hexString.substring(0, 2)}`))
+			hexString = hexString.substring(2)
+		}
+		const testBuffer = Buffer.from(replayNumbers)
+
+		// Test compression algorithms
+		const compressed = huffmanCompress(testBuffer)
+		// Test decompression algorithms
+		const decompressed = huffmanDecompress(compressed)
+
+		expect(testBuffer).toStrictEqual(decompressed)
 	})
 })
