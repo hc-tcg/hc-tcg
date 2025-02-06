@@ -128,7 +128,6 @@ function getNextTurnAction(
 	}
 
 	if (nextAction === 'PLAY_SINGLE_USE_CARD') {
-		console.log('here')
 		const card = choose(
 			game.components.filter(
 				CardComponent,
@@ -334,9 +333,7 @@ export const FuzzAI: VirtualAI = {
 	id: 'fuzz_ai',
 	getTurnActions: function* (game, component) {
 		while (true) {
-			let next = getNextTurnAction(game, component)
-			console.log(next)
-			yield next
+			yield getNextTurnAction(game, component)
 		}
 	},
 }
