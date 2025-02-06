@@ -419,7 +419,7 @@ export class GameModel {
 
 		const requestWithBlockedActions = {
 			...newRequest,
-			modal: {...modal, blockedActions: []},
+			modal: {...modal, blockedActions: blockedActions},
 		}
 		this.addModalRequest(requestWithBlockedActions, before)
 	}
