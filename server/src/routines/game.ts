@@ -11,12 +11,7 @@ import query from 'common/components/query'
 import {PlayerEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
 import {TypeT} from 'common/types/cards'
-import {
-	GameOutcome,
-	PlayCardAction,
-	TurnAction,
-	TurnActions,
-} from 'common/types/game-state'
+import {GameOutcome, TurnAction, TurnActions} from 'common/types/game-state'
 import {
 	AttackActionData,
 	PickSlotActionData,
