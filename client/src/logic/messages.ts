@@ -65,7 +65,7 @@ export const localMessages = messages('clientLocalMessages', {
 	GAME_ATTACK_START: null,
 	GAME_TURN_ACTION: null,
 	GAME_END_OVERLAY_SHOW: null,
-	GAME_END_OVERLAY_HIDE: null,
+	GAME_CLOSE: null,
 	GAME_COIN_FLIP_SET: null,
 	GAME_OPPONENT_CONNECTION_SET: null,
 	GAME_ACTIONS_HERMIT_CHANGE_CONFIRM: null,
@@ -199,7 +199,8 @@ type Messages = [
 		outcome: GameOutcome
 	},
 	{
-		type: typeof localMessages.GAME_END_OVERLAY_HIDE
+		type: typeof localMessages.GAME_CLOSE
+		menuSection?: string
 	},
 	{
 		type: typeof localMessages.GAME_COIN_FLIP_SET
