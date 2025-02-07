@@ -5,7 +5,6 @@ import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
 import {CARDS} from 'common/cards'
-import {PlayerDefs} from 'common/components/player-component'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerModel} from 'common/models/player-model'
 import {AchievementProgress} from 'common/types/achievements'
@@ -16,6 +15,7 @@ import {
 	CardStats,
 	DeckStats,
 	GameHistory,
+	GameHistoryPlayer,
 	GamesStats,
 	PlayerStats,
 	Stats,
@@ -751,115 +751,140 @@ export class Database {
 	}
 
 	/**Get a user's game history */
-	//@TODO switch this all to 1 query
 	public async getUserGameHistory(
 		uuid: string,
 	): Promise<DatabaseResult<Array<GameHistory>>> {
 		try {
 			const gamesResult: any = await this.pool.query(
 				`
-				SELECT * FROM games WHERE winner = $1 OR loser = $1`,
+				WITH games AS (
+					SELECT 
+					start_time,
+					game_id,
+					replay,
+					CASE WHEN winner = $1 THEN winner ELSE loser END as you,
+					CASE WHEN winner = $1 THEN loser ELSE winner END as opponent,
+					CASE WHEN winner = $1 THEN winner_deck_code ELSE loser_deck_code END as deck_code,
+					CASE WHEN first_player_won THEN winner ELSE loser END as first_player,
+					outcome,
+					winner = $1 as you_won
+					FROM games WHERE winner = $1 OR loser = $1
+				)
+				SELECT game_id,start_time,your_username,opponent_username,your_minecraft_name,opponent_minecraft_name,you,opponent,
+				outcome,you_won,decks.deck_code,copies,card_id,name,icon,icon_type,replay,first_player
+				FROM games
+				JOIN (SELECT user_id, username as your_username, minecraft_name as your_minecraft_name FROM users) as users_y ON games.you = users_y.user_id
+				JOIN (SELECT user_id, username as opponent_username, minecraft_name as opponent_minecraft_name FROM users) as users_o ON games.opponent = users_o.user_id
+				JOIN decks ON decks.deck_code = games.deck_code
+				JOIN deck_cards ON games.deck_code = deck_cards.deck_code
+				`,
 				[uuid],
 			)
 
-			const gamesRows: Array<Record<string, any>> = gamesResult.rows
+			type GameRow = {
+				game_id: number
+				start_time: Date
+				deck_code: string
+				your_username: string
+				opponent_username: string
+				your_minecraft_name: string
+				opponent_minecraft_name: string
+				you: string
+				opponent: string
+				first_player: string
+				you_won: boolean
+				cards: Array<number>
+				name: string
+				icon: string
+				icon_type: string
+				replay: Buffer
+			}
 
-			const allPlayersInGames = gamesRows.reduce((r: Array<string>, game) => {
-				r.push(game['winner'])
-				r.push(game['loser'])
-				return r
-			}, [])
-
-			const playersInGames = await this.pool.query(
-				`
-				SELECT * FROM users WHERE user_id IN (SELECT * FROM UNNEST ($1::uuid[]))`,
-				[allPlayersInGames],
+			const gamesRows: Array<GameRow> = gamesResult.rows.reduce(
+				(r: Array<GameRow>, row: any) => {
+					const includedRow = r.find(
+						(subrow) => subrow['game_id'] === row['game_id'],
+					)
+					if (includedRow) {
+						includedRow.cards.push(...Array(row['copies']).fill(row['card_id']))
+						return r
+					}
+					r.push({
+						game_id: row['game_id'],
+						start_time: row['start_time'],
+						deck_code: row['deck_code'],
+						your_username: row['your_username'],
+						opponent_username: row['opponent_username'],
+						your_minecraft_name: row['your_minecraft_name'],
+						opponent_minecraft_name: row['opponent_minecraft_name'],
+						you: row['you'],
+						opponent: row['opponent'],
+						first_player: row['first_player'],
+						you_won: row['you_won'],
+						cards: Array(row['copies']).fill(row['card_id']),
+						name: row['name'],
+						icon: row['icon'],
+						icon_type: row['icon_type'],
+						replay: row['replay'],
+					})
+					return r
+				},
+				[],
 			)
-
-			const players: Record<string, PlayerDefs> = {}
-
-			playersInGames.rows.forEach((row: Record<string, any>) => {
-				players[row['user_id']] = {
-					uuid: row['user_id'],
-					name: row['username'],
-					censoredName: row['username'],
-					minecraftName: row['minecraft_name'],
-					appearance: defaultAppearance,
-				}
-			})
-
-			const decks = await this.getDecksFromUuid(uuid)
-
-			if (decks.type === 'failure')
-				return {
-					type: 'failure',
-					reason: decks.reason,
-				}
 
 			const gamesHistory: Array<GameHistory> = []
 
 			for (let i = 0; i < gamesRows.length; i++) {
 				const game = gamesRows[i]
-				const firstPlayerWon = game['first_player_won']
 
-				const replay: Buffer | null = game['replay']
+				const replay: Buffer = game.replay
 				let hasReplay = false
 
-				if (replay && replay.length > 2) {
+				if (replay.length > 4) {
 					const decompressedReplay = huffmanDecompress(replay)
-					if (
-						decompressedReplay &&
-						decompressedReplay.readUintBE(0, 1) === 0x01
-					) {
+					if (decompressedReplay && decompressedReplay.readUInt8(0) === 0x01) {
 						hasReplay = true
 					}
 				}
 
-				const player1Id: string = firstPlayerWon
-					? game['winner']
-					: game['loser']
+				const youAreFirst = game.first_player === game.you
 
-				const player2Id: string = firstPlayerWon
-					? game['loser']
-					: game['winner']
+				const yourInfo: GameHistoryPlayer = {
+					player: 'you',
+					uuid: game.you,
+					name: game.your_username,
+					minecraftName: game.your_minecraft_name,
+				}
 
-				const player1DeckCode: string = firstPlayerWon
-					? game['winner_deck_code']
-					: game['loser_deck_code']
-				const player2DeckCode: string = firstPlayerWon
-					? game['loser_deck_code']
-					: game['winner_deck_code']
-
-				const player1Deck = decks.body.find(
-					(deck) => deck.code === player1DeckCode,
-				)
-
-				const player2Deck = decks.body.find(
-					(deck) => deck.code === player2DeckCode,
-				)
-
-				const firstPlayerType = player1Id === uuid ? 'you' : 'opponent'
-				const secondPlayerType = player2Id === uuid ? 'you' : 'opponent'
+				const opponentInfo: GameHistoryPlayer = {
+					player: 'opponent',
+					uuid: game.opponent,
+					name: game.opponent_username,
+					minecraftName: game.opponent_minecraft_name,
+				}
 
 				gamesHistory.push({
-					firstPlayer: {
-						player: firstPlayerType,
-						deck: firstPlayerType === 'you' ? player1Deck : undefined,
-						uuid: player1Id,
-						name: players[player1Id].name,
-						minecraftName: players[player1Id].minecraftName,
-					},
-					secondPlayer: {
-						player: secondPlayerType,
-						deck: secondPlayerType === 'you' ? player2Deck : undefined,
-						uuid: player2Id,
-						name: players[player2Id].name,
-						minecraftName: players[player2Id].minecraftName,
-					},
-					id: game['game_id'],
+					firstPlayer: youAreFirst ? yourInfo : opponentInfo,
+					secondPlayer: youAreFirst ? opponentInfo : yourInfo,
+					id: game.game_id,
 					hasReplay: hasReplay,
+					winner: game.you_won ? game.you : game.opponent,
+					startTime: game.start_time,
+					usedDeck: {
+						name: game.name,
+						icon: game.icon,
+						//@ts-ignore
+						iconType: game.icon_type,
+						cards: game.cards.map((card) => toLocalCardInstance(CARDS[card])),
+						code: game.deck_code,
+						tags: [],
+					},
 				})
 			}
+
+			gamesHistory.sort((a, b) => {
+				return b.startTime.getTime() - a.startTime.getTime()
+			})
 
 			return {
 				type: 'success',

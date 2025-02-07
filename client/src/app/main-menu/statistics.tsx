@@ -152,7 +152,7 @@ function Statistics({setMenuSection}: Props) {
 	// Stats stuff
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 	const stats = databaseInfo.stats
-	const gameHistory = databaseInfo.gameHistory.toReversed()
+	const gameHistory = databaseInfo.gameHistory
 	const [tab, setTab] = useState<tabs>('stats')
 	const [showInvalidReplayModal, setShowInvalidReplayModal] =
 		useState<boolean>(false)
@@ -868,66 +868,68 @@ function Statistics({setMenuSection}: Props) {
 								<Tabs selected={'games'} />
 								<div className={css.tableArea}>
 									<div className={css.gameHistory}>
-										{gameHistory.map((game) => (
-											<div className={css.gameHistoryBox}>
-												<div>
-													<img
-														className={css.playerHead}
-														src={`https://mc-heads.net/head/${game.firstPlayer.minecraftName}/right`}
-														alt="player head"
-													/>
-												</div>
-												<div>
-													{game.firstPlayer.uuid === databaseInfo.userId
-														? 'You'
-														: game.firstPlayer.name}
-												</div>
-												<div className={css.winAndLoss}>
-													<div className={css.win}>W</div>-
-													<div className={css.loss}>L</div>
-												</div>
-												<div>
-													{game.secondPlayer.uuid === databaseInfo.userId
-														? 'You'
-														: game.secondPlayer.name}
-												</div>
-												<div>
-													<img
-														className={css.playerHead}
-														src={`https://mc-heads.net/head/${game.firstPlayer.minecraftName}/left`}
-														alt="player head"
-													/>
-												</div>
-												<Button
-													onClick={() => {
-														setScreenshotDeckModalContents(
-															sortCards(
-																parseDeckCards(
-																	game.secondPlayer.player === 'you' &&
-																		game.secondPlayer.deck
-																		? game.secondPlayer.deck.cards.map(
-																				(card) => card.props.id,
-																			)
-																		: game.firstPlayer.player === 'you' &&
-																				game.firstPlayer.deck
-																			? game.firstPlayer.deck.cards.map(
-																					(card) => card.props.id,
-																				)
-																			: [],
+										{gameHistory.map((game) => {
+											const startTime = new Date(game.startTime)
+											return (
+												<div className={css.gameHistoryBox}>
+													<div>
+														<img
+															className={css.playerHead}
+															src={`https://mc-heads.net/head/${game.firstPlayer.minecraftName}/right`}
+															alt="player head"
+														/>
+													</div>
+													<div>
+														{game.firstPlayer.uuid === databaseInfo.userId
+															? 'You'
+															: game.firstPlayer.name}
+													</div>
+													<div className={css.winAndLoss}>
+														<div className={css.win}>W</div>-
+														<div className={css.loss}>L</div>
+													</div>
+													<div>
+														{game.secondPlayer.uuid === databaseInfo.userId
+															? 'You'
+															: game.secondPlayer.name}
+													</div>
+													<div>
+														<img
+															className={css.playerHead}
+															src={`https://mc-heads.net/head/${game.firstPlayer.minecraftName}/left`}
+															alt="player head"
+														/>
+													</div>
+													<Button
+														onClick={() => {
+															setScreenshotDeckModalContents(
+																sortCards(
+																	parseDeckCards(
+																		game.usedDeck.cards.map(
+																			(card) => card.props.id,
+																		),
+																	),
 																),
-															),
-														)
-													}}
-												>
-													View
-												</Button>
-												{game.hasReplay && (
-													<Button onClick={() => handleReplayGame(game)}>
-														Watch Replay
+															)
+														}}
+													>
+														View
 													</Button>
-												)}
-											</div>
-										))}
+													{game.hasReplay && (
+														<Button onClick={() => handleReplayGame(game)}>
+															Watch Replay
+														</Button>
+													)}
+													<div>
+														{startTime.getMonth() + 1}/{startTime.getDate()}/
+														{startTime.getFullYear() - 2000},{' '}
+														{startTime.getHours() % 12}:
+														{startTime.getMinutes().toString().padStart(2, '0')}{' '}
+														{startTime.getHours() >= 12 ? 'PM' : 'AM'}
+													</div>
+												</div>
+											)
+										})}
 									</div>
 								</div>
 							</div>
