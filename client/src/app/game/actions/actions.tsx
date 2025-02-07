@@ -7,6 +7,7 @@ import {
 	getAvailableActions,
 	getCurrentCoinFlip,
 	getCurrentPickMessage,
+	getEndGameOverlay,
 	getGameState,
 	getIsSpectator,
 	getPlayerEntity,
@@ -21,11 +22,12 @@ import css from './actions.module.scss'
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
 	localGameState: LocalGameState
+	gameEndButton: () => void
 	mobile?: boolean
 	id?: string
 }
 
-const Actions = ({onClick, localGameState, id}: Props) => {
+const Actions = ({onClick, localGameState, id, gameEndButton}: Props) => {
 	const currentPlayer = useSelector(
 		getPlayerStateByEntity(localGameState.turn.currentPlayerEntity),
 	)
@@ -38,6 +40,7 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 	const availableActions = useSelector(getAvailableActions)
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
 	const pickMessage = useSelector(getCurrentPickMessage)
+	const endGameOverlay = useSelector(getEndGameOverlay)
 	const dispatch = useMessageDispatch()
 
 	const turn = localGameState.turn.currentPlayerEntity === playerEntity
@@ -126,9 +129,16 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 		function handleAttack() {
 			dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: 'attack'})
 		}
-		function handleEndTurn() {
-			dispatch({type: localMessages.GAME_ACTIONS_END_TURN})
+		function handleEndAction() {
+			if (!endGameOverlay?.outcome) {
+				dispatch({type: localMessages.GAME_ACTIONS_END_TURN})
+				return
+			}
+			gameEndButton()
 		}
+		const endActionText = endGameOverlay?.outcome ? 'End Game' : 'End Turn'
+		const endActionEnabled =
+			availableActions.includes('END_TURN') || endGameOverlay?.outcome
 
 		const attackOptions =
 			availableActions.includes('SINGLE_USE_ATTACK') ||
@@ -147,13 +157,13 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 					Attack
 				</Button>
 				<Button
-					variant={!availableActions.includes('END_TURN') ? 'default' : 'error'}
+					variant={endActionEnabled ? 'error' : 'default'}
 					size="small"
 					style={{height: '34px'}}
-					onClick={handleEndTurn}
-					disabled={!availableActions.includes('END_TURN')}
+					onClick={handleEndAction}
+					disabled={!endActionEnabled}
 				>
-					End Turn
+					{endActionText}
 				</Button>
 			</div>
 		)

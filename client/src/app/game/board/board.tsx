@@ -20,10 +20,11 @@ type Props = {
 		index?: number,
 	) => void
 	localGameState: LocalGameState
+	gameEndButton: () => void
 }
 
 // TODO - Use selectors instead of passing gameState
-function Board({onClick, localGameState}: Props) {
+function Board({onClick, localGameState, gameEndButton}: Props) {
 	const settings = useSelector(getSettings)
 	const player = useSelector(getPlayerState)
 	const opponent = useSelector(getOpponentState)
@@ -88,6 +89,7 @@ function Board({onClick, localGameState}: Props) {
 					localGameState={localGameState}
 					onClick={(value) => onClick(value, player.entity)}
 					id={css.actions}
+					gameEndButton={gameEndButton}
 				/>
 				{PlayerBoard(rightPlayer, 'right')}
 			</div>

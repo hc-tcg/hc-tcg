@@ -52,7 +52,10 @@ function ModalContainer() {
 	return renderModal(openedModal, handleOpenModal)
 }
 
-function EndGameOverlayContainer() {
+function EndGameOverlayContainer({
+	modalVisible,
+	setModalVisible,
+}: {modalVisible: boolean; setModalVisible: (visible: boolean) => void}) {
 	const endGameOverlay = useSelector(getEndGameOverlay)
 	const gameState = useSelector(getGameState)
 	const isSpectator = useSelector(getIsSpectator)
@@ -96,7 +99,7 @@ function EndGameOverlayContainer() {
 		}
 	}, [...lives, endGameOverlay])
 
-	if (!gameState || !endGameOverlay?.outcome) return null
+	if (!gameState || !endGameOverlay?.outcome || !modalVisible) return null
 
 	return (
 		<EndGameOverlay
@@ -122,9 +125,7 @@ function EndGameOverlayContainer() {
 					? {type: 'spectator'}
 					: {type: 'player', entity: playerEntity}
 			}
-			onClose={() => {
-				dispatch({type: localMessages.GAME_END_OVERLAY_HIDE})
-			}}
+			onClose={() => setModalVisible(false)}
 		/>
 	)
 }
@@ -319,6 +320,7 @@ function Game() {
 
 	if (!gameState || !hasPlayerState) return <p>Loading</p>
 	const [gameScale, setGameScale] = useState<number>(1)
+	const [gameEndModal, setGameEndModal] = useState<boolean>(true)
 	const gameWrapperRef = useRef<HTMLDivElement>(null)
 	const gameRef = useRef<HTMLDivElement>(null)
 
@@ -389,7 +391,11 @@ function Game() {
 					style={{transform: `scale(${gameScale})`}}
 				>
 					<div className={css.grid} />
-					<Board onClick={handleBoardClick} localGameState={gameState} />
+					<Board
+						onClick={handleBoardClick}
+						localGameState={gameState}
+						gameEndButton={() => setGameEndModal(true)}
+					/>
 				</div>
 			</div>
 			<div className={css.bottom}>
@@ -398,7 +404,10 @@ function Game() {
 			</div>
 			<ModalContainer />
 			<Chat />
-			<EndGameOverlayContainer />)
+			<EndGameOverlayContainer
+				modalVisible={gameEndModal}
+				setModalVisible={setGameEndModal}
+			/>
 			<RequiresAvaiableActions />
 		</div>
 	)
