@@ -4,6 +4,8 @@ import {GameOutcome, GameVictoryReason} from 'common/types/game-state'
 import Button from 'components/button'
 import {Modal} from 'components/modal'
 import css from './end-game-overlay.module.scss'
+import {useDispatch} from 'react-redux'
+import {localMessages} from 'logic/messages'
 
 type Props = {
 	outcome: GameOutcome
@@ -27,6 +29,8 @@ const EndGameOverlay = ({
 	nameOfWinner,
 	nameOfLoser,
 }: Props) => {
+	const dispatch = useDispatch()
+
 	let animation
 
 	let myOutcome: 'tie' | 'win' | 'loss' | 'crash' | 'timeout' | 'no-viewers' =
@@ -116,7 +120,31 @@ const EndGameOverlay = ({
 					</Button>
 				)}
 
-				<Button onClick={onClose}>Return to Main Menu</Button>
+				<div className={css.endOptions}>
+					<Button
+						id={css.mainMenu}
+						onClick={() => dispatch({type: localMessages.GAME_CLOSE})}
+					>
+						Main Menu
+					</Button>
+					<Button
+						id={css.rematch}
+						onClick={() =>
+							dispatch({
+								type: localMessages.GAME_CLOSE,
+								menuSection: 'play-select',
+							})
+						}
+					>
+						Play again
+					</Button>
+					<Button id={css.viewReplay} onClick={onClose}>
+						View Replay
+					</Button>
+					<Button id={css.board} onClick={onClose}>
+						View Board
+					</Button>
+				</div>
 			</Modal.Description>
 		</Modal>
 	)
