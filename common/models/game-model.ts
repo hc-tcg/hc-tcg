@@ -356,7 +356,7 @@ export class GameModel {
 
 	public addCopyAttackModalRequest(
 		newRequest: Omit<CopyAttack.Request, 'modal'> & {
-			modal: Omit<CopyAttack.Request['modal'], 'blockedActions'>
+			modal: Omit<CopyAttack.Request['modal'], 'availableAttacks'>
 		},
 		before = false,
 	) {
