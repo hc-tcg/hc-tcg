@@ -27,11 +27,11 @@ import {GameOutcome} from 'common/types/game-state'
 import {NumberOrNull} from 'common/utils/database-codes'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {call} from 'typed-redux-saga'
+import {huffmanCompress, huffmanDecompress} from '../../src/utils/compression'
 import {
 	ReplayActionData,
 	bufferToTurnActions,
 } from '../routines/turn-action-compressor'
-import {huffmanCompress, huffmanDecompress} from '../../src/utils/compression'
 
 export type DatabaseResult<T = undefined> =
 	| {

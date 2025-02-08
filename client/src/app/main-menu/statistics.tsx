@@ -17,15 +17,15 @@ import Checkbox from 'components/checkbox'
 import Dropdown from 'components/dropdown'
 import {ScreenshotDeckModal} from 'components/import-export'
 import MenuLayout from 'components/menu-layout'
+import {Modal} from 'components/modal'
 import Spinner from 'components/spinner'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages} from 'logic/messages'
 import {useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './statistics.module.scss'
-import {Modal} from 'components/modal'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 

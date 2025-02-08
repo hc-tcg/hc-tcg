@@ -17,6 +17,10 @@ import {
 	turnActionsToBuffer,
 } from '../../server/src/routines/turn-action-compressor'
 import {
+	huffmanCompress,
+	huffmanDecompress,
+} from '../../server/src/utils/compression'
+import {
 	applyEffect,
 	attack,
 	endTurn,
@@ -26,10 +30,6 @@ import {
 	playCardFromHand,
 	testReplayGame,
 } from '../unit/game/utils'
-import {
-	huffmanDecompress,
-	huffmanCompress,
-} from '../../server/src/utils/compression'
 
 describe('Test Replays', () => {
 	test('Test play card and attack actions', async () => {
