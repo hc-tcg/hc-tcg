@@ -251,8 +251,8 @@ function getNextTurnAction(
 			}
 		} else if (modal.type === 'copyAttack') {
 			let action = choose(
-				['PRIMARY_ATTACK', 'SECONDARY_ATTACK'].filter(
-					(x) => !modal.blockedActions.includes(x as TurnAction),
+				['primary', 'secondary'].filter((x) =>
+					modal.availableAttacks.includes(x as any),
 				),
 				game.rng,
 			)
@@ -260,14 +260,14 @@ function getNextTurnAction(
 				action = 'cancel'
 			}
 
-			if (action === 'PRIMARY_ATTACK') {
+			if (action === 'primary') {
 				return {
 					type: 'MODAL_REQUEST',
 					modalResult: {
 						pick: 'primary',
 					},
 				}
-			} else if (action === 'SECONDARY_ATTACK') {
+			} else if (action === 'secondary') {
 				return {
 					type: 'MODAL_REQUEST',
 					modalResult: {

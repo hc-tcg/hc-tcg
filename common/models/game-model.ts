@@ -417,11 +417,20 @@ export class GameModel {
 		)
 			blockedActions.push('SECONDARY_ATTACK')
 
-		const requestWithBlockedActions = {
-			...newRequest,
-			modal: {...modal, blockedActions: []},
+		let attacks: Array<'primary' | 'secondary'> = ['primary', 'secondary']
+
+		if (blockedActions.includes('PRIMARY_ATTACK')) {
+			attacks.filter((x) => x != 'primary')
 		}
-		this.addModalRequest(requestWithBlockedActions, before)
+		if (blockedActions.includes('SECONDARY_ATTACK')) {
+			attacks.filter((x) => x != 'secondary')
+		}
+
+		const request: CopyAttack.Request = {
+			...newRequest,
+			modal: {...modal, availableAttacks: attacks},
+		}
+		this.addModalRequest(request, before)
 	}
 
 	public removeModalRequest(index = 0, timeout = true) {

@@ -1,6 +1,5 @@
 import {CardComponent} from '../components'
 import {CardEntity, PlayerEntity} from '../entities'
-import {TurnAction} from './game-state'
 
 export type ModalRequest =
 	| SelectCards.Request
@@ -120,7 +119,7 @@ export namespace CopyAttack {
 		/** Show a close button on this modal. */
 		cancelable: boolean
 		/** The actions that can not be used in this modal */
-		blockedActions: Array<TurnAction>
+		availableAttacks: Array<'primary' | 'secondary'>
 	}
 
 	export type Result =
