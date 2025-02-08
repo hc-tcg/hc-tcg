@@ -306,10 +306,16 @@
 }
 
 .playerHead {
-	height: 11vh;
-	padding: 0.5vh;
-	background-color: var(--gray-600);
+	height: 12vh;
+	padding: 1vh;
+	background-color: rgb(14, 14, 14);
 	clip-path: polygon(50% 0%, 100% 20%, 100% 80%, 50% 100%, 0% 80%, 0% 20%);
+
+	> img {
+		height: 10vh;
+		filter: drop-shadow(2px 0px 0 white) drop-shadow(-2px 0px 0 white)
+			drop-shadow(0px 2px 0 white) drop-shadow(0px -2px 0 white);
+	}
 }
 
 .winAndLoss {
@@ -346,6 +352,10 @@
 			color: #da5558;
 		}
 	}
+
+	&.reverseSide {
+		flex-direction: row-reverse;
+	}
 }
 
 .gameAreaMiddle {
@@ -354,9 +364,16 @@
 	gap: 0.5rem;
 	margin: 1rem;
 	grid-template-areas:
-		"p1name p1name winAndLoss winAndLoss p2name p2name"
-		"p1deck p1deck replay replay p2deck p2deck"
+		"me me winAndLoss winAndLoss opponent opponent"
+		"deck deck replay replay nothing nothing"
 		"time time time turns turns turns";
+
+	&.reverseSide {
+		grid-template-areas:
+			"opponent opponent winAndLoss winAndLoss me me"
+			"nothing nothing replay replay deck deck"
+			"time time time turns turns turns";
+	}
 }
 
 .gameHistoryHeader {
@@ -367,8 +384,7 @@
 	font-family: MinecraftBold;
 }
 
-#p1name {
-	grid-area: p1name;
+.playerName {
 	font-size: 1.25rem;
 	width: 7vw;
 	display: flex;
@@ -379,26 +395,21 @@
 		drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
 
 	&.me {
+		grid-area: me;
 		font-family: MinecraftBold;
-		color: #6fabd0;
+
+		&.reverseSide {
+			text-align: right;
+			flex-direction: row-reverse;
+		}
 	}
-}
 
-#p2name {
-	grid-area: p2name;
-	text-align: right;
-	font-size: 1.25rem;
-	width: 7vw;
-	display: flex;
-	flex-direction: row-reverse;
-	align-items: baseline;
-	gap: 0.5rem;
-	filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black)
-		drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
-
-	&.me {
-		font-family: MinecraftBold;
-		color: #6fabd0;
+	&:not(.me) {
+		grid-area: opponent;
+		&:not(.reverseSide) {
+			text-align: right;
+			flex-direction: row-reverse;
+		}
 	}
 }
 
@@ -407,12 +418,8 @@
 	image-rendering: crisp-edges;
 }
 
-#p1deck {
-	grid-area: p1deck;
-}
-
-#p2deck {
-	grid-area: p2deck;
+#deck {
+	grid-area: deck;
 }
 
 #replay {

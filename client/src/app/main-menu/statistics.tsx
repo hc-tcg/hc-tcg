@@ -25,6 +25,7 @@ import {Bar} from 'react-chartjs-2'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './statistics.module.scss'
 import {Modal} from 'components/modal'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 
@@ -152,7 +153,8 @@ function Statistics({setMenuSection}: Props) {
 	// Stats stuff
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 	const stats = databaseInfo.stats
-	const gameHistory = databaseInfo.gameHistory
+	const gameHistory = databaseInfo.gameHistory.filter((game) => game.hasReplay)
+	const settings = useSelector(getSettings)
 	const [tab, setTab] = useState<tabs>('stats')
 	const [showInvalidReplayModal, setShowInvalidReplayModal] =
 		useState<boolean>(false)
@@ -873,17 +875,24 @@ function Statistics({setMenuSection}: Props) {
 											const startTime = new Date(game.startTime)
 											return (
 												<div className={css.gameHistoryBox}>
-													<div>
+													<div className={css.playerHead}>
 														<img
-															className={css.playerHead}
-															src={`https://mc-heads.net/head/${game.firstPlayer.minecraftName}/right`}
+															src={`https://mc-heads.net/head/${settings.minecraftName}/right`}
 															alt="player head"
 														/>
 													</div>
-													<div className={css.gameAreaMiddle}>
+													<div
+														className={classNames(
+															css.gameAreaMiddle,
+															settings.gameSide === 'Right' && css.reverseSide,
+														)}
+													>
 														<div
 															id={css.p1name}
 															className={classNames(
+																css.playerName,
+																settings.gameSide === 'Right' &&
+																	css.reverseSide,
 																game.firstPlayer.uuid === databaseInfo.userId &&
 																	css.me,
 															)}
@@ -896,54 +905,38 @@ function Statistics({setMenuSection}: Props) {
 															)}
 															{game.firstPlayer.name}
 														</div>
-														<div className={css.winAndLoss}>
-															{game.winner === game.firstPlayer.uuid ? (
-																<div
-																	className={classNames(
+														<div
+															className={classNames(
+																css.winAndLoss,
+																settings.gameSide === 'Right' &&
+																	css.reverseSide,
+															)}
+														>
+															<div
+																className={classNames(
+																	game.winner === databaseInfo.userId &&
 																		css.win,
-																		game.firstPlayer.uuid ===
-																			databaseInfo.userId && css.me,
-																	)}
-																>
-																	W
-																</div>
-															) : (
-																<div
-																	className={classNames(
+																	game.winner !== databaseInfo.userId &&
 																		css.loss,
-																		game.firstPlayer.uuid ===
-																			databaseInfo.userId && css.me,
-																	)}
-																>
-																	L
-																</div>
-															)}{' '}
+																	css.me,
+																)}
+															>
+																{game.winner === databaseInfo.userId
+																	? 'W'
+																	: 'L'}
+															</div>{' '}
 															<div className={css.dash}>-</div>{' '}
-															{game.winner === game.secondPlayer.uuid ? (
-																<div
-																	className={classNames(
-																		css.win,
-																		game.secondPlayer.uuid ===
-																			databaseInfo.userId && css.me,
-																	)}
-																>
-																	W
-																</div>
-															) : (
-																<div
-																	className={classNames(
-																		css.loss,
-																		game.secondPlayer.uuid ===
-																			databaseInfo.userId && css.me,
-																	)}
-																>
-																	L
-																</div>
-															)}{' '}
+															<div>
+																{game.winner === databaseInfo.userId
+																	? 'L'
+																	: 'W'}
+															</div>
 														</div>
 														<div
-															id={css.p2name}
 															className={classNames(
+																css.playerName,
+																settings.gameSide === 'Right' &&
+																	css.reverseSide,
 																game.secondPlayer.uuid ===
 																	databaseInfo.userId && css.me,
 															)}
@@ -957,11 +950,7 @@ function Statistics({setMenuSection}: Props) {
 															{game.secondPlayer.name}
 														</div>
 														<Button
-															id={
-																game.firstPlayer.uuid === databaseInfo.userId
-																	? css.p1deck
-																	: css.p2deck
-															}
+															id={css.deck}
 															onClick={() => {
 																setScreenshotDeckModalContents(
 																	sortCards(
@@ -1000,10 +989,9 @@ function Statistics({setMenuSection}: Props) {
 															{game.turns} Turns
 														</div>
 													</div>
-													<div>
+													<div className={css.playerHead}>
 														<img
-															className={css.playerHead}
-															src={`https://mc-heads.net/head/${game.firstPlayer.minecraftName}/left`}
+															src={`https://mc-heads.net/head/${game.secondPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/left`}
 															alt="player head"
 														/>
 													</div>
