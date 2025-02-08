@@ -105,6 +105,12 @@ export type GameHistory = {
 	secondPlayer: GameHistoryPlayer
 	hasReplay: boolean
 	startTime: Date
+	length: {
+		minutes: number
+		seconds: number
+		milliseconds: number
+	}
+	turns: number | null
 	winner: string
 	usedDeck: Deck
 	id: number

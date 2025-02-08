@@ -868,6 +868,7 @@ function Statistics({setMenuSection}: Props) {
 								<Tabs selected={'games'} />
 								<div className={css.tableArea}>
 									<div className={css.gameHistory}>
+										<div className={css.gameHistoryHeader}>Game History</div>
 										{gameHistory.map((game) => {
 											const startTime = new Date(game.startTime)
 											return (
@@ -879,19 +880,125 @@ function Statistics({setMenuSection}: Props) {
 															alt="player head"
 														/>
 													</div>
-													<div>
-														{game.firstPlayer.uuid === databaseInfo.userId
-															? 'You'
-															: game.firstPlayer.name}
-													</div>
-													<div className={css.winAndLoss}>
-														<div className={css.win}>W</div>-
-														<div className={css.loss}>L</div>
-													</div>
-													<div>
-														{game.secondPlayer.uuid === databaseInfo.userId
-															? 'You'
-															: game.secondPlayer.name}
+													<div className={css.gameAreaMiddle}>
+														<div
+															id={css.p1name}
+															className={classNames(
+																game.firstPlayer.uuid === databaseInfo.userId &&
+																	css.me,
+															)}
+														>
+															{game.firstPlayer.uuid === game.winner && (
+																<img
+																	src={'images/icons/trophy.png'}
+																	className={css.trophy}
+																/>
+															)}
+															{game.firstPlayer.name}
+														</div>
+														<div className={css.winAndLoss}>
+															{game.winner === game.firstPlayer.uuid ? (
+																<div
+																	className={classNames(
+																		css.win,
+																		game.firstPlayer.uuid ===
+																			databaseInfo.userId && css.me,
+																	)}
+																>
+																	W
+																</div>
+															) : (
+																<div
+																	className={classNames(
+																		css.loss,
+																		game.firstPlayer.uuid ===
+																			databaseInfo.userId && css.me,
+																	)}
+																>
+																	L
+																</div>
+															)}{' '}
+															<div className={css.dash}>-</div>{' '}
+															{game.winner === game.secondPlayer.uuid ? (
+																<div
+																	className={classNames(
+																		css.win,
+																		game.secondPlayer.uuid ===
+																			databaseInfo.userId && css.me,
+																	)}
+																>
+																	W
+																</div>
+															) : (
+																<div
+																	className={classNames(
+																		css.loss,
+																		game.secondPlayer.uuid ===
+																			databaseInfo.userId && css.me,
+																	)}
+																>
+																	L
+																</div>
+															)}{' '}
+														</div>
+														<div
+															id={css.p2name}
+															className={classNames(
+																game.secondPlayer.uuid ===
+																	databaseInfo.userId && css.me,
+															)}
+														>
+															{game.secondPlayer.uuid === game.winner && (
+																<img
+																	src={'images/icons/trophy.png'}
+																	className={css.trophy}
+																/>
+															)}
+															{game.secondPlayer.name}
+														</div>
+														<Button
+															id={
+																game.firstPlayer.uuid === databaseInfo.userId
+																	? css.p1deck
+																	: css.p2deck
+															}
+															onClick={() => {
+																setScreenshotDeckModalContents(
+																	sortCards(
+																		parseDeckCards(
+																			game.usedDeck.cards.map(
+																				(card) => card.props.id,
+																			),
+																		),
+																	),
+																)
+															}}
+														>
+															View Deck
+														</Button>
+														{game.hasReplay && (
+															<Button
+																onClick={() => handleReplayGame(game)}
+																id={css.replay}
+															>
+																Watch Replay
+															</Button>
+														)}
+														<div id={css.time}>
+															{startTime.getMonth() + 1}/{startTime.getDate()}/
+															{startTime.getFullYear() - 2000},{' '}
+															{startTime.getHours() % 12}:
+															{startTime
+																.getMinutes()
+																.toString()
+																.padStart(2, '0')}{' '}
+															{startTime.getHours() >= 12 ? 'PM' : 'AM'}
+														</div>
+														<div id={css.turns}>
+															{game.length.minutes}m{game.length.seconds}.
+															{Math.floor(game.length.milliseconds / 10)}s |{' '}
+															{game.turns} Turns
+														</div>
 													</div>
 													<div>
 														<img
@@ -899,33 +1006,6 @@ function Statistics({setMenuSection}: Props) {
 															src={`https://mc-heads.net/head/${game.firstPlayer.minecraftName}/left`}
 															alt="player head"
 														/>
-													</div>
-													<Button
-														onClick={() => {
-															setScreenshotDeckModalContents(
-																sortCards(
-																	parseDeckCards(
-																		game.usedDeck.cards.map(
-																			(card) => card.props.id,
-																		),
-																	),
-																),
-															)
-														}}
-													>
-														View
-													</Button>
-													{game.hasReplay && (
-														<Button onClick={() => handleReplayGame(game)}>
-															Watch Replay
-														</Button>
-													)}
-													<div>
-														{startTime.getMonth() + 1}/{startTime.getDate()}/
-														{startTime.getFullYear() - 2000},{' '}
-														{startTime.getHours() % 12}:
-														{startTime.getMinutes().toString().padStart(2, '0')}{' '}
-														{startTime.getHours() >= 12 ? 'PM' : 'AM'}
 													</div>
 												</div>
 											)

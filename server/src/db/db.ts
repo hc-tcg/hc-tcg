@@ -760,6 +760,8 @@ export class Database {
 				WITH games AS (
 					SELECT 
 					start_time,
+					completion_time - start_time as length,
+					turns,
 					game_id,
 					replay,
 					CASE WHEN winner = $1 THEN winner ELSE loser END as you,
@@ -771,7 +773,7 @@ export class Database {
 					FROM games WHERE winner = $1 OR loser = $1
 				)
 				SELECT game_id,start_time,your_username,opponent_username,your_minecraft_name,opponent_minecraft_name,you,opponent,
-				outcome,you_won,decks.deck_code,copies,card_id,name,icon,icon_type,replay,first_player
+				outcome,you_won,decks.deck_code,copies,card_id,name,icon,icon_type,replay,first_player,length,turns
 				FROM games
 				JOIN (SELECT user_id, username as your_username, minecraft_name as your_minecraft_name FROM users) as users_y ON games.you = users_y.user_id
 				JOIN (SELECT user_id, username as opponent_username, minecraft_name as opponent_minecraft_name FROM users) as users_o ON games.opponent = users_o.user_id
@@ -784,6 +786,8 @@ export class Database {
 			type GameRow = {
 				game_id: number
 				start_time: Date
+				length: {minutes: number; seconds: number; milliseconds: number}
+				turns: number | null
 				deck_code: string
 				your_username: string
 				opponent_username: string
@@ -812,6 +816,8 @@ export class Database {
 					r.push({
 						game_id: row['game_id'],
 						start_time: row['start_time'],
+						length: row['length'],
+						turns: row['turns'],
 						deck_code: row['deck_code'],
 						your_username: row['your_username'],
 						opponent_username: row['opponent_username'],
@@ -870,6 +876,12 @@ export class Database {
 					hasReplay: hasReplay,
 					winner: game.you_won ? game.you : game.opponent,
 					startTime: game.start_time,
+					length: {
+						minutes: game.length.minutes || 0,
+						seconds: game.length.seconds || 0,
+						milliseconds: game.length.milliseconds || 0,
+					},
+					turns: game.turns,
 					usedDeck: {
 						name: game.name,
 						icon: game.icon,
