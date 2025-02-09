@@ -129,10 +129,10 @@ docker build . --build-arg APP_VERSION=$(git rev-parse --short HEAD)
 docker run -p 9000:9000 <Image Id>
 ```
 
-To host the project with the image on [docker hub](https://hub.docker.com/r/benji42/hc-tcg), install the docker-compose plugin then run the command:
+To host the project with the image on [docker hub](https://hub.docker.com/r/benji42/hc-tcg), install the docker-compose plugin, create a directory with the docker-compose.yml file (/etc/hctcg by default, can be changed by editing docker-compose.yml), create a directory in there for the db (mkdir -p /etc/hctcg/db or edit the docker-compose.yml if using a different directory) then run the command:
 
 ```sh
-docker compose up
+docker-compose up -d
 ```
 
-By default, the server will listen to requests on port 9000.
+By default, the server will listen to requests on port 9000.  The instance can be backed up by backing up the contents of /etc/hctcg (or whatever directory you specify).
