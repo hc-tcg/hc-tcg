@@ -3,7 +3,7 @@ import {Stats, User} from '../types/database'
 import {ApiDeck, Deck, Tag} from '../types/deck'
 import {GameOutcome, LocalGameState} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
-import {PlayerInfo} from '../types/server-requests'
+import {PlayerInfo, Update} from '../types/server-requests'
 
 export const serverMessages = messages('serverMessages', {
 	PLAYER_RECONNECTED: null,
@@ -61,7 +61,7 @@ export type ServerMessages = [
 	{type: typeof serverMessages.NEW_MINECRAFT_NAME; name: string},
 	{
 		type: typeof serverMessages.LOAD_UPDATES
-		updates: Record<string, Array<string>>
+		updates: Array<Update>
 	},
 	{type: typeof serverMessages.OPPONENT_CONNECTION; isConnected: boolean},
 	{type: typeof serverMessages.GAME_START},

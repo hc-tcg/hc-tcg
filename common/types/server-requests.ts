@@ -166,3 +166,10 @@ export namespace LocalDragCards {
 				rightCards: null
 		  }
 }
+
+export type Update = {
+	readonly tag: string
+	readonly description: string
+	readonly link: string
+	readonly timestamp: number
+}
