@@ -34,7 +34,7 @@ export function UpdatesModal({onClose}: UpdatesModalProps) {
 						For more updates, visit the HC-TCG discord.
 					</li>
 					{updates ? (
-						updates.map(({tag, description, link}, i) => {
+						updates.map(({tag, description, link, timestamp}, i) => {
 							return (
 								<>
 									<li
@@ -45,6 +45,9 @@ export function UpdatesModal({onClose}: UpdatesModalProps) {
 										<a href={link} target="_blank">
 											<h1 className={css.updateName}> Update {tag} </h1>
 										</a>
+										<span className={css.shortDate}>
+											{new Date(timestamp * 1000).toLocaleDateString()}
+										</span>
 										<div
 											dangerouslySetInnerHTML={{
 												__html: sanitize(toHTML(description)),

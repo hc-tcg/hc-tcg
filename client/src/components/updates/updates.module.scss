@@ -15,6 +15,13 @@
 	text-align: left;
 }
 
+h1 {
+    display: inline
+}
+
+.shortDate {
+	color: var(--text-light);
+}
 
 a:link {
 	color: inherit;
