@@ -286,6 +286,11 @@ describe('Test Weakness', () => {
 					yield* attack(game, 'secondary')
 					yield* endTurn(game)
 
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
 					expect(game.currentPlayer.activeRow).toBe(null)
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
@@ -313,9 +318,7 @@ describe('Test Weakness', () => {
 							query.row.currentPlayer,
 							query.row.index(2),
 						)?.health,
-					).toBe(
-						SmallishbeansRare.health - SmallishbeansRare.primary.damage - 20,
-					)
+					).toBe(SmallishbeansRare.health - SmallishbeansRare.primary.damage)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
