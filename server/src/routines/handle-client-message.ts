@@ -13,6 +13,7 @@ import {
 	exportDeck,
 	getAchievements,
 	getDecks,
+	getOverview,
 	getStats,
 	grabCurrentImport,
 	importDeck,
@@ -160,6 +161,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.SET_COSMETIC:
 			return yield* updateCosmeticSaga(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.REPLAY_OVERVIEW:
+			return yield* getOverview(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 	}

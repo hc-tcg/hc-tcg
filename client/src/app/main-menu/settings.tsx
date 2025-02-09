@@ -78,7 +78,7 @@ function More({setMenuSection}: Props) {
 		setMenuSection(section)
 	}
 	const handleDataSettings = () => changeMenuSection('data-settings')
-	const _handleHallOfFame = () => changeMenuSection('statistics')
+	const handleStatistics = () => changeMenuSection('statistics')
 	const _handleAchievements = () => changeMenuSection('achievements')
 
 	const handleCredits = () => changeMenuSection('credits')
@@ -160,6 +160,13 @@ function More({setMenuSection}: Props) {
 						className={css.mainMenuButton}
 					>
 						Updates
+					</Button>
+					<Button
+						variant="default"
+						onClick={handleStatistics}
+						className={css.mainMenuButton}
+					>
+						Statistics
 					</Button>
 				</div>
 			</MenuLayout>

@@ -18,6 +18,7 @@ export const clientMessages = messages('clientMessages', {
 	LEAVE_PRIVATE_QUEUE: null,
 	JOIN_PRIVATE_GAME: null,
 	CREATE_REPLAY_GAME: null,
+	REPLAY_OVERVIEW: null,
 	TURN_ACTION: null,
 	FORFEIT: null,
 	SPECTATOR_LEAVE: null,
@@ -93,6 +94,7 @@ export type ClientMessages = [
 	{
 		type: typeof clientMessages.CREATE_REPLAY_GAME
 		id: number
+		uuid: string
 	},
 	{
 		type: typeof clientMessages.TURN_ACTION
@@ -150,6 +152,7 @@ export type ClientMessages = [
 	{type: typeof clientMessages.DELETE_DECK; deck: Deck},
 	{type: typeof clientMessages.DELETE_TAG; tag: Tag},
 	{type: typeof clientMessages.SET_COSMETIC; cosmetic: Cosmetic['id']},
+	{type: typeof clientMessages.REPLAY_OVERVIEW; id: number},
 ]
 
 export type ClientMessage = Message<ClientMessages>
