@@ -165,17 +165,27 @@ function getAvailableActions(
 				.every(Boolean),
 	)
 
+	/** Players must immediately either apply or remove single use cards that show confirmation modal */
+	let mustHandleConfirmation: boolean = false
+
 	// Actions that require us to have an active row
-	if (activeRowId !== null) {
-		// Change active hermit
-		if (hasOtherHermit) {
-			actions.push('CHANGE_ACTIVE_HERMIT')
-		}
+	actionsWithActiveRow: if (activeRowId !== null) {
+		// End turn action
+		actions.push('END_TURN')
 
 		// Su actions
 		if (su && !suUsed) {
 			actions.push('REMOVE_EFFECT')
-			if (su.props.showConfirmationModal) actions.push('APPLY_EFFECT')
+			if (su.props.showConfirmationModal) {
+				actions.push('APPLY_EFFECT')
+				mustHandleConfirmation = true
+				break actionsWithActiveRow
+			}
+		}
+
+		// Change active hermit
+		if (hasOtherHermit) {
+			actions.push('CHANGE_ACTIVE_HERMIT')
 		}
 
 		// Attack actions
@@ -214,13 +224,13 @@ function getAvailableActions(
 				}
 			}
 		}
-
-		// End turn action
-		actions.push('END_TURN')
 	}
 
 	// Play card actions require an active row unless it's the players first turn
-	if (activeRowId !== null || turnState.turnNumber <= 2) {
+	if (
+		!mustHandleConfirmation &&
+		(activeRowId !== null || turnState.turnNumber <= 2)
+	) {
 		const desiredActions = game.components
 			.filter(
 				CardComponent,

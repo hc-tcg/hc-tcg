@@ -129,8 +129,10 @@ describe('Test Biffa Secondary', () => {
 
 					yield* playCardFromHand(game, Biffa2001Rare, 'hermit', 1)
 					yield* playCardFromHand(game, PotionOfSlowness, 'single_use')
-					if (!game.state.turn.availableActions.includes('SECONDARY_ATTACK'))
-						yield* removeEffect(game)
+					expect(game.state.turn.availableActions).not.toContain(
+						'SECONDARY_ATTACK',
+					)
+					yield* removeEffect(game)
 					yield* attack(game, 'secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health -
