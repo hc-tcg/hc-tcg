@@ -135,4 +135,4 @@ To host the project with the image on [docker hub](https://hub.docker.com/r/benj
 docker-compose up -d
 ```
 
-By default, the server will listen to requests on port 9000.  The instance can be backed up by backing up the contents of /etc/hctcg (or whatever directory you specify)
+By default, the server will listen to requests on port 9000.  The instance can be backed up by backing up the contents of /etc/hctcg (or whatever directory you specify).
