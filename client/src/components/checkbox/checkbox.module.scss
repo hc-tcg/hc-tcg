@@ -2,6 +2,8 @@
 	position: relative;
 	cursor: pointer;
 	user-select: none;
+	width: 18px;
+	height: 18px;
 }
 
 .originalCheckbox {
@@ -36,6 +38,8 @@
 		position: absolute;
 		width: 18px;
 		height: 18px;
+		max-width: 18px;
+		max-height: 18px;
 		image-rendering: crisp-edges;
 		margin-left: 2px;
 		margin-top: 2px;
