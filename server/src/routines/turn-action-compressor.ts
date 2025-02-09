@@ -9,7 +9,11 @@ import query from '../../../common/components/query'
 import {CardEntity, PlayerEntity} from '../../../common/entities'
 import {GameModel} from '../../../common/models/game-model'
 import {SlotTypeT} from '../../../common/types/cards'
-import {PlayCardAction, TurnAction} from '../../../common/types/game-state'
+import {
+	Message,
+	PlayCardAction,
+	TurnAction,
+} from '../../../common/types/game-state'
 import {
 	LocalCopyAttack,
 	LocalDragCards,
@@ -722,7 +726,13 @@ export function* bufferToTurnActions(
 	seed: string,
 	props: GameControllerProps,
 	actionsBuffer: Buffer,
-): Generator<any, Array<ReplayActionData>> {
+): Generator<
+	any,
+	{
+		replay: Array<ReplayActionData>
+		battleLog: Array<Message>
+	}
+> {
 	const con = new GameController(firstPlayerSetupDefs, secondPlayerSetupDefs, {
 		...props,
 		randomSeed: seed,
@@ -735,7 +745,11 @@ export function* bufferToTurnActions(
 	const version = actionsBuffer.readUInt8(cursor)
 	cursor++
 
-	if (version === 0x00 || version === 0x30) return []
+	if (version === 0x00 || version === 0x30)
+		return {
+			replay: [],
+			battleLog: [],
+		}
 
 	//Other version checks here
 
@@ -794,5 +808,8 @@ export function* bufferToTurnActions(
 		})
 	}
 
-	return replayActions
+	return {
+		replay: replayActions,
+		battleLog: con.chat,
+	}
 }

@@ -23,7 +23,7 @@ import {
 	User,
 	UserWithoutSecret,
 } from 'common/types/database'
-import {GameOutcome} from 'common/types/game-state'
+import {GameOutcome, Message} from 'common/types/game-state'
 import {NumberOrNull} from 'common/utils/database-codes'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {call} from 'typed-redux-saga'
@@ -32,6 +32,7 @@ import {
 	ReplayActionData,
 	bufferToTurnActions,
 } from '../routines/turn-action-compressor'
+import {newRandomNumberGenerator} from 'common/utils/random'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -767,13 +768,14 @@ export class Database {
 					CASE WHEN winner = $1 THEN winner ELSE loser END as you,
 					CASE WHEN winner = $1 THEN loser ELSE winner END as opponent,
 					CASE WHEN winner = $1 THEN winner_deck_code ELSE loser_deck_code END as deck_code,
-					CASE WHEN first_player_won THEN winner ELSE loser END as first_player,
+					first_player_won,
 					outcome,
-					winner = $1 as you_won
+					winner,
+					seed
 					FROM games WHERE winner = $1 OR loser = $1
 				)
 				SELECT game_id,start_time,your_username,opponent_username,your_minecraft_name,opponent_minecraft_name,you,opponent,
-				outcome,you_won,decks.deck_code,copies,card_id,name,icon,icon_type,replay,first_player,length,turns
+				outcome,winner,decks.deck_code,copies,card_id,name,icon,icon_type,replay,first_player_won,length,turns,seed
 				FROM games
 				JOIN (SELECT user_id, username as your_username, minecraft_name as your_minecraft_name FROM users) as users_y ON games.you = users_y.user_id
 				JOIN (SELECT user_id, username as opponent_username, minecraft_name as opponent_minecraft_name FROM users) as users_o ON games.opponent = users_o.user_id
@@ -795,13 +797,14 @@ export class Database {
 				opponent_minecraft_name: string
 				you: string
 				opponent: string
-				first_player: string
-				you_won: boolean
+				first_player_won: boolean
+				winner: string
 				cards: Array<number>
 				name: string
 				icon: string
 				icon_type: string
 				replay: Buffer
+				seed: string
 			}
 
 			const gamesRows: Array<GameRow> = gamesResult.rows.reduce(
@@ -825,13 +828,14 @@ export class Database {
 						opponent_minecraft_name: row['opponent_minecraft_name'],
 						you: row['you'],
 						opponent: row['opponent'],
-						first_player: row['first_player'],
-						you_won: row['you_won'],
+						first_player_won: row['first_player_won'],
+						winner: row['winner'],
 						cards: Array(row['copies']).fill(row['card_id']),
 						name: row['name'],
 						icon: row['icon'],
 						icon_type: row['icon_type'],
 						replay: row['replay'],
+						seed: row['seed'],
 					})
 					return r
 				},
@@ -853,7 +857,9 @@ export class Database {
 					}
 				}
 
-				const youAreFirst = game.first_player === game.you
+				const rng = newRandomNumberGenerator(game.seed)
+				const youAreFirst =
+					rng() >= 0.5 !== (game.winner === game.you) && game.first_player_won
 
 				const yourInfo: GameHistoryPlayer = {
 					player: 'you',
@@ -874,7 +880,7 @@ export class Database {
 					secondPlayer: youAreFirst ? opponentInfo : yourInfo,
 					id: game.game_id,
 					hasReplay: hasReplay,
-					winner: game.you_won ? game.you : game.opponent,
+					winner: game.winner,
 					startTime: game.start_time,
 					length: {
 						minutes: game.length.minutes || 0,
@@ -915,6 +921,7 @@ export class Database {
 			player2Defs: PlayerSetupDefs
 			seed: string
 			replay: Array<ReplayActionData>
+			battleLog: Array<Message>
 		}>
 	> {
 		try {
@@ -1024,8 +1031,9 @@ export class Database {
 				body: {
 					player1Defs,
 					player2Defs,
-					replay: replayActions,
+					replay: replayActions.replay,
 					seed,
+					battleLog: replayActions.battleLog,
 				},
 			}
 		} catch (e) {
@@ -1134,6 +1142,7 @@ export class Database {
 			let winningDeck
 			let loser
 			let losingDeck
+			let firstPlayerWon
 			let dbOutcome: 'timeout' | 'forfeit' | 'tie' | 'player_won' | 'error'
 
 			if (outcome.type === 'tie') {
@@ -1153,14 +1162,14 @@ export class Database {
 				winningDeck = firstPlayerDeckCode
 				loser = secondPlayerUuid
 				losingDeck = secondPlayerDeckCode
+				firstPlayerWon = true
 			} else {
 				winner = secondPlayerUuid
 				winningDeck = secondPlayerDeckCode
 				loser = firstPlayerUuid
 				losingDeck = firstPlayerDeckCode
+				firstPlayerWon = false
 			}
-
-			const firstPlayerWon = winner === firstPlayerUuid
 
 			const compressedReplay = huffmanCompress(replay)
 
@@ -1711,8 +1720,13 @@ export class Database {
 			const firstPlayerWon: boolean = game.rows[0]['first_player_won']
 			const tie: boolean = game.rows[0]['outcome'] === 'tie'
 
-			const firstPlayer = firstPlayerWon ? winner : loser
-			const secondPlayer = firstPlayerWon ? loser : winner
+			const rng = newRandomNumberGenerator(game.rows[0]['seed'])
+			const randomNumber = rng()
+
+			const firstPlayer =
+				randomNumber >= 0.5 !== firstPlayerWon ? winner : loser
+			const secondPlayer =
+				randomNumber >= 0.5 !== firstPlayerWon ? loser : winner
 
 			return {
 				type: 'success',

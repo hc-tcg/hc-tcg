@@ -26,6 +26,7 @@ import {useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './statistics.module.scss'
+import {FormattedText} from 'components/formatting/formatting'
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 
@@ -158,17 +159,33 @@ function Statistics({setMenuSection}: Props) {
 	const [tab, setTab] = useState<tabs>('stats')
 	const [showInvalidReplayModal, setShowInvalidReplayModal] =
 		useState<boolean>(false)
+	const [showOverviewModal, setShowOverviewModal] = useState<boolean>(false)
+	const [currentGame, setCurrentGame] = useState<GameHistory | null>(null)
+
 	const handleReplayGame = (game: GameHistory) => {
 		dispatch({
 			type: localMessages.MATCHMAKING_REPLAY_GAME,
 			id: game.id,
 		})
 	}
+	const handleOverview = (game: GameHistory) => {
+		setCurrentGame(game)
+		dispatch({
+			type: localMessages.OVERVIEW,
+			id: game.id,
+		})
+	}
 
 	const invalidReplay = databaseInfo.invalidReplay
+	const overview = databaseInfo.replayOverview
+	const overviewFirstId = overview.length >= 1 ? overview[0].sender.id : ''
 
 	if (invalidReplay && !showInvalidReplayModal) {
 		setShowInvalidReplayModal(true)
+	}
+
+	if (overview.length !== 0 && !showOverviewModal) {
+		setShowOverviewModal(true)
 	}
 
 	// Hall of fame stuff
@@ -973,6 +990,14 @@ function Statistics({setMenuSection}: Props) {
 																Watch Replay
 															</Button>
 														)}
+														{game.hasReplay && (
+															<Button
+																onClick={() => handleOverview(game)}
+																id={css.overview}
+															>
+																Overview
+															</Button>
+														)}
 														<div id={css.time}>
 															{startTime.getMonth() + 1}/{startTime.getDate()}/
 															{startTime.getFullYear() - 2000},{' '}
@@ -1252,6 +1277,39 @@ function Statistics({setMenuSection}: Props) {
 					<Modal.Description>
 						The replay you requested was not decoded properly. Please inform a
 						developer.
+					</Modal.Description>
+				</Modal>
+			)}
+			{showOverviewModal && (
+				<Modal
+					setOpen
+					title={'Game Overview'}
+					onClose={() => {
+						setShowOverviewModal(false)
+						dispatch({
+							type: localMessages.DATABASE_SET,
+							data: {
+								key: 'replayOverview',
+								value: [],
+							},
+						})
+					}}
+				>
+					<Modal.Description>
+						<div className={css.overview}>
+							{overview.map((line) => {
+								const isOpponent =
+									(currentGame?.firstPlayer.player === 'you') !==
+									(line.sender.id === overviewFirstId)
+
+								return FormattedText(line.message, {
+									isOpponent,
+									color: isOpponent ? 'orange' : 'blue',
+									isSelectable: true,
+									censorProfanity: false,
+								})
+							})}
+						</div>
 					</Modal.Description>
 				</Modal>
 			)}

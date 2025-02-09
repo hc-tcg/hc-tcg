@@ -99,6 +99,7 @@ export const localMessages = messages('clientLocalMessages', {
 	HIDE_TOOLTIP: null,
 	COSMETICS_SET: null,
 	COSMETIC_UPDATE: null,
+	OVERVIEW: null,
 })
 
 type Messages = [
@@ -139,6 +140,7 @@ type Messages = [
 		id: number
 	},
 	{type: typeof localMessages.INVALID_REPLAY},
+	{type: typeof localMessages.OVERVIEW; id: number},
 	{
 		type: typeof localMessages.MATCHMAKING_CODE_RECIEVED
 		gameCode: string

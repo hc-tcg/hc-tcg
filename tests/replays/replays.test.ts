@@ -52,13 +52,13 @@ describe('Test Replays', () => {
 			},
 			afterGame: function* (con) {
 				const turnActionsBuffer = yield* turnActionsToBuffer(con)
-				const turnActions = yield* bufferToTurnActions(
+				const turnActions = (yield* bufferToTurnActions(
 					con.player1Defs,
 					con.player2Defs,
 					con.game.rngSeed,
 					con.props,
 					turnActionsBuffer,
-				)
+				)).replay
 
 				expect(
 					con.game.turnActions.map((action) => action.action),
@@ -115,13 +115,13 @@ describe('Test Replays', () => {
 			afterGame: function* (con) {
 				const turnActionsBuffer = yield* turnActionsToBuffer(con)
 
-				const turnActions = yield* bufferToTurnActions(
+				const turnActions = (yield* bufferToTurnActions(
 					con.player1Defs,
 					con.player2Defs,
 					con.game.rngSeed,
 					con.props,
 					turnActionsBuffer,
-				)
+				)).replay
 
 				expect(
 					con.game.turnActions.map((action) => action.action),
@@ -174,13 +174,13 @@ describe('Test Replays', () => {
 			},
 			afterGame: function* (con) {
 				const turnActionsBuffer = yield* turnActionsToBuffer(con)
-				const turnActions = yield* bufferToTurnActions(
+				const turnActions = (yield* bufferToTurnActions(
 					con.player1Defs,
 					con.player2Defs,
 					con.game.rngSeed,
 					con.props,
 					turnActionsBuffer,
-				)
+				)).replay
 
 				expect(
 					con.game.turnActions.map((action) => action.action),
@@ -212,13 +212,13 @@ describe('Test Replays', () => {
 			afterGame: function* (con) {
 				const turnActionsBuffer = yield* turnActionsToBuffer(con)
 
-				const turnActions = yield* bufferToTurnActions(
+				const turnActions = (yield* bufferToTurnActions(
 					con.player1Defs,
 					con.player2Defs,
 					con.game.rngSeed,
 					con.props,
 					turnActionsBuffer,
-				)
+				)).replay
 
 				expect(
 					con.game.turnActions.map((action) => action.action),

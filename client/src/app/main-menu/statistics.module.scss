@@ -365,13 +365,13 @@
 	margin: 1rem;
 	grid-template-areas:
 		"me me winAndLoss winAndLoss opponent opponent"
-		"deck deck replay replay nothing nothing"
+		"deck deck replay replay overview overview"
 		"time time time turns turns turns";
 
 	&.reverseSide {
 		grid-template-areas:
 			"opponent opponent winAndLoss winAndLoss me me"
-			"nothing nothing replay replay deck deck"
+			"overview overview replay replay deck deck"
 			"time time time turns turns turns";
 	}
 }
@@ -424,6 +424,10 @@
 
 #replay {
 	grid-area: replay;
+}
+
+#overview {
+	grid-area: overview;
 }
 
 #time {
@@ -529,6 +533,14 @@
 			#97d6fd 90%
 		);
 	}
+}
+
+.overview {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	overflow-y: scroll;
+	padding: 0.5rem;
 }
 
 // Mobile

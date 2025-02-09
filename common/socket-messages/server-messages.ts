@@ -39,6 +39,7 @@ export const serverMessages = messages('serverMessages', {
 	COSMETICS_INVALID: null,
 	COSMETICS_UPDATE: null,
 	INVALID_REPLAY: null,
+	REPLAY_OVERVIEW_RECIEVED: null,
 	/**Postgres */
 	NO_DATABASE_CONNECTION: null,
 	AUTHENTICATED: null,
@@ -129,6 +130,10 @@ export type ServerMessages = [
 	{type: typeof serverMessages.COSMETICS_INVALID},
 	{type: typeof serverMessages.COSMETICS_UPDATE; appearance: Appearance},
 	{type: typeof serverMessages.INVALID_REPLAY},
+	{
+		type: typeof serverMessages.REPLAY_OVERVIEW_RECIEVED
+		battleLog: Array<ChatMessage>
+	},
 ]
 
 export type ServerMessage = Message<ServerMessages>

@@ -171,6 +171,7 @@ export class GameController {
 		// the coin flip delay confuses jest. Additionally we don't want to wait longer
 		// than what is needed in tests.
 		if (this.getPlayers().length === 0) {
+			this.chat.push(...logs)
 			return
 		}
 

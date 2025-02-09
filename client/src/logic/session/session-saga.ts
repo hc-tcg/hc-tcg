@@ -746,3 +746,29 @@ export function* cosmeticSaga() {
 		},
 	)
 }
+
+export function* overviewSaga() {
+	yield* takeEvery<LocalMessageTable[typeof localMessages.OVERVIEW]>(
+		localMessages.OVERVIEW,
+		function* (action) {
+			const socket = yield* select(getSocket)
+
+			yield* sendMsg({
+				type: clientMessages.REPLAY_OVERVIEW,
+				id: action.id,
+			})
+
+			const replay = yield* call(
+				receiveMsg(socket, serverMessages.REPLAY_OVERVIEW_RECIEVED),
+			)
+
+			yield put<LocalMessage>({
+				type: localMessages.DATABASE_SET,
+				data: {
+					key: 'replayOverview',
+					value: replay.battleLog,
+				},
+			})
+		},
+	)
+}
