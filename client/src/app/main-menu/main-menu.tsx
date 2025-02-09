@@ -86,12 +86,13 @@ function MainMenu({setMenuSection}: Props) {
 
 	let showUpdateModal =
 		!latestUpdateView ||
-		(updates.length && updates[0].timestamp > parseInt(latestUpdateView))
+		(updates.length &&
+			updates[0].timestamp > parseInt(latestUpdateView) &&
+			debugOptions.showUpdatesModal)
 
 	return (
 		<>
 			{showUpdateModal ? (
-				debugOptions.showUpdatesModal !== false &&
 				updatesOpen && <UpdatesModal onClose={() => setUpdatesOpen(false)} />
 			) : (
 				<></>
