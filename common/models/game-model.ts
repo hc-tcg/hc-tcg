@@ -420,10 +420,10 @@ export class GameModel {
 		let attacks: Array<'primary' | 'secondary'> = ['primary', 'secondary']
 
 		if (blockedActions.includes('PRIMARY_ATTACK')) {
-			attacks.filter((x) => x != 'primary')
+			attacks = attacks.filter((x) => x != 'primary')
 		}
 		if (blockedActions.includes('SECONDARY_ATTACK')) {
-			attacks.filter((x) => x != 'secondary')
+			attacks = attacks.filter((x) => x != 'secondary')
 		}
 
 		const request: CopyAttack.Request = {

@@ -7,8 +7,7 @@ import ZombieCleoRare from 'common/cards/hermits/zombiecleo-rare'
 import Crossbow from 'common/cards/single-use/crossbow'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {LocalCopyAttack} from 'common/types/server-requests'
-import {getLocalModalData} from 'server/utils/state-gen'
+import {CopyAttack} from 'common/types/modal-requests'
 import {
 	attack,
 	changeActiveHermit,
@@ -41,13 +40,9 @@ describe('Test Rendog Role Play', () => {
 						query.slot.rowIndex(0),
 					)
 					expect(
-						(
-							getLocalModalData(
-								game,
-								game.state.modalRequests[0].modal,
-							) as LocalCopyAttack.Data
-						).blockedActions,
-					).toContain('SECONDARY_ATTACK')
+						(game.state.modalRequests[0].modal as CopyAttack.Data)
+							.availableAttacks,
+					).not.toContain('secondary')
 					yield* finishModalRequest(game, {pick: 'primary'})
 					yield* removeEffect(game)
 					expect(game.state.turn.availableActions).toContain('SECONDARY_ATTACK')
@@ -60,13 +55,9 @@ describe('Test Rendog Role Play', () => {
 						query.slot.rowIndex(0),
 					)
 					expect(
-						(
-							getLocalModalData(
-								game,
-								game.state.modalRequests[0].modal,
-							) as LocalCopyAttack.Data
-						).blockedActions,
-					).not.toContain('SECONDARY_ATTACK')
+						(game.state.modalRequests[0].modal as CopyAttack.Data)
+							.availableAttacks,
+					).toContain('secondary')
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					yield* pick(
 						game,
@@ -111,13 +102,9 @@ describe('Test Rendog Role Play', () => {
 						query.slot.rowIndex(1),
 					)
 					expect(
-						(
-							getLocalModalData(
-								game,
-								game.state.modalRequests[0].modal,
-							) as LocalCopyAttack.Data
-						).blockedActions,
-					).toContain('SECONDARY_ATTACK')
+						(game.state.modalRequests[0].modal as CopyAttack.Data)
+							.availableAttacks,
+					).not.toContain('secondary')
 					yield* finishModalRequest(game, {pick: 'primary'})
 					yield* removeEffect(game)
 					yield* attack(game, 'secondary')
@@ -143,13 +130,9 @@ describe('Test Rendog Role Play', () => {
 						query.slot.rowIndex(1),
 					)
 					expect(
-						(
-							getLocalModalData(
-								game,
-								game.state.modalRequests[0].modal,
-							) as LocalCopyAttack.Data
-						).blockedActions,
-					).not.toContain('SECONDARY_ATTACK')
+						(game.state.modalRequests[0].modal as CopyAttack.Data)
+							.availableAttacks,
+					).toContain('secondary')
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					yield* pick(
 						game,
@@ -206,13 +189,9 @@ describe('Test Rendog Role Play', () => {
 						query.slot.rowIndex(1),
 					)
 					expect(
-						(
-							getLocalModalData(
-								game,
-								game.state.modalRequests[0].modal,
-							) as LocalCopyAttack.Data
-						).blockedActions,
-					).toContain('SECONDARY_ATTACK')
+						(game.state.modalRequests[0].modal as CopyAttack.Data)
+							.availableAttacks,
+					).not.toContain('secondary')
 					yield* finishModalRequest(game, {pick: 'primary'})
 					yield* removeEffect(game)
 					yield* attack(game, 'secondary')

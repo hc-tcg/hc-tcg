@@ -256,7 +256,7 @@ function getNextTurnAction(
 				),
 				game.rng,
 			)
-			if (game.rng() <= 0.3) {
+			if (game.rng() <= 0.3 && modal.cancelable) {
 				action = 'cancel'
 			}
 
