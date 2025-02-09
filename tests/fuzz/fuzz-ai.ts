@@ -250,31 +250,36 @@ function getNextTurnAction(
 				},
 			}
 		} else if (modal.type === 'copyAttack') {
-			let rng = game.rng()
-			if (modal.cancelable && rng < 0.3) {
+			let action = choose(
+				['primary', 'secondary'].filter((x) =>
+					modal.availableAttacks.includes(x as any),
+				),
+				game.rng,
+			)
+			if (game.rng() <= 0.3 && modal.cancelable) {
+				action = 'cancel'
+			}
+
+			if (action === 'primary') {
 				return {
 					type: 'MODAL_REQUEST',
 					modalResult: {
-						cancel: true,
+						pick: 'primary',
 					},
 				}
-			} else {
-				let rng = game.rng()
-				if (modal.cancelable && rng < 0.5) {
-					return {
-						type: 'MODAL_REQUEST',
-						modalResult: {
-							pick: 'primary',
-						},
-					}
-				} else {
-					return {
-						type: 'MODAL_REQUEST',
-						modalResult: {
-							pick: 'secondary',
-						},
-					}
+			} else if (action === 'secondary') {
+				return {
+					type: 'MODAL_REQUEST',
+					modalResult: {
+						pick: 'secondary',
+					},
 				}
+			}
+			return {
+				type: 'MODAL_REQUEST',
+				modalResult: {
+					cancel: true,
+				},
 			}
 		} else if (modal.type === 'dragCards') {
 			let rng = game.rng()

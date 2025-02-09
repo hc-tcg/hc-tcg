@@ -118,6 +118,8 @@ export namespace CopyAttack {
 		hermitCard: CardEntity
 		/** Show a close button on this modal. */
 		cancelable: boolean
+		/** The actions that can not be used in this modal */
+		availableAttacks: Array<'primary' | 'secondary'>
 	}
 
 	export type Result =
