@@ -20,5 +20,5 @@ export default {
 		bannedCards: ['evilxisuma_boss', 'feather', 'item_any_rare'],
 		disabledCards: ['iskallman_common', 'iskallman_rare'],
 	},
-	logoSubText: 'We nerfed Mumbo!',
+	logoSubText: '10k games since 1.0!',
 }
