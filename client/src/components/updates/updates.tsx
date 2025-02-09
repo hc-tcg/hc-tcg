@@ -21,6 +21,11 @@ export function UpdatesModal({onClose}: UpdatesModalProps) {
 		})
 	})
 
+	localStorage.setItem(
+		'latestUpdateView',
+		(new Date().valueOf() / 1000).toFixed(),
+	)
+
 	return (
 		<Modal setOpen title="Latest Updates" onClose={onClose} disableCloseButton>
 			<Modal.Description>
