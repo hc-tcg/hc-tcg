@@ -3,13 +3,18 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import css from './toolbar.module.scss'
 
-function ExitItem() {
+function ExitItem({gameOver, gameEndButton}: {gameOver: boolean, gameEndButton: () => void}) {
 	const dispatch = useMessageDispatch()
 	const openedModal = useSelector(getOpenedModal)
 
 	const handleExit = () => {
+		if (gameOver) {
+			gameEndButton()
+			return
+		}
 		if (!openedModal)
 			dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: 'exit'})
+
 	}
 
 	return (
