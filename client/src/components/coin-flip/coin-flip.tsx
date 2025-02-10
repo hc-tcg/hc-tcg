@@ -17,7 +17,7 @@ const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
 		const coinPics = [
 			<img src={`/images/coins/${COINS[headImage].file}`} />,
 			<div className={css.tcgFace}>
-				<img src={'/images/tcg1.png'} />
+				<img src={'/images/coins/tails.png'} />
 			</div>,
 		]
 
