@@ -5,7 +5,7 @@
 	overflow-y: auto;
 	color: var(--text-light);
 	gap: 10px;
-	max-height: 40vh;
+	max-height: 60vh;
 	height: 100%;
 }
 
@@ -15,6 +15,13 @@
 	text-align: left;
 }
 
+h1 {
+    display: inline
+}
+
+.shortDate {
+	color: var(--text-light);
+}
 
 a:link {
 	color: inherit;
