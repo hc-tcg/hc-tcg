@@ -195,7 +195,6 @@ type Messages = [
 	},
 	{
 		type: typeof localMessages.GAME_CLOSE
-		menuSection?: string
 	},
 	{
 		type: typeof localMessages.GAME_COIN_FLIP_SET
