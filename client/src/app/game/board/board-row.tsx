@@ -37,6 +37,7 @@ type BoardRowProps = {
 	rowState: LocalRowState
 	active: boolean
 	statusEffects: Array<LocalStatusEffectInstance>
+	gameOver: boolean
 }
 
 const BoardRow = ({
@@ -46,16 +47,18 @@ const BoardRow = ({
 	rowState,
 	active,
 	statusEffects,
+	gameOver,
 }: BoardRowProps) => {
 	const settings = useSelector(getSettings)
 	const localGameState = useSelector(getGameState)
 	const selectedCard = useSelector(getSelectedCard)
 
-	let shouldDim = !!(
-		settings.slotHighlightingEnabled &&
-		(selectedCard || localGameState?.currentPickableSlots) &&
-		localGameState?.turn.currentPlayerEntity === localGameState?.playerEntity
-	)
+	let shouldDim =
+		!!(
+			settings.slotHighlightingEnabled &&
+			(selectedCard || localGameState?.currentPickableSlots) &&
+			localGameState?.turn.currentPlayerEntity === localGameState?.playerEntity
+		) && !gameOver
 
 	const itemSlots = rowState.items.length
 	const slotTypes: Array<BoardSlotTypeT> = [
@@ -95,6 +98,7 @@ const BoardRow = ({
 						a.target.card === slot.card?.entity &&
 						slotType != 'hermit',
 				)}
+				gameOver={gameOver}
 			/>
 		)
 	})
