@@ -234,7 +234,9 @@ function Hand({gameOver}: {gameOver: boolean}) {
 				wrap={false}
 				displayTokenCost={false}
 				cards={filteredCards}
-				onClick={gameOver ? undefined : (card: LocalCardInstance) => selectCard(card)}
+				onClick={
+					gameOver ? undefined : (card: LocalCardInstance) => selectCard(card)
+				}
 				selected={[selectedCard]}
 				unpickable={unpickableCards}
 				statusEffects={gameState.statusEffects}
@@ -412,7 +414,10 @@ function Game({setMenuSection}: {setMenuSection: (section: string) => void}) {
 				</div>
 			</div>
 			<div className={css.bottom}>
-				<Toolbar gameOver={gameOver} gameEndButton={() => setGameEndModal(true)}/>
+				<Toolbar
+					gameOver={gameOver}
+					gameEndButton={() => setGameEndModal(true)}
+				/>
 				{!isSpectator && <Hand gameOver={gameOver} />}
 			</div>
 			<ModalContainer />
