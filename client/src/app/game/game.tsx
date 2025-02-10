@@ -53,10 +53,17 @@ function ModalContainer() {
 	return renderModal(openedModal, handleOpenModal)
 }
 
+type EndGameOverlayProps = {
+	modalVisible: boolean
+	setModalVisible: (visible: boolean) => void
+	setMenuSection: (section: string) => void
+}
+
 function EndGameOverlayContainer({
 	modalVisible,
 	setModalVisible,
-}: {modalVisible: boolean; setModalVisible: (visible: boolean) => void}) {
+	setMenuSection,
+}: EndGameOverlayProps) {
 	const endGameOverlay = useSelector(getEndGameOverlay)
 	const gameState = useSelector(getGameState)
 	const isSpectator = useSelector(getIsSpectator)
@@ -127,6 +134,7 @@ function EndGameOverlayContainer({
 					: {type: 'player', entity: playerEntity}
 			}
 			onClose={() => setModalVisible(false)}
+			setMenuSection={setMenuSection}
 		/>
 	)
 }
@@ -316,7 +324,7 @@ function RequiresAvaiableActions() {
 	return null
 }
 
-function Game() {
+function Game({setMenuSection}: {setMenuSection: (section: string) => void}) {
 	const gameState = useSelector(getGameState)
 	const hasPlayerState = useSelector(
 		(root: RootState) => getPlayerState(root) !== null,
@@ -414,6 +422,7 @@ function Game() {
 			<EndGameOverlayContainer
 				modalVisible={gameEndModal}
 				setModalVisible={setGameEndModal}
+				setMenuSection={setMenuSection}
 			/>
 			<RequiresAvaiableActions />
 		</div>
