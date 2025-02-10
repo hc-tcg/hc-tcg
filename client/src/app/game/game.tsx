@@ -1,3 +1,4 @@
+import cn from 'classnames'
 import {DEBUG_CONFIG} from 'common/config'
 import {PlayerEntity} from 'common/entities'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
@@ -138,7 +139,7 @@ function EndGameOverlayContainer({
 	)
 }
 
-function Hand() {
+function Hand({gameOver}: {gameOver: boolean}) {
 	const gameState = useSelector(getGameState)
 	if (!gameState) return null
 
@@ -227,13 +228,13 @@ function Hand() {
 	}
 
 	return (
-		<div className={css.hand} ref={handRef}>
+		<div className={cn(css.hand, {[css.noHover]: gameOver})} ref={handRef}>
 			{Filter()}
 			<CardList
 				wrap={false}
 				displayTokenCost={false}
 				cards={filteredCards}
-				onClick={(card: LocalCardInstance) => selectCard(card)}
+				onClick={gameOver ? undefined : (card: LocalCardInstance) => selectCard(card)}
 				selected={[selectedCard]}
 				unpickable={unpickableCards}
 				statusEffects={gameState.statusEffects}
@@ -320,6 +321,7 @@ function RequiresAvaiableActions() {
 
 function Game({setMenuSection}: {setMenuSection: (section: string) => void}) {
 	const gameState = useSelector(getGameState)
+	const gameEndState = useSelector(getEndGameOverlay)
 	const hasPlayerState = useSelector(
 		(root: RootState) => getPlayerState(root) !== null,
 	)
@@ -331,6 +333,8 @@ function Game({setMenuSection}: {setMenuSection: (section: string) => void}) {
 	const [gameEndModal, setGameEndModal] = useState<boolean>(true)
 	const gameWrapperRef = useRef<HTMLDivElement>(null)
 	const gameRef = useRef<HTMLDivElement>(null)
+
+	const gameOver = !!gameEndState?.outcome
 
 	const handleBoardClick = (
 		slotInfo: SlotInfo,
@@ -403,15 +407,16 @@ function Game({setMenuSection}: {setMenuSection: (section: string) => void}) {
 						onClick={handleBoardClick}
 						localGameState={gameState}
 						gameEndButton={() => setGameEndModal(true)}
+						gameOver={gameOver}
 					/>
 				</div>
 			</div>
 			<div className={css.bottom}>
-				<Toolbar />
-				{!isSpectator && <Hand />}
+				<Toolbar gameOver={gameOver} gameEndButton={() => setGameEndModal(true)}/>
+				{!isSpectator && <Hand gameOver={gameOver} />}
 			</div>
 			<ModalContainer />
-			<Chat />
+			<Chat gameOver={gameOver} />
 			<EndGameOverlayContainer
 				modalVisible={gameEndModal}
 				setModalVisible={setGameEndModal}

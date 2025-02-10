@@ -64,6 +64,10 @@
 		width: min-content;
 		justify-content: unset;
 	}
+
+	&.noHover {
+		pointer-events: none;
+	}
 }
 
 @media (orientation: landscape) {
