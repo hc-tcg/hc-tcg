@@ -213,7 +213,7 @@ function getNextTurnAction(
 		assert(
 			query.some(
 				query.not(query.slot.hand),
-				query.every(query.slot.hand, query.slot.currentPlayer),
+				query.every(query.slot.hand, query.slot.player(player.entity)),
 			)(game, game.components.get(slot)!),
 			"Players can not pick a card form their opponent's hand",
 		)
