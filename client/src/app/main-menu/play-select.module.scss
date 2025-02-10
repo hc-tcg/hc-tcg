@@ -20,12 +20,13 @@ h3 {
 }
 
 .header {
-	margin-top: 4vh;
-	margin-bottom: 3vh;
+	margin-top: 2vh;
+	margin-bottom: 2vh;
 }
 
 .appearanceHeader {
 	margin-top: 4vh;
+	text-align: center;
 }
 
 .clickToChange {
@@ -33,6 +34,7 @@ h3 {
 	margin-bottom: 1.5vh;
 	font-size: 1rem;
 	filter: drop-shadow(2px 2px 0 var(--text-dark));
+	text-align: center;
 }
 
 .gameTypes {
@@ -52,10 +54,9 @@ h3 {
 
 .buttonMenu {
 	height: 100%;
-	width: 100%;
-	white-space: nowrap;
+	max-height: 100%;
+	width: calc(min(max(45vw, 70vh), 80vw) - 16vw);
 	color: white;
-	background-color: rgba(0, 0, 0, 0.7);
 
 	.publicConfirm {
 		height: 100%;
@@ -65,10 +66,54 @@ h3 {
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+		gap: 0.5vh;
 		padding: 2vh;
+		background-color: rgba(0, 0, 0, 0.7);
 
 		.spacer {
 			flex-grow: 1;
+		}
+
+		.decksContainer {
+			margin: 1vh;
+			overflow-y: auto;
+			flex-grow: 1;
+			width: 100%;
+			height: min-content;
+			flex-grow: 1;
+			overflow-x: hidden;
+
+			.myDecksItem {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				gap: 0.2rem;
+				padding: 0.3rem;
+				user-select: none;
+				cursor: pointer;
+				height: 2.5rem;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				width: 100%;
+
+				&:hover {
+					filter: brightness(1.2);
+					background-color: rgba(5, 5, 5, 0.5);
+				}
+
+				.deckName {
+					text-overflow: ellipsis;
+					overflow: hidden;
+				}
+			}
+
+			.selectedDeck {
+				font-size: 1rem;
+				color: gold;
+				text-indent: 3px;
+				transition: all 0.25s ease-in-out;
+			}
 		}
 
 		.publicJoinButton {
@@ -76,91 +121,6 @@ h3 {
 			width: 100%;
 		}
 	}
-}
-
-.appearanceContainer {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 1vh;
-	font-weight: bold;
-	color: var(--text-light);
-	padding: 4px 16px;
-	border: 4px solid var(--gray-900);
-	background: hsla(210deg, 2%, 20%, 90%);
-
-	&:hover {
-		cursor: pointer;
-		transform: scale(1.05);
-	}
-
-	.playerHead {
-		background: var(--gray-800);
-		clip-path: polygon(50% 0, 100% 20%, 100% 80%, 50% 100%, 0 80%, 0 20%);
-		height: 52px;
-		aspect-ratio: 20/21;
-		padding: 5px;
-	}
-
-	.playerName {
-		>h1 {
-			font-family: MinecraftBold;
-			filter: drop-shadow(0 2px 0 hsla(0deg, 0%, 0%, 35%));
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			width: 40ch;
-			overflow: hidden;
-		}
-
-		>p {
-			letter-spacing: 1px;
-			font-family: Minecrafter, sans-serif;
-			text-transform: uppercase;
-			font-size: 10px;
-			font-weight: normal;
-			color: var(--gray-200);
-		}
-	}
-
-	.health {
-		display: flex;
-		flex-direction: row-reverse;
-		gap: 4px;
-		margin-left: auto;
-
-		>img {
-			$size: 32px;
-
-			height: $size;
-			width: $size;
-		}
-	}
-}
-
-/* Decks */
-.myDecksItem {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 0.2rem;
-	padding: 0.3rem;
-	user-select: none;
-	cursor: pointer;
-	max-height: 4rem;
-	text-overflow: ellipsis;
-	overflow: hidden;
-
-	&:hover {
-		filter: brightness(1.2);
-		background-color: rgba(5, 5, 5, 0.5);
-	}
-}
-
-.selectedDeck {
-	font-size: 1rem;
-	color: gold;
-	text-indent: 3px;
-	transition: all 0.25s ease-in-out;
 }
 
 .multiColoredCircle {
@@ -238,14 +198,6 @@ h3 {
 	flex-direction: row;
 }
 
-.decksContainer {
-	overflow-y: auto;
-	display: grid;
-	grid-template-columns: 33% 33% 33%;
-	grid-auto-flow: row;
-	width: 100%;
-}
-
 .bossRules {
 	gap: 1vh;
 
@@ -276,5 +228,71 @@ h3 {
 		justify-content: center;
 		gap: 1rem;
 		width: 50%;
+	}
+}
+
+.code {
+	font-size: 2vh;
+	cursor: pointer;
+}
+
+.privateGameCodeArea {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+
+	>input {
+		flex-grow: 1;
+		height: 2.7rem;
+	}
+}
+
+.bottomArea {
+	display: flex;
+	flex-direction: row;
+}
+
+.playerInfo {
+	position: absolute;
+	top: 6vh;
+	right: 1vh;
+	display: grid;
+	grid-template-areas:
+		"name icon"
+		"deck icon";
+	font-size: 1.5vh;
+	background-color: hsla(0deg, 0%, 0%, 35%);
+	padding: 0.75vh 1vh 0.75vh 1.5vh;
+	border-radius: 0.5vh;
+	user-select: none;
+	font-weight: normal;
+	text-align: right;
+	animation: fadeIn 250ms ease-in-out forwards;
+
+	>img {
+		height: 4vh;
+	}
+
+	#infoName {
+		grid-area: name;
+		font-weight: bold;
+		font-size: 1.8vh;
+	}
+
+	#infoDeck {
+		grid-area: deck;
+	}
+
+	#infoIcon {
+		grid-area: icon;
+		margin-left: 1vh;
+	}
+}
+
+.appearance {
+	cursor: pointer;
+
+	&:hover {
+		scale: 1.05;
 	}
 }
