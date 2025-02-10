@@ -209,6 +209,15 @@ function getNextTurnAction(
 			game.getPickableSlots(game.state.pickRequests[0].canPick),
 			game.rng,
 		)
+
+		assert(
+			query.some(
+				query.not(query.slot.hand),
+				query.every(query.slot.hand, query.slot.currentPlayer),
+			)(game, game.components.get(slot)!),
+			"Players can not pick a card form their opponent's hand",
+		)
+
 		return {
 			type: 'PICK_REQUEST',
 			entity: slot,
