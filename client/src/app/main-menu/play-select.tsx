@@ -275,7 +275,7 @@ function PlaySelect({setMenuSection}: Props) {
 		}
 	}
 
-	let header = 'Select a game type:'
+	let header = 'Select a game mode:'
 	switch (mode) {
 		case 'public':
 			header = 'Public Game'
@@ -416,16 +416,9 @@ function PlaySelect({setMenuSection}: Props) {
 							<div className={css.buttonMenu}>
 								{!status ? (
 									<div className={css.publicConfirm}>
-										<p>
-											Confirm your deck before entering a game. If you don't
-											pick one here, your last selected deck will be used.
-										</p>
-										<div className={css.deckSelector}>
-											<Accordion header={'Deck Select'} defaultOpen={false}>
-												<div className={css.decksContainer}>{decksList}</div>
-											</Accordion>
-										</div>
-										<div className={css.spacer}></div>
+										<h3>Select a deck</h3>
+										<p>By default, your last active deck will be used.</p>
+										<div className={css.decksContainer}>{decksList}</div>
 										<Button
 											className={css.publicJoinButton}
 											onClick={() => handleJoinQueue()}
