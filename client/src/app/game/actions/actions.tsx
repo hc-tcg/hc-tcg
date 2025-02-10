@@ -7,7 +7,6 @@ import {
 	getAvailableActions,
 	getCurrentCoinFlip,
 	getCurrentPickMessage,
-	getEndGameOverlay,
 	getGameState,
 	getIsSpectator,
 	getPlayerEntity,
@@ -28,7 +27,13 @@ type Props = {
 	id?: string
 }
 
-const Actions = ({onClick, localGameState, id, gameOver, gameEndButton}: Props) => {
+const Actions = ({
+	onClick,
+	localGameState,
+	id,
+	gameOver,
+	gameEndButton,
+}: Props) => {
 	const currentPlayer = useSelector(
 		getPlayerStateByEntity(localGameState.turn.currentPlayerEntity),
 	)
@@ -138,8 +143,7 @@ const Actions = ({onClick, localGameState, id, gameOver, gameEndButton}: Props) 
 			gameEndButton()
 		}
 		const endActionText = gameOver ? 'End Game' : 'End Turn'
-		const endActionEnabled =
-			availableActions.includes('END_TURN') || gameOver
+		const endActionEnabled = availableActions.includes('END_TURN') || gameOver
 
 		const attackOptions =
 			availableActions.includes('SINGLE_USE_ATTACK') ||
