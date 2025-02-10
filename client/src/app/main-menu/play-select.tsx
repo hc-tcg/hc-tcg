@@ -122,11 +122,25 @@ function PlaySelect({setMenuSection}: Props) {
 	const handleCodeClick = () => {
 		if (!gameCode) return
 		navigator.clipboard.writeText(gameCode)
+		dispatch({
+			type: localMessages.TOAST_OPEN,
+			open: true,
+			title: 'Copied code!',
+			description: 'Copied game code to clipboard.',
+			image: '/images/types/type-any.png',
+		})
 	}
 
 	const handleSpectatorCodeClick = () => {
 		if (!spectatorCode) return
 		navigator.clipboard.writeText(spectatorCode)
+		dispatch({
+			type: localMessages.TOAST_OPEN,
+			open: true,
+			title: 'Copied code!',
+			description: 'Copied spectator code to clipboard.',
+			image: '/images/types/type-any.png',
+		})
 	}
 
 	const queuingReason = (): string => {
