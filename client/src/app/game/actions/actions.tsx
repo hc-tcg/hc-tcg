@@ -22,12 +22,13 @@ import css from './actions.module.scss'
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
 	localGameState: LocalGameState
+	gameOver: boolean
 	gameEndButton: () => void
 	mobile?: boolean
 	id?: string
 }
 
-const Actions = ({onClick, localGameState, id, gameEndButton}: Props) => {
+const Actions = ({onClick, localGameState, id, gameOver, gameEndButton}: Props) => {
 	const currentPlayer = useSelector(
 		getPlayerStateByEntity(localGameState.turn.currentPlayerEntity),
 	)
@@ -40,7 +41,6 @@ const Actions = ({onClick, localGameState, id, gameEndButton}: Props) => {
 	const availableActions = useSelector(getAvailableActions)
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
 	const pickMessage = useSelector(getCurrentPickMessage)
-	const endGameOverlay = useSelector(getEndGameOverlay)
 	const dispatch = useMessageDispatch()
 
 	const turn = localGameState.turn.currentPlayerEntity === playerEntity
@@ -120,6 +120,7 @@ const Actions = ({onClick, localGameState, id, gameEndButton}: Props) => {
 					type={'single_use'}
 					entity={boardState?.singleUse.slot}
 					onClick={handleClick}
+					gameOver={gameOver}
 				/>
 			</div>
 		)
@@ -130,15 +131,15 @@ const Actions = ({onClick, localGameState, id, gameEndButton}: Props) => {
 			dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: 'attack'})
 		}
 		function handleEndAction() {
-			if (!endGameOverlay?.outcome) {
+			if (!gameOver) {
 				dispatch({type: localMessages.GAME_ACTIONS_END_TURN})
 				return
 			}
 			gameEndButton()
 		}
-		const endActionText = endGameOverlay?.outcome ? 'End Game' : 'End Turn'
+		const endActionText = gameOver ? 'End Game' : 'End Turn'
 		const endActionEnabled =
-			availableActions.includes('END_TURN') || endGameOverlay?.outcome
+			availableActions.includes('END_TURN') || gameOver
 
 		const attackOptions =
 			availableActions.includes('SINGLE_USE_ATTACK') ||
@@ -152,7 +153,7 @@ const Actions = ({onClick, localGameState, id, gameEndButton}: Props) => {
 					size="small"
 					style={{height: '34px'}}
 					onClick={handleAttack}
-					disabled={!attackOptions}
+					disabled={!attackOptions || gameOver}
 				>
 					Attack
 				</Button>

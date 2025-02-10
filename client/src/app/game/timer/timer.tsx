@@ -10,7 +10,7 @@ import {useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './timer.module.scss'
 
-function Timer() {
+function Timer({gameOver}: {gameOver: boolean}) {
 	const dispatch = useMessageDispatch()
 	const gameState = useSelector(getGameState) as LocalGameState
 	const time = useSelector(getTime)
@@ -52,11 +52,17 @@ function Timer() {
 
 	return (
 		<div className={cn(css.timer, css.white)}>
-			<p className={css.timeLeft}>Time Left:</p>
-			<span>
-				{Math.floor(remainingSeconds / 60)}:
-				{(remainingSeconds % 60).toString().padStart(2, '0')}
-			</span>
+			{gameOver ? (
+				<span>GAME OVER</span>
+			) : (
+				<>
+					<p className={css.timeLeft}>Time Left:</p>
+					<span>
+						{Math.floor(remainingSeconds / 60)}:
+						{(remainingSeconds % 60).toString().padStart(2, '0')}
+					</span>
+				</>
+			)}
 		</div>
 	)
 }
