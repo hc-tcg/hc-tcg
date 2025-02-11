@@ -15,6 +15,7 @@ import Button from 'components/button'
 import CardComponent from 'components/card'
 import Checkbox from 'components/checkbox'
 import Dropdown from 'components/dropdown'
+import {FormattedText} from 'components/formatting/formatting'
 import {ScreenshotDeckModal} from 'components/import-export'
 import MenuLayout from 'components/menu-layout'
 import {Modal} from 'components/modal'
@@ -26,7 +27,6 @@ import {useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './statistics.module.scss'
-import {FormattedText} from 'components/formatting/formatting'
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 

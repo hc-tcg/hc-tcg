@@ -25,6 +25,7 @@ import {
 } from 'common/types/database'
 import {GameOutcome, Message} from 'common/types/game-state'
 import {NumberOrNull} from 'common/utils/database-codes'
+import {newRandomNumberGenerator} from 'common/utils/random'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {call} from 'typed-redux-saga'
 import {huffmanCompress, huffmanDecompress} from '../../src/utils/compression'
@@ -32,7 +33,6 @@ import {
 	ReplayActionData,
 	bufferToTurnActions,
 } from '../routines/turn-action-compressor'
-import {newRandomNumberGenerator} from 'common/utils/random'
 
 export type DatabaseResult<T = undefined> =
 	| {
