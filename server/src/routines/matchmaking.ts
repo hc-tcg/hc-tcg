@@ -893,6 +893,8 @@ export function* createReplayGame(
 	const replayActions = replay.replay
 
 	for (let i = 0; i < replayActions.length; i++) {
+		if (con.game.outcome) break
+
 		const action = replayActions[i]
 
 		yield* delay(action.millisecondsSinceLastAction)

@@ -163,6 +163,7 @@ function Statistics({setMenuSection}: Props) {
 	const [currentGame, setCurrentGame] = useState<GameHistory | null>(null)
 
 	const handleReplayGame = (game: GameHistory) => {
+		setCurrentGame(game)
 		dispatch({
 			type: localMessages.MATCHMAKING_REPLAY_GAME,
 			id: game.id,
@@ -1276,7 +1277,7 @@ function Statistics({setMenuSection}: Props) {
 				>
 					<Modal.Description>
 						The replay you requested was not decoded properly. Please inform a
-						developer.
+						developer. This game's code is: <b>{currentGame?.id}</b>
 					</Modal.Description>
 				</Modal>
 			)}

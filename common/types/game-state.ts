@@ -123,6 +123,7 @@ export type TurnActions = Array<TurnAction>
 export type GameOutcome =
 	| {type: 'tie'}
 	| {type: 'timeout'}
+	| {type: 'no-viewers'}
 	| {type: 'game-crash'; error: string}
 	| {
 			type: 'player-won'

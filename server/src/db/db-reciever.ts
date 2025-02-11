@@ -695,7 +695,9 @@ export function* getOverview(
 	const replay = yield* root.db.getGameReplay(action.payload.id)
 
 	if (replay.type === 'failure') {
-		console.log(replay.reason)
+		broadcast([player], {
+			type: serverMessages.INVALID_REPLAY,
+		})
 		return
 	}
 
