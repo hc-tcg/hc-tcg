@@ -1147,6 +1147,8 @@ export class Database {
 
 			if (outcome.type === 'tie') {
 				dbOutcome = 'tie'
+			} else if (outcome.type === 'no-viewers') {
+				dbOutcome = 'tie'
 			} else if (outcome.type === 'game-crash') {
 				dbOutcome = 'error'
 			} else if (outcome.type === 'timeout') {
