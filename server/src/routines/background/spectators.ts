@@ -4,7 +4,7 @@ import {
 } from 'common/socket-messages/client-messages'
 import {formatText} from 'common/utils/formatting'
 import {getGame} from 'selectors'
-import {cancel, select} from 'typed-redux-saga'
+import {select} from 'typed-redux-saga'
 
 function* spectatorLeaveSaga(
 	action: RecievedClientMessage<typeof clientMessages.SPECTATOR_LEAVE>,
