@@ -23,6 +23,7 @@ import {StatusEffectComponent} from './status-effect-component'
 
 /** The minimal information that must be known about a player to start a game */
 export type PlayerDefs = {
+	uuid: string
 	name: string
 	minecraftName: string
 	censoredName: string
@@ -35,6 +36,7 @@ export class PlayerComponent {
 	readonly game: GameModel
 	readonly entity: PlayerEntity
 
+	readonly uuid: string
 	readonly playerName: string
 	readonly minecraftName: string
 	readonly censoredPlayerName: string
@@ -129,6 +131,7 @@ export class PlayerComponent {
 	constructor(game: GameModel, entity: PlayerEntity, player: PlayerDefs) {
 		this.game = game
 		this.entity = entity
+		this.uuid = player.uuid
 		this.playerName = player.name
 		this.minecraftName = player.minecraftName
 		this.censoredPlayerName = player.censoredName
