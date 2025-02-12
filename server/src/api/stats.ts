@@ -198,3 +198,44 @@ export async function getPrivateGame(params: {
 		},
 	]
 }
+
+export const IntervalStatsQuery = z.object({
+	before: z.string().nullish(),
+	after: z.string().nullish(),
+	interval: z.string().nullish(),
+})
+
+export async function getGameTimes(params: {
+	before: number | null
+	after: number | null
+	interval: number | null
+}): Promise<[number, Record<string, any>]> {
+	const games = await root.db.getGameTimes(params)
+
+	if (games.type === 'failure') {
+		return [
+			500,
+			{
+				error: games.reason,
+			},
+		]
+	}
+
+	let {before, after, interval} = params
+
+	if (before === null) before = games.body[0]
+	if (after === null) after = games.body[games.body.length - 1]
+	if (interval === null) interval = 24 * 60 * 60
+
+	const groupCount = Math.ceil((after - before) / interval)
+	if (groupCount > 2500) {
+		return [400, {error: 'Too many groups, increase interval'}]
+	}
+
+	const groups = games.body.reduce((result, time) => {
+		result[Math.floor((time - before) / interval)] += 1
+		return result
+	}, new Array(groupCount).fill(0) as number[])
+
+	return [200, groups]
+}

@@ -1893,4 +1893,30 @@ export class Database {
 			}
 		}
 	}
+
+	public async getGameTimes({
+		before,
+		after,
+	}: {before: number | null; after: number | null}): Promise<
+		DatabaseResult<number[]>
+	> {
+		try {
+			const result = await this.pool.query(
+				`
+					SELECT start_time FROM games
+					WHERE ($1::bigint IS NULL OR games.completion_time > to_timestamp($1::bigint))
+					AND ($2::bigint IS NULL OR games.completion_time <= to_timestamp($2::bigint))
+					ORDER BY start_time;
+				`,
+				[after, before],
+			)
+			return {
+				type: 'success',
+				body: result.rows.map((row) => row['start_time'] / 1000),
+			}
+		} catch (e) {
+			console.log(e)
+			return {type: 'failure'}
+		}
+	}
 }

@@ -15,9 +15,11 @@ import {
 	BasicStatsQuery,
 	CardStatsQuery,
 	DeckStatQuery,
+	IntervalStatsQuery,
 	StatsQueryParams,
 	getCardStats,
 	getDeckStats,
+	getGameTimes,
 	getGamesStats,
 	getPrivateGame,
 	getStats,
@@ -118,6 +120,17 @@ export function addApi(app: Express) {
 		let ret = await getGamesStats({
 			before: NumberOrNull(query.before),
 			after: NumberOrNull(query.after),
+		})
+		res.statusCode = ret[0]
+		res.send(ret[1])
+	})
+
+	app.get('/api/stats/game-times', async (req, res) => {
+		let query = IntervalStatsQuery.parse(req.query)
+		let ret = await getGameTimes({
+			before: NumberOrNull(query.before),
+			after: NumberOrNull(query.after),
+			interval: NumberOrNull(query.interval),
 		})
 		res.statusCode = ret[0]
 		res.send(ret[1])
