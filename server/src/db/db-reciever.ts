@@ -685,3 +685,24 @@ export function* setAppearance(player: PlayerModel) {
 		border: border,
 	})
 }
+
+export function* getOverview(
+	action: RecievedClientMessage<typeof clientMessages.REPLAY_OVERVIEW>,
+) {
+	if (!root.db?.connected) return
+	const player = root.players[action.playerId]
+
+	const replay = yield* root.db.getGameReplay(action.payload.id)
+
+	if (replay.type === 'failure') {
+		broadcast([player], {
+			type: serverMessages.INVALID_REPLAY,
+		})
+		return
+	}
+
+	broadcast([player], {
+		type: serverMessages.REPLAY_OVERVIEW_RECIEVED,
+		battleLog: replay.body.battleLog,
+	})
+}
