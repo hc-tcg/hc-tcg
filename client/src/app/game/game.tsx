@@ -10,6 +10,7 @@ import {
 	getCurrentPlayerEntity,
 	getEndGameOverlay,
 	getGameState,
+	getIsReplayer,
 	getIsSpectator,
 	getOpenedModal,
 	getPickRequestPickableSlots,
@@ -143,6 +144,7 @@ function Hand() {
 	const [filter, setFilter] = useState<string>('')
 	const pickableCards = pickRequestPickableSlots
 	const selectedCard = useSelector(getSelectedCard)
+	const isReplayer = useSelector(getIsReplayer)
 
 	const dispatch = useMessageDispatch()
 
@@ -216,7 +218,7 @@ function Hand() {
 
 	if (pickableCards != undefined) {
 		for (let card of filteredCards) {
-			if (card.slot && !pickableCards.includes(card.slot))
+			if (isReplayer || (card.slot && !pickableCards.includes(card.slot)))
 				unpickableCards.push(card)
 		}
 	}
@@ -228,7 +230,11 @@ function Hand() {
 				wrap={false}
 				displayTokenCost={false}
 				cards={filteredCards}
-				onClick={(card: LocalCardInstance) => selectCard(card)}
+				onClick={
+					!isReplayer
+						? (card: LocalCardInstance) => selectCard(card)
+						: undefined
+				}
 				selected={[selectedCard]}
 				unpickable={unpickableCards}
 				statusEffects={gameState.statusEffects}
@@ -353,6 +359,7 @@ function Game() {
 	)
 	const dispatch = useMessageDispatch()
 	const isSpectator = useSelector(getIsSpectator)
+	const isReplayer = useSelector(getIsReplayer)
 
 	if (!hasPlayerState) return <p>Loading</p>
 	const [gameScale, setGameScale] = useState<number>(1)
@@ -409,7 +416,7 @@ function Game() {
 			</div>
 			<div className={css.bottom}>
 				<Toolbar />
-				{!isSpectator && <Hand />}
+				{(!isSpectator || isReplayer) && <Hand />}
 			</div>
 			<ModalContainer />
 			<Chat />

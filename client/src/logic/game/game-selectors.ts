@@ -18,6 +18,10 @@ export const getIsSpectator = (state: RootState): boolean => {
 	return getGameState(state)?.isSpectator || false
 }
 
+export const getIsReplayer = (state: RootState): boolean => {
+	return getGameState(state)?.isReplayer || false
+}
+
 export const getTime = (state: RootState) => {
 	return getGame(state).time
 }

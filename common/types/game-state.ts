@@ -123,6 +123,7 @@ export type TurnActions = Array<TurnAction>
 export type GameOutcome =
 	| {type: 'tie'}
 	| {type: 'timeout'}
+	| {type: 'no-viewers'}
 	| {type: 'game-crash'; error: string}
 	| {
 			type: 'player-won'
@@ -157,6 +158,7 @@ export type LocalPlayerState = {
 
 export type LocalGameState = {
 	isSpectator: boolean
+	isReplayer: boolean
 	turn: LocalTurnState
 	order: Array<PlayerEntity>
 

@@ -11,6 +11,7 @@ import {
 	minecraftNameSaga,
 	newDeckSaga,
 	newDecksSaga,
+	overviewSaga,
 	recieveCurrentImportSaga,
 	recieveStatsSaga,
 	updatesSaga,
@@ -33,6 +34,7 @@ function* appSaga(): SagaIterator {
 	yield fork(matchmakingSaga)
 	yield fork(updatesSaga)
 	yield fork(cosmeticSaga)
+	yield fork(overviewSaga)
 }
 
 function* rootSaga(): SagaIterator {

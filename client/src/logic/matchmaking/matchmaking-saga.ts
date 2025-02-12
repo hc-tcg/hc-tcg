@@ -324,12 +324,15 @@ function* createReplayGameSaga(
 ) {
 	function* matchmaking() {
 		const socket = yield* select(getSocket)
+		const databaseInfo = yield* select(getLocalDatabaseInfo)
+		const uuid = databaseInfo.userId as string
 
 		try {
 			// Send message to server to create the game
 			yield* sendMsg({
 				type: clientMessages.CREATE_REPLAY_GAME,
 				id: action.id,
+				uuid: uuid,
 			})
 			const result = yield* race({
 				success: call(
