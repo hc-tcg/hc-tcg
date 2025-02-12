@@ -152,16 +152,11 @@ function setupEcsForPlayer(
 	})
 }
 
-export function getGameState(
-	game: GameModel,
-	randomizeOrder: boolean = true,
-): GameState {
+export function getGameState(game: GameModel, swapPlayers: boolean): GameState {
 	const playerEntities = game.components.filter(PlayerComponent)
 
-	if (randomizeOrder !== false) {
-		if (game.rng() >= 0.5) {
-			playerEntities.reverse()
-		}
+	if (swapPlayers !== false) {
+		playerEntities.reverse()
 	}
 
 	const gameState: GameState = {

@@ -164,6 +164,7 @@ export class GameModel {
 		assert(rngSeed.length < 16, 'Game RNG seed must be under 16 characters')
 		this.rngSeed = rngSeed
 		this.rng = newRandomNumberGenerator(rngSeed)
+		const swapPlayers = this.rng()
 
 		this.battleLog = new BattleLogModel(this)
 		this.turnActions = []
@@ -183,6 +184,7 @@ export class GameModel {
 			onGameEnd: new GameHook(),
 			afterGameEnd: new Hook(),
 		}
+
 		setupComponents(this, this.components, player1, player2, {
 			shuffleDeck: settings.shuffleDeck,
 			startWithAllCards: settings.startWithAllCards,
@@ -190,7 +192,10 @@ export class GameModel {
 			extraStartingCards: settings.extraStartingCards,
 		})
 
-		this.state = getGameState(this, options.randomizeOrder)
+		this.state = getGameState(
+			this,
+			swapPlayers >= 0.5 && options.randomizeOrder ? true : false,
+		)
 		this.voiceLineQueue = []
 	}
 

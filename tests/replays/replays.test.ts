@@ -23,6 +23,7 @@ import {
 import {
 	applyEffect,
 	attack,
+	changeActiveHermit,
 	endTurn,
 	finishModalRequest,
 	forfeit,
@@ -30,6 +31,31 @@ import {
 	playCardFromHand,
 	testReplayGame,
 } from '../unit/game/utils'
+import VintageBeefRare from 'common/cards/hermits/vintagebeef-rare'
+import FalseSymmetryRare from 'common/cards/hermits/falsesymmetry-rare'
+import RendogCommon from 'common/cards/hermits/rendog-common'
+import {GameController} from 'server/game-controller'
+import {delay} from 'typed-redux-saga'
+
+function* afterGame(con: GameController) {
+	const turnActionsBuffer = yield* turnActionsToBuffer(con)
+
+	const turnActions = (yield* bufferToTurnActions(
+		con.player1Defs,
+		con.player2Defs,
+		con.game.rngSeed,
+		con.props,
+		turnActionsBuffer,
+	)).replay
+
+	expect(con.game.turnActions.map((action) => action.action)).toStrictEqual(
+		turnActions.map((action) => action.action),
+	)
+
+	expect(con.game.turnActions.map((action) => action.player)).toStrictEqual(
+		turnActions.map((action) => action.player),
+	)
+}
 
 describe('Test Replays', () => {
 	test('Test play card and attack actions', async () => {
@@ -50,28 +76,7 @@ describe('Test Replays', () => {
 				yield* attack(game, 'primary')
 				yield* forfeit(game.currentPlayer.entity)
 			},
-			afterGame: function* (con) {
-				const turnActionsBuffer = yield* turnActionsToBuffer(con)
-				const turnActions = (yield* bufferToTurnActions(
-					con.player1Defs,
-					con.player2Defs,
-					con.game.rngSeed,
-					con.props,
-					turnActionsBuffer,
-				)).replay
-
-				expect(
-					con.game.turnActions.map((action) => action.action),
-				).toStrictEqual(turnActions.map((action) => action.action))
-
-				expect(
-					con.game.turnActions.map((action) => action.player),
-				).toStrictEqual(turnActions.map((action) => action.player))
-
-				expect(con.game.turnActions.map(() => 0)).toStrictEqual(
-					turnActions.map((action) => action.millisecondsSinceLastAction),
-				)
-			},
+			afterGame: afterGame,
 		})
 	})
 
@@ -112,21 +117,7 @@ describe('Test Replays', () => {
 				yield* endTurn(con.game)
 				yield* forfeit(con.game.currentPlayer.entity)
 			},
-			afterGame: function* (con) {
-				const turnActionsBuffer = yield* turnActionsToBuffer(con)
-
-				const turnActions = (yield* bufferToTurnActions(
-					con.player1Defs,
-					con.player2Defs,
-					con.game.rngSeed,
-					con.props,
-					turnActionsBuffer,
-				)).replay
-
-				expect(
-					con.game.turnActions.map((action) => action.action),
-				).toStrictEqual(turnActions.map((action) => action.action))
-			},
+			afterGame: afterGame,
 		})
 	})
 
@@ -172,27 +163,14 @@ describe('Test Replays', () => {
 
 				yield* forfeit(con.game.currentPlayer.entity)
 			},
-			afterGame: function* (con) {
-				const turnActionsBuffer = yield* turnActionsToBuffer(con)
-				const turnActions = (yield* bufferToTurnActions(
-					con.player1Defs,
-					con.player2Defs,
-					con.game.rngSeed,
-					con.props,
-					turnActionsBuffer,
-				)).replay
-
-				expect(
-					con.game.turnActions.map((action) => action.action),
-				).toStrictEqual(turnActions.map((action) => action.action))
-			},
+			afterGame: afterGame,
 		})
 	})
 
 	test('Test select attack modal works properly', () => {
 		testReplayGame({
-			playerOneDeck: [EvilXisumaRare, BalancedDoubleItem],
-			playerTwoDeck: [EthosLabCommon],
+			playerOneDeck: [EthosLabCommon],
+			playerTwoDeck: [EvilXisumaRare, BalancedDoubleItem],
 			gameSaga: function* (con) {
 				const game = con.game
 
@@ -209,21 +187,29 @@ describe('Test Replays', () => {
 
 				yield* forfeit(con.game.currentPlayer.entity)
 			},
-			afterGame: function* (con) {
-				const turnActionsBuffer = yield* turnActionsToBuffer(con)
+			afterGame: afterGame,
+		})
+	})
 
-				const turnActions = (yield* bufferToTurnActions(
-					con.player1Defs,
-					con.player2Defs,
-					con.game.rngSeed,
-					con.props,
-					turnActionsBuffer,
-				)).replay
+	test('Test change active Hermit action', () => {
+		testReplayGame({
+			playerOneDeck: [VintageBeefRare, FalseSymmetryRare],
+			playerTwoDeck: [RendogCommon],
+			gameSaga: function* (con) {
+				const game = con.game
 
-				expect(
-					con.game.turnActions.map((action) => action.action),
-				).toStrictEqual(turnActions.map((action) => action.action))
+				yield* playCardFromHand(game, VintageBeefRare, 'hermit', 0)
+				yield* playCardFromHand(game, FalseSymmetryRare, 'hermit', 1)
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, RendogCommon, 'hermit', 0)
+				yield* endTurn(game)
+
+				yield* changeActiveHermit(game, 1)
+
+				yield* forfeit(con.game.currentPlayer.entity)
 			},
+			afterGame: afterGame,
 		})
 	})
 

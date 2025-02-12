@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {put, spawn} from 'typed-redux-saga'
+import {delay, put, spawn} from 'typed-redux-saga'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -328,6 +328,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		compress(game, turnAction: ChangeActiveHermitActionData) {
 			const slot = game.components.find(
 				SlotComponent,
+				query.slot.currentPlayer,
 				query.slot.entity(turnAction.entity),
 			)
 			if (!slot?.inRow()) return null
@@ -335,15 +336,17 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		},
 		decompress(game, buffer) {
 			const rowIndex = buffer.readUInt8(0)
-			const cardComponent = game.components.find(
-				CardComponent,
-				query.card.isHermit,
-				query.card.row(query.row.index(rowIndex)),
+			const slotComponent = game.components.find(
+				SlotComponent,
+				query.slot.hermit,
+				query.slot.currentPlayer,
+				query.slot.rowIndex(rowIndex),
 			)
-			if (!cardComponent) return null
+
+			if (!slotComponent) return null
 			return {
 				type: 'CHANGE_ACTIVE_HERMIT',
-				entity: cardComponent.slot.entity,
+				entity: slotComponent.entity,
 			}
 		},
 	},
@@ -806,6 +809,10 @@ export function* bufferToTurnActions(
 			playerEntity: con.game.currentPlayer.entity,
 			action: turnAction,
 		})
+
+		if (turnAction.type === 'END_TURN') {
+			yield* delay(1)
+		}
 	}
 
 	return {
