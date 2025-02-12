@@ -376,9 +376,9 @@ function Statistics({setMenuSection}: Props) {
 										dispatch({
 											type: localMessages.TOAST_OPEN,
 											open: true,
-											title: 'Hash copied!',
+											title: 'Copied hash!',
 											description: `Copied ${deck.deck.code} to clipboard`,
-											image: getIconPath(deck.deck),
+											image: 'copy',
 										})
 									}}
 								>

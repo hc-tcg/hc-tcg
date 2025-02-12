@@ -127,7 +127,7 @@ function PlaySelect({setMenuSection}: Props) {
 			open: true,
 			title: 'Copied code!',
 			description: 'Copied game code to clipboard.',
-			image: '/images/types/type-any.png',
+			image: 'copy',
 		})
 	}
 
@@ -139,7 +139,7 @@ function PlaySelect({setMenuSection}: Props) {
 			open: true,
 			title: 'Copied code!',
 			description: 'Copied spectator code to clipboard.',
-			image: '/images/types/type-any.png',
+			image: 'copy',
 		})
 	}
 
