@@ -35,7 +35,6 @@ import VintageBeefRare from 'common/cards/hermits/vintagebeef-rare'
 import FalseSymmetryRare from 'common/cards/hermits/falsesymmetry-rare'
 import RendogCommon from 'common/cards/hermits/rendog-common'
 import {GameController} from 'server/game-controller'
-import {delay} from 'typed-redux-saga'
 
 function* afterGame(con: GameController) {
 	const turnActionsBuffer = yield* turnActionsToBuffer(con)

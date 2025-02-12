@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {delay, put, spawn} from 'typed-redux-saga'
+import {cancel, delay, put, spawn} from 'typed-redux-saga'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -719,6 +719,8 @@ export function* turnActionsToBuffer(
 		console.error(e)
 		Buffer.from([INVALID_REPLAY])
 	}
+
+	yield* cancel(newGameController.task)
 
 	return Buffer.concat([Buffer.from([REPLAY_VERSION]), ...buffers])
 }
