@@ -3,8 +3,11 @@ import Brush from 'common/cards/advent-of-tcg/single-use/brush'
 import Feather from 'common/cards/advent-of-tcg/single-use/feather'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import EvilXisumaRare from 'common/cards/hermits/evilxisuma_rare'
+import FalseSymmetryRare from 'common/cards/hermits/falsesymmetry-rare'
 import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
+import RendogCommon from 'common/cards/hermits/rendog-common'
 import TangoTekRare from 'common/cards/hermits/tangotek-rare'
+import VintageBeefRare from 'common/cards/hermits/vintagebeef-rare'
 import BalancedItem from 'common/cards/items/balanced-common'
 import BalancedDoubleItem from 'common/cards/items/balanced-rare'
 import BuilderItem from 'common/cards/items/builder-common'
@@ -12,6 +15,7 @@ import FarmDoubleItem from 'common/cards/items/farm-rare'
 import MinerItem from 'common/cards/items/miner-common'
 import query from 'common/components/query'
 import {DragCards} from 'common/types/modal-requests'
+import {GameController} from 'server/game-controller'
 import {
 	bufferToTurnActions,
 	turnActionsToBuffer,
@@ -31,10 +35,6 @@ import {
 	playCardFromHand,
 	testReplayGame,
 } from '../unit/game/utils'
-import VintageBeefRare from 'common/cards/hermits/vintagebeef-rare'
-import FalseSymmetryRare from 'common/cards/hermits/falsesymmetry-rare'
-import RendogCommon from 'common/cards/hermits/rendog-common'
-import {GameController} from 'server/game-controller'
 
 function* afterGame(con: GameController) {
 	const turnActionsBuffer = yield* turnActionsToBuffer(con)

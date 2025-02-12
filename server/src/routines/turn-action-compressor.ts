@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {cancel, put, spawn} from 'typed-redux-saga'
+import {cancel, delay, put, spawn} from 'typed-redux-saga'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -811,6 +811,11 @@ export function* bufferToTurnActions(
 			playerEntity: con.game.currentPlayer.entity,
 			action: turnAction,
 		})
+
+		// I don't know why this works, but we're going with it
+		if (turnAction.type === 'END_TURN') {
+			yield* delay(1)
+		}
 	}
 
 	return {
