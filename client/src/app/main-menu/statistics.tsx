@@ -15,10 +15,13 @@ import Button from 'components/button'
 import CardComponent from 'components/card'
 import Checkbox from 'components/checkbox'
 import Dropdown from 'components/dropdown'
+import {FormattedText} from 'components/formatting/formatting'
 import {ScreenshotDeckModal} from 'components/import-export'
 import MenuLayout from 'components/menu-layout'
+import {Modal} from 'components/modal'
 import Spinner from 'components/spinner'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages} from 'logic/messages'
 import {useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
@@ -151,13 +154,39 @@ function Statistics({setMenuSection}: Props) {
 	// Stats stuff
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 	const stats = databaseInfo.stats
-	const gameHistory = databaseInfo.gameHistory
+	const gameHistory = databaseInfo.gameHistory.filter((game) => game.hasReplay)
+	const settings = useSelector(getSettings)
 	const [tab, setTab] = useState<tabs>('stats')
+	const [showInvalidReplayModal, setShowInvalidReplayModal] =
+		useState<boolean>(false)
+	const [showOverviewModal, setShowOverviewModal] = useState<boolean>(false)
+	const [currentGame, setCurrentGame] = useState<GameHistory | null>(null)
+
 	const handleReplayGame = (game: GameHistory) => {
+		setCurrentGame(game)
 		dispatch({
 			type: localMessages.MATCHMAKING_REPLAY_GAME,
 			id: game.id,
 		})
+	}
+	const handleOverview = (game: GameHistory) => {
+		setCurrentGame(game)
+		dispatch({
+			type: localMessages.OVERVIEW,
+			id: game.id,
+		})
+	}
+
+	const invalidReplay = databaseInfo.invalidReplay
+	const overview = databaseInfo.replayOverview
+	const overviewFirstId = overview.length >= 1 ? overview[0].sender.id : ''
+
+	if (invalidReplay && !showInvalidReplayModal) {
+		setShowInvalidReplayModal(true)
+	}
+
+	if (overview.length !== 0 && !showOverviewModal) {
+		setShowOverviewModal(true)
 	}
 
 	// Hall of fame stuff
@@ -858,64 +887,144 @@ function Statistics({setMenuSection}: Props) {
 							<div className={css.fullLeftArea}>
 								<Tabs selected={'games'} />
 								<div className={css.tableArea}>
-									{gameHistory.map((game) => (
-										<div className={css.gameHistoryBox}>
-											<div>
-												<img
-													className={css.playerHead}
-													src={`https://mc-heads.net/head/${game.firstPlayer.minecraftName}/right`}
-													alt="player head"
-												/>
-											</div>
-											<div>
-												{game.firstPlayer.uuid === databaseInfo.userId
-													? 'You'
-													: game.firstPlayer.name}
-											</div>
-											<div className={css.winAndLoss}>
-												<div className={css.win}>W</div>-
-												<div className={css.loss}>L</div>
-											</div>
-											<div>
-												{game.secondPlayer.uuid === databaseInfo.userId
-													? 'You'
-													: game.secondPlayer.name}
-											</div>
-											<div>
-												<img
-													className={css.playerHead}
-													src={`https://mc-heads.net/head/${game.firstPlayer.minecraftName}/left`}
-													alt="player head"
-												/>
-											</div>
-											<Button
-												onClick={() => {
-													setScreenshotDeckModalContents(
-														sortCards(
-															parseDeckCards(
-																game.secondPlayer.player === 'you' &&
-																	game.secondPlayer.deck
-																	? game.secondPlayer.deck.cards.map(
-																			(card) => card.props.id,
-																		)
-																	: game.firstPlayer.player === 'you' &&
-																			game.firstPlayer.deck
-																		? game.firstPlayer.deck.cards.map(
+									<div className={css.gameHistory}>
+										<div className={css.gameHistoryHeader}>Game History</div>
+										{gameHistory.map((game) => {
+											const startTime = new Date(game.startTime)
+											return (
+												<div className={css.gameHistoryBox}>
+													<div className={css.playerHead}>
+														<img
+															src={`https://mc-heads.net/head/${settings.minecraftName}/right`}
+															alt="player head"
+														/>
+													</div>
+													<div
+														className={classNames(
+															css.gameAreaMiddle,
+															settings.gameSide === 'Right' && css.reverseSide,
+														)}
+													>
+														<div
+															id={css.p1name}
+															className={classNames(
+																css.playerName,
+																settings.gameSide === 'Right' &&
+																	css.reverseSide,
+																game.firstPlayer.uuid === databaseInfo.userId &&
+																	css.me,
+															)}
+														>
+															{game.firstPlayer.uuid === game.winner && (
+																<img
+																	src={'images/icons/trophy.png'}
+																	className={css.trophy}
+																/>
+															)}
+															{game.firstPlayer.name}
+														</div>
+														<div
+															className={classNames(
+																css.winAndLoss,
+																settings.gameSide === 'Right' &&
+																	css.reverseSide,
+															)}
+														>
+															<div
+																className={classNames(
+																	game.winner === databaseInfo.userId &&
+																		css.win,
+																	game.winner !== databaseInfo.userId &&
+																		css.loss,
+																	css.me,
+																)}
+															>
+																{game.winner === databaseInfo.userId
+																	? 'W'
+																	: 'L'}
+															</div>{' '}
+															<div className={css.dash}>-</div>{' '}
+															<div>
+																{game.winner === databaseInfo.userId
+																	? 'L'
+																	: 'W'}
+															</div>
+														</div>
+														<div
+															className={classNames(
+																css.playerName,
+																settings.gameSide === 'Right' &&
+																	css.reverseSide,
+																game.secondPlayer.uuid ===
+																	databaseInfo.userId && css.me,
+															)}
+														>
+															{game.secondPlayer.uuid === game.winner && (
+																<img
+																	src={'images/icons/trophy.png'}
+																	className={css.trophy}
+																/>
+															)}
+															{game.secondPlayer.name}
+														</div>
+														<Button
+															id={css.deck}
+															onClick={() => {
+																setScreenshotDeckModalContents(
+																	sortCards(
+																		parseDeckCards(
+																			game.usedDeck.cards.map(
 																				(card) => card.props.id,
-																			)
-																		: [],
-															),
-														),
-													)
-												}}
-											>
-												View
-											</Button>
-											<Button onClick={() => handleReplayGame(game)}>
-												Watch Replay
-											</Button>
-										</div>
-									))}
+																			),
+																		),
+																	),
+																)
+															}}
+														>
+															View Deck
+														</Button>
+														{game.hasReplay && (
+															<Button
+																onClick={() => handleReplayGame(game)}
+																id={css.replay}
+															>
+																Watch Replay
+															</Button>
+														)}
+														{game.hasReplay && (
+															<Button
+																onClick={() => handleOverview(game)}
+																id={css.overview}
+															>
+																Overview
+															</Button>
+														)}
+														<div id={css.time}>
+															{startTime.getMonth() + 1}/{startTime.getDate()}/
+															{startTime.getFullYear() - 2000},{' '}
+															{startTime.getHours() % 12}:
+															{startTime
+																.getMinutes()
+																.toString()
+																.padStart(2, '0')}{' '}
+															{startTime.getHours() >= 12 ? 'PM' : 'AM'}
+														</div>
+														<div id={css.turns}>
+															{game.length.minutes}m{game.length.seconds}.
+															{Math.floor(game.length.milliseconds / 10)}s |{' '}
+															{game.turns} Turns
+														</div>
+													</div>
+													<div className={css.playerHead}>
+														<img
+															src={`https://mc-heads.net/head/${game.secondPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/left`}
+															alt="player head"
+														/>
+													</div>
+												</div>
+											)
+										})}
+									</div>
 								</div>
 							</div>
 						)}
@@ -1150,6 +1259,60 @@ function Statistics({setMenuSection}: Props) {
 					cards={screenshotDeckModalContents}
 					onClose={() => setScreenshotDeckModalContents(null)}
 				/>
+			)}
+			{showInvalidReplayModal && (
+				<Modal
+					setOpen
+					title={'Invalid Replay Requeted'}
+					onClose={() => {
+						setShowInvalidReplayModal(false)
+						dispatch({
+							type: localMessages.DATABASE_SET,
+							data: {
+								key: 'invalidReplay',
+								value: false,
+							},
+						})
+					}}
+				>
+					<Modal.Description>
+						The replay you requested was not decoded properly. Please inform a
+						developer. This game's code is: <b>{currentGame?.id}</b>
+					</Modal.Description>
+				</Modal>
+			)}
+			{showOverviewModal && (
+				<Modal
+					setOpen
+					title={'Game Overview'}
+					onClose={() => {
+						setShowOverviewModal(false)
+						dispatch({
+							type: localMessages.DATABASE_SET,
+							data: {
+								key: 'replayOverview',
+								value: [],
+							},
+						})
+					}}
+				>
+					<Modal.Description>
+						<div className={css.overview}>
+							{overview.map((line) => {
+								const isOpponent =
+									(currentGame?.firstPlayer.player === 'you') !==
+									(line.sender.id === overviewFirstId)
+
+								return FormattedText(line.message, {
+									isOpponent,
+									color: isOpponent ? 'orange' : 'blue',
+									isSelectable: true,
+									censorProfanity: false,
+								})
+							})}
+						</div>
+					</Modal.Description>
+				</Modal>
 			)}
 		</>
 	)

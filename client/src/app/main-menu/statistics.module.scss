@@ -283,41 +283,163 @@
 	}
 }
 
+.gameHistory {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	padding: 1rem;
+}
+
 .gameHistoryBox {
+	width: max(50%, 600px);
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+	align-self: center;
 	justify-content: center;
-	background-color: black;
-	color: white;
+	background-color: var(--gray-900);
+	color: var(--text-light);
 	gap: 1rem;
-	margin: 2rem;
+	border-radius: 10px;
 }
 
 .playerHead {
-	height: 10vh;
+	height: 12vh;
+	width: 12vh;
+	padding: 1vh;
+	background-color: rgb(14, 14, 14);
+	clip-path: polygon(50% 0%, 100% 20%, 100% 80%, 50% 100%, 0% 80%, 0% 20%);
+
+	> img {
+		height: 10vh;
+		filter: drop-shadow(2px 0px 0 white) drop-shadow(-2px 0px 0 white)
+			drop-shadow(0px 2px 0 white) drop-shadow(0px -2px 0 white);
+	}
 }
 
 .winAndLoss {
 	display: flex;
 	flex-direction: row;
+	justify-content: center;
 	gap: 0.5rem;
-	line-height: 2rem;
+	line-height: 1.5rem;
+	font-size: 1.5rem;
+	font-family: Minecrafter;
+	grid-area: winAndLoss;
+	width: 8vw;
+	filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black)
+		drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
+
+	.dash {
+		font-family: Minecraft;
+	}
 
 	> div {
-		border-radius: 50%;
-		width: 2rem;
-		height: 2rem;
+		width: 1rem;
+		height: 1rem;
 		text-align: center;
+	}
 
-		&.win {
-			background-color: #63b45c;
-		}
-
-		&.loss {
-			background-color: #da5558;
+	> .win {
+		&.me {
+			color: #63b45c;
 		}
 	}
+
+	> .loss {
+		&.me {
+			color: #da5558;
+		}
+	}
+
+	&.reverseSide {
+		flex-direction: row-reverse;
+	}
+}
+
+.gameAreaMiddle {
+	width: 22vw;
+	display: grid;
+	gap: 0.5rem;
+	margin: 1rem;
+	grid-template-areas:
+		"me me winAndLoss winAndLoss opponent opponent"
+		"deck deck replay replay overview overview"
+		"time time time turns turns turns";
+
+	&.reverseSide {
+		grid-template-areas:
+			"opponent opponent winAndLoss winAndLoss me me"
+			"overview overview replay replay deck deck"
+			"time time time turns turns turns";
+	}
+}
+
+.gameHistoryHeader {
+	width: max(50%, 600px);
+	align-self: center;
+	color: var(--text-light);
+	font-size: 1.5rem;
+	font-family: MinecraftBold;
+}
+
+.playerName {
+	font-size: 1.25rem;
+	width: 7vw;
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	gap: 0.5rem;
+	filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black)
+		drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
+
+	&.me {
+		grid-area: me;
+		font-family: MinecraftBold;
+
+		&.reverseSide {
+			text-align: right;
+			flex-direction: row-reverse;
+		}
+	}
+
+	&:not(.me) {
+		grid-area: opponent;
+		&:not(.reverseSide) {
+			text-align: right;
+			flex-direction: row-reverse;
+		}
+	}
+}
+
+.trophy {
+	height: 16px;
+	image-rendering: crisp-edges;
+}
+
+#deck {
+	grid-area: deck;
+}
+
+#replay {
+	grid-area: replay;
+}
+
+#overview {
+	grid-area: overview;
+}
+
+#time {
+	grid-area: time;
+	font-size: 1rem;
+}
+
+#turns {
+	grid-area: turns;
+	font-size: 1rem;
+	text-align: right;
 }
 
 .stats {
@@ -385,8 +507,8 @@
 		background: linear-gradient(
 			0deg,
 			#325a2f 15%,
-			#63b45c 15% 90%,
-			rgb(147, 207, 141) 90%
+			#63b45c 15% 93%,
+			rgb(196, 235, 193) 93%
 		);
 	}
 
@@ -398,8 +520,8 @@
 		background: linear-gradient(
 			0deg,
 			#72282a 15%,
-			#da5558 15% 90%,
-			#eb9192 90%
+			#da5558 15% 93%,
+			#ecb1b2 93%
 		);
 	}
 
@@ -412,6 +534,14 @@
 			#97d6fd 90%
 		);
 	}
+}
+
+.overview {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	overflow-y: scroll;
+	padding: 0.5rem;
 }
 
 // Mobile

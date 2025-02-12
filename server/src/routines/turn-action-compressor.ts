@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {put, spawn} from 'typed-redux-saga'
+import {cancel, delay, put, spawn} from 'typed-redux-saga'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -9,7 +9,11 @@ import query from '../../../common/components/query'
 import {CardEntity, PlayerEntity} from '../../../common/entities'
 import {GameModel} from '../../../common/models/game-model'
 import {SlotTypeT} from '../../../common/types/cards'
-import {PlayCardAction, TurnAction} from '../../../common/types/game-state'
+import {
+	Message,
+	PlayCardAction,
+	TurnAction,
+} from '../../../common/types/game-state'
 import {
 	LocalCopyAttack,
 	LocalDragCards,
@@ -324,6 +328,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		compress(game, turnAction: ChangeActiveHermitActionData) {
 			const slot = game.components.find(
 				SlotComponent,
+				query.slot.currentPlayer,
 				query.slot.entity(turnAction.entity),
 			)
 			if (!slot?.inRow()) return null
@@ -331,15 +336,17 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		},
 		decompress(game, buffer) {
 			const rowIndex = buffer.readUInt8(0)
-			const cardComponent = game.components.find(
-				CardComponent,
-				query.card.isHermit,
-				query.card.row(query.row.index(rowIndex)),
+			const slotComponent = game.components.find(
+				SlotComponent,
+				query.slot.hermit,
+				query.slot.currentPlayer,
+				query.slot.rowIndex(rowIndex),
 			)
-			if (!cardComponent) return null
+
+			if (!slotComponent) return null
 			return {
 				type: 'CHANGE_ACTIVE_HERMIT',
-				entity: cardComponent.slot.entity,
+				entity: slotComponent.entity,
 			}
 		},
 	},
@@ -689,9 +696,9 @@ export function* turnActionsToBuffer(
 
 	const buffers: Array<Buffer> = []
 
-	newGameController.task = yield* spawn(gameSaga, newGameController)
-
 	try {
+		newGameController.task = yield* spawn(gameSaga, newGameController)
+
 		for (let i = 0; i < originalGame.turnActions.length; i++) {
 			const action = originalGame.turnActions[i]
 			buffers.push(
@@ -713,6 +720,8 @@ export function* turnActionsToBuffer(
 		Buffer.from([INVALID_REPLAY])
 	}
 
+	yield* cancel(newGameController.task)
+
 	return Buffer.concat([Buffer.from([REPLAY_VERSION]), ...buffers])
 }
 
@@ -722,7 +731,13 @@ export function* bufferToTurnActions(
 	seed: string,
 	props: GameControllerProps,
 	actionsBuffer: Buffer,
-): Generator<any, Array<ReplayActionData>> {
+): Generator<
+	any,
+	{
+		replay: Array<ReplayActionData>
+		battleLog: Array<Message>
+	}
+> {
 	const con = new GameController(firstPlayerSetupDefs, secondPlayerSetupDefs, {
 		...props,
 		randomSeed: seed,
@@ -735,7 +750,11 @@ export function* bufferToTurnActions(
 	const version = actionsBuffer.readUInt8(cursor)
 	cursor++
 
-	if (version === 0x00 || version === 0x30) return []
+	if (version === 0x00 || version === 0x30)
+		return {
+			replay: [],
+			battleLog: [],
+		}
 
 	//Other version checks here
 
@@ -792,7 +811,15 @@ export function* bufferToTurnActions(
 			playerEntity: con.game.currentPlayer.entity,
 			action: turnAction,
 		})
+
+		// I don't know why this works, but we're going with it
+		if (turnAction.type === 'END_TURN') {
+			yield* delay(1)
+		}
 	}
 
-	return replayActions
+	return {
+		replay: replayActions,
+		battleLog: con.chat,
+	}
 }
