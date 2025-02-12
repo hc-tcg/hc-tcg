@@ -35,7 +35,7 @@ const defaultState: SessionState = {
 	playerId: '' as PlayerId,
 	playerSecret: '',
 	playerDeck: null,
-	connecting: false,
+	connecting: true,
 	connected: false,
 	tooltip: null,
 	toast: [],

@@ -10,6 +10,7 @@ import {
 	getPublicGameCount,
 	getPublicQueueLength,
 } from './games'
+import {authenticateUser} from './auth'
 import {CancelGameBody} from './schema'
 import {
 	BasicStatsQuery,
@@ -26,6 +27,14 @@ import {
 import {requestUrlRoot} from './utils'
 
 export function addApi(app: Express) {
+	app.get('/api/auth/', async (req, res) => {
+		const userId = req.get('userId')
+		const secret = req.get('secret')
+		let ret = await authenticateUser(userId, secret)
+		res.statusCode = ret[0]
+		res.send(ret[1])
+	})
+
 	app.get('/api/cards', (req, res) => {
 		res.send(cards(requestUrlRoot(req)))
 	})

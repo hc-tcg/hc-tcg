@@ -10,6 +10,7 @@ import {Appearance} from 'common/cosmetics/types'
 import {PlayerId} from 'common/models/player-model'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {User} from 'common/types/database'
 import {Deck} from 'common/types/deck'
 import {PlayerInfo} from 'common/types/server-requests'
 import {toLocalCardInstance} from 'common/utils/cards'
@@ -223,58 +224,72 @@ function* setupDeckData(socket: any) {
 	})
 }
 
-export function* updateAchievements(socket: any) {
-	yield* sendMsg({
-		type: clientMessages.GET_ACHIEVEMENTS,
-	})
-	const result = yield* race({
-		achievements: call(
-			receiveMsg(socket, serverMessages.ACHIEVEMENTS_RECIEVED),
-		),
-		failure: call(receiveMsg(socket, serverMessages.NO_DATABASE_CONNECTION)),
-	})
-
-	if (result.failure) {
-		yield* put<LocalMessage>({
-			type: localMessages.DATABASE_SET,
-			data: {
-				key: 'noConnection',
-				value: true,
-			},
-		})
-		return
-	}
-
-	const {achievements} = result
-
-	if (!achievements) return
-
-	yield put<LocalMessage>({
-		type: localMessages.DATABASE_SET,
-		data: {
-			key: 'achievements',
-			value: achievements.progress,
-		},
-	})
-}
-
+//@TODO add back achievements,decks, stats into get the auth endpoint
 export function* loginSaga() {
 	const socket = yield* select(getSocket)
 	const session = loadSession()
 
 	console.log('session saga: ', session)
 	if (!session) {
-		const {name} = yield* take<LocalMessageTable[typeof localMessages.LOGIN]>(
-			localMessages.LOGIN,
-		)
+		// const {name} = yield* take<LocalMessageTable[typeof localMessages.LOGIN]>(
+		// 	localMessages.LOGIN,
+		// )
+		const name = 'Benji'
 
-		socket.auth = {playerName: name, version: getClientVersion()}
+		const secret = localStorage.getItem('databaseInfo:secret')
+		const userId = localStorage.getItem('databaseInfo:userId')
+
+		// Create new database user to connect
+		if (!secret || !userId) {
+			socket.auth = {playerName: name, version: getClientVersion()}
+			yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
+			socket.connect()
+
+			yield* insertUser(socket)
+		} else {
+			const headers = {
+				userId: userId,
+				secret: secret,
+			}
+
+			const auth = yield* call(fetch, 'http://localhost:9000/api/auth/', {
+				headers,
+			})
+
+			const userResponse = (yield* call([auth, auth.json])) as User
+
+			console.log(userResponse)
+
+			socket.auth = {
+				playerName: userResponse.username,
+				version: getClientVersion(),
+			}
+			yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
+			socket.connect()
+
+			if (auth.status !== 200) {
+				yield* setupDeckData(socket)
+			}
+
+			const appearance: Appearance = {
+				title: TITLES[userResponse.title || ''] || defaultAppearance.title,
+				coin: COINS[userResponse.coin || ''] || defaultAppearance.coin,
+				heart: HEARTS[userResponse.heart || ''] || defaultAppearance.heart,
+				background:
+					BACKGROUNDS[userResponse.title || ''] || defaultAppearance.background,
+				border: BORDERS[userResponse.title || ''] || defaultAppearance.border,
+			}
+			yield* put<LocalMessage>({
+				type: localMessages.COSMETICS_SET,
+				appearance: appearance,
+			})
+		}
 	} else {
 		socket.auth = {...session, version: getClientVersion()}
+		yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
+		socket.connect()
 	}
 
-	yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
-	socket.connect()
 	const connectErrorChan = createConnectErrorChannel(socket)
 
 	const result = yield* race({
@@ -315,7 +330,6 @@ export function* loginSaga() {
 			player: session,
 		})
 		yield* setupDeckData(socket)
-		yield* updateAchievements(socket)
 		yield put<LocalMessage>({
 			type: localMessages.CONNECTED,
 		})
@@ -380,55 +394,6 @@ export function* loginSaga() {
 		// set user info for reconnects
 		socket.auth.playerId = result.playerInfo.player.playerId
 		socket.auth.playerSecret = result.playerInfo.player.playerSecret
-
-		const secret = localStorage.getItem('databaseInfo:secret')
-		const userId = localStorage.getItem('databaseInfo:userId')
-
-		// Create new database user to connect
-		if (!secret || !userId) {
-			yield* insertUser(socket)
-		} else {
-			yield* sendMsg({
-				type: clientMessages.PG_AUTHENTICATE,
-				userId: userId,
-				secret: secret,
-			})
-
-			const userInfo = yield* race({
-				success: call(receiveMsg(socket, serverMessages.AUTHENTICATED)),
-				failure: call(receiveMsg(socket, serverMessages.AUTHENTICATION_FAIL)),
-				noConnection: call(
-					receiveMsg(socket, serverMessages.NO_DATABASE_CONNECTION),
-				),
-			})
-
-			if (userInfo.success || userInfo.noConnection) {
-				yield* setupDeckData(socket)
-				yield* updateAchievements(socket)
-			}
-			if (userInfo.success) {
-				const appearance: Appearance = {
-					title:
-						TITLES[userInfo.success.user.title || ''] ||
-						defaultAppearance.title,
-					coin:
-						COINS[userInfo.success.user.coin || ''] || defaultAppearance.coin,
-					heart:
-						HEARTS[userInfo.success.user.heart || ''] ||
-						defaultAppearance.heart,
-					background:
-						BACKGROUNDS[userInfo.success.user.title || ''] ||
-						defaultAppearance.background,
-					border:
-						BORDERS[userInfo.success.user.title || ''] ||
-						defaultAppearance.border,
-				}
-				yield* put<LocalMessage>({
-					type: localMessages.COSMETICS_SET,
-					appearance: appearance,
-				})
-			}
-		}
 
 		yield put<LocalMessage>({
 			type: localMessages.CONNECTED,
