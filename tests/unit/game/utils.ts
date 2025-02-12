@@ -41,6 +41,7 @@ function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 			minecraftName: playerName,
 			censoredName: playerName,
 			appearance: defaultAppearance,
+			uuid: '',
 		},
 		deck,
 	}
@@ -355,6 +356,7 @@ export function testBossFight(
 				censoredName: 'Evil Xisuma',
 				minecraftName: 'EvilXisuma',
 				appearance: {...defaultAppearance, coin: EvilXCoin},
+				uuid: '',
 				disableDeckingOut: true,
 			},
 			deck: [EvilXisumaBoss],
@@ -516,7 +518,7 @@ export function testReplayGame(options: {
 		{
 			randomizeOrder: true,
 			// This seed always ensures player one goes first. Because how replays work, turn order needs to be random here
-			randomSeed: '123456a',
+			randomSeed: '1234567',
 			settings: {
 				...defaultGameSettings,
 			},
