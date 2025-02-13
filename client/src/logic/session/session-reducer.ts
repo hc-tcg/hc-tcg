@@ -71,6 +71,11 @@ const loginReducer = (
 				playerDeck:
 					(action.player as PlayerInfo)?.playerDeck?.code || state.playerDeck,
 			}
+		case localMessages.NOT_CONNECTING:
+			return {
+				...state,
+				connecting: false,
+			}
 		case localMessages.CONNECTED:
 			return {
 				...state,

@@ -10,7 +10,7 @@ import {
 	getPublicGameCount,
 	getPublicQueueLength,
 } from './games'
-import {authenticateUser} from './auth'
+import {authenticateUser, createUser} from './auth'
 import {CancelGameBody} from './schema'
 import {
 	BasicStatsQuery,
@@ -31,6 +31,13 @@ export function addApi(app: Express) {
 		const userId = req.get('userId')
 		const secret = req.get('secret')
 		let ret = await authenticateUser(userId, secret)
+		res.statusCode = ret[0]
+		res.send(ret[1])
+	})
+
+	app.get('/api/createUser/', async (req, res) => {
+		const username = req.get('username')
+		let ret = await createUser(username)
 		res.statusCode = ret[0]
 		res.send(ret[1])
 	})

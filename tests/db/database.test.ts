@@ -68,7 +68,7 @@ describe('Test Database', () => {
 	})
 
 	test('Add User', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 		expect(user.body).not.toBeNull()
 		expect(user.body.username).toBe('Test User')
@@ -80,7 +80,7 @@ describe('Test Database', () => {
 	})
 
 	test('Authenticate', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const authenticatedUser = await database.authenticateUser(
@@ -104,7 +104,7 @@ describe('Test Database', () => {
 	})
 
 	test('Add and Retrieve Deck', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const tag = await database.insertTag(
@@ -150,8 +150,8 @@ describe('Test Database', () => {
 	})
 
 	test('Add Game and Check Stat Retrieval Works', async () => {
-		const winner = await database.insertUser('Winner', 'ethoslab')
-		const loser = await database.insertUser('Winner', 'geminitay')
+		const winner = await database.insertUser('Winner')
+		const loser = await database.insertUser('Loser')
 
 		assert(
 			winner.type === 'success',
@@ -350,7 +350,7 @@ describe('Test Database', () => {
 	})
 
 	test('Update Username and Minecraft Name', async () => {
-		const user = await database.insertUser('Ethoslab', 'ethoslab')
+		const user = await database.insertUser('Ethoslab')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		await database.setUsername(user.body.uuid, 'GeminiTay')
@@ -367,7 +367,7 @@ describe('Test Database', () => {
 	})
 
 	test('Add and Retrieve Tags', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const tag1 = await database.insertTag(
@@ -403,7 +403,7 @@ describe('Test Database', () => {
 	})
 
 	test('Add and Retrieve Deck', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const tag = await database.insertTag(
@@ -465,7 +465,7 @@ describe('Test Database', () => {
 	})
 
 	test('Returning decks with no tags or cards', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const code = generateDatabaseCode()
@@ -505,7 +505,7 @@ describe('Test Database', () => {
 	})
 
 	test('Confirm decks are disassociated from a user properly', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const tag = await database.insertTag(
@@ -583,7 +583,7 @@ describe('Test Database', () => {
 	})
 
 	test('Confirm tags are deleted properly', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const tag = await database.insertTag(
@@ -618,7 +618,7 @@ describe('Test Database', () => {
 	})
 
 	test("Confirm deck deletion doesn't impact other decks", async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const deck1 = await database.insertDeck(

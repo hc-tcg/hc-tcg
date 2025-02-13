@@ -12,6 +12,8 @@ let messagesThatHaveNotBeenSent: Array<ClientMessage> = []
 export function* sendMsg(payload: ClientMessage) {
 	const socket = yield* select(getSocket)
 
+	if (!socket) throw new Error('The socket should be defined at this point.')
+
 	if (socket.connected) {
 		console.log('[send]', payload.type, payload)
 		const {playerId, playerSecret} = yield* select(getSession)
@@ -75,6 +77,8 @@ export function receiveMsg<T extends keyof ServerMessageTable>(
 function* socketSaga(): SagaIterator {
 	const socket = yield* select(getSocket)
 	const session = yield* select(getSession)
+
+	if (!socket) throw new Error('The socket should be defined at this point.')
 
 	const channel = eventChannel((emitter: any): any => {
 		const connectListener = () => emitter('connect')

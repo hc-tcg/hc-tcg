@@ -1,4 +1,4 @@
-import root from '../serverRoot'
+import root from 'serverRoot'
 
 export async function authenticateUser(
 	userId: string | undefined,
@@ -21,6 +21,31 @@ export async function authenticateUser(
 	}
 
 	const userInfo = await root.db.authenticateUser(userId, secret)
+
+	if (userInfo.type === 'failure') {
+		return [401, 'Authentication information is not valid']
+	}
+
+	return [200, userInfo.body]
+}
+
+export async function createUser(
+	username: string | undefined,
+): Promise<[number, any]> {
+	if (!username) {
+		return [400, {error: 'A username is required to create a user.'}]
+	}
+
+	if (!root.db.connected) {
+		return [
+			500,
+			{
+				error: 'Endpoint is unavailable because database is disabled',
+			},
+		]
+	}
+
+	const userInfo = await root.db.insertUser(username)
 
 	if (userInfo.type === 'failure') {
 		return [401, 'Authentication information is not valid']

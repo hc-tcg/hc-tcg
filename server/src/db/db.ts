@@ -33,6 +33,7 @@ import {
 	ReplayActionData,
 	bufferToTurnActions,
 } from '../routines/turn-action-compressor'
+import assert from 'assert'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -174,16 +175,13 @@ export class Database {
 	}
 
 	/*** Insert a user into the Database. Returns `user`. */
-	public async insertUser(
-		username: string,
-		minecraftName: string | null,
-	): Promise<DatabaseResult<User>> {
+	public async insertUser(username: string): Promise<DatabaseResult<User>> {
 		try {
 			const secret = (await this.pool.query('SELECT * FROM uuid_generate_v4()'))
 				.rows[0]['uuid_generate_v4']
 			const user = await this.pool.query(
 				"INSERT INTO users (username, minecraft_name, secret) values ($1,$2,crypt($3, gen_salt('bf', $4))) RETURNING (user_id)",
-				[username, minecraftName, secret, this.bfDepth],
+				[username, username, secret, this.bfDepth],
 			)
 			return {
 				type: 'success',
@@ -191,12 +189,25 @@ export class Database {
 					uuid: user.rows[0]['user_id'],
 					secret: secret,
 					username: username,
-					minecraftName: minecraftName,
+					minecraftName: username,
 					title: null,
 					coin: null,
 					heart: null,
 					background: null,
 					border: null,
+					stats: {
+						gamesPlayed: 0,
+						wins: 0,
+						losses: 0,
+						forfeitWins: 0,
+						forfeitLosses: 0,
+						ties: 0,
+						topCards: [],
+						uniquePlayersEncountered: 0,
+					},
+					decks: [],
+					achievements: {achievementData: {}},
+					gameHistory: [],
 				},
 			}
 		} catch (e) {
@@ -214,6 +225,32 @@ export class Database {
 				[uuid, secret],
 			)
 
+			const playerUuid = user.rows[0]['user_id']
+
+			assert(playerUuid, 'The player UUID should be defined.')
+
+			const decks = await this.getDecksFromUuid(playerUuid)
+			const achievements = await this.getAchievements(playerUuid)
+			const stats = await this.getUserStats(playerUuid)
+			const gameHistory = await this.getUserGameHistory(playerUuid)
+
+			assert(
+				decks.type === 'success',
+				'If the UUID is defined, retrieving decks should not fail.',
+			)
+			assert(
+				achievements.type === 'success',
+				'If the UUID is defined, retrieving achievements should not fail.',
+			)
+			assert(
+				stats.type === 'success',
+				'If the UUID is defined, retrieving stats should not fail.',
+			)
+			assert(
+				gameHistory.type === 'success',
+				'If the UUID is defined, game history should not fail.',
+			)
+
 			return {
 				type: 'success',
 				body: {
@@ -226,6 +263,10 @@ export class Database {
 					heart: user.rows[0]['heart'],
 					background: user.rows[0]['background'],
 					border: user.rows[0]['border'],
+					decks: decks.body,
+					achievements: achievements.body,
+					stats: stats.body,
+					gameHistory: gameHistory.body,
 				},
 			}
 		} catch (e) {

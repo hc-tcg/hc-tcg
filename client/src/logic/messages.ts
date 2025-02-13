@@ -33,6 +33,7 @@ export const localMessages = messages('clientLocalMessages', {
 	LOGIN: null,
 	PLAYER_SESSION_SET: null,
 	PLAYER_INFO_SET: null,
+	NOT_CONNECTING: null,
 	CONNECTED: null,
 	DISCONNECT: null,
 	LOGOUT: null,
@@ -118,6 +119,7 @@ type Messages = [
 		}
 	},
 	{type: typeof localMessages.PLAYER_INFO_SET; player: PlayerInfo},
+	{type: typeof localMessages.NOT_CONNECTING},
 	{type: typeof localMessages.CONNECTED},
 	{type: typeof localMessages.DISCONNECT; errorMessage?: string},
 	{type: typeof localMessages.LOGOUT},

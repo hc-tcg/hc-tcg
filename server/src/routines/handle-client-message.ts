@@ -6,8 +6,6 @@ import {LocalMessage, localMessages} from 'messages'
 import {put, takeEvery} from 'typed-redux-saga'
 import {safeCall} from 'utils'
 import {
-	addUser,
-	authenticateUser,
 	deleteDeck,
 	deleteTag,
 	exportDeck,
@@ -103,14 +101,6 @@ function* handler(message: RecievedClientMessage) {
 				action: actionMessage.payload.action,
 				playerEntity: actionMessage.payload.playerEntity,
 			})
-		case clientMessages.PG_INSERT_USER:
-			return yield* addUser(
-				message as RecievedClientMessage<typeof message.type>,
-			)
-		case clientMessages.PG_AUTHENTICATE:
-			return yield* authenticateUser(
-				message as RecievedClientMessage<typeof message.type>,
-			)
 		case clientMessages.GET_DECKS:
 			return yield* getDecks(
 				message as RecievedClientMessage<typeof message.type>,

@@ -24,8 +24,6 @@ export const clientMessages = messages('clientMessages', {
 	SPECTATOR_LEAVE: null,
 	CHAT_MESSAGE: null,
 	/**Postgres */
-	PG_AUTHENTICATE: null,
-	PG_INSERT_USER: null,
 	GET_DECKS: null,
 	GET_ACHIEVEMENTS: null,
 	GET_STATS: null,
@@ -103,16 +101,6 @@ export type ClientMessages = [
 	},
 	{type: typeof clientMessages.SPECTATOR_LEAVE},
 	{type: typeof clientMessages.CHAT_MESSAGE; message: string},
-	{
-		type: typeof clientMessages.PG_AUTHENTICATE
-		userId: string
-		secret: string
-	},
-	{
-		type: typeof clientMessages.PG_INSERT_USER
-		username: string | null
-		minecraftName: string | null
-	},
 	{type: typeof clientMessages.GET_DECKS; newActiveDeck?: string},
 	{type: typeof clientMessages.GET_STATS},
 	{type: typeof clientMessages.GET_ACHIEVEMENTS},

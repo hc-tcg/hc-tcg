@@ -2,7 +2,6 @@ import {CARDS} from 'common/cards'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerModel} from 'common/models/player-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {PlayerStats} from 'common/types/database'
 import {GameOutcome} from 'common/types/game-state'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import root from 'serverRoot'
@@ -18,71 +17,6 @@ function* noDatabaseConnection(playerId: string) {
 	broadcast([player], {type: serverMessages.NO_DATABASE_CONNECTION})
 }
 
-export function* addUser(
-	action: RecievedClientMessage<typeof clientMessages.PG_INSERT_USER>,
-) {
-	if (!root.db?.connected) {
-		yield* noDatabaseConnection(action.playerId)
-		return
-	}
-	const result = yield* call(
-		[root.db, root.db.insertUser],
-		action.payload.username ? action.payload.username : '',
-		action.payload.minecraftName,
-	)
-
-	const player = root.players[action.playerId]
-
-	if (result.type === 'success') {
-		player.uuid = result.body.uuid
-		player.authenticated = true
-		broadcast([player], {
-			type: serverMessages.ACHIEVEMENTS_RECIEVED,
-			progress: player.achievementProgress,
-		})
-		broadcast([player], {type: serverMessages.AUTHENTICATED, user: result.body})
-	} else {
-		broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})
-	}
-}
-
-export function* authenticateUser(
-	action: RecievedClientMessage<typeof clientMessages.PG_AUTHENTICATE>,
-) {
-	if (!root.db?.connected) {
-		yield* noDatabaseConnection(action.playerId)
-		return
-	}
-	const result = yield* call(
-		[root.db, root.db.authenticateUser],
-		action.payload.userId,
-		action.payload.secret,
-	)
-
-	const player = root.players[action.playerId]
-
-	if (player && result.type === 'success') {
-		player.uuid = result.body.uuid
-		player.authenticated = true
-
-		const achievementProgress = yield* call(
-			[root.db, root.db.getAchievements],
-			player.uuid,
-		)
-		if (achievementProgress.type === 'success') {
-			player.achievementProgress = achievementProgress.body.achievementData
-			broadcast([player], {
-				type: serverMessages.ACHIEVEMENTS_RECIEVED,
-				progress: player.achievementProgress,
-			})
-		}
-
-		broadcast([player], {type: serverMessages.AUTHENTICATED, user: result.body})
-	} else {
-		broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})
-	}
-}
-
 export function* getDecks(
 	action: RecievedClientMessage<typeof clientMessages.GET_DECKS>,
 ) {
@@ -91,14 +25,6 @@ export function* getDecks(
 		return
 	}
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		broadcast([player], {
-			type: serverMessages.DECKS_RECIEVED,
-			decks: [],
-			tags: [],
-		})
-		return
-	}
 
 	const decksResult = yield* call(
 		[root.db, root.db.getDecksFromUuid],
@@ -133,9 +59,6 @@ export function* insertDeck(
 		return
 	}
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
 
 	const deckTags = action.payload.deck.tags
 
@@ -182,10 +105,6 @@ export function* updateDeck(
 		return
 	}
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
-
 	const deckTags = action.payload.deck.tags
 
 	for (let i = 0; i < deckTags.length; i++) {
@@ -230,9 +149,6 @@ export function* insertDecks(
 		return
 	}
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
 
 	// Insert deck
 	for (let d = 0; d < action.payload.decks.length; d++) {
@@ -281,9 +197,6 @@ export function* importDeck(
 		return
 	}
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
 
 	const code = action.payload.code
 
@@ -345,9 +258,6 @@ export function* exportDeck(
 		return
 	}
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
 
 	const result = yield* call(
 		[root.db, root.db.setAsExported],
@@ -371,9 +281,6 @@ export function* grabCurrentImport(
 		return
 	}
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
 
 	if (!action.payload.code) {
 		broadcast([player], {
@@ -411,9 +318,6 @@ export function* setShowData(
 		return
 	}
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
 
 	const result = yield* call(
 		[root.db, root.db.setShowData],
@@ -438,9 +342,6 @@ export function* deleteDeck(
 		return
 	}
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
 
 	const result = yield* call(
 		[root.db, root.db.deleteDeck],
@@ -464,9 +365,6 @@ export function* deleteTag(
 		return
 	}
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
 
 	const result = yield* call(
 		[root.db, root.db.deleteTag],
@@ -486,26 +384,8 @@ export function* getStats(
 	action: RecievedClientMessage<typeof clientMessages.GET_STATS>,
 ) {
 	if (!root.db?.connected) return
-	const defaultStats: PlayerStats = {
-		gamesPlayed: 0,
-		wins: 0,
-		losses: 0,
-		forfeitWins: 0,
-		forfeitLosses: 0,
-		ties: 0,
-		uniquePlayersEncountered: 0,
-		topCards: [],
-	}
 
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		broadcast([player], {
-			type: serverMessages.STATS_RECIEVED,
-			stats: defaultStats,
-			gameHistory: [],
-		})
-		return
-	}
 
 	const statsResult = yield* call([root.db, root.db.getUserStats], player.uuid)
 	const historyResult = yield* call(
@@ -568,7 +448,6 @@ export function* addGame(
 
 	for (let i = 0; i < players.length; i++) {
 		const player = players[i]
-		if (!player.uuid) continue
 		const stats = yield* call([root.db, root.db.getUserStats], player.uuid)
 		const gameHistory = yield* call(
 			[root.db, root.db.getUserGameHistory],
