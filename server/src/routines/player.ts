@@ -68,7 +68,11 @@ export function* playerConnectedSaga(
 				messages: game?.chat,
 			})
 		} else {
-			console.log('invalid player connected')
+			const time = Date.now()
+			const date = new Date(time)
+			console.info(
+				`${date.toLocaleTimeString('it-IT')}: Invalid player connected.`,
+			)
 			broadcast([{socket}], {type: serverMessages.INVALID_PLAYER})
 		}
 		return
@@ -122,18 +126,6 @@ export function* playerDisconnectedSaga(
 		yield* put<LocalMessage>({type: localMessages.PLAYER_REMOVED, player}) // @TODO will we try to get playerId here after instance is deleted?
 		delete root.players[playerId]
 	}
-}
-
-export function* updateDeckSaga(
-	action: RecievedClientMessage<typeof clientMessages.SELECT_DECK>,
-) {
-	const {playerId} = action
-	let playerDeck = action.payload.deck
-	const player = root.players[playerId]
-	if (!player) return
-	player.setPlayerDeck(playerDeck)
-	if (!player.deck) return
-	broadcast([player], {type: serverMessages.NEW_DECK, deck: player.deck})
 }
 
 export function* updateMinecraftNameSaga(

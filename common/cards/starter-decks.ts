@@ -1,3 +1,4 @@
+import {TypeT} from '../types/cards'
 import {
 	ChainmailArmor,
 	DiamondArmor,
@@ -99,12 +100,14 @@ import {Attach, Card, Hermit, Item, SingleUse} from './types'
 
 export type StarterDeck = {
 	name: string
+	icon: TypeT
 	cards: Array<Hermit | Attach | SingleUse | Item>
 }
 
 export const STARTER_DECKS: Array<StarterDeck> = [
 	{
 		name: 'Farm Deck #1',
+		icon: 'farm',
 		cards: [
 			PotatoBoyCommon,
 			PotatoBoyCommon,
@@ -152,6 +155,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'PvP Deck #1',
+		icon: 'pvp',
 		cards: [
 			SmallishbeansCommon,
 			SmallishbeansCommon,
@@ -199,6 +203,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'Balanced Deck #1',
+		icon: 'balanced',
 		cards: [
 			VintageBeefCommon,
 			VintageBeefCommon,
@@ -246,6 +251,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'Spedrunner Deck #1',
+		icon: 'speedrunner',
 		cards: [
 			SteampunkTangoCommon,
 			SteampunkTangoCommon,
@@ -293,6 +299,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'Redstone Deck #1',
+		icon: 'redstone',
 		cards: [
 			EthosLabRare,
 			XisumavoidRare,
@@ -340,6 +347,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'PvP Deck #2',
+		icon: 'pvp',
 		cards: [
 			WelsknightRare,
 			WelsknightRare,
@@ -387,6 +395,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'Prankster Deck #1',
+		icon: 'prankster',
 		cards: [
 			MumboJumboRare,
 			MumboJumboRare,
@@ -434,6 +443,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'Builder Deck #1',
+		icon: 'builder',
 		cards: [
 			EthosLabCommon,
 			EthosLabCommon,
@@ -481,6 +491,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'Redstone/Builder #1',
+		icon: 'redstone',
 		cards: [
 			TurtleShell,
 			BdoubleO100Common,
@@ -528,6 +539,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'Prankster Deck #2',
+		icon: 'prankster',
 		cards: [
 			GoldenAxe,
 			GoldenAxe,
@@ -575,6 +587,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'PvP Deck #3',
+		icon: 'pvp',
 		cards: [
 			ZombieCleoRare,
 			ZombieCleoRare,
@@ -622,6 +635,6 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 ]
 
-export function getStarterPack(): Array<Card> {
-	return STARTER_DECKS[Math.floor(Math.random() * STARTER_DECKS.length)].cards
+export function getStarterPack(): StarterDeck {
+	return STARTER_DECKS[Math.floor(Math.random() * STARTER_DECKS.length)]
 }

@@ -25,7 +25,7 @@ import {
 	UserWithoutSecret,
 } from 'common/types/database'
 import {GameOutcome, Message} from 'common/types/game-state'
-import {NumberOrNull} from 'common/utils/database-codes'
+import {generateDatabaseCode, NumberOrNull} from 'common/utils/database-codes'
 import {newRandomNumberGenerator} from 'common/utils/random'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {call} from 'typed-redux-saga'
@@ -34,6 +34,7 @@ import {
 	ReplayActionData,
 	bufferToTurnActions,
 } from '../routines/turn-action-compressor'
+import {getStarterPack} from 'common/cards/starter-decks'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -183,10 +184,35 @@ export class Database {
 				"INSERT INTO users (username, minecraft_name, secret) values ($1,$2,crypt($3, gen_salt('bf', $4))) RETURNING (user_id)",
 				[username, username, secret, this.bfDepth],
 			)
+
+			const playerUuid: string = user.rows[0]['user_id']
+
+			const starterPack = getStarterPack()
+
+			const deckInfo = {
+				name: 'Starter Deck',
+				iconType: 'item',
+				icon: starterPack.icon,
+				cards: starterPack.cards.map((card) => toLocalCardInstance(card)),
+				code: generateDatabaseCode(),
+				tags: [],
+				public: false,
+			}
+
+			await this.insertDeck(
+				deckInfo.name,
+				deckInfo.icon,
+				deckInfo.iconType,
+				deckInfo.cards.map((card) => card.props.numericId),
+				deckInfo.tags,
+				deckInfo.code,
+				playerUuid,
+			)
+
 			return {
 				type: 'success',
 				body: {
-					uuid: user.rows[0]['user_id'],
+					uuid: playerUuid,
 					secret: secret,
 					username: username,
 					minecraftName: username,
@@ -205,7 +231,8 @@ export class Database {
 						topCards: [],
 						uniquePlayersEncountered: 0,
 					},
-					decks: [],
+					//@ts-ignore
+					decks: [deckInfo],
 					achievements: {achievementData: {}},
 					gameHistory: [],
 				},

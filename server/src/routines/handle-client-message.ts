@@ -33,16 +33,11 @@ import {
 import {
 	loadUpdatesSaga,
 	updateCosmeticSaga,
-	updateDeckSaga,
 	updateMinecraftNameSaga,
 } from './player'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
-		case clientMessages.SELECT_DECK:
-			return yield* updateDeckSaga(
-				message as RecievedClientMessage<typeof message.type>,
-			)
 		case clientMessages.UPDATE_MINECRAFT_NAME:
 			return yield* updateMinecraftNameSaga(
 				message as RecievedClientMessage<typeof message.type>,

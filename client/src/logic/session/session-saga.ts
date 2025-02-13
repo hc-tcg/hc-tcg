@@ -1,5 +1,4 @@
 import {ACHIEVEMENTS} from 'common/achievements'
-import {getStarterPack} from 'common/cards/starter-decks'
 import {BACKGROUNDS} from 'common/cosmetics/background'
 import {BORDERS} from 'common/cosmetics/borders'
 import {COINS} from 'common/cosmetics/coins'
@@ -11,10 +10,7 @@ import {PlayerId} from 'common/models/player-model'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {User} from 'common/types/database'
-import {Deck} from 'common/types/deck'
 import {PlayerInfo} from 'common/types/server-requests'
-import {toLocalCardInstance} from 'common/utils/cards'
-import {generateDatabaseCode} from 'common/utils/database-codes'
 import {
 	getAchievements,
 	getAppearance,
@@ -26,7 +22,6 @@ import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {
 	deleteDeckFromLocalStorage,
 	getActiveDeckCode,
-	getLocalStorageDecks,
 	saveDeckToLocalStorage,
 } from 'logic/saved-decks/saved-decks'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
@@ -152,10 +147,6 @@ export function* setupData(user: User) {
 			type: localMessages.SELECT_DECK,
 			deck: activeDeck,
 		})
-		yield* sendMsg({
-			type: clientMessages.SELECT_DECK,
-			deck: activeDeck,
-		})
 	}
 
 	// Set minecraft name
@@ -185,6 +176,7 @@ export function* loginSaga() {
 		const userId = localStorage.getItem('databaseInfo:userId')
 
 		if (!secret || !userId) {
+			// Create a new user here
 			yield* put<LocalMessage>({type: localMessages.NOT_CONNECTING})
 
 			const {name} = yield* take<LocalMessageTable[typeof localMessages.LOGIN]>(
@@ -211,6 +203,12 @@ export function* loginSaga() {
 				secret: userResponse.secret,
 			})
 
+			yield* put<LocalMessage>({
+				type: localMessages.SELECT_DECK,
+				deck: userResponse.decks[0],
+			})
+			localStorage.setItem('activeDeck', userResponse.decks[0].code)
+
 			socket.auth = {
 				...socket.auth,
 				playerUuid: userResponse.uuid,
@@ -221,39 +219,6 @@ export function* loginSaga() {
 			socket.connect()
 
 			yield* setupData(userResponse)
-
-			const localStorageDecks = getLocalStorageDecks()
-
-			if (localStorageDecks.length > 0) {
-				yield* sendMsg({
-					type: clientMessages.INSERT_DECKS,
-					decks: localStorageDecks,
-					newActiveDeck: localStorageDecks[0].code,
-				})
-			} else {
-				const starterDeck: Deck = {
-					code: generateDatabaseCode(),
-					name: 'Starter Deck',
-					iconType: 'item',
-					icon: 'any',
-					tags: [],
-					cards: getStarterPack().map((card) => toLocalCardInstance(card)),
-					public: false,
-				}
-
-				yield* sendMsg({
-					type: clientMessages.INSERT_DECK,
-					deck: starterDeck,
-					newActiveDeck: starterDeck.code,
-				})
-
-				localStorage.setItem('activeDeck', starterDeck.code)
-
-				yield* put<LocalMessage>({
-					type: localMessages.SELECT_DECK,
-					deck: starterDeck,
-				})
-			}
 		} else {
 			const userResponse = yield* authenticateUser(userId, secret)
 
@@ -466,15 +431,6 @@ export function* databaseConnectionSaga() {
 			})
 		},
 	)
-	yield* takeEvery<LocalMessageTable[typeof localMessages.SELECT_DECK]>(
-		localMessages.SELECT_DECK,
-		function* (action) {
-			yield* sendMsg({
-				type: clientMessages.SELECT_DECK,
-				deck: action.deck,
-			})
-		},
-	)
 	yield* takeEvery<LocalMessageTable[typeof localMessages.MINECRAFT_NAME_SET]>(
 		localMessages.MINECRAFT_NAME_SET,
 		function* (action) {
@@ -557,19 +513,33 @@ export function* recieveCurrentImportSaga() {
 	}
 }
 
-export function* recieveStatsSaga() {
+export function* recieveAfterGameInfo() {
 	const socket = yield* select(getSocket)
 	while (true) {
 		const result = yield* race({
-			statsRecieved: call(receiveMsg(socket, serverMessages.STATS_RECIEVED)),
+			afterGameInfo: call(receiveMsg(socket, serverMessages.AFTER_GAME_INFO)),
 			invalidReplay: call(receiveMsg(socket, serverMessages.INVALID_REPLAY)),
 		})
-		if (result.statsRecieved) {
+		if (result.afterGameInfo) {
 			yield put<LocalMessage>({
 				type: localMessages.DATABASE_SET,
 				data: {
 					key: 'stats',
-					value: result.statsRecieved.stats,
+					value: result.afterGameInfo.stats,
+				},
+			})
+			yield put<LocalMessage>({
+				type: localMessages.DATABASE_SET,
+				data: {
+					key: 'gameHistory',
+					value: result.afterGameInfo.gameHistory,
+				},
+			})
+			yield put<LocalMessage>({
+				type: localMessages.DATABASE_SET,
+				data: {
+					key: 'achievements',
+					value: result.afterGameInfo.achievements,
 				},
 			})
 		} else if (result.invalidReplay) {

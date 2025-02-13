@@ -420,7 +420,10 @@ export function* getDeck(code: string) {
 
 	const deck = yield* call([root.db, root.db.getPlayerDeckFromID], code)
 
-	if (deck.type === 'failure') return null
+	assert(
+		deck.type === 'success',
+		'The code should always be vaild here, so the deck should be retrieved.',
+	)
 	return deck.body
 }
 

@@ -39,7 +39,6 @@ export const clientMessages = messages('clientMessages', {
 
 export type ClientMessages = [
 	{type: typeof clientMessages.GET_UPDATES},
-	{type: typeof clientMessages.SELECT_DECK; deck: Deck},
 	{type: typeof clientMessages.UPDATE_MINECRAFT_NAME; name: string},
 	{
 		type: typeof clientMessages.CREATE_BOSS_GAME
