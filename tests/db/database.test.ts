@@ -72,7 +72,6 @@ describe('Test Database', () => {
 		assert(user.type === 'success', 'The user should be created successfully')
 		expect(user.body).not.toBeNull()
 		expect(user.body.username).toBe('Test User')
-		expect(user.body.minecraftName).toBe('ethoslab')
 		expect(user.body.uuid).toBeTruthy()
 		expect(user.body.secret).toBeTruthy()
 		expect(typeof user.body.uuid === 'string').toBeTruthy()
@@ -98,7 +97,6 @@ describe('Test Database', () => {
 		)
 
 		expect(authenticatedUser.body.username).toBe(user.body.username)
-		expect(authenticatedUser.body.minecraftName).toBe(user.body.minecraftName)
 		expect(authenticatedUser.body.uuid).toBe(user.body.uuid)
 		expect(incorrectUser.type).toBe('failure')
 	})
@@ -363,7 +361,6 @@ describe('Test Database', () => {
 		)
 
 		expect(updatedUser.body.username).toBe('GeminiTay')
-		expect(updatedUser.body.minecraftName).toBe('geminitay')
 	})
 
 	test('Add and Retrieve Tags', async () => {

@@ -2,6 +2,7 @@ import {DEBUG} from 'common/config'
 import {NumberOrNull} from 'common/utils/database-codes'
 import {Express} from 'express'
 import root from 'serverRoot'
+import {authenticateUser, createUser} from './auth'
 import {cards, deckCost, getDeckInformation, ranks, types} from './cards'
 import {
 	cancelApiGame,
@@ -10,7 +11,6 @@ import {
 	getPublicGameCount,
 	getPublicQueueLength,
 } from './games'
-import {authenticateUser, createUser} from './auth'
 import {CancelGameBody} from './schema'
 import {
 	BasicStatsQuery,

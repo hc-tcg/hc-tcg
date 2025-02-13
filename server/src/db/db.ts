@@ -4,6 +4,7 @@ import {ApiDeck, Deck, Tag} from 'common/types/deck'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
+import assert from 'assert'
 import {CARDS} from 'common/cards'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerModel} from 'common/models/player-model'
@@ -33,7 +34,6 @@ import {
 	ReplayActionData,
 	bufferToTurnActions,
 } from '../routines/turn-action-compressor'
-import assert from 'assert'
 
 export type DatabaseResult<T = undefined> =
 	| {
