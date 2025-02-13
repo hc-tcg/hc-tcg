@@ -149,18 +149,15 @@ export function* setupData(user: User) {
 		})
 	}
 
-	// Set minecraft name
-	if (user.minecraftName) {
-		yield* sendMsg({
-			type: clientMessages.UPDATE_MINECRAFT_NAME,
-			name: user.minecraftName,
-		})
-	} else {
-		yield* sendMsg({
-			type: clientMessages.UPDATE_MINECRAFT_NAME,
-			name: user.username,
-		})
-	}
+	yield* put<LocalMessage>({
+		type: localMessages.USERNAME_SET,
+		name: user.username,
+	})
+
+	yield* put<LocalMessage>({
+		type: localMessages.MINECRAFT_NAME_SET,
+		name: user.minecraftName ? user.minecraftName : user.username,
+	})
 }
 
 export function* loginSaga() {
@@ -262,6 +259,11 @@ export function* loginSaga() {
 	})
 
 	if (result.invalidPlayer || result.connectError) {
+		yield* put<LocalMessage>({
+			type: localMessages.CONNECTING_MESSAGE,
+			message: 'Connection Error. Reloading',
+		})
+
 		clearSession()
 		socket.disconnect()
 		location.reload()
@@ -450,6 +452,17 @@ export function* databaseConnectionSaga() {
 			})
 		},
 	)
+	yield* takeEvery<LocalMessageTable[typeof localMessages.USERNAME_SET]>(
+		localMessages.USERNAME_SET,
+		function* (action) {
+			sessionStorage.setItem('playerName', action.name)
+			sessionStorage.setItem('censoredPlayerName', action.name)
+			yield* sendMsg({
+				type: clientMessages.UPDATE_USERNAME,
+				name: action.name,
+			})
+		},
+	)
 }
 
 export function* logoutSaga() {
@@ -571,19 +584,6 @@ export function* databaseErrorSaga() {
 			receiveMsg(socket, serverMessages.DATABASE_FAILURE),
 		)
 		console.error(result.error)
-	}
-}
-
-export function* minecraftNameSaga() {
-	const socket = yield* select(getSocket)
-	while (true) {
-		const result = yield* call(
-			receiveMsg(socket, serverMessages.NEW_MINECRAFT_NAME),
-		)
-		yield put<LocalMessage>({
-			type: localMessages.MINECRAFT_NAME_NEW,
-			name: result.name,
-		})
 	}
 }
 

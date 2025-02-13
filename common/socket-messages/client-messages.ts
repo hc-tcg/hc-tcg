@@ -8,7 +8,6 @@ import {AnyTurnActionData} from '../types/turn-action-data'
 export const clientMessages = messages('clientMessages', {
 	GET_UPDATES: null,
 	SELECT_DECK: null,
-	UPDATE_MINECRAFT_NAME: null,
 	CREATE_BOSS_GAME: null,
 	CANCEL_BOSS_GAME: null,
 	CREATE_PRIVATE_GAME: null,
@@ -24,6 +23,8 @@ export const clientMessages = messages('clientMessages', {
 	SPECTATOR_LEAVE: null,
 	CHAT_MESSAGE: null,
 	/**Postgres */
+	UPDATE_USERNAME: null,
+	UPDATE_MINECRAFT_NAME: null,
 	GET_DECKS: null,
 	INSERT_DECK: null,
 	EXPORT_DECK: null,
@@ -39,6 +40,7 @@ export const clientMessages = messages('clientMessages', {
 
 export type ClientMessages = [
 	{type: typeof clientMessages.GET_UPDATES},
+	{type: typeof clientMessages.UPDATE_USERNAME; name: string},
 	{type: typeof clientMessages.UPDATE_MINECRAFT_NAME; name: string},
 	{
 		type: typeof clientMessages.CREATE_BOSS_GAME

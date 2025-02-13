@@ -2,6 +2,7 @@ import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
+import {getMinecraftName} from 'logic/session/session-selectors'
 import React from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
@@ -12,6 +13,7 @@ type Props = {
 function GameSettings({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
+	const minecraftName = useSelector(getMinecraftName)
 
 	const handleDialogsChange = () => {
 		dispatch({
@@ -82,14 +84,6 @@ function GameSettings({setMenuSection}: Props) {
 				type: localMessages.MINECRAFT_NAME_SET,
 				name: username,
 			})
-			dispatch({
-				type: localMessages.SETTINGS_SET,
-				setting: {
-					key: 'minecraftName',
-					value: username,
-				},
-			})
-			localStorage.setItem('minecraftName', username)
 		}
 	}
 
@@ -126,7 +120,7 @@ function GameSettings({setMenuSection}: Props) {
 					<div className={css.left}>
 						<img
 							className={css.playerHead}
-							src={`https://mc-heads.net/head/${settings.minecraftName}/left`}
+							src={`https://mc-heads.net/head/${minecraftName}/left`}
 							alt="player head"
 						/>
 					</div>

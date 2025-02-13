@@ -72,8 +72,4 @@ export class PlayerModel {
 			tags: newDeck.tags,
 		}
 	}
-
-	setMinecraftName(name: string) {
-		this.minecraftName = name
-	}
 }

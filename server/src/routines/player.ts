@@ -8,7 +8,7 @@ import {
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalGameState} from 'common/types/game-state'
-import {setAppearance} from 'db/db-reciever'
+import {setAppearance, setMinecraftName, setUsername} from 'db/db-reciever'
 import {GameController} from 'game-controller'
 import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
 import {getGame} from 'selectors'
@@ -16,6 +16,7 @@ import {delay, put, race, select, take} from 'typed-redux-saga'
 import {getLocalGameState} from 'utils/state-gen'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
+import {censorString} from 'common/utils/formatting'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 
@@ -128,6 +129,19 @@ export function* playerDisconnectedSaga(
 	}
 }
 
+export function* updateUsernameSaga(
+	action: RecievedClientMessage<typeof clientMessages.UPDATE_USERNAME>,
+) {
+	const {playerId} = action
+	let username = action.payload.name
+	const player = root.players[playerId]
+	if (!player) return
+	player.name = username
+	player.censoredName = censorString(username)
+
+	yield* setUsername(player.uuid, username)
+}
+
 export function* updateMinecraftNameSaga(
 	action: RecievedClientMessage<typeof clientMessages.UPDATE_MINECRAFT_NAME>,
 ) {
@@ -135,12 +149,9 @@ export function* updateMinecraftNameSaga(
 	let minecraftName = action.payload.name
 	const player = root.players[playerId]
 	if (!player) return
-	player.setMinecraftName(minecraftName)
+	player.minecraftName = minecraftName
 
-	broadcast([player], {
-		type: serverMessages.NEW_MINECRAFT_NAME,
-		name: player.minecraftName,
-	})
+	yield* setMinecraftName(player.uuid, minecraftName)
 }
 
 export function* loadUpdatesSaga(action: any) {

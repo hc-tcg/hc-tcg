@@ -16,6 +16,10 @@ export const getPlayerName = (state: RootState) => {
 	return getSession(state).playerName
 }
 
+export const getMinecraftName = (state: RootState) => {
+	return getSession(state).minecraftName
+}
+
 export const getPlayerDeckCode = (state: RootState) => {
 	return getSession(state).playerDeck
 }

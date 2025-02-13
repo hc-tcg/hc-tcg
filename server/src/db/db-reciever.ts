@@ -450,6 +450,16 @@ export function* getGameReplay(gameId: number) {
 	return replay.body
 }
 
+export function* setUsername(playerUuid: string, username: string) {
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
+	yield* call([root.db, root.db.setUsername], playerUuid, username)
+}
+
+export function* setMinecraftName(playerUuid: string, username: string) {
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
+	yield* call([root.db, root.db.setMinecraftName], playerUuid, username)
+}
+
 export function* setAppearance(player: PlayerModel) {
 	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 

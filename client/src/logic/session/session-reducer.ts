@@ -139,7 +139,11 @@ const loginReducer = (
 				...state,
 				tooltip: null,
 			}
-		case localMessages.MINECRAFT_NAME_NEW:
+		case localMessages.USERNAME_SET:
+			return {
+				...state,
+				playerName: action.name,
+			}
 		case localMessages.MINECRAFT_NAME_SET:
 			return {
 				...state,

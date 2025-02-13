@@ -34,10 +34,15 @@ import {
 	loadUpdatesSaga,
 	updateCosmeticSaga,
 	updateMinecraftNameSaga,
+	updateUsernameSaga,
 } from './player'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
+		case clientMessages.UPDATE_USERNAME:
+			return yield* updateUsernameSaga(
+				message as RecievedClientMessage<typeof message.type>,
+			)
 		case clientMessages.UPDATE_MINECRAFT_NAME:
 			return yield* updateMinecraftNameSaga(
 				message as RecievedClientMessage<typeof message.type>,
