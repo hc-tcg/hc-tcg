@@ -11,6 +11,7 @@ type SessionState = {
 	playerSecret: string
 	playerDeck: string | null
 	connecting: boolean
+	connectingMessage: string
 	connected: boolean
 	errorType?:
 		| 'invalid_name'
@@ -36,6 +37,7 @@ const defaultState: SessionState = {
 	playerSecret: '',
 	playerDeck: null,
 	connecting: true,
+	connectingMessage: 'Connecting',
 	connected: false,
 	tooltip: null,
 	toast: [],
@@ -81,6 +83,11 @@ const loginReducer = (
 				...state,
 				connecting: false,
 				connected: true,
+			}
+		case localMessages.CONNECTING_MESSAGE:
+			return {
+				...state,
+				connectingMessage: action.message,
 			}
 		case localMessages.UPDATES_LOAD:
 			return {

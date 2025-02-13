@@ -222,6 +222,11 @@ export function* loginSaga() {
 		} else {
 			const userResponse = yield* authenticateUser(userId, secret)
 
+			yield* put<LocalMessage>({
+				type: localMessages.CONNECTING_MESSAGE,
+				message: 'Singing in',
+			})
+
 			socket.auth = {
 				...socket.auth,
 				playerUuid: userResponse.uuid,
@@ -234,6 +239,11 @@ export function* loginSaga() {
 			yield* setupData(userResponse)
 		}
 	} else {
+		yield* put<LocalMessage>({
+			type: localMessages.CONNECTING_MESSAGE,
+			message: 'Reconnecting',
+		})
+
 		socket.auth = {...socket.auth, ...session, version: getClientVersion()}
 		yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
 		socket.connect()
