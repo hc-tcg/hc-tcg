@@ -287,20 +287,19 @@ export function* loginSaga() {
 		timeout: delay(8000),
 	})
 
-	if (result.invalidPlayer || result.connectError || result.timeout) {
+	if (result.invalidPlayer || result.connectError) {
 		clearSession()
-		let errorType
-		if (result.invalidPlayer) errorType = 'session_expired'
-		else if (Object.hasOwn(result, 'timeout')) errorType = 'timeout'
-		else if (result.connectError) errorType = result.connectError
-		if (socket.connected) socket.disconnect()
-		if (typeof errorType !== 'string')
-			throw new Error(
-				'For some unknown reason, `errorType` is a string even though the type system claims otherwise.',
-			)
+		socket.disconnect()
+		location.reload()
+		return
+	}
+
+	if (result.timeout) {
+		clearSession()
+		socket.disconnect()
 		yield put<LocalMessage>({
 			type: localMessages.DISCONNECT,
-			errorMessage: errorType,
+			errorMessage: 'timeout',
 		})
 		return
 	}
