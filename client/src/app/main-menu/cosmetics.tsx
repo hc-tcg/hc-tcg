@@ -123,6 +123,14 @@ function Cosmetics({setMenuSection}: Props) {
 			<div className={css.appearance}>
 				<CosmeticPreview />
 			</div>
+			<div className={css.updatePlayerInfo}>
+				<input placeholder={'Username'}></input>
+				<Button>Update Username</Button>
+			</div>
+			<div className={css.updatePlayerInfo}>
+				<input placeholder={'Minecraft Username'}></input>
+				<Button>Update Player Head</Button>
+			</div>
 			<div className={css.itemSelector}>
 				<Dropdown
 					button={
