@@ -1,3 +1,4 @@
+import assert from 'assert'
 import {CARDS} from 'common/cards'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerModel} from 'common/models/player-model'
@@ -11,7 +12,6 @@ import {
 	RecievedClientMessage,
 	clientMessages,
 } from '../../../common/socket-messages/client-messages'
-import assert from 'assert'
 
 const CONNECTION_ASSERTION_MSG =
 	'The database should always be connected when this function is called.'

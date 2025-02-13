@@ -12,8 +12,8 @@ import {
 	newDeckSaga,
 	newDecksSaga,
 	overviewSaga,
-	recieveCurrentImportSaga,
 	recieveAfterGameInfo,
+	recieveCurrentImportSaga,
 	updatesSaga,
 } from 'logic/session/session-saga'
 import socketSaga from 'logic/socket/socket-saga'

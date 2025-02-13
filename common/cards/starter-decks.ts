@@ -96,7 +96,7 @@ import SplashPotionOfPoison from './single-use/splash-potion-of-poison'
 import {DiamondSword} from './single-use/sword'
 import TargetBlock from './single-use/target-block'
 import TNT from './single-use/tnt'
-import {Attach, Card, Hermit, Item, SingleUse} from './types'
+import {Attach, Hermit, Item, SingleUse} from './types'
 
 export type StarterDeck = {
 	name: string
