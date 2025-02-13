@@ -172,7 +172,6 @@ export function* setupData(user: User) {
 	}
 }
 
-//@TODO add back achievements,decks, stats into get the auth endpoint
 export function* loginSaga() {
 	const socket = yield* select(getSocket)
 	const session = loadSession()

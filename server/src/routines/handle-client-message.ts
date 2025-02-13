@@ -9,10 +9,8 @@ import {
 	deleteDeck,
 	deleteTag,
 	exportDeck,
-	getAchievements,
 	getDecks,
 	getOverview,
-	getStats,
 	grabCurrentImport,
 	importDeck,
 	insertDeck,
@@ -139,14 +137,6 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.DELETE_TAG:
 			return yield* deleteTag(
-				message as RecievedClientMessage<typeof message.type>,
-			)
-		case clientMessages.GET_STATS:
-			return yield* getStats(
-				message as RecievedClientMessage<typeof message.type>,
-			)
-		case clientMessages.GET_ACHIEVEMENTS:
-			return yield* getAchievements(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.SET_COSMETIC:

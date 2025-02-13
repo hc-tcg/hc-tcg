@@ -24,6 +24,7 @@ import {
 	addGame,
 	getDeck,
 	getGameReplay,
+	sendAfterGameInfo,
 	updateAchievements,
 } from 'db/db-reciever'
 import {GameController} from 'game-controller'
@@ -280,6 +281,7 @@ function* gameManager(con: GameController) {
 				turnActionsBuffer,
 				con.gameCode,
 			)
+			yield* sendAfterGameInfo(gamePlayers)
 		}
 	}
 }

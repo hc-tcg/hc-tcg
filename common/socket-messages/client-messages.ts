@@ -25,8 +25,6 @@ export const clientMessages = messages('clientMessages', {
 	CHAT_MESSAGE: null,
 	/**Postgres */
 	GET_DECKS: null,
-	GET_ACHIEVEMENTS: null,
-	GET_STATS: null,
 	INSERT_DECK: null,
 	EXPORT_DECK: null,
 	GRAB_CURRENT_IMPORT: null,
@@ -102,8 +100,6 @@ export type ClientMessages = [
 	{type: typeof clientMessages.SPECTATOR_LEAVE},
 	{type: typeof clientMessages.CHAT_MESSAGE; message: string},
 	{type: typeof clientMessages.GET_DECKS; newActiveDeck?: string},
-	{type: typeof clientMessages.GET_STATS},
-	{type: typeof clientMessages.GET_ACHIEVEMENTS},
 	{
 		type: typeof clientMessages.INSERT_DECK
 		deck: Deck
