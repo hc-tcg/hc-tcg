@@ -4,19 +4,19 @@
 	align-items: center;
 	justify-content: center;
 	color: var(--text-light);
-}
 
-h2,
-h3 {
-	filter: drop-shadow(2px 2px 0 var(--text-dark));
-}
+	h2,
+	h3 {
+		filter: drop-shadow(2px 2px 0 var(--text-dark));
+	}
 
-h2 {
-	font-size: 2rem;
-}
+	h2 {
+		font-size: 2rem;
+	}
 
-h3 {
-	font-size: 1.5rem;
+	h3 {
+		font-size: 1.5rem;
+	}
 }
 
 .header {
@@ -52,16 +52,25 @@ h3 {
 	grid-gap: 2rem;
 }
 
+.largeButton {
+	height: 5vh;
+	width: 100%;
+}
+
 .buttonMenu {
 	height: 100%;
-	max-height: 100%;
-	width: calc(min(max(45vw, 70vh), 80vw) - 16vw);
+	width: 100%;
 	color: white;
+	overflow: hidden;
+	text-align: center;
 
-	.publicConfirm {
+
+	>* {
+		width: calc(70vh - 26vh);
 		height: 100%;
-		width: 100%;
+	}
 
+	.chooseDeck {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -69,57 +78,79 @@ h3 {
 		gap: 0.5vh;
 		padding: 2vh;
 		background-color: rgba(0, 0, 0, 0.7);
+	}
 
-		.spacer {
-			flex-grow: 1;
-		}
+	.privateModeSelect {
+		gap: 0.5vh;
+		padding: 2vh;
+		background-color: rgba(0, 0, 0, 0.7);
 
-		.decksContainer {
-			margin: 1vh;
-			overflow-y: auto;
-			flex-grow: 1;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+
+
+		.option {
+			height: 50%;
 			width: 100%;
-			height: min-content;
-			flex-grow: 1;
-			overflow-x: hidden;
-
-			.myDecksItem {
-				display: flex;
-				flex-direction: row;
-				align-items: center;
-				gap: 0.2rem;
-				padding: 0.3rem;
-				user-select: none;
-				cursor: pointer;
-				height: 2.5rem;
-				white-space: nowrap;
-				text-overflow: ellipsis;
-				overflow: hidden;
-				width: 100%;
-
-				&:hover {
-					filter: brightness(1.2);
-					background-color: rgba(5, 5, 5, 0.5);
-				}
-
-				.deckName {
-					text-overflow: ellipsis;
-					overflow: hidden;
-				}
-			}
-
-			.selectedDeck {
-				font-size: 1rem;
-				color: gold;
-				text-indent: 3px;
-				transition: all 0.25s ease-in-out;
-			}
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
 		}
 
-		.publicJoinButton {
-			height: 5vh;
+		.row {
 			width: 100%;
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+			grid-gap: 0.5vh;
 		}
+
+	}
+}
+
+.spacer {
+	flex-grow: 1;
+}
+
+.deckSelector {
+	margin: 1vh;
+	overflow-y: auto;
+	width: 100%;
+	flex-grow: 1;
+	overflow-x: hidden;
+
+	.myDecksItem {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 0.2rem;
+		padding: 0.3rem;
+		user-select: none;
+		cursor: pointer;
+		height: 2.5rem;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		width: 100%;
+
+		&:hover {
+			filter: brightness(1.2);
+			background-color: rgba(5, 5, 5, 0.5);
+		}
+
+		.deckName {
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+	}
+
+	.selectedDeck {
+		font-size: 1rem;
+		color: gold;
+		text-indent: 3px;
+		transition: all 0.25s ease-in-out;
 	}
 }
 

@@ -1,5 +1,6 @@
-$width: 16vw;
-$height: 25vw;
+$width: 26vh;
+$expandedWidth: 70vh;
+$height: 40vh;
 $time: 0.25s;
 
 .buttonContainer {
@@ -241,7 +242,7 @@ $time: 0.25s;
 	}
 
 	to {
-		width: min(max(45vw, 70vh), 80vw);
+		width: $expandedWidth;
 		pointer-events: all;
 	}
 }
@@ -260,7 +261,7 @@ $time: 0.25s;
 	from {
 		scale: 1;
 		pointer-events: none;
-		width: min(max(45vw, 70vh), 80vw);
+		width: $expandedWidth;
 	}
 
 	99% {
