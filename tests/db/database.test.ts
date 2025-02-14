@@ -491,7 +491,9 @@ describe('Test Database', () => {
 			'The deck should be retrieved successfully',
 		)
 
-		const returnedDeckFromGroup = allDecks.body[0]
+		const decks = allDecks.body.filter((deck) => deck.name !== 'Starter Deck')
+
+		const returnedDeckFromGroup = decks[0]
 		expect(returnedDeckFromGroup).toBeTruthy()
 		expect(returnedDeckFromGroup?.tags).toStrictEqual([])
 		expect(returnedDeckFromGroup?.cards).toStrictEqual([])
@@ -576,7 +578,9 @@ describe('Test Database', () => {
 			"The user's decks should be retrieved properly",
 		)
 
-		expect(userDecks.body).toStrictEqual([])
+		const decks = userDecks.body.filter((deck) => deck.name !== 'Starter Deck')
+
+		expect(decks).toStrictEqual([])
 	})
 
 	test('Confirm tags are deleted properly', async () => {
