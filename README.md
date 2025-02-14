@@ -32,6 +32,11 @@ npm run client:dev   # start the client and update automatically when you make c
 npm run dev          # start both the client and server
 ```
 
+If you need to test code that interacts with the database, you can use our development docker compose file:
+```
+# docker-compose -f docker-compose-dev.yml up
+```
+
 _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
 
 By default, the client is hosted on port 3002.
