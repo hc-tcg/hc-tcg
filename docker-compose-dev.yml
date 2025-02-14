@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - /etc/hctcg/db:/var/lib/postgresql/data
+    environment: 
+      - POSTGRES_USER=hctcg
+      - POSTGRES_PASSWORD=hctcg
+      - POSTGRES_DB=hctcg
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hctcg"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  hctcg:
+    build: .
+    container_name: hc-tcg
+    ports:
+      - 9000:9000
+    restart: unless-stopped
+    links:
+      - db
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://hctcg:hctcg@db:5432/hctcg
+
