@@ -19,7 +19,7 @@ COPY common/config/debug-config.example.js common/config/debug-config.js
 RUN npm ci
 
 RUN if [ $DEV != true ]; then npx playwright install --with-deps firefox; fi
-RUN if [ $DEV != true ]; npm run client:render-cards; fi
+RUN if [ $DEV != true ]; then npm run client:render-cards; fi
 RUN npm run build
 
 # Remove the build-time dependencies to keep the image small and enable node optimizations.
