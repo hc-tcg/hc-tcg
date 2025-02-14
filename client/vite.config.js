@@ -47,5 +47,6 @@ export default defineConfig({
 			: {},
 	server: {
 		port: CONFIG.clientDevPort || 3002,
+		host: '0.0.0.0',
 	},
 })

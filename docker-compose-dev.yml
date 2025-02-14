@@ -16,11 +16,10 @@ services:
   hctcg:
     build:
         context: .
-        args:
-            DEV: true
-    container_name: hc-tcg
+        dockerfile: dev.Dockerfile
+    container_name: hc-tcg-dev
     ports:
-      - 9000:9000
+      - 3002:3002
     restart: unless-stopped
     links:
       - db
