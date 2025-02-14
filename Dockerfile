@@ -2,7 +2,6 @@ FROM node:18.20-bookworm
 
 ARG APP_VERSION
 ENV APP_VERSION $APP_VERSION
-ARG DEV
 ENV CI true
 
 #######################################################################
