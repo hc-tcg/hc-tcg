@@ -129,7 +129,6 @@ const GameModeButton = ({
 		if (buttonPosition && background && button) {
 			if (selectedMode === mode) {
 				// Only trigger a change when the selected mode changed
-
 				grow()
 			} else if (selectedMode && selectedMode !== mode) {
 				hide()
