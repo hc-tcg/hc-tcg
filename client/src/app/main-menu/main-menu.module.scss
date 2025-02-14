@@ -304,51 +304,6 @@ nav {
 	color: var(--text-light);
 }
 
-.minecraftNameArea {
-	background: hsla(0deg, 0%, 0%, 55%);
-	border-radius: 0.5vh;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-
-	.left {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		margin: 4vh;
-
-		.playerHead {
-			width: 15vh;
-			height: 15vh;
-			filter: drop-shadow(2px 2px 0 white) drop-shadow(2px -2px 0 white)
-				drop-shadow(-2px 2px 0 white) drop-shadow(-2px -2px 0 white);
-		}
-	}
-
-	.right {
-		p {
-			padding: 0.5vh;
-			color: var(--text-light);
-			font-size: 2vh;
-			filter: drop-shadow(1px 1px 0 var(--text-dark));
-		}
-
-		.playerHeadForm {
-			width: 100%;
-			display: flex;
-
-			> * {
-				font-size: 2vh;
-				line-height: 100%;
-			}
-
-			.customInput {
-				width: 90%;
-			}
-		}
-	}
-}
-
 .creditsContainer {
 	display: grid;
 	grid-template-columns: 50% 50%;
