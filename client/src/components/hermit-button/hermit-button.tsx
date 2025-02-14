@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import {ReactElement, useEffect, useReducer, useRef, useState} from 'react'
 import css from './hermit-button.module.scss'
 
-interface HermitbuttonProps {
+interface GameModeButtonProps {
 	image: string
 	title: string
 	mode: string
@@ -15,7 +15,7 @@ interface HermitbuttonProps {
 	onReturn?: () => void
 }
 
-const HermitButton = ({
+const GameModeButton = ({
 	image,
 	title,
 	description,
@@ -26,7 +26,7 @@ const HermitButton = ({
 	children,
 	onSelect,
 	onReturn,
-}: HermitbuttonProps) => {
+}: GameModeButtonProps) => {
 	const buttonRef = useRef<HTMLDivElement>(null)
 	const backgroundRef = useRef<HTMLDivElement>(null)
 	const rightOverlayRef = useRef<HTMLDivElement>(null)
@@ -197,4 +197,4 @@ const HermitButton = ({
 	)
 }
 
-export default HermitButton
+export default GameModeButton
