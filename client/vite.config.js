@@ -46,11 +46,6 @@ export default defineConfig({
 				}
 			: {},
 	server: {
-        host: '0.0.0.0',
 		port: CONFIG.clientDevPort || 3002,
-		hmr: {
-			host: 'localhost',
-			port: CONFIG.clientDevPort || 3002,
-		},
 	},
 })

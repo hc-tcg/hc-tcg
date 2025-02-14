@@ -23,5 +23,7 @@ COPY common common
 COPY server server
 COPY client client
 
-CMD [ "npm", "run", "dev" ]
+RUN npm run client:build-dev
+
+CMD [ "npm", "run", "server:dev" ]
 
