@@ -1,4 +1,5 @@
 import {ACHIEVEMENTS} from 'common/achievements'
+import {getStarterPack} from 'common/cards/starter-decks'
 import {BACKGROUNDS} from 'common/cosmetics/background'
 import {BORDERS} from 'common/cosmetics/borders'
 import {COINS} from 'common/cosmetics/coins'
@@ -10,7 +11,10 @@ import {PlayerId} from 'common/models/player-model'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {User} from 'common/types/database'
+import {Deck} from 'common/types/deck'
 import {PlayerInfo} from 'common/types/server-requests'
+import {toLocalCardInstance} from 'common/utils/cards'
+import {generateDatabaseCode} from 'common/utils/database-codes'
 import {
 	getAchievements,
 	getAppearance,
@@ -22,6 +26,7 @@ import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {
 	deleteDeckFromLocalStorage,
 	getActiveDeckCode,
+	getLocalStorageDecks,
 	saveDeckToLocalStorage,
 } from 'logic/saved-decks/saved-decks'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
@@ -79,7 +84,37 @@ const createConnectErrorChannel = (socket: any) =>
 		return () => socket.off('connect_error', connectErrorListener)
 	})
 
-export function* authenticateUser(
+function getNonDatabaseUser(): User {
+	const playerName = localStorage.getItem('playerName')
+	return {
+		uuid: Math.random().toString(),
+		secret: Math.random().toString(),
+		username: playerName || 'Steve',
+		minecraftName: 'steve',
+		title: null,
+		coin: null,
+		heart: null,
+		background: null,
+		border: null,
+		decks: getLocalStorageDecks(),
+		achievements: {
+			achievementData: {},
+		},
+		stats: {
+			gamesPlayed: 0,
+			wins: 0,
+			losses: 0,
+			ties: 0,
+			forfeitWins: 0,
+			forfeitLosses: 0,
+			uniquePlayersEncountered: 0,
+			topCards: [],
+		},
+		gameHistory: [],
+	}
+}
+
+function* authenticateUser(
 	playerUuid: string,
 	secret: string,
 ): Generator<any, User> {
@@ -92,7 +127,42 @@ export function* authenticateUser(
 		headers,
 	})
 
+	if (auth.status === 500) return getNonDatabaseUser()
+
 	const userResponse = (yield* call([auth, auth.json])) as User
+	return userResponse
+}
+
+function* createUser(username: string): Generator<any, User> {
+	const headers = {
+		username: username,
+	}
+
+	const userInfo = yield* call(fetch, 'http://localhost:9000/api/createUser/', {
+		method: 'POST',
+		headers,
+	})
+
+	if (userInfo.status === 500) {
+		const user = getNonDatabaseUser()
+		if (user.decks.length === 0) {
+			const starterDeck = getStarterPack()
+			const newDeck: Deck = {
+				name: 'Starter Deck',
+				icon: starterDeck.icon,
+				iconType: 'item',
+				cards: starterDeck.cards.map((card) => toLocalCardInstance(card)),
+				code: generateDatabaseCode(),
+				public: false,
+				tags: [],
+			}
+			user.decks.push(newDeck)
+			saveDeckToLocalStorage(newDeck)
+		}
+		return user
+	}
+
+	const userResponse = (yield* call([userInfo, userInfo.json])) as User
 	return userResponse
 }
 
@@ -142,7 +212,7 @@ export function* setupData(user: User) {
 	// Set active deck
 	const activeDeckCode = getActiveDeckCode()
 	const activeDeck = user.decks.find((deck) => deck.code === activeDeckCode)
-	if (activeDeck) {
+	if (activeDeck && activeDeck.code) {
 		yield* put<LocalMessage>({
 			type: localMessages.SELECT_DECK,
 			deck: activeDeck,
@@ -168,6 +238,18 @@ export function* loginSaga() {
 
 	console.log('session saga: ', session)
 
+	const noConnection = true
+
+	if (noConnection) {
+		yield* put<LocalMessage>({
+			type: localMessages.DATABASE_SET,
+			data: {
+				key: 'noConnection',
+				value: true,
+			},
+		})
+	}
+
 	if (!session) {
 		const secret = localStorage.getItem('databaseInfo:secret')
 		const userId = localStorage.getItem('databaseInfo:userId')
@@ -180,19 +262,9 @@ export function* loginSaga() {
 				localMessages.LOGIN,
 			)
 
-			const headers = {
-				username: name,
-			}
+			localStorage.setItem('playerName', name)
 
-			const userInfo = yield* call(
-				fetch,
-				'http://localhost:9000/api/createUser/',
-				{
-					headers,
-				},
-			)
-
-			const userResponse = (yield* call([userInfo, userInfo.json])) as User
+			const userResponse = yield* createUser(name)
 
 			yield* put<LocalMessage>({
 				type: localMessages.SET_ID_AND_SECRET,
@@ -455,6 +527,7 @@ export function* databaseConnectionSaga() {
 	yield* takeEvery<LocalMessageTable[typeof localMessages.USERNAME_SET]>(
 		localMessages.USERNAME_SET,
 		function* (action) {
+			localStorage.setItem('playerName', action.name)
 			sessionStorage.setItem('playerName', action.name)
 			sessionStorage.setItem('censoredPlayerName', action.name)
 			yield* sendMsg({

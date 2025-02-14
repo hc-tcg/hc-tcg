@@ -35,7 +35,7 @@ export function addApi(app: Express) {
 		res.send(ret[1])
 	})
 
-	app.get('/api/createUser/', async (req, res) => {
+	app.post('/api/createUser/', async (req, res) => {
 		const username = req.get('username')
 		let ret = await createUser(username)
 		res.statusCode = ret[0]
