@@ -1,5 +1,6 @@
-$width: 16vw;
-$height: 25vw;
+$width: 26vh;
+$expandedWidth: 70vh;
+$height: 40vh;
 $time: 0.25s;
 
 .buttonContainer {
@@ -122,7 +123,7 @@ $time: 0.25s;
 	box-sizing: border-box;
 	cursor: pointer;
 
-	> img {
+	>img {
 		padding-top: 0.85vh;
 		padding-bottom: 0.85vh;
 		font-size: 1.75rem;
@@ -131,7 +132,7 @@ $time: 0.25s;
 		filter: invert(1);
 	}
 
-	> p {
+	>p {
 		font-size: 1.5vh;
 		transform: translateY(1px);
 		padding-right: 0.5vh;
@@ -214,7 +215,7 @@ $time: 0.25s;
 	flex-shrink: 0;
 	cursor: pointer;
 
-	> img {
+	>img {
 		height: 1.5rem;
 		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
 	}
@@ -241,7 +242,7 @@ $time: 0.25s;
 	}
 
 	to {
-		width: min(max(45vw, 70vh), 80vw);
+		width: $expandedWidth;
 		pointer-events: all;
 	}
 }
@@ -260,7 +261,7 @@ $time: 0.25s;
 	from {
 		scale: 1;
 		pointer-events: none;
-		width: min(max(45vw, 70vh), 80vw);
+		width: $expandedWidth;
 	}
 
 	99% {

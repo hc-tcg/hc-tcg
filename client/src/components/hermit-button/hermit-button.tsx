@@ -11,6 +11,7 @@ interface HermitbuttonProps {
 	backgroundImage: string
 	description: string
 	children: ReactElement
+	onSelect?: () => void
 	onReturn?: () => void
 }
 
@@ -23,6 +24,7 @@ const HermitButton = ({
 	setSelectedMode,
 	backgroundImage,
 	children,
+	onSelect,
 	onReturn,
 }: HermitbuttonProps) => {
 	const buttonRef = useRef<HTMLDivElement>(null)
@@ -48,8 +50,7 @@ const HermitButton = ({
 			setButtonPosition({x: pos.x, y: pos.y, h: pos.height, w: pos.width})
 
 			if (selectedMode === mode) {
-				const width = 'min(max(45vw, 70vh), 80vw)'
-				backgroundRef.current.style.translate = `calc((100vw - ${width}) / 2) 0`
+				backgroundRef.current.style.translate = 'calc((100vw - 70vh) / 2) 0'
 			} else {
 				backgroundRef.current.style.translate = `${pos.x}px 0`
 			}
@@ -78,8 +79,7 @@ const HermitButton = ({
 		background.classList.remove(css.shrink, css.show, css.hide)
 		background.classList.add(css.grow)
 
-		const width = 'min(max(45vw, 70vh), 80vw)'
-		background.style.translate = `calc((100vw - ${width}) / 2) 0`
+		background.style.translate = 'calc((100vw - 70vh) / 2) 0'
 	}
 
 	const shrink = () => {
@@ -151,6 +151,7 @@ const HermitButton = ({
 			onMouseDown={(ev) => {
 				if (ev.button !== 0) return
 				setSelectedMode(mode)
+				if (mode !== selectedMode && onSelect) onSelect()
 			}}
 			ref={buttonRef}
 		>
@@ -189,7 +190,7 @@ const HermitButton = ({
 					</div>
 				</div>
 				<div ref={rightOverlayRef} className={css.rightOverlay}>
-					{children}
+					{selectedMode === mode && children}
 				</div>
 			</div>
 		</div>
