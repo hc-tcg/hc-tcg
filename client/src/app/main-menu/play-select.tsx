@@ -25,7 +25,7 @@ import {getIconPath} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import Button from 'components/button'
 import CardList from 'components/card-list'
-import HermitButton from 'components/hermit-button'
+import GameModeButton from 'components/hermit-button'
 import MenuLayout from 'components/menu-layout'
 import {Modal} from 'components/modal'
 import Spinner from 'components/spinner'
@@ -419,7 +419,7 @@ function PlaySelect({setMenuSection}: Props) {
 				<h2 className={css.header}>{header}</h2>
 				<div className={css.gameTypes}>
 					<div className={css.gameTypesButtons}>
-						<HermitButton
+						<GameModeButton
 							image={'vintagebeef'}
 							backgroundImage={'gamemodes/public'}
 							title={'Public Game'}
@@ -461,8 +461,8 @@ function PlaySelect({setMenuSection}: Props) {
 									</div>
 								)}
 							</div>
-						</HermitButton>
-						<HermitButton
+						</GameModeButton>
+						<GameModeButton
 							image={'cubfan135'}
 							backgroundImage={'gamemodes/private'}
 							title={'Private Game'}
@@ -524,8 +524,8 @@ function PlaySelect({setMenuSection}: Props) {
 									</div>
 								)}
 							</div>
-						</HermitButton>
-						<HermitButton
+						</GameModeButton>
+						<GameModeButton
 							image={'evilxisuma'}
 							backgroundImage={'gamemodes/boss'}
 							title={'Boss Battle'}
@@ -559,7 +559,7 @@ function PlaySelect({setMenuSection}: Props) {
 									</Button>
 								</div>
 							</div>
-						</HermitButton>
+						</GameModeButton>
 					</div>
 				</div>
 				<div className={css.bottomArea}>
