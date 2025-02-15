@@ -126,7 +126,7 @@ describe('Test Lightning Rod', () => {
 						game.components.find(
 							CardComponent,
 							query.card.is(LightningRod),
-							query.card.opponentPlayer,
+							query.card.currentPlayer,
 							query.card.afk,
 						),
 					).not.toBe(null)
