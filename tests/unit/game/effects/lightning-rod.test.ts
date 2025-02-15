@@ -134,5 +134,5 @@ describe('Test Lightning Rod', () => {
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
-	}),
+	})
 })
