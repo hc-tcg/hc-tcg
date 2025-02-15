@@ -3,11 +3,16 @@ import {Deck} from '../types/deck'
 export function sortDecks(
 	decks: Array<Deck>,
 	sortingMethod: 'Alphabetical' | 'First Tag',
-	prioritizedDeck: Deck | null = null,
+	prioritizedDeckCode: string | null = null,
 ): Array<Deck> {
 	return decks.sort((a, b) => {
-		if (prioritizedDeck && a.code === prioritizedDeck.code) {
-			return -1
+		if (prioritizedDeckCode) {
+			if (a.code === prioritizedDeckCode) {
+				return -1
+			}
+			if (b.code === prioritizedDeckCode) {
+				return 1
+			}
 		}
 		if (sortingMethod === 'Alphabetical') {
 			if (a.name === b.name) {
