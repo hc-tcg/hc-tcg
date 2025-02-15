@@ -12,6 +12,10 @@ export type User = {
 	heart: string | null
 	background: string | null
 	border: string | null
+	decks: Array<Deck>
+	achievements: AchievementData
+	stats: PlayerStats
+	gameHistory: Array<GameHistory>
 }
 
 export type UserWithoutSecret = {
@@ -93,18 +97,25 @@ export type ApiGame = {
 	winner: string | null
 }
 
-export type GameHistoryPlayer =
-	| {
-			player: 'you'
-			name: string
-			minecraftName: string
-			deck: Deck | undefined
-			uuid: string
-	  }
-	| {player: 'opponent'; name: string; minecraftName: string; uuid: string}
+export type GameHistoryPlayer = {
+	player: 'you' | 'opponent'
+	name: string
+	minecraftName: string
+	uuid: string
+}
 
 export type GameHistory = {
 	firstPlayer: GameHistoryPlayer
 	secondPlayer: GameHistoryPlayer
+	hasReplay: boolean
+	startTime: Date
+	length: {
+		minutes: number
+		seconds: number
+		milliseconds: number
+	}
+	turns: number | null
+	winner: string
+	usedDeck: Deck
 	id: number
 }

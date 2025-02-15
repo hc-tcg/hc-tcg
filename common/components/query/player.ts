@@ -7,6 +7,10 @@ export function entity(entity: PlayerEntity): ComponentQuery<PlayerComponent> {
 	return (_game, player) => player.entity === entity
 }
 
+export function uuid(uuid: string): ComponentQuery<PlayerComponent> {
+	return (_game, player) => player.uuid === uuid
+}
+
 export const currentPlayer: ComponentQuery<PlayerComponent> = (game, player) =>
 	player.entity === game.currentPlayerEntity
 

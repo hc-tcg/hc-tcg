@@ -34,6 +34,7 @@ const TeamStar: Achievement = {
 	numericId: 12,
 	id: 'team_star',
 	name: 'Hermit Gang',
+	icon: '',
 	description:
 		'Win 5 games using a deck that includes every member of team S.T.A.R.',
 	steps: 6,

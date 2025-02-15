@@ -24,6 +24,7 @@ import {
 	addGame,
 	getDeck,
 	getGameReplay,
+	sendAfterGameInfo,
 	updateAchievements,
 } from 'db/db-reciever'
 import {GameController} from 'game-controller'
@@ -59,11 +60,15 @@ function setupGame(
 	let con = new GameController(
 		{
 			model: player1,
-			deck: player1Deck.cards.map((card) => card.props.numericId),
+			deck: player1Deck.cards
+				.map((card) => card.props.numericId)
+				.sort((a, b) => a - b),
 		},
 		{
 			model: player2,
-			deck: player2Deck.cards.map((card) => card.props.numericId),
+			deck: player2Deck.cards
+				.map((card) => card.props.numericId)
+				.sort((a, b) => a - b),
 		},
 		{gameCode, spectatorCode, apiSecret, countAchievements: true},
 	)
@@ -75,12 +80,14 @@ function setupGame(
 		player: player1,
 		playerOnLeft: playerEntities[0],
 		spectator: false,
+		replayer: false,
 	})
 
 	con.addViewer({
 		player: player2,
 		playerOnLeft: playerEntities[1],
 		spectator: false,
+		replayer: false,
 	})
 
 	return con
@@ -274,6 +281,7 @@ function* gameManager(con: GameController) {
 				turnActionsBuffer,
 				con.gameCode,
 			)
+			yield* sendAfterGameInfo(gamePlayers)
 		}
 	}
 }
@@ -363,7 +371,6 @@ function* updateDeckSaga(
 ) {
 	if (payload.databaseConnected) {
 		const newDeck = yield* getDeck(payload.activeDeckCode)
-		if (!newDeck) return
 		player.setPlayerDeck(newDeck)
 		return
 	}
@@ -377,7 +384,7 @@ export function* joinQueue(
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	updateDeckSaga(player, msg.payload)
+	yield* updateDeckSaga(player, msg.payload)
 
 	if (!player) {
 		console.info('[Join queue] Player not found: ', playerId)
@@ -458,6 +465,7 @@ function setupSolitareGame(
 		player,
 		playerOnLeft: playerEntities[0],
 		spectator: false,
+		replayer: false,
 	})
 
 	con.game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
@@ -471,7 +479,7 @@ export function* createBossGame(
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	updateDeckSaga(player, msg.payload)
+	yield* updateDeckSaga(player, msg.payload)
 
 	if (!player) {
 		console.info('[Create Boss game] Player not found: ', playerId)
@@ -502,6 +510,7 @@ export function* createBossGame(
 	broadcast([player], {type: serverMessages.CREATE_BOSS_GAME_SUCCESS})
 
 	const newBossGameController = setupSolitareGame(player, player.deck, {
+		uuid: '',
 		name: 'Evil Xisuma',
 		minecraftName: 'EvilXisuma',
 		censoredName: 'Evil Xisuma',
@@ -561,7 +570,7 @@ export function* createPrivateGame(
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	updateDeckSaga(player, msg.payload)
+	yield* updateDeckSaga(player, msg.payload)
 
 	if (!player) {
 		console.info('[Create private game] Player not found: ', playerId)
@@ -603,7 +612,7 @@ export function* joinPrivateGame(
 	} = msg
 	const player = root.players[playerId]
 
-	updateDeckSaga(player, msg.payload)
+	yield* updateDeckSaga(player, msg.payload)
 
 	if (!player) {
 		console.info('[Join private game] Player not found: ', playerId)
@@ -641,6 +650,7 @@ export function* joinPrivateGame(
 			player: player,
 			playerOnLeft: spectatorGame.game.state.order[0],
 			spectator: true,
+			replayer: false,
 		})
 
 		console.info(
@@ -749,6 +759,7 @@ export function* joinPrivateGame(
 				player: root.players[playerId],
 				spectator: true,
 				playerOnLeft: newGame.game.state.order[0],
+				replayer: false,
 			})
 			let gameState = getLocalGameState(newGame.game, viewer)
 
@@ -835,9 +846,13 @@ export function* createReplayGame(
 		broadcast([player], {type: serverMessages.CREATE_PRIVATE_GAME_FAILURE})
 		return
 	}
-
 	const replay = yield* getGameReplay(msg.payload.id)
-	if (!replay) return
+	if (!replay) {
+		broadcast([root.players[playerId]], {
+			type: serverMessages.INVALID_REPLAY,
+		})
+		return
+	}
 
 	const con = new GameController(replay.player1Defs, replay.player2Defs, {
 		randomSeed: replay.seed,
@@ -846,10 +861,16 @@ export function* createReplayGame(
 	root.addGame(con)
 	root.hooks.newGame.call(con)
 
+	const viewerEntity = con.game.components.findEntity(
+		PlayerComponent,
+		query.player.uuid(msg.payload.uuid),
+	)
+
 	const viewer = con.addViewer({
 		player: root.players[playerId],
 		spectator: true,
-		playerOnLeft: con.game.state.order[0],
+		playerOnLeft: viewerEntity ? viewerEntity : con.game.state.order[0],
+		replayer: true,
 	})
 	let gameState = getLocalGameState(con.game, viewer)
 
@@ -873,7 +894,10 @@ export function* createReplayGame(
 	const replayActions = replay.replay
 
 	for (let i = 0; i < replayActions.length; i++) {
+		if (con.game.outcome) break
+
 		const action = replayActions[i]
+
 		yield* delay(action.millisecondsSinceLastAction)
 		yield* put({
 			type: clientMessages.TURN_ACTION,
@@ -886,8 +910,6 @@ export function* createReplayGame(
 		})
 	}
 
-	yield* delay(1000)
-
 	gameState.timer.turnRemaining = 0
 	gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
 	if (!con.game.endInfo.victoryReason) {
@@ -897,6 +919,8 @@ export function* createReplayGame(
 			.filter(PlayerComponent)
 			.forEach((player) => (gameState.players[player.entity].coinFlips = []))
 	}
+
+	yield* delay(10)
 
 	broadcast([viewer.player], {
 		type: serverMessages.GAME_END,

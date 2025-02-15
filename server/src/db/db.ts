@@ -4,8 +4,9 @@ import {ApiDeck, Deck, Tag} from 'common/types/deck'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
+import assert from 'assert'
 import {CARDS} from 'common/cards'
-import {PlayerDefs} from 'common/components/player-component'
+import {getStarterPack} from 'common/cards/starter-decks'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerModel} from 'common/models/player-model'
 import {AchievementProgress} from 'common/types/achievements'
@@ -16,6 +17,7 @@ import {
 	CardStats,
 	DeckStats,
 	GameHistory,
+	GameHistoryPlayer,
 	GamesStats,
 	PlayerStats,
 	Stats,
@@ -23,10 +25,12 @@ import {
 	User,
 	UserWithoutSecret,
 } from 'common/types/database'
-import {GameOutcome} from 'common/types/game-state'
-import {NumberOrNull} from 'common/utils/database-codes'
+import {GameOutcome, Message} from 'common/types/game-state'
+import {NumberOrNull, generateDatabaseCode} from 'common/utils/database-codes'
+import {newRandomNumberGenerator} from 'common/utils/random'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {call} from 'typed-redux-saga'
+import {huffmanCompress, huffmanDecompress} from '../../src/utils/compression'
 import {
 	ReplayActionData,
 	bufferToTurnActions,
@@ -172,29 +176,65 @@ export class Database {
 	}
 
 	/*** Insert a user into the Database. Returns `user`. */
-	public async insertUser(
-		username: string,
-		minecraftName: string | null,
-	): Promise<DatabaseResult<User>> {
+	public async insertUser(username: string): Promise<DatabaseResult<User>> {
 		try {
 			const secret = (await this.pool.query('SELECT * FROM uuid_generate_v4()'))
 				.rows[0]['uuid_generate_v4']
 			const user = await this.pool.query(
-				"INSERT INTO users (username, minecraft_name, secret) values ($1,$2,crypt($3, gen_salt('bf', $4))) RETURNING (user_id)",
-				[username, minecraftName, secret, this.bfDepth],
+				"INSERT INTO users (username, minecraft_name, secret) values ($1,$1,crypt($2, gen_salt('bf', $3))) RETURNING (user_id)",
+				[username, secret, this.bfDepth],
 			)
+
+			const playerUuid: string = user.rows[0]['user_id']
+
+			const starterPack = getStarterPack()
+
+			const deckInfo = {
+				name: 'Starter Deck',
+				iconType: 'item',
+				icon: starterPack.icon,
+				cards: starterPack.cards.map((card) => toLocalCardInstance(card)),
+				code: generateDatabaseCode(),
+				tags: [],
+				public: false,
+			}
+
+			await this.insertDeck(
+				deckInfo.name,
+				deckInfo.icon,
+				deckInfo.iconType,
+				deckInfo.cards.map((card) => card.props.numericId),
+				deckInfo.tags,
+				deckInfo.code,
+				playerUuid,
+			)
+
 			return {
 				type: 'success',
 				body: {
-					uuid: user.rows[0]['user_id'],
+					uuid: playerUuid,
 					secret: secret,
 					username: username,
-					minecraftName: minecraftName,
+					minecraftName: username,
 					title: null,
 					coin: null,
 					heart: null,
 					background: null,
 					border: null,
+					stats: {
+						gamesPlayed: 0,
+						wins: 0,
+						losses: 0,
+						forfeitWins: 0,
+						forfeitLosses: 0,
+						ties: 0,
+						topCards: [],
+						uniquePlayersEncountered: 0,
+					},
+					//@ts-ignore
+					decks: [deckInfo],
+					achievements: {achievementData: {}},
+					gameHistory: [],
 				},
 			}
 		} catch (e) {
@@ -212,6 +252,32 @@ export class Database {
 				[uuid, secret],
 			)
 
+			const playerUuid = user.rows[0]['user_id']
+
+			assert(playerUuid, 'The player UUID should be defined.')
+
+			const decks = await this.getDecksFromUuid(playerUuid)
+			const achievements = await this.getAchievements(playerUuid)
+			const stats = await this.getUserStats(playerUuid)
+			const gameHistory = await this.getUserGameHistory(playerUuid)
+
+			assert(
+				decks.type === 'success',
+				'If the UUID is defined, retrieving decks should not fail.',
+			)
+			assert(
+				achievements.type === 'success',
+				'If the UUID is defined, retrieving achievements should not fail.',
+			)
+			assert(
+				stats.type === 'success',
+				'If the UUID is defined, retrieving stats should not fail.',
+			)
+			assert(
+				gameHistory.type === 'success',
+				'If the UUID is defined, game history should not fail.',
+			)
+
 			return {
 				type: 'success',
 				body: {
@@ -224,6 +290,10 @@ export class Database {
 					heart: user.rows[0]['heart'],
 					background: user.rows[0]['background'],
 					border: user.rows[0]['border'],
+					decks: decks.body,
+					achievements: achievements.body,
+					stats: stats.body,
+					gameHistory: gameHistory.body,
 				},
 			}
 		} catch (e) {
@@ -750,104 +820,157 @@ export class Database {
 	}
 
 	/**Get a user's game history */
-	//@TODO switch this all to 1 query
 	public async getUserGameHistory(
 		uuid: string,
 	): Promise<DatabaseResult<Array<GameHistory>>> {
 		try {
 			const gamesResult: any = await this.pool.query(
 				`
-				SELECT * FROM games WHERE winner = $1 OR loser = $1`,
+				WITH games AS (
+					SELECT 
+					start_time,
+					completion_time - start_time as length,
+					turns,
+					game_id,
+					replay,
+					CASE WHEN winner = $1 THEN winner ELSE loser END as you,
+					CASE WHEN winner = $1 THEN loser ELSE winner END as opponent,
+					CASE WHEN winner = $1 THEN winner_deck_code ELSE loser_deck_code END as deck_code,
+					first_player_won,
+					outcome,
+					winner,
+					seed
+					FROM games WHERE winner = $1 OR loser = $1
+				)
+				SELECT game_id,start_time,your_username,opponent_username,your_minecraft_name,opponent_minecraft_name,you,opponent,
+				outcome,winner,decks.deck_code,copies,card_id,name,icon,icon_type,replay,first_player_won,length,turns,seed
+				FROM games
+				JOIN (SELECT user_id, username as your_username, minecraft_name as your_minecraft_name FROM users) as users_y ON games.you = users_y.user_id
+				JOIN (SELECT user_id, username as opponent_username, minecraft_name as opponent_minecraft_name FROM users) as users_o ON games.opponent = users_o.user_id
+				JOIN decks ON decks.deck_code = games.deck_code
+				JOIN deck_cards ON games.deck_code = deck_cards.deck_code
+				`,
 				[uuid],
 			)
 
-			const gamesRows: Array<Record<string, any>> = gamesResult.rows
+			type GameRow = {
+				game_id: number
+				start_time: Date
+				length: {minutes: number; seconds: number; milliseconds: number}
+				turns: number | null
+				deck_code: string
+				your_username: string
+				opponent_username: string
+				your_minecraft_name: string
+				opponent_minecraft_name: string
+				you: string
+				opponent: string
+				first_player_won: boolean
+				winner: string
+				cards: Array<number>
+				name: string
+				icon: string
+				icon_type: string
+				replay: Buffer
+				seed: string
+			}
 
-			const allPlayersInGames = gamesRows.reduce((r: Array<string>, game) => {
-				r.push(game['winner'])
-				r.push(game['loser'])
-				return r
-			}, [])
-
-			const playersInGames = await this.pool.query(
-				`
-				SELECT * FROM users WHERE user_id IN (SELECT * FROM UNNEST ($1::uuid[]))`,
-				[allPlayersInGames],
+			const gamesRows: Array<GameRow> = gamesResult.rows.reduce(
+				(r: Array<GameRow>, row: any) => {
+					const includedRow = r.find(
+						(subrow) => subrow['game_id'] === row['game_id'],
+					)
+					if (includedRow) {
+						includedRow.cards.push(...Array(row['copies']).fill(row['card_id']))
+						return r
+					}
+					r.push({
+						game_id: row['game_id'],
+						start_time: row['start_time'],
+						length: row['length'],
+						turns: row['turns'],
+						deck_code: row['deck_code'],
+						your_username: row['your_username'],
+						opponent_username: row['opponent_username'],
+						your_minecraft_name: row['your_minecraft_name'],
+						opponent_minecraft_name: row['opponent_minecraft_name'],
+						you: row['you'],
+						opponent: row['opponent'],
+						first_player_won: row['first_player_won'],
+						winner: row['winner'],
+						cards: Array(row['copies']).fill(row['card_id']),
+						name: row['name'],
+						icon: row['icon'],
+						icon_type: row['icon_type'],
+						replay: row['replay'],
+						seed: row['seed'],
+					})
+					return r
+				},
+				[],
 			)
-
-			const players: Record<string, PlayerDefs> = {}
-
-			playersInGames.rows.forEach((row: Record<string, any>) => {
-				players[row['user_id']] = {
-					name: row['username'],
-					censoredName: row['username'],
-					minecraftName: row['minecraft_name'],
-					appearance: defaultAppearance,
-				}
-			})
-
-			const decks = await this.getDecksFromUuid(uuid)
-
-			if (decks.type === 'failure')
-				return {
-					type: 'failure',
-					reason: decks.reason,
-				}
 
 			const gamesHistory: Array<GameHistory> = []
 
 			for (let i = 0; i < gamesRows.length; i++) {
 				const game = gamesRows[i]
-				const firstPlayerWon = game['first_player_won']
 
-				const replay: Buffer = game['replay']
+				const replay: Buffer = game.replay
+				let hasReplay = false
 
-				if (replay.length < 2 || replay.readUintBE(0, 1) !== 0x01) continue
+				if (replay.length > 4) {
+					const decompressedReplay = huffmanDecompress(replay)
+					if (decompressedReplay && decompressedReplay.readUInt8(0) === 0x01) {
+						hasReplay = true
+					}
+				}
 
-				const player1Id: string = firstPlayerWon
-					? game['winner']
-					: game['loser']
+				const rng = newRandomNumberGenerator(game.seed)
+				const youAreFirst =
+					rng() >= 0.5 !== (game.winner === game.you) && game.first_player_won
 
-				const player2Id: string = firstPlayerWon
-					? game['loser']
-					: game['winner']
+				const yourInfo: GameHistoryPlayer = {
+					player: 'you',
+					uuid: game.you,
+					name: game.your_username,
+					minecraftName: game.your_minecraft_name,
+				}
 
-				const player1DeckCode: string = firstPlayerWon
-					? game['winner_deck_code']
-					: game['loser_deck_code']
-				const player2DeckCode: string = firstPlayerWon
-					? game['loser_deck_code']
-					: game['winner_deck_code']
-
-				const player1Deck = decks.body.find(
-					(deck) => deck.code === player1DeckCode,
-				)
-
-				const player2Deck = decks.body.find(
-					(deck) => deck.code === player2DeckCode,
-				)
-
-				const firstPlayerType = player1Id === uuid ? 'you' : 'opponent'
-				const secondPlayerType = player2Id === uuid ? 'you' : 'opponent'
+				const opponentInfo: GameHistoryPlayer = {
+					player: 'opponent',
+					uuid: game.opponent,
+					name: game.opponent_username,
+					minecraftName: game.opponent_minecraft_name,
+				}
 
 				gamesHistory.push({
-					firstPlayer: {
-						player: firstPlayerType,
-						deck: firstPlayerType === 'you' ? player1Deck : undefined,
-						uuid: player1Id,
-						name: players[player1Id].name,
-						minecraftName: players[player1Id].minecraftName,
+					firstPlayer: youAreFirst ? yourInfo : opponentInfo,
+					secondPlayer: youAreFirst ? opponentInfo : yourInfo,
+					id: game.game_id,
+					hasReplay: hasReplay,
+					winner: game.winner,
+					startTime: game.start_time,
+					length: {
+						minutes: game.length.minutes || 0,
+						seconds: game.length.seconds || 0,
+						milliseconds: game.length.milliseconds || 0,
 					},
-					secondPlayer: {
-						player: secondPlayerType,
-						deck: secondPlayerType === 'you' ? player2Deck : undefined,
-						uuid: player2Id,
-						name: players[player2Id].name,
-						minecraftName: players[player2Id].minecraftName,
+					turns: game.turns,
+					usedDeck: {
+						name: game.name,
+						icon: game.icon,
+						//@ts-ignore
+						iconType: game.icon_type,
+						cards: game.cards.map((card) => toLocalCardInstance(CARDS[card])),
+						code: game.deck_code,
+						tags: [],
 					},
-					id: game['game_id'],
 				})
 			}
+
+			gamesHistory.sort((a, b) => {
+				return b.startTime.getTime() - a.startTime.getTime()
+			})
 
 			return {
 				type: 'success',
@@ -866,6 +989,7 @@ export class Database {
 			player2Defs: PlayerSetupDefs
 			seed: string
 			replay: Array<ReplayActionData>
+			battleLog: Array<Message>
 		}>
 	> {
 		try {
@@ -877,18 +1001,18 @@ export class Database {
 					WHERE game_id = $1
 				)
 				SELECT 
-					winner as user_id, winner_deck_code as deck_code, username, minecraft_name,
+					winner as user_id, winner_deck_code as selected_deck_code, username, minecraft_name,
 					card_id, copies, replay, seed, first_player_won = TRUE as first
 					FROM game 
 					JOIN users ON users.user_id = winner
-					LEFT JOIN deck_cards ON deck_cards.deck_code = game.winner_deck_code
+					LEFT JOIN deck_cards ON deck_cards.deck_code = winner_deck_code
 				UNION (
 					SELECT 
-					loser as user_id, loser_deck_code as deck_code, username, minecraft_name,
+					loser as user_id, loser_deck_code as selected_deck_code, username, minecraft_name,
 					card_id, copies, replay, seed, first_player_won = FALSE as first
 					FROM game 
 					JOIN users ON users.user_id = loser
-					LEFT JOIN deck_cards ON deck_cards.deck_code = game.winner_deck_code
+					LEFT JOIN deck_cards ON deck_cards.deck_code = loser_deck_code
 				)
 					`,
 				[gameId],
@@ -896,19 +1020,27 @@ export class Database {
 
 			const rows: Array<Record<string, any>> = gamesResult.rows
 			const game: Record<string, any> = rows[0]
-			const replay: Buffer = game['replay']
 			const seed: string = game['seed']
 
-			if (replay.length < 2 || replay.readUintBE(0, 1) !== 0x01)
+			const replay: Buffer = game['replay']
+			const decompressedReplay: Buffer | null = huffmanDecompress(replay)
+
+			if (
+				!decompressedReplay ||
+				decompressedReplay.length < 2 ||
+				decompressedReplay.readUintBE(0, 1) !== 0x01
+			) {
 				return {type: 'failure', reason: 'The game requested has no replay.'}
+			}
 
 			const firstPlayerRows = rows.filter((row) => row.first)
 			const secondPlayerRows = rows.filter((row) => !row.first)
 
-			const player1Deck: Array<string> = firstPlayerRows.reduce(
-				(r: Array<string>, row: any) => {
+			const player1Deck: Array<number> = firstPlayerRows.reduce(
+				(r: Array<number>, row: any) => {
 					const newElements = Array(row['copies']).fill(
-						this.allCards.find((card) => card.numericId === row['card_id'])?.id,
+						this.allCards.find((card) => card.numericId === row['card_id'])
+							?.numericId,
 					)
 					if (newElements.includes(undefined)) return r
 					r.push(...newElements)
@@ -917,10 +1049,11 @@ export class Database {
 				[],
 			)
 
-			const player2Deck: Array<string> = secondPlayerRows.reduce(
-				(r: Array<string>, row: any) => {
+			const player2Deck: Array<number> = secondPlayerRows.reduce(
+				(r: Array<number>, row: any) => {
 					const newElements = Array(row['copies']).fill(
-						this.allCards.find((card) => card.numericId === row['card_id'])?.id,
+						this.allCards.find((card) => card.numericId === row['card_id'])
+							?.numericId,
 					)
 					if (newElements.includes(undefined)) return r
 					r.push(...newElements)
@@ -931,23 +1064,25 @@ export class Database {
 
 			const player1Defs: PlayerSetupDefs & {uuid: string} = {
 				model: {
+					uuid: firstPlayerRows[0].user_id,
 					name: firstPlayerRows[0].username,
 					minecraftName: firstPlayerRows[0].minecraft_name,
 					censoredName: firstPlayerRows[0].username,
 					appearance: defaultAppearance,
 				},
-				deck: player1Deck,
+				deck: player1Deck.sort((a, b) => a - b),
 				uuid: firstPlayerRows[0].user_id,
 			}
 
 			const player2Defs: PlayerSetupDefs & {uuid: string} = {
 				model: {
+					uuid: secondPlayerRows[0].user_id,
 					name: secondPlayerRows[0].username,
 					minecraftName: secondPlayerRows[0].minecraft_name,
 					censoredName: secondPlayerRows[0].username,
 					appearance: defaultAppearance,
 				},
-				deck: player2Deck,
+				deck: player2Deck.sort((a, b) => a - b),
 				uuid: secondPlayerRows[0].user_id,
 			}
 
@@ -956,7 +1091,7 @@ export class Database {
 				player2Defs,
 				seed,
 				{},
-				replay,
+				decompressedReplay,
 			)
 
 			return {
@@ -964,8 +1099,9 @@ export class Database {
 				body: {
 					player1Defs,
 					player2Defs,
-					replay: replayActions,
+					replay: replayActions.replay,
 					seed,
+					battleLog: replayActions.battleLog,
 				},
 			}
 		} catch (e) {
@@ -1074,9 +1210,12 @@ export class Database {
 			let winningDeck
 			let loser
 			let losingDeck
+			let firstPlayerWon
 			let dbOutcome: 'timeout' | 'forfeit' | 'tie' | 'player_won' | 'error'
 
 			if (outcome.type === 'tie') {
+				dbOutcome = 'tie'
+			} else if (outcome.type === 'no-viewers') {
 				dbOutcome = 'tie'
 			} else if (outcome.type === 'game-crash') {
 				dbOutcome = 'error'
@@ -1093,14 +1232,16 @@ export class Database {
 				winningDeck = firstPlayerDeckCode
 				loser = secondPlayerUuid
 				losingDeck = secondPlayerDeckCode
+				firstPlayerWon = true
 			} else {
 				winner = secondPlayerUuid
 				winningDeck = secondPlayerDeckCode
 				loser = firstPlayerUuid
 				losingDeck = firstPlayerDeckCode
+				firstPlayerWon = false
 			}
 
-			const firstPlayerWon = winner === firstPlayerUuid
+			const compressedReplay = huffmanCompress(replay)
 
 			await this.pool.query(
 				"INSERT INTO games (start_time, completion_time, winner, loser, winner_deck_code, loser_deck_code, outcome, seed, turns, first_player_won, replay, opponent_code) VALUES(CURRENT_TIMESTAMP - $1 * '1 millisecond'::interval,CURRENT_TIMESTAMP,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
@@ -1114,7 +1255,7 @@ export class Database {
 					seed,
 					turns,
 					firstPlayerWon,
-					replay,
+					compressedReplay,
 					opponentCode,
 				],
 			)
@@ -1649,8 +1790,13 @@ export class Database {
 			const firstPlayerWon: boolean = game.rows[0]['first_player_won']
 			const tie: boolean = game.rows[0]['outcome'] === 'tie'
 
-			const firstPlayer = firstPlayerWon ? winner : loser
-			const secondPlayer = firstPlayerWon ? loser : winner
+			const rng = newRandomNumberGenerator(game.rows[0]['seed'])
+			const randomNumber = rng()
+
+			const firstPlayer =
+				randomNumber >= 0.5 !== firstPlayerWon ? winner : loser
+			const secondPlayer =
+				randomNumber >= 0.5 !== firstPlayerWon ? loser : winner
 
 			return {
 				type: 'success',
