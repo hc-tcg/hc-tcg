@@ -1,12 +1,12 @@
 import {ClientMessage} from 'common/socket-messages/client-messages'
 import {ServerMessageTable} from 'common/socket-messages/server-messages'
 import {LocalMessage, localMessages} from 'logic/messages'
+import {NO_SOCKET_ASSERT} from 'logic/session/session-saga'
 import {getSession} from 'logic/session/session-selectors'
 import {SagaIterator} from 'redux-saga'
 import {eventChannel} from 'redux-saga'
 import {put, select, takeEvery} from 'typed-redux-saga'
 import {getSocket} from './socket-selectors'
-import {NO_SOCKET_ASSERT} from 'logic/session/session-saga'
 
 let messagesThatHaveNotBeenSent: Array<ClientMessage> = []
 
