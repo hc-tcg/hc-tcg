@@ -23,7 +23,7 @@ import Spinner from 'components/spinner'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages} from 'logic/messages'
-import {useRef, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './statistics.module.scss'
@@ -128,6 +128,29 @@ const decksOrderByOptions = {
 	wins: 'Wins',
 }
 
+const gameIntervals = [
+	60 * 60,
+	12 * 60 * 60,
+	24 * 60 * 60,
+	7 * 24 * 60 * 60,
+	30 * 24 * 60 * 60,
+	2 * 30 * 24 * 60 * 60,
+	3 * 30 * 24 * 60 * 60,
+	6 * 30 * 24 * 60 * 60,
+	365 * 24 * 60 * 60,
+]
+const gameIntervalNames = [
+	'1 hour',
+	'12 hours',
+	'1 day',
+	'1 week',
+	'1 month',
+	'2 months',
+	'3 months',
+	'6 months',
+	'1 year',
+]
+
 function padDecimal(n: number, paddingAmount: number) {
 	const percent = Math.round(n * 10000) / 100
 	let percentString = percent.toString()
@@ -202,8 +225,10 @@ function Statistics({setMenuSection}: Props) {
 	/** Endpoint Options */
 	const beforeRef = useRef<any>()
 	const afterRef = useRef<any>()
+	const intervalRef = useRef<any>()
 	const [endpointBefore, setEndpointBefore] = useState<number | null>(null)
 	const [endpointAfter, setEndpointAfter] = useState<number | null>(null)
+	const [endpointInterval, setEndpointInterval] = useState<number | null>(null)
 	const [showDropdown, _setShowDropdown] = useState<boolean>(false)
 
 	const [cardOrderBy, setCardOrderBy] =
@@ -247,17 +272,18 @@ function Statistics({setMenuSection}: Props) {
 			return url
 		},
 		games: () => {
-			if (endpointBefore !== null && endpointAfter !== null) {
-				return `games?after=${endpointAfter}&before=${endpointBefore}`
+			let url = 'games?'
+			if (endpointBefore) {
+				url += `before=${endpointBefore}&`
 			}
-			if (endpointBefore !== null) {
-				return `games?before=${endpointBefore}`
+			if (endpointAfter) {
+				url += `after=${endpointAfter}&`
 			}
-			if (endpointAfter !== null) {
-				return `games?after=${endpointAfter}`
+			if (endpointInterval) {
+				url += `interval=${endpointInterval}&`
 			}
 
-			return 'games'
+			return url.slice(0, url.length - 1)
 		},
 		types: () => {
 			if (endpointBefore !== null && endpointAfter !== null) {
@@ -335,7 +361,9 @@ function Statistics({setMenuSection}: Props) {
 		}
 	}
 
-	if (!dataRetrieved) getData()
+	useEffect(() => {
+		if (!dataRetrieved) getData()
+	}, [tab, dataRetrieved, selectedEndpoint])
 
 	const parseDeckCards = (cards: Array<string>) => {
 		return cards.map((card) => CARDS[card])
@@ -553,46 +581,108 @@ function Statistics({setMenuSection}: Props) {
 
 	const parseGame = (game: Record<string, any>) => {
 		return (
-			<table className={css.hallOfFameTableNoHeader}>
-				{endpointAfter === null && endpointBefore === null && (
-					<>
+			<>
+				<table className={css.hallOfFameTableNoHeader}>
+					{endpointAfter === null && endpointBefore === null && (
+						<>
+							<tr>
+								<th>All time games</th>
+								<td>{game.allTimeGames}</td>
+							</tr>
+							<tr>
+								<th>Games since 1.0</th>
+								<td>{game.games}</td>
+							</tr>
+						</>
+					)}
+					{(endpointAfter !== null || endpointBefore !== null) && (
 						<tr>
-							<th>All time games</th>
-							<td>{game.allTimeGames}</td>
-						</tr>
-						<tr>
-							<th>Games since 1.0</th>
+							<th>Games</th>
 							<td>{game.games}</td>
 						</tr>
-					</>
-				)}
-				{(endpointAfter !== null || endpointBefore !== null) && (
+					)}
 					<tr>
-						<th>Games</th>
-						<td>{game.games}</td>
+						<th>Tie rate</th>
+						<td>{padDecimal(game.tieRate, 3)}</td>
 					</tr>
-				)}
-				<tr>
-					<th>Tie rate</th>
-					<td>{padDecimal(game.tieRate, 3)}</td>
-				</tr>
-				<tr>
-					<th>Forfeit rate</th>
-					<td>{padDecimal(game.forfeitRate, 3)}</td>
-				</tr>
-				<tr>
-					<th>Error rate</th>
-					<td>{padDecimal(game.errorRate, 3)}</td>
-				</tr>
-				<tr>
-					<th>Average game length</th>
-					<td>{formatTime(game.gameLength.averageLength)}</td>
-				</tr>
-				<tr>
-					<th>Median game length</th>
-					<td>{formatTime(game.gameLength.medianLength)}</td>
-				</tr>
-			</table>
+					<tr>
+						<th>Forfeit rate</th>
+						<td>{padDecimal(game.forfeitRate, 3)}</td>
+					</tr>
+					<tr>
+						<th>Error rate</th>
+						<td>{padDecimal(game.errorRate, 3)}</td>
+					</tr>
+					<tr>
+						<th>Average game length</th>
+						<td>{formatTime(game.gameLength.averageLength)}</td>
+					</tr>
+					<tr>
+						<th>Median game length</th>
+						<td>{formatTime(game.gameLength.medianLength)}</td>
+					</tr>
+				</table>
+				<Bar
+					title={'Types sorted by ' + sortBy}
+					className={css.typeGraph}
+					data={{
+						labels: game.groups.map((_count: number, index: number) => {
+							const date = new Date(
+								1000 * (index * game.interval + game.initialDate),
+							)
+							return date.toLocaleDateString() + ' ' + date.toLocaleTimeString()
+						}),
+						datasets: [
+							{
+								label: 'Games',
+								data: game.groups,
+								borderWidth: 1,
+							},
+						],
+					}}
+					options={{
+						animation: {
+							duration: 0,
+						},
+						plugins: {
+							legend: {
+								onClick: () => {},
+							},
+							tooltip: {
+								titleFont: () => {
+									return {size: 16}
+								},
+								bodyFont: () => {
+									return {size: 12}
+								},
+								backgroundColor: 'rgba(10, 1, 15, 0.95)',
+								borderWidth: 2,
+								borderColor: 'rgb(38, 13, 77)',
+								callbacks: {
+									title: (item) => item[0].label,
+									label: (item) => item.formattedValue,
+								},
+							},
+						},
+						scales: {
+							x: {
+								ticks: {
+									autoSkip: true,
+									maxTicksLimit: 10,
+									font: {size: 10}
+								},
+							},
+							y: {
+								ticks: {
+									autoSkip: true,
+									maxTicksLimit: 5,
+									stepSize: 1,
+								},
+							},
+						},
+					}}
+				/>
+			</>
 		)
 	}
 
@@ -1068,7 +1158,8 @@ function Statistics({setMenuSection}: Props) {
 										]}
 										showNames={true}
 										action={(option) => {
-											if (option === selectedEndpoint) return
+											if (option.toLocaleLowerCase() === selectedEndpoint)
+												return
 											setData(null)
 											setDataRetrieved(false)
 											setSelectedEndpoint(
@@ -1201,6 +1292,28 @@ function Statistics({setMenuSection}: Props) {
 												></Checkbox>
 											</div>
 										</>
+									)}
+									{selectedEndpoint === 'games' && (
+										<div className={css.input}>
+											<p style={{flexGrow: 1}}>Interval: {gameIntervalNames[intervalRef.current?.valueAsNumber] || '1 day'}</p>
+											<input
+												type="range"
+												ref={intervalRef}
+												min={0}
+												max={gameIntervals.length - 1}
+												value={intervalRef.current?.valueAsNumber !== undefined ? intervalRef.current?.valueAsNumber: 2}
+												onChange={(_e) => {
+													if (intervalRef.current.valueAsNumber === undefined) {
+														setEndpointInterval(null)
+													} else {
+														setEndpointInterval(
+															gameIntervals[intervalRef.current.valueAsNumber],
+														)
+													}
+													setDataRetrieved(false)
+												}}
+											/>
+										</div>
 									)}
 									{selectedEndpoint === 'types' && (
 										<>

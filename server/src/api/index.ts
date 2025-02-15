@@ -116,24 +116,20 @@ export function addApi(app: Express) {
 	})
 
 	app.get('/api/stats/games', async (req, res) => {
-		let query = BasicStatsQuery.parse(req.query)
-		let ret = await getGamesStats({
-			before: NumberOrNull(query.before),
-			after: NumberOrNull(query.after),
-		})
-		res.statusCode = ret[0]
-		res.send(ret[1])
-	})
-
-	app.get('/api/stats/game-times', async (req, res) => {
-		let query = IntervalStatsQuery.parse(req.query)
-		let ret = await getGameTimes({
+		const query = IntervalStatsQuery.parse(req.query)
+		const params = {
 			before: NumberOrNull(query.before),
 			after: NumberOrNull(query.after),
 			interval: NumberOrNull(query.interval),
-		})
-		res.statusCode = ret[0]
-		res.send(ret[1])
+		}
+		const statsRes = await getGamesStats(params)
+		const timesRes = await getGameTimes(params)
+		res.statusCode = Math.max(statsRes[0], timesRes[0])
+		if (res.statusCode !== 200) {
+			res.send({error: statsRes[1].error || timesRes[1].error})
+			return
+		}
+		res.send({...statsRes[1], ...timesRes[1]})
 	})
 
 	app.get('/api/stats/private-game/:code', async (req, res) => {
