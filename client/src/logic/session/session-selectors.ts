@@ -16,12 +16,20 @@ export const getPlayerName = (state: RootState) => {
 	return getSession(state).playerName
 }
 
+export const getMinecraftName = (state: RootState) => {
+	return getSession(state).minecraftName
+}
+
 export const getPlayerDeckCode = (state: RootState) => {
 	return getSession(state).playerDeck
 }
 
 export const getConnecting = (state: RootState) => {
 	return getSession(state).connecting
+}
+
+export const getConnectingMessage = (state: RootState) => {
+	return getSession(state).connectingMessage
 }
 
 export const getErrorType = (state: RootState) => {

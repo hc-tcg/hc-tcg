@@ -4,7 +4,9 @@ import {ApiDeck, Deck, Tag} from 'common/types/deck'
 import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
+import assert from 'assert'
 import {CARDS} from 'common/cards'
+import {getStarterPack} from 'common/cards/starter-decks'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerModel} from 'common/models/player-model'
 import {AchievementProgress} from 'common/types/achievements'
@@ -24,7 +26,7 @@ import {
 	UserWithoutSecret,
 } from 'common/types/database'
 import {GameOutcome, Message} from 'common/types/game-state'
-import {NumberOrNull} from 'common/utils/database-codes'
+import {NumberOrNull, generateDatabaseCode} from 'common/utils/database-codes'
 import {newRandomNumberGenerator} from 'common/utils/random'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {call} from 'typed-redux-saga'
@@ -174,29 +176,65 @@ export class Database {
 	}
 
 	/*** Insert a user into the Database. Returns `user`. */
-	public async insertUser(
-		username: string,
-		minecraftName: string | null,
-	): Promise<DatabaseResult<User>> {
+	public async insertUser(username: string): Promise<DatabaseResult<User>> {
 		try {
 			const secret = (await this.pool.query('SELECT * FROM uuid_generate_v4()'))
 				.rows[0]['uuid_generate_v4']
 			const user = await this.pool.query(
-				"INSERT INTO users (username, minecraft_name, secret) values ($1,$2,crypt($3, gen_salt('bf', $4))) RETURNING (user_id)",
-				[username, minecraftName, secret, this.bfDepth],
+				"INSERT INTO users (username, minecraft_name, secret) values ($1,$1,crypt($2, gen_salt('bf', $3))) RETURNING (user_id)",
+				[username, secret, this.bfDepth],
 			)
+
+			const playerUuid: string = user.rows[0]['user_id']
+
+			const starterPack = getStarterPack()
+
+			const deckInfo = {
+				name: 'Starter Deck',
+				iconType: 'item',
+				icon: starterPack.icon,
+				cards: starterPack.cards.map((card) => toLocalCardInstance(card)),
+				code: generateDatabaseCode(),
+				tags: [],
+				public: false,
+			}
+
+			await this.insertDeck(
+				deckInfo.name,
+				deckInfo.icon,
+				deckInfo.iconType,
+				deckInfo.cards.map((card) => card.props.numericId),
+				deckInfo.tags,
+				deckInfo.code,
+				playerUuid,
+			)
+
 			return {
 				type: 'success',
 				body: {
-					uuid: user.rows[0]['user_id'],
+					uuid: playerUuid,
 					secret: secret,
 					username: username,
-					minecraftName: minecraftName,
+					minecraftName: username,
 					title: null,
 					coin: null,
 					heart: null,
 					background: null,
 					border: null,
+					stats: {
+						gamesPlayed: 0,
+						wins: 0,
+						losses: 0,
+						forfeitWins: 0,
+						forfeitLosses: 0,
+						ties: 0,
+						topCards: [],
+						uniquePlayersEncountered: 0,
+					},
+					//@ts-ignore
+					decks: [deckInfo],
+					achievements: {achievementData: {}},
+					gameHistory: [],
 				},
 			}
 		} catch (e) {
@@ -214,6 +252,32 @@ export class Database {
 				[uuid, secret],
 			)
 
+			const playerUuid = user.rows[0]['user_id']
+
+			assert(playerUuid, 'The player UUID should be defined.')
+
+			const decks = await this.getDecksFromUuid(playerUuid)
+			const achievements = await this.getAchievements(playerUuid)
+			const stats = await this.getUserStats(playerUuid)
+			const gameHistory = await this.getUserGameHistory(playerUuid)
+
+			assert(
+				decks.type === 'success',
+				'If the UUID is defined, retrieving decks should not fail.',
+			)
+			assert(
+				achievements.type === 'success',
+				'If the UUID is defined, retrieving achievements should not fail.',
+			)
+			assert(
+				stats.type === 'success',
+				'If the UUID is defined, retrieving stats should not fail.',
+			)
+			assert(
+				gameHistory.type === 'success',
+				'If the UUID is defined, game history should not fail.',
+			)
+
 			return {
 				type: 'success',
 				body: {
@@ -226,6 +290,10 @@ export class Database {
 					heart: user.rows[0]['heart'],
 					background: user.rows[0]['background'],
 					border: user.rows[0]['border'],
+					decks: decks.body,
+					achievements: achievements.body,
+					stats: stats.body,
+					gameHistory: gameHistory.body,
 				},
 			}
 		} catch (e) {
