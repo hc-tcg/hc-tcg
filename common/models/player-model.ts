@@ -17,11 +17,15 @@ export class PlayerModel {
 	public censoredName: string
 	public socket: Socket
 	public uuid: string
-	public authenticated: boolean
 	public achievementProgress: AchievementProgress
 	public appearance: Appearance
 
-	constructor(playerName: string, minecraftName: string, socket: Socket) {
+	constructor(
+		playerName: string,
+		minecraftName: string,
+		uuid: string,
+		socket: Socket,
+	) {
 		this.internalId = Math.random().toString() as PlayerId
 		this.internalSecret = Math.random().toString()
 
@@ -31,8 +35,7 @@ export class PlayerModel {
 		this.minecraftName = minecraftName
 		this.censoredName = censorString(playerName)
 		this.socket = socket
-		this.uuid = ''
-		this.authenticated = false
+		this.uuid = uuid
 		this.achievementProgress = {}
 		this.appearance = {...defaultAppearance}
 	}
@@ -68,9 +71,5 @@ export class PlayerModel {
 			code: newDeck.code,
 			tags: newDeck.tags,
 		}
-	}
-
-	setMinecraftName(name: string) {
-		this.minecraftName = name
 	}
 }

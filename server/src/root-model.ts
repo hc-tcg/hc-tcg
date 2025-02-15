@@ -74,6 +74,11 @@ export class RootModel {
 	}
 	public addPlayer(player: PlayerModel) {
 		this.players[player.id] = player
+		const time = Date.now()
+		const date = new Date(time)
+		console.log(
+			`${date.toLocaleTimeString('it-IT')}: Player [${player.uuid}] has logged in.`,
+		)
 	}
 	public addGame(game: GameController) {
 		this.games[game.id] = game

@@ -7,7 +7,6 @@ import {
 	ChangeActiveHermitActionData,
 } from 'common/types/turn-action-data'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
-import {updateAchievements} from 'logic/session/session-saga'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {
@@ -253,7 +252,6 @@ function* gameSaga(initialGameState?: LocalGameState) {
 				type: localMessages.GAME_END_OVERLAY_SHOW,
 				outcome,
 			})
-			yield call(updateAchievements, socket)
 		}
 	} catch (err) {
 		console.error('Client error: ', err)

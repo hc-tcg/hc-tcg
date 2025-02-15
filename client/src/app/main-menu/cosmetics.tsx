@@ -11,7 +11,7 @@ import {
 } from 'logic/game/database/database-selectors'
 import {localMessages} from 'logic/messages'
 import {getSession} from 'logic/session/session-selectors'
-import {useState} from 'react'
+import {useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './cosmsetics.module.scss'
 
@@ -83,6 +83,9 @@ function Cosmetics({setMenuSection}: Props) {
 	)
 	const selected = appearance[selectedCosmetic]
 
+	const usernameRef = useRef<HTMLInputElement>(null)
+	const minecraftNameRef = useRef<HTMLInputElement>(null)
+
 	const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 		let isUnlocked = true
 		if (cosmetic.requires && ACHIEVEMENTS[cosmetic.requires]) {
@@ -122,6 +125,38 @@ function Cosmetics({setMenuSection}: Props) {
 		>
 			<div className={css.appearance}>
 				<CosmeticPreview />
+			</div>
+			<div className={css.updatePlayerInfo}>
+				<input ref={usernameRef} placeholder={'Username'}></input>
+				<Button
+					onClick={() => {
+						if (!usernameRef.current) return
+						dispatch({
+							type: localMessages.USERNAME_SET,
+							name: usernameRef.current.value,
+						})
+					}}
+				>
+					Update Username
+				</Button>
+			</div>
+			<div className={css.updatePlayerInfo}>
+				<input
+					ref={minecraftNameRef}
+					placeholder={'Minecraft Username'}
+					minLength={3}
+				></input>
+				<Button
+					onClick={() => {
+						if (!minecraftNameRef.current) return
+						dispatch({
+							type: localMessages.MINECRAFT_NAME_SET,
+							name: minecraftNameRef.current.value,
+						})
+					}}
+				>
+					Update Player Head
+				</Button>
 			</div>
 			<div className={css.itemSelector}>
 				<Dropdown
