@@ -177,28 +177,6 @@ $time: 0.25s;
 	width: calc(100% - $width);
 }
 
-.selectedDeck {
-	display: flex;
-	flex-direction: row;
-	color: var(--text-light);
-	font-size: 1rem;
-	background-color: var(--gray-700);
-	width: 16vw;
-	height: 2.5rem;
-	align-self: center;
-	border-radius: 0.5vh;
-	user-select: none;
-	font-weight: normal;
-	text-align: center;
-	justify-content: center;
-	align-items: center;
-
-	.infoIcon {
-		padding: 5px;
-		height: 100%;
-	}
-}
-
 .viewDeckButton {
 	position: absolute;
 	bottom: 1rem;
@@ -340,5 +318,202 @@ $time: 0.25s;
 	to {
 		pointer-events: all;
 		cursor: pointer;
+	}
+}
+
+////////////
+/* GAME MODE BUTTON COMPONENTS */
+////////////
+
+.buttonMenu {
+	height: 100%;
+	width: 100%;
+	color: white;
+	overflow: hidden;
+	text-align: center;
+
+	.largeButton {
+		height: 5vh;
+		width: 100%;
+	}
+
+	>* {
+		width: calc(70vh - 26vh);
+		height: 100%;
+	}
+
+	.chooseDeck {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 0.5vh;
+		padding: 2vh;
+		background-color: rgba(0, 0, 0, 0.7);
+
+		.deckSelector {
+			margin: 1vh;
+			overflow-y: auto;
+			width: 100%;
+			flex-grow: 1;
+			overflow-x: hidden;
+
+			.myDecksItem {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				gap: 0.2rem;
+				margin-right: 0.5rem;
+				padding: 0.3rem;
+				user-select: none;
+				cursor: pointer;
+				height: 2.5rem;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				width: 100%;
+
+				&:not(.selectedDeck):hover {
+					filter: brightness(1.2);
+					background-color: rgba(5, 5, 5, 0.5);
+				}
+
+				&.selectedDeck {
+					font-size: 1rem;
+					color: gold;
+					text-indent: 3px;
+					transition: all 0.25s ease-in-out;
+					background-color: var(--gray-700);
+					border-radius: 0.5vh;
+				}
+
+				.deckName {
+					text-overflow: ellipsis;
+					overflow: hidden;
+				}
+			}
+		}
+
+		.multiColoredCircle {
+			width: 0.5rem;
+			height: 2rem;
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		}
+
+		.singleTag {
+			flex-grow: 1;
+			border-radius: 6px;
+		}
+
+		.deckImage {
+			display: grid;
+			place-content: center;
+			background-color: var(--gray-500);
+			border-radius: 6px;
+			width: 2rem;
+			height: 2rem;
+			flex-shrink: 0;
+
+			>img {
+				height: 1.5rem;
+				filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
+			}
+		}
+
+		.usesIcon {
+			&.farm {
+				background-color: rgb(124, 204, 12);
+			}
+
+			&.redstone {
+				background-color: rgb(185, 33, 42);
+			}
+
+			&.prankster {
+				background-color: rgb(116, 55, 168);
+			}
+
+			&.explorer {
+				background-color: rgb(103, 138, 190);
+			}
+
+			&.balanced {
+				background-color: rgb(101, 124, 50);
+			}
+
+			&.builder {
+				background-color: rgb(184, 162, 154);
+			}
+
+			&.pvp {
+				background-color: rgb(85, 202, 194);
+			}
+
+			&.speedrunner {
+				background-color: rgb(223, 226, 36);
+			}
+
+			&.terraform {
+				background-color: rgb(217, 119, 147);
+			}
+
+			&.miner {
+				background-color: rgb(110, 105, 108);
+			}
+		}
+	}
+
+	.queue {
+		color: white;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 1.5vh;
+		padding: 2vh;
+		background-color: rgba(0, 0, 0, 0.7);
+
+		.innerContainer {
+			margin-top: 2vh;
+			background-color: rgba(0, 0, 0, 0.8);
+			gap: 1.5vh;
+			padding: 2vh;
+			border-radius: 8px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+		}
+	}
+
+	.privateModeSelect {
+		gap: 0.5vh;
+		padding: 2vh;
+		background-color: rgba(0, 0, 0, 0.7);
+
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+
+
+		.option {
+			height: 50%;
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.row {
+			width: 100%;
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+			grid-gap: 0.5vh;
+		}
+
 	}
 }

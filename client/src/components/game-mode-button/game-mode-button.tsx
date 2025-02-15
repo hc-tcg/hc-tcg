@@ -1,6 +1,12 @@
 import classNames from 'classnames'
 import {ReactElement, useEffect, useReducer, useRef, useState} from 'react'
-import css from './hermit-button.module.scss'
+import css from './game-mode-button.module.scss'
+import Button from 'components/button'
+import {Deck, Tag} from 'common/types/deck'
+import {getIconPath} from 'common/utils/state-gen'
+import {useSelector} from 'react-redux'
+import {getSession} from 'logic/session/session-selectors'
+import Spinner from 'components/spinner'
 
 interface GameModeButtonProps {
 	image: string
@@ -10,12 +16,13 @@ interface GameModeButtonProps {
 	setSelectedMode: (key: string | null) => void
 	backgroundImage: string
 	description: string
-	children: ReactElement
+	children: ReactElement | ReactElement[]
 	onSelect?: () => void
 	onReturn?: () => void
+	disableBack: boolean
 }
 
-const GameModeButton = ({
+function GameModeButton({
 	image,
 	title,
 	description,
@@ -26,7 +33,8 @@ const GameModeButton = ({
 	children,
 	onSelect,
 	onReturn,
-}: GameModeButtonProps) => {
+	disableBack,
+}: GameModeButtonProps) {
 	const buttonRef = useRef<HTMLDivElement>(null)
 	const backgroundRef = useRef<HTMLDivElement>(null)
 	const rightOverlayRef = useRef<HTMLDivElement>(null)
@@ -165,18 +173,21 @@ const GameModeButton = ({
 				<div className={css.vingette}></div>
 				<div className={css.leftOverlay}>
 					<div className={classNames(css.button)}>
-						<div
-							className={css.returnButton}
-							ref={returnButtonRef}
-							onClick={(ev) => {
-								if (ev.button !== 0) return
-								if (onReturn) onReturn()
-								setSelectedMode(null)
-							}}
-						>
-							<img src="../images/back_arrow.svg" alt="back-arrow" />
-							<p>Back</p>
-						</div>
+						{!disableBack && (
+							<div
+								className={css.returnButton}
+								ref={returnButtonRef}
+								onClick={(ev) => {
+									if (disableBack) return
+									if (ev.button !== 0) return
+									if (onReturn) onReturn()
+									setSelectedMode(null)
+								}}
+							>
+								<img src="../images/back_arrow.svg" alt="back-arrow" />
+								<p>Back</p>
+							</div>
+						)}
 						<img
 							src={`images/hermits-nobg/${image}.png`}
 							className={css.hermitImage}
@@ -195,5 +206,144 @@ const GameModeButton = ({
 		</div>
 	)
 }
+
+interface ChooseDeckProps {
+	active: boolean
+	title: string
+	subTitle: string
+	confirmMessage: string
+	onConfirm: () => void
+	onSelectDeck: (deck: Deck) => void
+	decks: Deck[]
+}
+
+GameModeButton.ChooseDeck = ({
+	active,
+	title,
+	subTitle,
+	confirmMessage,
+	onConfirm,
+	onSelectDeck,
+	decks,
+}: ChooseDeckProps) => {
+	// Don't do any logic if we are not active
+	if (!active) return <></>
+
+	// @TODO needs to find the active deck in a better way
+	// aka this whole system needs to be consistent
+	const {playerDeck} = useSelector(getSession)
+
+	const decksHaveTags =
+		decks.reduce((tags: Array<Tag>, decks) => {
+			return [...tags, ...decks.tags]
+		}, []).length > 0
+
+	const deckSelector = (
+		<div className={css.deckSelector}>
+			{decks.map((deck, i) => (
+				<div
+					className={classNames(
+						css.myDecksItem,
+						playerDeck && deck.code === playerDeck && css.selectedDeck,
+					)}
+					key={i}
+					onClick={() => onSelectDeck(deck)}
+				>
+					{deck.tags && deck.tags.length > 0 && (
+						<div className={css.multiColoredCircle}>
+							{deck.tags.map((tag, i) => (
+								<div
+									className={css.singleTag}
+									style={{backgroundColor: tag.color}}
+									key={i}
+								></div>
+							))}
+						</div>
+					)}
+					{decksHaveTags && deck.tags.length === 0 && (
+						<div className={css.multiColoredCircle}>
+							<div className={css.singleTag}></div>
+						</div>
+					)}
+					<div
+						className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}
+					>
+						<img src={getIconPath(deck)} alt={'deck-icon'} />
+					</div>
+					<div className={css.deckName}>{deck.name}</div>
+				</div>
+			))}
+		</div>
+	)
+	return (
+		<div className={css.buttonMenu}>
+			<div className={css.chooseDeck}>
+				<h3>{title}</h3>
+				<p>{subTitle}</p>
+				{deckSelector}
+				<Button
+					className={css.largeButton}
+					onClick={onConfirm}
+					variant="primary"
+				>
+					{confirmMessage}
+				</Button>
+			</div>
+		</div>
+	)
+}
+
+interface QueueProps {
+	active: boolean
+	title: string
+	message: string
+	extraMessage?: string
+	onCancel: () => void
+	// @TODO active deck
+}
+
+GameModeButton.Queue = ({
+	active,
+	title,
+	message,
+	extraMessage,
+	onCancel,
+}: QueueProps) => {
+	// Don't do any logic if we are not active
+	if (!active) return <></>
+
+	return (
+		<div className={css.buttonMenu}>
+			<div className={css.queue}>
+				<h3>{title}</h3>
+				<div className={css.spacer} />
+				<div className={css.spinner}>
+					<Spinner />
+				</div>
+				<p>{message}</p>
+				{extraMessage && <p>{extraMessage}</p>}
+				<div className={css.spacer} />
+				<Button className={css.largeButton} onClick={onCancel} variant="error">
+					Cancel
+				</Button>
+			</div>
+		</div>
+	)
+}
+
+/*
+				<h3>Choose your deck</h3>
+				<p>When ready, press the Join Queue button to begin.</p>
+				() => {
+						selectDeck(deck)
+						playSwitchDeckSFX()
+						dispatch({type: localMessages.UPDATE_DECK, deck: deck})
+					}
+				
+
+
+								{queueStatus && (
+								)}
+				*/
 
 export default GameModeButton

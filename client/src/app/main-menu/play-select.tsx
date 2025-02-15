@@ -25,7 +25,7 @@ import {getIconPath} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import Button from 'components/button'
 import CardList from 'components/card-list'
-import GameModeButton from 'components/hermit-button'
+import GameModeButton from 'components/game-mode-button'
 import MenuLayout from 'components/menu-layout'
 import {Modal} from 'components/modal'
 import Spinner from 'components/spinner'
@@ -42,6 +42,8 @@ import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './play-select.module.scss'
 import {CosmeticPreview} from './cosmetics'
+import {sortDecks} from 'common/utils/sorting'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -52,6 +54,7 @@ function PlaySelect({setMenuSection}: Props) {
 	const queueStatus = useSelector(getStatus)
 	const gameCode = useSelector(getGameCode)
 	const spectatorCode = useSelector(getSpectatorCode)
+	const settings = useSelector(getSettings)
 
 	const {playerDeck, playerName, newPlayer} = useSelector(getSession)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
@@ -63,6 +66,7 @@ function PlaySelect({setMenuSection}: Props) {
 	const welcomeMessage = newPlayer ? 'Welcome' : 'Welcome Back'
 	const [mode, setMode] = useState<string | null>(null)
 	const [lobbyCreated, setLobbyCreated] = useState<boolean>(false)
+	const disableBack = !!queueStatus
 	const inputRef = useRef<HTMLInputElement>(null)
 
 	const checkForValidation = (): boolean => {
@@ -90,12 +94,11 @@ function PlaySelect({setMenuSection}: Props) {
 
 	const sortDecksByActive = () => {
 		// Sort decks, placing active at the top
-		decks.sort((a) => {
-			if (loadedDeck && a.code === loadedDeck.code) {
-				return -1
-			}
-			return 0
-		})
+		sortDecks(
+			decks,
+			settings.deckSortingMethod,
+			loadedDeck ? loadedDeck.code : null,
+		)
 	}
 
 	const handleJoinQueue = () => {
@@ -145,85 +148,34 @@ function PlaySelect({setMenuSection}: Props) {
 		if (queueStatus === 'waiting_for_player_as_spectator')
 			return 'Waiting for game to begin'
 		return 'Loading'
+
+		// null/none | in_queue | in_game |
 	}
 
 	const handleLeaveQueue = () => {
-		setTimeout(() => dispatch({type: localMessages.MATCHMAKING_LEAVE}), 200)
+		dispatch({type: localMessages.MATCHMAKING_LEAVE})
 	}
 
-	const playSwitchDeckSFX = () => {
-		const pageTurn = [
-			'/sfx/Page_turn1.ogg',
-			'/sfx/Page_turn2.ogg',
-			'/sfx/Page_turn3.ogg',
-		]
-		dispatch({
-			type: localMessages.SOUND_PLAY,
-			path: pageTurn[Math.floor(Math.random() * pageTurn.length)],
-		})
-	}
-
-	const loadDeck = (deck: Deck) => {
+	const onSelectDeck = (deck: Deck) => {
 		setLoadedDeck(deck)
+
+		if (loadedDeck?.code !== deck.code) {
+			const pageTurn = [
+				'/sfx/Page_turn1.ogg',
+				'/sfx/Page_turn2.ogg',
+				'/sfx/Page_turn3.ogg',
+			]
+			dispatch({
+				type: localMessages.SOUND_PLAY,
+				path: pageTurn[Math.floor(Math.random() * pageTurn.length)],
+			})
+		}
 
 		dispatch({
 			type: localMessages.UPDATE_DECKS,
 			newActiveDeck: deck,
 		})
 	}
-
-	const decksHaveTags =
-		decks.reduce((tags: Array<Tag>, decks) => {
-			return [...tags, ...decks.tags]
-		}, []).length > 0
-
-	const deckSelector = (
-		<div className={css.deckSelector}>
-			{decks.map((deck, i) => {
-				return (
-					<div
-						className={classNames(
-							css.myDecksItem,
-							loadedDeck && deck.code === loadedDeck.code && css.selectedDeck,
-						)}
-						key={i}
-						onClick={() => {
-							loadDeck(deck)
-							playSwitchDeckSFX()
-							dispatch({type: localMessages.UPDATE_DECK, deck: deck})
-						}}
-					>
-						{deck.tags && deck.tags.length > 0 && (
-							<div className={css.multiColoredCircle}>
-								{deck.tags.map((tag, i) => (
-									<div
-										className={css.singleTag}
-										style={{backgroundColor: tag.color}}
-										key={i}
-									></div>
-								))}
-							</div>
-						)}
-						{decksHaveTags && deck.tags.length === 0 && (
-							<div className={css.multiColoredCircle}>
-								<div className={css.singleTag}></div>
-							</div>
-						)}
-						<div
-							className={classNames(
-								css.deckImage,
-								css.usesIcon,
-								css[deck.icon],
-							)}
-						>
-							<img src={getIconPath(deck)} alt={'deck-icon'} />
-						</div>
-						<div className={css.deckName}>{deck.name}</div>
-					</div>
-				)
-			})}
-		</div>
-	)
 
 	/* Boss game stuff */
 	const [evilXOpen, setEvilXOpen] = useState<boolean>(false)
@@ -283,7 +235,7 @@ function PlaySelect({setMenuSection}: Props) {
 	}, [handleKeyPress])
 
 	function handleKeyPress(e: any) {
-		if (e.key === 'Escape') {
+		if (!disableBack && e.key === 'Escape') {
 			if (mode === null) {
 				setMenuSection('main-menu')
 				return
@@ -431,36 +383,23 @@ function PlaySelect({setMenuSection}: Props) {
 							setSelectedMode={setMode}
 							onSelect={sortDecksByActive}
 							onReturn={handleLeaveQueue}
+							disableBack={disableBack}
 						>
-							<div className={css.buttonMenu}>
-								{!queueStatus ? (
-									<div className={css.chooseDeck}>
-										<h3>Choose your deck</h3>
-										<p>When ready, press the Join Queue button to begin.</p>
-										{deckSelector}
-										<Button
-											className={css.largeButton}
-											onClick={() => handleJoinQueue()}
-											variant="primary"
-										>
-											Join Queue
-										</Button>
-									</div>
-								) : (
-									<div className={css.queueMenu}>
-										<div>
-											<div className={css.spinner}>
-												<Spinner />
-											</div>
-											<p>{queuingReason()}</p>
-											<p>
-												Having trouble finding a match? Feel free to join our
-												discord!
-											</p>
-										</div>
-									</div>
-								)}
-							</div>
+							<GameModeButton.ChooseDeck
+								active={!queueStatus}
+								title="Choose your deck"
+								subTitle="When ready, press the Join Queue button to begin."
+								confirmMessage="Join Queue"
+								onConfirm={handleJoinQueue}
+								decks={decks}
+								onSelectDeck={onSelectDeck}
+							/>
+							<GameModeButton.Queue
+								active={!!queueStatus}
+								title="In Public Queue"
+								message="Waiting for opponent..."
+								onCancel={handleLeaveQueue}
+							/>
 						</GameModeButton>
 						<GameModeButton
 							image={'cubfan135'}
@@ -470,10 +409,12 @@ function PlaySelect({setMenuSection}: Props) {
 							mode="private"
 							selectedMode={mode}
 							setSelectedMode={setMode}
+							onSelect={sortDecksByActive}
 							onReturn={() => {
 								handleLeaveQueue()
 								setTimeout(() => setLobbyCreated(false), 200)
 							}}
+							disableBack={disableBack}
 						>
 							<div className={css.buttonMenu}>
 								{!lobbyCreated && !queueStatus && (
@@ -534,7 +475,9 @@ function PlaySelect({setMenuSection}: Props) {
 							}
 							mode="boss"
 							selectedMode={mode}
+							onSelect={sortDecksByActive}
 							setSelectedMode={setMode}
+							disableBack={disableBack}
 						>
 							<div className={css.buttonMenu}>
 								<div className={css.publicConfirm}>
@@ -542,7 +485,6 @@ function PlaySelect({setMenuSection}: Props) {
 										Confirm your deck before entering a game. If you don't pick
 										one here, your last selected deck will be used.
 									</p>
-									{deckSelector}
 									<div className={css.spacer}></div>
 									<Button
 										className={css.publicJoinButton}
@@ -562,19 +504,15 @@ function PlaySelect({setMenuSection}: Props) {
 						</GameModeButton>
 					</div>
 				</div>
-				<div className={css.bottomArea}>
-					<div>
-						<h3 className={css.appearanceHeader}>In-game Appearance</h3>
-						<p className={css.clickToChange}>
-							<i>Click to change</i>
-						</p>
-						<div
-							className={css.appearance}
-							onClick={() => setMenuSection('cosmetics')}
-						>
-							<CosmeticPreview />
-						</div>
-					</div>
+				<h3 className={css.appearanceHeader}>In-game Appearance</h3>
+				<p className={classNames(css.clickToChange, disableBack && css.hide)}>
+					<i>Click to change</i>
+				</p>
+				<div
+					className={disableBack ? undefined : css.appearance}
+					onClick={() => !disableBack && setMenuSection('cosmetics')}
+				>
+					<CosmeticPreview />
 				</div>
 			</MenuLayout>
 		</>
