@@ -2,7 +2,6 @@ import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import React from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
 
@@ -74,24 +73,6 @@ function GameSettings({setMenuSection}: Props) {
 			},
 		})
 	}
-	const handleMinecraftName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
-		ev.preventDefault()
-		const username = ev.currentTarget.minecraftName.value.trim()
-		if (username.length > 3) {
-			dispatch({
-				type: localMessages.MINECRAFT_NAME_SET,
-				name: username,
-			})
-			dispatch({
-				type: localMessages.SETTINGS_SET,
-				setting: {
-					key: 'minecraftName',
-					value: username,
-				},
-			})
-			localStorage.setItem('minecraftName', username)
-		}
-	}
 
 	return (
 		<MenuLayout
@@ -122,29 +103,6 @@ function GameSettings({setMenuSection}: Props) {
 				<Button variant="stone" onClick={handleDeckSortingMethod}>
 					Deck Sorting Method: {settings.deckSortingMethod}
 				</Button>
-				<div className={css.minecraftNameArea}>
-					<div className={css.left}>
-						<img
-							className={css.playerHead}
-							src={`https://mc-heads.net/head/${settings.minecraftName}/left`}
-							alt="player head"
-						/>
-					</div>
-					<div className={css.right}>
-						<p>Select in-game player head</p>
-						<form className={css.playerHeadForm} onSubmit={handleMinecraftName}>
-							<div className={css.customInput}>
-								<input
-									maxLength={16}
-									name="minecraftName"
-									placeholder="Minecraft Username"
-									id="minecraft-name"
-								></input>
-							</div>
-							<Button variant="stone">Select</Button>
-						</form>
-					</div>
-				</div>
 			</div>
 		</MenuLayout>
 	)

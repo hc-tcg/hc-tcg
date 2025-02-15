@@ -1,3 +1,4 @@
+import assert from 'assert'
 import {huffmanTree} from '../../../common/config/huffman-tree'
 
 type HuffmanNode = {
@@ -146,10 +147,10 @@ export function huffmanDecompress(bytes: Buffer): Buffer | null {
 		let byte = 0
 		while (byte < byteString.length) {
 			const entry = getNextEntry(byteString, byte)
-			if (!entry)
-				throw new Error(
-					'Invalid byte sequence encountered while decoding replay.',
-				)
+			assert(
+				entry,
+				'An invalid byte sequence was encountered while decoding replay.',
+			)
 			if (entry.symbol === 'EOF') {
 				break
 			}

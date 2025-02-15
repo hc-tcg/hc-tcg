@@ -12,7 +12,6 @@ export const serverMessages = messages('serverMessages', {
 	INVALID_PLAYER: null,
 	PLAYER_INFO: null,
 	NEW_DECK: null,
-	NEW_MINECRAFT_NAME: null,
 	LOAD_UPDATES: null,
 	OPPONENT_CONNECTION: null,
 	GAME_START: null,
@@ -41,12 +40,10 @@ export const serverMessages = messages('serverMessages', {
 	INVALID_REPLAY: null,
 	REPLAY_OVERVIEW_RECIEVED: null,
 	/**Postgres */
-	NO_DATABASE_CONNECTION: null,
 	AUTHENTICATED: null,
 	AUTHENTICATION_FAIL: null,
 	DECKS_RECIEVED: null,
-	ACHIEVEMENTS_RECIEVED: null,
-	STATS_RECIEVED: null,
+	AFTER_GAME_INFO: null,
 	CURRENT_IMPORT_RECIEVED: null,
 	DATABASE_FAILURE: null,
 })
@@ -65,7 +62,6 @@ export type ServerMessages = [
 		game?: LocalGameState
 	},
 	{type: typeof serverMessages.NEW_DECK; deck: Deck},
-	{type: typeof serverMessages.NEW_MINECRAFT_NAME; name: string},
 	{
 		type: typeof serverMessages.LOAD_UPDATES
 		updates: Array<Update>
@@ -107,7 +103,6 @@ export type ServerMessages = [
 	},
 	{type: typeof serverMessages.GAME_STATE; localGameState: LocalGameState},
 	{type: typeof serverMessages.CHAT_UPDATE; messages: Array<ChatMessage>},
-	{type: typeof serverMessages.NO_DATABASE_CONNECTION},
 	{type: typeof serverMessages.AUTHENTICATED; user: User},
 	{type: typeof serverMessages.AUTHENTICATION_FAIL},
 	{
@@ -117,13 +112,10 @@ export type ServerMessages = [
 		newActiveDeck?: Deck
 	},
 	{
-		type: typeof serverMessages.ACHIEVEMENTS_RECIEVED
-		progress: AchievementProgress
-	},
-	{
-		type: typeof serverMessages.STATS_RECIEVED
+		type: typeof serverMessages.AFTER_GAME_INFO
 		stats: PlayerStats
 		gameHistory: Array<GameHistory>
+		achievements: AchievementProgress
 	},
 	{type: typeof serverMessages.CURRENT_IMPORT_RECIEVED; deck: ApiDeck | null},
 	{type: typeof serverMessages.DATABASE_FAILURE; error: string | undefined},
