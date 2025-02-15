@@ -24,6 +24,7 @@ import {
 	addGame,
 	getDeck,
 	getGameReplay,
+	sendAfterGameInfo,
 	updateAchievements,
 } from 'db/db-reciever'
 import {GameController} from 'game-controller'
@@ -280,6 +281,7 @@ function* gameManager(con: GameController) {
 				turnActionsBuffer,
 				con.gameCode,
 			)
+			yield* sendAfterGameInfo(gamePlayers)
 		}
 	}
 }
@@ -369,7 +371,6 @@ function* updateDeckSaga(
 ) {
 	if (payload.databaseConnected) {
 		const newDeck = yield* getDeck(payload.activeDeckCode)
-		if (!newDeck) return
 		player.setPlayerDeck(newDeck)
 		return
 	}
@@ -383,7 +384,7 @@ export function* joinQueue(
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	updateDeckSaga(player, msg.payload)
+	yield* updateDeckSaga(player, msg.payload)
 
 	if (!player) {
 		console.info('[Join queue] Player not found: ', playerId)
@@ -478,7 +479,7 @@ export function* createBossGame(
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	updateDeckSaga(player, msg.payload)
+	yield* updateDeckSaga(player, msg.payload)
 
 	if (!player) {
 		console.info('[Create Boss game] Player not found: ', playerId)
@@ -569,7 +570,7 @@ export function* createPrivateGame(
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	updateDeckSaga(player, msg.payload)
+	yield* updateDeckSaga(player, msg.payload)
 
 	if (!player) {
 		console.info('[Create private game] Player not found: ', playerId)
@@ -611,7 +612,7 @@ export function* joinPrivateGame(
 	} = msg
 	const player = root.players[playerId]
 
-	updateDeckSaga(player, msg.payload)
+	yield* updateDeckSaga(player, msg.payload)
 
 	if (!player) {
 		console.info('[Join private game] Player not found: ', playerId)
