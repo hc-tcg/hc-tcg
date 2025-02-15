@@ -8,7 +8,8 @@ import {
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalGameState} from 'common/types/game-state'
-import {setAppearance} from 'db/db-reciever'
+import {censorString} from 'common/utils/formatting'
+import {setAppearance, setMinecraftName, setUsername} from 'db/db-reciever'
 import {GameController} from 'game-controller'
 import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
 import {getGame} from 'selectors'
@@ -48,7 +49,7 @@ function getLocalGameStateForPlayer(
 export function* playerConnectedSaga(
 	action: LocalMessageTable[typeof localMessages.CLIENT_CONNECTED],
 ) {
-	const {playerName, minecraftName, deck, socket} = action
+	const {playerName, minecraftName, playerUuid, deck, socket} = action
 
 	if (action.playerId) {
 		const existingPlayer = root.players[action.playerId]
@@ -68,13 +69,22 @@ export function* playerConnectedSaga(
 				messages: game?.chat,
 			})
 		} else {
-			console.log('invalid player connected')
+			const time = Date.now()
+			const date = new Date(time)
+			console.info(
+				`${date.toLocaleTimeString('it-IT')}: Invalid player connected.`,
+			)
 			broadcast([{socket}], {type: serverMessages.INVALID_PLAYER})
 		}
 		return
 	}
 
-	const newPlayer = new PlayerModel(playerName, minecraftName, socket)
+	const newPlayer = new PlayerModel(
+		playerName,
+		minecraftName,
+		playerUuid,
+		socket,
+	)
 	if (deck) newPlayer.setPlayerDeck(deck)
 	root.addPlayer(newPlayer)
 
@@ -119,16 +129,17 @@ export function* playerDisconnectedSaga(
 	}
 }
 
-export function* updateDeckSaga(
-	action: RecievedClientMessage<typeof clientMessages.SELECT_DECK>,
+export function* updateUsernameSaga(
+	action: RecievedClientMessage<typeof clientMessages.UPDATE_USERNAME>,
 ) {
 	const {playerId} = action
-	let playerDeck = action.payload.deck
+	let username = action.payload.name
 	const player = root.players[playerId]
 	if (!player) return
-	player.setPlayerDeck(playerDeck)
-	if (!player.deck) return
-	broadcast([player], {type: serverMessages.NEW_DECK, deck: player.deck})
+	player.name = username
+	player.censoredName = censorString(username)
+
+	yield* setUsername(player.uuid, username)
 }
 
 export function* updateMinecraftNameSaga(
@@ -138,12 +149,9 @@ export function* updateMinecraftNameSaga(
 	let minecraftName = action.payload.name
 	const player = root.players[playerId]
 	if (!player) return
-	player.setMinecraftName(minecraftName)
+	player.minecraftName = minecraftName
 
-	broadcast([player], {
-		type: serverMessages.NEW_MINECRAFT_NAME,
-		name: player.minecraftName,
-	})
+	yield* setMinecraftName(player.uuid, minecraftName)
 }
 
 export function* loadUpdatesSaga(action: any) {

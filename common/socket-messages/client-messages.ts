@@ -8,7 +8,6 @@ import {AnyTurnActionData} from '../types/turn-action-data'
 export const clientMessages = messages('clientMessages', {
 	GET_UPDATES: null,
 	SELECT_DECK: null,
-	UPDATE_MINECRAFT_NAME: null,
 	CREATE_BOSS_GAME: null,
 	CANCEL_BOSS_GAME: null,
 	CREATE_PRIVATE_GAME: null,
@@ -24,11 +23,9 @@ export const clientMessages = messages('clientMessages', {
 	SPECTATOR_LEAVE: null,
 	CHAT_MESSAGE: null,
 	/**Postgres */
-	PG_AUTHENTICATE: null,
-	PG_INSERT_USER: null,
+	UPDATE_USERNAME: null,
+	UPDATE_MINECRAFT_NAME: null,
 	GET_DECKS: null,
-	GET_ACHIEVEMENTS: null,
-	GET_STATS: null,
 	INSERT_DECK: null,
 	EXPORT_DECK: null,
 	GRAB_CURRENT_IMPORT: null,
@@ -43,7 +40,7 @@ export const clientMessages = messages('clientMessages', {
 
 export type ClientMessages = [
 	{type: typeof clientMessages.GET_UPDATES},
-	{type: typeof clientMessages.SELECT_DECK; deck: Deck},
+	{type: typeof clientMessages.UPDATE_USERNAME; name: string},
 	{type: typeof clientMessages.UPDATE_MINECRAFT_NAME; name: string},
 	{
 		type: typeof clientMessages.CREATE_BOSS_GAME
@@ -103,19 +100,7 @@ export type ClientMessages = [
 	},
 	{type: typeof clientMessages.SPECTATOR_LEAVE},
 	{type: typeof clientMessages.CHAT_MESSAGE; message: string},
-	{
-		type: typeof clientMessages.PG_AUTHENTICATE
-		userId: string
-		secret: string
-	},
-	{
-		type: typeof clientMessages.PG_INSERT_USER
-		username: string | null
-		minecraftName: string | null
-	},
 	{type: typeof clientMessages.GET_DECKS; newActiveDeck?: string},
-	{type: typeof clientMessages.GET_STATS},
-	{type: typeof clientMessages.GET_ACHIEVEMENTS},
 	{
 		type: typeof clientMessages.INSERT_DECK
 		deck: Deck
