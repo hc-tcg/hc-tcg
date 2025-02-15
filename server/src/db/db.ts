@@ -181,8 +181,8 @@ export class Database {
 			const secret = (await this.pool.query('SELECT * FROM uuid_generate_v4()'))
 				.rows[0]['uuid_generate_v4']
 			const user = await this.pool.query(
-				"INSERT INTO users (username, minecraft_name, secret) values ($1,$2,crypt($3, gen_salt('bf', $4))) RETURNING (user_id)",
-				[username, username, secret, this.bfDepth],
+				"INSERT INTO users (username, minecraft_name, secret) values ($1,$1,crypt($3, gen_salt('bf', $3))) RETURNING (user_id)",
+				[username, secret, this.bfDepth],
 			)
 
 			const playerUuid: string = user.rows[0]['user_id']

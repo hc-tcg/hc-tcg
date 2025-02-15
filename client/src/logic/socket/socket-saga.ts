@@ -6,13 +6,14 @@ import {SagaIterator} from 'redux-saga'
 import {eventChannel} from 'redux-saga'
 import {put, select, takeEvery} from 'typed-redux-saga'
 import {getSocket} from './socket-selectors'
+import {NO_SOCKET_ASSERT} from 'logic/session/session-saga'
 
 let messagesThatHaveNotBeenSent: Array<ClientMessage> = []
 
 export function* sendMsg(payload: ClientMessage) {
 	const socket = yield* select(getSocket)
 
-	if (!socket) throw new Error('The socket should be defined at this point.')
+	if (!socket) throw new Error(NO_SOCKET_ASSERT)
 
 	if (socket.connected) {
 		console.log('[send]', payload.type, payload)
@@ -78,7 +79,7 @@ function* socketSaga(): SagaIterator {
 	const socket = yield* select(getSocket)
 	const session = yield* select(getSession)
 
-	if (!socket) throw new Error('The socket should be defined at this point.')
+	if (!socket) throw new Error(NO_SOCKET_ASSERT)
 
 	const channel = eventChannel((emitter: any): any => {
 		const connectListener = () => emitter('connect')

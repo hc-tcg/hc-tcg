@@ -17,8 +17,6 @@ export function newSocket(): SocketType {
 		console.log('[message]', event, payload)
 	})
 
-	console.log(socket)
-
 	//@ts-ignore
 	return socket
 }

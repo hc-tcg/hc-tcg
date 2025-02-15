@@ -34,6 +34,9 @@ import {getSocket} from 'logic/socket/socket-selectors'
 import {eventChannel} from 'redux-saga'
 import {call, delay, put, race, select, take, takeEvery} from 'typed-redux-saga'
 
+export const NO_SOCKET_ASSERT =
+	'The socket should be be defined as soon as the page is opened.'
+
 const loadSession = () => {
 	const playerName = sessionStorage.getItem('playerName')
 	const censoredPlayerName = sessionStorage.getItem('censoredPlayerName')
@@ -127,7 +130,16 @@ function* authenticateUser(
 		headers,
 	})
 
-	if (auth.status === 500) return getNonDatabaseUser()
+	if (auth.status === 500) {
+		yield* put<LocalMessage>({
+			type: localMessages.DATABASE_SET,
+			data: {
+				key: 'noConnection',
+				value: true,
+			},
+		})
+		return getNonDatabaseUser()
+	}
 
 	const userResponse = (yield* call([auth, auth.json])) as User
 	return userResponse
@@ -145,6 +157,13 @@ function* createUser(username: string): Generator<any, User> {
 
 	if (userInfo.status === 500) {
 		const user = getNonDatabaseUser()
+		yield* put<LocalMessage>({
+			type: localMessages.DATABASE_SET,
+			data: {
+				key: 'noConnection',
+				value: true,
+			},
+		})
 		if (user.decks.length === 0) {
 			const starterDeck = getStarterPack()
 			const newDeck: Deck = {
@@ -234,21 +253,9 @@ export function* loginSaga() {
 	const socket = yield* select(getSocket)
 	const session = loadSession()
 
-	if (!socket) throw Error('The socket should be defined at this point.')
+	if (!socket) throw Error(NO_SOCKET_ASSERT)
 
 	console.log('session saga: ', session)
-
-	const noConnection = true
-
-	if (noConnection) {
-		yield* put<LocalMessage>({
-			type: localMessages.DATABASE_SET,
-			data: {
-				key: 'noConnection',
-				value: true,
-			},
-		})
-	}
 
 	if (!session) {
 		const secret = localStorage.getItem('databaseInfo:secret')
@@ -541,7 +548,7 @@ export function* databaseConnectionSaga() {
 export function* logoutSaga() {
 	const socket = yield* select(getSocket)
 
-	if (!socket) throw new Error('The socket should be defined at this point.')
+	if (!socket) throw new Error(NO_SOCKET_ASSERT)
 
 	yield* race([
 		take(localMessages.LOGOUT),
