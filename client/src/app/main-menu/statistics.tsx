@@ -895,7 +895,7 @@ function Statistics({setMenuSection}: Props) {
 												<div className={css.gameHistoryBox}>
 													<div className={css.playerHead}>
 														<img
-															src={`https://mc-heads.net/head/${settings.minecraftName}/right`}
+															src={`https://mc-heads.net/head/${game.firstPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/right`}
 															alt="player head"
 														/>
 													</div>

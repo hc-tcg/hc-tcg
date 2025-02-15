@@ -6,15 +6,11 @@ import {LocalMessage, localMessages} from 'messages'
 import {put, takeEvery} from 'typed-redux-saga'
 import {safeCall} from 'utils'
 import {
-	addUser,
-	authenticateUser,
 	deleteDeck,
 	deleteTag,
 	exportDeck,
-	getAchievements,
 	getDecks,
 	getOverview,
-	getStats,
 	grabCurrentImport,
 	importDeck,
 	insertDeck,
@@ -37,14 +33,14 @@ import {
 import {
 	loadUpdatesSaga,
 	updateCosmeticSaga,
-	updateDeckSaga,
 	updateMinecraftNameSaga,
+	updateUsernameSaga,
 } from './player'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
-		case clientMessages.SELECT_DECK:
-			return yield* updateDeckSaga(
+		case clientMessages.UPDATE_USERNAME:
+			return yield* updateUsernameSaga(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.UPDATE_MINECRAFT_NAME:
@@ -103,14 +99,6 @@ function* handler(message: RecievedClientMessage) {
 				action: actionMessage.payload.action,
 				playerEntity: actionMessage.payload.playerEntity,
 			})
-		case clientMessages.PG_INSERT_USER:
-			return yield* addUser(
-				message as RecievedClientMessage<typeof message.type>,
-			)
-		case clientMessages.PG_AUTHENTICATE:
-			return yield* authenticateUser(
-				message as RecievedClientMessage<typeof message.type>,
-			)
 		case clientMessages.GET_DECKS:
 			return yield* getDecks(
 				message as RecievedClientMessage<typeof message.type>,
@@ -149,14 +137,6 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.DELETE_TAG:
 			return yield* deleteTag(
-				message as RecievedClientMessage<typeof message.type>,
-			)
-		case clientMessages.GET_STATS:
-			return yield* getStats(
-				message as RecievedClientMessage<typeof message.type>,
-			)
-		case clientMessages.GET_ACHIEVEMENTS:
-			return yield* getAchievements(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.SET_COSMETIC:
