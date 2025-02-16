@@ -13,6 +13,7 @@ import PackOfWolves from './pack-of-wolves'
 import TeamStar from './team-star'
 import {Achievement} from './types'
 import Untouchable from './untouchable'
+import UseLikeAHermit from './use-like-a-hermit'
 import {Win1, Win10, Win100, Win500, Win1000} from './wins'
 import Wipeout from './wipeout'
 
@@ -32,6 +33,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	TeamStar,
 	OreSnatcher,
 	Designer,
+	UseLikeAHermit,
 	Win1,
 	Win10,
 	Win100,
