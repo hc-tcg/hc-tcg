@@ -39,6 +39,8 @@ export const beforeAttack = createPriorityDictionary({
 	TARGET_BLOCK_REDIRECT: null,
 	/** Effects, Hermits, and Status Effects that add additional attacks or adjust damage of the main attack. */
 	ADD_ATTACK: null,
+	/** When attacks miss.  */
+	ATTACKS_MISS: null,
 	/** Effects, Hermits, and Status Effects that modify damage of additional attacks along with the main attack.  */
 	MODIFY_DAMAGE: null,
 	/** Hermit attack abilities that modify state before any damage is dealt */

@@ -26,7 +26,7 @@ export const InvisibilityPotionHeadsEffect: StatusEffect<PlayerComponent> = {
 
 		observer.subscribeWithPriority(
 			game.hooks.beforeAttack,
-			beforeAttack.MODIFY_DAMAGE,
+			beforeAttack.ATTACKS_MISS,
 			(attack) => {
 				if (attack.player.entity !== player.opponentPlayer.entity) return
 				if (!attack.isType('primary', 'secondary')) return
