@@ -55,6 +55,7 @@ const MonkeyfarmRare: Hermit = {
 					query.not(query.slot.active),
 					query.not(query.slot.empty),
 					query.not(query.slot.frozen),
+					query.slot.row((_game, row) => !!row.health),
 				)
 
 				if (!game.components.exists(SlotComponent, pickCondition)) return
