@@ -55,8 +55,6 @@ const LightningRod: Attach = {
 						if (attack.calculateDamage() <= 0) return
 
 						used = true
-
-						observer.unsubscribe(game.hooks.beforeAttack)
 					},
 				)
 			},
