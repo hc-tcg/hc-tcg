@@ -10,9 +10,6 @@ import {CardComponent} from './card-component'
 import {ObserverComponent} from './observer-component'
 import {PlayerComponent} from './player-component'
 
-let STATUS_EFFECTS: Record<any, StatusEffect<any>>
-import('../status-effects').then((mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS))
-
 export class StatusEffectComponent<
 	TargetT extends CardComponent | PlayerComponent =
 		| CardComponent
@@ -37,7 +34,8 @@ export class StatusEffectComponent<
 	) {
 		this.game = game
 		this.entity = entity
-		this.props = STATUS_EFFECTS[statusEffect.id] as any
+
+		this.props = statusEffect as any
 		this.creatorEntity = creator
 		this.order = game.components.filter(StatusEffectComponent).length
 		this.targetEntity = null

@@ -750,7 +750,7 @@ function EditDeck({
 								</div>
 								<div className={css.editDeckInfoSettings}>
 									<p className={css.privacySettings}>
-										Keep name and icon private
+										Make name and icon public
 									</p>
 									<div className={css.spacingItem}></div>
 									<Checkbox
@@ -759,7 +759,7 @@ function EditDeck({
 											dispatch({
 												type: localMessages.MAKE_INFO_PUBLIC,
 												code: loadedDeck.code,
-												public: !e.currentTarget.checked,
+												public: e.currentTarget.checked,
 											})
 											const currentIndex = databaseInfo.decks.findIndex(
 												(code) => code.code === loadedDeck.code,

@@ -23,11 +23,15 @@ const BrewingStand: Attach = {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			if (!component.slot.inRow() || component.slot.row.getItems().length === 0)
+			if (
+				!component.slot.inRow() ||
+				component.slot.row.getItems(true).length === 0
+			)
 				return
 
 			if (component.slot.row.entity !== player.activeRowEntity) return
 
+			/** @todo This flip does not get logged, may have to be added manually */
 			const flip = flipCoin(game, player, component)[0]
 			if (flip !== 'heads') return
 

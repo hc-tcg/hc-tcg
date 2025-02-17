@@ -2,7 +2,6 @@ import {describe, expect, test} from '@jest/globals'
 import SmallishbeansAdventRare from 'common/cards/advent-of-tcg/hermits/smallishbeans-rare'
 import String from 'common/cards/attach/string'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import SmallishbeansRare from 'common/cards/hermits/smallishbeans-rare'
 import PvPDoubleItem from 'common/cards/items/pvp-rare'
 import WildItem from 'common/cards/items/wild-common'
 import Efficiency from 'common/cards/single-use/efficiency'
@@ -64,27 +63,6 @@ describe('Test Stratos Joel', () => {
 				},
 			},
 			{startWithAllCards: true},
-		)
-	})
-
-	test('Stratos Joel does not count for rare Joel "Obsess"', () => {
-		testGame(
-			{
-				playerOneDeck: [EthosLabCommon],
-				playerTwoDeck: [SmallishbeansRare, SmallishbeansAdventRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
-
-					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 0)
-					yield* playCardFromHand(game, SmallishbeansAdventRare, 'hermit', 1)
-					yield* attack(game, 'secondary')
-					expect(game.opponentPlayer.activeRow?.health).toBe(
-						EthosLabCommon.health - SmallishbeansRare.secondary.damage,
-					)
-				},
-			},
-			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
 })

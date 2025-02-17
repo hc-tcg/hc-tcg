@@ -28,7 +28,7 @@ const SmeltingEffect: Counter<CardComponent> = {
 			effect.counter -= 1
 			if (effect.counter === 0) {
 				if (target.slot.inRow()) {
-					target.slot.row.getItems().forEach((item) => {
+					target.slot.row.getItems(true).forEach((item) => {
 						if (item.isItem() && item.props.id.includes('common')) {
 							// Create a new double item and delete the old single item
 							game.components.new(

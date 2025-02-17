@@ -64,7 +64,7 @@ export class CardComponent<CardType extends Card = Card> {
 		this.entity = entity
 		this.observerEntity = null
 		if (card instanceof Object) {
-			this.props = CARDS[card.id] as CardType
+			this.props = card as CardType
 		} else {
 			this.props = CARDS[card] as CardType
 		}
