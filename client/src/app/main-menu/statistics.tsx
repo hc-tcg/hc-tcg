@@ -27,6 +27,7 @@ import {ReactNode, useEffect, useReducer, useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './statistics.module.scss'
+import Tabs from 'components/tabs/tabs'
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 
@@ -146,8 +147,6 @@ function DropDownButton({children}: {children: React.ReactChild}) {
 	return <Button>{children} ▼</Button>
 }
 
-type tabs = 'stats' | 'hof' | 'games'
-
 function Statistics({setMenuSection}: Props) {
 	const dispatch = useDispatch()
 
@@ -156,7 +155,7 @@ function Statistics({setMenuSection}: Props) {
 	const stats = databaseInfo.stats
 	const gameHistory = databaseInfo.gameHistory.filter((game) => game.hasReplay)
 	const settings = useSelector(getSettings)
-	const [tab, setTab] = useState<tabs>('stats')
+	const [tab, setTab] = useState<string>('Statistics')
 	const [showInvalidReplayModal, setShowInvalidReplayModal] =
 		useState<boolean>(false)
 	const [showOverviewModal, setShowOverviewModal] = useState<boolean>(false)
@@ -286,47 +285,6 @@ function Statistics({setMenuSection}: Props) {
 			if (!privateGameCode || privateGameCode.length !== 6) return ''
 			return `private-game/${privateGameCode}`
 		},
-	}
-
-	function Tabs({selected}: {selected: tabs}) {
-		return (
-			<div className={classNames(css.tabs, css.mobileHeader)}>
-				<div
-					className={classNames(
-						css.tab,
-						selected === 'stats' ? css.selected : css.deselected,
-					)}
-					onClick={() => {
-						if (selected !== 'stats') setTab('stats')
-					}}
-				>
-					My Stats
-				</div>
-				<div
-					className={classNames(
-						css.tab,
-						selected === 'games' ? css.selected : css.deselected,
-					)}
-					onClick={() => {
-						if (selected !== 'games') setTab('games')
-					}}
-				>
-					My Games
-				</div>
-				<div
-					className={classNames(
-						css.tab,
-						selected === 'hof' ? css.selected : css.deselected,
-					)}
-					onClick={() => {
-						if (selected !== 'hof') setTab('hof')
-					}}
-				>
-					Hall of Fame
-				</div>
-				<div className={css.afterTabs}></div>
-			</div>
-		)
 	}
 
 	async function getData() {
@@ -822,19 +780,21 @@ function Statistics({setMenuSection}: Props) {
 		)
 	}
 
+	const tabs = ['Statistics', 'My Games', 'Hall of Fame']
+
 	return (
 		<>
 			<MenuLayout
-				back={() => setMenuSection('more')}
+				back={() => setMenuSection('main-menu')}
 				title="Statistics"
-				returnText="More"
+				returnText="Main Menu"
 				className={css.settingsMenu}
 			>
 				<div className={css.bigHallOfFameArea}>
 					<div className={css.mainHallOfFameArea}>
-						{tab === 'stats' && (
+						{tab === 'Statistics' && (
 							<div className={css.fullLeftArea}>
-								<Tabs selected={'stats'} />
+								<Tabs selected={tab} setSelected={setTab} tabs={tabs} />
 								<div className={css.tableArea}>
 									<div className={css.stats}>
 										<div className={css.stat}>
@@ -948,9 +908,9 @@ function Statistics({setMenuSection}: Props) {
 								</div>
 							</div>
 						)}
-						{tab === 'games' && (
+						{tab === 'My Games' && (
 							<div className={css.fullLeftArea}>
-								<Tabs selected={'games'} />
+								<Tabs selected={tab} setSelected={setTab} tabs={tabs} />
 								<div className={css.tableArea}>
 									<div className={css.gameHistory}>
 										<div className={css.gameHistoryHeader}>Game History</div>
@@ -1114,9 +1074,9 @@ function Statistics({setMenuSection}: Props) {
 								</div>
 							</div>
 						)}
-						{tab === 'hof' && (
+						{tab === 'Hall of Fame' && (
 							<div className={css.fullLeftArea}>
-								<Tabs selected={'hof'} />
+								<Tabs selected={tab} setSelected={setTab} tabs={tabs} />
 								<div className={css.optionsButtonArea}>
 									<DropdownComponent
 										button={
@@ -1143,7 +1103,7 @@ function Statistics({setMenuSection}: Props) {
 								</div>
 							</div>
 						)}
-						{tab === 'hof' && (
+						{tab === 'Hall of Fame' && (
 							<div
 								className={classNames(
 									css.hofSidebar,
