@@ -4,13 +4,11 @@ on:
     push:
         branches:
             - master
-            - aotcgii
-            - achievements
+            - ux-rework
     pull_request:
         branches:
             - master
-            - aotcgii
-            - achievements
+            - ux-rework
 
 permissions:
     checks: write
