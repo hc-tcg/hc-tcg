@@ -154,7 +154,6 @@ describe('Test Lightning Rod', () => {
 		)
 	})
 	test('Rod discards from 0 damage due to Royal Protection', () => {
-		// Practically includes 0-damage atttacks.
 		testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
