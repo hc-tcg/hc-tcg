@@ -92,7 +92,7 @@ export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 
 		observer.subscribeWithPriority(
 			game.hooks.beforeAttack,
-			beforeAttack.ATTACKS_MISS,
+			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return
 				if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
