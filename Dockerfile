@@ -1,3 +1,5 @@
+#syntax=docker/dockerfile:1.7-labs
+
 FROM node:18.20-bookworm
 
 ARG APP_VERSION
@@ -11,7 +13,8 @@ WORKDIR /app
 
 RUN apt-get install imagemagick
 
-COPY . .
+# Card renders are not copied to ensure the Docker build is always up to date
+COPY --exclude=client/public/images/cards/** . .
 
 COPY common/config/debug-config.example.js common/config/debug-config.js
 

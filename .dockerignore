@@ -6,8 +6,6 @@ node_modules/**
 client/dist/**
 server/dist/**
 card-prerender/render/**
-client/public/images/cards
-client/public/images/cards/**
 /test-results/
 /playwright-report/
 /blob-report/
