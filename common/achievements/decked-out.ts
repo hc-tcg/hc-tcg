@@ -6,7 +6,7 @@ const DeckedOut: Achievement = {
 	numericId: 1,
 	id: 'decked_out',
 	name: 'Decked out',
-	icon: '',
+	icon: 'soulflame',
 	description: 'Win a game by your opponent running out of cards',
 	steps: 1,
 	onGameEnd(_game, playerEntity, component, outcome) {
