@@ -43,8 +43,6 @@ export const beforeAttack = createPriorityDictionary({
 	SELF_MODIFY_DAMAGE: null,
 	/** When attacks miss.  */
 	ATTACKS_MISS: null,
-	/** Listeners that runs after attacks miss and before other damage modifiers.  */
-	RESOLVE_AFTER_MISS: null,
 	/** Effects, Hermits, and Status Effects that modify damage of additional attacks along with the main attack.  */
 	MODIFY_DAMAGE: null,
 	/** Hermit attack abilities that modify state before any damage is dealt */
