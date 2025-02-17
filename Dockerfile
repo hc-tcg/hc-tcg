@@ -1,3 +1,5 @@
+#syntax=docker/dockerfile:1.7-labs
+
 FROM node:18.20-bookworm
 
 ARG APP_VERSION
