@@ -11,7 +11,8 @@ WORKDIR /app
 
 RUN apt-get install imagemagick
 
-COPY . .
+COPY --exclude-paths client/public/images/cards/** . .
+
 
 COPY common/config/debug-config.example.js common/config/debug-config.js
 

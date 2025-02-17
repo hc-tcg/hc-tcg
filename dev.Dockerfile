@@ -10,14 +10,14 @@ ENV CI true
 RUN mkdir /app
 WORKDIR /app
 
-RUN apt-get install imagemagick
-
 COPY package.json package.json
 COPY package-lock.json package-lock.json
 RUN npm ci
 
 COPY common/config/debug-config.example.js common/config/debug-config.js
 COPY version.js version.js
+
+COPY client/public/images/cards client/public/images/cards 
 
 COPY common common
 COPY server server
