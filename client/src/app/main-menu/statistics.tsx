@@ -23,7 +23,7 @@ import Spinner from 'components/spinner'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages} from 'logic/messages'
-import {useRef, useState} from 'react'
+import {ReactNode, useEffect, useReducer, useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './statistics.module.scss'
@@ -204,7 +204,7 @@ function Statistics({setMenuSection}: Props) {
 	const afterRef = useRef<any>()
 	const [endpointBefore, setEndpointBefore] = useState<number | null>(null)
 	const [endpointAfter, setEndpointAfter] = useState<number | null>(null)
-	const [showDropdown, _setShowDropdown] = useState<boolean>(false)
+	const [showDropdown, setShowDropdown] = useState<boolean>(false)
 
 	const [cardOrderBy, setCardOrderBy] =
 		useState<keyof typeof cardOrderByOptions>('winrate')
@@ -224,6 +224,17 @@ function Statistics({setMenuSection}: Props) {
 	/* Private Game */
 	const codeRef = useRef<any>()
 	const [privateGameCode, setPrivateGameCode] = useState<string | null>(null)
+
+	// Make sure things look good after resize
+	const [, inc] = useReducer((x) => x + 1, 0)
+	useEffect(() => {
+		window.addEventListener('resize', inc)
+
+		// Clean up event listeners
+		return () => {
+			window.removeEventListener('resize', inc)
+		}
+	})
 
 	const endpoints: Record<Endpoints, () => string> = {
 		decks: () => {
@@ -433,14 +444,16 @@ function Statistics({setMenuSection}: Props) {
 			)
 		}
 
+		const cardsPerLine = window.innerWidth > 720 ? 9 : 5
+
 		const cardGroups = cards.reduce(
 			(r: Array<Array<Record<string, any>>>, card, index) => {
-				if (index % 9 === 0) {
+				if (index % cardsPerLine === 0) {
 					r.push([])
 				}
 				r[r.length - 1].push(card)
 				if (index === cards.length - 1) {
-					for (let i = (index % 9) + 1; i < 9; i++) {
+					for (let i = (index % cardsPerLine) + 1; i < cardsPerLine; i++) {
 						r[r.length - 1].push({extraCard: null})
 					}
 				}
@@ -625,6 +638,22 @@ function Statistics({setMenuSection}: Props) {
 		const typeList = types.types as Array<Record<string, any>>
 		typeList.sort((a, b) => b[sortBy] - a[sortBy])
 
+		const onMobile = window.innerWidth > 720 ? false : true
+
+		const xTicks = {
+			ticks: {
+				display: false,
+			},
+		}
+		const yTicks = {
+			min: 0,
+			ticks: {
+				callback: function (value: any) {
+					return value + '%'
+				},
+			},
+		}
+
 		return (
 			<div className={css.barContainer}>
 				<Bar
@@ -662,9 +691,12 @@ function Statistics({setMenuSection}: Props) {
 						],
 					}}
 					options={{
+						indexAxis: onMobile ? 'y' : 'x',
+						responsive: true,
 						animation: {
 							duration: 0,
 						},
+						maintainAspectRatio: false,
 						plugins: {
 							legend: {
 								onClick: () => {},
@@ -687,24 +719,16 @@ function Statistics({setMenuSection}: Props) {
 							},
 						},
 						scales: {
-							x: {
-								ticks: {
-									display: false,
-								},
-							},
-							y: {
-								min: 0,
-								ticks: {
-									callback: function (value, _index, _values) {
-										return value + '%'
-									},
-								},
-							},
+							x: onMobile ? yTicks : xTicks,
+							y: onMobile ? xTicks : xTicks,
 						},
 						layout: {
 							padding: {
 								/* Each type icon needs twenty pixels of padding */
-								bottom: Math.max(...typeList.map((x) => x.type.length)) * 20,
+								bottom: onMobile
+									? 0
+									: Math.max(...typeList.map((x) => x.type.length)) * 20,
+								left: onMobile ? 40 : 0,
 							},
 						},
 					}}
@@ -714,22 +738,43 @@ function Statistics({setMenuSection}: Props) {
 							afterDatasetsDraw: (chart) => {
 								const ctx = chart.ctx
 								const xAxis = chart.scales.x
-								const offset =
-									(xAxis.getPixelForTick(1) - xAxis.getPixelForTick(0)) / 2
-								xAxis.ticks.forEach((_value, index: number) => {
-									const x = xAxis.getPixelForTick(index) - offset + 10
-									typeList[index].type.forEach((type: TypeT, index: number) => {
-										const image = new Image()
-										image.src = getCardTypeIcon(type)
-										ctx.drawImage(
-											image,
-											x,
-											chart.scales.y.bottom + 5 + index * 20,
-											20,
-											20,
+								const yAxis = chart.scales.y
+								if (!onMobile) {
+									const offset =
+										(xAxis.getPixelForTick(1) - xAxis.getPixelForTick(0)) / 2
+									xAxis.ticks.forEach((_value, index: number) => {
+										const x = xAxis.getPixelForTick(index) - offset + 10
+										typeList[index].type.forEach(
+											(type: TypeT, index: number) => {
+												const image = new Image()
+												image.src = getCardTypeIcon(type)
+												ctx.drawImage(
+													image,
+													x,
+													chart.scales.y.bottom + 5 + index * 20,
+													20,
+													20,
+												)
+											},
 										)
 									})
-								})
+								} else {
+									const offset =
+										(yAxis.getPixelForTick(1) - yAxis.getPixelForTick(0)) / 2
+									yAxis.ticks.forEach((_value, index: number) => {
+										const y = yAxis.getPixelForTick(index) - offset + 10
+										typeList[index].type.forEach((type: TypeT, i: number) => {
+											if (i >= 2) return
+											const image = new Image()
+											if (typeList[index].type.length > 2 && i === 1) {
+												image.src = '/images/icons/plus.png'
+											} else {
+												image.src = getCardTypeIcon(type)
+											}
+											ctx.drawImage(image, 20 - i * 20, y, 20, 20)
+										})
+									})
+								}
 							},
 						},
 					]}
@@ -754,19 +799,39 @@ function Statistics({setMenuSection}: Props) {
 		}
 	}
 
+	const DropdownComponent = ({button}: {button: ReactNode}) => {
+		return (
+			<Dropdown
+				button={button}
+				label="Selected statistic"
+				options={[
+					{name: 'Decks'},
+					{name: 'Cards'},
+					{name: 'Games'},
+					{name: 'Types'},
+					{name: 'Private game'},
+				]}
+				showNames={true}
+				action={(option) => {
+					if (option === selectedEndpoint) return
+					setData(null)
+					setDataRetrieved(false)
+					setSelectedEndpoint(option.toLocaleLowerCase() as Endpoints)
+				}}
+			/>
+		)
+	}
+
 	return (
 		<>
 			<MenuLayout
-				back={() => setMenuSection('settings')}
+				back={() => setMenuSection('more')}
 				title="Statistics"
 				returnText="More"
 				className={css.settingsMenu}
 			>
 				<div className={css.bigHallOfFameArea}>
 					<div className={css.mainHallOfFameArea}>
-						<div className={classNames(css.tabs, css.showOnMobile)}>
-							<Tabs selected={'hof'}></Tabs>
-						</div>
 						{tab === 'stats' && (
 							<div className={css.fullLeftArea}>
 								<Tabs selected={'stats'} />
@@ -893,20 +958,29 @@ function Statistics({setMenuSection}: Props) {
 											const startTime = new Date(game.startTime)
 											return (
 												<div className={css.gameHistoryBox}>
-													<div className={css.playerHead}>
-														<img
-															src={`https://mc-heads.net/head/${game.firstPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/right`}
-															alt="player head"
-														/>
-													</div>
 													<div
 														className={classNames(
 															css.gameAreaMiddle,
 															settings.gameSide === 'Right' && css.reverseSide,
 														)}
 													>
+														<div id={css.playerHead}>
+															<div className={css.playerHead}>
+																<img
+																	src={`https://mc-heads.net/head/${game.firstPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/right`}
+																	alt="player head"
+																/>
+															</div>
+														</div>
+														<div id={css.opponentHead}>
+															<div className={css.playerHead}>
+																<img
+																	src={`https://mc-heads.net/head/${game.secondPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/left`}
+																	alt="player head"
+																/>
+															</div>
+														</div>
 														<div
-															id={css.p1name}
 															className={classNames(
 																css.playerName,
 																settings.gameSide === 'Right' &&
@@ -967,6 +1041,7 @@ function Statistics({setMenuSection}: Props) {
 															)}
 															{game.secondPlayer.name}
 														</div>
+
 														<Button
 															id={css.deck}
 															onClick={() => {
@@ -985,41 +1060,52 @@ function Statistics({setMenuSection}: Props) {
 														</Button>
 														{game.hasReplay && (
 															<Button
-																onClick={() => handleReplayGame(game)}
 																id={css.replay}
+																onClick={() => handleReplayGame(game)}
 															>
 																Watch Replay
 															</Button>
 														)}
 														{game.hasReplay && (
 															<Button
-																onClick={() => handleOverview(game)}
 																id={css.overview}
+																onClick={() => handleOverview(game)}
 															>
 																Overview
 															</Button>
 														)}
-														<div id={css.time}>
-															{startTime.getMonth() + 1}/{startTime.getDate()}/
-															{startTime.getFullYear() - 2000},{' '}
-															{startTime.getHours() % 12}:
-															{startTime
-																.getMinutes()
-																.toString()
-																.padStart(2, '0')}{' '}
-															{startTime.getHours() >= 12 ? 'PM' : 'AM'}
+														<div id={css.time} className={css.timeAndturns}>
+															{startTime.getMonth() + 1}/{startTime.getDate()}
+															<span className={css.hideOnMobile}>
+																/{startTime.getFullYear() - 2000},{' '}
+															</span>
+															<span>
+																{startTime.getHours() % 12}:
+																{startTime
+																	.getMinutes()
+																	.toString()
+																	.padStart(2, '0')}{' '}
+																{startTime.getHours() >= 12 ? 'PM' : 'AM'}
+															</span>
 														</div>
-														<div id={css.turns}>
+														<div id={css.turns} className={css.hideOnMobile}>
 															{game.length.minutes}m{game.length.seconds}.
 															{Math.floor(game.length.milliseconds / 10)}s |{' '}
 															{game.turns} Turns
 														</div>
-													</div>
-													<div className={css.playerHead}>
-														<img
-															src={`https://mc-heads.net/head/${game.secondPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/left`}
-															alt="player head"
-														/>
+														<div
+															id={css.turns}
+															className={classNames(
+																css.showOnMobile,
+																css.timeAndturns,
+															)}
+														>
+															<div>
+																{game.length.minutes}m{game.length.seconds}.
+																{Math.floor(game.length.milliseconds / 10)}s
+															</div>
+															<div>{game.turns} Turns</div>
+														</div>
 													</div>
 												</div>
 											)
@@ -1031,6 +1117,21 @@ function Statistics({setMenuSection}: Props) {
 						{tab === 'hof' && (
 							<div className={css.fullLeftArea}>
 								<Tabs selected={'hof'} />
+								<div className={css.optionsButtonArea}>
+									<DropdownComponent
+										button={
+											<div className={css.showOptionsButton}>
+												Statistic: {title(selectedEndpoint)}
+											</div>
+										}
+									/>
+									<div
+										className={css.showOptionsButton}
+										onClick={() => setShowDropdown(!showDropdown)}
+									>
+										{showDropdown ? 'Hide' : 'Show'} Parameters
+									</div>
+								</div>
 								<div className={css.tableArea}>
 									{dataRetrieved && getTable()}
 									{!dataRetrieved && (
@@ -1049,34 +1150,21 @@ function Statistics({setMenuSection}: Props) {
 									!showDropdown && css.hideOnMobile,
 								)}
 							>
-								<div className={css.sidebarHeader}></div>
+								<div className={css.optionsHeader}></div>
 								<div className={css.hofOptions}>
-									<p>
+									<p className={css.hideOnMobile}>
 										<b>Statistic</b>
 									</p>
-									<Dropdown
-										button={
-											<DropDownButton>{title(selectedEndpoint)}</DropDownButton>
-										}
-										label="Selected statistic"
-										options={[
-											{name: 'Decks'},
-											{name: 'Cards'},
-											{name: 'Games'},
-											{name: 'Types'},
-											{name: 'Private game'},
-										]}
-										showNames={true}
-										action={(option) => {
-											if (option === selectedEndpoint) return
-											setData(null)
-											setDataRetrieved(false)
-											setSelectedEndpoint(
-												option.toLocaleLowerCase() as Endpoints,
-											)
-										}}
-									/>
-									<p>
+									<span className={css.hideOnMobile}>
+										<DropdownComponent
+											button={
+												<DropDownButton>
+													{title(selectedEndpoint)}
+												</DropDownButton>
+											}
+										/>
+									</span>
+									<p className={css.hideOnMobile}>
 										<b>Parameters</b>
 									</p>
 									{selectedEndpoint !== 'private game' && (
