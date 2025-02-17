@@ -7,7 +7,7 @@ function Tabs({
 	tabs,
 }: {
 	selected: string
-	setSelected: (str: string) => void
+	setSelected: (str: any) => void
 	tabs: Array<string>
 }) {
 	return (
