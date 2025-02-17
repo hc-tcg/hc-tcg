@@ -6,13 +6,13 @@ import {Achievement} from './types'
 
 const CertifiedZombie: Achievement = {
 	...achievement,
-	id: 'all_cards',
+	id: 'certified_zombie',
 	numericId: 0,
 	name: 'Certified Zombie',
 	description:
 		'Survive with an armor stand as your active hermit for three rounds.',
 	steps: 3,
-	icon: 'old_menu',
+	icon: 'certified_zombie',
 	onGameStart(game, playerEntity, component, observer) {
 		let player = game.components.get(playerEntity)
 		assert(player, 'Player should be in the ECS')
