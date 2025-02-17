@@ -16,6 +16,7 @@ import {useDispatch, useSelector} from 'react-redux'
 import css from './cosmsetics.module.scss'
 import Tabs from 'components/tabs/tabs'
 import AchievementComponent from 'components/achievement'
+import {Achievement} from 'common/achievements/types'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -80,15 +81,35 @@ function Cosmetics({setMenuSection}: Props) {
 		useState<Cosmetic['type']>('title')
 	const achievementProgress = useSelector(getAchievements)
 	const appearance = useSelector(getAppearance)
-	const slectableCosmetics = ALL_COSMETICS.filter(
+	const selectableCosmetics = ALL_COSMETICS.filter(
 		(cosmetic) => cosmetic.type === selectedCosmetic,
 	)
 	const selected = appearance[selectedCosmetic]
-	const [tab, selectTab] = useState<string>('Titles')
+	const [tab, selectTab] = useState<Cosmetic['type']>('title')
 	const data = useSelector(getAchievements)
 
 	// const usernameRef = useRef<HTMLInputElement>(null)
 	// const minecraftNameRef = useRef<HTMLInputElement>(null)
+
+	const sortedAchievements = ACHIEVEMENTS_LIST.reduce(
+		(
+			r: {
+				background: Array<Achievement>
+				title: Array<Achievement>
+				coin: Array<Achievement>
+				heart: Array<Achievement>
+				border: Array<Achievement>
+			},
+			c,
+		) => {
+			const cosmetic = ALL_COSMETICS.find((cosmetic) => cosmetic.id === c.icon)
+			if (!cosmetic) return r
+			r[cosmetic.type].push(c)
+
+			return r
+		},
+		{background: [], title: [], coin: [], heart: [], border: []},
+	)
 
 	const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 		let isUnlocked = true
@@ -166,11 +187,11 @@ function Cosmetics({setMenuSection}: Props) {
 				<Tabs
 					selected={tab}
 					setSelected={selectTab}
-					tabs={['Title', 'Coin', 'Heart', 'Background', 'Border']}
+					tabs={['title', 'coin', 'heart', 'background', 'border']}
 				/>
 				<div className={css.itemSelector}>
 					<div className={css.cosmetics}>
-						{ACHIEVEMENTS_LIST.map((achievement) => {
+						{sortedAchievements[tab].map((achievement) => {
 							return (
 								<AchievementComponent
 									key={achievement.numericId}
