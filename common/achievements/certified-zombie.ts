@@ -1,8 +1,8 @@
 import assert from 'assert'
-import {achievement} from './defaults'
-import {Achievement} from './types'
 import ArmorStand from '../cards/attach/armor-stand'
 import {onTurnEnd} from '../types/priorities'
+import {achievement} from './defaults'
+import {Achievement} from './types'
 
 const CertifiedZombie: Achievement = {
 	...achievement,

@@ -1,4 +1,5 @@
 import British from './british'
+import CertifiedZombie from './certified-zombie'
 import DeceptiveSpectacles from './deceptive-spectacles'
 import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
@@ -15,7 +16,6 @@ import {Achievement} from './types'
 import Untouchable from './untouchable'
 import {Win1, Win10, Win100, Win500, Win1000} from './wins'
 import Wipeout from './wipeout'
-import CertifiedZombie from './certified-zombie'
 
 export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	AllCards,
