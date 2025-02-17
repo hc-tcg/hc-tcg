@@ -41,7 +41,7 @@ const PythonGBRare: Hermit = {
 	) {
 		observer.subscribeWithPriority(
 			game.hooks.beforeAttack,
-			beforeAttack.SELF_MODIFY_DAMAGE,
+			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
