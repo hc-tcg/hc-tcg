@@ -1,8 +1,8 @@
 import {expect, test} from '@jest/globals'
+import CertifiedZombie from 'common/achievements/certified-zombie'
 import ArmorStand from 'common/cards/attach/armor-stand'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {endTurn, forfeit, playCardFromHand, testAchivement} from '../utils'
-import CertifiedZombie from 'common/achievements/certified-zombie'
 
 test('Test Use Like a Hermit achievement', () => {
 	testAchivement(
