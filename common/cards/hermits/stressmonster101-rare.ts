@@ -36,7 +36,7 @@ const StressMonster101Rare: Hermit = {
 
 		observer.subscribeWithPriority(
 			game.hooks.beforeAttack,
-			beforeAttack.MODIFY_DAMAGE,
+			beforeAttack.SELF_MODIFY_DAMAGE,
 			(attack) => {
 				if (
 					!attack.isAttacker(component.entity) ||
