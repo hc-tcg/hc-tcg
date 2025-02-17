@@ -25,10 +25,6 @@
 	flex-direction: column;
 }
 
-.sidebarHeader {
-	height: 44px;
-}
-
 .hallOfFameTable {
 	background-color: #000;
 	color: var(--text-light);
@@ -245,14 +241,13 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	height: 100%;
+	height: 70%;
 }
 
 .typeGraph {
 	background-color: var(--gray-700);
 	color: white;
 	margin: 1vh;
-	width: 100%;
 }
 
 .showOnMobile {
@@ -293,27 +288,23 @@
 }
 
 .gameHistoryBox {
-	width: max(50%, 600px);
-	display: flex;
-	flex-direction: row;
-	align-items: center;
+	width: min(95%, 800px);
+	padding: 1rem;
 	align-self: center;
-	justify-content: center;
 	background-color: var(--gray-900);
 	color: var(--text-light);
-	gap: 1rem;
 	border-radius: 10px;
 }
 
 .playerHead {
-	height: 12vh;
-	width: 12vh;
-	padding: 1vh;
+	height: 8rem;
+	width: 8rem;
+	padding: 1rem;
 	background-color: rgb(14, 14, 14);
 	clip-path: polygon(50% 0%, 100% 20%, 100% 80%, 50% 100%, 0% 80%, 0% 20%);
 
 	> img {
-		height: 10vh;
+		height: 6rem;
 		filter: drop-shadow(2px 0px 0 white) drop-shadow(-2px 0px 0 white)
 			drop-shadow(0px 2px 0 white) drop-shadow(0px -2px 0 white);
 	}
@@ -328,7 +319,7 @@
 	font-size: 1.5rem;
 	font-family: Minecrafter;
 	grid-area: winAndLoss;
-	width: 8vw;
+	width: 100%;
 	filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black)
 		drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
 
@@ -360,25 +351,24 @@
 }
 
 .gameAreaMiddle {
-	width: 22vw;
+	width: 100%;
 	display: grid;
 	gap: 0.5rem;
-	margin: 1rem;
 	grid-template-areas:
-		"me me winAndLoss winAndLoss opponent opponent"
-		"deck deck replay replay overview overview"
-		"time time time turns turns turns";
+		"playerHead me me winAndLoss winAndLoss opponent opponent opponentHead"
+		"playerHead deck deck replay replay overview overview opponentHead"
+		"playerHead time time time turns turns turns opponentHead";
 
 	&.reverseSide {
 		grid-template-areas:
-			"opponent opponent winAndLoss winAndLoss me me"
-			"overview overview replay replay deck deck"
-			"time time time turns turns turns";
+			"opponentHead opponent opponent winAndLoss winAndLoss me me playerHead"
+			"opponentHead overview overview replay replay deck deck playerHead"
+			"opponentHead time time time turns turns turns playerHead";
 	}
 }
 
 .gameHistoryHeader {
-	width: max(50%, 600px);
+	width: min(95%, 800px);
 	align-self: center;
 	color: var(--text-light);
 	font-size: 1.5rem;
@@ -394,6 +384,7 @@
 	gap: 0.5rem;
 	filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black)
 		drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
+	width: 100%;
 
 	&.me {
 		grid-area: me;
@@ -442,6 +433,17 @@
 	text-align: right;
 }
 
+#playerHead {
+	grid-area: playerHead;
+}
+
+#opponentHead {
+	grid-area: opponentHead;
+	display: flex;
+	width: 100%;
+	justify-content: right;
+}
+
 .stats {
 	display: flex;
 	flex-direction: column;
@@ -472,6 +474,10 @@
 	font-size: 1.1rem;
 	padding: 0.5rem;
 	padding-top: 2rem;
+}
+
+.optionsHeader {
+	height: 43px;
 }
 
 .stat {
@@ -544,6 +550,27 @@
 	padding: 0.5rem;
 }
 
+.optionsButtonArea {
+	width: 100%;
+	height: 7vh;
+	display: none;
+	background-color: var(--gray-700);
+	border: 2px black solid;
+	border-top: 0px;
+	padding: 0.5rem;
+	gap: 0.5rem;
+}
+
+.showOptionsButton {
+	background-color: var(--gray-600);
+	border-radius: 5px;
+	padding: 0.5rem;
+	color: white;
+	font-family: Minecraft;
+	font-size: 1rem;
+	height: 2rem;
+}
+
 // Mobile
 @media (max-width: 720px) {
 	.bigHallOfFameArea {
@@ -557,7 +584,7 @@
 	}
 
 	.mainHallOfFameArea {
-		margin-top: 10%;
+		margin-top: 6vh;
 		margin-left: 2%;
 		margin-right: 2%;
 		margin-bottom: 2%;
@@ -573,10 +600,15 @@
 
 	.hofSidebar {
 		width: 96vw;
-		height: 85vh;
+		height: 81vh;
 		position: absolute;
-		top: 14vh;
-		border: 2px black solid;
+		top: 18vh;
+
+		&.hideOnMobile {
+			height: 0px;
+			width: 0px;
+			pointer-events: none;
+		}
 	}
 
 	.showOnMobile {
@@ -587,12 +619,20 @@
 		display: none;
 	}
 
-	.tabs {
-		height: 10%;
+	.optionsHeader {
+		display: none;
+	}
 
-		&.mobileHeader {
-			display: none;
-		}
+	.hofOptions {
+		background-color: var(--gray-900);
+	}
+
+	.optionsButtonArea {
+		display: flex;
+	}
+
+	.tabs {
+		height: 7vh;
 	}
 
 	.tableArea {
@@ -607,5 +647,48 @@
 
 	.fullLeftArea {
 		width: 100%;
+	}
+
+	.timeAndturns {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.winAndLoss {
+		height: 100%;
+		align-items: center;
+
+		> div {
+			height: 100%;
+			margin-top: 50%;
+		}
+	}
+
+	.hallOfFameTableGrid {
+		tr > td {
+			width: 20%;
+		}
+	}
+
+	.barContainer {
+		height: 100%;
+	}
+
+	.gameAreaMiddle {
+		grid-template-areas:
+			"playerHead winAndLoss winAndLoss opponentHead"
+			"playerHead winAndLoss winAndLoss opponentHead"
+			"playerHead deck deck opponentHead"
+			"me replay replay opponent"
+			"time overview overview turns";
+
+		&.reverseSide {
+			grid-template-areas:
+				"opponentHead winAndLoss winAndLoss playerHead"
+				"opponentHead winAndLoss winAndLoss playerHead"
+				"opponentHead deck deck playerHead"
+				"opponent replay replay me"
+				"time overview overview turns";
+		}
 	}
 }
