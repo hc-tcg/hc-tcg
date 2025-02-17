@@ -2,6 +2,7 @@ import {Achievement} from 'common/achievements/types'
 import {COSMETICS} from 'common/cosmetics'
 import {ProgressionEntry} from 'common/types/achievements'
 import css from './achievement.module.scss'
+import classNames from 'classnames'
 
 type Props = {
 	achievement: Achievement
@@ -25,7 +26,13 @@ export default function AchievementComponent({
 
 	return (
 		<div className={css.achievementContainer}>
-			<img src={icon_url} className={css.icon} />
+			<img
+				src={icon_url}
+				className={classNames(
+					css.icon,
+					iconCosmetic && iconCosmetic.type === 'background' && css.rounded,
+				)}
+			/>
 			<div>
 				<div>
 					{achievement.name}

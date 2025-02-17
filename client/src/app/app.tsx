@@ -19,13 +19,12 @@ import Deck from './deck'
 import Game from './game'
 import Login from './login'
 import MainMenu from './main-menu'
-import Achievements from './main-menu/achievements'
 import Cosmetics from './main-menu/cosmetics'
 import Credits from './main-menu/credits'
 import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
 import PlaySelect from './main-menu/play-select'
-import More from './main-menu/settings'
+import Settings from './main-menu/settings'
 import Statistics from './main-menu/statistics'
 
 function App() {
@@ -66,15 +65,15 @@ function App() {
 				case 'deck':
 					return <Deck setMenuSection={menuSectionSet} />
 				case 'more':
-					return <More setMenuSection={menuSectionSet} />
+					return <Settings setMenuSection={menuSectionSet} />
 				case 'settings':
+					return <Settings setMenuSection={menuSectionSet} />
+				case 'game-settings':
 					return <GameSettings setMenuSection={menuSectionSet} />
 				case 'data-settings':
 					return <DataSettings setMenuSection={menuSectionSet} />
 				case 'statistics':
 					return <Statistics setMenuSection={menuSectionSet} />
-				case 'achievements':
-					return <Achievements setMenuSection={menuSectionSet} />
 				case 'cosmetics':
 					return <Cosmetics setMenuSection={menuSectionSet} />
 				case 'credits':
