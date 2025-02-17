@@ -4,7 +4,6 @@ import EvilXisumaBoss, {
 	supplyBossAttack,
 } from 'common/cards/boss/hermits/evilxisuma_boss'
 import {Card} from 'common/cards/types'
-import {COINS} from 'common/coins'
 import {
 	AchievementComponent,
 	BoardSlotComponent,
