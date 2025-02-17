@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import ArmorStand from 'common/cards/attach/armor-stand'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import EvilXisumaRare from 'common/cards/hermits/evilxisuma_rare'
+import EvilXisumaRare from 'common/cards/hermits/evilxisuma-rare'
 import {StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
