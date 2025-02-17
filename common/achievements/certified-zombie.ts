@@ -4,11 +4,11 @@ import {Achievement} from './types'
 import ArmorStand from '../cards/attach/armor-stand'
 import {onTurnEnd} from '../types/priorities'
 
-const UseLikeAHermit: Achievement = {
+const CertifiedZombie: Achievement = {
 	...achievement,
 	id: 'all_cards',
 	numericId: 0,
-	name: 'Use Like a Hermit...?',
+	name: 'Certified Zombie',
 	description:
 		'Survive with an armor stand as your active hermit for three rounds.',
 	steps: 3,
@@ -34,4 +34,4 @@ const UseLikeAHermit: Achievement = {
 	},
 }
 
-export default UseLikeAHermit
+export default CertifiedZombie
