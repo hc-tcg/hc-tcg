@@ -40,6 +40,13 @@
 	overflow-y: hidden;
 }
 
+.appearanceHeader {
+	color: white;
+	width: 100%;
+	text-align: center;
+	padding-bottom: 1rem;
+}
+
 .achievements {
 	margin-top: auto;
 	display: flex;
@@ -90,6 +97,7 @@
 .unlocked {
 	&:hover {
 		background-color: var(--gray-400);
+		cursor: pointer;
 	}
 }
 
@@ -117,7 +125,7 @@
 
 .appearance {
 	width: 80%;
-	margin: 4rem;
+	margin: 2rem;
 	align-self: center;
 }
 
@@ -184,4 +192,9 @@
 			width: $size;
 		}
 	}
+}
+
+.tooltip {
+	height: 100vh;
+	width: 100vh;
 }

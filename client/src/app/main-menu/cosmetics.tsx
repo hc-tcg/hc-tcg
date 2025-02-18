@@ -25,6 +25,9 @@ import Tabs from 'components/tabs/tabs'
 import AchievementComponent from 'components/achievement'
 import {Achievement} from 'common/achievements/types'
 import Tooltip from 'components/tooltip'
+import CardInstanceTooltip from 'components/card/card-tooltip'
+import {CARDS} from 'common/cards'
+import {WithoutFunctions} from 'common/types/server-requests'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -152,7 +155,7 @@ function Cosmetics({setMenuSection}: Props) {
 		const tooltip = <div className={css.tooltip}>This is a tooltip</div>
 
 		return (
-			<Tooltip tooltip={tooltip} showAboveModal={true}>
+			<Tooltip tooltip={tooltip} showAboveModal={false}>
 				{item}
 			</Tooltip>
 		)
@@ -166,9 +169,6 @@ function Cosmetics({setMenuSection}: Props) {
 			className={css.cosmeticsLayout}
 		>
 			<div className={css.body}>
-				<div className={css.appearance}>
-					<CosmeticPreview />
-				</div>
 				{/* <div className={css.updatePlayerInfo}>
 					<input ref={usernameRef} placeholder={'Username'}></input>
 					<Button
@@ -218,6 +218,11 @@ function Cosmetics({setMenuSection}: Props) {
 									/>
 								)
 							})}
+						</div>
+					)}
+					{tab === 'rewards' && (
+						<div className={css.appearance}>
+							<CosmeticPreview />
 						</div>
 					)}
 					{tab === 'rewards' && (
