@@ -74,7 +74,7 @@
 		"server:build": "npm run server:tsc && node esbuild.js",
 		"server:dev": "tsx watch --tsconfig server/tsconfig.json server/src",
 		"server:tsc": "tsc --p server/tsconfig.json",
-		"client:build-dev": "npm run client:tsc && vite build client/ --mode production",
+		"client:build-dev": "npm run client:tsc && vite build client/",
 		"client:build-prod": "npm run client:tsc && npm run client:render-cards && vite build client/ --mode production",
 		"client:render-cards": "./card-prerender/render.sh",
 		"client:render-cards-nt": ".\\card-prerender\\render.bat",
@@ -93,6 +93,7 @@
 		"test:e2e": "playwright test",
 		"test:ct": "playwright test -c playwright-ct.config.ts",
 		"test:ct-update": "npm run test:ct -- -u",
+		"test:fuzz": "cd tests/fuzz && npx tsx index.ts",
 		"lint": "biome check .",
 		"fix": "biome check --write .",
 		"format": "biome format --write ."

@@ -8,6 +8,7 @@ Hermitcraft TCG uses four types of tests:
 - Component Tests: `npm run test:ct`
 - End To End Tests: `npm run test:e2e`
 - Shell Script Tests: `npm run test:api`
+- Fuzz Testing: `npm run test:fuzz`
 
 ### Unit Tests
 Unit tests are used for redux saga and various functions and components.
@@ -37,4 +38,19 @@ Additionally debug mode endpoints are enabled.
 ### Shell Tests
 Shell scripts are used to test the hc-tcg API. `curl` and `jq` must be installed to run these tests.
 
+### Fuzz Tests
+Commands:
+- Run many tests: `npm run test:fuzz -- fuzz <number of times>`
+- Run a test with a specific seed and debug logs: `npm run test:fuzz -- debug <the seed>`
+
+Fuzz tests run random AI players against each other to attempt to find bugs.
+This type of test focuses on two specific bug categories:
+- Assertion failures
+- The game getting in a "stuck" state. For example a pick request having no pickable slots.
+
+Other Flags:
+| Flag | Description |
+| ---      | ----        |
+| `--fail-fast` | Fail after the first error is found. |
+| `--json` | Print the output in JSON. |
 

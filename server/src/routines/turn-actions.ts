@@ -20,7 +20,6 @@ import {
 } from 'common/types/turn-action-data'
 import {executeAttacks} from 'common/utils/attacks'
 import {applySingleUse} from 'common/utils/board'
-import {getLocalModalData} from '../utils/state-gen'
 
 function getAttack(
 	game: GameModel,
@@ -330,11 +329,8 @@ export function modalRequestAction(
 		let modalRequest_ = modalRequest as CopyAttack.Request
 		let modal = modalResult as CopyAttack.Result
 		assert(
-			!modal.pick ||
-				!(
-					getLocalModalData(game, modalRequest.modal) as LocalCopyAttack.Data
-				).blockedActions.includes(attackToAttackAction[modal.pick]),
-			`Client picked a blocked attack to copy: ${modal.pick}`,
+			!modal.pick || modalRequest.modal.availableAttacks.includes(modal.pick),
+			`Client picked an action that was not available to copy: ${modal.pick}`,
 		)
 		modalRequest_.onResult(modal)
 	} else throw Error('Unknown modal type')

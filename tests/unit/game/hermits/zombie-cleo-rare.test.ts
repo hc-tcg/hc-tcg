@@ -22,8 +22,7 @@ import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import ChromaKeyedEffect from 'common/status-effects/chroma-keyed'
 import {SecondaryAttackDisabledEffect} from 'common/status-effects/singleturn-attack-disabled'
-import {LocalCopyAttack} from 'common/types/server-requests'
-import {getLocalModalData} from 'server/utils/state-gen'
+import {CopyAttack} from 'common/types/modal-requests'
 import {
 	attack,
 	changeActiveHermit,
@@ -128,13 +127,8 @@ function* testAmnesiaBlocksPuppetryMock(game: GameModel) {
 		query.slot.rowIndex(0),
 	)
 	expect(
-		(
-			getLocalModalData(
-				game,
-				game.state.modalRequests[0].modal,
-			) as LocalCopyAttack.Data
-		).blockedActions,
-	).toContain('SECONDARY_ATTACK')
+		(game.state.modalRequests[0].modal as CopyAttack.Data).availableAttacks,
+	).not.toContain('secondary')
 	yield* finishModalRequest(game, {pick: 'primary'})
 }
 
@@ -390,13 +384,8 @@ function* testPuppetingTimeSkip(game: GameModel) {
 		query.slot.rowIndex(1),
 	)
 	expect(
-		(
-			getLocalModalData(
-				game,
-				game.state.modalRequests[0].modal,
-			) as LocalCopyAttack.Data
-		).blockedActions,
-	).toContain('SECONDARY_ATTACK')
+		(game.state.modalRequests[0].modal as CopyAttack.Data).availableAttacks,
+	).not.toContain('secondary')
 	yield* finishModalRequest(game, {pick: 'primary'})
 	yield* removeEffect(game)
 	yield* attack(game, 'secondary')

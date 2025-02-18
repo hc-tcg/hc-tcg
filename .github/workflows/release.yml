@@ -54,7 +54,7 @@ jobs:
             NEW_TAG=$(git describe --tags --abbrev=0 HEAD)
             COMMIT_HISTORY="[View Development Log](<${{ github.server_url }}/${{ github.repository }}/compare/$MOST_RECENT_TAG...$NEW_TAG>)"
             CLEAN_BODY=$(python -c "import sys; print(sys.argv[1].strip())" "$BODY")
-            CONTENT="<@&1076950211831803934> Release $TAG_NAME will be released in 10 minutes. Please finish your games.\n\n$CLEAN_BODY\n\n$COMMIT_HISTORY";
+            CONTENT="<@&1076950211831803934> Release $TAG_NAME will be released in 15 minutes. Please finish your games.\n\n$CLEAN_BODY\n\n$COMMIT_HISTORY";
             CONTENT=${CONTENT//$'\n'/\\n};
             CONTENT=$(echo $CONTENT|tr -d '\r');
             CONTENT=${CONTENT//$'"'/\\\"};
@@ -66,7 +66,7 @@ jobs:
             BODY: ${{ github.event.release.body }}
 
         - name: Wait
-          run: sleep 9m 30s
+          run: sleep 14m 30s
 
         - uses: superfly/flyctl-actions/setup-flyctl@master
         - run: flyctl deploy --remote-only
