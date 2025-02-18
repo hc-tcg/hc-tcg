@@ -7,7 +7,7 @@ import {
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {onTurnEnd} from '../types/priorities'
-import {flipCoin} from '../utils/coinFlips'
+import {flipCoin} from '../utils/coinflips'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 export const TrapHoleEffect: StatusEffect<PlayerComponent> = {

@@ -6,7 +6,7 @@ import {
 import {GameModel} from '../../models/game-model'
 import SheepStareEffect from '../../status-effects/sheep-stare'
 import {beforeAttack} from '../../types/priorities'
-import {flipCoin} from '../../utils/coinFlips'
+import {flipCoin} from '../../utils/coinflips'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 
