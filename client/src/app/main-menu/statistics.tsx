@@ -622,66 +622,74 @@ function Statistics({setMenuSection}: Props) {
 						<td>{formatTime(game.gameLength.medianLength)}</td>
 					</tr>
 				</table>
-				<Bar
-					title={'Types sorted by ' + sortBy}
-					className={css.typeGraph}
-					data={{
-						labels: game.groups.map((_count: number, index: number) => {
-							const date = new Date(
-								1000 * (index * game.interval + game.initialDate),
-							)
-							return date.toLocaleDateString() + ' ' + date.toLocaleTimeString()
-						}),
-						datasets: [
-							{
-								label: 'Games',
-								data: game.groups,
-								borderWidth: 1,
-							},
-						],
-					}}
-					options={{
-						animation: {
-							duration: 0,
-						},
-						plugins: {
-							legend: {
-								onClick: () => {},
-							},
-							tooltip: {
-								titleFont: () => {
-									return {size: 16}
+				<div>
+					<Bar
+						title={''}
+						className={css.gameGraph}
+						data={{
+							labels: game.groups.map((_count: number, index: number) => {
+								const date = new Date(
+									1000 * (index * game.interval + game.initialDate),
+								)
+								return (
+									date.toLocaleDateString() +
+									(game.interval < 24 * 60 * 60
+										? ' ' + date.toLocaleTimeString()
+										: '')
+								)
+							}),
+							datasets: [
+								{
+									label: 'Games',
+									data: game.groups,
+									borderWidth: 1,
+									backgroundColor: 'rgb(30, 30, 31)',
 								},
-								bodyFont: () => {
-									return {size: 12}
-								},
-								backgroundColor: 'rgba(10, 1, 15, 0.95)',
-								borderWidth: 2,
-								borderColor: 'rgb(38, 13, 77)',
-								callbacks: {
-									title: (item) => item[0].label,
-									label: (item) => item.formattedValue,
-								},
+							],
+						}}
+						options={{
+							animation: {
+								duration: 0,
 							},
-						},
-						scales: {
-							x: {
-								ticks: {
-									autoSkip: true,
-									maxTicksLimit: 10,
-									font: {size: 10}
+							plugins: {
+								legend: {
+									onClick: () => {},
 								},
-							},
-							y: {
-								ticks: {
-									autoSkip: true,
-									maxTicksLimit: 5,
-									stepSize: 1,
+								tooltip: {
+									titleFont: () => {
+										return {size: 16}
+									},
+									bodyFont: () => {
+										return {size: 12}
+									},
+									backgroundColor: 'rgba(10, 1, 15, 0.95)',
+									borderWidth: 2,
+									borderColor: 'rgb(38, 13, 77)',
+									callbacks: {
+										title: (item) => item[0].label,
+										label: (item) => item.formattedValue,
+									},
 								},
 							},
-						},
-					}}
-				/>
+							scales: {
+								x: {
+									ticks: {
+										autoSkip: true,
+										maxTicksLimit: 10,
+										font: {size: 10},
+									},
+								},
+								y: {
+									ticks: {
+										autoSkip: true,
+										maxTicksLimit: 5,
+										stepSize: 1,
+									},
+								},
+							},
+						}}
+					/>
+				</div>
 			</>
 		)
 	}
@@ -1295,13 +1303,22 @@ function Statistics({setMenuSection}: Props) {
 									)}
 									{selectedEndpoint === 'games' && (
 										<div className={css.input}>
-											<p style={{flexGrow: 1}}>Interval: {gameIntervalNames[intervalRef.current?.valueAsNumber] || '1 day'}</p>
+											<p style={{flexGrow: 1}}>
+												Interval:{' '}
+												{gameIntervalNames[
+													intervalRef.current?.valueAsNumber
+												] || '1 day'}
+											</p>
 											<input
 												type="range"
 												ref={intervalRef}
 												min={0}
 												max={gameIntervals.length - 1}
-												value={intervalRef.current?.valueAsNumber !== undefined ? intervalRef.current?.valueAsNumber: 2}
+												value={
+													intervalRef.current?.valueAsNumber !== undefined
+														? intervalRef.current?.valueAsNumber
+														: 2
+												}
 												onChange={(_e) => {
 													if (intervalRef.current.valueAsNumber === undefined) {
 														setEndpointInterval(null)

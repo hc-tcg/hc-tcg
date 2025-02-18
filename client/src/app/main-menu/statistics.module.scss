@@ -255,6 +255,14 @@
 	width: 100%;
 }
 
+.gameGraph {
+	background-color: var(--gray-700);
+	color: white;
+	width: 100%;
+	padding: 1vh;
+	max-height: 100%;
+}
+
 .showOnMobile {
 	display: none;
 }
