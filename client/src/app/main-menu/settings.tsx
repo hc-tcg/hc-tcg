@@ -2,7 +2,6 @@ import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
 import Slider from 'components/slider'
 import UpdatesModal from 'components/updates'
-import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import React, {useState} from 'react'
@@ -12,12 +11,9 @@ import css from './main-menu.module.scss'
 type Props = {
 	setMenuSection: (section: string) => void
 }
-function More({setMenuSection}: Props) {
+function Settings({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
-	const databaseInfo = useSelector(getLocalDatabaseInfo)
-
-	const stats = databaseInfo.stats
 
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch({
@@ -78,8 +74,7 @@ function More({setMenuSection}: Props) {
 		setMenuSection(section)
 	}
 	const handleDataSettings = () => changeMenuSection('data-settings')
-	const handleStatistics = () => changeMenuSection('statistics')
-	const _handleAchievements = () => changeMenuSection('achievements')
+	const handleGameSettings = () => changeMenuSection('game-settings')
 
 	const handleCredits = () => changeMenuSection('credits')
 
@@ -88,13 +83,6 @@ function More({setMenuSection}: Props) {
 	const handleUpdates = () => {
 		setUpdatesOpen(true)
 	}
-
-	const _winrate =
-		stats !== null &&
-		Math.round(
-			((stats.wins + stats.forfeitWins) / (stats.gamesPlayed - stats.ties)) *
-				10000,
-		) / 100
 
 	return (
 		<>
@@ -107,7 +95,7 @@ function More({setMenuSection}: Props) {
 			)}
 			<MenuLayout
 				back={() => changeMenuSection('main-menu')}
-				title="More"
+				title="Settings"
 				returnText="Main Menu"
 				className={css.settingsMenu}
 			>
@@ -159,10 +147,10 @@ function More({setMenuSection}: Props) {
 					</Button>
 					<Button
 						variant="default"
-						onClick={handleStatistics}
+						onClick={handleGameSettings}
 						className={css.mainMenuButton}
 					>
-						Statistics
+						Game Settings
 					</Button>
 				</div>
 			</MenuLayout>
@@ -170,4 +158,4 @@ function More({setMenuSection}: Props) {
 	)
 }
 
-export default More
+export default Settings

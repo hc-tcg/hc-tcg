@@ -1,7 +1,14 @@
 import cn from 'classnames'
-import {ACHIEVEMENTS} from 'common/achievements'
+import {ACHIEVEMENTS, ACHIEVEMENTS_LIST} from 'common/achievements'
 import {ALL_COSMETICS} from 'common/cosmetics'
-import {Cosmetic} from 'common/cosmetics/types'
+import {
+	Background,
+	Border,
+	Coin,
+	Cosmetic,
+	Heart,
+	Title,
+} from 'common/cosmetics/types'
 import Button from 'components/button'
 import Dropdown from 'components/dropdown'
 import MenuLayout from 'components/menu-layout'
@@ -14,6 +21,13 @@ import {getSession} from 'logic/session/session-selectors'
 import {useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './cosmsetics.module.scss'
+import Tabs from 'components/tabs/tabs'
+import AchievementComponent from 'components/achievement'
+import {Achievement} from 'common/achievements/types'
+import Tooltip from 'components/tooltip'
+import CardInstanceTooltip from 'components/card/card-tooltip'
+import {CARDS} from 'common/cards'
+import {WithoutFunctions} from 'common/types/server-requests'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -78,13 +92,36 @@ function Cosmetics({setMenuSection}: Props) {
 		useState<Cosmetic['type']>('title')
 	const achievementProgress = useSelector(getAchievements)
 	const appearance = useSelector(getAppearance)
-	const slectableCosmetics = ALL_COSMETICS.filter(
+	const selectableCosmetics = ALL_COSMETICS.filter(
 		(cosmetic) => cosmetic.type === selectedCosmetic,
 	)
 	const selected = appearance[selectedCosmetic]
+	const [tab, selectTab] = useState<'achievements' | 'rewards'>('achievements')
+	const data = useSelector(getAchievements)
 
-	const usernameRef = useRef<HTMLInputElement>(null)
-	const minecraftNameRef = useRef<HTMLInputElement>(null)
+	// const usernameRef = useRef<HTMLInputElement>(null)
+	// const minecraftNameRef = useRef<HTMLInputElement>(null)
+
+	const sortedCosmetics = ALL_COSMETICS.reduce(
+		(
+			r: {
+				background: Array<Background>
+				title: Array<Title>
+				coin: Array<Coin>
+				heart: Array<Heart>
+				border: Array<Border>
+			},
+			c,
+		) => {
+			if (c.type === 'background') r.background.push(c)
+			else if (c.type === 'border') r.border.push(c)
+			else if (c.type === 'coin') r.coin.push(c)
+			else if (c.type === 'heart') r.heart.push(c)
+			else if (c.type === 'title') r.title.push(c)
+			return r
+		},
+		{background: [], title: [], coin: [], heart: [], border: []},
+	)
 
 	const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 		let isUnlocked = true
@@ -93,7 +130,7 @@ function Cosmetics({setMenuSection}: Props) {
 			isUnlocked = !!achievementProgress[achievement.numericId]?.completionTime
 		}
 		let isSelected = selected.id === cosmetic.id
-		return (
+		const item = (
 			<div
 				className={cn(css.cosmeticItem, {
 					[css.unlocked]: isUnlocked,
@@ -106,84 +143,122 @@ function Cosmetics({setMenuSection}: Props) {
 					})
 				}
 			>
-				{cosmetic.name}
-				{isUnlocked ? (
-					<></>
-				) : (
-					<img className={css.lockOverlay} src="/images/lock.png" />
+				<div className={css.cosmeticName}>{cosmetic.name}</div>
+				{!isUnlocked && (
+					<div className={css.lockOverlay}>
+						<img src="/images/lock.png" />
+					</div>
 				)}
 			</div>
+		)
+
+		const tooltip = <div className={css.tooltip}>This is a tooltip</div>
+
+		return (
+			<Tooltip tooltip={tooltip} showAboveModal={false}>
+				{item}
+			</Tooltip>
 		)
 	}
 
 	return (
 		<MenuLayout
-			back={() => setMenuSection('achievements')}
-			title="Cosmetics"
-			returnText="Achievements"
+			back={() => setMenuSection('main-menu')}
+			title="Achievements"
+			returnText="Main Menu"
 			className={css.cosmeticsLayout}
 		>
-			<div className={css.appearance}>
-				<CosmeticPreview />
-			</div>
-			<div className={css.updatePlayerInfo}>
-				<input ref={usernameRef} placeholder={'Username'}></input>
-				<Button
-					onClick={() => {
-						if (!usernameRef.current) return
-						dispatch({
-							type: localMessages.USERNAME_SET,
-							name: usernameRef.current.value,
-						})
-					}}
-				>
-					Update Username
-				</Button>
-			</div>
-			<div className={css.updatePlayerInfo}>
-				<input
-					ref={minecraftNameRef}
-					placeholder={'Minecraft Username'}
-					minLength={3}
-				></input>
-				<Button
-					onClick={() => {
-						if (!minecraftNameRef.current) return
-						dispatch({
-							type: localMessages.MINECRAFT_NAME_SET,
-							name: minecraftNameRef.current.value,
-						})
-					}}
-				>
-					Update Player Head
-				</Button>
-			</div>
-			<div className={css.itemSelector}>
-				<Dropdown
-					button={
-						<Button>
-							{selectedCosmetic.charAt(0).toUpperCase() +
-								selectedCosmetic.slice(1) +
-								's'}
-						</Button>
-					}
-					label={'Change cosmetic'}
-					showNames={true}
-					options={[
-						{name: 'Titles', key: 'title'},
-						{name: 'Coins', key: 'coin'},
-						{name: 'Hearts', key: 'heart'},
-						{name: 'Backgrounds', key: 'background'},
-						{name: 'Borders', key: 'border'},
-					]}
-					action={(action) => {
-						setSelectedCosmetic(action as Cosmetic['type'])
-					}}
+			<div className={css.body}>
+				{/* <div className={css.updatePlayerInfo}>
+					<input ref={usernameRef} placeholder={'Username'}></input>
+					<Button
+						onClick={() => {
+							if (!usernameRef.current) return
+							dispatch({
+								type: localMessages.USERNAME_SET,
+								name: usernameRef.current.value,
+							})
+						}}
+					>
+						Update Username
+					</Button>
+				</div>
+				<div className={css.updatePlayerInfo}>
+					<input
+						ref={minecraftNameRef}
+						placeholder={'Minecraft Username'}
+						minLength={3}
+					></input>
+					<Button
+						onClick={() => {
+							if (!minecraftNameRef.current) return
+							dispatch({
+								type: localMessages.MINECRAFT_NAME_SET,
+								name: minecraftNameRef.current.value,
+							})
+						}}
+					>
+						Update Player Head
+					</Button>
+				</div> */}
+				<Tabs
+					selected={tab}
+					setSelected={selectTab}
+					tabs={['achievements', 'rewards']}
 				/>
-				<div className={css.cosmetics}>
-					{slectableCosmetics.map((cosmetic) => (
-						<CosmeticItem cosmetic={cosmetic} />
-					))}
+				<div className={css.itemSelector}>
+					{tab === 'achievements' && (
+						<div className={css.achievements}>
+							{ACHIEVEMENTS_LIST.map((achievement) => {
+								return (
+									<AchievementComponent
+										key={achievement.numericId}
+										achievement={achievement}
+										progressData={data[achievement.numericId]}
+									/>
+								)
+							})}
+						</div>
+					)}
+					{tab === 'rewards' && (
+						<div className={css.appearance}>
+							<CosmeticPreview />
+						</div>
+					)}
+					{tab === 'rewards' && (
+						<div className={css.cosmeticsContainer}>
+							<div>Backgrounds</div>
+							<div className={css.cosmetics}>
+								{sortedCosmetics.background.map((cosmetic) => (
+									<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+								))}
+							</div>
+							<div>Borders</div>
+							<div className={css.cosmetics}>
+								{sortedCosmetics.border.map((cosmetic) => (
+									<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+								))}
+							</div>
+							<div>Coins</div>
+							<div className={css.cosmetics}>
+								{sortedCosmetics.coin.map((cosmetic) => (
+									<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+								))}
+							</div>
+							<div>Hearts</div>
+							<div className={css.cosmetics}>
+								{sortedCosmetics.heart.map((cosmetic) => (
+									<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+								))}
+							</div>
+							<div>Titles</div>
+							<div className={css.cosmetics}>
+								{sortedCosmetics.title.map((cosmetic) => (
+									<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+								))}
+							</div>
+						</div>
+					)}
 				</div>
 			</div>
 		</MenuLayout>

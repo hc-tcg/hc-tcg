@@ -1,8 +1,18 @@
 .cosmeticsLayout {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+}
+
+.body {
 	padding: 1vh;
 	display: block;
 	display: flex;
 	flex-direction: column;
+	max-width: 80rem;
+	width: 100%;
+	height: 95vh;
 
 	h2 {
 		font-size: 3vh;
@@ -22,17 +32,41 @@
 
 .itemSelector {
 	flex-grow: 1;
+	padding: 1rem;
 	border: 2px black solid;
-	background-color: var(--gray-700);
-	padding: 1vh;
+	border-top: 0px;
+	background-color: var(--gray-600);
+	height: 100%;
+	overflow-y: hidden;
+}
+
+.appearanceHeader {
+	color: white;
+	width: 100%;
+	text-align: center;
+	padding-bottom: 1rem;
+}
+
+.achievements {
+	margin-top: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5vh;
+	overflow-y: scroll;
+	height: 100%;
+}
+
+.cosmeticsContainer {
+	height: 100%;
+	overflow-y: scroll;
 }
 
 .cosmetics {
 	margin-top: auto;
 	display: flex;
-	flex-wrap: wrap;
+	flex-direction: row;
 	gap: 0.5vh;
-	overflow-y: scroll;
+	overflow-x: auto;
 }
 
 .cosmeticItem {
@@ -52,9 +86,18 @@
 	background-color: var(--gray-600);
 }
 
+.cosmeticName {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
 .unlocked {
 	&:hover {
 		background-color: var(--gray-400);
+		cursor: pointer;
 	}
 }
 
@@ -63,10 +106,16 @@
 }
 
 .lockOverlay {
-	position: absolute;
-	width: 10vh;
-	height: 10vh;
-	opacity: 50%;
+	position: relative;
+
+	> img {
+		position: absolute;
+		top: -9.5vh;
+		left: -5vh;
+		width: 10vh;
+		height: 10vh;
+		opacity: 50%;
+	}
 }
 
 .updatePlayerInfo {
@@ -76,7 +125,7 @@
 
 .appearance {
 	width: 80%;
-	margin: 4rem;
+	margin: 2rem;
 	align-self: center;
 }
 
@@ -143,4 +192,9 @@
 			width: $size;
 		}
 	}
+}
+
+.tooltip {
+	height: 100vh;
+	width: 100vh;
 }
