@@ -99,4 +99,3 @@ const EvilJevinRare: Hermit = {
 }
 
 export default EvilJevinRare
-import {flipCoin} from '../../utils/coinflips'

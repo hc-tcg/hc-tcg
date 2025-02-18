@@ -66,4 +66,3 @@ const MinecartWithTNT: SingleUse = {
 }
 
 export default MinecartWithTNT
-import {flipCoin} from '../../../utils/coinflips'

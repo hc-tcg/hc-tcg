@@ -57,4 +57,3 @@ const Looting: SingleUse = {
 }
 
 export default Looting
-import {flipCoin} from '../../utils/coinflips'

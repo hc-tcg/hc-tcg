@@ -172,4 +172,3 @@ export const AussiePingImmuneEffect: StatusEffect<PlayerComponent> = {
 		})
 	},
 }
-import {flipCoin} from '../utils/coinflips'

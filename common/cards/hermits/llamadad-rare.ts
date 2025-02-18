@@ -53,4 +53,3 @@ const LlamadadRare: Hermit = {
 }
 
 export default LlamadadRare
-import {flipCoin} from '../../utils/coinflips'

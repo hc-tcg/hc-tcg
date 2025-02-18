@@ -54,4 +54,3 @@ const BadOmen: SingleUse = {
 }
 
 export default BadOmen
-import BadOmenEffect from '../../status-effects/bad-omen'

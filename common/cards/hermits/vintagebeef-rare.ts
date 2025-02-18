@@ -68,4 +68,3 @@ const VintageBeefRare: Hermit = {
 }
 
 export default VintageBeefRare
-import {flipCoin} from '../../utils/coinflips'

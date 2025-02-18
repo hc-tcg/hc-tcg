@@ -94,4 +94,3 @@ const Egg: SingleUse = {
 }
 
 export default Egg
-import {flipCoin} from '../../utils/coinflips'

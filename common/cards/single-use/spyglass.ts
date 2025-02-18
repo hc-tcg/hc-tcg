@@ -88,4 +88,3 @@ const Spyglass: SingleUse = {
 }
 
 export default Spyglass
-import {flipCoin} from '../../utils/coinflips'

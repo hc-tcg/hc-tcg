@@ -111,4 +111,3 @@ const EvilXisumaRare: Hermit = {
 }
 
 export default EvilXisumaRare
-import {flipCoin} from '../../utils/coinflips'

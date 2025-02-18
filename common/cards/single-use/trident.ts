@@ -63,4 +63,3 @@ const Trident: SingleUse = {
 }
 
 export default Trident
-import {flipCoin} from '../../utils/coinflips'

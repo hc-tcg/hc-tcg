@@ -53,4 +53,3 @@ const FrenchralisRare: Hermit = {
 }
 
 export default FrenchralisRare
-import {flipCoin} from '../../utils/coinflips'

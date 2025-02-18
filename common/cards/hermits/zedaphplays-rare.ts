@@ -60,4 +60,3 @@ const ZedaphPlaysRare: Hermit = {
 }
 
 export default ZedaphPlaysRare
-import {flipCoin} from '../../utils/coinflips'

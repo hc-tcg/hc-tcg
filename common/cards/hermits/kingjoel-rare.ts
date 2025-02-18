@@ -95,4 +95,3 @@ const KingJoelRare: Hermit = {
 }
 
 export default KingJoelRare
-import {flipCoin} from '../../utils/coinflips'

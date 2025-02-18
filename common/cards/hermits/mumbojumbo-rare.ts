@@ -63,4 +63,3 @@ const MumboJumboRare: Hermit = {
 }
 
 export default MumboJumboRare
-import {flipCoin} from '../../utils/coinflips'

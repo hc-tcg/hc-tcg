@@ -111,4 +111,3 @@ const GrianRare: Hermit = {
 }
 
 export default GrianRare
-import {flipCoin} from '../../utils/coinflips'
