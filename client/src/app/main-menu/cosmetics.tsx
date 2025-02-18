@@ -1,7 +1,14 @@
 import cn from 'classnames'
 import {ACHIEVEMENTS, ACHIEVEMENTS_LIST} from 'common/achievements'
 import {ALL_COSMETICS} from 'common/cosmetics'
-import {Cosmetic} from 'common/cosmetics/types'
+import {
+	Background,
+	Border,
+	Coin,
+	Cosmetic,
+	Heart,
+	Title,
+} from 'common/cosmetics/types'
 import Button from 'components/button'
 import Dropdown from 'components/dropdown'
 import MenuLayout from 'components/menu-layout'
@@ -17,6 +24,7 @@ import css from './cosmsetics.module.scss'
 import Tabs from 'components/tabs/tabs'
 import AchievementComponent from 'components/achievement'
 import {Achievement} from 'common/achievements/types'
+import Tooltip from 'components/tooltip'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -85,27 +93,28 @@ function Cosmetics({setMenuSection}: Props) {
 		(cosmetic) => cosmetic.type === selectedCosmetic,
 	)
 	const selected = appearance[selectedCosmetic]
-	const [tab, selectTab] = useState<Cosmetic['type']>('title')
+	const [tab, selectTab] = useState<'achievements' | 'rewards'>('achievements')
 	const data = useSelector(getAchievements)
 
 	// const usernameRef = useRef<HTMLInputElement>(null)
 	// const minecraftNameRef = useRef<HTMLInputElement>(null)
 
-	const sortedAchievements = ACHIEVEMENTS_LIST.reduce(
+	const sortedCosmetics = ALL_COSMETICS.reduce(
 		(
 			r: {
-				background: Array<Achievement>
-				title: Array<Achievement>
-				coin: Array<Achievement>
-				heart: Array<Achievement>
-				border: Array<Achievement>
+				background: Array<Background>
+				title: Array<Title>
+				coin: Array<Coin>
+				heart: Array<Heart>
+				border: Array<Border>
 			},
 			c,
 		) => {
-			const cosmetic = ALL_COSMETICS.find((cosmetic) => cosmetic.id === c.icon)
-			if (!cosmetic) return r
-			r[cosmetic.type].push(c)
-
+			if (c.type === 'background') r.background.push(c)
+			else if (c.type === 'border') r.border.push(c)
+			else if (c.type === 'coin') r.coin.push(c)
+			else if (c.type === 'heart') r.heart.push(c)
+			else if (c.type === 'title') r.title.push(c)
 			return r
 		},
 		{background: [], title: [], coin: [], heart: [], border: []},
@@ -118,7 +127,7 @@ function Cosmetics({setMenuSection}: Props) {
 			isUnlocked = !!achievementProgress[achievement.numericId]?.completionTime
 		}
 		let isSelected = selected.id === cosmetic.id
-		return (
+		const item = (
 			<div
 				className={cn(css.cosmeticItem, {
 					[css.unlocked]: isUnlocked,
@@ -131,13 +140,21 @@ function Cosmetics({setMenuSection}: Props) {
 					})
 				}
 			>
-				{cosmetic.name}
-				{isUnlocked ? (
-					<></>
-				) : (
-					<img className={css.lockOverlay} src="/images/lock.png" />
+				<div className={css.cosmeticName}>{cosmetic.name}</div>
+				{!isUnlocked && (
+					<div className={css.lockOverlay}>
+						<img src="/images/lock.png" />
+					</div>
 				)}
 			</div>
+		)
+
+		const tooltip = <div className={css.tooltip}>This is a tooltip</div>
+
+		return (
+			<Tooltip tooltip={tooltip} showAboveModal={true}>
+				{item}
+			</Tooltip>
 		)
 	}
 
@@ -187,20 +204,56 @@ function Cosmetics({setMenuSection}: Props) {
 				<Tabs
 					selected={tab}
 					setSelected={selectTab}
-					tabs={['title', 'coin', 'heart', 'background', 'border']}
+					tabs={['achievements', 'rewards']}
 				/>
 				<div className={css.itemSelector}>
-					<div className={css.cosmetics}>
-						{sortedAchievements[tab].map((achievement) => {
-							return (
-								<AchievementComponent
-									key={achievement.numericId}
-									achievement={achievement}
-									progressData={data[achievement.numericId]}
-								/>
-							)
-						})}
-					</div>
+					{tab === 'achievements' && (
+						<div className={css.achievements}>
+							{ACHIEVEMENTS_LIST.map((achievement) => {
+								return (
+									<AchievementComponent
+										key={achievement.numericId}
+										achievement={achievement}
+										progressData={data[achievement.numericId]}
+									/>
+								)
+							})}
+						</div>
+					)}
+					{tab === 'rewards' && (
+						<div className={css.cosmeticsContainer}>
+							<div>Backgrounds</div>
+							<div className={css.cosmetics}>
+								{sortedCosmetics.background.map((cosmetic) => (
+									<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+								))}
+							</div>
+							<div>Borders</div>
+							<div className={css.cosmetics}>
+								{sortedCosmetics.border.map((cosmetic) => (
+									<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+								))}
+							</div>
+							<div>Coins</div>
+							<div className={css.cosmetics}>
+								{sortedCosmetics.coin.map((cosmetic) => (
+									<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+								))}
+							</div>
+							<div>Hearts</div>
+							<div className={css.cosmetics}>
+								{sortedCosmetics.heart.map((cosmetic) => (
+									<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+								))}
+							</div>
+							<div>Titles</div>
+							<div className={css.cosmetics}>
+								{sortedCosmetics.title.map((cosmetic) => (
+									<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+								))}
+							</div>
+						</div>
+					)}
 				</div>
 			</div>
 		</MenuLayout>
