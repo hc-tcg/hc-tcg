@@ -33,30 +33,37 @@ export default function AchievementComponent({
 					iconCosmetic && iconCosmetic.type === 'background' && css.rounded,
 				)}
 			/>
-			<div>
+			<div className={css.meat}>
 				<div>
-					{achievement.name}
-					<div className={css.achievementDescription}>
-						{achievement.description}
+					<div>
+						{achievement.name}
+						<div className={css.achievementDescription}>
+							{achievement.description}
+						</div>
+					</div>
+					<div className={css.achievementPlayers}>
+						3.5% of players have this achievement
 					</div>
 				</div>
-				<div className={css.progressContainer}>
-					<progress
-						value={progress}
-						max={achievement.steps}
-						className={css.progressBar}
-					></progress>
-					<span>
-						{progress}/{achievement.steps}
-					</span>
+				<div>
+					<div className={css.progressContainer}>
+						<div>
+							{progress}/{achievement.steps}
+						</div>
+						<progress
+							value={progress}
+							max={achievement.steps}
+							className={css.progressBar}
+						></progress>
+					</div>
+					{completionTime ? (
+						<span>
+							Completed: {new Date(completionTime).toLocaleDateString()}
+						</span>
+					) : (
+						''
+					)}
 				</div>
-				{completionTime ? (
-					<span>
-						Completed: {new Date(completionTime).toLocaleDateString()}
-					</span>
-				) : (
-					''
-				)}
 			</div>
 		</div>
 	)
