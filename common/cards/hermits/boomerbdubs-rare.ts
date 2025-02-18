@@ -196,3 +196,4 @@ const BoomerBdubsRare: Hermit = {
 }
 
 export default BoomerBdubsRare
+import {flipCoin} from '../../utils/coinflips'

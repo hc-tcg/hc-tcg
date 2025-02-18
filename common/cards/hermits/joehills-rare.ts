@@ -107,3 +107,4 @@ const JoeHillsRare: Hermit = {
 }
 
 export default JoeHillsRare
+import {flipCoin} from '../../utils/coinflips'

@@ -94,3 +94,4 @@ const MilkBucket: Attach & SingleUse = {
 }
 
 export default MilkBucket
+import BadOmenEffect from '../../status-effects/bad-omen'

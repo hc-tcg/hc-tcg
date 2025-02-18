@@ -65,3 +65,4 @@ const XisumavoidRare: Hermit = {
 }
 
 export default XisumavoidRare
+import {flipCoin} from '../../utils/coinflips'

@@ -126,3 +126,4 @@ export const STATUS_EFFECTS: Record<string, StatusEffect> =
 		result[effect.id] = effect
 		return result
 	}, {})
+import BadOmenEffect from './bad-omen'

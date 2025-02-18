@@ -73,3 +73,4 @@ const EthosLabRare: Hermit = {
 }
 
 export default EthosLabRare
+import {flipCoin} from '../../utils/coinflips'

@@ -74,3 +74,4 @@ const JinglerRare: Hermit = {
 }
 
 export default JinglerRare
+import {flipCoin} from '../../utils/coinflips'

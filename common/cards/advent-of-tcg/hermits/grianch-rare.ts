@@ -148,3 +148,4 @@ const GrianchRare: Hermit = {
 }
 
 export default GrianchRare
+import {flipCoin} from '../../../utils/coinflips'

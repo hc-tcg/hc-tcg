@@ -74,3 +74,4 @@ const SheepStareEffect: StatusEffect<PlayerComponent> = {
 }
 
 export default SheepStareEffect
+import {flipCoin} from '../utils/coinflips'

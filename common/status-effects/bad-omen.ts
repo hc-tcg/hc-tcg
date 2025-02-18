@@ -53,3 +53,4 @@ const BadOmenEffect: Counter<CardComponent> = {
 }
 
 export default BadOmenEffect
+	id: 'bad-omen',

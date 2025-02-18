@@ -57,3 +57,4 @@ const FalseSymmetryRare: Hermit = {
 }
 
 export default FalseSymmetryRare
+import {flipCoin} from '../../utils/coinflips'

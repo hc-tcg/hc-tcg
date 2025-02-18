@@ -60,3 +60,4 @@ const InvisibilityPotion: SingleUse = {
 }
 
 export default InvisibilityPotion
+import {flipCoin} from '../../utils/coinflips'

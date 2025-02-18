@@ -64,3 +64,4 @@ const HumanCleoRare: Hermit = {
 }
 
 export default HumanCleoRare
+import {flipCoin} from '../../utils/coinflips'

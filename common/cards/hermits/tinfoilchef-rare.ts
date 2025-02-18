@@ -59,3 +59,4 @@ const TinFoilChefRare: Hermit = {
 }
 
 export default TinFoilChefRare
+import {flipCoin} from '../../utils/coinflips'

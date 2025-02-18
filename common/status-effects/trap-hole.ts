@@ -62,3 +62,4 @@ export const TrapHoleEffect: StatusEffect<PlayerComponent> = {
 		)
 	},
 }
+import {flipCoin} from '../utils/coinflips'

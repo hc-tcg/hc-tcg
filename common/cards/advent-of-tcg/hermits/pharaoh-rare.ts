@@ -145,3 +145,4 @@ const PharaohRare: Hermit = {
 }
 
 export default PharaohRare
+import {flipCoin} from '../../../utils/coinflips'

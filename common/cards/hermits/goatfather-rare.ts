@@ -83,3 +83,4 @@ const GoatfatherRare: Hermit = {
 }
 
 export default GoatfatherRare
+import {flipCoin} from '../../utils/coinflips'

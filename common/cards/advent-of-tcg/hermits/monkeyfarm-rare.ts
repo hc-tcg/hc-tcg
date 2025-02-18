@@ -77,3 +77,4 @@ const MonkeyfarmRare: Hermit = {
 }
 
 export default MonkeyfarmRare
+import {flipCoin} from '../../../utils/coinflips'

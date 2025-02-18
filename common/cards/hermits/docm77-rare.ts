@@ -56,3 +56,4 @@ const Docm77Rare: Hermit = {
 }
 
 export default Docm77Rare
+import {flipCoin} from '../../utils/coinflips'
