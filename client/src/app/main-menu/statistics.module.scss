@@ -152,7 +152,7 @@
 	overflow-y: scroll;
 	border: 2px black solid;
 	border-top: 0px;
-	background-color: var(--gray-700);
+	background-color: var(--gray-600);
 }
 
 .dropdownButton {
@@ -414,11 +414,11 @@
 	font-size: 1.1rem;
 
 	div:nth-child(odd) {
-		background-color: var(--gray-700);
+		background-color: var(--gray-600);
 	}
 
 	div:nth-child(even) {
-		background-color: var(--gray-600);
+		background-color: var(--gray-700);
 	}
 }
 
