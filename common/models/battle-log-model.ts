@@ -96,6 +96,12 @@ export class BattleLogModel {
 			if (this.game.settings.verboseLogging) {
 				console.info(`${this.game.logHeader} ${firstEntry.description}`)
 			}
+
+			if (!this.game.settings.logErrorsToStderr) {
+				if (firstEntry.description.includes('INVALID VALUE')) {
+					throw new Error(`Invalid battle log found: ${firstEntry.description}`)
+				}
+			}
 		}
 
 		const timeout = this.game.currentPlayer.coinFlips.reduce(
