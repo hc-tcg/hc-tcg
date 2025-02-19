@@ -31,7 +31,7 @@ const SmallishbeansRare: Hermit = {
 		cost: ['explorer', 'explorer', 'any'],
 		damage: 90,
 		power:
-			'For each your AFK Ethoslab or Geminitay cards on the game board, do an additional 10hp damage.',
+			'For each of your AFK Ethos or Gems on the game board, do an additional 10hp damage.',
 	},
 	onAttach(
 		game: GameModel,

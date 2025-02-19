@@ -27,7 +27,7 @@ function getThorns(
 		expansion: props.expansion,
 		rarity: props.rarity,
 		tokens: props.tokens,
-		description: `When the Hermit this card is attached to takes damage, your opponent's active Hermit takes ${amount}hp damage.\nIgnores armour.`,
+		description: `When the Hermit this card is attached to takes damage, your opponent's active Hermit takes ${amount}hp damage.\nThis damage can not be prevented by armour.`,
 		onAttach(
 			game: GameModel,
 			component: CardComponent,
