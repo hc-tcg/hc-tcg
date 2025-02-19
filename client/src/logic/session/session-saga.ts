@@ -1,6 +1,6 @@
 import {ACHIEVEMENTS} from 'common/achievements'
 import {getStarterPack} from 'common/cards/starter-decks'
-import {BACKGROUNDS} from 'common/cosmetics/background'
+import {BACKGROUNDS} from 'common/cosmetics/backgrounds'
 import {BORDERS} from 'common/cosmetics/borders'
 import {COINS} from 'common/cosmetics/coins'
 import {defaultAppearance} from 'common/cosmetics/default'
