@@ -1,4 +1,5 @@
 import NoDerpcoins from '../achievements/no-derpcoins'
+import PackOfWolves from '../achievements/pack-of-wolves'
 import {Coin} from './types'
 
 const CoinDefinitions: Omit<Coin, 'type'>[] = [
@@ -12,6 +13,18 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		name: 'Evil X',
 		borderColor: '#666666',
 		requires: NoDerpcoins.id,
+	},
+	{
+		id: 'wolf',
+		name: 'Wolf',
+		borderColor: '#dddadb',
+		requires: PackOfWolves.id,
+	},
+	{
+		id: 'pink-sheep',
+		name: 'Pink Sheep',
+		borderColor: '#de7f9c',
+		requires: undefined,
 	},
 ]
 
