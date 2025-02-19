@@ -82,6 +82,7 @@
 
 .appearanceContainer {
 	width: 100%;
+	max-width: 600px;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
@@ -101,6 +102,7 @@
 		hsla(195deg, 100%, 60%, 50%)
 	);
 	background-size: cover;
+	background-repeat: repeat;
 
 	.playerHead {
 		background: var(--gray-800);
