@@ -17,6 +17,7 @@ import {delay, put, race, select, take} from 'typed-redux-saga'
 import {getLocalGameState} from 'utils/state-gen'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
+import { DEBUG_CONFIG } from 'common/config'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 
@@ -181,6 +182,8 @@ export function* updateCosmeticSaga(
 		isUnlocked =
 			!!player.achievementProgress[achievement?.numericId]?.completionTime
 	}
+	if (DEBUG_CONFIG.unlockAllCosmetics)
+		isUnlocked = true
 	if (!cosmetic || !isUnlocked) {
 		broadcast([player], {type: serverMessages.COSMETICS_INVALID})
 	}
