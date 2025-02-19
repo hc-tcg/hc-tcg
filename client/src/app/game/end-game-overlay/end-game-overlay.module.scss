@@ -42,6 +42,31 @@
 	}
 }
 
+.endOptions {
+	display: grid;
+	width: 100%;
+	gap: 0.75vh;
+	grid-template-areas:
+		"main-menu rematch"
+		"replay board";
+	
+	#mainMenu {
+		grid-area: main-menu;
+	}
+
+	#rematch {
+		grid-area: rematch;
+	}
+
+	#viewReplay {
+		grid-area: replay;
+	}
+
+	#board {
+		grid-area: board;
+	}
+}
+
 @keyframes float {
 	from {
 		transform: translateY(0);

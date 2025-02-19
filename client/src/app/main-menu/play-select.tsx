@@ -228,7 +228,6 @@ function PlaySelect({setMenuSection}: Props) {
 	const handleCreateBossGame = () => {
 		const valid = checkForValidation()
 		if (!valid) return
-		setMenuSection('game-landing')
 		dispatch({type: localMessages.MATCHMAKING_BOSS_GAME_CREATE})
 	}
 

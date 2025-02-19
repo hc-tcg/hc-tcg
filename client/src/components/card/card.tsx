@@ -84,6 +84,7 @@ const Card = (props: CardReactProps) => {
 						[css.selected]: selected,
 						[css.picked]: picked,
 						[css.unpickable]: unpickable,
+						[css.clickable]: !!props.disabled,
 					},
 				)}
 				onClick={unpickable ? () => {} : onClick}

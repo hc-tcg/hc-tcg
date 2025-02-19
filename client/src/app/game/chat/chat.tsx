@@ -73,7 +73,7 @@ function clamp(n: number, min: number, max: number): number {
 	return Math.max(Math.min(n, max), min)
 }
 
-function Chat() {
+function Chat({gameOver}: {gameOver: boolean}) {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 	const chatMessages = settings.chatEnabled ? useSelector(getChatMessages) : []
@@ -248,6 +248,7 @@ function Chat() {
 						]
 					: [playerName, opponentName]
 			}
+			gameOver={gameOver}
 			bindChatPos={bindChatPos}
 			closeChat={closeChat}
 			handleNewMessage={handleNewMessage}
@@ -269,6 +270,7 @@ type ChatContentProps = {
 	profanityFilterEnabled: boolean
 	isSpectating: boolean
 	playerNames: [string?, string?]
+	gameOver: boolean
 	bindChatPos?: () => {}
 	closeChat?: () => void
 	handleNewMessage?: (e: any) => void
@@ -283,6 +285,7 @@ export const ChatContent = ({
 	profanityFilterEnabled,
 	isSpectating,
 	playerNames,
+	gameOver,
 	bindChatPos,
 	closeChat,
 	handleNewMessage,
@@ -391,7 +394,7 @@ export const ChatContent = ({
 							//@ts-ignore
 							ref={inputRef}
 						/>
-						<Button variant="default" size="small">
+						<Button disabled={gameOver} variant="default" size="small">
 							Send
 						</Button>
 					</form>

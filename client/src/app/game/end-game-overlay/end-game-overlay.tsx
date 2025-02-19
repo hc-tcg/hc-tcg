@@ -3,6 +3,8 @@ import {PlayerEntity} from 'common/entities'
 import {GameOutcome, GameVictoryReason} from 'common/types/game-state'
 import Button from 'components/button'
 import {Modal} from 'components/modal'
+import {localMessages} from 'logic/messages'
+import {useDispatch} from 'react-redux'
 import css from './end-game-overlay.module.scss'
 
 type Props = {
@@ -18,6 +20,7 @@ type Props = {
 	onClose?: () => void
 	nameOfWinner: string | null
 	nameOfLoser: string | null
+	setMenuSection: (section: string) => void
 }
 
 const EndGameOverlay = ({
@@ -26,7 +29,10 @@ const EndGameOverlay = ({
 	onClose,
 	nameOfWinner,
 	nameOfLoser,
+	setMenuSection,
 }: Props) => {
+	const dispatch = useDispatch()
+
 	let animation
 
 	let myOutcome: 'tie' | 'win' | 'loss' | 'crash' | 'timeout' | 'no-viewers' =
@@ -116,7 +122,32 @@ const EndGameOverlay = ({
 					</Button>
 				)}
 
-				<Button onClick={onClose}>Return to Main Menu</Button>
+				<div className={css.endOptions}>
+					<Button
+						id={css.mainMenu}
+						onClick={() => {
+							setMenuSection('main-menu')
+							dispatch({type: localMessages.GAME_CLOSE})
+						}}
+					>
+						Main Menu
+					</Button>
+					<Button
+						id={css.rematch}
+						onClick={() => {
+							setMenuSection('play-select')
+							dispatch({type: localMessages.GAME_CLOSE})
+						}}
+					>
+						Play again
+					</Button>
+					<Button id={css.viewReplay} onClick={onClose}>
+						View Replay
+					</Button>
+					<Button id={css.board} onClick={onClose}>
+						View Board
+					</Button>
+				</div>
 			</Modal.Description>
 		</Modal>
 	)

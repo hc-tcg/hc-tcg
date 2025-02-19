@@ -27,6 +27,7 @@ export type SlotProps = {
 	active?: boolean
 	cssId?: string
 	statusEffects?: Array<LocalStatusEffectInstance>
+	gameOver: boolean
 }
 const Slot = ({
 	type,
@@ -36,6 +37,7 @@ const Slot = ({
 	active,
 	statusEffects,
 	cssId,
+	gameOver,
 }: SlotProps) => {
 	const settings = useSelector(getSettings)
 	const cardsCanBePlacedIn = useSelector(getCardsCanBePlacedIn)
@@ -95,18 +97,25 @@ const Slot = ({
 	return (
 		<button
 			onClick={isClickable ? onClick : () => {}}
-			disabled={!isClickable}
+			disabled={!isClickable || gameOver}
 			id={css[cssId || 'slot']}
 			className={classnames(css.slot, {
 				[css.pickable]:
-					isPickable && somethingPickable && settings.slotHighlightingEnabled,
+					isPickable &&
+					somethingPickable &&
+					settings.slotHighlightingEnabled &&
+					!gameOver,
 				[css.unpickable]:
-					!isPickable && somethingPickable && settings.slotHighlightingEnabled,
-				[css.available]: isClickable,
+					!isPickable &&
+					somethingPickable &&
+					settings.slotHighlightingEnabled &&
+					!gameOver,
+				[css.available]: isClickable && !gameOver,
 				[css[type]]: true,
 				[css.empty]: !card,
 				[css.hermitSlot]: type == 'hermit',
 				[css.afk]: !active && type !== 'single_use',
+				[css.reacts]: !gameOver,
 			})}
 		>
 			{card ? (
@@ -114,7 +123,11 @@ const Slot = ({
 					{card.turnedOver ? (
 						<img src="/images/card-back.jpg" className={css.cardBack} />
 					) : (
-						<Card card={card.props} displayTokenCost={false} />
+						<Card
+							disabled={!!gameOver}
+							card={card.props}
+							displayTokenCost={false}
+						/>
 					)}
 				</div>
 			) : (
