@@ -1,5 +1,6 @@
 import {ACHIEVEMENTS} from 'common/achievements'
 import {getStarterPack} from 'common/cards/starter-decks'
+import { DEBUG_CONFIG } from 'common/config'
 import {BACKGROUNDS} from 'common/cosmetics/backgrounds'
 import {BORDERS} from 'common/cosmetics/borders'
 import {COINS} from 'common/cosmetics/coins'
@@ -694,6 +695,8 @@ export function* cosmeticSaga() {
 				isUnlocked =
 					!!achievementProgress[achievement.numericId]?.completionTime
 			}
+			if (DEBUG_CONFIG.unlockAllCosmetics)
+				isUnlocked = true
 			if (!isUnlocked || selected) return
 			yield* sendMsg({
 				type: clientMessages.SET_COSMETIC,
