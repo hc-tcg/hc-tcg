@@ -1,4 +1,5 @@
 import British from './british'
+import CertifiedZombie from './certified-zombie'
 import DeceptiveSpectacles from './deceptive-spectacles'
 import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
@@ -32,6 +33,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	TeamStar,
 	OreSnatcher,
 	Designer,
+	CertifiedZombie,
 	Win1,
 	Win10,
 	Win100,
