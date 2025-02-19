@@ -14,7 +14,7 @@ import {getSession} from 'logic/session/session-selectors'
 import {useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './cosmsetics.module.scss'
-import { DEBUG_CONFIG } from 'common/config'
+import {DEBUG_CONFIG} from 'common/config'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -93,8 +93,7 @@ function Cosmetics({setMenuSection}: Props) {
 			const achievement = ACHIEVEMENTS[cosmetic.requires]
 			isUnlocked = !!achievementProgress[achievement.numericId]?.completionTime
 		}
-		if (DEBUG_CONFIG.unlockAllCosmetics)
-			isUnlocked = true
+		if (DEBUG_CONFIG.unlockAllCosmetics) isUnlocked = true
 		let isSelected = selected.id === cosmetic.id
 		return (
 			<div
