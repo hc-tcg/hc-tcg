@@ -183,7 +183,7 @@ function SelectDeck({
 			type: localMessages.UPDATE_DECKS,
 			newActiveDeck: loadedDeck,
 		})
-		setMenuSection('mainmenu')
+		setMenuSection('main-menu')
 	}
 	const handleImportDeck = (deck: Deck) => {
 		setImportedDeck(deck)

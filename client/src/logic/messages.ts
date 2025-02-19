@@ -1,3 +1,4 @@
+import {Appearance, Cosmetic} from 'common/cosmetics/types'
 import {PlayerEntity} from 'common/entities'
 import {PlayerId} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
@@ -33,23 +34,26 @@ export const localMessages = messages('clientLocalMessages', {
 	LOGIN: null,
 	PLAYER_SESSION_SET: null,
 	PLAYER_INFO_SET: null,
+	NOT_CONNECTING: null,
 	CONNECTED: null,
+	CONNECTING_MESSAGE: null,
 	DISCONNECT: null,
 	LOGOUT: null,
 	UPDATES_LOAD: null,
 	TOAST_OPEN: null,
 	TOAST_CLOSE: null,
 	EVERY_TOAST_CLOSE: null,
+	USERNAME_SET: null,
 	MINECRAFT_NAME_SET: null,
-	MINECRAFT_NAME_NEW: null,
 	MATCHMAKING_QUEUE_JOIN: null,
 	MATCHMAKING_QUEUE_JOIN_FAILURE: null,
 	MATCHMAKING_BOSS_GAME_CREATE: null,
+	MATCHMAKING_REPLAY_GAME: null,
+	INVALID_REPLAY: null,
 	MATCHMAKING_PRIVATE_GAME_LOBBY: null,
 	MATCHMAKING_CODE_RECIEVED: null,
 	MATCHMAKING_LEAVE: null,
 	MATCHMAKING_CODE_SET: null,
-	MATCHMAKING_CODE_INVALID: null,
 	MATCHMAKING_WAITING_FOR_PLAYER: null,
 	MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR: null,
 	GAME_LOCAL_STATE_RECIEVED: null,
@@ -96,6 +100,9 @@ export const localMessages = messages('clientLocalMessages', {
 	NEW_PLAYER: null,
 	SHOW_TOOLTIP: null,
 	HIDE_TOOLTIP: null,
+	COSMETICS_SET: null,
+	COSMETIC_UPDATE: null,
+	OVERVIEW: null,
 })
 
 type Messages = [
@@ -114,7 +121,9 @@ type Messages = [
 		}
 	},
 	{type: typeof localMessages.PLAYER_INFO_SET; player: PlayerInfo},
+	{type: typeof localMessages.NOT_CONNECTING},
 	{type: typeof localMessages.CONNECTED},
+	{type: typeof localMessages.CONNECTING_MESSAGE; message: string},
 	{type: typeof localMessages.DISCONNECT; errorMessage?: string},
 	{type: typeof localMessages.LOGOUT},
 	{type: typeof localMessages.UPDATES_LOAD; updates: Array<Update>},
@@ -127,10 +136,16 @@ type Messages = [
 	},
 	{type: typeof localMessages.TOAST_CLOSE; id: number},
 	{type: typeof localMessages.EVERY_TOAST_CLOSE},
+	{type: typeof localMessages.USERNAME_SET; name: string},
 	{type: typeof localMessages.MINECRAFT_NAME_SET; name: string},
-	{type: typeof localMessages.MINECRAFT_NAME_NEW; name: string},
 	{type: typeof localMessages.MATCHMAKING_QUEUE_JOIN},
 	{type: typeof localMessages.MATCHMAKING_BOSS_GAME_CREATE},
+	{
+		type: typeof localMessages.MATCHMAKING_REPLAY_GAME
+		id: number
+	},
+	{type: typeof localMessages.INVALID_REPLAY},
+	{type: typeof localMessages.OVERVIEW; id: number},
 	{
 		type: typeof localMessages.MATCHMAKING_CODE_RECIEVED
 		gameCode: string
@@ -142,7 +157,6 @@ type Messages = [
 		type: typeof localMessages.MATCHMAKING_CODE_SET
 		code: string
 	},
-	{type: typeof localMessages.MATCHMAKING_CODE_INVALID},
 	{type: typeof localMessages.MATCHMAKING_WAITING_FOR_PLAYER},
 	{type: typeof localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR},
 	{type: typeof localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY},
@@ -249,6 +263,11 @@ type Messages = [
 		tooltipWidth: number
 	},
 	{type: typeof localMessages.HIDE_TOOLTIP},
+	{
+		type: typeof localMessages.COSMETICS_SET
+		appearance: Appearance
+	},
+	{type: typeof localMessages.COSMETIC_UPDATE; cosmetic: Cosmetic},
 ]
 
 /** A message used locally on the client to update global state */

@@ -12,7 +12,7 @@ import css from './main-menu.module.scss'
 type Props = {
 	setMenuSection: (section: string) => void
 }
-function Settings({setMenuSection}: Props) {
+function More({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
@@ -77,9 +77,9 @@ function Settings({setMenuSection}: Props) {
 		dispatch({type: localMessages.SOUND_SECTION_CHANGE, section: section})
 		setMenuSection(section)
 	}
-	const handleGameSettings = () => changeMenuSection('game-settings')
 	const handleDataSettings = () => changeMenuSection('data-settings')
-	const handleHallOfFame = () => changeMenuSection('hall-of-fame')
+	const handleStatistics = () => changeMenuSection('statistics')
+	const _handleAchievements = () => changeMenuSection('achievements')
 
 	const handleCredits = () => changeMenuSection('credits')
 
@@ -89,7 +89,7 @@ function Settings({setMenuSection}: Props) {
 		setUpdatesOpen(true)
 	}
 
-	const winrate =
+	const _winrate =
 		stats !== null &&
 		Math.round(
 			((stats.wins + stats.forfeitWins) / (stats.gamesPlayed - stats.ties)) *
@@ -106,7 +106,7 @@ function Settings({setMenuSection}: Props) {
 				/>
 			)}
 			<MenuLayout
-				back={() => changeMenuSection('mainmenu')}
+				back={() => changeMenuSection('main-menu')}
 				title="More"
 				returnText="Main Menu"
 				className={css.settingsMenu}
@@ -122,73 +122,52 @@ function Settings({setMenuSection}: Props) {
 					<Slider value={settings.voiceVolume} onInput={handleVoiceChange}>
 						Voice Lines Volume: {getPercentDescriptor(settings.voiceVolume)}
 					</Slider>
-					<Button variant="stone" onClick={handleMuteSound}>
+					<Button
+						variant="default"
+						onClick={handleMuteSound}
+						className={css.mainMenuButton}
+					>
 						Sound: {getBoolDescriptor(!settings.muted)}
 					</Button>
-					<Button variant="stone" onClick={handlePanoramaToggle}>
+					<Button
+						variant="default"
+						onClick={handlePanoramaToggle}
+						className={css.mainMenuButton}
+					>
 						Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
 					</Button>
-					<Button variant="stone" onClick={handleGameSettings}>
-						Game Settings
-					</Button>
-					<Button variant="stone" onClick={handleDataSettings}>
+					<Button
+						variant="default"
+						onClick={handleDataSettings}
+						className={css.mainMenuButton}
+					>
 						Data Management
 					</Button>
-					<Button variant="stone" onClick={handleCredits}>
+					<Button
+						variant="default"
+						onClick={handleCredits}
+						className={css.mainMenuButton}
+					>
 						Credits
 					</Button>
-					<Button variant="stone" onClick={handleUpdates}>
+					<Button
+						variant="default"
+						onClick={handleUpdates}
+						className={css.mainMenuButton}
+					>
 						Updates
 					</Button>
-				</div>
-
-				<h2>Statistics</h2>
-				<div className={css.settingsBig}>
-					<div className={css.stats}>
-						<div className={css.stat}>
-							<span>Games Played</span>
-							<span>{stats?.gamesPlayed}</span>
-						</div>
-						<div className={css.stat}>
-							<span>Wins</span>
-							<span>{stats?.wins}</span>
-						</div>
-						<div className={css.stat}>
-							<span>Losses</span>
-							<span>{stats?.losses}</span>
-						</div>
-						<div className={css.stat}>
-							<span>Ties</span>
-							<span>{stats?.ties}</span>
-						</div>
-						<div className={css.stat}>
-							<span>Forfeit Wins</span>
-							<span>{stats?.forfeitWins}</span>
-						</div>
-						<div className={css.stat}>
-							<span>Forfeit Losses</span>
-							<span>{stats?.forfeitLosses}</span>
-						</div>
-						<div className={css.stat}>
-							<span>Winrate</span>
-							<span>
-								{stats !== null && stats.gamesPlayed > stats.ties
-									? winrate + '%'
-									: 'N/A'}
-							</span>
-						</div>
-						<Button
-							className={css.hofButton}
-							variant="stone"
-							onClick={handleHallOfFame}
-						>
-							Hall of Fame
-						</Button>
-					</div>
+					<Button
+						variant="default"
+						onClick={handleStatistics}
+						className={css.mainMenuButton}
+					>
+						Statistics
+					</Button>
 				</div>
 			</MenuLayout>
 		</>
 	)
 }
 
-export default Settings
+export default More

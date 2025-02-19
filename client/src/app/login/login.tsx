@@ -5,7 +5,11 @@ import {VersionLinks} from 'components/link-container'
 import Spinner from 'components/spinner'
 import TcgLogo from 'components/tcg-logo'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {getConnecting, getErrorType} from 'logic/session/session-selectors'
+import {
+	getConnecting,
+	getConnectingMessage,
+	getErrorType,
+} from 'logic/session/session-selectors'
 import React from 'react'
 import {useSelector} from 'react-redux'
 import css from './login.module.scss'
@@ -25,6 +29,7 @@ const Login = () => {
 	const dispatch = useMessageDispatch()
 	const connecting = useSelector(getConnecting)
 	const errorType = useSelector(getErrorType)
+	const connectingMessage = useSelector(getConnectingMessage)
 
 	const handlePlayerName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
@@ -39,7 +44,7 @@ const Login = () => {
 				{connecting ? (
 					<div className={css.connecting}>
 						<Spinner />
-						<p>Connecting</p>
+						<p>{connectingMessage}</p>
 					</div>
 				) : (
 					<form className={css.nameForm} onSubmit={handlePlayerName}>

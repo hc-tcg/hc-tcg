@@ -1,9 +1,10 @@
 import assert from 'assert'
-import {COINS} from '../coins'
+import {Appearance} from '../cosmetics/types'
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
 import type {GameModel} from '../models/game-model'
 import {StatusEffect} from '../status-effects/status-effect'
+import {AchievementProgress} from '../types/achievements'
 import type {HermitAttackType} from '../types/attack'
 import type {TypeT} from '../types/cards'
 import type {
@@ -22,21 +23,24 @@ import {StatusEffectComponent} from './status-effect-component'
 
 /** The minimal information that must be known about a player to start a game */
 export type PlayerDefs = {
+	uuid: string
 	name: string
 	minecraftName: string
 	censoredName: string
+	appearance: Appearance
 	disableDeckingOut?: true
-	selectedCoinHead: keyof typeof COINS
+	achievementProgress?: AchievementProgress
 }
 
 export class PlayerComponent {
 	readonly game: GameModel
 	readonly entity: PlayerEntity
 
+	readonly uuid: string
 	readonly playerName: string
 	readonly minecraftName: string
 	readonly censoredPlayerName: string
-	readonly selectedCoinHead: keyof typeof COINS
+	readonly appearance: Appearance
 
 	coinFlips: Array<CurrentCoinFlip>
 	lives: number
@@ -127,10 +131,11 @@ export class PlayerComponent {
 	constructor(game: GameModel, entity: PlayerEntity, player: PlayerDefs) {
 		this.game = game
 		this.entity = entity
+		this.uuid = player.uuid
 		this.playerName = player.name
 		this.minecraftName = player.minecraftName
 		this.censoredPlayerName = player.censoredName
-		this.selectedCoinHead = player.selectedCoinHead
+		this.appearance = player.appearance
 		this.coinFlips = []
 		this.lives = 3
 		this.hasPlacedHermit = false

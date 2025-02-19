@@ -17,7 +17,6 @@ export type LocalSettings = {
 	panoramaEnabled: boolean
 	panorama: string
 	gameSide: string
-	minecraftName: string
 	deckSortingMethod: 'Alphabetical' | 'First Tag'
 	lastSelectedTag: string | null
 }
@@ -43,7 +42,6 @@ const defaultSettings: LocalSettings = {
 	panoramaEnabled: true,
 	panorama: 'hermit-hill',
 	gameSide: 'Left',
-	minecraftName: '',
 	deckSortingMethod: 'Alphabetical',
 	lastSelectedTag: null,
 }

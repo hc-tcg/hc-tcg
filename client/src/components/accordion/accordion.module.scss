@@ -18,11 +18,15 @@
 	justify-self: flex-end;
 	height: 8px;
 	width: 8px;
+	transition: transform 0.15s;
 }
 
 .content {
 	overflow: hidden;
 	height: 100%;
+	transition: height 0.15s, opacity, 0.15s, margin-bottom 0.15s;
+	opacity: 1;
+	animation-duration: 2s;
 }
 
 .padding {
@@ -34,4 +38,5 @@
 .hide {
 	padding: 0;
 	height: 0;
+	opacity: 0;
 }

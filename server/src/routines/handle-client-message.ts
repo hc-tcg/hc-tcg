@@ -6,13 +6,11 @@ import {LocalMessage, localMessages} from 'messages'
 import {put, takeEvery} from 'typed-redux-saga'
 import {safeCall} from 'utils'
 import {
-	addUser,
-	authenticateUser,
 	deleteDeck,
 	deleteTag,
 	exportDeck,
 	getDecks,
-	getStats,
+	getOverview,
 	grabCurrentImport,
 	importDeck,
 	insertDeck,
@@ -26,6 +24,7 @@ import {
 	cancelPrivateGame,
 	createBossGame,
 	createPrivateGame,
+	createReplayGame,
 	joinPrivateGame,
 	joinQueue,
 	leavePrivateQueue,
@@ -33,14 +32,15 @@ import {
 } from './matchmaking'
 import {
 	loadUpdatesSaga,
-	updateDeckSaga,
+	updateCosmeticSaga,
 	updateMinecraftNameSaga,
+	updateUsernameSaga,
 } from './player'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
-		case clientMessages.SELECT_DECK:
-			return yield* updateDeckSaga(
+		case clientMessages.UPDATE_USERNAME:
+			return yield* updateUsernameSaga(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.UPDATE_MINECRAFT_NAME:
@@ -83,6 +83,10 @@ function* handler(message: RecievedClientMessage) {
 			return yield* leavePrivateQueue(
 				message as RecievedClientMessage<typeof message.type>,
 			)
+		case clientMessages.CREATE_REPLAY_GAME:
+			return yield* createReplayGame(
+				message as RecievedClientMessage<typeof message.type>,
+			)
 		case clientMessages.CHAT_MESSAGE:
 			return yield* chatMessage(
 				message as RecievedClientMessage<typeof message.type>,
@@ -95,14 +99,6 @@ function* handler(message: RecievedClientMessage) {
 				action: actionMessage.payload.action,
 				playerEntity: actionMessage.payload.playerEntity,
 			})
-		case clientMessages.PG_INSERT_USER:
-			return yield* addUser(
-				message as RecievedClientMessage<typeof message.type>,
-			)
-		case clientMessages.PG_AUTHENTICATE:
-			return yield* authenticateUser(
-				message as RecievedClientMessage<typeof message.type>,
-			)
 		case clientMessages.GET_DECKS:
 			return yield* getDecks(
 				message as RecievedClientMessage<typeof message.type>,
@@ -143,8 +139,12 @@ function* handler(message: RecievedClientMessage) {
 			return yield* deleteTag(
 				message as RecievedClientMessage<typeof message.type>,
 			)
-		case clientMessages.GET_STATS:
-			return yield* getStats(
+		case clientMessages.SET_COSMETIC:
+			return yield* updateCosmeticSaga(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.REPLAY_OVERVIEW:
+			return yield* getOverview(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 	}

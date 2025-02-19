@@ -207,7 +207,14 @@ function* privateLobbySaga() {
 
 				if (result.invalidCode) {
 					yield* put<LocalMessage>({
-						type: localMessages.MATCHMAKING_CODE_INVALID,
+						type: localMessages.TOAST_OPEN,
+						open: true,
+						title: 'Invalid Code!',
+						description: 'The code you entered is invalid.',
+						image: '/images/types/type-any.png',
+					})
+					yield* put<LocalMessage>({
+						type: localMessages.MATCHMAKING_LEAVE,
 					})
 					continue
 				} else if (result.createPrivateGameSuccess) {
@@ -312,6 +319,61 @@ function* privateLobbySaga() {
 	})
 }
 
+function* createReplayGameSaga(
+	action: LocalMessageTable[typeof localMessages.MATCHMAKING_REPLAY_GAME],
+) {
+	function* matchmaking() {
+		const socket = yield* select(getSocket)
+		const databaseInfo = yield* select(getLocalDatabaseInfo)
+		const uuid = databaseInfo.userId as string
+
+		try {
+			// Send message to server to create the game
+			yield* sendMsg({
+				type: clientMessages.CREATE_REPLAY_GAME,
+				id: action.id,
+				uuid: uuid,
+			})
+			const result = yield* race({
+				success: call(
+					receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
+				),
+				failure: call(receiveMsg(socket, serverMessages.JOIN_QUEUE_FAILURE)),
+			})
+
+			if (result.failure || !result.success) {
+				// Something went wrong, go back to menu
+				yield* put<LocalMessage>({
+					type: localMessages.MATCHMAKING_LEAVE,
+				})
+				return
+			}
+
+			// We have joined the queue, wait for game start
+			yield* call(gameSaga, result.success.localGameState)
+		} catch (err) {
+			console.error('Game crashed: ', err)
+		} finally {
+			if (yield* cancelled()) {
+				// Clear state and back to menu
+				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
+				yield* put<LocalMessage>({type: localMessages.GAME_END})
+			}
+		}
+	}
+
+	const result = yield* race({
+		cancel: take('LEAVE_MATCHMAKING'),
+		matchmaking: call(matchmaking),
+	})
+
+	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
+
+	if (result.cancel) {
+		yield* sendMsg({type: clientMessages.CANCEL_BOSS_GAME})
+	}
+}
+
 function* joinQueueSaga() {
 	function* matchmaking() {
 		const socket = yield* select(getSocket)
@@ -375,6 +437,11 @@ function* matchmakingSaga() {
 		localMessages.MATCHMAKING_BOSS_GAME_CREATE,
 		createBossGameSaga,
 	)
+	yield* takeEvery<
+		LocalMessageTable[typeof localMessages.MATCHMAKING_REPLAY_GAME]
+	>(localMessages.MATCHMAKING_REPLAY_GAME, function* (action) {
+		yield* createReplayGameSaga(action)
+	})
 }
 
 export default matchmakingSaga

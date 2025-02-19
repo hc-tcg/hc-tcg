@@ -29,7 +29,8 @@ const EndGameOverlay = ({
 }: Props) => {
 	let animation
 
-	let myOutcome: 'tie' | 'win' | 'loss' | 'crash' | 'timeout' = 'tie'
+	let myOutcome: 'tie' | 'win' | 'loss' | 'crash' | 'timeout' | 'no-viewers' =
+		'tie'
 
 	if (outcome.type === 'tie') {
 		myOutcome = 'tie'
@@ -37,6 +38,8 @@ const EndGameOverlay = ({
 		myOutcome = 'crash'
 	} else if (outcome.type === 'timeout') {
 		myOutcome = 'timeout'
+	} else if (outcome.type === 'no-viewers') {
+		myOutcome = 'no-viewers'
 	} else if (viewer.type === 'spectator') {
 		myOutcome = 'win'
 	} else if (viewer.entity === outcome.winner) {
@@ -50,6 +53,8 @@ const EndGameOverlay = ({
 		win: `${viewer.type === 'spectator' ? nameOfWinner : 'You'} Won`,
 		loss: 'You Lost',
 		timeout: 'The game timed out.',
+		'no-viewers':
+			'If an HC-TCG game has nobody watching it, does it still have a winner? Sometimes, but not now.',
 		crash:
 			'The game crashed. Please copy the crash message and report this to the developers.',
 	}

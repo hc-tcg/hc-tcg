@@ -3,15 +3,16 @@ import localSettingsSaga from 'logic/local-settings/local-settings-saga'
 import matchmakingSaga from 'logic/matchmaking/matchmaking-saga'
 import {localMessages} from 'logic/messages'
 import {
+	cosmeticSaga,
 	databaseConnectionSaga,
 	databaseErrorSaga,
 	loginSaga,
 	logoutSaga,
-	minecraftNameSaga,
 	newDeckSaga,
 	newDecksSaga,
+	overviewSaga,
+	recieveAfterGameInfo,
 	recieveCurrentImportSaga,
-	recieveStatsSaga,
 	updatesSaga,
 } from 'logic/session/session-saga'
 import socketSaga from 'logic/socket/socket-saga'
@@ -25,12 +26,13 @@ function* appSaga(): SagaIterator {
 	yield fork(logoutSaga)
 	yield fork(newDecksSaga)
 	yield fork(newDeckSaga)
-	yield fork(recieveStatsSaga)
+	yield fork(recieveAfterGameInfo)
 	yield fork(recieveCurrentImportSaga)
 	yield fork(databaseErrorSaga)
-	yield fork(minecraftNameSaga)
 	yield fork(matchmakingSaga)
 	yield fork(updatesSaga)
+	yield fork(cosmeticSaga)
+	yield fork(overviewSaga)
 }
 
 function* rootSaga(): SagaIterator {

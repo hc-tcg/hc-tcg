@@ -18,6 +18,7 @@ type Messages = [
 	{
 		type: typeof localMessages.CLIENT_CONNECTED
 		playerId: PlayerId
+		playerUuid: string
 		playerName: string
 		playerSecret: string
 		minecraftName: string

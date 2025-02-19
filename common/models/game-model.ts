@@ -1,4 +1,5 @@
 import assert from 'assert'
+import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
 import JoeHillsRare from '../cards/hermits/joehills-rare'
 import {
 	CardComponent,
@@ -103,6 +104,11 @@ export class GameModel {
 	public publishBattleLog: (logs: Array<Message>, timeout: number) => void
 
 	public battleLog: BattleLogModel
+	/**All past turn actions, saved for replays */
+	public turnActions: Array<ReplayActionData>
+	/**The time the last action has been recieved*/
+	public lastActionTime: number | null
+
 	public state: GameState
 	/** The seed for the random number generation for this game. WARNING: Must be under 15 characters or the database will break. */
 	public readonly rngSeed: string
@@ -129,6 +135,8 @@ export class GameModel {
 		 * Locked slots cannot be chosen in some combinator expressions.
 		 */
 		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
+		/** Hook called when the game ends for disposing references */
+		onGameEnd: GameHook<(outcome: GameOutcome) => void>
 		/** Hook called when the game ends for disposing references */
 		afterGameEnd: Hook<string, () => void>
 		/** Hook for reviving rows after all attacks are executed */
@@ -167,8 +175,11 @@ export class GameModel {
 		assert(rngSeed.length < 16, 'Game RNG seed must be under 16 characters')
 		this.rngSeed = rngSeed
 		this.rng = newRandomNumberGenerator(rngSeed)
+		const swapPlayers = this.rng()
 
 		this.battleLog = new BattleLogModel(this)
+		this.turnActions = []
+		this.lastActionTime = null
 
 		this.endInfo = {
 			deadPlayerEntities: [],
@@ -181,8 +192,10 @@ export class GameModel {
 			rowRevive: new PriorityHook(rowRevive),
 			afterAttack: new PriorityHook(afterAttack),
 			freezeSlots: new GameHook(),
+			onGameEnd: new GameHook(),
 			afterGameEnd: new Hook(),
 		}
+
 		setupComponents(this, this.components, player1, player2, {
 			shuffleDeck: settings.shuffleDeck,
 			startWithAllCards: settings.startWithAllCards,
@@ -190,7 +203,10 @@ export class GameModel {
 			extraStartingCards: settings.extraStartingCards,
 		})
 
-		this.state = getGameState(this, options.randomizeOrder)
+		this.state = getGameState(
+			this,
+			swapPlayers >= 0.5 && options.randomizeOrder ? true : false,
+		)
 		this.voiceLineQueue = []
 	}
 

@@ -256,7 +256,7 @@ function DataSettings({setMenuSection}: Props) {
 							userId: id,
 							secret: secret,
 						})
-						setMenuSection('mainmenu')
+						setMenuSection('main-menu')
 						dispatch({
 							type: localMessages.LOGOUT,
 						})
@@ -283,7 +283,7 @@ function DataSettings({setMenuSection}: Props) {
 							})
 						},
 						() => {
-							setMenuSection('mainmenu')
+							setMenuSection('main-menu')
 							dispatch({
 								type: localMessages.LOGOUT,
 							})

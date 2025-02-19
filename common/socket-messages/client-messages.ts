@@ -1,3 +1,4 @@
+import {Cosmetic} from '../cosmetics/types'
 import {PlayerEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
 import {Message, MessageTable, messages} from '../redux-messages'
@@ -7,7 +8,6 @@ import {AnyTurnActionData} from '../types/turn-action-data'
 export const clientMessages = messages('clientMessages', {
 	GET_UPDATES: null,
 	SELECT_DECK: null,
-	UPDATE_MINECRAFT_NAME: null,
 	CREATE_BOSS_GAME: null,
 	CANCEL_BOSS_GAME: null,
 	CREATE_PRIVATE_GAME: null,
@@ -16,15 +16,16 @@ export const clientMessages = messages('clientMessages', {
 	LEAVE_QUEUE: null,
 	LEAVE_PRIVATE_QUEUE: null,
 	JOIN_PRIVATE_GAME: null,
+	CREATE_REPLAY_GAME: null,
+	REPLAY_OVERVIEW: null,
 	TURN_ACTION: null,
 	FORFEIT: null,
 	SPECTATOR_LEAVE: null,
 	CHAT_MESSAGE: null,
 	/**Postgres */
-	PG_AUTHENTICATE: null,
-	PG_INSERT_USER: null,
+	UPDATE_USERNAME: null,
+	UPDATE_MINECRAFT_NAME: null,
 	GET_DECKS: null,
-	GET_STATS: null,
 	INSERT_DECK: null,
 	EXPORT_DECK: null,
 	GRAB_CURRENT_IMPORT: null,
@@ -34,11 +35,12 @@ export const clientMessages = messages('clientMessages', {
 	UPDATE_DECK: null,
 	DELETE_DECK: null,
 	DELETE_TAG: null,
+	SET_COSMETIC: null,
 })
 
 export type ClientMessages = [
 	{type: typeof clientMessages.GET_UPDATES},
-	{type: typeof clientMessages.SELECT_DECK; deck: Deck},
+	{type: typeof clientMessages.UPDATE_USERNAME; name: string},
 	{type: typeof clientMessages.UPDATE_MINECRAFT_NAME; name: string},
 	{
 		type: typeof clientMessages.CREATE_BOSS_GAME
@@ -87,24 +89,18 @@ export type ClientMessages = [
 		code: string
 	},
 	{
+		type: typeof clientMessages.CREATE_REPLAY_GAME
+		id: number
+		uuid: string
+	},
+	{
 		type: typeof clientMessages.TURN_ACTION
 		playerEntity: PlayerEntity
 		action: AnyTurnActionData
 	},
 	{type: typeof clientMessages.SPECTATOR_LEAVE},
 	{type: typeof clientMessages.CHAT_MESSAGE; message: string},
-	{
-		type: typeof clientMessages.PG_AUTHENTICATE
-		userId: string
-		secret: string
-	},
-	{
-		type: typeof clientMessages.PG_INSERT_USER
-		username: string | null
-		minecraftName: string | null
-	},
 	{type: typeof clientMessages.GET_DECKS; newActiveDeck?: string},
-	{type: typeof clientMessages.GET_STATS},
 	{
 		type: typeof clientMessages.INSERT_DECK
 		deck: Deck
@@ -140,6 +136,8 @@ export type ClientMessages = [
 	},
 	{type: typeof clientMessages.DELETE_DECK; deck: Deck},
 	{type: typeof clientMessages.DELETE_TAG; tag: Tag},
+	{type: typeof clientMessages.SET_COSMETIC; cosmetic: Cosmetic['id']},
+	{type: typeof clientMessages.REPLAY_OVERVIEW; id: number},
 ]
 
 export type ClientMessage = Message<ClientMessages>

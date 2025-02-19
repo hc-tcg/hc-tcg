@@ -2,6 +2,7 @@ import {DEBUG} from 'common/config'
 import {NumberOrNull} from 'common/utils/database-codes'
 import {Express} from 'express'
 import root from 'serverRoot'
+import {authenticateUser, createUser} from './auth'
 import {cards, deckCost, getDeckInformation, ranks, types} from './cards'
 import {
 	cancelApiGame,
@@ -26,6 +27,21 @@ import {
 import {requestUrlRoot} from './utils'
 
 export function addApi(app: Express) {
+	app.get('/api/auth/', async (req, res) => {
+		const userId = req.get('userId')
+		const secret = req.get('secret')
+		let ret = await authenticateUser(userId, secret)
+		res.statusCode = ret[0]
+		res.send(ret[1])
+	})
+
+	app.post('/api/createUser/', async (req, res) => {
+		const username = req.get('username')
+		let ret = await createUser(username)
+		res.statusCode = ret[0]
+		res.send(ret[1])
+	})
+
 	app.get('/api/cards', (req, res) => {
 		res.send(cards(requestUrlRoot(req)))
 	})

@@ -8,6 +8,7 @@ import {
 	expect,
 	test,
 } from '@jest/globals'
+import {ACHIEVEMENTS_LIST} from 'common/achievements'
 import {CARDS, CARDS_LIST} from 'common/cards'
 import BdoubleO100Common from 'common/cards/hermits/bdoubleo100-common'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
@@ -46,6 +47,7 @@ describe('Test Database', () => {
 				...env,
 			},
 			CARDS_LIST,
+			ACHIEVEMENTS_LIST,
 			BF_DEPTH,
 		)
 	})
@@ -66,11 +68,10 @@ describe('Test Database', () => {
 	})
 
 	test('Add User', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 		expect(user.body).not.toBeNull()
 		expect(user.body.username).toBe('Test User')
-		expect(user.body.minecraftName).toBe('ethoslab')
 		expect(user.body.uuid).toBeTruthy()
 		expect(user.body.secret).toBeTruthy()
 		expect(typeof user.body.uuid === 'string').toBeTruthy()
@@ -78,7 +79,7 @@ describe('Test Database', () => {
 	})
 
 	test('Authenticate', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const authenticatedUser = await database.authenticateUser(
@@ -96,13 +97,12 @@ describe('Test Database', () => {
 		)
 
 		expect(authenticatedUser.body.username).toBe(user.body.username)
-		expect(authenticatedUser.body.minecraftName).toBe(user.body.minecraftName)
 		expect(authenticatedUser.body.uuid).toBe(user.body.uuid)
 		expect(incorrectUser.type).toBe('failure')
 	})
 
 	test('Add and Retrieve Deck', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const tag = await database.insertTag(
@@ -148,8 +148,8 @@ describe('Test Database', () => {
 	})
 
 	test('Add Game and Check Stat Retrieval Works', async () => {
-		const winner = await database.insertUser('Winner', 'ethoslab')
-		const loser = await database.insertUser('Winner', 'geminitay')
+		const winner = await database.insertUser('Winner')
+		const loser = await database.insertUser('Loser')
 
 		assert(
 			winner.type === 'success',
@@ -348,7 +348,7 @@ describe('Test Database', () => {
 	})
 
 	test('Update Username and Minecraft Name', async () => {
-		const user = await database.insertUser('Ethoslab', 'ethoslab')
+		const user = await database.insertUser('Ethoslab')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		await database.setUsername(user.body.uuid, 'GeminiTay')
@@ -361,11 +361,10 @@ describe('Test Database', () => {
 		)
 
 		expect(updatedUser.body.username).toBe('GeminiTay')
-		expect(updatedUser.body.minecraftName).toBe('geminitay')
 	})
 
 	test('Add and Retrieve Tags', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const tag1 = await database.insertTag(
@@ -401,7 +400,7 @@ describe('Test Database', () => {
 	})
 
 	test('Add and Retrieve Deck', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const tag = await database.insertTag(
@@ -452,7 +451,7 @@ describe('Test Database', () => {
 			returnedDeckWithData.body.cards.map((c) => CARDS[c].numericId),
 		).toStrictEqual(playerDeck.cards)
 
-		const allDecks = await database.getDecks(user.body.uuid)
+		const allDecks = await database.getDecksFromUuid(user.body.uuid)
 		assert(
 			allDecks.type === 'success',
 			'The deck should be retrieved successfully',
@@ -463,7 +462,7 @@ describe('Test Database', () => {
 	})
 
 	test('Returning decks with no tags or cards', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const code = generateDatabaseCode()
@@ -480,7 +479,7 @@ describe('Test Database', () => {
 
 		assert(deck1.type === 'success', 'Deck 1 was created successfully')
 
-		const allDecks = await database.getDecks(user.body.uuid)
+		const allDecks = await database.getDecksFromUuid(user.body.uuid)
 		const returnedDeckFromId = await database.getDeckFromID(code)
 
 		assert(
@@ -492,7 +491,9 @@ describe('Test Database', () => {
 			'The deck should be retrieved successfully',
 		)
 
-		const returnedDeckFromGroup = allDecks.body[0]
+		const decks = allDecks.body.filter((deck) => deck.name !== 'Starter Deck')
+
+		const returnedDeckFromGroup = decks[0]
 		expect(returnedDeckFromGroup).toBeTruthy()
 		expect(returnedDeckFromGroup?.tags).toStrictEqual([])
 		expect(returnedDeckFromGroup?.cards).toStrictEqual([])
@@ -503,7 +504,7 @@ describe('Test Database', () => {
 	})
 
 	test('Confirm decks are disassociated from a user properly', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const tag = await database.insertTag(
@@ -564,7 +565,7 @@ describe('Test Database', () => {
 		await database.deleteDeck(withExportedCode.body, user.body.uuid)
 
 		const withExportedDeck = await database.getDeckFromID(withExportedCode.body)
-		const userDecks = await database.getDecks(user.body.uuid)
+		const userDecks = await database.getDecksFromUuid(user.body.uuid)
 
 		assert(
 			withExportedDeck.type === 'success',
@@ -577,11 +578,13 @@ describe('Test Database', () => {
 			"The user's decks should be retrieved properly",
 		)
 
-		expect(userDecks.body).toStrictEqual([])
+		const decks = userDecks.body.filter((deck) => deck.name !== 'Starter Deck')
+
+		expect(decks).toStrictEqual([])
 	})
 
 	test('Confirm tags are deleted properly', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const tag = await database.insertTag(
@@ -616,7 +619,7 @@ describe('Test Database', () => {
 	})
 
 	test("Confirm deck deletion doesn't impact other decks", async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const deck1 = await database.insertDeck(

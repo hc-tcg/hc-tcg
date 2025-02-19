@@ -11,6 +11,7 @@ type SessionState = {
 	playerSecret: string
 	playerDeck: string | null
 	connecting: boolean
+	connectingMessage: string
 	connected: boolean
 	errorType?:
 		| 'invalid_name'
@@ -35,7 +36,8 @@ const defaultState: SessionState = {
 	playerId: '' as PlayerId,
 	playerSecret: '',
 	playerDeck: null,
-	connecting: false,
+	connecting: true,
+	connectingMessage: 'Connecting',
 	connected: false,
 	tooltip: null,
 	toast: [],
@@ -71,11 +73,21 @@ const loginReducer = (
 				playerDeck:
 					(action.player as PlayerInfo)?.playerDeck?.code || state.playerDeck,
 			}
+		case localMessages.NOT_CONNECTING:
+			return {
+				...state,
+				connecting: false,
+			}
 		case localMessages.CONNECTED:
 			return {
 				...state,
 				connecting: false,
 				connected: true,
+			}
+		case localMessages.CONNECTING_MESSAGE:
+			return {
+				...state,
+				connectingMessage: action.message,
 			}
 		case localMessages.UPDATES_LOAD:
 			return {
@@ -127,7 +139,11 @@ const loginReducer = (
 				...state,
 				tooltip: null,
 			}
-		case localMessages.MINECRAFT_NAME_NEW:
+		case localMessages.USERNAME_SET:
+			return {
+				...state,
+				playerName: action.name,
+			}
 		case localMessages.MINECRAFT_NAME_SET:
 			return {
 				...state,

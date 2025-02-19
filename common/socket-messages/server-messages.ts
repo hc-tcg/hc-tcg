@@ -1,5 +1,7 @@
+import {Appearance} from '../cosmetics/types'
 import {Message, MessageTable, messages} from '../redux-messages'
-import {Stats, User} from '../types/database'
+import {AchievementProgress} from '../types/achievements'
+import {GameHistory, PlayerStats, User} from '../types/database'
 import {ApiDeck, Deck, Tag} from '../types/deck'
 import {GameOutcome, LocalGameState} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
@@ -10,7 +12,6 @@ export const serverMessages = messages('serverMessages', {
 	INVALID_PLAYER: null,
 	PLAYER_INFO: null,
 	NEW_DECK: null,
-	NEW_MINECRAFT_NAME: null,
 	LOAD_UPDATES: null,
 	OPPONENT_CONNECTION: null,
 	GAME_START: null,
@@ -34,12 +35,15 @@ export const serverMessages = messages('serverMessages', {
 	GAME_OVER_STAT: null,
 	GAME_STATE: null,
 	CHAT_UPDATE: null,
+	COSMETICS_INVALID: null,
+	COSMETICS_UPDATE: null,
+	INVALID_REPLAY: null,
+	REPLAY_OVERVIEW_RECIEVED: null,
 	/**Postgres */
-	NO_DATABASE_CONNECTION: null,
 	AUTHENTICATED: null,
 	AUTHENTICATION_FAIL: null,
 	DECKS_RECIEVED: null,
-	STATS_RECIEVED: null,
+	AFTER_GAME_INFO: null,
 	CURRENT_IMPORT_RECIEVED: null,
 	DATABASE_FAILURE: null,
 })
@@ -58,7 +62,6 @@ export type ServerMessages = [
 		game?: LocalGameState
 	},
 	{type: typeof serverMessages.NEW_DECK; deck: Deck},
-	{type: typeof serverMessages.NEW_MINECRAFT_NAME; name: string},
 	{
 		type: typeof serverMessages.LOAD_UPDATES
 		updates: Array<Update>
@@ -100,7 +103,6 @@ export type ServerMessages = [
 	},
 	{type: typeof serverMessages.GAME_STATE; localGameState: LocalGameState},
 	{type: typeof serverMessages.CHAT_UPDATE; messages: Array<ChatMessage>},
-	{type: typeof serverMessages.NO_DATABASE_CONNECTION},
 	{type: typeof serverMessages.AUTHENTICATED; user: User},
 	{type: typeof serverMessages.AUTHENTICATION_FAIL},
 	{
@@ -109,9 +111,21 @@ export type ServerMessages = [
 		tags: Array<Tag>
 		newActiveDeck?: Deck
 	},
-	{type: typeof serverMessages.STATS_RECIEVED; stats: Stats},
+	{
+		type: typeof serverMessages.AFTER_GAME_INFO
+		stats: PlayerStats
+		gameHistory: Array<GameHistory>
+		achievements: AchievementProgress
+	},
 	{type: typeof serverMessages.CURRENT_IMPORT_RECIEVED; deck: ApiDeck | null},
 	{type: typeof serverMessages.DATABASE_FAILURE; error: string | undefined},
+	{type: typeof serverMessages.COSMETICS_INVALID},
+	{type: typeof serverMessages.COSMETICS_UPDATE; appearance: Appearance},
+	{type: typeof serverMessages.INVALID_REPLAY},
+	{
+		type: typeof serverMessages.REPLAY_OVERVIEW_RECIEVED
+		battleLog: Array<ChatMessage>
+	},
 ]
 
 export type ServerMessage = Message<ServerMessages>
