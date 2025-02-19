@@ -30,7 +30,7 @@ const PoultryManRare: Hermit = {
 		cost: ['farm', 'farm', 'any'],
 		damage: 90,
 		power:
-			'When played with egg, egg is returned to your hand instead of being discarded.',
+			'When used with an Egg effect card, Egg is returned to your hand instead of being discarded.',
 	},
 	onAttach(
 		game: GameModel,
