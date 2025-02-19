@@ -74,7 +74,7 @@ export class BattleLogModel {
 		return entry
 	}
 
-	public async sendLogs() {
+	public sendLogs() {
 		let logs: Array<Message> = []
 
 		while (this.logMessageQueue.length > 0) {
