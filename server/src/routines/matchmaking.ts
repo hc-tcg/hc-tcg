@@ -46,7 +46,7 @@ import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import {turnActionsToBuffer} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
-import { COINS } from 'common/cosmetics/coins'
+import {COINS} from 'common/cosmetics/coins'
 
 function setupGame(
 	player1: PlayerModel,
