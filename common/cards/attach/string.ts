@@ -12,7 +12,7 @@ const String: Attach = {
 	rarity: 'rare',
 	tokens: 2,
 	description:
-		"Attach to one of your opponent's empty item or effect slots. While attached, your opponent can no longer attach cards to that slot.",
+		"Attach to one of your opponent's empty item or effect slots.\nYour opponent can no longer attach cards to that slot.",
 	attachCondition: query.every(
 		query.slot.opponent,
 		query.slot.empty,
