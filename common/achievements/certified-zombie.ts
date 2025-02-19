@@ -7,7 +7,7 @@ import {Achievement} from './types'
 const CertifiedZombie: Achievement = {
 	...achievement,
 	id: 'certified_zombie',
-	numericId: 0,
+	numericId: 18,
 	name: 'Certified Zombie',
 	description:
 		'Survive with an armor stand as your active hermit for three rounds.',
