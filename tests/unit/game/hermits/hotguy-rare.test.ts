@@ -66,6 +66,8 @@ describe('Test Hotguy Rare', () => {
 					EthosLabCommon,
 					EthosLabCommon,
 					EthosLabCommon,
+					/* Thorns is being tested because it was a suspected bugged interacton
+					 * https://discord.com/channels/1073763159187390584/1341987170180796487/1341988384783994891 */
 					ThornsIII,
 				],
 				playerTwoDeck: [HotguyRare, Crossbow],
