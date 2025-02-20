@@ -9,7 +9,7 @@
 	padding: 1vh;
 	display: block;
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
 	max-width: 80rem;
 	width: 100%;
 	height: 95vh;
@@ -29,6 +29,14 @@
 	align-items: center;
 	justify-content: center;
 }
+.body2 {
+	flex-grow: 1;
+	height: 100%;
+	width: 100%;
+	overflow-y: hidden;
+	display: flex;
+	flex-direction: column;
+}
 
 .itemSelector {
 	flex-grow: 1;
@@ -36,6 +44,15 @@
 	border: 2px black solid;
 	border-top: 0px;
 	background-color: var(--gray-600);
+	height: 100%;
+	overflow-y: hidden;
+}
+
+.nameSelector {
+	flex-grow: 1;
+	padding: 1rem;
+	border: 2px black solid;
+	background-color: var(--gray-700);
 	height: 100%;
 	overflow-y: hidden;
 }
@@ -57,14 +74,22 @@
 }
 
 .cosmeticsContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	overflow-y: hidden;
+}
+
+.cosmeticsContainerContainer {
 	height: 100%;
 	overflow-y: scroll;
 }
 
 .cosmetics {
 	margin-top: auto;
-	display: flex;
-	flex-direction: row;
+	display: grid;
+	grid-template-columns: 12vh 12vh 12vh 12vh;
+	grid-auto-flow: row;
 	gap: 0.5vh;
 	overflow-x: auto;
 }
@@ -80,10 +105,14 @@
 	flex-direction: column;
 	color: var(--text-light);
 
-	border: 5px var(--gray-700) solid;
-	border-radius: 1vh;
+	border: 2px black solid;
+	border-radius: 5px;
 
-	background-color: var(--gray-600);
+	background-color: var(--gray-700);
+
+	&:not(.unlocked) {
+		background-color: var(--gray-900);
+	}
 }
 
 .cosmeticName {
@@ -92,6 +121,58 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	font-family: Minecrafter;
+	font-size: 0.9rem;
+	color: var(--text-light);
+
+	filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black)
+		drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
+}
+
+.cosmeticBorder {
+	width: 100%;
+	height: 100%;
+	border-image-slice: 30;
+	border-image-width: 20px;
+	border-image-repeat: stretch stretch;
+	border-style: solid;
+	background-color: rgba(48, 48, 48, 0.5);
+}
+
+.cosmeticBackground {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	border: 2px black solid;
+}
+
+.cosmeticCoin {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	border: 4px solid;
+	box-shadow: 0 0 8px;
+}
+
+.appearanceCoin {
+	width: 10vh;
+	height: 10vh;
+	border-radius: 50%;
+	border: 4px solid;
+	box-shadow: 0 0 8px;
+}
+
+.cosmeticHeart {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+
+	> img {
+		width: 33%;
+		height: 33%;
+	}
 }
 
 .unlocked {
@@ -105,16 +186,25 @@
 	background-color: var(--gray-500);
 }
 
+.sectionHeader {
+	font-family: Minecrafter;
+	color: white;
+	font-size: 1.2rem;
+}
+
 .lockOverlay {
 	position: relative;
 
 	> img {
 		position: absolute;
+		height: 32px;
+		image-rendering: crisp-edges;
+
 		top: -9.5vh;
-		left: -5vh;
-		width: 10vh;
-		height: 10vh;
-		opacity: 50%;
+		left: -2.5vw;
+
+		filter: drop-shadow(2px 0px 0 white) drop-shadow(-2px 0px 0 white)
+			drop-shadow(0px 2px 0 white) drop-shadow(0px -2px 0 white);
 	}
 }
 
@@ -123,9 +213,17 @@
 	flex-direction: row;
 }
 
+.leftSideCosmetics {
+	width: 50%;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	margin-left: 1rem;
+	margin-top: 1vh;
+}
+
 .appearance {
-	width: 80%;
-	margin: 2rem;
+	width: 100%;
 	align-self: center;
 }
 

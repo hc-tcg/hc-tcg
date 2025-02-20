@@ -15,6 +15,7 @@ import MenuLayout from 'components/menu-layout'
 import {
 	getAchievements,
 	getAppearance,
+	getLocalDatabaseInfo,
 } from 'logic/game/database/database-selectors'
 import {localMessages} from 'logic/messages'
 import {getSession} from 'logic/session/session-selectors'
@@ -29,6 +30,7 @@ import CardInstanceTooltip from 'components/card/card-tooltip'
 import {CARDS} from 'common/cards'
 import {WithoutFunctions} from 'common/types/server-requests'
 import Card from 'components/card'
+import {COINS} from 'common/cosmetics/coins'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -89,24 +91,27 @@ export function CosmeticPreview() {
 const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 	const dispatch = useDispatch()
 	const achievementProgress = useSelector(getAchievements)
-
-	const [selectedCosmetic, setSelectedCosmetic] =
-		useState<Cosmetic['type']>('title')
 	const appearance = useSelector(getAppearance)
-	const selectableCosmetics = ALL_COSMETICS.filter(
-		(cosmetic) => cosmetic.type === selectedCosmetic,
-	)
-	const selected = appearance[selectedCosmetic]
+
+	const cosmetics = [
+		appearance.background,
+		appearance.border,
+		appearance.coin,
+		appearance.heart,
+		appearance.title,
+	]
 
 	let isUnlocked = true
 
-	let isSelected = selected.id === cosmetic.id
+	let isSelected = cosmetics.find((c) => c.id === cosmetic.id)
 
 	const achievement = cosmetic.requires ? ACHIEVEMENTS[cosmetic.requires] : null
 
 	if (cosmetic.requires && achievement) {
 		isUnlocked = !!achievementProgress[achievement.numericId]?.completionTime
 	}
+
+	const icon_url = `/images/cosmetics/${cosmetic.type}/${cosmetic.id}.png`
 
 	const item = (
 		<div
@@ -121,7 +126,42 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 				})
 			}
 		>
-			<div className={css.cosmeticName}>{cosmetic.name}</div>
+			{cosmetic.type === 'title' && (
+				<div className={css.cosmeticName}>{cosmetic.name}</div>
+			)}
+			{cosmetic.type === 'background' && (
+				<img
+					className={css.cosmeticBackground}
+					src={icon_url}
+					alt={cosmetic.name}
+				></img>
+			)}
+			{cosmetic.type === 'coin' && (
+				<img
+					className={css.cosmeticCoin}
+					style={{
+						borderColor: `${COINS[cosmetic.id].borderColor}`,
+						boxShadow: `0 0 4px ${COINS[cosmetic.id].borderColor}`,
+					}}
+					src={icon_url}
+					alt={cosmetic.name}
+				></img>
+			)}
+			{cosmetic.type === 'heart' && (
+				<div className={css.cosmeticHeart}>
+					<img src={icon_url} alt={cosmetic.name}></img>
+					<img src={icon_url} alt={cosmetic.name}></img>
+					<img src={icon_url} alt={cosmetic.name}></img>
+				</div>
+			)}
+			{cosmetic.type === 'border' && (
+				<div
+					className={css.cosmeticBorder}
+					style={{
+						borderImageSource: `url("${icon_url}")`,
+					}}
+				></div>
+			)}
 			{!isUnlocked && (
 				<div className={css.lockOverlay}>
 					<img src="/images/lock.png" />
@@ -136,23 +176,18 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 			<p>{achievement.description}</p>
 		</div>
 	) : (
-		<div></div>
+		<div className={css.tooltip}>
+			<b>{cosmetic.name}</b>
+		</div>
 	)
 
-	return achievement ? <Tooltip tooltip={tooltip}>{item}</Tooltip> : item
+	return <Tooltip tooltip={tooltip}>{item}</Tooltip>
 }
 
 function Cosmetics({setMenuSection}: Props) {
 	const dispatch = useDispatch()
 
-	const [selectedCosmetic, setSelectedCosmetic] =
-		useState<Cosmetic['type']>('title')
-	const achievementProgress = useSelector(getAchievements)
-	const appearance = useSelector(getAppearance)
-	const selectableCosmetics = ALL_COSMETICS.filter(
-		(cosmetic) => cosmetic.type === selectedCosmetic,
-	)
-	const selected = appearance[selectedCosmetic]
+	const cosmetics = useSelector(getAppearance)
 	const [tab, selectTab] = useState<'achievements' | 'rewards'>('achievements')
 	const progressData = useSelector(getAchievements)
 
@@ -220,65 +255,84 @@ function Cosmetics({setMenuSection}: Props) {
 						Update Player Head
 					</Button>
 				</div> */}
-				<Tabs
-					selected={tab}
-					setSelected={selectTab}
-					tabs={['achievements', 'rewards']}
-				/>
-				<div className={css.itemSelector}>
-					{tab === 'achievements' && (
-						<div className={css.achievements}>
-							{ACHIEVEMENTS_LIST.map((achievement) => {
-								return (
-									<AchievementComponent
-										key={achievement.numericId}
-										achievement={achievement}
-										progressData={progressData[achievement.numericId]}
-									/>
-								)
-							})}
-						</div>
-					)}
-					{tab === 'rewards' && (
+				<div className={css.body2}>
+					<Tabs
+						selected={tab}
+						setSelected={selectTab}
+						tabs={['achievements', 'rewards']}
+					/>
+					<div className={css.itemSelector}>
+						{tab === 'achievements' && (
+							<div className={css.achievements}>
+								{ACHIEVEMENTS_LIST.map((achievement) => {
+									return (
+										<AchievementComponent
+											key={achievement.numericId}
+											achievement={achievement}
+											progressData={progressData[achievement.numericId]}
+										/>
+									)
+								})}
+							</div>
+						)}
+						{tab === 'rewards' && (
+							<div className={css.cosmeticsContainerContainer}>
+								<div className={css.cosmeticsContainer}>
+									<div className={css.sectionHeader}>Backgrounds</div>
+									<div className={css.cosmetics}>
+										{sortedCosmetics.background.map((cosmetic) => (
+											<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+										))}
+									</div>
+									<div className={css.sectionHeader}>Borders</div>
+									<div className={css.cosmetics}>
+										{sortedCosmetics.border.map((cosmetic) => (
+											<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+										))}
+									</div>
+									<div className={css.sectionHeader}>Coins</div>
+									<div className={css.cosmetics}>
+										{sortedCosmetics.coin.map((cosmetic) => (
+											<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+										))}
+									</div>
+									<div className={css.sectionHeader}>Hearts</div>
+									<div className={css.cosmetics}>
+										{sortedCosmetics.heart.map((cosmetic) => (
+											<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+										))}
+									</div>
+									<div className={css.sectionHeader}>Titles</div>
+									<div className={css.cosmetics}>
+										{sortedCosmetics.title.map((cosmetic) => (
+											<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+										))}
+									</div>
+								</div>
+							</div>
+						)}
+					</div>
+				</div>
+				{tab === 'rewards' && (
+					<div className={css.leftSideCosmetics}>
+						<h2>Current Appearance</h2>
 						<div className={css.appearance}>
 							<CosmeticPreview />
 						</div>
-					)}
-					{tab === 'rewards' && (
-						<div className={css.cosmeticsContainer}>
-							<div>Backgrounds</div>
-							<div className={css.cosmetics}>
-								{sortedCosmetics.background.map((cosmetic) => (
-									<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
-								))}
-							</div>
-							<div>Borders</div>
-							<div className={css.cosmetics}>
-								{sortedCosmetics.border.map((cosmetic) => (
-									<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
-								))}
-							</div>
-							<div>Coins</div>
-							<div className={css.cosmetics}>
-								{sortedCosmetics.coin.map((cosmetic) => (
-									<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
-								))}
-							</div>
-							<div>Hearts</div>
-							<div className={css.cosmetics}>
-								{sortedCosmetics.heart.map((cosmetic) => (
-									<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
-								))}
-							</div>
-							<div>Titles</div>
-							<div className={css.cosmetics}>
-								{sortedCosmetics.title.map((cosmetic) => (
-									<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
-								))}
-							</div>
+						<img
+							className={css.appearanceCoin}
+							style={{
+								borderColor: `${COINS[cosmetics.coin.id].borderColor}`,
+								boxShadow: `0 0 4px ${COINS[cosmetics.coin.id].borderColor}`,
+							}}
+							src={`/images/cosmetics/coin/${cosmetics.coin.id}.png`}
+							alt={'Coin'}
+						></img>
+						<div className={css.nameSelector}>
+							This is the place to select your player head and player name
 						</div>
-					)}
-				</div>
+					</div>
+				)}
 			</div>
 		</MenuLayout>
 	)
