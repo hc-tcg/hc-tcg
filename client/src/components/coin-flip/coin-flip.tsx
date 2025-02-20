@@ -16,10 +16,11 @@ const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
 	const longestFlipIndex = Math.floor(Math.random() * tosses.length)
 	const coin = COINS[headImage]
 
+
 	const coins = tosses.map((face, index) => {
 		const coinPics = [
-			<img src={`/images/coins/${COINS[headImage]}`} />,
-			<img src={`/images/cosmetics/coin/${COSMETICS[headImage]}.png`} />,
+			<img src={'/images/cosmetics/coin/tails.png'} />,
+			<img src={`/images/cosmetics/coin/${COSMETICS[headImage].id}.png`} />,
 		]
 
 		const flipOffset =
