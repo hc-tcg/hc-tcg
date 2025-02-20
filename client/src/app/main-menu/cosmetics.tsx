@@ -101,6 +101,13 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 	let isUnlocked = true
 
 	let isSelected = selected.id === cosmetic.id
+
+	const achievement = cosmetic.requires ? ACHIEVEMENTS[cosmetic.requires] : null
+
+	if (cosmetic.requires && achievement) {
+		isUnlocked = !!achievementProgress[achievement.numericId]?.completionTime
+	}
+
 	const item = (
 		<div
 			className={cn(css.cosmeticItem, {
@@ -122,12 +129,6 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 			)}
 		</div>
 	)
-
-	const achievement = cosmetic.requires ? ACHIEVEMENTS[cosmetic.requires] : null
-
-	if (cosmetic.requires && achievement) {
-		isUnlocked = !!achievementProgress[achievement.numericId]?.completionTime
-	}
 
 	const tooltip = achievement ? (
 		<div className={css.tooltip}>
