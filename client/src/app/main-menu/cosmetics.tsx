@@ -28,6 +28,7 @@ import Tooltip from 'components/tooltip'
 import CardInstanceTooltip from 'components/card/card-tooltip'
 import {CARDS} from 'common/cards'
 import {WithoutFunctions} from 'common/types/server-requests'
+import Card from 'components/card'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -85,6 +86,61 @@ export function CosmeticPreview() {
 	)
 }
 
+const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
+	const dispatch = useDispatch()
+	const achievementProgress = useSelector(getAchievements)
+
+	const [selectedCosmetic, setSelectedCosmetic] =
+		useState<Cosmetic['type']>('title')
+	const appearance = useSelector(getAppearance)
+	const selectableCosmetics = ALL_COSMETICS.filter(
+		(cosmetic) => cosmetic.type === selectedCosmetic,
+	)
+	const selected = appearance[selectedCosmetic]
+
+	let isUnlocked = true
+
+	let isSelected = selected.id === cosmetic.id
+	const item = (
+		<div
+			className={cn(css.cosmeticItem, {
+				[css.unlocked]: isUnlocked,
+				[css.selected]: isSelected,
+			})}
+			onClick={() =>
+				dispatch({
+					type: localMessages.COSMETIC_UPDATE,
+					cosmetic: cosmetic,
+				})
+			}
+		>
+			<div className={css.cosmeticName}>{cosmetic.name}</div>
+			{!isUnlocked && (
+				<div className={css.lockOverlay}>
+					<img src="/images/lock.png" />
+				</div>
+			)}
+		</div>
+	)
+
+	const achievement = cosmetic.requires ? ACHIEVEMENTS[cosmetic.requires] : null
+
+	if (cosmetic.requires && achievement) {
+		isUnlocked = !!achievementProgress[achievement.numericId]?.completionTime
+	}
+
+	const tooltip = achievement ? (
+		<div className={css.tooltip}>
+			<b>{achievement.name}</b>
+			<p>{achievement.description}</p>
+		</div>
+	) : (
+		<div></div>
+	)
+
+	return achievement ? <Tooltip tooltip={tooltip}>{item}</Tooltip> : item
+}
+
 function Cosmetics({setMenuSection}: Props) {
 	const dispatch = useDispatch()
 
@@ -97,7 +153,7 @@ function Cosmetics({setMenuSection}: Props) {
 	)
 	const selected = appearance[selectedCosmetic]
 	const [tab, selectTab] = useState<'achievements' | 'rewards'>('achievements')
-	const data = useSelector(getAchievements)
+	const progressData = useSelector(getAchievements)
 
 	// const usernameRef = useRef<HTMLInputElement>(null)
 	// const minecraftNameRef = useRef<HTMLInputElement>(null)
@@ -122,44 +178,6 @@ function Cosmetics({setMenuSection}: Props) {
 		},
 		{background: [], title: [], coin: [], heart: [], border: []},
 	)
-
-	const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
-		let isUnlocked = true
-		if (cosmetic.requires && ACHIEVEMENTS[cosmetic.requires]) {
-			const achievement = ACHIEVEMENTS[cosmetic.requires]
-			isUnlocked = !!achievementProgress[achievement.numericId]?.completionTime
-		}
-		let isSelected = selected.id === cosmetic.id
-		const item = (
-			<div
-				className={cn(css.cosmeticItem, {
-					[css.unlocked]: isUnlocked,
-					[css.selected]: isSelected,
-				})}
-				onClick={() =>
-					dispatch({
-						type: localMessages.COSMETIC_UPDATE,
-						cosmetic: cosmetic,
-					})
-				}
-			>
-				<div className={css.cosmeticName}>{cosmetic.name}</div>
-				{!isUnlocked && (
-					<div className={css.lockOverlay}>
-						<img src="/images/lock.png" />
-					</div>
-				)}
-			</div>
-		)
-
-		const tooltip = <div className={css.tooltip}>This is a tooltip</div>
-
-		return (
-			<Tooltip tooltip={tooltip} showAboveModal={false}>
-				{item}
-			</Tooltip>
-		)
-	}
 
 	return (
 		<MenuLayout
@@ -214,7 +232,7 @@ function Cosmetics({setMenuSection}: Props) {
 									<AchievementComponent
 										key={achievement.numericId}
 										achievement={achievement}
-										progressData={data[achievement.numericId]}
+										progressData={progressData[achievement.numericId]}
 									/>
 								)
 							})}
