@@ -6,8 +6,59 @@ import Crossbow from 'common/cards/single-use/crossbow'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
+import Bow from 'common/cards/single-use/bow'
 
 describe('Test Hotguy Rare', () => {
+	test('Test Hotguy with Bow', () => {
+		testGame(
+			{
+				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
+				playerTwoDeck: [HotguyRare, Bow],
+				saga: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, HotguyRare, 'hermit', 0)
+					yield* playCardFromHand(game, Bow, 'single_use')
+					yield* attack(game, 'secondary')
+
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(0),
+						)?.health,
+					).toBe(EthosLabCommon.health - HotguyRare.secondary.damage)
+
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(EthosLabCommon.health - 80 /* Bow */)
+
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(2),
+						)?.health,
+					).toBe(EthosLabCommon.health)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
 	test('Test Hotguy with Crossbow', () => {
 		testGame(
 			{
