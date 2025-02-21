@@ -88,9 +88,13 @@ function Cosmetics({setMenuSection}: Props) {
 
 	const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 		let isUnlocked = true
-		if (cosmetic.requires && ACHIEVEMENTS[cosmetic.requires]) {
-			const achievement = ACHIEVEMENTS[cosmetic.requires]
-			isUnlocked = !!achievementProgress[achievement.numericId]?.completionTime
+		if (cosmetic.requires && ACHIEVEMENTS[cosmetic.requires.achievement]) {
+			const achievement = ACHIEVEMENTS[cosmetic.requires.achievement]
+			isUnlocked =
+				!!achievementProgress[achievement.numericId]?.completionTime
+			if (cosmetic.requires.level !== undefined) {
+				isUnlocked = achievement.levels[cosmetic.requires.level].steps
+			} 
 		}
 		let isSelected = selected.id === cosmetic.id
 		return (

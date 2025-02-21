@@ -5,7 +5,7 @@ const BritishTitle: Title = {
 	type: 'title',
 	id: 'british',
 	name: "Bri'ish",
-	requires: British.id,
+	requires: {achievement: British.id},
 }
 
 export default BritishTitle
