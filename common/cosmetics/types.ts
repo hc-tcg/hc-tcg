@@ -4,7 +4,7 @@ export type Cosmetic = {
 	type: 'title' | 'coin' | 'heart' | 'background' | 'border'
 	id: string
 	name: string
-	requires?: Achievement['id']
+	requires?: {achievement: Achievement['id']; level: number}
 }
 
 export type Title = Cosmetic & {type: 'title'}

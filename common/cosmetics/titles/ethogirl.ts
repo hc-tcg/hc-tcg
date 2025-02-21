@@ -5,7 +5,7 @@ const EthogirlTitle: Title = {
 	type: 'title',
 	id: 'ethogirl',
 	name: 'Ethogirl',
-	requires: Ethogirl.id,
+	requires: {achievement: Ethogirl.id, level: 0},
 }
 
 export default EthogirlTitle
