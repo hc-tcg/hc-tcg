@@ -416,7 +416,7 @@ function PlaySelect({setMenuSection}: Props) {
 								id="privateOptions"
 								title="Select an option"
 								subTitle="Either join a private game created by another player, spectate an existing game, 
-								or create your own lobby to challenge someone else."
+								or create your own game to challenge someone else."
 								buttons={[
 									{
 										text: 'Join Game',
@@ -431,7 +431,7 @@ function PlaySelect({setMenuSection}: Props) {
 										},
 									},
 									{
-										text: 'Create Lobby',
+										text: 'Create Game',
 										onClick() {
 											addMenuWithBack('createPrivateGame')
 										},
