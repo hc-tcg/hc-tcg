@@ -1,4 +1,3 @@
-import cn from 'classnames'
 import {ACHIEVEMENTS, ACHIEVEMENTS_LIST} from 'common/achievements'
 import {ALL_COSMETICS} from 'common/cosmetics'
 import {
@@ -31,6 +30,7 @@ import {CARDS} from 'common/cards'
 import {WithoutFunctions} from 'common/types/server-requests'
 import Card from 'components/card'
 import {COINS} from 'common/cosmetics/coins'
+import classNames from 'classnames'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -92,6 +92,7 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 	const dispatch = useDispatch()
 	const achievementProgress = useSelector(getAchievements)
 	const appearance = useSelector(getAppearance)
+	const itemRef = useRef<HTMLDivElement>(null)
 
 	const cosmetics = [
 		appearance.background,
@@ -115,19 +116,31 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 
 	const item = (
 		<div
-			className={cn(css.cosmeticItem, {
+			className={classNames(css.cosmeticItem, {
 				[css.unlocked]: isUnlocked,
 				[css.selected]: isSelected,
 			})}
-			onClick={() =>
+			ref={itemRef}
+			onClick={() => {
+				if (!isUnlocked || isSelected) return
 				dispatch({
 					type: localMessages.COSMETIC_UPDATE,
 					cosmetic: cosmetic,
 				})
-			}
+				if (!itemRef.current) return
+				itemRef.current.animate(
+					{
+						backgroundColor: ['var(--gray-400)', 'var(--gray-500)'],
+					},
+					{
+						easing: 'ease-in-out',
+						duration: 200,
+					},
+				)
+			}}
 		>
 			{cosmetic.type === 'title' && (
-				<div className={css.cosmeticName}>{cosmetic.name}</div>
+				<div className={css.cosmeticTitle}>{cosmetic.name || 'No Title'}</div>
 			)}
 			{cosmetic.type === 'background' && (
 				<img
@@ -181,7 +194,22 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 		</div>
 	)
 
-	return <Tooltip tooltip={tooltip}>{item}</Tooltip>
+	return (
+		<div className={css.cosmeticBox}>
+			{achievement || cosmetic.name.length > 0 ? (
+				<Tooltip tooltip={tooltip}>{item}</Tooltip>
+			) : (
+				item
+			)}
+			{cosmetic.type !== 'title' && (
+				<div
+					className={classNames(css.cosmeticName, isUnlocked && css.unlocked)}
+				>
+					{cosmetic.name}
+				</div>
+			)}
+		</div>
+	)
 }
 
 function Cosmetics({setMenuSection}: Props) {
@@ -191,8 +219,8 @@ function Cosmetics({setMenuSection}: Props) {
 	const [tab, selectTab] = useState<'achievements' | 'rewards'>('achievements')
 	const progressData = useSelector(getAchievements)
 
-	// const usernameRef = useRef<HTMLInputElement>(null)
-	// const minecraftNameRef = useRef<HTMLInputElement>(null)
+	const usernameRef = useRef<HTMLInputElement>(null)
+	const minecraftNameRef = useRef<HTMLInputElement>(null)
 
 	const sortedCosmetics = ALL_COSMETICS.reduce(
 		(
@@ -223,38 +251,6 @@ function Cosmetics({setMenuSection}: Props) {
 			className={css.cosmeticsLayout}
 		>
 			<div className={css.body}>
-				{/* <div className={css.updatePlayerInfo}>
-					<input ref={usernameRef} placeholder={'Username'}></input>
-					<Button
-						onClick={() => {
-							if (!usernameRef.current) return
-							dispatch({
-								type: localMessages.USERNAME_SET,
-								name: usernameRef.current.value,
-							})
-						}}
-					>
-						Update Username
-					</Button>
-				</div>
-				<div className={css.updatePlayerInfo}>
-					<input
-						ref={minecraftNameRef}
-						placeholder={'Minecraft Username'}
-						minLength={3}
-					></input>
-					<Button
-						onClick={() => {
-							if (!minecraftNameRef.current) return
-							dispatch({
-								type: localMessages.MINECRAFT_NAME_SET,
-								name: minecraftNameRef.current.value,
-							})
-						}}
-					>
-						Update Player Head
-					</Button>
-				</div> */}
 				<div className={css.body2}>
 					<Tabs
 						selected={tab}
@@ -315,7 +311,7 @@ function Cosmetics({setMenuSection}: Props) {
 				</div>
 				{tab === 'rewards' && (
 					<div className={css.leftSideCosmetics}>
-						<h2>Current Appearance</h2>
+						<h2>Your Appearance</h2>
 						<div className={css.appearance}>
 							<CosmeticPreview />
 						</div>
@@ -328,8 +324,40 @@ function Cosmetics({setMenuSection}: Props) {
 							src={`/images/cosmetics/coin/${cosmetics.coin.id}.png`}
 							alt={'Coin'}
 						></img>
+						<h2>Your Info</h2>
 						<div className={css.nameSelector}>
-							This is the place to select your player head and player name
+							<div className={css.updatePlayerInfo}>
+								<input ref={usernameRef} placeholder={'Username'}></input>
+								<Button
+									onClick={() => {
+										if (!usernameRef.current) return
+										dispatch({
+											type: localMessages.USERNAME_SET,
+											name: usernameRef.current.value,
+										})
+									}}
+								>
+									Update Username
+								</Button>
+							</div>
+							<div className={css.updatePlayerInfo}>
+								<input
+									ref={minecraftNameRef}
+									placeholder={'Minecraft Username'}
+									minLength={3}
+								></input>
+								<Button
+									onClick={() => {
+										if (!minecraftNameRef.current) return
+										dispatch({
+											type: localMessages.MINECRAFT_NAME_SET,
+											name: minecraftNameRef.current.value,
+										})
+									}}
+								>
+									Update Player Head
+								</Button>
+							</div>
 						</div>
 					</div>
 				)}
