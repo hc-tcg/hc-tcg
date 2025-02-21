@@ -407,7 +407,7 @@ function Statistics({setMenuSection}: Props) {
 											open: true,
 											title: 'Hash copied!',
 											description: `Copied ${deck.deck.code} to clipboard`,
-											image: getIconPath(deck.deck),
+											image: 'copy',
 										})
 									}}
 								>

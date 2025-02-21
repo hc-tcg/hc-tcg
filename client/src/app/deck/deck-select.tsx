@@ -265,7 +265,7 @@ function SelectDeck({
 				<div
 					className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}
 				>
-					<img src={getIconPath(deck)} alt={'deck-icon'} />
+					<img src={getIconPath(deck)} />
 				</div>
 				{deck.name}
 			</li>

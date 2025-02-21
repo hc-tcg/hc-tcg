@@ -1,6 +1,9 @@
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useEffect, useLayoutEffect, useRef, useState} from 'react'
 import css from './toast.module.scss'
+import {CopyIcon} from 'components/svgs'
+
+const svgImages: Record<string, () => JSX.Element> = {copy: CopyIcon}
 
 type Props = {
 	title: string
@@ -159,7 +162,10 @@ export const ToastInner = ({
 			ref={toastRef}
 			onDoubleClick={() => setAliveTime(maxOpenFor)}
 		>
-			{image && <img src={image} alt="icon" />}
+			{image && !Object.keys(svgImages).includes(image) && (
+				<img src={image} alt="icon" />
+			)}
+			{image && <div className={css.svgImage}>{svgImages[image]()}</div>}
 			<div className={css.content}>
 				<div className={css.title}>{title}</div>
 				<div className={css.description}>{description}</div>

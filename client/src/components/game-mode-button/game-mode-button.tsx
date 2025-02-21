@@ -7,18 +7,21 @@ import {getIconPath} from 'common/utils/state-gen'
 import {useSelector} from 'react-redux'
 import {getSession} from 'logic/session/session-selectors'
 import Spinner from 'components/spinner'
+import {ButtonVariant} from 'common/types/buttons'
+import {MatchmakingStatus} from 'logic/matchmaking/matchmaking-types'
+import {CopyIcon} from 'components/svgs'
 
 interface GameModeButtonProps {
 	image: string
 	title: string
 	mode: string
-	selectedMode: string | null
-	setSelectedMode: (key: string | null) => void
+	activeMode: string | null
+	setActiveMode: (key: string | null) => void
 	backgroundImage: string
 	description: string
 	children: ReactElement | ReactElement[]
-	onSelect?: () => void
-	onReturn?: () => void
+	onSelect: () => void
+	onBack: () => void
 	disableBack: boolean
 }
 
@@ -27,12 +30,12 @@ function GameModeButton({
 	title,
 	description,
 	mode,
-	selectedMode,
-	setSelectedMode,
+	activeMode,
+	setActiveMode,
 	backgroundImage,
 	children,
 	onSelect,
-	onReturn,
+	onBack,
 	disableBack,
 }: GameModeButtonProps) {
 	const buttonRef = useRef<HTMLDivElement>(null)
@@ -57,7 +60,7 @@ function GameModeButton({
 			const pos = buttonRef.current.getBoundingClientRect()
 			setButtonPosition({x: pos.x, y: pos.y, h: pos.height, w: pos.width})
 
-			if (selectedMode === mode) {
+			if (activeMode === mode) {
 				backgroundRef.current.style.translate = 'calc((100vw - 70vh) / 2) 0'
 			} else {
 				backgroundRef.current.style.translate = `${pos.x}px 0`
@@ -131,16 +134,16 @@ function GameModeButton({
 		background.style.translate = `${buttonPosition.x}px 0`
 	}
 
-	if (selectedMode != lastMode) {
+	if (activeMode != lastMode) {
 		const background = backgroundRef.current
 		const button = buttonRef.current
 		if (buttonPosition && background && button) {
-			if (selectedMode === mode) {
+			if (activeMode === mode) {
 				// Only trigger a change when the selected mode changed
 				grow()
-			} else if (selectedMode && selectedMode !== mode) {
+			} else if (activeMode && activeMode !== mode) {
 				hide()
-			} else if (selectedMode === null) {
+			} else if (activeMode === null) {
 				if (lastMode == mode) {
 					shrink()
 				} else {
@@ -148,7 +151,7 @@ function GameModeButton({
 				}
 			}
 
-			setLastMode(selectedMode)
+			setLastMode(activeMode)
 		}
 	}
 
@@ -157,8 +160,8 @@ function GameModeButton({
 			className={classNames(css.buttonContainer, css.enablePointer)}
 			onMouseDown={(ev) => {
 				if (ev.button !== 0) return
-				setSelectedMode(mode)
-				if (mode !== selectedMode && onSelect) onSelect()
+				setActiveMode(mode)
+				if (mode !== activeMode && onSelect) onSelect()
 			}}
 			ref={buttonRef}
 		>
@@ -173,21 +176,21 @@ function GameModeButton({
 				<div className={css.vingette}></div>
 				<div className={css.leftOverlay}>
 					<div className={classNames(css.button)}>
-						{!disableBack && (
-							<div
-								className={css.returnButton}
-								ref={returnButtonRef}
-								onClick={(ev) => {
-									if (disableBack) return
-									if (ev.button !== 0) return
-									if (onReturn) onReturn()
-									setSelectedMode(null)
-								}}
-							>
-								<img src="../images/back_arrow.svg" alt="back-arrow" />
-								<p>Back</p>
-							</div>
-						)}
+						<div
+							className={classNames(
+								css.returnButton,
+								disableBack && css.disableBack,
+							)}
+							ref={returnButtonRef}
+							onClick={(ev) => {
+								if (disableBack) return
+								if (ev.button !== 0) return
+								if (onBack) onBack()
+							}}
+						>
+							<img src="../images/back_arrow.svg" alt="back-arrow" />
+							<p>Back</p>
+						</div>
 						<img
 							src={`images/hermits-nobg/${image}.png`}
 							className={css.hermitImage}
@@ -200,38 +203,43 @@ function GameModeButton({
 					</div>
 				</div>
 				<div ref={rightOverlayRef} className={css.rightOverlay}>
-					{selectedMode === mode && children}
+					{activeMode === mode && children}
 				</div>
 			</div>
 		</div>
 	)
 }
 
-interface ChooseDeckProps {
-	active: boolean
+interface ButtonMenuProps {
+	activeButtonMenu: string | null
+	id: string
+}
+
+interface ChooseDeckProps extends ButtonMenuProps {
 	title: string
 	subTitle: string
+	requestCode?: boolean
 	confirmMessage: string
-	onConfirm: () => void
+	onConfirm: (code?: string) => void
 	onSelectDeck: (deck: Deck) => void
 	decks: Deck[]
 }
 
 GameModeButton.ChooseDeck = ({
-	active,
+	activeButtonMenu,
+	id,
 	title,
 	subTitle,
+	requestCode = false,
 	confirmMessage,
 	onConfirm,
 	onSelectDeck,
 	decks,
 }: ChooseDeckProps) => {
-	// Don't do any logic if we are not active
-	if (!active) return <></>
+	if (activeButtonMenu !== id) return <></>
 
-	// @TODO needs to find the active deck in a better way
-	// aka this whole system needs to be consistent
 	const {playerDeck} = useSelector(getSession)
+	const inputRef = useRef<HTMLInputElement>(null)
 
 	const decksHaveTags =
 		decks.reduce((tags: Array<Tag>, decks) => {
@@ -243,7 +251,7 @@ GameModeButton.ChooseDeck = ({
 			{decks.map((deck, i) => (
 				<div
 					className={classNames(
-						css.myDecksItem,
+						css.deck,
 						playerDeck && deck.code === playerDeck && css.selectedDeck,
 					)}
 					key={i}
@@ -251,11 +259,11 @@ GameModeButton.ChooseDeck = ({
 				>
 					{deck.tags && deck.tags.length > 0 && (
 						<div className={css.multiColoredCircle}>
-							{deck.tags.map((tag, i) => (
+							{deck.tags.map((tag, i2) => (
 								<div
 									className={css.singleTag}
 									style={{backgroundColor: tag.color}}
-									key={i}
+									key={i2}
 								></div>
 							))}
 						</div>
@@ -268,22 +276,90 @@ GameModeButton.ChooseDeck = ({
 					<div
 						className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}
 					>
-						<img src={getIconPath(deck)} alt={'deck-icon'} />
+						<img src={getIconPath(deck)} />
 					</div>
 					<div className={css.deckName}>{deck.name}</div>
 				</div>
 			))}
 		</div>
 	)
+
+	const confirmButton = (
+		<Button
+			className={css.largeButton}
+			onClick={() => {
+				onConfirm(inputRef.current?.value ?? undefined)
+			}}
+			variant="primary"
+		>
+			{confirmMessage}
+		</Button>
+	)
+
 	return (
 		<div className={css.buttonMenu}>
 			<div className={css.chooseDeck}>
 				<h3>{title}</h3>
 				<p>{subTitle}</p>
 				{deckSelector}
+				{requestCode ? (
+					<div className={css.row}>
+						<input
+							type="text"
+							ref={inputRef}
+							className={css.largeButton}
+							placeholder="Enter code..."
+							spellCheck={false}
+						/>
+						{confirmButton}
+					</div>
+				) : (
+					confirmButton
+				)}
+			</div>
+		</div>
+	)
+}
+interface EnterCodeProps extends ButtonMenuProps {
+	title: string
+	subTitle: string
+	placeholder: string
+	confirmMessage: string
+	onConfirm: (code: string) => void
+}
+
+GameModeButton.EnterCode = ({
+	activeButtonMenu,
+	id,
+	title,
+	subTitle,
+	placeholder,
+	confirmMessage,
+	onConfirm,
+}: EnterCodeProps) => {
+	if (activeButtonMenu !== id) return <></>
+
+	const inputRef = useRef<HTMLInputElement>(null)
+
+	return (
+		<div className={css.buttonMenu}>
+			<div className={css.enterCode}>
+				<h3>{title}</h3>
+				<p>{subTitle}</p>
+				<div className={css.spacer}></div>
+				<input
+					type="text"
+					ref={inputRef}
+					className={css.largeButton}
+					placeholder={placeholder}
+					spellCheck={false}
+				/>
 				<Button
 					className={css.largeButton}
-					onClick={onConfirm}
+					onClick={() => {
+						const code = inputRef.current?.value ?? undefined
+						if (code) onConfirm(code)
+					}}
 					variant="primary"
 				>
 					{confirmMessage}
@@ -293,57 +369,180 @@ GameModeButton.ChooseDeck = ({
 	)
 }
 
-interface QueueProps {
-	active: boolean
-	title: string
-	message: string
-	extraMessage?: string
+export type CodeInfo = {
+	name: string
+	code: string
+}
+
+interface QueueProps extends ButtonMenuProps {
+	joiningMessage: string
+	queueMessage: string
+	timedMessage?: ReactElement
+	activeDeck?: Deck
+	codes?: CodeInfo[]
+	onCodeClick?: (code: CodeInfo) => void
+	matchmakingStatus: MatchmakingStatus
+	cancelMessage: string
 	onCancel: () => void
-	// @TODO active deck
 }
 
 GameModeButton.Queue = ({
-	active,
-	title,
-	message,
-	extraMessage,
+	activeButtonMenu,
+	id,
+	joiningMessage,
+	queueMessage,
+	timedMessage,
+	activeDeck,
+	codes,
+	onCodeClick,
+	matchmakingStatus,
+	cancelMessage,
 	onCancel,
 }: QueueProps) => {
-	// Don't do any logic if we are not active
-	if (!active) return <></>
+	if (activeButtonMenu !== id) return <></>
+
+	useEffect(() => {
+		// If we're no longer in the queue for whatever reason, go back after 1 second.
+		if (!matchmakingStatus) onCancel()
+	})
+
+	const [innerMessage, setInnerMessage] = useState<string>(joiningMessage)
+
+	const gameMessage = 'Starting game...'
+	switch (matchmakingStatus) {
+		case 'in_game':
+			if (innerMessage !== gameMessage) {
+				setInnerMessage(gameMessage)
+			}
+			break
+		case 'joining_queue':
+			if (innerMessage !== joiningMessage) {
+				setInnerMessage(joiningMessage)
+			}
+			break
+		case 'in_queue':
+			if (innerMessage !== queueMessage) {
+				setInnerMessage(queueMessage)
+			}
+		default:
+			break
+	}
+
+	let codesHtml
+	if (codes) {
+		codesHtml = (
+			<div className={css.codes}>
+				{codes.map(({name, code}, i) => {
+					return (
+						<div className={css.code} key={i}>
+							<p>{name}:</p>
+							<p
+								className={css.copy}
+								onClick={() => onCodeClick && onCodeClick({name, code})}
+							>
+								<CopyIcon />
+								{code}
+							</p>
+						</div>
+					)
+				})}
+			</div>
+		)
+	}
 
 	return (
 		<div className={css.buttonMenu}>
 			<div className={css.queue}>
-				<h3>{title}</h3>
-				<div className={css.spacer} />
-				<div className={css.spinner}>
-					<Spinner />
-				</div>
-				<p>{message}</p>
-				{extraMessage && <p>{extraMessage}</p>}
-				<div className={css.spacer} />
-				<Button className={css.largeButton} onClick={onCancel} variant="error">
-					Cancel
+				<h3 className={css.message}>{innerMessage}</h3>
+				<Spinner />
+				{timedMessage && <p className={css.timedMessage}>{timedMessage}</p>}
+				{codesHtml}
+				{activeDeck && (
+					<div className={css.deck}>
+						<p>Active deck:</p>
+						<div
+							className={classNames(
+								css.deckImage,
+								css.usesIcon,
+								css[activeDeck.icon],
+							)}
+						>
+							<img src={getIconPath(activeDeck)} />
+						</div>
+						<p className={css.deckName}>{activeDeck.name}</p>
+					</div>
+				)}
+				<Button onClick={onCancel} variant="error">
+					{cancelMessage}
 				</Button>
 			</div>
 		</div>
 	)
 }
 
+interface OptionsSelectProps extends ButtonMenuProps {
+	title: string
+	subTitle?: string
+	buttons: Array<{
+		text: string
+		onClick: () => void
+		variant?: ButtonVariant
+	}>
+}
+
+GameModeButton.OptionsSelect = ({
+	activeButtonMenu,
+	id,
+	title,
+	subTitle,
+	buttons,
+}: OptionsSelectProps) => {
+	if (activeButtonMenu !== id) return <></>
+
+	return (
+		<div className={css.buttonMenu}>
+			<div className={css.optionsSelect}>
+				<h3>{title}</h3>
+				{subTitle && <p>{subTitle}</p>}
+				<div className={css.spacer}></div>
+				{buttons.map(({text, onClick, variant}, i) => (
+					<Button
+						className={css.largeButton}
+						onClick={onClick}
+						key={i}
+						variant={variant ? variant : 'default'}
+					>
+						{text}
+					</Button>
+				))}
+			</div>
+		</div>
+	)
+}
+
 /*
-				<h3>Choose your deck</h3>
-				<p>When ready, press the Join Queue button to begin.</p>
-				() => {
-						selectDeck(deck)
-						playSwitchDeckSFX()
-						dispatch({type: localMessages.UPDATE_DECK, deck: deck})
-					}
 				
-
-
-								{queueStatus && (
+							<div className={css.buttonMenu}>
+								{!lobbyCreated && !queueStatus && (
 								)}
+								{lobbyCreated && (
+									<div className={css.queueMenu}>
+										<div>
+											<p>Opponent Code</p>
+											<div className={css.code} onClick={handleCodeClick}>
+												<CopyIcon /> {gameCode}
+											</div>
+											<p>Spectator Code</p>
+											<div
+												className={css.code}
+												onClick={handleSpectatorCodeClick}
+											>
+												<CopyIcon /> {spectatorCode}
+											</div>
+										</div>
+									</div>
+								)}
+							</div>
 				*/
 
 export default GameModeButton

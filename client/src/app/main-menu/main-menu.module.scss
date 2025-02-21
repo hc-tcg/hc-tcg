@@ -1,7 +1,4 @@
 .mainmenu {
-	position: relative;
-	display: flex;
-	flex-direction: column;
 	height: 100%;
 	width: 100%;
 	color: var(--text-light);
@@ -24,7 +21,7 @@
 	text-align: right;
 	animation: fadeIn 250ms ease-in-out forwards;
 
-	> img {
+	>img {
 		height: 4vh;
 	}
 
@@ -55,14 +52,13 @@
 }
 
 .content {
-	position: absolute;
+	padding-top: 10vh;
 	inset: 0;
 	display: grid;
 	place-content: flex-start center;
+	justify-items: center;
 	padding-bottom: 3vh;
 	margin-inline: auto;
-	justify-items: center;
-	align-content: center;
 	gap: 7vh;
 }
 
@@ -241,7 +237,7 @@ nav {
 	padding: 0.8vh 0;
 	color: var(--text-light);
 
-	> span {
+	>span {
 		font-size: 2vh;
 		user-select: text;
 	}
@@ -284,8 +280,8 @@ nav {
 		height: 5.5vh;
 		font-size: 2vh;
 
-		&:focus-visible + label,
-		&:not(:placeholder-shown) + label {
+		&:focus-visible+label,
+		&:not(:placeholder-shown)+label {
 			top: -3vh;
 			left: 0.8vh;
 			color: var(--text-light);
@@ -317,7 +313,7 @@ nav {
 	flex-wrap: wrap;
 }
 
-.developerCreditsContainer > div {
+.developerCreditsContainer>div {
 	margin: 0.5vh;
 }
 

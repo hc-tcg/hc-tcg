@@ -19,7 +19,7 @@ import TargetBlock from 'common/cards/single-use/target-block'
 import {Card} from 'common/cards/types'
 import {EXPANSIONS} from 'common/const/expansions'
 import {CardEntity} from 'common/entities'
-import {Deck, Tag} from 'common/types/deck'
+import {Deck} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {getIconPath} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
@@ -28,8 +28,6 @@ import CardList from 'components/card-list'
 import GameModeButton from 'components/game-mode-button'
 import MenuLayout from 'components/menu-layout'
 import {Modal} from 'components/modal'
-import Spinner from 'components/spinner'
-import {CopyIcon} from 'components/svgs'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {
 	getGameCode,
@@ -38,12 +36,13 @@ import {
 } from 'logic/matchmaking/matchmaking-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getSession} from 'logic/session/session-selectors'
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './play-select.module.scss'
 import {CosmeticPreview} from './cosmetics'
 import {sortDecks} from 'common/utils/sorting'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {CodeInfo} from 'components/game-mode-button/game-mode-button'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -51,23 +50,42 @@ type Props = {
 
 function PlaySelect({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
-	const queueStatus = useSelector(getStatus)
+	const matchmaking = useSelector(getStatus)
+	const settings = useSelector(getSettings)
 	const gameCode = useSelector(getGameCode)
 	const spectatorCode = useSelector(getSpectatorCode)
-	const settings = useSelector(getSettings)
-
-	const {playerDeck, playerName, newPlayer} = useSelector(getSession)
+	const {playerDeck} = useSelector(getSession)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
+
+	const decks = databaseInfo?.decks
 	const [loadedDeck, setLoadedDeck] = useState<Deck | undefined>(
 		databaseInfo?.decks.find((deck) => deck.code === playerDeck),
 	)
 
-	const decks = databaseInfo?.decks
-	const welcomeMessage = newPlayer ? 'Welcome' : 'Welcome Back'
-	const [mode, setMode] = useState<string | null>(null)
-	const [lobbyCreated, setLobbyCreated] = useState<boolean>(false)
-	const disableBack = !!queueStatus
-	const inputRef = useRef<HTMLInputElement>(null)
+	// Menu state
+	const [activeMode, setActiveMode] = useState<string | null>(null)
+	const [activeButtonMenu, setActiveButtonMenu] = useState<string | null>(null)
+
+	// Back stack
+	const [backStack, setBackStack] = useState<Array<string>>([])
+	const addMenuWithBack = (buttonMenu: string) => {
+		if (activeButtonMenu) {
+			// Add last menu to stack
+			setBackStack([...backStack, activeButtonMenu])
+		}
+		setActiveButtonMenu(buttonMenu)
+	}
+	const goBack = () => {
+		const lastMenu = backStack.splice(-1)[0]
+		if (lastMenu) {
+			setActiveButtonMenu(lastMenu)
+			setBackStack(backStack)
+		} else {
+			setActiveMode(null)
+			setActiveButtonMenu(null)
+			setBackStack([])
+		}
+	}
 
 	const checkForValidation = (): boolean => {
 		if (!playerDeck || !loadedDeck) {
@@ -92,6 +110,7 @@ function PlaySelect({setMenuSection}: Props) {
 		return false
 	}
 
+	// Deck management
 	const sortDecksByActive = () => {
 		// Sort decks, placing active at the top
 		sortDecks(
@@ -100,62 +119,6 @@ function PlaySelect({setMenuSection}: Props) {
 			loadedDeck ? loadedDeck.code : null,
 		)
 	}
-
-	const handleJoinQueue = () => {
-		const valid = checkForValidation()
-		if (!valid) return
-		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
-		dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
-	}
-	const handlePrivateGame = () => {
-		const valid = checkForValidation()
-		if (!valid) return
-		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
-		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
-	}
-
-	const handleCodeSubmit = (code: string) => {
-		if (code.length !== 6) {
-			dispatch({
-				type: localMessages.TOAST_OPEN,
-				open: true,
-				title: 'Invalid Code!',
-				description: 'The code you entered is invalid.',
-				image: '/images/types/type-any.png',
-			})
-			return
-		}
-		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
-		dispatch({type: localMessages.MATCHMAKING_CODE_SET, code})
-	}
-
-	const handleCodeClick = () => {
-		if (!gameCode) return
-		navigator.clipboard.writeText(gameCode)
-	}
-
-	const handleSpectatorCodeClick = () => {
-		if (!spectatorCode) return
-		navigator.clipboard.writeText(spectatorCode)
-	}
-
-	const queuingReason = (): string => {
-		if (queueStatus === 'in_game') return 'Starting game'
-		if (queueStatus === 'loading') return 'Loading'
-		if (queueStatus === 'private_lobby') return 'Loading'
-		if (queueStatus === 'random_waiting') return 'Waiting for opponent'
-		if (queueStatus === 'waiting_for_player') return 'Waiting for second player'
-		if (queueStatus === 'waiting_for_player_as_spectator')
-			return 'Waiting for game to begin'
-		return 'Loading'
-
-		// null/none | in_queue | in_game |
-	}
-
-	const handleLeaveQueue = () => {
-		dispatch({type: localMessages.MATCHMAKING_LEAVE})
-	}
-
 	const onSelectDeck = (deck: Deck) => {
 		setLoadedDeck(deck)
 
@@ -174,6 +137,22 @@ function PlaySelect({setMenuSection}: Props) {
 		dispatch({
 			type: localMessages.UPDATE_DECKS,
 			newActiveDeck: deck,
+		})
+	}
+
+	const handleLeaveQueue = () => {
+		dispatch({type: localMessages.MATCHMAKING_LEAVE})
+	}
+
+	const handleCodeClick = (code: CodeInfo) => {
+		navigator.clipboard.writeText(code.code)
+
+		dispatch({
+			type: localMessages.TOAST_OPEN,
+			open: true,
+			title: 'Code copied!',
+			description: `Copied ${code.name} to clipboard.`,
+			image: 'copy',
 		})
 	}
 
@@ -199,7 +178,7 @@ function PlaySelect({setMenuSection}: Props) {
 		const valid = checkForValidation()
 		if (!valid) return
 		setMenuSection('game-landing')
-		dispatch({type: localMessages.MATCHMAKING_BOSS_GAME_CREATE})
+		dispatch({type: localMessages.MATCHMAKING_CREATE_BOSS_GAME})
 	}
 
 	const nonFunctionalCards = [
@@ -235,18 +214,17 @@ function PlaySelect({setMenuSection}: Props) {
 	}, [handleKeyPress])
 
 	function handleKeyPress(e: any) {
-		if (!disableBack && e.key === 'Escape') {
-			if (mode === null) {
+		if (!matchmaking && e.key === 'Escape') {
+			if (activeMode === null) {
 				setMenuSection('main-menu')
 				return
 			}
-			if (queueStatus) handleLeaveQueue()
-			setMode(null)
+			setActiveMode(null)
 		}
 	}
 
 	let header = 'Select a game mode:'
-	switch (mode) {
+	switch (activeMode) {
 		case 'public':
 			header = 'Public Game'
 			break
@@ -348,26 +326,13 @@ function PlaySelect({setMenuSection}: Props) {
 			</Modal>
 			<MenuLayout
 				back={() => {
-					if (queueStatus) handleLeaveQueue()
+					handleLeaveQueue()
 					setMenuSection('main-menu')
 				}}
 				title="Play"
 				returnText="Main Menu"
 				className={css.playSelect}
 			>
-				<div className={css.playerInfo}>
-					<p id={css.infoName}>
-						{welcomeMessage}, {playerName}
-					</p>
-					<p id={css.infoDeck}>
-						{'Active Deck - ' + `${loadedDeck ? loadedDeck.name : 'None'}`}
-					</p>
-					<img
-						id={css.infoIcon}
-						src={loadedDeck ? getIconPath(loadedDeck) : getCardTypeIcon('any')}
-						alt="deck-icon"
-					/>
-				</div>
 				<h2 className={css.header}>{header}</h2>
 				<div className={css.gameTypes}>
 					<div className={css.gameTypesButtons}>
@@ -379,26 +344,56 @@ function PlaySelect({setMenuSection}: Props) {
 								'Challenge a random player to a game of HC-TCG Online!'
 							}
 							mode="public"
-							selectedMode={mode}
-							setSelectedMode={setMode}
-							onSelect={sortDecksByActive}
-							onReturn={handleLeaveQueue}
-							disableBack={disableBack}
+							activeMode={activeMode}
+							setActiveMode={setActiveMode}
+							onSelect={() => {
+								addMenuWithBack('publicChooseDeck')
+								sortDecksByActive()
+							}}
+							onBack={goBack}
+							disableBack={!!matchmaking}
 						>
 							<GameModeButton.ChooseDeck
-								active={!queueStatus}
+								activeButtonMenu={activeButtonMenu}
+								id="publicChooseDeck"
 								title="Choose your deck"
 								subTitle="When ready, press the Join Queue button to begin."
 								confirmMessage="Join Queue"
-								onConfirm={handleJoinQueue}
+								onConfirm={() => {
+									const valid = checkForValidation()
+									if (!valid) return
+									dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+									dispatch({type: localMessages.MATCHMAKING_JOIN_PUBLIC_QUEUE})
+									addMenuWithBack('publicQueue')
+								}}
 								decks={decks}
 								onSelectDeck={onSelectDeck}
 							/>
 							<GameModeButton.Queue
-								active={!!queueStatus}
-								title="In Public Queue"
-								message="Waiting for opponent..."
-								onCancel={handleLeaveQueue}
+								activeButtonMenu={activeButtonMenu}
+								id="publicQueue"
+								joiningMessage="Joining queue..."
+								queueMessage="Searching for game..."
+								timedMessage={
+									<>
+										Can't find an opponent?<> </>
+										<a
+											href="https://discord.gg/AjGbqNfcQX"
+											target="_blank"
+											rel="noreferrer"
+											title="Discord"
+										>
+											Join our discord!
+										</a>
+									</>
+								}
+								activeDeck={loadedDeck}
+								matchmakingStatus={matchmaking}
+								cancelMessage="Leave Queue"
+								onCancel={() => {
+									if (matchmaking) handleLeaveQueue()
+									goBack()
+								}}
 							/>
 						</GameModeButton>
 						<GameModeButton
@@ -407,64 +402,165 @@ function PlaySelect({setMenuSection}: Props) {
 							title={'Private Game'}
 							description={'Play against your friends in a private lobby.'}
 							mode="private"
-							selectedMode={mode}
-							setSelectedMode={setMode}
-							onSelect={sortDecksByActive}
-							onReturn={() => {
-								handleLeaveQueue()
-								setTimeout(() => setLobbyCreated(false), 200)
+							activeMode={activeMode}
+							setActiveMode={setActiveMode}
+							onSelect={() => {
+								addMenuWithBack('privateOptions')
+								sortDecksByActive()
 							}}
-							disableBack={disableBack}
+							onBack={goBack}
+							disableBack={!!matchmaking}
 						>
-							<div className={css.buttonMenu}>
-								{!lobbyCreated && !queueStatus && (
-									<div className={css.privateModeSelect}>
-										<h3>Select an option</h3>
-										<p>
-											Either join a private game created by another player,
-											spectate an existing game, or create your own lobby to
-											challenge someone else.
-										</p>
-										<div className={css.spacer}></div>
-										<Button className={css.largeButton} onClick={() => {}}>
-											Join Game
-										</Button>
-										<Button className={css.largeButton} onClick={() => {}}>
-											Spectate Game
-										</Button>
-										<Button className={css.largeButton} onClick={() => {}}>
-											Create Lobby
-										</Button>
-									</div>
-								)}
-								{lobbyCreated && (
-									<div className={css.queueMenu}>
-										<div>
-											<p>Opponent Code</p>
-											<div className={css.code} onClick={handleCodeClick}>
-												<CopyIcon /> {gameCode}
-											</div>
-											<p>Spectator Code</p>
-											<div
-												className={css.code}
-												onClick={handleSpectatorCodeClick}
-											>
-												<CopyIcon /> {spectatorCode}
-											</div>
-										</div>
-									</div>
-								)}
-								{queueStatus && (
-									<div className={css.queueMenu}>
-										<div>
-											<div className={css.spinner}>
-												<Spinner />
-											</div>
-											<p>{queuingReason()}</p>
-										</div>
-									</div>
-								)}
-							</div>
+							<GameModeButton.OptionsSelect
+								activeButtonMenu={activeButtonMenu}
+								id="privateOptions"
+								title="Select an option"
+								subTitle="Either join a private game created by another player, spectate an existing game, 
+								or create your own lobby to challenge someone else."
+								buttons={[
+									{
+										text: 'Join Game',
+										onClick() {
+											addMenuWithBack('privateJoinGame')
+										},
+									},
+									{
+										text: 'Spectate Game',
+										onClick() {
+											addMenuWithBack('privateSpectateGame')
+										},
+									},
+									{
+										text: 'Create Lobby',
+										onClick() {
+											addMenuWithBack('createPrivateGame')
+										},
+									},
+								]}
+							/>
+							<GameModeButton.ChooseDeck
+								activeButtonMenu={activeButtonMenu}
+								id="privateJoinGame"
+								title="Join Private Game"
+								subTitle="Choose your deck, enter the code, and then press the Confirm button to begin."
+								confirmMessage="Confirm"
+								requestCode
+								onConfirm={(code) => {
+									const valid = checkForValidation()
+									if (!valid) return
+
+									if (!code || code.length !== 6) {
+										dispatch({
+											type: localMessages.TOAST_OPEN,
+											open: true,
+											title: 'Invalid Code!',
+											description: 'The code you entered is invalid.',
+										})
+										return
+									}
+
+									dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+									dispatch({
+										type: localMessages.MATCHMAKING_JOIN_PRIVATE_QUEUE,
+										code,
+									})
+									addMenuWithBack('privateJoinQueue')
+								}}
+								decks={decks}
+								onSelectDeck={onSelectDeck}
+							/>
+							<GameModeButton.EnterCode
+								activeButtonMenu={activeButtonMenu}
+								id="privateSpectateGame"
+								title="Spectate Private Game"
+								subTitle="Enter the spectator code, then press the Confirm button to join the game."
+								placeholder="Enter spectator code..."
+								confirmMessage="Confirm"
+								onConfirm={(code) => {
+									if (!code || code.length !== 6) {
+										dispatch({
+											type: localMessages.TOAST_OPEN,
+											open: true,
+											title: 'Invalid Code!',
+											description: 'The code you entered is invalid.',
+										})
+										return
+									}
+
+									dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+									dispatch({
+										type: localMessages.MATCHMAKING_SPECTATE_PRIVATE_GAME,
+										code,
+									})
+									addMenuWithBack('privateSpectateQueue')
+								}}
+							/>
+							<GameModeButton.ChooseDeck
+								activeButtonMenu={activeButtonMenu}
+								id="createPrivateGame"
+								title="Create Private Game"
+								subTitle="When ready, press the Create Game button to begin."
+								confirmMessage="Create Game"
+								onConfirm={() => {
+									const valid = checkForValidation()
+									if (!valid) return
+
+									dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+									dispatch({
+										type: localMessages.MATCHMAKING_CREATE_PRIVATE_GAME,
+									})
+									addMenuWithBack('createGameQueue')
+								}}
+								decks={decks}
+								onSelectDeck={onSelectDeck}
+							/>
+							<GameModeButton.Queue
+								activeButtonMenu={activeButtonMenu}
+								id="privateJoinQueue"
+								joiningMessage="Verifying code..."
+								queueMessage="Waiting for opponent..."
+								activeDeck={loadedDeck}
+								matchmakingStatus={matchmaking}
+								cancelMessage="Cancel"
+								onCancel={() => {
+									if (matchmaking) handleLeaveQueue()
+									goBack()
+								}}
+							/>
+							<GameModeButton.Queue
+								activeButtonMenu={activeButtonMenu}
+								id="privateSpectateQueue"
+								joiningMessage="Verifying spectator code..."
+								queueMessage="Waiting for game to begin..."
+								matchmakingStatus={matchmaking}
+								cancelMessage="Cancel"
+								onCancel={() => {
+									if (matchmaking) handleLeaveQueue()
+									goBack()
+								}}
+							/>
+							<GameModeButton.Queue
+								activeButtonMenu={activeButtonMenu}
+								id="createGameQueue"
+								joiningMessage="Creating game..."
+								queueMessage="Waiting for opponent..."
+								activeDeck={loadedDeck}
+								codes={
+									gameCode && spectatorCode
+										? [
+												{name: 'Opponent Code', code: gameCode},
+												{name: 'Spectator Code', code: spectatorCode},
+											]
+										: undefined
+								}
+								onCodeClick={handleCodeClick}
+								matchmakingStatus={matchmaking}
+								cancelMessage="Cancel Game"
+								onCancel={() => {
+									if (matchmaking) handleLeaveQueue()
+									goBack()
+								}}
+							/>
 						</GameModeButton>
 						<GameModeButton
 							image={'evilxisuma'}
@@ -474,10 +570,11 @@ function PlaySelect({setMenuSection}: Props) {
 								'Prove your worth as an HC-TCG player by challenging Evil X to a fight.'
 							}
 							mode="boss"
-							selectedMode={mode}
+							activeMode={activeMode}
 							onSelect={sortDecksByActive}
-							setSelectedMode={setMode}
-							disableBack={disableBack}
+							setActiveMode={setActiveMode}
+							onBack={goBack}
+							disableBack={!!matchmaking}
 						>
 							<div className={css.buttonMenu}>
 								<div className={css.publicConfirm}>
@@ -505,12 +602,17 @@ function PlaySelect({setMenuSection}: Props) {
 					</div>
 				</div>
 				<h3 className={css.appearanceHeader}>In-game Appearance</h3>
-				<p className={classNames(css.clickToChange, disableBack && css.hide)}>
+				<p
+					className={classNames(
+						css.clickToChange,
+						matchmaking && css.disableBack,
+					)}
+				>
 					<i>Click to change</i>
 				</p>
 				<div
-					className={disableBack ? undefined : css.appearance}
-					onClick={() => !disableBack && setMenuSection('cosmetics')}
+					className={matchmaking ? undefined : css.appearance}
+					onClick={() => !matchmaking && setMenuSection('cosmetics')}
 				>
 					<CosmeticPreview />
 				</div>

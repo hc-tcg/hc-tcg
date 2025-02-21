@@ -25,12 +25,12 @@ export const serverMessages = messages('serverMessages', {
 	CREATE_PRIVATE_GAME_FAILURE: null,
 	JOIN_PRIVATE_GAME_SUCCESS: null,
 	JOIN_PRIVATE_GAME_FAILURE: null,
-	JOIN_QUEUE_SUCCESS: null,
-	JOIN_QUEUE_FAILURE: null,
+	JOIN_PUBLIC_QUEUE_SUCCESS: null,
+	JOIN_PUBLIC_QUEUE_FAILURE: null,
 	SPECTATE_PRIVATE_GAME_START: null,
 	SPECTATE_PRIVATE_GAME_WAITING: null,
+	SPECTATE_PRIVATE_GAME_FAILURE: null,
 	INVALID_CODE: null,
-	WAITING_FOR_PLAYER: null,
 	PRIVATE_GAME_CANCELLED: null,
 	GAME_OVER_STAT: null,
 	GAME_STATE: null,
@@ -86,15 +86,15 @@ export type ServerMessages = [
 	{type: typeof serverMessages.CREATE_PRIVATE_GAME_FAILURE},
 	{type: typeof serverMessages.JOIN_PRIVATE_GAME_SUCCESS},
 	{type: typeof serverMessages.JOIN_PRIVATE_GAME_FAILURE},
-	{type: typeof serverMessages.JOIN_QUEUE_SUCCESS},
-	{type: typeof serverMessages.JOIN_QUEUE_FAILURE},
+	{type: typeof serverMessages.JOIN_PUBLIC_QUEUE_SUCCESS},
+	{type: typeof serverMessages.JOIN_PUBLIC_QUEUE_FAILURE},
 	{
 		type: typeof serverMessages.SPECTATE_PRIVATE_GAME_START
 		localGameState: LocalGameState
 	},
 	{type: typeof serverMessages.SPECTATE_PRIVATE_GAME_WAITING},
+	{type: typeof serverMessages.SPECTATE_PRIVATE_GAME_FAILURE},
 	{type: typeof serverMessages.INVALID_CODE},
-	{type: typeof serverMessages.WAITING_FOR_PLAYER},
 	{type: typeof serverMessages.PRIVATE_GAME_CANCELLED},
 	{
 		type: typeof serverMessages.GAME_OVER_STAT
