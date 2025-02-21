@@ -311,12 +311,12 @@ function Cosmetics({setMenuSection}: Props) {
 				</div>
 				{tab === 'rewards' && (
 					<div className={css.leftSideCosmetics}>
-						<h2>Your Appearance</h2>
+						<h2 className={css.hideOnMobile}>Your Appearance</h2>
 						<div className={css.appearance}>
 							<CosmeticPreview />
 						</div>
 						<img
-							className={css.appearanceCoin}
+							className={classNames(css.appearanceCoin, css.hideOnMobile)}
 							style={{
 								borderColor: `${COINS[cosmetics.coin.id].borderColor}`,
 								boxShadow: `0 0 4px ${COINS[cosmetics.coin.id].borderColor}`,
@@ -324,7 +324,7 @@ function Cosmetics({setMenuSection}: Props) {
 							src={`/images/cosmetics/coin/${cosmetics.coin.id}.png`}
 							alt={'Coin'}
 						></img>
-						<h2>Your Info</h2>
+						<h2 className={css.hideOnMobile}>Your Info</h2>
 						<div className={css.nameSelector}>
 							<div className={css.updatePlayerInfo}>
 								<input ref={usernameRef} placeholder={'Username'}></input>

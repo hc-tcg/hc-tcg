@@ -233,7 +233,7 @@
 		image-rendering: crisp-edges;
 
 		top: -9.5vh;
-		left: -2.5vw;
+		left: -5vh;
 
 		filter: drop-shadow(2px 0px 0 white) drop-shadow(-2px 0px 0 white)
 			drop-shadow(0px 2px 0 white) drop-shadow(0px -2px 0 white);
@@ -325,4 +325,18 @@
 
 h2 {
 	text-align: center;
+}
+
+@media screen and (max-width: 720px) {
+	.body {
+		flex-direction: column;
+	}
+
+	.leftSideCosmetics {
+		width: 90vw;
+	}
+
+	.hideOnMobile {
+		display: none;
+	}
 }
