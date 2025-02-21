@@ -156,16 +156,19 @@ export const ToastInner = ({
 		return null
 	}
 
+	const isSvgImage = image && Object.keys(svgImages).includes(image)
+
 	return (
 		<div
 			className={css.toast}
 			ref={toastRef}
 			onDoubleClick={() => setAliveTime(maxOpenFor)}
 		>
-			{image && !Object.keys(svgImages).includes(image) && (
+			{image && isSvgImage ? (
+				<div className={css.svgImage}>{svgImages[image]()}</div>
+			) : (
 				<img src={image} alt="icon" />
 			)}
-			{image && <div className={css.svgImage}>{svgImages[image]()}</div>}
 			<div className={css.content}>
 				<div className={css.title}>{title}</div>
 				<div className={css.description}>{description}</div>
