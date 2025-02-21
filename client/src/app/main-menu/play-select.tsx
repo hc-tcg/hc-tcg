@@ -499,7 +499,7 @@ function PlaySelect({setMenuSection}: Props) {
 								activeButtonMenu={activeButtonMenu}
 								id="createPrivateGame"
 								title="Create Private Game"
-								subTitle="When ready, press the Create Game button to begin."
+								subTitle="Choose your deck, then press the Create Game button to begin."
 								confirmMessage="Create Game"
 								onConfirm={() => {
 									const valid = checkForValidation()
