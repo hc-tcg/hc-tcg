@@ -33,7 +33,7 @@ function MainMenu({setMenuSection}: Props) {
 
 	const handleDeck = () => setMenuSection('deck')
 	const handleSettings = () => setMenuSection('settings')
-	const handleAchievements = () => setMenuSection('cosmetics')
+	const handleAchievements = () => setMenuSection('achievements')
 	const handleStatistics = () => setMenuSection('statistics')
 
 	const updates = useSelector(getUpdates)

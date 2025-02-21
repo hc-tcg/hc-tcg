@@ -9,12 +9,10 @@ import {
 	Title,
 } from 'common/cosmetics/types'
 import Button from 'components/button'
-import Dropdown from 'components/dropdown'
 import MenuLayout from 'components/menu-layout'
 import {
 	getAchievements,
 	getAppearance,
-	getLocalDatabaseInfo,
 } from 'logic/game/database/database-selectors'
 import {localMessages} from 'logic/messages'
 import {getSession} from 'logic/session/session-selectors'
@@ -23,17 +21,15 @@ import {useDispatch, useSelector} from 'react-redux'
 import css from './cosmsetics.module.scss'
 import Tabs from 'components/tabs/tabs'
 import AchievementComponent from 'components/achievement'
-import {Achievement} from 'common/achievements/types'
 import Tooltip from 'components/tooltip'
-import CardInstanceTooltip from 'components/card/card-tooltip'
-import {CARDS} from 'common/cards'
-import {WithoutFunctions} from 'common/types/server-requests'
-import Card from 'components/card'
 import {COINS} from 'common/cosmetics/coins'
 import classNames from 'classnames'
 
+type Pages = 'achievements' | 'rewards'
+
 type Props = {
 	setMenuSection: (section: string) => void
+	page: Pages
 }
 
 export function CosmeticPreview() {
@@ -212,11 +208,11 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 	)
 }
 
-function Cosmetics({setMenuSection}: Props) {
+function Cosmetics({setMenuSection, page}: Props) {
 	const dispatch = useDispatch()
 
 	const cosmetics = useSelector(getAppearance)
-	const [tab, selectTab] = useState<'achievements' | 'rewards'>('achievements')
+	const [tab, selectTab] = useState<Pages>(page)
 	const progressData = useSelector(getAchievements)
 
 	const usernameRef = useRef<HTMLInputElement>(null)

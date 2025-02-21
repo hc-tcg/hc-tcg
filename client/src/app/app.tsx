@@ -74,8 +74,12 @@ function App() {
 					return <DataSettings setMenuSection={menuSectionSet} />
 				case 'statistics':
 					return <Statistics setMenuSection={menuSectionSet} />
+				case 'achievements':
+					return (
+						<Cosmetics setMenuSection={menuSectionSet} page={'achievements'} />
+					)
 				case 'cosmetics':
-					return <Cosmetics setMenuSection={menuSectionSet} />
+					return <Cosmetics setMenuSection={menuSectionSet} page={'rewards'} />
 				case 'credits':
 					return <Credits setMenuSection={menuSectionSet} />
 				case 'play-select':
