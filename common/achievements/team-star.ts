@@ -33,11 +33,15 @@ const TeamStar: Achievement = {
 	...achievement,
 	numericId: 12,
 	id: 'team_star',
-	name: 'Hermit Gang',
+	levels: [
+		{
+			name: 'Hermit Gang',
+			description:
+				'Win 5 games using a deck that includes every member of team S.T.A.R.',
+			steps: 6,
+		},
+	],
 	icon: '',
-	description:
-		'Win 5 games using a deck that includes every member of team S.T.A.R.',
-	steps: 6,
 	onGameEnd(game, playerEntity, component, outcome) {
 		const player = game.components.get(playerEntity)
 		if (!player) return

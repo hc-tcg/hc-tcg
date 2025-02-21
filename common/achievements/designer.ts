@@ -10,10 +10,14 @@ const Designer: Achievement = {
 	...achievement,
 	numericId: 24,
 	id: 'designer',
-	name: 'Designer',
+	levels: [
+		{
+			name: 'Designer',
+			description: "Use a deck that isn't a starter deck in a game.",
+			steps: 1,
+		},
+	],
 	icon: '',
-	description: "Use a deck that isn't a starter deck in a game.",
-	steps: 1,
 	onGameEnd(game, playerEntity, component) {
 		const player = game.components.get(playerEntity)
 		if (!player) return

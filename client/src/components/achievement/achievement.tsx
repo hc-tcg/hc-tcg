@@ -25,11 +25,6 @@ export default function AchievementComponent({
 
 	let out = []
 
-	if (!achievement.levels) {
-		return
-	}
-
-
 	for (const level of achievement.levels) {
 		out.push(
 			<div className={css.achievementContainer}>

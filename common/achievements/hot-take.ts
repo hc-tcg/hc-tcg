@@ -6,9 +6,13 @@ const HotTake: Achievement = {
 	...achievement,
 	numericId: 9,
 	id: 'hot_take',
-	name: 'Hot take',
-	description: 'Fully power up a 3-cost Hermit you got as a prize card',
-	steps: 1,
+	levels: [
+		{
+			name: 'Hot take',
+			description: 'Fully power up a 3-cost Hermit you got as a prize card',
+			steps: 1,
+		},
+	],
 	icon: '',
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
