@@ -1,7 +1,4 @@
 .mainmenu {
-	position: relative;
-	display: flex;
-	flex-direction: column;
 	height: 100%;
 	width: 100%;
 	color: var(--text-light);
@@ -55,14 +52,13 @@
 }
 
 .content {
-	position: absolute;
+	padding-top: 10vh;
 	inset: 0;
 	display: grid;
 	place-content: flex-start center;
+	justify-items: center;
 	padding-bottom: 3vh;
 	margin-inline: auto;
-	justify-items: center;
-	align-content: center;
 	gap: 7vh;
 }
 
@@ -404,4 +400,5 @@ nav {
 	border-radius: 0.5vh;
 	padding: 1vh 2vh;
 	gap: 1vh;
+	overflow-y: scroll;
 }

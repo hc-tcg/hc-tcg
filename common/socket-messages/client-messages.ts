@@ -8,14 +8,15 @@ import {AnyTurnActionData} from '../types/turn-action-data'
 export const clientMessages = messages('clientMessages', {
 	GET_UPDATES: null,
 	SELECT_DECK: null,
-	CREATE_BOSS_GAME: null,
-	CANCEL_BOSS_GAME: null,
+	JOIN_PUBLIC_QUEUE: null,
+	LEAVE_PUBLIC_QUEUE: null,
+	JOIN_PRIVATE_QUEUE: null,
+	SPECTATE_PRIVATE_GAME: null,
+	LEAVE_PRIVATE_QUEUE: null,
 	CREATE_PRIVATE_GAME: null,
 	CANCEL_PRIVATE_GAME: null,
-	JOIN_QUEUE: null,
-	LEAVE_QUEUE: null,
-	LEAVE_PRIVATE_QUEUE: null,
-	JOIN_PRIVATE_GAME: null,
+	CREATE_BOSS_GAME: null,
+	CANCEL_BOSS_GAME: null,
 	CREATE_REPLAY_GAME: null,
 	REPLAY_OVERVIEW: null,
 	TURN_ACTION: null,
@@ -43,6 +44,35 @@ export type ClientMessages = [
 	{type: typeof clientMessages.UPDATE_USERNAME; name: string},
 	{type: typeof clientMessages.UPDATE_MINECRAFT_NAME; name: string},
 	{
+		type: typeof clientMessages.JOIN_PUBLIC_QUEUE
+		databaseConnected: true
+		activeDeckCode: string
+	},
+	{
+		type: typeof clientMessages.JOIN_PUBLIC_QUEUE
+		databaseConnected: false
+		activeDeck: Deck
+	},
+	{type: typeof clientMessages.LEAVE_PUBLIC_QUEUE},
+	{
+		type: typeof clientMessages.JOIN_PRIVATE_QUEUE
+		databaseConnected: true
+		activeDeckCode: string
+		code: string
+	},
+	{
+		type: typeof clientMessages.JOIN_PRIVATE_QUEUE
+		databaseConnected: false
+		activeDeck: Deck
+		code: string
+	},
+	{
+		type: typeof clientMessages.SPECTATE_PRIVATE_GAME
+		code: string
+	},
+	{type: typeof clientMessages.LEAVE_PRIVATE_QUEUE},
+	// @TODO
+	{
 		type: typeof clientMessages.CREATE_BOSS_GAME
 		databaseConnected: true
 		activeDeckCode: string
@@ -64,30 +94,6 @@ export type ClientMessages = [
 		activeDeck: Deck
 	},
 	{type: typeof clientMessages.CANCEL_PRIVATE_GAME},
-	{
-		type: typeof clientMessages.JOIN_QUEUE
-		databaseConnected: true
-		activeDeckCode: string
-	},
-	{
-		type: typeof clientMessages.JOIN_QUEUE
-		databaseConnected: false
-		activeDeck: Deck
-	},
-	{type: typeof clientMessages.LEAVE_QUEUE},
-	{type: typeof clientMessages.LEAVE_PRIVATE_QUEUE},
-	{
-		type: typeof clientMessages.JOIN_PRIVATE_GAME
-		databaseConnected: true
-		activeDeckCode: string
-		code: string
-	},
-	{
-		type: typeof clientMessages.JOIN_PRIVATE_GAME
-		databaseConnected: false
-		activeDeck: Deck
-		code: string
-	},
 	{
 		type: typeof clientMessages.CREATE_REPLAY_GAME
 		id: number

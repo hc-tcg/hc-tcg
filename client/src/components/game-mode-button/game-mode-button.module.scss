@@ -31,7 +31,7 @@ $time: 0.25s;
 
 		.rightOverlay,
 		.returnButton {
-			animation: opacityGrow $time forwards;
+			opacity: 100%;
 		}
 	}
 
@@ -42,9 +42,7 @@ $time: 0.25s;
 
 		.rightOverlay,
 		.returnButton {
-			pointer-events: none;
-			cursor: default;
-			animation: opacityShrink $time forwards;
+			opacity: 0%;
 		}
 
 		&:hover {
@@ -119,8 +117,8 @@ $time: 0.25s;
 	padding: 5px;
 	border: 1px rgba(0, 0, 0, 0) solid;
 	color: white;
+	transition: opacity $time linear;
 	opacity: 0%;
-	box-sizing: border-box;
 	cursor: pointer;
 
 	>img {
@@ -136,6 +134,12 @@ $time: 0.25s;
 		font-size: 1.5vh;
 		transform: translateY(1px);
 		padding-right: 0.5vh;
+	}
+
+	&.disableBack {
+		pointer-events: none;
+		cursor: default;
+		opacity: 0% !important;
 	}
 
 	&:hover {
@@ -169,6 +173,7 @@ $time: 0.25s;
 }
 
 .rightOverlay {
+	transition: opacity $time linear;
 	position: absolute;
 	top: 0%;
 	right: 0%;
@@ -225,16 +230,6 @@ $time: 0.25s;
 	}
 }
 
-@keyframes opacityGrow {
-	from {
-		opacity: 0%;
-	}
-
-	to {
-		opacity: 100%;
-	}
-}
-
 @keyframes shrink {
 	from {
 		scale: 1;
@@ -250,16 +245,6 @@ $time: 0.25s;
 		scale: 1;
 		pointer-events: all;
 		width: $width;
-	}
-}
-
-@keyframes opacityShrink {
-	from {
-		opacity: 100%;
-	}
-
-	to {
-		opacity: 0%;
 	}
 }
 
@@ -331,6 +316,8 @@ $time: 0.25s;
 	color: white;
 	overflow: hidden;
 	text-align: center;
+	transition: opacity;
+	background-color: rgba(0, 0, 0, 0.7);
 
 	.largeButton {
 		height: 5vh;
@@ -340,6 +327,7 @@ $time: 0.25s;
 	>* {
 		width: calc(70vh - 26vh);
 		height: 100%;
+		animation: timedShow 0.25s forwards;
 	}
 
 	.chooseDeck {
@@ -349,7 +337,6 @@ $time: 0.25s;
 		align-items: center;
 		gap: 0.5vh;
 		padding: 2vh;
-		background-color: rgba(0, 0, 0, 0.7);
 
 		.deckSelector {
 			margin: 1vh;
@@ -358,7 +345,7 @@ $time: 0.25s;
 			flex-grow: 1;
 			overflow-x: hidden;
 
-			.myDecksItem {
+			.deck {
 				display: flex;
 				flex-direction: row;
 				align-items: center;
@@ -384,83 +371,76 @@ $time: 0.25s;
 					text-indent: 3px;
 					transition: all 0.25s ease-in-out;
 					background-color: var(--gray-700);
-					border-radius: 0.5vh;
 				}
 
 				.deckName {
 					text-overflow: ellipsis;
 					overflow: hidden;
 				}
+
+				.multiColoredCircle {
+					width: 0.5rem;
+					height: 2rem;
+					display: flex;
+					flex-direction: column;
+					gap: 4px;
+				}
+
+				.singleTag {
+					flex-grow: 1;
+					border-radius: 6px;
+				}
+
+				.deckImage {
+					display: grid;
+					place-content: center;
+					border-radius: 6px;
+					width: 2rem;
+					height: 2rem;
+					flex-shrink: 0;
+
+					>img {
+						height: 1.5rem;
+						filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
+					}
+				}
 			}
 		}
 
-		.multiColoredCircle {
-			width: 0.5rem;
-			height: 2rem;
-			display: flex;
-			flex-direction: column;
-			gap: 4px;
+		input {
+			box-shadow: inset 0 -4px 1px, inset 1px 1px 0 1px;
+			font-size: 1.2rem;
+
+			&::placeholder {
+				font-size: 1rem;
+				padding-left: 0.2rem;
+			}
 		}
 
-		.singleTag {
-			flex-grow: 1;
-			border-radius: 6px;
-		}
-
-		.deckImage {
+		.row {
+			width: 100%;
 			display: grid;
-			place-content: center;
-			background-color: var(--gray-500);
-			border-radius: 6px;
-			width: 2rem;
-			height: 2rem;
-			flex-shrink: 0;
-
-			>img {
-				height: 1.5rem;
-				filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
-			}
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+			grid-gap: 0.5vh;
 		}
+	}
 
-		.usesIcon {
-			&.farm {
-				background-color: rgb(124, 204, 12);
-			}
+	.enterCode {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 0.5vh;
+		padding: 2vh;
 
-			&.redstone {
-				background-color: rgb(185, 33, 42);
-			}
+		input {
+			box-shadow: inset 0 -1px 1px, inset 1px 1px 0 1px;
+			font-size: 1.2rem;
+			text-align: center;
 
-			&.prankster {
-				background-color: rgb(116, 55, 168);
-			}
-
-			&.explorer {
-				background-color: rgb(103, 138, 190);
-			}
-
-			&.balanced {
-				background-color: rgb(101, 124, 50);
-			}
-
-			&.builder {
-				background-color: rgb(184, 162, 154);
-			}
-
-			&.pvp {
-				background-color: rgb(85, 202, 194);
-			}
-
-			&.speedrunner {
-				background-color: rgb(223, 226, 36);
-			}
-
-			&.terraform {
-				background-color: rgb(217, 119, 147);
-			}
-
-			&.miner {
-				background-color: rgb(110, 105, 108);
+			&::placeholder {
+				font-size: 1rem;
+				line-height: 100%;
 			}
 		}
 	}
@@ -471,27 +451,92 @@ $time: 0.25s;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		gap: 1.5vh;
+		gap: 2.5vh;
 		padding: 2vh;
-		background-color: rgba(0, 0, 0, 0.7);
 
-		.innerContainer {
-			margin-top: 2vh;
-			background-color: rgba(0, 0, 0, 0.8);
-			gap: 1.5vh;
-			padding: 2vh;
-			border-radius: 8px;
+		.deck,
+		.codes {
+			margin: 0 1vh;
+			max-width: 100%;
 			display: flex;
-			flex-direction: column;
 			align-items: center;
 			justify-content: center;
+			user-select: none;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+
+		.deck {
+			gap: 0.5rem;
+			padding: 0.5rem 1rem;
+			background-color: var(--gray-600);
+			border-radius: 6px;
+
+			.deckName {
+				text-overflow: ellipsis;
+				overflow: hidden;
+			}
+
+			.deckImage {
+				display: grid;
+				place-content: center;
+				padding: 0.5rem;
+				gap: 0.5rem;
+				height: 2rem;
+				width: 2rem;
+				flex-shrink: 0;
+				border-radius: 6px;
+
+				>img {
+					height: 1.5rem;
+					filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
+				}
+			}
+		}
+
+		.codes {
+			gap: 1.5vh;
+
+			.code {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 0.5rem;
+				padding: 0.5rem 1rem;
+				background-color: var(--gray-600);
+				border-radius: 6px;
+
+				.copy {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					background-color: var(--gray-700);
+					border-radius: 6px;
+					padding: 0.5rem;
+					gap: 0.5rem;
+
+					&:hover {
+						cursor: pointer;
+						background-color: var(--gray-800);
+					}
+				}
+			}
+		}
+
+		.timedMessage {
+			opacity: 0%;
+			animation: timedShow 2s 8s forwards;
+
+			a {
+				color: white !important;
+			}
 		}
 	}
 
-	.privateModeSelect {
+	.optionsSelect {
 		gap: 0.5vh;
 		padding: 2vh;
-		background-color: rgba(0, 0, 0, 0.7);
 
 		display: flex;
 		flex-direction: column;
@@ -508,12 +553,59 @@ $time: 0.25s;
 			align-items: center;
 		}
 
-		.row {
-			width: 100%;
-			display: grid;
-			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-			grid-gap: 0.5vh;
-		}
+	}
+}
 
+.usesIcon {
+	background-color: var(--gray-500);
+
+	&.farm {
+		background-color: rgb(124, 204, 12);
+	}
+
+	&.redstone {
+		background-color: rgb(185, 33, 42);
+	}
+
+	&.prankster {
+		background-color: rgb(116, 55, 168);
+	}
+
+	&.explorer {
+		background-color: rgb(103, 138, 190);
+	}
+
+	&.balanced {
+		background-color: rgb(101, 124, 50);
+	}
+
+	&.builder {
+		background-color: rgb(184, 162, 154);
+	}
+
+	&.pvp {
+		background-color: rgb(85, 202, 194);
+	}
+
+	&.speedrunner {
+		background-color: rgb(223, 226, 36);
+	}
+
+	&.terraform {
+		background-color: rgb(217, 119, 147);
+	}
+
+	&.miner {
+		background-color: rgb(110, 105, 108);
+	}
+}
+
+@keyframes timedShow {
+	from {
+		opacity: 0%;
+	}
+
+	to {
+		opacity: 100%;
 	}
 }
