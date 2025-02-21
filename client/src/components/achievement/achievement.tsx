@@ -23,34 +23,45 @@ export default function AchievementComponent({
 		: 0
 	const completionTime = progressData?.completionTime
 
-	return (
-		<div className={css.achievementContainer}>
-			<img src={icon_url} className={css.icon} />
-			<div>
+	let out = []
+
+	if (!achievement.levels) {
+		return
+	}
+
+
+	for (const level of achievement.levels) {
+		out.push(
+			<div className={css.achievementContainer}>
+				<img src={icon_url} className={css.icon} />
 				<div>
-					{achievement.name}
-					<div className={css.achievementDescription}>
-						{achievement.description}
+					<div>
+						{level.name}
+						<div className={css.achievementDescription}>
+							{level.description}
+						</div>
 					</div>
+					<div className={css.progressContainer}>
+						<progress
+							value={progress}
+							max={level.steps}
+							className={css.progressBar}
+						></progress>
+						<span>
+							{progress}/{level.steps}
+						</span>
+					</div>
+					{completionTime ? (
+						<span>
+							Completed: {new Date(completionTime).toLocaleDateString()}
+						</span>
+					) : (
+						''
+					)}
 				</div>
-				<div className={css.progressContainer}>
-					<progress
-						value={progress}
-						max={achievement.steps}
-						className={css.progressBar}
-					></progress>
-					<span>
-						{progress}/{achievement.steps}
-					</span>
-				</div>
-				{completionTime ? (
-					<span>
-						Completed: {new Date(completionTime).toLocaleDateString()}
-					</span>
-				) : (
-					''
-				)}
-			</div>
-		</div>
-	)
+			</div>,
+		)
+	}
+
+	return [out]
 }
