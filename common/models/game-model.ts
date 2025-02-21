@@ -5,10 +5,20 @@ import {
 	PlayerComponent,
 	RowComponent,
 	SlotComponent,
+	StatusEffectComponent,
 } from '../components'
 import query, {ComponentQuery} from '../components/query'
 import {CONFIG, DEBUG_CONFIG} from '../config'
 import {PlayerEntity, SlotEntity} from '../entities'
+import {
+	MultiturnPrimaryAttackDisabledEffect,
+	MultiturnSecondaryAttackDisabledEffect,
+} from '../status-effects/multiturn-attack-disabled'
+import {
+	PrimaryAttackDisabledEffect,
+	SecondaryAttackDisabledEffect,
+} from '../status-effects/singleturn-attack-disabled'
+import TimeSkipDisabledEffect from '../status-effects/time-skip-disabled'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
@@ -358,6 +368,86 @@ export class GameModel {
 			this.state.modalRequests.push(newRequest)
 		}
 	}
+
+	public addCopyAttackModalRequest(
+		newRequest: Omit<CopyAttack.Request, 'modal'> & {
+			modal: Omit<CopyAttack.Request['modal'], 'availableAttacks'>
+		},
+		before = false,
+	) {
+		let modal = newRequest.modal
+		let hermitCard = this.components.get(modal.hermitCard)!
+		let blockedActions = hermitCard.player.hooks.blockedActions.callSome(
+			[[]],
+			(observerEntity) => {
+				let observer = this.components.get(observerEntity)
+				return observer?.wrappingEntity === hermitCard.entity
+			},
+		)
+
+		/* Due to an issue with the blocked actions system, we have to check if our target has thier action
+		 * blocked by status effects here.
+		 */
+		if (
+			this.components.exists(
+				StatusEffectComponent,
+				query.effect.is(
+					PrimaryAttackDisabledEffect,
+					MultiturnPrimaryAttackDisabledEffect,
+				),
+				query.effect.targetIsCardAnd(
+					query.card.entity(hermitCard.entity),
+					query.card.currentPlayer,
+				),
+			) ||
+			(hermitCard.isHermit() && hermitCard.props.primary.passive)
+		) {
+			blockedActions.push('PRIMARY_ATTACK')
+		}
+
+		if (
+			this.components.exists(
+				StatusEffectComponent,
+				query.effect.is(
+					SecondaryAttackDisabledEffect,
+					MultiturnSecondaryAttackDisabledEffect,
+				),
+				query.effect.targetIsCardAnd(
+					query.card.entity(hermitCard.entity),
+					query.card.currentPlayer,
+				),
+			) ||
+			(hermitCard.isHermit() && hermitCard.props.secondary.passive)
+		) {
+			blockedActions.push('SECONDARY_ATTACK')
+		}
+
+		if (
+			this.components.exists(
+				StatusEffectComponent,
+				query.effect.is(TimeSkipDisabledEffect),
+				query.effect.targetIsPlayerAnd(query.player.currentPlayer),
+			) &&
+			query.card.is(JoeHillsRare)(this, hermitCard)
+		)
+			blockedActions.push('SECONDARY_ATTACK')
+
+		let attacks: Array<'primary' | 'secondary'> = ['primary', 'secondary']
+
+		if (blockedActions.includes('PRIMARY_ATTACK')) {
+			attacks = attacks.filter((x) => x != 'primary')
+		}
+		if (blockedActions.includes('SECONDARY_ATTACK')) {
+			attacks = attacks.filter((x) => x != 'secondary')
+		}
+
+		const request: CopyAttack.Request = {
+			...newRequest,
+			modal: {...modal, availableAttacks: attacks},
+		}
+		this.addModalRequest(request, before)
+	}
+
 	public removeModalRequest(index = 0, timeout = true) {
 		if (this.state.modalRequests[index] !== undefined) {
 			const request = this.state.modalRequests.splice(index, 1)[0]

@@ -129,6 +129,7 @@ export const singleUse = {
 	category: 'single_use' as CardCategoryT,
 	attachCondition: query.every(
 		query.slot.singleUse,
+		query.slot.empty,
 		query.slot.playerHasActiveHermit,
 		query.actionAvailable('PLAY_SINGLE_USE_CARD'),
 	),

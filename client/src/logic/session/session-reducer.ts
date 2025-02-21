@@ -1,6 +1,6 @@
 import {PlayerId} from 'common/models/player-model'
 import {ToastData} from 'common/types/app'
-import {PlayerInfo} from 'common/types/server-requests'
+import {PlayerInfo, Update} from 'common/types/server-requests'
 import {LocalMessage, localMessages} from 'logic/messages'
 import React from 'react'
 
@@ -26,7 +26,7 @@ type SessionState = {
 		tooltipWidth: number
 	} | null
 	toast: Array<ToastData>
-	updates: Record<string, Array<string>>
+	updates: Array<Update>
 	newPlayer: boolean //If the account was created this session
 }
 
@@ -41,7 +41,7 @@ const defaultState: SessionState = {
 	connected: false,
 	tooltip: null,
 	toast: [],
-	updates: {},
+	updates: [],
 	newPlayer: false,
 }
 
@@ -92,7 +92,7 @@ const loginReducer = (
 		case localMessages.UPDATES_LOAD:
 			return {
 				...state,
-				...action.updates,
+				updates: action.updates,
 			}
 		case localMessages.INSERT_DECK:
 		case localMessages.UPDATE_DECK:

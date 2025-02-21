@@ -168,7 +168,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			ZombieCleoRare,
 			ZombieCleoRare,
 			Loyalty,
-			Loyalty,
+			Efficiency,
 			ChainmailArmor,
 			ChainmailArmor,
 			LightningRod,

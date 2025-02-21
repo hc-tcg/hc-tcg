@@ -119,7 +119,7 @@ const RendogRare: Hermit = {
 						let pickedCard = pickedSlot.getCard() as CardComponent<Hermit>
 						if (!pickedCard) return
 
-						game.addModalRequest({
+						game.addCopyAttackModalRequest({
 							player: player.entity,
 							modal: {
 								type: 'copyAttack',

@@ -165,17 +165,27 @@ function getAvailableActions(
 				.every(Boolean),
 	)
 
+	/** Players must immediately either apply or remove single use cards that show confirmation modal */
+	let mustHandleConfirmation: boolean = false
+
 	// Actions that require us to have an active row
-	if (activeRowId !== null) {
-		// Change active hermit
-		if (hasOtherHermit) {
-			actions.push('CHANGE_ACTIVE_HERMIT')
-		}
+	actionsWithActiveRow: if (activeRowId !== null) {
+		// End turn action
+		actions.push('END_TURN')
 
 		// Su actions
 		if (su && !suUsed) {
 			actions.push('REMOVE_EFFECT')
-			if (su.props.showConfirmationModal) actions.push('APPLY_EFFECT')
+			if (su.props.showConfirmationModal) {
+				actions.push('APPLY_EFFECT')
+				mustHandleConfirmation = true
+				break actionsWithActiveRow
+			}
+		}
+
+		// Change active hermit
+		if (hasOtherHermit) {
+			actions.push('CHANGE_ACTIVE_HERMIT')
 		}
 
 		// Attack actions
@@ -214,21 +224,13 @@ function getAvailableActions(
 				}
 			}
 		}
-
-		// End turn action
-		actions.push('END_TURN')
 	}
 
 	// Play card actions require an active row unless it's the players first turn
-	if (activeRowId !== null || turnState.turnNumber <= 2) {
-		// Temporarily add these to see if any slots are available
-		game.state.turn.availableActions = [
-			...actions,
-			'PLAY_HERMIT_CARD',
-			'PLAY_EFFECT_CARD',
-			'PLAY_ITEM_CARD',
-			'PLAY_SINGLE_USE_CARD',
-		]
+	if (
+		!mustHandleConfirmation &&
+		(activeRowId !== null || turnState.turnNumber <= 2)
+	) {
 		const desiredActions = game.components
 			.filter(
 				CardComponent,
@@ -238,24 +240,41 @@ function getAvailableActions(
 				),
 			)
 			.reduce((reducer: TurnActions, card: CardComponent): TurnActions => {
-				const pickableSlots = game.components.filter(
-					SlotComponent,
-					card.props.attachCondition,
-				)
-
-				if (pickableSlots.length === 0) return reducer
-
+				// See Issue #1205
 				if (card.isHealth() && !reducer.includes('PLAY_HERMIT_CARD')) {
-					reducer.push('PLAY_HERMIT_CARD')
+					game.state.turn.availableActions = [...actions, 'PLAY_HERMIT_CARD']
+					const pickableSlots = game.components.filter(
+						SlotComponent,
+						card.props.attachCondition,
+					)
+					if (pickableSlots.length !== 0) reducer.push('PLAY_HERMIT_CARD')
 				}
 				if (card.isAttach() && !reducer.includes('PLAY_EFFECT_CARD')) {
-					reducer.push('PLAY_EFFECT_CARD')
+					game.state.turn.availableActions = [...actions, 'PLAY_EFFECT_CARD']
+					const pickableSlots = game.components.filter(
+						SlotComponent,
+						card.props.attachCondition,
+					)
+					if (pickableSlots.length !== 0) reducer.push('PLAY_EFFECT_CARD')
 				}
 				if (card.isItem() && !reducer.includes('PLAY_ITEM_CARD')) {
-					reducer.push('PLAY_ITEM_CARD')
+					game.state.turn.availableActions = [...actions, 'PLAY_ITEM_CARD']
+					const pickableSlots = game.components.filter(
+						SlotComponent,
+						card.props.attachCondition,
+					)
+					if (pickableSlots.length !== 0) reducer.push('PLAY_ITEM_CARD')
 				}
 				if (card.isSingleUse() && !reducer.includes('PLAY_SINGLE_USE_CARD')) {
-					reducer.push('PLAY_SINGLE_USE_CARD')
+					game.state.turn.availableActions = [
+						...actions,
+						'PLAY_SINGLE_USE_CARD',
+					]
+					const pickableSlots = game.components.filter(
+						SlotComponent,
+						card.props.attachCondition,
+					)
+					if (pickableSlots.length !== 0) reducer.push('PLAY_SINGLE_USE_CARD')
 				}
 				return reducer
 			}, [] as TurnActions)
@@ -509,8 +528,6 @@ function getPlayerAI(game: GameModel) {
 function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 	const {opponentPlayer, currentPlayer} = con.game
 
-	let playerAISagaRunning: boolean = false
-
 	while (true) {
 		if (con.game.settings.showHooksState.enabled) printHooksState(con.game)
 
@@ -575,11 +592,9 @@ function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 		con.game.battleLog.sendLogs()
 
 		const playerAI = getPlayerAI(con.game)
-		if (playerAI && !playerAISagaRunning) {
+		if (playerAI) {
 			yield* fork(function* () {
-				playerAISagaRunning = true
 				yield* call(virtualPlayerActionSaga, con, playerAI)
-				playerAISagaRunning = false
 			})
 		}
 
@@ -737,12 +752,8 @@ export function* turnSaga(con: GameController) {
 		buffers.dropping(10),
 	)
 
-	let result
-	try {
-		result = yield* call(turnActionsSaga, con, turnActionChannel)
-	} finally {
-		turnActionChannel.close()
-	}
+	let result = yield* call(turnActionsSaga, con, turnActionChannel)
+	turnActionChannel.close()
 
 	if (result === 'GAME_END') return 'GAME_END'
 

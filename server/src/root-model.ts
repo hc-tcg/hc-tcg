@@ -1,6 +1,7 @@
 import {ACHIEVEMENTS_LIST} from 'common/achievements'
 import {CARDS_LIST} from 'common/cards'
 import {PlayerModel} from 'common/models/player-model'
+import {Update} from 'common/types/server-requests'
 import {Database} from 'db/db'
 import dotenv from 'dotenv'
 import {GameController} from 'game-controller'
@@ -31,7 +32,7 @@ export class RootModel {
 		playerLeft: new Hook<string, (player: PlayerModel) => void>(),
 		privateCancelled: new Hook<string, (code: string) => void>(),
 	}
-	public updates: Record<string, Array<string>> = {}
+	public updates: Array<Update> = []
 
 	public constructor() {
 		const env = dotenv.config()

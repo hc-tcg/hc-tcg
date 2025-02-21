@@ -102,10 +102,6 @@ function More({setMenuSection}: Props) {
 				<UpdatesModal
 					onClose={() => {
 						setUpdatesOpen(!updatesOpen)
-						localStorage.setItem(
-							'latestUpdateView',
-							(new Date().valueOf() / 1000).toFixed(),
-						)
 					}}
 				/>
 			)}

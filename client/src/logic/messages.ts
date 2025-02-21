@@ -14,6 +14,7 @@ import {
 	LocalCardInstance,
 	PlayerInfo,
 	SlotInfo,
+	Update,
 } from 'common/types/server-requests'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {Dispatch} from 'react'
@@ -124,7 +125,7 @@ type Messages = [
 	{type: typeof localMessages.CONNECTING_MESSAGE; message: string},
 	{type: typeof localMessages.DISCONNECT; errorMessage?: string},
 	{type: typeof localMessages.LOGOUT},
-	{type: typeof localMessages.UPDATES_LOAD; updates: Record<string, string[]>},
+	{type: typeof localMessages.UPDATES_LOAD; updates: Array<Update>},
 	{
 		type: typeof localMessages.TOAST_OPEN
 		open: boolean

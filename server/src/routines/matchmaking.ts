@@ -938,6 +938,110 @@ export function* createReplayGame(
 	console.info(`Replay game ended: ${con.id}`)
 }
 
+//@Todo fix games from just timing out when player leaves
+export function* createReplayGame(
+	msg: RecievedClientMessage<typeof clientMessages.CREATE_REPLAY_GAME>,
+) {
+	const {playerId} = msg
+	const player = root.players[playerId]
+
+	if (inGame(playerId) || inQueue(playerId)) {
+		console.info(
+			'[Create private game] Player is already in game or queue:',
+			player.name,
+		)
+		broadcast([player], {type: serverMessages.CREATE_PRIVATE_GAME_FAILURE})
+		return
+	}
+	const replay = yield* getGameReplay(msg.payload.id)
+	if (!replay) {
+		broadcast([root.players[playerId]], {
+			type: serverMessages.INVALID_REPLAY,
+		})
+		return
+	}
+
+	const con = new GameController(replay.player1Defs, replay.player2Defs, {
+		randomSeed: replay.seed,
+		randomizeOrder: true,
+	})
+	root.addGame(con)
+	root.hooks.newGame.call(con)
+
+	const viewerEntity = con.game.components.findEntity(
+		PlayerComponent,
+		query.player.uuid(msg.payload.uuid),
+	)
+
+	const viewer = con.addViewer({
+		player: root.players[playerId],
+		spectator: true,
+		playerOnLeft: viewerEntity ? viewerEntity : con.game.state.order[0],
+		replayer: true,
+	})
+	let gameState = getLocalGameState(con.game, viewer)
+
+	broadcast([root.players[playerId]], {
+		type: serverMessages.SPECTATE_PRIVATE_GAME_START,
+		localGameState: gameState,
+	})
+
+	con.task = yield* spawn(gameSaga, con)
+
+	console.info(
+		`${con.game.logHeader}`,
+		`Replay game started: ${con.id}`,
+		`Viewer: ${msg.playerId}.`,
+		'Total games:',
+		root.getGameIds().length,
+	)
+
+	yield* delay(1000)
+
+	const replayActions = replay.replay
+
+	for (let i = 0; i < replayActions.length; i++) {
+		if (con.game.outcome) break
+
+		const action = replayActions[i]
+
+		yield* delay(action.millisecondsSinceLastAction)
+		yield* put({
+			type: clientMessages.TURN_ACTION,
+			payload: {
+				action: action.action,
+				playerEntity: action.player,
+			},
+			playerEntity: action.player,
+			action: action.action,
+		})
+	}
+
+	gameState.timer.turnRemaining = 0
+	gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
+	if (!con.game.endInfo.victoryReason) {
+		// Remove coin flips from state if game was terminated before game end to prevent
+		// clients replaying animations after a forfeit, disconnect, or excessive game duration
+		con.game.components
+			.filter(PlayerComponent)
+			.forEach((player) => (gameState.players[player.entity].coinFlips = []))
+	}
+
+	yield* delay(10)
+
+	broadcast([viewer.player], {
+		type: serverMessages.GAME_END,
+		gameState,
+		outcome: con.game.outcome
+			? con.game.outcome
+			: {type: 'game-crash', error: 'The replay game did not save properly.'},
+	})
+
+	delete root.games[con.id]
+	root.hooks.gameRemoved.call(con)
+	console.info(`Replay game ended: ${con.id}`)
+}
+
 function onPlayerLeft(player: PlayerModel) {
 	// Remove player from all queues
 

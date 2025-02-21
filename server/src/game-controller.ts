@@ -11,7 +11,7 @@ import {
 	ServerMessage,
 	serverMessages,
 } from 'common/socket-messages/server-messages'
-import {Message} from 'common/types/game-state'
+import {CurrentCoinFlip, Message} from 'common/types/game-state'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {broadcast} from './utils/comm'
 import {getLocalGameState} from './utils/state-gen'
@@ -200,6 +200,13 @@ export class GameController {
 		})
 
 		this.game.voiceLineQueue = []
+	}
+
+	public getRandomDelayForAI(coinFlips: Array<CurrentCoinFlip>) {
+		return (
+			coinFlips.reduce((r, flip) => r + flip.delay, 0) +
+			(this.game.rng() * 500 + 500)
+		)
 	}
 
 	public broadcastToViewers(payload: ServerMessage) {

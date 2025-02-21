@@ -42,12 +42,14 @@ function MainMenu({setMenuSection}: Props) {
 
 	const welcomeMessage = newPlayer ? 'Welcome' : 'Welcome Back'
 
+	let showUpdateModal =
+		(!latestUpdateView ||
+			(updates.length && updates[0].timestamp > parseInt(latestUpdateView))) &&
+		debugOptions.showUpdatesModal !== false
+
 	return (
 		<>
-			{!latestUpdateView ||
-			parseInt(updates['timestamps'] ? updates['timestamps'][0] : '0') >
-				parseInt(latestUpdateView) ? (
-				debugOptions.showUpdatesModal &&
+			{showUpdateModal ? (
 				updatesOpen && <UpdatesModal onClose={() => setUpdatesOpen(false)} />
 			) : (
 				<></>

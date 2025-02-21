@@ -91,7 +91,12 @@ const Card = (props: CardReactProps) => {
 				{debugConfig.renderCardsDynamically ? (
 					<div className={cn(css.noPointerEvents, css.card)}>{card}</div>
 				) : (
-					<div className={classNames(css.noPointerEvents, css[disabled])}>
+					<div
+						className={classNames(
+							css.cardImageContainer,
+							disabled === 'disabled' && css.disabled,
+						)}
+					>
 						<img
 							className={css.renderedCardImage}
 							src={getRenderedCardImage(props.card, displayTokenCost)}

@@ -32,6 +32,11 @@ npm run client:dev   # start the client and update automatically when you make c
 npm run dev          # start both the client and server
 ```
 
+If you need to test code that interacts with the database, you can use our development docker compose file:
+```
+# docker-compose -f docker-compose-dev.yml up
+```
+
 _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
 
 By default, the client is hosted on port 3002.
@@ -100,12 +105,13 @@ npm run test                # run all the tests
 npm run test:unit           # run unittests written with jest, this will catch most errors.
 npm run test:unit-verbose   # run unittests written with jest and print verbose logs for debugging.
 npm run test:vunit          # the same as test:unit-verbose
-npm run test:starter-decks` # run starter deck verification check
-npm run test:db`            # run database tests
+npm run test:starter-decks  # run starter deck verification check
+npm run test:db             # run database tests
 npm run test:ct             # run component tests with playwright.
 npm run test:ct-update      # update component snapshots.
 npm run test:api            # run tests for the hc-tcg API.
 npm run test:e2e            # run end-to-end tests with Playwright.
+npm run test:fuzz           # run fuzz tests (see tests/README.md for more details).
 ```
 
 # Building & Self Hosting
@@ -128,10 +134,10 @@ docker build . --build-arg APP_VERSION=$(git rev-parse --short HEAD)
 docker run -p 9000:9000 <Image Id>
 ```
 
-To host the project with the image on [docker hub](https://hub.docker.com/r/benji42/hc-tcg), install the docker-compose plugin then run the command:
+To host the project with the image on [docker hub](https://hub.docker.com/r/benji42/hc-tcg), install the docker-compose plugin, create a directory with the docker-compose.yml file (/etc/hctcg by default, can be changed by editing docker-compose.yml), create a directory in there for the db (mkdir -p /etc/hctcg/db or edit the docker-compose.yml if using a different directory) then run the command:
 
 ```sh
-docker compose up
+docker-compose up -d
 ```
 
-By default, the server will listen to requests on port 9000.
+By default, the server will listen to requests on port 9000.  The instance can be backed up by backing up the contents of /etc/hctcg (or whatever directory you specify).

@@ -6,7 +6,7 @@ import {
 } from '../components'
 import query from '../components/query'
 import {afterAttack, beforeAttack} from '../types/priorities'
-import {StatusEffect, systemStatusEffect} from './status-effect'
+import {StatusEffect, statusEffect} from './status-effect'
 
 const hasNotFrozenHermit = (player: PlayerComponent) => [
 	query.slot.player(player.entity),
@@ -16,7 +16,7 @@ const hasNotFrozenHermit = (player: PlayerComponent) => [
 ]
 
 const FrozenEffect: StatusEffect<CardComponent> = {
-	...systemStatusEffect,
+	...statusEffect,
 	name: 'Frozen',
 	icon: 'frozen',
 	id: 'frozen',

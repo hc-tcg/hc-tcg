@@ -100,6 +100,11 @@ export type ClientMessages = [
 		uuid: string
 	},
 	{
+		type: typeof clientMessages.CREATE_REPLAY_GAME
+		id: number
+		uuid: string
+	},
+	{
 		type: typeof clientMessages.TURN_ACTION
 		playerEntity: PlayerEntity
 		action: AnyTurnActionData
