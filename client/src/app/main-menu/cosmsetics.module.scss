@@ -19,7 +19,7 @@
 		color: var(--text-light);
 		margin-bottom: 2vh;
 		margin-top: 2vh;
-		filter: drop-shadow(1px 1px 0 var(--text-dark));
+		filter: drop-shadow(2px 2px 0 var(--text-dark));
 	}
 }
 
@@ -49,12 +49,12 @@
 }
 
 .nameSelector {
-	flex-grow: 1;
 	padding: 1rem;
 	border: 2px black solid;
 	background-color: var(--gray-700);
-	height: 100%;
+	height: min-content;
 	overflow-y: hidden;
+	width: 100%;
 }
 
 .appearanceHeader {
@@ -243,13 +243,21 @@
 .updatePlayerInfo {
 	display: flex;
 	flex-direction: row;
+	width: 100%;
+
+	> input {
+		height: 2.75rem;
+		flex-grow: 1;
+	}
 }
 
 .leftSideCosmetics {
-	width: 50%;
+	width: 60%;
 	display: flex;
 	flex-direction: column;
-	margin-left: 1rem;
+	align-items: center;
+	align-self: center;
+	margin-left: 2.5rem;
 	margin-top: 2vh;
 }
 
@@ -333,7 +341,9 @@ h2 {
 	}
 
 	.leftSideCosmetics {
-		width: 90vw;
+		width: 95vw;
+		gap: 1rem;
+		margin-left: 0rem;
 	}
 
 	.hideOnMobile {
