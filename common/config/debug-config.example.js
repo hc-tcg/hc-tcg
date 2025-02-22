@@ -22,4 +22,5 @@ export default {
 	disableRewardCards: false,
 	renderCardsDynamically: false,
 	statsUrl: null,
+	unlockAllCosmetics: false,
 }

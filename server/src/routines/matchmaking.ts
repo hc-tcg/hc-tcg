@@ -8,7 +8,7 @@ import {
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
-import EvilXCoin from 'common/cosmetics/coins/evilx'
+import {COINS} from 'common/cosmetics/coins'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
@@ -41,6 +41,8 @@ import {
 	take,
 } from 'typed-redux-saga'
 import {safeCall} from 'utils'
+import {BACKGROUNDS} from '../../../common/cosmetics/backgrounds'
+import {BORDERS} from '../../../common/cosmetics/borders'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
@@ -517,7 +519,12 @@ export function* createBossGame(
 		deck: [EvilXisumaBoss],
 		virtualAI: ExBossAI,
 		disableDeckingOut: true,
-		appearance: {...defaultAppearance, coin: EvilXCoin},
+		appearance: {
+			...defaultAppearance,
+			background: BACKGROUNDS['how_did_we_get_here'],
+			coin: COINS['evilx'],
+			border: BORDERS['gold_border'],
+		},
 	})
 	newBossGameController.game.state.isEvilXBossGame = true
 
