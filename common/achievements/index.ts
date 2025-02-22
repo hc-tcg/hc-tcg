@@ -11,6 +11,7 @@ import AllCards from './jack-of-all-cards'
 import NoDerpcoins from './no-derpcoins'
 import OreSnatcher from './ore-snatcher'
 import PackOfWolves from './pack-of-wolves'
+import SUStainable from './sustainable'
 import TeamStar from './team-star'
 import {Achievement} from './types'
 import Untouchable from './untouchable'
@@ -34,6 +35,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	OreSnatcher,
 	Designer,
 	CertifiedZombie,
+	SUStainable,
 	Win1,
 	Win10,
 	Win100,
