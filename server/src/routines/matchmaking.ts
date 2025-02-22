@@ -8,6 +8,7 @@ import {
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
+import {COINS} from 'common/cosmetics/coins'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
@@ -40,15 +41,14 @@ import {
 	take,
 } from 'typed-redux-saga'
 import {safeCall} from 'utils'
+import {BACKGROUNDS} from '../../../common/cosmetics/backgrounds'
+import {BORDERS} from '../../../common/cosmetics/borders'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import {turnActionsToBuffer} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
-import {COINS} from 'common/cosmetics/coins'
-import {BACKGROUNDS} from '../../../common/cosmetics/backgrounds'
-import {BORDERS} from '../../../common/cosmetics/borders'
 
 function setupGame(
 	player1: PlayerModel,

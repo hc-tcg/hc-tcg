@@ -1,4 +1,5 @@
 import {ACHIEVEMENTS} from 'common/achievements'
+import {DEBUG_CONFIG} from 'common/config'
 import {COSMETICS} from 'common/cosmetics'
 import {Background, Border, Coin, Heart, Title} from 'common/cosmetics/types'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
@@ -17,7 +18,6 @@ import {delay, put, race, select, take} from 'typed-redux-saga'
 import {getLocalGameState} from 'utils/state-gen'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
-import {DEBUG_CONFIG} from 'common/config'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 
