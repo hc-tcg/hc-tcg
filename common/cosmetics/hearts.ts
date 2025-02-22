@@ -5,6 +5,14 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		id: 'red',
 		name: 'Default',
 	},
+	{
+		id: 'soulflame',
+		name: 'Soulflame',
+	},
+	{
+		id: 'gold',
+		name: 'Gold',
+	},
 ]
 
 export const ALL_HEARTS: Heart[] = HeartDefinitions.map((heart) => ({
