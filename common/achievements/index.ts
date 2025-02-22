@@ -5,12 +5,15 @@ import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
 import Designer from './designer'
 import Ethogirl from './ethogirl'
-import HotTake from './hot-take'
 import HowDidWeGetHere from './how-did-we-get-here'
+import HotTake from './hot-take'
 import AllCards from './jack-of-all-cards'
+import NakedAndScared from './naked-and-scared'
 import NoDerpcoins from './no-derpcoins'
 import OreSnatcher from './ore-snatcher'
 import PackOfWolves from './pack-of-wolves'
+import ServerLag from './server-lag'
+import SheepStarer from './sheep-starer'
 import SUStainable from './sustainable'
 import TeamStar from './team-star'
 import {Achievement} from './types'
@@ -28,11 +31,14 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	DefeatEvilX,
 	NoDerpcoins,
 	British,
-	HotTake,
+	ServerLag,
 	DeceptiveSpectacles,
 	Untouchable,
 	TeamStar,
 	OreSnatcher,
+	SheepStarer,
+	NakedAndScared,
+	HotTake,
 	Designer,
 	CertifiedZombie,
 	SUStainable,

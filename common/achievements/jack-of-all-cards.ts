@@ -11,7 +11,7 @@ const AllCards: Achievement = {
 	id: 'all_cards',
 	numericId: 0,
 	name: 'Jack of all cards',
-	description: 'Use every card from the base set',
+	description: 'Win a game using every card from the base set',
 	steps: defaultCards.length,
 	getProgress(goals) {
 		return Object.values(goals).filter((goal) => goal > 0).length
