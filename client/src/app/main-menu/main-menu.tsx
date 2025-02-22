@@ -33,9 +33,9 @@ function MainMenu({setMenuSection}: Props) {
 	}
 
 	const handleDeck = () => setMenuSection('deck')
-	const handleMore = () => setMenuSection('more')
 	const handleSettings = () => setMenuSection('settings')
 	const handleAchievements = () => setMenuSection('achievements')
+	const handleStatistics = () => setMenuSection('statistics')
 
 	const updates = useSelector(getUpdates)
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(true)
@@ -147,11 +147,11 @@ function MainMenu({setMenuSection}: Props) {
 						</Button>
 						<Button
 							variant="default"
-							id={css.more}
-							onClick={handleMore}
+							id={css.statistics}
+							onClick={handleStatistics}
 							className={css.mainMenuButton}
 						>
-							More
+							Statistics
 						</Button>
 					</nav>
 					<Beef />
