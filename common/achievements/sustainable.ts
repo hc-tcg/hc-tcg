@@ -1,9 +1,9 @@
 import assert from 'assert'
+import Composter from '../cards/single-use/composter'
 import {CardComponent} from '../components'
 import query from '../components/query'
 import {achievement} from './defaults'
 import {Achievement} from './types'
-import Composter from '../cards/single-use/composter'
 
 const SUStainable: Achievement = {
 	...achievement,

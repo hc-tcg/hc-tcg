@@ -1,16 +1,10 @@
 import {describe, expect, test} from '@jest/globals'
-import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import {
-	endTurn,
-	forfeit,
-	pick,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
-import Composter from 'common/cards/single-use/composter'
-import query from 'common/components/query'
 import SUStainable from 'common/achievements/sustainable'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import Composter from 'common/cards/single-use/composter'
 import {SlotComponent} from 'common/components'
+import query from 'common/components/query'
+import {forfeit, pick, playCardFromHand, testAchivement} from '../utils'
 
 describe('Test SUStainable achivement', () => {
 	test('Test SUStainable achivement', () => {
