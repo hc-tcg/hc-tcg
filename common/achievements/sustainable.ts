@@ -29,11 +29,7 @@ const SUStainable: Achievement = {
 
 			if (su.props.id !== Composter.id) return
 
-			let handSize = player.getHand().length
-			let numUsed = Math.min(handSize - 1, 2)
-			console.log(numUsed)
-
-			component.incrementGoalProgress({goal: 0, amount: numUsed})
+			component.incrementGoalProgress({goal: 0, amount: 2})
 		})
 	},
 }

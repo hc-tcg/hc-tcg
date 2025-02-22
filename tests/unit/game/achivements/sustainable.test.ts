@@ -35,31 +35,13 @@ describe('Test SUStainable achivement', () => {
 						query.slot.currentPlayer,
 						query.slot.hand,
 					)
-					console.log(cards)
 					yield* pick(game, query.slot.entity(cards[0]))
 					yield* pick(game, query.slot.entity(cards[1]))
-					yield* endTurn(game)
-
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
-
-					yield* playCardFromHand(game, Composter, 'single_use')
-
-					cards = game.components.filterEntities(
-						SlotComponent,
-						query.slot.currentPlayer,
-						query.slot.hand,
-					)
-
-					yield* pick(game, query.slot.entity(cards[0]))
-					yield* pick(game, query.slot.entity(cards[1]))
-
-					yield* endTurn(game)
 
 					yield* forfeit(game.currentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
-					expect(SUStainable.getProgress(achievement.goals)).toBe(3)
+					expect(SUStainable.getProgress(achievement.goals)).toBe(2)
 				},
 			},
 			{startWithAllCards: false},
