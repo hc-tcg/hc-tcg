@@ -27,6 +27,10 @@
 			hsla(195deg, 100%, 60%, 50%)
 		);
 
+		background-repeat: repeat-x;
+		background-size: contain;
+		background-position: left;
+
 		&.right {
 			background: linear-gradient(
 				90deg,
@@ -38,10 +42,6 @@
 			background-size: contain;
 			background-position: left;
 		}
-
-		background-repeat: repeat-x;
-		background-size: contain;
-		background-position: left;
 	}
 }
 
@@ -70,10 +70,12 @@
 	height: 52px;
 	aspect-ratio: 20/21;
 	padding: 5px;
-	z-index: 100;
+	z-index: 50;
 }
 
 .playerName {
+	z-index: 50;
+
 	> h1 {
 		font-family: MinecraftBold;
 		filter: drop-shadow(0 2px 0 hsla(0deg, 0%, 0%, 35%));
@@ -96,7 +98,6 @@
 		color: var(--gray-200);
 		filter: drop-shadow(0 1px 0 black);
 	}
-	z-index: 100;
 }
 
 .playerName.disconnected {
@@ -126,6 +127,7 @@
 	display: flex;
 	flex-direction: column-reverse;
 	margin-left: auto;
+	z-index: 50;
 
 	> img {
 		$size: 16px;
@@ -138,7 +140,6 @@
 		margin-left: 0;
 		margin-right: auto;
 	}
-	z-index: 100;
 }
 
 @media (orientation: landscape) {
