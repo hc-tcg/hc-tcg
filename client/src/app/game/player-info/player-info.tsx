@@ -92,6 +92,12 @@ function PlayerInfo({player, direction}: Props) {
 			<div className={cn(css.health, css[direction])}>
 				{health(player.lives)}
 			</div>
+			<div
+				className={cn(css.background, css[direction], {
+					[css.active]: thisPlayer,
+				})}
+				style={{}}
+			></div>
 		</div>
 	)
 }
