@@ -1,4 +1,4 @@
-import {ALL_BACKGROUNDS} from './background'
+import {ALL_BACKGROUNDS} from './backgrounds'
 import {ALL_BORDERS} from './borders'
 import {ALL_COINS} from './coins'
 import {ALL_HEARTS} from './hearts'

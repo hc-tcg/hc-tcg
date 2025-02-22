@@ -1,4 +1,5 @@
 import {ACHIEVEMENTS} from 'common/achievements'
+import {DEBUG_CONFIG} from 'common/config'
 import {COSMETICS} from 'common/cosmetics'
 import {Background, Border, Coin, Heart, Title} from 'common/cosmetics/types'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
@@ -181,6 +182,7 @@ export function* updateCosmeticSaga(
 		isUnlocked =
 			!!player.achievementProgress[achievement?.numericId]?.completionTime
 	}
+	if (DEBUG_CONFIG.unlockAllCosmetics) isUnlocked = true
 	if (!cosmetic || !isUnlocked) {
 		broadcast([player], {type: serverMessages.COSMETICS_INVALID})
 	}
