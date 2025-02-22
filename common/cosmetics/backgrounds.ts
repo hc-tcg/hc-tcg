@@ -9,8 +9,12 @@ const BackgroundDefinitions: Omit<Background, 'type'>[] = [
 	},
 	{
 		id: 'old_menu',
-		name: 'Old Menu',
+		name: 'Pixels',
 		requires: AllCards.id,
+	},
+	{
+		id: 'balanced',
+		name: 'Flowers',
 	},
 	{
 		id: 'builder',
@@ -21,12 +25,32 @@ const BackgroundDefinitions: Omit<Background, 'type'>[] = [
 		name: 'The End',
 	},
 	{
+		id: 'farm',
+		name: 'Farm',
+	},
+	{
 		id: 'terraform',
 		name: 'Azalea',
 	},
 	{
 		id: 'pvp',
 		name: 'Taiga',
+	},
+	{
+		id: 'speedrunner',
+		name: 'Stronghold',
+	},
+	{
+		id: 'miner',
+		name: 'Dripstone',
+	},
+	{
+		id: 'redstone',
+		name: 'Desert',
+	},
+	{
+		id: 'prankster',
+		name: 'Deep Dark',
 	},
 	{
 		id: 'how_did_we_get_here',
