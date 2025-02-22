@@ -1,14 +1,14 @@
-import TransparentBackground from './background/transparent'
-import BlueBorder from './borders/blue'
-import CreeperCoin from './coins/creeper'
-import RedHearts from './hearts/red'
-import EmptyTitle from './titles/empty'
+import {BACKGROUNDS} from './backgrounds'
+import {BORDERS} from './borders'
+import {COINS} from './coins'
+import {HEARTS} from './hearts'
+import {TITLES} from './titles'
 import {Appearance} from './types'
 
 export const defaultAppearance: Appearance = {
-	title: EmptyTitle,
-	coin: CreeperCoin,
-	heart: RedHearts,
-	background: TransparentBackground,
-	border: BlueBorder,
+	title: TITLES['no_title'],
+	coin: COINS['creeper'],
+	heart: HEARTS['red'],
+	background: BACKGROUNDS['transparent'],
+	border: BORDERS['blue'],
 }

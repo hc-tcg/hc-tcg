@@ -6,30 +6,61 @@
 	font-weight: bold;
 	color: var(--text-light);
 	padding: 4px 16px;
-	border: 4px solid var(--gray-900);
-	background: hsla(210deg, 2%, 20%, 50%);
+	border: 3px solid var(--gray-900);
+	background: hsla(214, 3%, 44%, 0.5);
 	flex-grow: 1;
-}
+	background-repeat: repeat-x;
+	background-size: contain;
+	background-position: left;
+	max-width: 600px;
+	width: 600px;
 
-.active {
-	border-image-slice: 30;
-	border-image-width: 20px;
-	border-image-repeat: stretch stretch;
-	border-image-source: url("/images/cosmetics/border/blue.png");
-	border-style: solid;
-	background: linear-gradient(
-		-90deg,
-		hsla(195deg, 53%, 60%, 35%),
-		hsla(195deg, 100%, 60%, 50%)
-	);
-	background-size: cover;
-
-	&.right {
+	&.active {
+		border-image-slice: 30;
+		border-image-width: 20px;
+		border-image-repeat: stretch stretch;
+		border-image-source: url("/images/cosmetics/border/blue.png");
+		border-style: solid;
 		background: linear-gradient(
-			90deg,
+			-90deg,
 			hsla(195deg, 53%, 60%, 35%),
 			hsla(195deg, 100%, 60%, 50%)
 		);
+
+		&.right {
+			background: linear-gradient(
+				90deg,
+				hsla(195deg, 53%, 60%, 35%),
+				hsla(195deg, 100%, 60%, 50%)
+			);
+
+			background-repeat: repeat-x;
+			background-size: contain;
+			background-position: left;
+		}
+
+		background-repeat: repeat-x;
+		background-size: contain;
+		background-position: left;
+	}
+}
+
+.background {
+	position: absolute;
+	height: 66px;
+	width: 604px;
+	margin-top: 0px;
+	margin-left: -22px;
+	backdrop-filter: grayscale(80%) brightness(60%);
+	border: 4px solid var(--gray-300);
+
+	&.active {
+		display: none;
+	}
+
+	&.right {
+		margin-left: 0px;
+		margin-right: -22px;
 	}
 }
 
@@ -39,6 +70,7 @@
 	height: 52px;
 	aspect-ratio: 20/21;
 	padding: 5px;
+	z-index: 100;
 }
 
 .playerName {
@@ -62,7 +94,9 @@
 		font-size: 10px;
 		font-weight: normal;
 		color: var(--gray-200);
+		filter: drop-shadow(0 1px 0 black);
 	}
+	z-index: 100;
 }
 
 .playerName.disconnected {
@@ -104,6 +138,7 @@
 		margin-left: 0;
 		margin-right: auto;
 	}
+	z-index: 100;
 }
 
 @media (orientation: landscape) {
@@ -127,5 +162,16 @@
 		&.right {
 			flex-direction: row;
 		}
+	}
+}
+
+@media (orientation: portrait) {
+	.playerInfo {
+		max-width: 330px;
+		width: 330px;
+	}
+
+	.background {
+		width: 334px;
 	}
 }

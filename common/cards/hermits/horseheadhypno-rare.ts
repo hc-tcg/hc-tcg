@@ -29,7 +29,7 @@ const HorseHeadHypnoRare: Hermit = {
 		cost: ['builder', 'builder', 'any'],
 		damage: 90,
 		power:
-			'After this attack, choose one Item card from your discard pile and return it to your hand.',
+			'After your attack, choose one item card from your discard pile and return it to your hand.',
 	},
 	onAttach(
 		game: GameModel,

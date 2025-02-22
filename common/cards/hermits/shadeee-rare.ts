@@ -28,7 +28,7 @@ const ShadeEERare: Hermit = {
 		cost: ['redstone', 'redstone'],
 		damage: 80,
 		power:
-			'If you have fewer AFK Hermits than your opponent, deal an additional 40hp damage.',
+			'If you have fewer AFK Hermits than your opponent, do an additional 40hp damage.',
 	},
 	onAttach(
 		game: GameModel,
