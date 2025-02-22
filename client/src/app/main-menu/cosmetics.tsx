@@ -1,5 +1,7 @@
+import classNames from 'classnames'
 import {ACHIEVEMENTS, ACHIEVEMENTS_LIST} from 'common/achievements'
 import {ALL_COSMETICS} from 'common/cosmetics'
+import {COINS} from 'common/cosmetics/coins'
 import {
 	Background,
 	Border,
@@ -8,8 +10,11 @@ import {
 	Heart,
 	Title,
 } from 'common/cosmetics/types'
+import AchievementComponent from 'components/achievement'
 import Button from 'components/button'
 import MenuLayout from 'components/menu-layout'
+import Tabs from 'components/tabs/tabs'
+import Tooltip from 'components/tooltip'
 import {
 	getAchievements,
 	getAppearance,
@@ -19,11 +24,6 @@ import {getSession} from 'logic/session/session-selectors'
 import {useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './cosmsetics.module.scss'
-import Tabs from 'components/tabs/tabs'
-import AchievementComponent from 'components/achievement'
-import Tooltip from 'components/tooltip'
-import {COINS} from 'common/cosmetics/coins'
-import classNames from 'classnames'
 
 type Pages = 'achievements' | 'rewards'
 

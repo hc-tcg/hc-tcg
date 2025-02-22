@@ -20,6 +20,7 @@ import {ScreenshotDeckModal} from 'components/import-export'
 import MenuLayout from 'components/menu-layout'
 import {Modal} from 'components/modal'
 import Spinner from 'components/spinner'
+import Tabs from 'components/tabs/tabs'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages} from 'logic/messages'
@@ -27,7 +28,6 @@ import {ReactNode, useEffect, useReducer, useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './statistics.module.scss'
-import Tabs from 'components/tabs/tabs'
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 
