@@ -7,8 +7,8 @@ const BackgroundDefinitions: Omit<Background, 'type'>[] = [
 		name: 'Transparent',
 	},
 	{
-		id: 'classic_menu',
-		name: 'Classic Menu',
+		id: 'classic',
+		name: 'Classic',
 		requires: AllCards.id,
 	},
 ]
