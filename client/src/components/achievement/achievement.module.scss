@@ -79,3 +79,12 @@
 		width: 50%;
 	}
 }
+
+@media screen and (max-width: 720px) {
+	.meat {
+		flex-direction: column;
+		:not(:first-child) {
+			width: 100%;
+		}
+	}
+}
