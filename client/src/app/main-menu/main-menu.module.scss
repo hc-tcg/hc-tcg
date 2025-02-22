@@ -97,13 +97,11 @@ nav {
 	display: grid;
 	gap: 0.75vh;
 	grid-template-areas:
-		"public"
-		"private-create"
-		"solo-game"
-		"deck"
-		"settings"
-		"riddle"
-		"logout";
+        "public"
+        "deck"
+        "achievements"
+        "settings"
+        "more";
 	animation: fadeIn 250ms ease-in-out forwards;
 }
 
@@ -117,7 +115,7 @@ nav {
 			"public public"
 			"deck deck"
 			"achievements achievements"
-			"settings more";
+			"statistics settings";
 	}
 }
 
