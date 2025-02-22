@@ -74,7 +74,7 @@ export class BattleLogModel {
 		return entry
 	}
 
-	public async sendLogs() {
+	public sendLogs() {
 		let logs: Array<Message> = []
 
 		while (this.logMessageQueue.length > 0) {
@@ -95,6 +95,12 @@ export class BattleLogModel {
 
 			if (this.game.settings.verboseLogging) {
 				console.info(`${this.game.logHeader} ${firstEntry.description}`)
+			}
+
+			if (!this.game.settings.logErrorsToStderr) {
+				if (firstEntry.description.includes('INVALID VALUE')) {
+					throw new Error(`Invalid battle log found: ${firstEntry.description}`)
+				}
 			}
 		}
 

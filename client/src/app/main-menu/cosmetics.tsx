@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import {ACHIEVEMENTS, ACHIEVEMENTS_LIST} from 'common/achievements'
+import debugConfig from 'common/config/debug-config'
 import {ALL_COSMETICS} from 'common/cosmetics'
 import {COINS} from 'common/cosmetics/coins'
 import {
@@ -104,7 +105,7 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 
 	const achievement = cosmetic.requires ? ACHIEVEMENTS[cosmetic.requires] : null
 
-	if (cosmetic.requires && achievement) {
+	if (cosmetic.requires && achievement && !debugConfig.unlockAllCosmetics) {
 		isUnlocked = !!achievementProgress[achievement.numericId]?.completionTime
 	}
 

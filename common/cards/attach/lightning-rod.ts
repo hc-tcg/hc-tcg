@@ -52,7 +52,7 @@ const LightningRod: Attach = {
 
 		observer.subscribeWithPriority(
 			game.hooks.beforeAttack,
-			beforeAttack.REACT_TO_DAMAGE,
+			beforeAttack.RESOLVE_AFTER_MODIFIERS,
 			(attack) => {
 				if (attack.player.entity !== opponentPlayer.entity) return
 				if (!component.slot?.onBoard() || !component.slot.row) return
@@ -60,6 +60,7 @@ const LightningRod: Attach = {
 				if (game.currentPlayer.entity !== opponentPlayer.entity) return
 				if (attack.target?.player.entity !== player.entity) return
 				if (attack.calculateDamage() <= 0) return
+
 				used = true
 			},
 		)

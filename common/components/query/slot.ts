@@ -35,7 +35,8 @@ export const empty: ComponentQuery<SlotComponent> = (game, pos) => {
 		query.card.slotEntity(pos.entity),
 	)
 	if (!card) return true
-	if (card.isHermit() && !card.isAlive()) return true
+	// Slots will become empty if the row is at 0 health when knock-outs are checked
+	if (pos.inRow() && !pos.row.health) return true
 	return false
 }
 

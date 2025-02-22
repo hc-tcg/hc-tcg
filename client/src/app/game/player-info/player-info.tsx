@@ -78,7 +78,8 @@ function PlayerInfo({player, direction}: Props) {
 			<div className={cn(css.playerName, css[direction])}>
 				<h1
 					className={cn({
-						[css.turnHighlight]: thisPlayer,
+						[css.turnHighlight]:
+							thisPlayer && player.appearance.background.id === 'transparent',
 						[css.disconnected]: !connected,
 					})}
 				>
@@ -92,6 +93,12 @@ function PlayerInfo({player, direction}: Props) {
 			<div className={cn(css.health, css[direction])}>
 				{health(player.lives)}
 			</div>
+			<div
+				className={cn(css.background, css[direction], {
+					[css.active]: thisPlayer,
+				})}
+				style={{}}
+			></div>
 		</div>
 	)
 }

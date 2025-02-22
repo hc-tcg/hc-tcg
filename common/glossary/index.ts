@@ -21,6 +21,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
 	},
 	knockout: {
 		name: 'Knockout',
-		description: 'When your Hermit card is knocked out, you lose one life.',
+		description:
+			'When your Hermit card is knocked out and removed from the game board, you lose one life.',
 	},
 }
