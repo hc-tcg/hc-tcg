@@ -3,7 +3,7 @@ import {Background} from './types'
 
 const BackgroundDefinitions: Omit<Background, 'type'>[] = [
 	{
-		id: 'default',
+		id: 'transparent',
 		name: 'Default',
 	},
 	{
