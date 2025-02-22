@@ -143,9 +143,16 @@ export class Database {
 					achievement_id integer REFERENCES achievements(achievement_id),
 					goal_id integer,
 					progress integer NOT NULL,
-					completion_time timestamp,
 					PRIMARY KEY (user_id, achievement_id, goal_id)
 				);
+				CREATE TABLE IF NOT EXISTS achievement_completion_time(
+					user_id uuid REFERENCES users(user_id),
+					achievement_id integer REFERENCES achievements(achievement_id),
+					goal_id integer,
+					level integer NOT NULL,
+					completion_time timestamp,
+					PRIMARY KEY (user_id, achievement_id, level)
+				)
 				`,
 			)
 
@@ -1819,12 +1826,16 @@ export class Database {
 		try {
 			const result = await this.pool.query(
 				`
-				SELECT achievement_id, goal_id, progress, completion_time
+				SELECT user_goals.achievement_id, user_goals.goal_id, user_goals.progress, achievement_completion.level, achievement_completion.completion_time
 				FROM user_goals
-				WHERE user_id = $1;
+				LEFT JOIN achievement_completion
+				ON user_goals.user_id = achievement_completion.user_id AND user_goals.achievement_id = achievement_completion.achievement_id
+				WHERE user_goals.user_id = $1;
 				`,
 				[playerId],
 			)
+
+			console.log(result)
 
 			const progress: AchievementProgress = {}
 			result.rows.forEach((row) => {
