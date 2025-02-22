@@ -5,11 +5,11 @@ import {Background} from './types'
 const BackgroundDefinitions: Omit<Background, 'type'>[] = [
 	{
 		id: 'transparent',
-		name: 'Transparent',
+		name: 'Default',
 	},
 	{
-		id: 'old_menu',
-		name: 'Pixels',
+		id: 'classic',
+		name: 'Classic',
 		requires: AllCards.id,
 	},
 	{
