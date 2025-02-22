@@ -47,6 +47,8 @@ import gameSaga, {getTimerForSeconds} from './game'
 import {turnActionsToBuffer} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
 import {COINS} from 'common/cosmetics/coins'
+import {BACKGROUNDS} from '../../../common/cosmetics/backgrounds'
+import {BORDERS} from '../../../common/cosmetics/borders'
 
 function setupGame(
 	player1: PlayerModel,
@@ -517,7 +519,12 @@ export function* createBossGame(
 		deck: [EvilXisumaBoss],
 		virtualAI: ExBossAI,
 		disableDeckingOut: true,
-		appearance: {...defaultAppearance, coin: COINS['evilx']},
+		appearance: {
+			...defaultAppearance,
+			background: BACKGROUNDS['how_did_we_get_here'],
+			coin: COINS['evilx'],
+			border: BORDERS['gold_border'],
+		},
 	})
 	newBossGameController.game.state.isEvilXBossGame = true
 
