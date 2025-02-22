@@ -12,11 +12,13 @@ const Designer: Achievement = {
 	id: 'designer',
 	name: 'Designer',
 	icon: '',
-	description: "Use a deck that isn't a starter deck in a game.",
+	description: "Win a game using a deck that isn't a starter deck.",
 	steps: 1,
-	onGameEnd(game, playerEntity, component) {
+	onGameEnd(game, playerEntity, component, outcome) {
 		const player = game.components.get(playerEntity)
 		if (!player) return
+		if (outcome.type !== 'player-won') return
+		if (outcome.winner !== playerEntity) return
 
 		if (
 			STARTER_DECK_IDS.includes(player.getDeck().map((card) => card.props.id))
