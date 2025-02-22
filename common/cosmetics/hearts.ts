@@ -15,13 +15,13 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		name: 'Silver',
 	},
 	{
-		id: 'gold',
-		name: 'Gold',
-	},
-	{
 		id: 'emerald',
 		name: 'Emerald',
 		requires: SUStainable.id,
+	},
+	{
+		id: 'gold',
+		name: 'Gold',
 	},
 ]
 
