@@ -9,6 +9,18 @@ const BorderDefinitions: Omit<Border, 'type'>[] = [
 		id: 'green',
 		name: 'Emerald',
 	},
+	{
+		id: 'red_border',
+		name: 'Red',
+	},
+	{
+		id: 'silver_border',
+		name: 'Silver',
+	},
+	{
+		id: 'gold_border',
+		name: 'Gold',
+	},
 ]
 
 export const ALL_BORDERS: Border[] = BorderDefinitions.map((border) => ({

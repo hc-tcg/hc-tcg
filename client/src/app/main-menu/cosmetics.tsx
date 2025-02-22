@@ -25,6 +25,7 @@ import {useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './cosmsetics.module.scss'
 import {DEBUG_CONFIG} from 'common/config'
+import debugConfig from 'common/config/debug-config'
 
 type Pages = 'achievements' | 'rewards'
 
@@ -105,7 +106,7 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 
 	const achievement = cosmetic.requires ? ACHIEVEMENTS[cosmetic.requires] : null
 
-	if (cosmetic.requires && achievement) {
+	if (cosmetic.requires && achievement && !debugConfig.unlockAllCosmetics) {
 		isUnlocked = !!achievementProgress[achievement.numericId]?.completionTime
 	}
 

@@ -1,3 +1,4 @@
+import HowDidWeGetHere from '../achievements/how-did-we-get-here'
 import AllCards from '../achievements/jack-of-all-cards'
 import {Background} from './types'
 
@@ -10,6 +11,27 @@ const BackgroundDefinitions: Omit<Background, 'type'>[] = [
 		id: 'old_menu',
 		name: 'Old Menu',
 		requires: AllCards.id,
+	},
+	{
+		id: 'builder',
+		name: 'Plains',
+	},
+	{
+		id: 'explorer',
+		name: 'The End',
+	},
+	{
+		id: 'terraform',
+		name: 'Azalea',
+	},
+	{
+		id: 'pvp',
+		name: 'Taiga',
+	},
+	{
+		id: 'how_did_we_get_here',
+		name: 'The Nether',
+		requires: HowDidWeGetHere.id,
 	},
 ]
 

@@ -26,6 +26,12 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		borderColor: '#de7f9c',
 		requires: undefined,
 	},
+	{
+		id: 'cod',
+		name: 'Cod',
+		borderColor: '#221F26',
+		requires: undefined,
+	},
 ]
 
 export const ALL_COINS: Coin[] = CoinDefinitions.map((coin) => ({
