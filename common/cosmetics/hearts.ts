@@ -10,6 +10,10 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		name: 'Soulflame',
 	},
 	{
+		id: 'silver_heart',
+		name: 'Silver',
+	},
+	{
 		id: 'gold',
 		name: 'Gold',
 	},

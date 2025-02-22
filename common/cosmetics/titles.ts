@@ -3,7 +3,7 @@ import CertifiedZombie from '../achievements/certified-zombie'
 import DefeatEvilX from '../achievements/defeat-evil-x'
 import Ethogirl from '../achievements/ethogirl'
 import OreSnatcher from '../achievements/ore-snatcher'
-import { Win1 } from '../achievements/wins'
+import {Win1} from '../achievements/wins'
 import {Title} from './types'
 
 const TitleDefinitions: Omit<Title, 'type'>[] = [
@@ -37,9 +37,49 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		requires: Win1.id,
 	},
 	{
-		id:'ore_snatcher',
+		id: 'ore_snatcher',
 		name: 'Ore Snatcher',
-		requires: OreSnatcher.id
+		requires: OreSnatcher.id,
+	},
+	{
+		id: 'builder_title',
+		name: 'Builder Master',
+	},
+	{
+		id: 'balanced_title',
+		name: 'Balanced Master',
+	},
+	{
+		id: 'explorer_title',
+		name: 'Explorer Master',
+	},
+	{
+		id: 'farm_title',
+		name: 'Farm Master',
+	},
+	{
+		id: 'miner_title',
+		name: 'Miner Master',
+	},
+	{
+		id: 'prankster_title',
+		name: 'Prankster Master',
+	},
+	{
+		id: 'pvp_title',
+		name: 'PvP Master',
+	},
+	{
+		id: 'redstone_title',
+		name: 'Redstone Master',
+	},
+	{
+		id: 'speedrunner_title',
+		name: 'Speedrunner Master',
+	},
+	{
+		id: 'terraform_title',
+		name: 'Terraform Master',
 	},
 ]
 

@@ -6,8 +6,20 @@ const BorderDefinitions: Omit<Border, 'type'>[] = [
 		name: 'Blue',
 	},
 	{
-		id: 'green',
+		id: 'green_border',
 		name: 'Emerald',
+	},
+	{
+		id: 'red_border',
+		name: 'Red',
+	},
+	{
+		id: 'silver_border',
+		name: 'Silver',
+	},
+	{
+		id: 'gold_border',
+		name: 'Gold',
 	},
 ]
 
