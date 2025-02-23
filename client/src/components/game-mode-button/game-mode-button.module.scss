@@ -3,6 +3,10 @@ $expandedWidth: 75vh;
 $height: 42vh;
 $time: 0.25s;
 
+$mobileWidth: 90vw;
+$mobileHeight: 20vh;
+$expandedHeight: 67vh;
+
 .buttonContainer {
 	width: $width;
 	height: $height;
@@ -121,7 +125,7 @@ $time: 0.25s;
 	opacity: 0%;
 	cursor: pointer;
 
-	>img {
+	> img {
 		padding-top: 0.85vh;
 		padding-bottom: 0.85vh;
 		height: 3.2vh;
@@ -129,7 +133,7 @@ $time: 0.25s;
 		filter: invert(1);
 	}
 
-	>p {
+	> p {
 		font-size: 1.5vh;
 		transform: translateY(1px);
 		padding-right: 0.5vh;
@@ -296,7 +300,7 @@ $time: 0.25s;
 		width: 100%;
 	}
 
-	>* {
+	> * {
 		width: calc($expandedWidth - $width);
 		height: 100%;
 		animation: timedShow 0.25s forwards;
@@ -372,7 +376,7 @@ $time: 0.25s;
 					height: 2.75vh;
 					flex-shrink: 0;
 
-					>img {
+					> img {
 						height: 2vh;
 						filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
 					}
@@ -461,7 +465,7 @@ $time: 0.25s;
 				flex-shrink: 0;
 				border-radius: 0.5vh;
 
-				>img {
+				> img {
 					height: 2vh;
 					filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
 				}
@@ -516,7 +520,6 @@ $time: 0.25s;
 		justify-content: center;
 		align-items: center;
 
-
 		.option {
 			height: 50%;
 			width: 100%;
@@ -525,7 +528,6 @@ $time: 0.25s;
 			justify-content: center;
 			align-items: center;
 		}
-
 	}
 }
 
@@ -580,5 +582,101 @@ $time: 0.25s;
 
 	to {
 		opacity: 100%;
+	}
+}
+
+@media screen and (max-width: 720px) {
+	.buttonContainer {
+		width: $mobileWidth;
+		height: $mobileHeight;
+	}
+
+	.backgroundContainer {
+		width: $mobileWidth;
+		height: $mobileHeight;
+		top: 0;
+		left: auto;
+	}
+
+	@keyframes grow {
+		from {
+			height: $mobileHeight;
+			pointer-events: none;
+		}
+
+		99% {
+			pointer-events: none;
+		}
+
+		to {
+			height: $expandedHeight;
+			pointer-events: all;
+		}
+	}
+
+	@keyframes shrink {
+		from {
+			scale: 1;
+			pointer-events: none;
+			height: $expandedHeight;
+		}
+
+		99% {
+			pointer-events: none;
+		}
+
+		to {
+			scale: 1;
+			pointer-events: all;
+			height: $mobileHeight;
+		}
+	}
+
+	.leftOverlay {
+		width: 100%;
+	}
+
+	.spacer {
+		display: none;
+	}
+
+	.text {
+		position: absolute;
+		left: 0px;
+		top: 5vh;
+	}
+
+	.vingette {
+		width: 100%;
+		height: 100%;
+		box-shadow: inset 0 0 30px black;
+		background: linear-gradient(270deg, rgba(0, 0, 0, 0) 20%, black 80%);
+	}
+
+	.hermitImage {
+		top: 5px;
+		right: -20px;
+	}
+
+	.rightOverlay {
+		transition: opacity $time linear;
+		position: absolute;
+		top: 30%;
+		right: 0%;
+		opacity: 0%;
+		height: 70%;
+		width: 100%;
+	}
+
+	.chooseDeck {
+		width: 100%;
+		background-color: var(--gray-900);
+		border: 2px black solid;
+	}
+
+	.optionsSelect {
+		width: 100%;
+		background-color: var(--gray-900);
+		border: 2px black solid;
 	}
 }
