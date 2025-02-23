@@ -6,7 +6,7 @@ import {Achievement} from './types'
 const CantTouchThis: Achievement = {
 	...achievement,
 	numericId: 11,
-	id: 'untouchabble',
+	id: 'cant_touch_this',
 	levels: [
 		{
 			name: "Can't Touch This!",
