@@ -5,17 +5,21 @@
 	justify-content: center;
 	color: var(--text-light);
 
+	p {
+		font-size: 1.5vh;
+	}
+
 	h2,
 	h3 {
 		filter: drop-shadow(2px 2px 0 var(--text-dark));
 	}
 
 	h2 {
-		font-size: 2rem;
+		font-size: 3vh;
 	}
 
 	h3 {
-		font-size: 1.5rem;
+		font-size: 2.25vh;
 	}
 }
 
@@ -34,14 +38,13 @@
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	gap: 6rem;
 }
 
 .gameTypesButtons {
 	display: grid;
 	grid-auto-flow: column;
 	justify-content: center;
-	grid-gap: 2rem;
+	grid-gap: 3vh;
 }
 
 .top {
@@ -61,22 +64,6 @@
 	}
 }
 
-.code {
-	font-size: 2vh;
-	cursor: pointer;
-}
-
-.privateGameCodeArea {
-	display: flex;
-	flex-direction: row;
-	width: 100%;
-
-	>input {
-		flex-grow: 1;
-		height: 2.7rem;
-	}
-}
-
 .bottomArea {
 	display: flex;
 	flex-direction: column;
@@ -86,7 +73,6 @@
 .clickToChange {
 	margin-top: 0.5vh;
 	margin-bottom: 1.5vh;
-	font-size: 1rem;
 	filter: drop-shadow(2px 2px 0 var(--text-dark));
 	transition: opacity linear 250ms;
 
