@@ -16,12 +16,12 @@ function getTypeWinAchievement(id: number, type: TypeT): Achievement {
 		levels: [
 			{
 				name: `${toTitleCase(type)} Adept`,
-				description: `Win 10 games with at least 7 ${type} hermits in your deck`,
+				description: `Win 10 games with at least 7 ${type} hermits in your deck.`,
 				steps: 10,
 			},
 			{
 				name: `${toTitleCase(type)} Master`,
-				description: `Win 100 games with at least 7 ${type} hermits in your deck`,
+				description: `Win 100 games with at least 7 ${type} hermits in your deck.`,
 				steps: 100,
 			},
 		],
