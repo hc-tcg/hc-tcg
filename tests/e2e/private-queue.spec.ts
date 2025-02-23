@@ -173,7 +173,7 @@ test('Player is removed from private queue when they press "Cancel" (Spectator C
 	).toStrictEqual([])
 })
 
-test('Game starts for players and spectators and places players back on title screen.', async ({
+test('Game starts for players and spectators and places players back on game mode selection screen.', async ({
 	context,
 	page: playerOne,
 }) => {
