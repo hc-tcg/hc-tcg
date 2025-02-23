@@ -432,7 +432,8 @@ export function* updateAchievements(player: PlayerModel) {
 
 	const {type: success} = yield* call(
 		[root.db, root.db.updateAchievements],
-		player,
+		player.uuid,
+		player.achievementProgress,
 	)
 	if (success === 'failure') return false
 	return true

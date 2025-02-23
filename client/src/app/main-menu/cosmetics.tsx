@@ -103,10 +103,15 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 
 	let isSelected = cosmetics.find((c) => c.id === cosmetic.id)
 
-	const achievement = cosmetic.requires ? ACHIEVEMENTS[cosmetic.requires] : null
+	const achievement = cosmetic.requires
+		? ACHIEVEMENTS[cosmetic.requires.achievement]
+		: null
 
 	if (cosmetic.requires && achievement && !debugConfig.unlockAllCosmetics) {
-		isUnlocked = !!achievementProgress[achievement.numericId]?.completionTime
+		isUnlocked =
+			!!achievementProgress[achievement.numericId].levels[
+				cosmetic.requires.level || 0
+			]?.completionTime
 	}
 
 	const icon_url = `/images/cosmetics/${cosmetic.type}/${cosmetic.id}.png`
@@ -182,8 +187,8 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 
 	const tooltip = achievement ? (
 		<div className={css.tooltip}>
-			<b>{achievement.name}</b>
-			<p>{achievement.description}</p>
+			<b>{achievement.levels[cosmetic.requires?.level || 0].name}</b>
+			<p>{achievement.levels[cosmetic.requires?.level || 0].description}</p>
 		</div>
 	) : (
 		<div className={css.tooltip}>

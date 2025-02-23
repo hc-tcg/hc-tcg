@@ -5,10 +5,14 @@ const Inneffective: Achievement = {
 	...achievement,
 	numericId: 16,
 	id: 'inneffective',
-	name: 'Inneffective',
+	levels: [
+		{
+			name: 'Inneffective',
+			description: 'Win 10 games using no effect cards.',
+			steps: 10,
+		},
+	],
 	icon: '',
-	description: 'Win 10 games using no effect cards.',
-	steps: 10,
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		if (!player) return

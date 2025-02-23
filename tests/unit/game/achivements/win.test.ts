@@ -1,13 +1,13 @@
 import {describe, expect, test} from '@jest/globals'
-import {Win1} from 'common/achievements/wins'
+import Win from 'common/achievements/wins'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
 
 describe('Test win achivement', () => {
-	test('Test win1 achivement', () => {
+	test('Test win achivement', () => {
 		testAchivement(
 			{
-				achievement: Win1,
+				achievement: Win,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
@@ -18,18 +18,18 @@ describe('Test win achivement', () => {
 					yield* attack(game, 'secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
-					expect(Win1.getProgress(achievement.goals)).toBeGreaterThanOrEqual(
-						Win1.steps,
+					expect(Win.getProgress(achievement.goals)).toBeGreaterThanOrEqual(
+						Win.levels[0].steps,
 					)
 				},
 			},
 			{oneShotMode: true, noItemRequirements: true},
 		)
 	})
-	test('Test win1 achivement does not count wrong player wins', () => {
+	test('Test win achivement does not count wrong player wins', () => {
 		testAchivement(
 			{
-				achievement: Win1,
+				achievement: Win,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
@@ -39,7 +39,7 @@ describe('Test win achivement', () => {
 					yield* attack(game, 'secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
-					expect(Win1.getProgress(achievement.goals)).toBeFalsy()
+					expect(Win.getProgress(achievement.goals)).toBeFalsy()
 				},
 			},
 			{oneShotMode: true, noItemRequirements: true},

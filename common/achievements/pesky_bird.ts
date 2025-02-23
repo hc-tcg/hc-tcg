@@ -5,11 +5,15 @@ import {Achievement} from './types'
 const PeskyBird: Achievement = {
 	...achievement,
 	numericId: 10,
-	id: 'pesky_bird',
-	name: 'Pesky Bird',
 	icon: '',
-	description: 'Force your opponent to discard at least 7 cards in one game.',
-	steps: 7,
+	id: 'pesky_bird',
+	levels: [
+		{
+			name: 'Pesky Bird',
+			description: 'Force your opponent to discard 7 cards in one game.',
+			steps: 7,
+		},
+	],
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		if (!player) return

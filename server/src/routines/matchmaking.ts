@@ -219,19 +219,21 @@ function* gameManager(con: GameController) {
 						achievement,
 						outcome,
 					)
-					const complete =
-						achievement.props.getProgress(achievement.goals) ===
-						achievement.props.steps
-					const previouslyComplete =
-						!!v.player.achievementProgress[achievement.props.numericId]
-							.completionTime
-					v.player.achievementProgress[achievement.props.numericId].goals =
-						achievement.goals
-					if (complete && !previouslyComplete)
-						// @TODO here is where we see what new achievements have been completed
-						v.player.achievementProgress[
-							achievement.props.numericId
-						].completionTime = new Date()
+
+					for (const [i, level] of achievement.props.levels.entries()) {
+						const complete =
+							achievement.props.getProgress(achievement.goals) >= level.steps
+						const previouslyComplete =
+							!!v.player.achievementProgress[achievement.props.numericId]
+								.levels[i]
+						v.player.achievementProgress[achievement.props.numericId].goals =
+							achievement.goals
+						if (complete && !previouslyComplete)
+							// @TODO here is where we see what new achievements have been completed
+							v.player.achievementProgress[achievement.props.numericId].levels[
+								i
+							].completionTime = new Date()
+					}
 				})
 				return updateAchievements(v.player)
 			}),

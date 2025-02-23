@@ -20,10 +20,14 @@ const Ethogirl: Achievement = {
 	...achievement,
 	numericId: 2,
 	id: 'ethogirl',
-	name: 'Ethogirl',
-	description:
-		'Place all 3 Etho cards and both Shade-E-E cards on your board at the same time.',
-	steps: 5,
+	levels: [
+		{
+			name: 'Ethogirl',
+			description:
+				'Place all 3 Etho cards and both Shade-E-E cards on your board at the same time.',
+			steps: 5,
+		},
+	],
 	icon: '',
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)

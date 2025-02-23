@@ -6,7 +6,7 @@ import NakedAndScared from '../achievements/naked-and-scared'
 import OreSnatcher from '../achievements/ore-snatcher'
 import PeskyBird from '../achievements/pesky_bird'
 import TeamStar from '../achievements/team-star'
-import {Win1} from '../achievements/wins'
+import Win from '../achievements/wins'
 import {Title} from './types'
 
 const TitleDefinitions: Omit<Title, 'type'>[] = [
@@ -17,47 +17,52 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 	{
 		id: 'british',
 		name: "Bri'ish",
-		requires: British.id,
+		requires: {achievement: British.id},
 	},
 	{
 		id: 'card_slinger',
 		name: 'Card Slinger',
-		requires: Win1.id,
+		requires: {achievement: Win.id, level: 1},
 	},
 	{
 		id: 'certified-zombie',
 		name: 'Certified Zombie',
-		requires: CertifiedZombie.id,
+		requires: {achievement: CertifiedZombie.id},
 	},
 	{
 		id: 'ethogirl',
 		name: 'Ethogirl',
-		requires: Ethogirl.id,
+		requires: {achievement: Ethogirl.id},
 	},
 	{
 		id: 'evil_xterminator',
 		name: 'Evil X-Terminator',
-		requires: DefeatEvilX.id,
+		requires: {achievement: DefeatEvilX.id},
 	},
 	{
 		id: 'hermit_gang',
 		name: 'Hermit Gang',
-		requires: TeamStar.id,
+		requires: {achievement: TeamStar.id},
 	},
 	{
 		id: 'naked_and_scared',
 		name: 'Naked and Scared',
-		requires: NakedAndScared.id,
+		requires: {achievement: NakedAndScared.id},
+	},
+	{
+		id: 'victor',
+		name: 'Victor',
+		requires: {achievement: Win.id, level: 0},
 	},
 	{
 		id: 'ore_snatcher',
 		name: 'Ore Snatcher',
-		requires: OreSnatcher.id,
+		requires: {achievement: OreSnatcher.id},
 	},
 	{
 		id: 'pesky_bird',
 		name: 'Pesky Bird',
-		requires: PeskyBird.id,
+		requires: {achievement: PeskyBird.id},
 	},
 	{
 		id: 'builder_title',

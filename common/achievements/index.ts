@@ -17,9 +17,21 @@ import ServerLag from './server-lag'
 import SheepStarer from './sheep-starer'
 import SUStainable from './sustainable'
 import TeamStar from './team-star'
+import {
+	BalancedWins,
+	BuilderWins,
+	ExplorerWins,
+	FarmWins,
+	MinerWins,
+	PranksterWins,
+	PvpWins,
+	RedstoneWins,
+	SpeedrunnerWins,
+	TerraformWins,
+} from './type-wins'
 import {Achievement} from './types'
 import Untouchable from './untouchable'
-import {Win1, Win10, Win100, Win500, Win1000} from './wins'
+import Win from './wins'
 import Wipeout from './wipeout'
 
 export const ACHIEVEMENTS_LIST: Array<Achievement> = [
@@ -44,11 +56,17 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	CertifiedZombie,
 	SUStainable,
 	Inneffective,
-	Win1,
-	Win10,
-	Win100,
-	Win500,
-	Win1000,
+	Win,
+	BalancedWins,
+	BuilderWins,
+	SpeedrunnerWins,
+	RedstoneWins,
+	FarmWins,
+	PvpWins,
+	TerraformWins,
+	PranksterWins,
+	MinerWins,
+	ExplorerWins,
 ]
 
 export const ACHIEVEMENTS: Record<string | number, Achievement> =

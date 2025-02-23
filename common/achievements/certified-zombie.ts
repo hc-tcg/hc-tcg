@@ -8,10 +8,14 @@ const CertifiedZombie: Achievement = {
 	...achievement,
 	id: 'certified_zombie',
 	numericId: 18,
-	name: 'Certified Zombie',
-	description:
-		'Survive with an armor stand as your active hermit for three rounds.',
-	steps: 3,
+	levels: [
+		{
+			name: 'Certified Zombie',
+			description:
+				'Survive with an armor stand as your active hermit for three rounds.',
+			steps: 3,
+		},
+	],
 	icon: 'certified_zombie',
 	onGameStart(game, playerEntity, component, observer) {
 		let player = game.components.get(playerEntity)

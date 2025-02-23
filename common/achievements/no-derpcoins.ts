@@ -6,10 +6,14 @@ const NoDerpcoins: Achievement = {
 	...achievement,
 	numericId: 7,
 	id: 'no_derpcoins',
-	name: 'No Derpcoins Required',
+	levels: [
+		{
+			name: 'No Derpcoins Required',
+			description: 'Defeat Evil X using a 0 token deck.',
+			steps: 1,
+		},
+	],
 	icon: '',
-	description: 'Defeat Evil X using a 0 token deck.',
-	steps: 1,
 	onGameEnd(game, playerEntity, component, outcome) {
 		const player = game.components.get(playerEntity)
 		if (!player || !game.state.isEvilXBossGame) return

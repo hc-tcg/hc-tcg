@@ -1,29 +1,23 @@
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
-function winAchievement(
-	name: string,
-	numericId: number,
-	winCount: number,
-): Achievement {
-	return {
-		...achievement,
-		numericId: numericId,
-		id: `wins_${winCount}`,
-		name: name,
-		icon: '',
-		description: `Win ${winCount} game${winCount !== 1 ? 's' : ''}.`,
-		steps: winCount,
-		onGameEnd(_game, playerEntity, component, outcome) {
-			if (outcome.type !== 'player-won' || outcome.winner !== playerEntity)
-				return
-			component.incrementGoalProgress({goal: 0})
-		},
-	}
+const Win: Achievement = {
+	...achievement,
+	numericId: 26,
+	id: 'wins',
+	levels: [
+		{name: 'Card Slinger', description: 'Win 1 Game', steps: 1},
+		{name: 'TCG Novice', description: 'Win 10 Games', steps: 10},
+		{name: 'TCG Apprentice', description: 'Win 100 Games', steps: 100},
+		{name: 'TCG Legend', description: 'Win 500 Games', steps: 500},
+		{name: 'TCG Champion', description: 'Win 1000 Games', steps: 1000},
+	],
+	icon: '',
+	onGameEnd(_game, playerEntity, component, outcome) {
+		console.log('Incrementing progress')
+		if (outcome.type !== 'player-won' || outcome.winner !== playerEntity) return
+		component.incrementGoalProgress({goal: 0})
+	},
 }
 
-export const Win1 = winAchievement('Card Slinger', 25, 1)
-export const Win10 = winAchievement('TCG Novice', 26, 10)
-export const Win100 = winAchievement('TCG Apprentice', 27, 100)
-export const Win500 = winAchievement('TCG Champion', 28, 500)
-export const Win1000 = winAchievement('TCG Legend', 29, 1000)
+export default Win

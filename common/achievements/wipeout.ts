@@ -7,10 +7,14 @@ const Wipeout: Achievement = {
 	...achievement,
 	numericId: 5,
 	id: 'wipeout',
-	name: 'Wipeout',
+	levels: [
+		{
+			name: 'Wipeout',
+			description: 'Knockout 5 Hermits in the same turn.',
+			steps: 5,
+		},
+	],
 	icon: '',
-	description: 'Knockout 5 Hermits in the same turn.',
-	steps: 5,
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		if (!player) return
