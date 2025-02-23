@@ -8,8 +8,8 @@ const NoDerpcoins: Achievement = {
 	id: 'no_derpcoins',
 	levels: [
 		{
-			name: 'No derpcoins required',
-			description: 'Defeat Evil X using a 0 token deck',
+			name: 'No Derpcoins Required',
+			description: 'Defeat Evil X using a 0 token deck.',
 			steps: 1,
 		},
 	],

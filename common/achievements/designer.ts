@@ -12,7 +12,7 @@ const Designer: Achievement = {
 	id: 'designer',
 	levels: [
 		{
-			name: 'Designer',
+			name: 'Hermits and Crafting',
 			description: "Win a game using a deck that isn't a starter deck.",
 			steps: 1,
 		},
