@@ -11,10 +11,10 @@ import {
 	Title,
 	Tooltip,
 } from 'chart.js'
-import App from './app'
-import store from './store'
 import {CARDS_LIST} from 'common/cards'
 import {getRenderedCardImage} from 'common/cards/card'
+import App from './app'
+import store from './store'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 
