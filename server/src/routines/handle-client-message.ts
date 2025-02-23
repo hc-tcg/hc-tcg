@@ -26,9 +26,10 @@ import {
 	createPrivateGame,
 	createReplayGame,
 	joinPrivateGame,
-	joinQueue,
+	joinPublicQueue,
 	leavePrivateQueue,
-	leaveQueue,
+	leavePublicQueue,
+	spectatePrivateGame,
 } from './matchmaking'
 import {
 	loadUpdatesSaga,
@@ -51,12 +52,12 @@ function* handler(message: RecievedClientMessage) {
 			return yield* loadUpdatesSaga(
 				message as RecievedClientMessage<typeof message.type>,
 			)
-		case clientMessages.JOIN_QUEUE:
-			return yield* joinQueue(
+		case clientMessages.JOIN_PUBLIC_QUEUE:
+			return yield* joinPublicQueue(
 				message as RecievedClientMessage<typeof message.type>,
 			)
-		case clientMessages.LEAVE_QUEUE:
-			return yield* leaveQueue(
+		case clientMessages.LEAVE_PUBLIC_QUEUE:
+			return yield* leavePublicQueue(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.CREATE_BOSS_GAME:
@@ -67,8 +68,12 @@ function* handler(message: RecievedClientMessage) {
 			return yield* createPrivateGame(
 				message as RecievedClientMessage<typeof message.type>,
 			)
-		case clientMessages.JOIN_PRIVATE_GAME:
+		case clientMessages.JOIN_PRIVATE_QUEUE:
 			return yield* joinPrivateGame(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.SPECTATE_PRIVATE_GAME:
+			return yield* spectatePrivateGame(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.SPECTATOR_LEAVE:

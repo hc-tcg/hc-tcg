@@ -2,7 +2,6 @@ import classNames from 'classnames'
 import BerryBush from 'common/cards/advent-of-tcg/attach/berry-bush'
 import Dropper from 'common/cards/advent-of-tcg/single-use/dropper'
 import Glowstone from 'common/cards/advent-of-tcg/single-use/glowstone'
-import {getCardTypeIcon} from 'common/cards/card'
 import PoePoeSkizzRare from 'common/cards/hermits/poepoeskizz-rare'
 import RenbobRare from 'common/cards/hermits/renbob-rare'
 import Anvil from 'common/cards/single-use/anvil'
@@ -19,28 +18,25 @@ import TargetBlock from 'common/cards/single-use/target-block'
 import {Card} from 'common/cards/types'
 import {EXPANSIONS} from 'common/const/expansions'
 import {CardEntity} from 'common/entities'
-import {Deck, Tag} from 'common/types/deck'
+import {Deck} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
-import {getIconPath} from 'common/utils/state-gen'
+import {sortDecks} from 'common/utils/sorting'
 import {validateDeck} from 'common/utils/validation'
-import Accordion from 'components/accordion'
 import Button from 'components/button'
 import CardList from 'components/card-list'
-import HermitButton from 'components/hermit-button'
+import GameModeButton from 'components/game-mode-button'
+import {CodeInfo} from 'components/game-mode-button/game-mode-button'
 import MenuLayout from 'components/menu-layout'
-import {Modal} from 'components/modal'
-import Spinner from 'components/spinner'
-import {CopyIcon} from 'components/svgs'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {
 	getGameCode,
 	getSpectatorCode,
 	getStatus,
 } from 'logic/matchmaking/matchmaking-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {setActiveDeck} from 'logic/saved-decks/saved-decks'
 import {getSession} from 'logic/session/session-selectors'
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CosmeticPreview} from './cosmetics'
 import css from './play-select.module.scss'
@@ -51,22 +47,42 @@ type Props = {
 
 function PlaySelect({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
-	const status = useSelector(getStatus)
+	const matchmaking = useSelector(getStatus)
+	const settings = useSelector(getSettings)
 	const gameCode = useSelector(getGameCode)
 	const spectatorCode = useSelector(getSpectatorCode)
-
-	const {playerDeck, playerName, newPlayer} = useSelector(getSession)
+	const {playerDeck} = useSelector(getSession)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
+
+	const decks = databaseInfo?.decks
 	const [loadedDeck, setLoadedDeck] = useState<Deck | undefined>(
 		databaseInfo?.decks.find((deck) => deck.code === playerDeck),
 	)
 
-	const decks = databaseInfo?.decks
-	const welcomeMessage = newPlayer ? 'Welcome' : 'Welcome Back'
-	const [mode, setMode] = useState<string | null>(null)
-	const selectedDeckRef = useRef<HTMLDivElement>(null)
-	const [lobbyCreated, setLobbyCreated] = useState<boolean>(false)
-	const inputRef = useRef<HTMLInputElement>(null)
+	// Menu state
+	const [activeMode, setActiveMode] = useState<string | null>(null)
+	const [activeButtonMenu, setActiveButtonMenu] = useState<string | null>(null)
+
+	// Back stack
+	const [backStack, setBackStack] = useState<Array<string>>([])
+	const addMenuWithBack = (buttonMenu: string) => {
+		if (activeButtonMenu) {
+			// Add last menu to stack
+			setBackStack([...backStack, activeButtonMenu])
+		}
+		setActiveButtonMenu(buttonMenu)
+	}
+	const goBack = () => {
+		const lastMenu = backStack.splice(-1)[0]
+		if (lastMenu) {
+			setActiveButtonMenu(lastMenu)
+			setBackStack(backStack)
+		} else {
+			setActiveMode(null)
+			setActiveButtonMenu(null)
+			setBackStack([])
+		}
+	}
 
 	const checkForValidation = (): boolean => {
 		if (!playerDeck || !loadedDeck) {
@@ -91,125 +107,53 @@ function PlaySelect({setMenuSection}: Props) {
 		return false
 	}
 
-	const handleJoinQueue = () => {
-		const valid = checkForValidation()
-		if (!valid) return
-		dispatch({type: localMessages.MATCHMAKING_QUEUE_JOIN})
-		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+	// Deck management
+	const sortDecksByActive = () => {
+		// Sort decks, placing active at the top
+		sortDecks(
+			decks,
+			settings.deckSortingMethod,
+			loadedDeck ? loadedDeck.code : null,
+		)
 	}
-	const handlePrivateGame = () => {
-		const valid = checkForValidation()
-		if (!valid) return
-		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
-		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
-	}
+	const onSelectDeck = (deck: Deck) => {
+		setLoadedDeck(deck)
 
-	const handleCodeSubmit = (code: string) => {
-		if (code.length !== 6) {
+		if (loadedDeck?.code !== deck.code) {
+			const pageTurn = [
+				'/sfx/Page_turn1.ogg',
+				'/sfx/Page_turn2.ogg',
+				'/sfx/Page_turn3.ogg',
+			]
 			dispatch({
-				type: localMessages.TOAST_OPEN,
-				open: true,
-				title: 'Invalid Code!',
-				description: 'The code you entered is invalid.',
-				image: '/images/types/type-any.png',
+				type: localMessages.SOUND_PLAY,
+				path: pageTurn[Math.floor(Math.random() * pageTurn.length)],
 			})
-			return
 		}
-		dispatch({type: localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY})
-		dispatch({type: localMessages.MATCHMAKING_CODE_SET, code})
-	}
 
-	const handleCodeClick = () => {
-		if (!gameCode) return
-		navigator.clipboard.writeText(gameCode)
-	}
-
-	const handleSpectatorCodeClick = () => {
-		if (!spectatorCode) return
-		navigator.clipboard.writeText(spectatorCode)
-	}
-
-	const queuingReason = (): string => {
-		if (status === 'in_game') return 'Starting game'
-		if (status === 'loading') return 'Loading'
-		if (status === 'private_lobby') return 'Loading'
-		if (status === 'random_waiting') return 'Waiting for opponent'
-		if (status === 'waiting_for_player') return 'Waiting for second player'
-		if (status === 'waiting_for_player_as_spectator')
-			return 'Waiting for game to begin'
-		return 'Loading'
-	}
-
-	const handleLeaveQueue = () => {
-		setTimeout(() => dispatch({type: localMessages.MATCHMAKING_LEAVE}), 200)
-	}
-
-	const playSwitchDeckSFX = () => {
-		const pageTurn = [
-			'/sfx/Page_turn1.ogg',
-			'/sfx/Page_turn2.ogg',
-			'/sfx/Page_turn3.ogg',
-		]
 		dispatch({
-			type: localMessages.SOUND_PLAY,
-			path: pageTurn[Math.floor(Math.random() * pageTurn.length)],
+			type: localMessages.UPDATE_DECKS,
+			newActiveDeck: deck,
 		})
 	}
 
-	const decksHaveTags =
-		decks.reduce((tags: Array<Tag>, decks) => {
-			return [...tags, ...decks.tags]
-		}, []).length > 0
+	const handleLeaveQueue = () => {
+		dispatch({type: localMessages.MATCHMAKING_LEAVE})
+	}
 
-	const decksList = decks.map((deck, i) => {
-		return (
-			<div
-				className={classNames(
-					css.myDecksItem,
-					loadedDeck && deck.code === loadedDeck.code && css.selectedDeck,
-				)}
-				ref={
-					loadedDeck && deck.code === loadedDeck.code
-						? selectedDeckRef
-						: undefined
-				}
-				key={i}
-				onClick={() => {
-					setLoadedDeck(deck)
-					setActiveDeck(deck)
-					playSwitchDeckSFX()
-					dispatch({type: localMessages.UPDATE_DECK, deck: deck})
-				}}
-			>
-				{deck.tags && deck.tags.length > 0 && (
-					<div className={css.multiColoredCircle}>
-						{deck.tags.map((tag, i) => (
-							<div
-								className={css.singleTag}
-								style={{backgroundColor: tag.color}}
-								key={i}
-							></div>
-						))}
-					</div>
-				)}
-				{decksHaveTags && deck.tags.length === 0 && (
-					<div className={css.multiColoredCircle}>
-						<div className={css.singleTag}></div>
-					</div>
-				)}
-				<div
-					className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}
-				>
-					<img src={getIconPath(deck)} alt={'deck-icon'} />
-				</div>
-				<div className={css.deckName}>{deck.name}</div>
-			</div>
-		)
-	})
+	const handleCodeClick = (code: CodeInfo) => {
+		navigator.clipboard.writeText(code.code)
+
+		dispatch({
+			type: localMessages.TOAST_OPEN,
+			open: true,
+			title: 'Code copied!',
+			description: `Copied ${code.name} to clipboard.`,
+			image: 'copy',
+		})
+	}
 
 	/* Boss game stuff */
-	const [evilXOpen, setEvilXOpen] = useState<boolean>(false)
-
 	function createUICardInstance(card: Card): LocalCardInstance {
 		return {
 			props: WithoutFunctions(card),
@@ -223,13 +167,6 @@ function PlaySelect({setMenuSection}: Props) {
 
 	function removeDisabledExpansions(card: Card) {
 		return !EXPANSIONS[card.expansion].disabled
-	}
-
-	const handleCreateBossGame = () => {
-		const valid = checkForValidation()
-		if (!valid) return
-		setMenuSection('game-landing')
-		dispatch({type: localMessages.MATCHMAKING_BOSS_GAME_CREATE})
 	}
 
 	const nonFunctionalCards = [
@@ -252,11 +189,11 @@ function PlaySelect({setMenuSection}: Props) {
 		.filter(removeDisabledExpansions)
 		.map(createUICardInstance)
 
-	/* Keys */
 	const directlyOppositeCards = [Anvil, RenbobRare, PoePoeSkizzRare]
 		.filter(removeDisabledExpansions)
 		.map(createUICardInstance)
 
+	/* Keys */
 	useEffect(() => {
 		window.addEventListener('keydown', handleKeyPress)
 		return () => {
@@ -265,18 +202,19 @@ function PlaySelect({setMenuSection}: Props) {
 	}, [handleKeyPress])
 
 	function handleKeyPress(e: any) {
-		if (e.key === 'Escape') {
-			if (mode === null) {
-				setMenuSection('main-menu')
-				return
+		if (!matchmaking && e.key === 'Escape') {
+			if (backStack[0]) {
+				goBack()
+			} else if (activeMode) {
+				setActiveMode(null)
+				setActiveButtonMenu(null)
+				setBackStack([])
 			}
-			if (status) handleLeaveQueue()
-			setMode(null)
 		}
 	}
 
-	let header = 'Select a game type:'
-	switch (mode) {
+	let header = 'Select a game mode:'
+	switch (activeMode) {
 		case 'public':
 			header = 'Public Game'
 			break
@@ -295,113 +233,19 @@ function PlaySelect({setMenuSection}: Props) {
 
 	return (
 		<>
-			<Modal
-				setOpen={evilXOpen}
-				title="Rules"
-				onClose={() => setEvilXOpen(!evilXOpen)}
-			>
-				<Modal.Description className={css.bossRules}>
-					<p>
-						That's right, the Hermitcraft TCG has its first boss fight! This is
-						no challenge deck, Evil X cares not for the cards. He brings his own
-						moves, and they are vicious! If you think you can defeat him, you'll
-						need to bring your best game. Be sure to check your audio settings
-						to hear the voice commands during the battle.
-					</p>
-					<h1>Rules</h1>
-					<p>
-						You will always go first but can only have three rows to play on.
-					</p>
-					<p>
-						EX has only one row to play on and has no item slots to attach to
-						his boss card. However, his card has 300hp, comes back again at full
-						health when knocked out, and will perform harder attacks with every
-						life lost.
-					</p>
-					{directlyOppositeCards.length
-						? [
-								<p>
-									EX is always directly opposite your active Hermit for the
-									purposes of:
-								</p>,
-								<div>
-									<CardList
-										tooltipAboveModal={true}
-										cards={directlyOppositeCards}
-										wrap={true}
-										displayTokenCost={false}
-									/>
-								</div>,
-							]
-						: undefined}
-					<p>
-						EX is immune to and cannot be inflicted with Fire, Poison, and
-						Slowness.
-					</p>
-					<p>The following cards don't work in this battle:</p>
-					<div>
-						<CardList
-							tooltipAboveModal={true}
-							cards={nonFunctionalCards}
-							wrap={true}
-							displayTokenCost={false}
-						/>
-					</div>
-					<h1>EX's Moves & Special</h1>
-					<p>Evil X can attack for 50, 70 or 90 damage.</p>
-					<p>
-						After losing a life, EX can also either heal for 150hp, set your
-						active Hermit on fire, or double the damage of his main attack.
-					</p>
-					<p>
-						On his last life, EX can deal 20 damage to all AFK Hermits, discard
-						your active Hermit's attached effect card, or force you to discard
-						an item card from your active Hermit. Discarded effect cards act as
-						if <u>Curse of Vanishing</u> was used and do not trigger from his
-						attack.
-					</p>
-					<p>
-						If a special move disables EX's attack, this only prevents attack
-						damage, being set on fire and damage against AFK Hermits.
-					</p>
-					<p>
-						At the end of EX's ninth turn, even if he cannot attack, he will
-						perform one of two special moves:
-					</p>
-					<ol>
-						<li>Discard your whole hand and draw one new card.</li>
-						<li>
-							Remove all attached item and effect cards from your active Hermit.
-						</li>
-					</ol>
-				</Modal.Description>
-			</Modal>
 			<MenuLayout
 				back={() => {
-					if (status) handleLeaveQueue()
+					handleLeaveQueue()
 					setMenuSection('main-menu')
 				}}
 				title="Play"
 				returnText="Main Menu"
 				className={css.playSelect}
 			>
-				<div className={css.playerInfo}>
-					<p id={css.infoName}>
-						{welcomeMessage}, {playerName}
-					</p>
-					<p id={css.infoDeck}>
-						{'Active Deck - ' + `${loadedDeck ? loadedDeck.name : 'None'}`}
-					</p>
-					<img
-						id={css.infoIcon}
-						src={loadedDeck ? getIconPath(loadedDeck) : getCardTypeIcon('any')}
-						alt="deck-icon"
-					/>
-				</div>
 				<h2 className={css.header}>{header}</h2>
 				<div className={css.gameTypes}>
 					<div className={css.gameTypesButtons}>
-						<HermitButton
+						<GameModeButton
 							image={'vintagebeef'}
 							backgroundImage={'gamemodes/public'}
 							title={'Public Game'}
@@ -409,132 +253,225 @@ function PlaySelect({setMenuSection}: Props) {
 								'Challenge a random player to a game of HC-TCG Online!'
 							}
 							mode="public"
-							selectedMode={mode}
-							setSelectedMode={setMode}
-							onReturn={handleLeaveQueue}
+							activeMode={activeMode}
+							setActiveMode={setActiveMode}
+							onSelect={() => {
+								addMenuWithBack('publicChooseDeck')
+								sortDecksByActive()
+							}}
+							onBack={goBack}
+							disableBack={!!matchmaking}
 						>
-							<div className={css.buttonMenu}>
-								{!status ? (
-									<div className={css.publicConfirm}>
-										<p>
-											Confirm your deck before entering a game. If you don't
-											pick one here, your last selected deck will be used.
-										</p>
-										<div className={css.deckSelector}>
-											<Accordion header={'Deck Select'} defaultOpen={false}>
-												<div className={css.decksContainer}>{decksList}</div>
-											</Accordion>
-										</div>
-										<div className={css.spacer}></div>
-										<Button
-											className={css.publicJoinButton}
-											onClick={() => handleJoinQueue()}
-											variant="primary"
+							<GameModeButton.ChooseDeck
+								activeButtonMenu={activeButtonMenu}
+								id="publicChooseDeck"
+								title="Choose your deck"
+								subTitle="When ready, press the Join Queue button to begin."
+								confirmMessage="Join Queue"
+								onConfirm={() => {
+									const valid = checkForValidation()
+									if (!valid) return
+									dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+									dispatch({type: localMessages.MATCHMAKING_JOIN_PUBLIC_QUEUE})
+									addMenuWithBack('publicQueue')
+								}}
+								decks={decks}
+								onSelectDeck={onSelectDeck}
+							/>
+							<GameModeButton.Queue
+								activeButtonMenu={activeButtonMenu}
+								id="publicQueue"
+								joiningMessage="Joining queue..."
+								queueMessage="Searching for game..."
+								timedMessage={
+									<>
+										Can't find an opponent?<> </>
+										<a
+											href="https://discord.gg/AjGbqNfcQX"
+											target="_blank"
+											rel="noreferrer"
+											title="Discord"
 										>
-											Join Queue
-										</Button>
-									</div>
-								) : (
-									<div className={css.queueMenu}>
-										<div>
-											<div className={css.spinner}>
-												<Spinner />
-											</div>
-											<p>{queuingReason()}</p>
-											<p>
-												Having trouble finding a match? Feel free to join our
-												discord!
-											</p>
-										</div>
-									</div>
-								)}
-							</div>
-						</HermitButton>
-						<HermitButton
+											Join our discord!
+										</a>
+									</>
+								}
+								activeDeck={loadedDeck}
+								matchmakingStatus={matchmaking}
+								cancelMessage="Leave Queue"
+								onCancel={() => {
+									if (matchmaking) handleLeaveQueue()
+									goBack()
+								}}
+							/>
+						</GameModeButton>
+						<GameModeButton
 							image={'cubfan135'}
 							backgroundImage={'gamemodes/private'}
 							title={'Private Game'}
 							description={'Play against your friends in a private lobby.'}
 							mode="private"
-							selectedMode={mode}
-							setSelectedMode={setMode}
-							onReturn={() => {
-								handleLeaveQueue()
-								setTimeout(() => setLobbyCreated(false), 200)
+							activeMode={activeMode}
+							setActiveMode={setActiveMode}
+							onSelect={() => {
+								addMenuWithBack('privateOptions')
+								sortDecksByActive()
 							}}
+							onBack={goBack}
+							disableBack={!!matchmaking}
 						>
-							<div className={css.buttonMenu}>
-								{!lobbyCreated && !status && (
-									<div className={css.publicConfirm}>
-										<p>
-											Confirm your deck before entering a game. If you don't
-											pick one here, your last selected deck will be used.
-										</p>
-										<div className={css.deckSelector}>
-											<Accordion header={'Deck Select'} defaultOpen={false}>
-												<div className={css.decksContainer}>{decksList}</div>
-											</Accordion>
-										</div>
-										<div className={css.spacer}></div>
-										<p>
-											Enter an opponent code given to you by the player you're
-											facing, enter a spectator game to view a match, or create
-											your own private lobby.
-										</p>
-										<div className={css.privateGameCodeArea}>
-											<input ref={inputRef} placeholder={'Enter code'}></input>
-											<Button
-												onClick={() => {
-													if (inputRef.current)
-														handleCodeSubmit(inputRef.current.value)
-												}}
-												variant="primary"
-											>
-												Enter Game
-											</Button>
-										</div>
-										<Button
-											className={css.publicJoinButton}
-											onClick={() => {
-												setLobbyCreated(true)
-												handlePrivateGame()
-											}}
-											variant="primary"
-										>
-											Create Lobby
-										</Button>
-									</div>
-								)}
-								{lobbyCreated && (
-									<div className={css.queueMenu}>
-										<div>
-											<p>Opponent Code</p>
-											<div className={css.code} onClick={handleCodeClick}>
-												<CopyIcon /> {gameCode}
-											</div>
-											<p>Spectator Code</p>
-											<div
-												className={css.code}
-												onClick={handleSpectatorCodeClick}
-											>
-												<CopyIcon /> {spectatorCode}
-											</div>
-										</div>
-									</div>
-								)}
-								{status && (
-									<div className={css.queueMenu}>
-										<div>
-											<div className={css.spinner}>
-												<Spinner />
-											</div>
-											<p>{queuingReason()}</p>
-										</div>
-									</div>
-								)}
-							</div>
-						</HermitButton>
-						<HermitButton
+							<GameModeButton.OptionsSelect
+								activeButtonMenu={activeButtonMenu}
+								id="privateOptions"
+								title="Select an option"
+								subTitle="Either join a private game created by another player, spectate an existing game, 
+								or create your own game to challenge someone else."
+								buttons={[
+									{
+										text: 'Join Game',
+										onClick() {
+											addMenuWithBack('privateJoinGame')
+										},
+									},
+									{
+										text: 'Spectate Game',
+										onClick() {
+											addMenuWithBack('privateSpectateGame')
+										},
+									},
+									{
+										text: 'Create Game',
+										onClick() {
+											addMenuWithBack('createPrivateGame')
+										},
+									},
+								]}
+							/>
+							<GameModeButton.ChooseDeck
+								activeButtonMenu={activeButtonMenu}
+								id="privateJoinGame"
+								title="Join Private Game"
+								subTitle="Choose your deck, enter the code, and then press the Confirm button to begin."
+								confirmMessage="Confirm"
+								requestCode
+								onConfirm={(code) => {
+									const valid = checkForValidation()
+									if (!valid) return
+
+									if (!code || code.length !== 6) {
+										dispatch({
+											type: localMessages.TOAST_OPEN,
+											open: true,
+											title: 'Invalid Code!',
+											description: 'The code you entered is invalid.',
+										})
+										return
+									}
+
+									dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+									dispatch({
+										type: localMessages.MATCHMAKING_JOIN_PRIVATE_QUEUE,
+										code,
+									})
+									addMenuWithBack('privateJoinQueue')
+								}}
+								decks={decks}
+								onSelectDeck={onSelectDeck}
+							/>
+							<GameModeButton.EnterCode
+								activeButtonMenu={activeButtonMenu}
+								id="privateSpectateGame"
+								title="Spectate Private Game"
+								subTitle="Enter the spectator code, then press the Confirm button to join the game."
+								placeholder="Enter spectator code..."
+								confirmMessage="Confirm"
+								onConfirm={(code) => {
+									if (!code || code.length !== 6) {
+										dispatch({
+											type: localMessages.TOAST_OPEN,
+											open: true,
+											title: 'Invalid Code!',
+											description: 'The code you entered is invalid.',
+										})
+										return
+									}
+
+									dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+									dispatch({
+										type: localMessages.MATCHMAKING_SPECTATE_PRIVATE_GAME,
+										code,
+									})
+									addMenuWithBack('privateSpectateQueue')
+								}}
+							/>
+							<GameModeButton.ChooseDeck
+								activeButtonMenu={activeButtonMenu}
+								id="createPrivateGame"
+								title="Create Private Game"
+								subTitle="Choose your deck, then press the Create Game button to begin."
+								confirmMessage="Create Game"
+								onConfirm={() => {
+									const valid = checkForValidation()
+									if (!valid) return
+
+									dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+									dispatch({
+										type: localMessages.MATCHMAKING_CREATE_PRIVATE_GAME,
+									})
+									addMenuWithBack('createGameQueue')
+								}}
+								decks={decks}
+								onSelectDeck={onSelectDeck}
+							/>
+							<GameModeButton.Queue
+								activeButtonMenu={activeButtonMenu}
+								id="privateJoinQueue"
+								joiningMessage="Verifying code..."
+								queueMessage="Waiting for opponent..."
+								activeDeck={loadedDeck}
+								matchmakingStatus={matchmaking}
+								cancelMessage="Cancel"
+								onCancel={() => {
+									if (matchmaking) handleLeaveQueue()
+									goBack()
+								}}
+							/>
+							<GameModeButton.Queue
+								activeButtonMenu={activeButtonMenu}
+								id="privateSpectateQueue"
+								joiningMessage="Verifying spectator code..."
+								queueMessage="Waiting for game to begin..."
+								matchmakingStatus={matchmaking}
+								cancelMessage="Cancel"
+								onCancel={() => {
+									if (matchmaking) handleLeaveQueue()
+									goBack()
+								}}
+							/>
+							<GameModeButton.Queue
+								activeButtonMenu={activeButtonMenu}
+								id="createGameQueue"
+								joiningMessage="Creating game..."
+								queueMessage="Waiting for opponent..."
+								activeDeck={loadedDeck}
+								codes={
+									gameCode && spectatorCode
+										? [
+												{name: 'Opponent Code', code: gameCode},
+												{name: 'Spectator Code', code: spectatorCode},
+											]
+										: undefined
+								}
+								onCodeClick={handleCodeClick}
+								matchmakingStatus={matchmaking}
+								cancelMessage="Cancel Game"
+								onCancel={() => {
+									if (matchmaking) handleLeaveQueue()
+									goBack()
+								}}
+							/>
+						</GameModeButton>
+						<GameModeButton
 							image={'evilxisuma'}
 							backgroundImage={'gamemodes/boss'}
 							title={'Boss Battle'}
@@ -542,52 +479,154 @@ function PlaySelect({setMenuSection}: Props) {
 								'Prove your worth as an HC-TCG player by challenging Evil X to a fight.'
 							}
 							mode="boss"
-							selectedMode={mode}
-							setSelectedMode={setMode}
+							activeMode={activeMode}
+							onSelect={() => {
+								addMenuWithBack('bossSelect')
+								sortDecksByActive()
+							}}
+							setActiveMode={setActiveMode}
+							onBack={goBack}
+							disableBack={!!matchmaking}
 						>
-							<div className={css.buttonMenu}>
-								<div className={css.publicConfirm}>
+							<GameModeButton.OptionsSelect
+								id="bossSelect"
+								activeButtonMenu={activeButtonMenu}
+								title="Welcome to your doom."
+								subTitle="That's right, HC-TCG Online has its first boss fight! This is no challenge deck - Evil X cares
+								not for the cards. He brings his own moves, and they are vicious! If you think you can defeat him, you'll
+								need to be on your best game. Make sure your audio is enabled, as you'll need to listen to voice commands
+								during the battle."
+								buttons={[
+									{
+										text: 'Full Rules',
+										onClick() {
+											addMenuWithBack('bossRules')
+										},
+									},
+									{
+										text: 'Challenge Evil X',
+										onClick() {
+											addMenuWithBack('bossChooseDeck')
+										},
+										variant: 'primary',
+									},
+								]}
+							/>
+							<GameModeButton.CustomMenu
+								id="bossRules"
+								activeButtonMenu={activeButtonMenu}
+							>
+								<div className={css.bossRules}>
+									<h3>Full Rules</h3>
 									<p>
-										Confirm your deck before entering a game. If you don't pick
-										one here, your last selected deck will be used.
+										You will always go first but can only have three rows to
+										play on.
 									</p>
-									<div className={css.deckSelector}>
-										<Accordion header={'Deck Select'} defaultOpen={false}>
-											<div className={css.decksContainer}>{decksList}</div>
-										</Accordion>
+									<p>
+										EX has only one row to play on and has no item slots to
+										attach to his boss card. However, his card has 300hp, comes
+										back again at full health when knocked out, and will perform
+										harder attacks with every life lost.
+									</p>
+									{directlyOppositeCards.length
+										? [
+												<p>
+													EX is always directly opposite your active Hermit for
+													the purposes of:
+												</p>,
+												<div>
+													<CardList
+														tooltipAboveModal={true}
+														cards={directlyOppositeCards}
+														wrap={true}
+														displayTokenCost={false}
+													/>
+												</div>,
+											]
+										: undefined}
+									<p>
+										EX is immune to and cannot be inflicted with Fire, Poison,
+										and Slowness.
+									</p>
+									<p>The following cards don't work in this battle:</p>
+									<div>
+										<CardList
+											tooltipAboveModal={true}
+											cards={nonFunctionalCards}
+											wrap={true}
+											displayTokenCost={false}
+										/>
 									</div>
-									<div className={css.spacer}></div>
-									<Button
-										className={css.publicJoinButton}
-										onClick={() => setEvilXOpen(true)}
-									>
-										Show Rules
-									</Button>
-									<Button
-										className={css.publicJoinButton}
-										variant={'primary'}
-										onClick={handleCreateBossGame}
-									>
-										Fight Evil X
+									<h1>EX's Moves & Special</h1>
+									<p>Evil X can attack for 50, 70 or 90 damage.</p>
+									<p>
+										After losing a life, EX can also either heal for 150hp, set
+										your active Hermit on fire, or double the damage of his main
+										attack.
+									</p>
+									<p>
+										On his last life, EX can deal 20 damage to all AFK Hermits,
+										discard your active Hermit's attached effect card, or force
+										you to discard an item card from your active Hermit.
+										Discarded effect cards act as if <u>Curse of Vanishing</u>{' '}
+										was used and do not trigger from his attack.
+									</p>
+									<p>
+										If a special move disables EX's attack, this only prevents
+										attack damage, being set on fire and damage against AFK
+										Hermits.
+									</p>
+									<p>
+										At the end of EX's ninth turn, even if he cannot attack, he
+										will perform one of two special moves:
+									</p>
+									<ol>
+										<li>Discard your whole hand and draw one new card.</li>
+										<li>
+											Remove all attached item and effect cards from your active
+											Hermit.
+										</li>
+									</ol>
+									<Button className={css.rulesBack} onClick={goBack}>
+										Go Back
 									</Button>
 								</div>
-							</div>
-						</HermitButton>
+							</GameModeButton.CustomMenu>
+							<GameModeButton.ChooseDeck
+								activeButtonMenu={activeButtonMenu}
+								id="bossChooseDeck"
+								title="Choose your deck"
+								subTitle="When ready, press the Fight! button to begin."
+								confirmMessage="Fight!"
+								onConfirm={() => {
+									const valid = checkForValidation()
+									if (!valid) return
+
+									dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+									dispatch({
+										type: localMessages.MATCHMAKING_CREATE_BOSS_GAME,
+									})
+								}}
+								decks={decks}
+								onSelectDeck={onSelectDeck}
+							/>
+						</GameModeButton>
 					</div>
 				</div>
-				<div className={css.bottomArea}>
-					<div>
-						<h3 className={css.appearanceHeader}>In-game Appearance</h3>
-						<p className={css.clickToChange}>
-							<i>Click to change</i>
-						</p>
-						<div
-							className={css.appearance}
-							onClick={() => setMenuSection('cosmetics')}
-						>
-							<CosmeticPreview />
-						</div>
-					</div>
+				<h3 className={css.appearanceHeader}>In-game Appearance</h3>
+				<p
+					className={classNames(
+						css.clickToChange,
+						matchmaking && css.disableBack,
+					)}
+				>
+					<i>Click to change</i>
+				</p>
+				<div
+					className={matchmaking ? undefined : css.appearance}
+					onClick={() => !matchmaking && setMenuSection('cosmetics')}
+				>
+					<CosmeticPreview />
 				</div>
 			</MenuLayout>
 		</>

@@ -4,19 +4,23 @@
 	align-items: center;
 	justify-content: center;
 	color: var(--text-light);
-}
 
-h2,
-h3 {
-	filter: drop-shadow(2px 2px 0 var(--text-dark));
-}
+	p {
+		font-size: 1.5vh;
+	}
 
-h2 {
-	font-size: 2rem;
-}
+	h2,
+	h3 {
+		filter: drop-shadow(2px 2px 0 var(--text-dark));
+	}
 
-h3 {
-	font-size: 1.5rem;
+	h2 {
+		font-size: 3vh;
+	}
+
+	h3 {
+		font-size: 2.25vh;
+	}
 }
 
 .header {
@@ -29,157 +33,18 @@ h3 {
 	text-align: center;
 }
 
-.clickToChange {
-	margin-top: 0.5vh;
-	margin-bottom: 1.5vh;
-	font-size: 1rem;
-	filter: drop-shadow(2px 2px 0 var(--text-dark));
-	text-align: center;
-}
-
 .gameTypes {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	gap: 6rem;
 }
 
 .gameTypesButtons {
 	display: grid;
 	grid-auto-flow: column;
 	justify-content: center;
-	grid-gap: 2rem;
-}
-
-.buttonMenu {
-	height: 100%;
-	max-height: 100%;
-	width: calc(min(max(45vw, 70vh), 80vw) - 16vw);
-	color: white;
-
-	.publicConfirm {
-		height: 100%;
-		width: 100%;
-
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		padding: 2vh;
-		background-color: rgba(0, 0, 0, 0.7);
-
-		.spacer {
-			flex-grow: 1;
-		}
-
-		.publicJoinButton {
-			height: 5vh;
-			width: 100%;
-		}
-	}
-}
-
-/* Decks */
-.myDecksItem {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	gap: 0.2rem;
-	padding: 0.3rem;
-	user-select: none;
-	cursor: pointer;
-	max-height: 4rem;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: hidden;
-
-	&:hover {
-		filter: brightness(1.2);
-		background-color: rgba(5, 5, 5, 0.5);
-	}
-
-	.deckName {
-		text-overflow: ellipsis;
-		overflow: hidden;
-	}
-}
-
-.selectedDeck {
-	font-size: 1rem;
-	color: gold;
-	text-indent: 3px;
-	transition: all 0.25s ease-in-out;
-}
-
-.multiColoredCircle {
-	width: 0.5rem;
-	height: 2rem;
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-}
-
-.singleTag {
-	flex-grow: 1;
-	border-radius: 6px;
-}
-
-.deckImage {
-	display: grid;
-	place-content: center;
-	background-color: var(--gray-500);
-	border-radius: 6px;
-	width: 2rem;
-	height: 2rem;
-	flex-shrink: 0;
-
-	> img {
-		height: 1.5rem;
-		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
-	}
-}
-
-.usesIcon {
-	&.farm {
-		background-color: rgb(124, 204, 12);
-	}
-
-	&.redstone {
-		background-color: rgb(185, 33, 42);
-	}
-
-	&.prankster {
-		background-color: rgb(116, 55, 168);
-	}
-
-	&.explorer {
-		background-color: rgb(103, 138, 190);
-	}
-
-	&.balanced {
-		background-color: rgb(101, 124, 50);
-	}
-
-	&.builder {
-		background-color: rgb(184, 162, 154);
-	}
-
-	&.pvp {
-		background-color: rgb(85, 202, 194);
-	}
-
-	&.speedrunner {
-		background-color: rgb(223, 226, 36);
-	}
-
-	&.terraform {
-		background-color: rgb(217, 119, 147);
-	}
-
-	&.miner {
-		background-color: rgb(110, 105, 108);
-	}
+	grid-gap: 3vh;
 }
 
 .top {
@@ -187,115 +52,56 @@ h3 {
 	flex-direction: row;
 }
 
-.decksContainer {
-	overflow-y: scroll;
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
-	grid-auto-flow: row;
-	width: 100%;
-	height: min-content;
-	flex-grow: 1;
-	overflow: hidden;
-}
-
-.deckSelector {
-	overflow-y: scroll;
-}
-
 .bossRules {
-	gap: 1vh;
-
-	color: var(--text-light);
-	max-height: 80vh;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 1.5vh;
+	padding: 2vh;
+	animation: timedShow 0.25s forwards;
+	overflow-y: auto;
 
 	ol li {
 		list-style-type: decimal;
 		list-style-position: inside;
 	}
-}
 
-.queueMenu {
-	display: flex;
-	height: 100%;
-	font-size: 1rem;
-	color: white;
-	align-items: center;
-	justify-content: center;
-
-	> div {
-		background-color: rgba(0, 0, 0, 0.8);
-		padding: 1rem;
-		border-radius: 8px;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: 1rem;
-		width: 50%;
-	}
-}
-
-.code {
-	font-size: 2vh;
-	cursor: pointer;
-}
-
-.privateGameCodeArea {
-	display: flex;
-	flex-direction: row;
-	width: 100%;
-
-	> input {
-		flex-grow: 1;
-		height: 2.7rem;
+	.rulesBack {
+		height: 5vh;
 	}
 }
 
 .bottomArea {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 }
 
-.playerInfo {
-	position: absolute;
-	top: 6vh;
-	right: 1vh;
-	display: grid;
-	grid-template-areas:
-		"name icon"
-		"deck icon";
-	font-size: 1.5vh;
-	background-color: hsla(0deg, 0%, 0%, 35%);
-	padding: 0.75vh 1vh 0.75vh 1.5vh;
-	border-radius: 0.5vh;
-	user-select: none;
-	font-weight: normal;
-	text-align: right;
-	animation: fadeIn 250ms ease-in-out forwards;
+.clickToChange {
+	margin-top: 0.5vh;
+	margin-bottom: 1.5vh;
+	filter: drop-shadow(2px 2px 0 var(--text-dark));
+	transition: opacity linear 250ms;
 
-	> img {
-		height: 4vh;
-	}
-
-	#infoName {
-		grid-area: name;
-		font-weight: bold;
-		font-size: 1.8vh;
-	}
-
-	#infoDeck {
-		grid-area: deck;
-	}
-
-	#infoIcon {
-		grid-area: icon;
-		margin-left: 1vh;
+	&.disableBack {
+		opacity: 0%;
 	}
 }
 
 .appearance {
 	cursor: pointer;
+	width: 500px;
+
 	&:hover {
 		scale: 1.05;
+	}
+}
+
+@keyframes timedShow {
+	from {
+		opacity: 0%;
+	}
+
+	to {
+		opacity: 100%;
 	}
 }
