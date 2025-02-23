@@ -1836,8 +1836,9 @@ export class Database {
 
 			const progress: AchievementProgress = {}
 			result.rows.forEach((row) => {
+				let achievement = ACHIEVEMENTS[row['achievement_id']]
+
 				if (!progress[row['achievement_id']]) {
-					let achievement = ACHIEVEMENTS[row['achievement_id']]
 					progress[row['achievement_id']] = {
 						goals: {},
 						levels: Array(achievement.levels.length).fill({}),
@@ -1847,6 +1848,20 @@ export class Database {
 				progress[row['achievement_id']].goals[row['goal_id']] = row['progress']
 				progress[row['achievement_id']].levels[row['level']].completionTime =
 					row['completion_time']
+
+				// If we add a new level of an achievement the user may have the goal complete but will not have the achievement.
+				// This code grants the user the level for the achievement the first time they log in after said update.
+				for (const [i, level] of achievement.levels.entries()) {
+					if (
+						row['progress'] > level.steps &&
+						progress[row['achievement_id']].levels[row['level']]
+							.completionTime === undefined
+					) {
+						progress[row['achievement_id']].levels[i].completionTime = new Date(
+							Date.now(),
+						)
+					}
+				}
 			})
 
 			return {

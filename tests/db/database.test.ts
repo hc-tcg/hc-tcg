@@ -670,10 +670,19 @@ describe('Test Database', () => {
 		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 		let player = user.body
+
 		let completionTime = new Date(Date.now())
+		let completionTimeTwo = new Date(Date.now())
 
 		await database.updateAchievements(player.uuid, {
-			1: {goals: {0: 1}, levels: [{completionTime: completionTime}]},
+			0: {goals: {0: 1}, levels: [{completionTime: completionTime}]},
+			1: {
+				goals: {0: 3},
+				levels: [
+					{completionTime: completionTime},
+					{completionTime: completionTimeTwo},
+				],
+			},
 		})
 
 		let results = await database.getAchievements(player.uuid)
@@ -683,9 +692,14 @@ describe('Test Database', () => {
 		)
 		let achievements = results.body.achievementData
 
-		expect(achievements[1].goals).toStrictEqual({0: 1})
+		expect(achievements[0].goals).toStrictEqual({0: 1})
+		expect(achievements[0].levels).toStrictEqual([
+			{completionTime: completionTime},
+		])
+		expect(achievements[1].goals).toStrictEqual({0: 3})
 		expect(achievements[1].levels).toStrictEqual([
 			{completionTime: completionTime},
+			{completionTime: completionTimeTwo},
 		])
 	})
 })
