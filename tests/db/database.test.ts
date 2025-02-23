@@ -683,8 +683,8 @@ describe('Test Database', () => {
 		)
 		let achievements = results.body.achievementData
 
-		expect(achievements[0].goals).toStrictEqual({0: 1})
-		expect(achievements[0].levels).toStrictEqual([
+		expect(achievements[1].goals).toStrictEqual({0: 1})
+		expect(achievements[1].levels).toStrictEqual([
 			{completionTime: completionTime},
 		])
 	})
