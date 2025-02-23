@@ -13,10 +13,15 @@ const SheepStarer: Achievement = {
 	...achievement,
 	numericId: 14,
 	id: 'sheep_starer',
-	name: 'Sheep Starer',
 	icon: '',
-	description: 'Keep a red HP (100 - 0) Zedaph alive for three consecutive turns.',
-	steps: 3,
+	levels: [
+		{
+			name: 'Sheep Starer',
+			description:
+				'Keep a red HP (100 - 0) Zedaph alive for three consecutive turns.',
+			steps: 3,
+		},
+	],
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		if (!player) return

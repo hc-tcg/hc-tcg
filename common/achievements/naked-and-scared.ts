@@ -38,10 +38,14 @@ const NakedAndScared: Achievement = {
 	...achievement,
 	numericId: 15,
 	id: 'naked_and_scared',
-	name: 'Naked and Scared',
 	icon: '',
-	description: 'Win 15 games using no healing or armor cards.',
-	steps: 15,
+	levels: [
+		{
+			name: 'Naked and Scared',
+			description: 'Win 15 games using no healing or armor cards.',
+			steps: 15,
+		},
+	],
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		if (!player) return

@@ -42,11 +42,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	Designer,
 	CertifiedZombie,
 	SUStainable,
-	Win1,
-	Win10,
-	Win100,
-	Win500,
-	Win1000,
+	Win,
 ]
 
 export const ACHIEVEMENTS: Record<string | number, Achievement> =
