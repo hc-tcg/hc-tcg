@@ -5,6 +5,7 @@ import {toLocalCardInstance} from 'common/utils/cards'
 import pg from 'pg'
 const {Pool} = pg
 import assert from 'assert'
+import {ACHIEVEMENTS} from 'common/achievements'
 import {CARDS} from 'common/cards'
 import {getStarterPack} from 'common/cards/starter-decks'
 import {defaultAppearance} from 'common/cosmetics/default'
@@ -29,13 +30,12 @@ import {GameOutcome, Message} from 'common/types/game-state'
 import {NumberOrNull, generateDatabaseCode} from 'common/utils/database-codes'
 import {newRandomNumberGenerator} from 'common/utils/random'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
-import {actionChannel, call} from 'typed-redux-saga'
+import {call} from 'typed-redux-saga'
 import {huffmanCompress, huffmanDecompress} from '../../src/utils/compression'
 import {
 	ReplayActionData,
 	bufferToTurnActions,
 } from '../routines/turn-action-compressor'
-import {ACHIEVEMENTS} from 'common/achievements'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -149,9 +149,8 @@ export class Database {
 				CREATE TABLE IF NOT EXISTS achievement_completion_time(
 					user_id uuid REFERENCES users(user_id),
 					achievement_id integer REFERENCES achievements(achievement_id),
-					goal_id integer,
 					level integer NOT NULL,
-					completion_time timestamp,
+					completion_time timestamp NOT NULL,
 					PRIMARY KEY (user_id, achievement_id, level)
 				)
 				`,
@@ -1830,13 +1829,11 @@ export class Database {
 				SELECT user_goals.achievement_id, user_goals.goal_id, user_goals.progress, achievement_completion_time.level, achievement_completion_time.completion_time
 				FROM user_goals
 				LEFT JOIN achievement_completion_time
-				ON user_goals.user_id = achievement_completion_time.user_id AND user_goals.achievement_id = achievement_completion_time.achievement_id AND user_goals.goal_id = achievement_completion_time.goal_id
+				ON user_goals.user_id = achievement_completion_time.user_id AND user_goals.achievement_id = achievement_completion_time.achievement_id
 				WHERE user_goals.user_id = $1;
 				`,
 				[playerId],
 			)
-
-			console.log(result)
 
 			const progress: AchievementProgress = {}
 			result.rows.forEach((row) => {
@@ -1902,11 +1899,10 @@ export class Database {
 					return achievementGoals
 				},
 			)
-			console.log(goals.filter((goal) => goal.progress > 0))
 			await this.pool.query(
 				`
 				INSERT INTO user_goals (user_id, achievement_id, goal_id, progress)
-				(SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::int[], $4::int[])
+				(SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::int[], $4::int[]))
 				ON CONFLICT (user_id, achievement_id, goal_id) DO UPDATE
 				SET progress = EXCLUDED.progress;
 				`,
@@ -1920,7 +1916,6 @@ export class Database {
 
 			type CompletionTimeRow = {
 				achievement: number
-				goal: number
 				level: number
 				completion_time: Date
 			}
@@ -1934,32 +1929,27 @@ export class Database {
 				if (!achievement) return []
 				const progress = player.achievementProgress[achievement.numericId]
 				const completionTime: CompletionTimeRow[] = []
-				for (const goal_id of Object.keys(progress.goals)) {
-					for (const [i, level] of progress.levels.entries()) {
-						if (!level.completionTime) continue
-						const goal_id_number = parseInt(goal_id)
-						completionTime.push({
-							achievement: achievement.numericId,
-							goal: goal_id_number,
-							level: i,
-							completion_time: level.completionTime,
-						})
-					}
+				for (const [i, level] of progress.levels.entries()) {
+					if (!level.completionTime) continue
+					completionTime.push({
+						achievement: achievement.numericId,
+						level: i,
+						completion_time: level.completionTime,
+					})
 				}
 				return completionTime
 			})
 
 			await this.pool.query(
 				`
-	            INSERT INTO achievement_completion_time (user_id, achievement_id, goal_id, level, completion_time)
-				(SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::int[], $4::int[], $5::timestamp[]))
-				ON CONFLICT (user_id, achievement_id, goal_id, level) DO UPDATE
-				completion_time = EXCLUDED.completion_time;
+	            INSERT INTO achievement_completion_time (user_id, achievement_id, level, completion_time)
+				(SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::int[], $4::timestamp[]))
+				ON CONFLICT (user_id, achievement_id, level) DO UPDATE
+				SET completion_time = EXCLUDED.completion_time;
 			     `,
 				[
 					completion.map(() => player.uuid),
 					completion.map((row) => row.achievement),
-					completion.map((row) => row.goal),
 					completion.map((row) => row.level),
 					completion.map((row) => row.completion_time),
 				],

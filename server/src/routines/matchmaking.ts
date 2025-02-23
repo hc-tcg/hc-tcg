@@ -222,7 +222,7 @@ function* gameManager(con: GameController) {
 
 					for (const [i, level] of achievement.props.levels.entries()) {
 						const complete =
-							achievement.props.getProgress(achievement.goals) === level.steps
+							achievement.props.getProgress(achievement.goals) >= level.steps
 						const previouslyComplete =
 							!!v.player.achievementProgress[achievement.props.numericId]
 								.levels[i]

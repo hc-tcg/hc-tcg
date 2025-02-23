@@ -14,6 +14,7 @@ const Win: Achievement = {
 	],
 	icon: '',
 	onGameEnd(_game, playerEntity, component, outcome) {
+		console.log('Incrementing progress')
 		if (outcome.type !== 'player-won' || outcome.winner !== playerEntity) return
 		component.incrementGoalProgress({goal: 0})
 	},
