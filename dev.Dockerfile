@@ -23,5 +23,5 @@ COPY common common
 COPY server server
 COPY client client
 
-CMD [ "npm", "run", "start" ]
+CMD [ "npm", "run", "dev" ]
 
