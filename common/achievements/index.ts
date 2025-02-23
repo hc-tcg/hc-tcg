@@ -7,6 +7,7 @@ import Designer from './designer'
 import Ethogirl from './ethogirl'
 import HotTake from './hot-take'
 import HowDidWeGetHere from './how-did-we-get-here'
+import Innefective from './innefective'
 import AllCards from './jack-of-all-cards'
 import NakedAndScared from './naked-and-scared'
 import NoDerpcoins from './no-derpcoins'
@@ -42,6 +43,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	Designer,
 	CertifiedZombie,
 	SUStainable,
+	Innefective,
 	Win,
 ]
 
