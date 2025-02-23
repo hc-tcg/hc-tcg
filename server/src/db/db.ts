@@ -1839,7 +1839,7 @@ export class Database {
 				if (!progress[row['achievement_id']]) {
 					let achievement = ACHIEVEMENTS[row['achievement_id']]
 					progress[row['achievement_id']] = {
-						goals: [],
+						goals: {},
 						levels: Array(achievement.levels.length).fill({}),
 					}
 				}
