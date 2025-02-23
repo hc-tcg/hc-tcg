@@ -15,7 +15,8 @@ const SheepStarer: Achievement = {
 	id: 'sheep_starer',
 	name: 'Sheep Starer',
 	icon: '',
-	description: 'Keep a red HP (100 - 0) Zedaph alive for three consecutive turns.',
+	description:
+		'Keep a red HP (100 - 0) Zedaph alive for three consecutive turns.',
 	steps: 3,
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
