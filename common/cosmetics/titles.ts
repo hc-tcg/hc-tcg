@@ -4,7 +4,7 @@ import DefeatEvilX from '../achievements/defeat-evil-x'
 import Ethogirl from '../achievements/ethogirl'
 import NakedAndScared from '../achievements/naked-and-scared'
 import OreSnatcher from '../achievements/ore-snatcher'
-import PeskyBird from '../achievements/pesky_bird'
+import PeskyBird from '../achievements/pesky-bird'
 import TeamStar from '../achievements/team-star'
 import {
 	BalancedWins,
