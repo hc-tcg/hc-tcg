@@ -52,6 +52,8 @@ function GameModeButton({
 
 	const [lastMode, setLastMode] = useState<string | null>(null)
 
+	const onMobile = window.screen.width <= 720
+
 	const [buttonPosition, setButtonPosition] = useState<{
 		x: number
 		y: number
@@ -59,6 +61,9 @@ function GameModeButton({
 		w: number
 	} | null>(null)
 	const [, reload] = useReducer((x) => x + 1, 0)
+
+	const transform = 'calc((100vw - 75vh) / 2) 0'
+	const mobileTransform = '0 10vh'
 
 	const handleResize = () => {
 		if (!buttonRef.current || !backgroundRef.current) {
@@ -68,7 +73,11 @@ function GameModeButton({
 			setButtonPosition({x: pos.x, y: pos.y, h: pos.height, w: pos.width})
 
 			if (activeMode === mode) {
-				backgroundRef.current.style.translate = 'calc((100vw - 75vh) / 2) 0'
+				backgroundRef.current.style.translate = onMobile
+					? mobileTransform
+					: transform
+			} else if (window.screen.width <= 720) {
+				backgroundRef.current.style.translate = `0 ${pos.y}px`
 			} else {
 				backgroundRef.current.style.translate = `${pos.x}px 0`
 			}
@@ -97,7 +106,9 @@ function GameModeButton({
 		background.classList.remove(css.shrink, css.show, css.hide)
 		background.classList.add(css.grow)
 
-		background.style.translate = 'calc((100vw - 75vh) / 2) 0'
+		backgroundRef.current.style.translate = onMobile
+			? mobileTransform
+			: transform
 	}
 
 	const shrink = () => {
@@ -111,7 +122,9 @@ function GameModeButton({
 		background.classList.remove(css.grow, css.show, css.hide)
 		background.classList.add(css.shrink)
 
-		background.style.translate = `${buttonPosition.x}px 0`
+		background.style.translate = onMobile
+			? `0 ${buttonPosition.y}px`
+			: `${buttonPosition.x}px 0`
 	}
 
 	const hide = () => {
@@ -125,7 +138,9 @@ function GameModeButton({
 		background.classList.remove(css.shrink, css.grow, css.show)
 		background.classList.add(css.hide)
 
-		background.style.translate = `${buttonPosition.x}px 0`
+		background.style.translate = onMobile
+			? `0 ${buttonPosition.y}px`
+			: `${buttonPosition.x}px 0`
 	}
 	const show = () => {
 		const background = backgroundRef.current
@@ -138,7 +153,9 @@ function GameModeButton({
 		background.classList.remove(css.hide, css.grow, css.shrink)
 		background.classList.add(css.show)
 
-		background.style.translate = `${buttonPosition.x}px 0`
+		background.style.translate = onMobile
+			? `0 ${buttonPosition.y}px`
+			: `${buttonPosition.x}px 0`
 	}
 
 	if (activeMode != lastMode) {
