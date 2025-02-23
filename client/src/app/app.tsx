@@ -19,13 +19,12 @@ import Deck from './deck'
 import Game from './game'
 import Login from './login'
 import MainMenu from './main-menu'
-import Achievements from './main-menu/achievements'
 import Cosmetics from './main-menu/cosmetics'
 import Credits from './main-menu/credits'
 import DataSettings from './main-menu/data-settings'
 import GameSettings from './main-menu/game-settings'
 import PlaySelect from './main-menu/play-select'
-import More from './main-menu/settings'
+import Settings from './main-menu/settings'
 import Statistics from './main-menu/statistics'
 
 function App() {
@@ -37,8 +36,18 @@ function App() {
 	const toastMessage = useSelector(getToast)
 	const tooltip = useSelector(getTooltip)
 	const settings = useSelector(getSettings)
-	const [menuSection, setMenuSection] = useState<string>('main-menu')
+
+	const lastMenuSection = sessionStorage.getItem('menuSection')
+
+	const [menuSection, setMenuSection] = useState<string>(
+		lastMenuSection || 'main-menu',
+	)
 	let enableToast = false
+
+	const menuSectionSet = (section: string) => {
+		setMenuSection(section)
+		sessionStorage.setItem('menuSection', section)
+	}
 
 	useEffect(() => {
 		dispatch({
@@ -54,27 +63,31 @@ function App() {
 			enableToast = true
 			switch (menuSection) {
 				case 'deck':
-					return <Deck setMenuSection={setMenuSection} />
+					return <Deck setMenuSection={menuSectionSet} />
 				case 'more':
-					return <More setMenuSection={setMenuSection} />
+					return <Settings setMenuSection={menuSectionSet} />
 				case 'settings':
-					return <GameSettings setMenuSection={setMenuSection} />
+					return <Settings setMenuSection={menuSectionSet} />
+				case 'game-settings':
+					return <GameSettings setMenuSection={menuSectionSet} />
 				case 'data-settings':
-					return <DataSettings setMenuSection={setMenuSection} />
+					return <DataSettings setMenuSection={menuSectionSet} />
 				case 'statistics':
-					return <Statistics setMenuSection={setMenuSection} />
+					return <Statistics setMenuSection={menuSectionSet} />
 				case 'achievements':
-					return <Achievements setMenuSection={setMenuSection} />
+					return (
+						<Cosmetics setMenuSection={menuSectionSet} page={'achievements'} />
+					)
 				case 'cosmetics':
-					return <Cosmetics setMenuSection={setMenuSection} />
+					return <Cosmetics setMenuSection={menuSectionSet} page={'rewards'} />
 				case 'credits':
-					return <Credits setMenuSection={setMenuSection} />
+					return <Credits setMenuSection={menuSectionSet} />
 				case 'play-select':
-					return <PlaySelect setMenuSection={setMenuSection} />
+					return <PlaySelect setMenuSection={menuSectionSet} />
 
 				case 'main-menu':
 				default:
-					return <MainMenu setMenuSection={setMenuSection} />
+					return <MainMenu setMenuSection={menuSectionSet} />
 			}
 		}
 		return <Login />

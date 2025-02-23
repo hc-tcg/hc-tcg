@@ -1,15 +1,25 @@
 .cosmeticsLayout {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+}
+
+.body {
 	padding: 1vh;
 	display: block;
 	display: flex;
-	flex-direction: column;
+	flex-direction: row;
+	max-width: 80rem;
+	width: 100%;
+	height: 95vh;
 
 	h2 {
 		font-size: 3vh;
 		color: var(--text-light);
 		margin-bottom: 2vh;
 		margin-top: 2vh;
-		filter: drop-shadow(1px 1px 0 var(--text-dark));
+		filter: drop-shadow(2px 2px 0 var(--text-dark));
 	}
 }
 
@@ -19,20 +29,68 @@
 	align-items: center;
 	justify-content: center;
 }
+.body2 {
+	flex-grow: 1;
+	height: 100%;
+	width: 100%;
+	overflow-y: hidden;
+	display: flex;
+	flex-direction: column;
+}
 
 .itemSelector {
 	flex-grow: 1;
+	padding: 1rem;
+	border: 2px black solid;
+	border-top: 0px;
+	background-color: var(--gray-600);
+	height: 100%;
+	overflow-y: hidden;
+}
+
+.nameSelector {
+	padding: 1rem;
 	border: 2px black solid;
 	background-color: var(--gray-700);
-	padding: 1vh;
+	height: min-content;
+	overflow-y: hidden;
+	width: 100%;
+}
+
+.appearanceHeader {
+	color: white;
+	width: 100%;
+	text-align: center;
+	padding-bottom: 1rem;
+}
+
+.achievements {
+	margin-top: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5vh;
+	overflow-y: scroll;
+	height: 100%;
+}
+
+.cosmeticsContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	overflow-y: hidden;
+}
+
+.cosmeticsContainerContainer {
+	height: 100%;
+	overflow-y: scroll;
 }
 
 .cosmetics {
 	margin-top: auto;
 	display: flex;
-	flex-wrap: wrap;
 	gap: 0.5vh;
-	overflow-y: scroll;
+	flex-direction: row;
+	flex-wrap: wrap;
 }
 
 .cosmeticItem {
@@ -46,15 +104,115 @@
 	flex-direction: column;
 	color: var(--text-light);
 
-	border: 5px var(--gray-700) solid;
-	border-radius: 1vh;
+	border: 2px black solid;
+	border-radius: 5px;
+	transition: transform 0.3s;
 
-	background-color: var(--gray-600);
+	background-color: var(--gray-700);
+	transform: translateY(0px);
+
+	&:not(.unlocked) {
+		background-color: var(--gray-900);
+	}
+
+	&.unlocked {
+		&:not(.selected) {
+			&:hover {
+				background-color: var(--gray-400);
+				cursor: pointer;
+				transform: translateY(-5px);
+			}
+		}
+	}
 }
 
-.unlocked {
-	&:hover {
-		background-color: var(--gray-400);
+.bounce {
+	animation: bounce 0.5s ease;
+}
+
+.cosmeticBox {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.cosmeticName {
+	color: white;
+	text-align: center;
+	background-color: var(--gray-900);
+	border-radius: 5px;
+
+	&.unlocked {
+		filter: drop-shadow(0 2px 0 hsla(0deg, 0%, 0%, 35%));
+	}
+
+	&:not(.unlocked) {
+		color: var(--gray-300);
+	}
+}
+
+.cosmeticTitle {
+	height: 100%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: Minecrafter;
+	font-size: 0.9rem;
+	color: var(--text-light);
+
+	filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black)
+		drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
+}
+
+.cosmeticBorder {
+	width: 100%;
+	height: 100%;
+	border-image-slice: 30;
+	border-image-width: 20px;
+	border-image-repeat: stretch stretch;
+	border-style: solid;
+	background-color: rgba(48, 48, 48, 0.5);
+}
+
+.cosmeticBackground {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	border: 2px black solid;
+	object-fit: cover;
+	object-position: left;
+}
+
+.cosmeticCoin {
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	border: 4px solid;
+	box-shadow: 0 0 8px;
+}
+
+.appearanceCoin {
+	width: 8vh;
+	height: 8vh;
+	border-radius: 50%;
+	border: 4px solid;
+	box-shadow: 0 0 8px;
+	align-self: center;
+	margin-top: 2rem;
+	margin-bottom: 3rem;
+}
+
+.cosmeticHeart {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+
+	> img {
+		width: 33%;
+		height: 33%;
 	}
 }
 
@@ -62,21 +220,55 @@
 	background-color: var(--gray-500);
 }
 
+.sectionHeader {
+	font-family: Minecrafter;
+	color: white;
+	font-size: 1.2rem;
+}
+
 .lockOverlay {
-	position: absolute;
-	width: 10vh;
-	height: 10vh;
-	opacity: 50%;
+	position: relative;
+
+	> img {
+		position: absolute;
+		height: 32px;
+		image-rendering: crisp-edges;
+
+		top: -9.5vh;
+		left: -5vh;
+
+		filter: drop-shadow(2px 0px 0 white) drop-shadow(-2px 0px 0 white)
+			drop-shadow(0px 2px 0 white) drop-shadow(0px -2px 0 white);
+	}
 }
 
 .updatePlayerInfo {
 	display: flex;
 	flex-direction: row;
+	width: 100%;
+
+	> input {
+		height: 2.75rem;
+		width: 55%;
+	}
+
+	> button {
+		flex-grow: 1;
+	}
+}
+
+.leftSideCosmetics {
+	width: 60%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	align-self: center;
+	margin-left: 2.5rem;
+	margin-top: 2vh;
 }
 
 .appearance {
-	width: 80%;
-	margin: 4rem;
+	width: 100%;
 	align-self: center;
 }
 
@@ -89,7 +281,7 @@
 	font-weight: bold;
 	color: var(--text-light);
 	padding: 4px 16px;
-	border: 4px solid var(--gray-900);
+	border: 3px solid var(--gray-900);
 	border-image-slice: 30;
 	border-image-width: 20px;
 	border-image-repeat: stretch stretch;
@@ -100,7 +292,9 @@
 		hsla(195deg, 53%, 60%, 35%),
 		hsla(195deg, 100%, 60%, 50%)
 	);
-	background-size: cover;
+	background-repeat: repeat-x;
+	background-size: contain;
+	background-position: left;
 
 	.playerHead {
 		background: var(--gray-800);
@@ -127,6 +321,7 @@
 			font-size: 10px;
 			font-weight: normal;
 			color: var(--gray-200);
+			filter: drop-shadow(0 1px 0 black);
 		}
 	}
 
@@ -142,5 +337,25 @@
 			height: $size;
 			width: $size;
 		}
+	}
+}
+
+h2 {
+	text-align: center;
+}
+
+@media screen and (max-width: 720px) {
+	.body {
+		flex-direction: column;
+	}
+
+	.leftSideCosmetics {
+		width: 95vw;
+		gap: 1rem;
+		margin-left: 0rem;
+	}
+
+	.hideOnMobile {
+		display: none;
 	}
 }

@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import {Achievement} from 'common/achievements/types'
 import {COSMETICS} from 'common/cosmetics'
 import {ProgressionEntry} from 'common/types/achievements'
@@ -23,18 +24,25 @@ export default function AchievementComponent({
 		: 0
 	const completionTime = progressData?.completionTime
 
-	let out = []
-
-	for (const level of achievement.levels) {
-		out.push(
-			<div className={css.achievementContainer}>
-				<img src={icon_url} className={css.icon} />
+	return (
+		<div className={css.achievementContainer}>
+			<img
+				src={icon_url}
+				className={classNames(
+					css.icon,
+					iconCosmetic && iconCosmetic.type === 'background' && css.rounded,
+				)}
+			/>
+			<div className={css.meat}>
 				<div>
 					<div>
-						{level.name}
+						{achievement.name}
 						<div className={css.achievementDescription}>
-							{level.description}
+							{achievement.description}
 						</div>
+					</div>
+					<div className={css.achievementPlayers}>
+						3.5% of players have this achievement
 					</div>
 					<div className={css.progressContainer}>
 						<progress
@@ -54,9 +62,26 @@ export default function AchievementComponent({
 						''
 					)}
 				</div>
-			</div>,
-		)
-	}
-
-	return [out]
+				<div>
+					<div className={css.progressContainer}>
+						<div>
+							{progress}/{achievement.steps}
+						</div>
+						<progress
+							value={progress}
+							max={achievement.steps}
+							className={css.progressBar}
+						></progress>
+					</div>
+					{completionTime ? (
+						<span>
+							Completed: {new Date(completionTime).toLocaleDateString()}
+						</span>
+					) : (
+						''
+					)}
+				</div>
+			</div>
+		</div>
+	)
 }

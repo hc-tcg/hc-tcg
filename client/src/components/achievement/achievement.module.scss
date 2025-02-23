@@ -1,40 +1,90 @@
 .achievementContainer {
-    display: flex;
-    font-size: 1.8vh;
-    align-items: center;
-    gap: 1vh;
-    font-family: Minecraft, Unifont;
-    color: white;
-    text-shadow: 0.1vh 0.1vh 0.2vh black, -0.1vh -0.1vh 0.2vh black;
-    text-decoration: none;
-    margin-bottom: 10px;
-    background: hsla(0deg, 0%, 0%, 55%);
-    padding: 0.5vh;
-    border-radius: 1vh;
+	display: flex;
+	font-size: 1rem;
+	align-items: center;
+	gap: 1vh;
+	font-family: Minecraft, Unifont;
+	color: white;
+	text-shadow: 0.1vh 0.1vh 0.2vh black, -0.1vh -0.1vh 0.2vh black;
+	text-decoration: none;
+	margin-bottom: 10px;
+	background: hsla(0deg, 0%, 0%, 55%);
+	padding: 0.5vh;
+	border-radius: 5px;
+	width: 100%;
 }
 
 .icon {
-    box-shadow: 0 0 2px black;
-    width: 6vh;
-    height: 6vh;
-    margin: 0.5vh;
-    border-radius: 3.5vh;
+	width: 6vh;
+	height: 6vh;
+	margin: 0.5vh;
+
+	&.rounded {
+		border-radius: 50%;
+	}
 }
 
 .progressBar {
-    height: 1vh;
-    width: 100%;
+	height: 1vh;
+	width: 100%;
+	margin-right: 1rem;
 }
 
 .progressContainer {
-    display: flex;
-    gap: 1vh;
-    align-items: center;
-    vertical-align: center;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+
+	> div {
+		text-align: right;
+	}
+
+	> progress {
+		flex-grow: 1;
+	}
 }
 
 .achievementDescription {
-    font-size: 1vh;
-    text-shadow: none;
-    color: lightgray;
+	font-size: 0.8rem;
+	text-shadow: none;
+	color: lightgray;
+}
+
+.achievementPlayers {
+	font-size: 0.8rem;
+	text-shadow: none;
+	color: var(--gray-300);
+}
+
+.aroundOverlay {
+	position: relative;
+}
+
+.lockOverlay {
+	width: 6vh;
+	height: 6vh;
+}
+
+.meat {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+
+	:first-child {
+		flex-grow: 1;
+	}
+
+	:not(:first-child) {
+		width: 50%;
+	}
+}
+
+@media screen and (max-width: 720px) {
+	.meat {
+		flex-direction: column;
+		:not(:first-child) {
+			width: 100%;
+		}
+	}
 }

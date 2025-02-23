@@ -29,7 +29,7 @@ const JinglerRare: Hermit = {
 		cost: ['speedrunner', 'speedrunner', 'any'],
 		damage: 80,
 		power:
-			'Flip a coin.\nIf heads, your opponent must choose a card to discard from their hand.',
+			'Flip a coin.\nIf heads, your opponent must choose one card to discard from their hand.',
 	},
 	onAttach(
 		game: GameModel,
