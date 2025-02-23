@@ -2,18 +2,18 @@ import {CardComponent} from '../components'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
-const DeceptiveSpectacles: Achievement = {
+const PeskyBird: Achievement = {
 	...achievement,
 	numericId: 10,
-	id: 'deceptive_spectacles',
+	icon: '',
+	id: 'pesky_bird',
 	levels: [
 		{
-			name: 'Deceptive Spectacles',
-			description: 'Force your opponent to discard 7 cards in one game',
+			name: 'Pesky Bird',
+			description: 'Force your opponent to discard 7 cards in one game.',
 			steps: 7,
 		},
 	],
-	icon: '',
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		if (!player) return
@@ -32,4 +32,4 @@ const DeceptiveSpectacles: Achievement = {
 	},
 }
 
-export default DeceptiveSpectacles
+export default PeskyBird

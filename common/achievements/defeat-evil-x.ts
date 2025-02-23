@@ -8,7 +8,7 @@ const DefeatEvilX: Achievement = {
 	icon: '',
 	levels: [
 		{
-			name: 'Evil X-terminated',
+			name: 'Evil X-Terminator',
 			description: 'Defeat Evil X',
 			steps: 1,
 		},

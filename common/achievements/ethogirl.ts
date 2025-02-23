@@ -24,7 +24,7 @@ const Ethogirl: Achievement = {
 		{
 			name: 'Ethogirl',
 			description:
-				'Place all 3 Etho cards and both Shade-e cards on your board at the same time',
+				'Place all 3 Etho cards and both Shade-E-E cards on your board at the same time.',
 			steps: 5,
 		},
 	],

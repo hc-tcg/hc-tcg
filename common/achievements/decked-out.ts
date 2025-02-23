@@ -9,7 +9,7 @@ const DeckedOut: Achievement = {
 		{
 			name: 'Decked out',
 			steps: 1,
-			description: 'Win a game by your opponent running out of cards',
+			description: 'Win a game by your opponent running out of cards.',
 		},
 	],
 	icon: 'soulflame',

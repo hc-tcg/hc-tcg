@@ -12,7 +12,7 @@ const PackOfWolves: Achievement = {
 	levels: [
 		{
 			name: 'Pack Of Wolves',
-			description: 'Have 3 wolves attached to your hermits at the same time',
+			description: 'Have 3 wolves attached to your hermits at the same time.',
 			steps: 3,
 		},
 	],

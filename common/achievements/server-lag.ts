@@ -3,7 +3,7 @@ import {afterAttack} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
-const HotTake: Achievement = {
+const ServerLag: Achievement = {
 	...achievement,
 	numericId: 9,
 	id: 'server_lag',
@@ -11,7 +11,7 @@ const HotTake: Achievement = {
 		{
 			name: 'Server Lag',
 			description:
-				'Deal the final blow of the game using a Hermit you got as a prize card',
+				'Deal the final blow of the game using a Hermit you got as a prize card.',
 			steps: 1,
 		},
 	],
@@ -45,4 +45,4 @@ const HotTake: Achievement = {
 	},
 }
 
-export default HotTake
+export default ServerLag
