@@ -689,7 +689,6 @@ describe('Test Database', () => {
 		})
 
 		let results = await database.getAchievements(player.uuid)
-		console.log(results)
 		assert(
 			results.type === 'success',
 			'The achievements should be retrieved successfully',
