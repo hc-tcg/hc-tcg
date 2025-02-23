@@ -29,12 +29,13 @@ import {GameOutcome, Message} from 'common/types/game-state'
 import {NumberOrNull, generateDatabaseCode} from 'common/utils/database-codes'
 import {newRandomNumberGenerator} from 'common/utils/random'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
-import {call} from 'typed-redux-saga'
+import {actionChannel, call} from 'typed-redux-saga'
 import {huffmanCompress, huffmanDecompress} from '../../src/utils/compression'
 import {
 	ReplayActionData,
 	bufferToTurnActions,
 } from '../routines/turn-action-compressor'
+import {ACHIEVEMENTS} from 'common/achievements'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -1826,10 +1827,10 @@ export class Database {
 		try {
 			const result = await this.pool.query(
 				`
-				SELECT user_goals.achievement_id, user_goals.goal_id, user_goals.progress, achievement_completion.level, achievement_completion.completion_time
+				SELECT user_goals.achievement_id, user_goals.goal_id, user_goals.progress, achievement_completion_time.level, achievement_completion_time.completion_time
 				FROM user_goals
-				LEFT JOIN achievement_completion
-				ON user_goals.user_id = achievement_completion.user_id AND user_goals.achievement_id = achievement_completion.achievement_id
+				LEFT JOIN achievement_completion_time
+				ON user_goals.user_id = achievement_completion_time.user_id AND user_goals.achievement_id = achievement_completion_time.achievement_id AND user_goals.goal_id = achievement_completion_time.goal_id
 				WHERE user_goals.user_id = $1;
 				`,
 				[playerId],
@@ -1840,14 +1841,16 @@ export class Database {
 			const progress: AchievementProgress = {}
 			result.rows.forEach((row) => {
 				if (!progress[row['achievement_id']]) {
+					let achievement = ACHIEVEMENTS[row['achievement_id']]
 					progress[row['achievement_id']] = {
 						goals: [],
-						completionTime: row['completion_time']
-							? row['completion_time']
-							: undefined,
+						levels: Array(achievement.levels.length).fill({}),
 					}
 				}
+
 				progress[row['achievement_id']].goals[row['goal_id']] = row['progress']
+				progress[row['achievement_id']].levels[row['level']].completionTime =
+					row['completion_time']
 			})
 
 			return {
@@ -1874,7 +1877,6 @@ export class Database {
 				achievment: number
 				goal: number
 				progress: number
-				completion_time: Date | null
 			}
 			const goals: GoalRow[] = Object.keys(player.achievementProgress).flatMap(
 				(achievement_id) => {
@@ -1895,9 +1897,6 @@ export class Database {
 								progress.goals[goal_id_number] !== undefined
 									? progress.goals[goal_id_number]
 									: 0,
-							completion_time: progress.completionTime
-								? progress.completionTime
-								: null,
 						})
 					})
 					return achievementGoals
@@ -1906,19 +1905,66 @@ export class Database {
 			console.log(goals.filter((goal) => goal.progress > 0))
 			await this.pool.query(
 				`
-				INSERT INTO user_goals (user_id, achievement_id, goal_id, progress, completion_time)
-				(SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::int[], $4::int[], $5::timestamp[]))
+				INSERT INTO user_goals (user_id, achievement_id, goal_id, progress)
+				(SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::int[], $4::int[])
 				ON CONFLICT (user_id, achievement_id, goal_id) DO UPDATE
-				SET progress = EXCLUDED.progress, completion_time = EXCLUDED.completion_time;
+				SET progress = EXCLUDED.progress;
 				`,
 				[
 					goals.map(() => player.uuid),
 					goals.map((row) => row.achievment),
 					goals.map((row) => row.goal),
 					goals.map((row) => row.progress),
-					goals.map((row) => row.completion_time),
 				],
 			)
+
+			type CompletionTimeRow = {
+				achievement: number
+				goal: number
+				level: number
+				completion_time: Date
+			}
+
+			const completion: CompletionTimeRow[] = Object.keys(
+				player.achievementProgress,
+			).flatMap((achievement_id) => {
+				const achievement = this.allAchievements.find(
+					(achievement) => achievement.numericId.toString() === achievement_id,
+				)
+				if (!achievement) return []
+				const progress = player.achievementProgress[achievement.numericId]
+				const completionTime: CompletionTimeRow[] = []
+				for (const goal_id of Object.keys(progress.goals)) {
+					for (const [i, level] of progress.levels.entries()) {
+						if (!level.completionTime) continue
+						const goal_id_number = parseInt(goal_id)
+						completionTime.push({
+							achievement: achievement.numericId,
+							goal: goal_id_number,
+							level: i,
+							completion_time: level.completionTime,
+						})
+					}
+				}
+				return completionTime
+			})
+
+			await this.pool.query(
+				`
+	            INSERT INTO achievement_completion_time (user_id, achievement_id, goal_id, level, completion_time)
+				(SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::int[], $4::int[], $5::timestamp[]))
+				ON CONFLICT (user_id, achievement_id, goal_id, level) DO UPDATE
+				completion_time = EXCLUDED.completion_time;
+			     `,
+				[
+					completion.map(() => player.uuid),
+					completion.map((row) => row.achievement),
+					completion.map((row) => row.goal),
+					completion.map((row) => row.level),
+					completion.map((row) => row.completion_time),
+				],
+			)
+
 			return {type: 'success', body: undefined}
 		} catch (e) {
 			console.log(e)
