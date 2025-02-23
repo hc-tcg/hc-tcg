@@ -3,13 +3,13 @@ import {afterAttack} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
-const Untouchable: Achievement = {
+const CantTouchThis: Achievement = {
 	...achievement,
 	numericId: 11,
-	id: 'untouchabble',
+	id: 'cant_touch_this',
 	levels: [
 		{
-			name: 'Untouchable',
+			name: "Can't Touch This!",
 			description: 'Take 0 damage from 3 consecutive opponent attacks.',
 			steps: 3,
 		},
@@ -38,4 +38,4 @@ const Untouchable: Achievement = {
 	},
 }
 
-export default Untouchable
+export default CantTouchThis
