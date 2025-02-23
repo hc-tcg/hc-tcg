@@ -21,7 +21,7 @@ test('Private queue is exited when API game is cancelled (Opponent Code)', async
 	await page.getByPlaceholder(' ').press('Enter')
 	await page.getByRole('button', {name: 'Play'}).click()
 
-	await page.locator(privateGameQuery).click()
+	await page.getByRole('heading', {name: 'Private Game'}).click()
 
 	await page.getByRole('button', {name: 'Join Game'}).click()
 	await page.getByPlaceholder('Enter code...').fill(gameCode)
@@ -57,7 +57,7 @@ test('Private queue is exited when API game is cancelled (Spectator Code)', asyn
 	await page.getByPlaceholder(' ').press('Enter')
 
 	await page.getByRole('button', {name: 'Play'}).click()
-	await page.locator(privateGameQuery).click()
+	await page.getByRole('heading', {name: 'Private Game'}).click()
 
 	await page.getByRole('button', {name: 'Spectate Game'}).click()
 	await page.getByPlaceholder('Enter spectator code...').fill(spectatorCode)
@@ -94,7 +94,7 @@ test('Player is removed from private queue when they press "Cancel" (Opponent Co
 
 	await page.getByRole('button', {name: 'Play'}).click()
 
-	await page.locator(privateGameQuery).click()
+	await page.getByRole('heading', {name: 'Private Game'}).click()
 
 	await page.getByRole('button', {name: 'Join Game'}).click()
 	await page.getByPlaceholder('Enter code...').fill(gameCode)
@@ -141,7 +141,8 @@ test('Player is removed from private queue when they press "Cancel" (Spectator C
 	await page.getByPlaceholder(' ').press('Enter')
 
 	await page.getByRole('button', {name: 'Play'}).click()
-	await page.locator(privateGameQuery).click()
+	await page.getByRole('heading', {name: 'Private Game'}).click()
+
 	await page.getByRole('button', {name: 'Spectate Game'}).click()
 	await page.getByPlaceholder('Enter spectator code...').fill(spectatorCode)
 	await page.getByRole('button', {name: 'Confirm'}).click()

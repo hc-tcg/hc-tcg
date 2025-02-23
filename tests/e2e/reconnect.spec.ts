@@ -1,7 +1,5 @@
 import {expect, test} from '@playwright/test'
 
-const publicGameQuery = 'Public GameChallenge a random'
-
 test('is still connected after reload', async ({page}) => {
 	await page.goto('/?showUpdatesModal=false')
 
@@ -38,7 +36,7 @@ test('player does not stay in queue after reloading the page', async ({
 	let playerId = await page.evaluate(() => global.getState().session.playerId)
 
 	await page.getByRole('button', {name: 'Play'}).click()
-	await page.getByText(publicGameQuery).click()
+	await page.getByRole('heading', {name: 'Public Game'}).click()
 	await page.getByRole('button', {name: 'Join Queue'}).click()
 
 	let queue = await (
@@ -76,10 +74,10 @@ test('Game state updates if socket is restarted during game.', async ({
 	await playerTwo.getByPlaceholder(' ').press('Enter')
 
 	await playerOne.getByRole('button', {name: 'Play'}).click()
-	await playerOne.getByText(publicGameQuery).click()
+	await playerOne.getByRole('heading', {name: 'Public Game'}).click()
 	await playerOne.getByRole('button', {name: 'Join Queue'}).click()
 	await playerTwo.getByRole('button', {name: 'Play'}).click()
-	await playerTwo.getByText(publicGameQuery).click()
+	await playerTwo.getByRole('heading', {name: 'Public Game'}).click()
 	await playerTwo.getByRole('button', {name: 'Join Queue'}).click()
 
 	// Mathcmaking can take up to 3 seconds
