@@ -2,9 +2,6 @@ import {expect, test} from '@playwright/test'
 
 test.setTimeout(30000)
 
-const privateGameQuery =
-	'div:nth-child(2) > ._backgroundContainer_10bx1_12 > ._leftOverlay_10bx1_142 > ._button_10bx1_1 > ._spacer_10bx1_161'
-
 test('Private queue is exited when API game is cancelled (Opponent Code)', async ({
 	page,
 }) => {
@@ -195,7 +192,7 @@ test('Game starts for players and spectators and places players back on game mod
 	await spectator.getByPlaceholder(' ').fill('Test Player')
 	await spectator.getByPlaceholder(' ').press('Enter')
 	await spectator.getByRole('button', {name: 'Play'}).click()
-	await spectator.locator(privateGameQuery).click()
+	await spectator.getByRole('heading', {name: 'Private Game'}).click()
 	await spectator.getByRole('button', {name: 'Spectate Game'}).click()
 	await spectator
 		.getByPlaceholder('Enter spectator code...')
@@ -206,7 +203,7 @@ test('Game starts for players and spectators and places players back on game mod
 		await player.getByPlaceholder(' ').fill('Test Player')
 		await player.getByPlaceholder(' ').press('Enter')
 		await player.getByRole('button', {name: 'Play'}).click()
-		await player.locator(privateGameQuery).click()
+		await player.getByRole('heading', {name: 'Private Game'}).click()
 		await player.getByRole('button', {name: 'Join Game'}).click()
 		await player.getByPlaceholder('Enter code...').fill(gameCode)
 		await player.getByRole('button', {name: 'Confirm'}).click()
