@@ -27,57 +27,57 @@ const BackgroundDefinitions: Omit<Background, 'type'>[] = [
 	{
 		id: 'balanced',
 		name: 'Flowers',
-		requires: {achievement: BalancedWins.id},
+		requires: {achievement: BalancedWins.id, level: 0},
 	},
 	{
 		id: 'builder',
 		name: 'Plains',
-		requires: {achievement: BuilderWins.id},
+		requires: {achievement: BuilderWins.id, level: 0},
 	},
 	{
 		id: 'explorer',
 		name: 'The End',
-		requires: {achievement: ExplorerWins.id},
+		requires: {achievement: ExplorerWins.id, level: 0},
 	},
 	{
 		id: 'farm',
 		name: 'Farm',
-		requires: {achievement: FarmWins.id},
+		requires: {achievement: FarmWins.id, level: 0},
 	},
 	{
 		id: 'terraform',
 		name: 'Azalea',
-		requires: {achievement: TerraformWins.id},
+		requires: {achievement: TerraformWins.id, level: 0},
 	},
 	{
 		id: 'pvp',
 		name: 'Taiga',
-		requires: {achievement: PvpWins.id},
+		requires: {achievement: PvpWins.id, level: 0},
 	},
 	{
 		id: 'speedrunner',
 		name: 'Stronghold',
-		requires: {achievement: SpeedrunnerWins.id},
+		requires: {achievement: SpeedrunnerWins.id, level: 0},
 	},
 	{
 		id: 'miner',
 		name: 'Dripstone',
-		requires: {achievement: MinerWins.id},
+		requires: {achievement: MinerWins.id, level: 0},
 	},
 	{
 		id: 'redstone',
 		name: 'Desert',
-		requires: {achievement: RedstoneWins.id},
+		requires: {achievement: RedstoneWins.id, level: 0},
 	},
 	{
 		id: 'prankster',
 		name: 'Deep Dark',
-		requires: {achievement: PranksterWins.id},
+		requires: {achievement: PranksterWins.id, level: 0},
 	},
 	{
 		id: 'how_did_we_get_here',
 		name: 'The Nether',
-		requires: {achievement: HowDidWeGetHere.id},
+		requires: {achievement: HowDidWeGetHere.id, level: 0},
 	},
 ]
 

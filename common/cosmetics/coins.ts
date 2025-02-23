@@ -18,30 +18,6 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		requires: {achievement: ServerLag.id},
 	},
 	{
-		id: 'evilx',
-		name: 'Evil X',
-		borderColor: '#666666',
-		requires: {achievement: NoDerpcoins.id},
-	},
-	{
-		id: 'wolf',
-		name: 'Wolf',
-		borderColor: '#dddadb',
-		requires: {achievement: PackOfWolves.id},
-	},
-	{
-		id: 'pink-sheep',
-		name: 'Pink Sheep',
-		borderColor: '#de7f9c',
-		requires: undefined,
-	},
-	{
-		id: 'cod',
-		name: 'Cod',
-		borderColor: '#221F26',
-		requires: undefined,
-	},
-	{
 		id: 'dinnerbone',
 		name: 'Dinnerbone',
 		borderColor: '#e1b530',

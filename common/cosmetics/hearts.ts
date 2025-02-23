@@ -29,11 +29,6 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		name: 'Soulflame',
 		requires: {achievement: DeckedOut.id},
 	},
-	{
-		id: 'gold',
-		name: 'Gold',
-		requires: {achievement: Win.id, level: 4},
-	},
 ]
 
 export const ALL_HEARTS: Heart[] = HeartDefinitions.map((heart) => ({
