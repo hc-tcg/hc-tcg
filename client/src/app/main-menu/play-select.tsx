@@ -201,11 +201,11 @@ function PlaySelect({setMenuSection}: Props) {
 		.filter(removeDisabledExpansions)
 		.map(createUICardInstance)
 
-	/* Keys */
 	const directlyOppositeCards = [Anvil, RenbobRare, PoePoeSkizzRare]
 		.filter(removeDisabledExpansions)
 		.map(createUICardInstance)
 
+	/* Keys */
 	useEffect(() => {
 		window.addEventListener('keydown', handleKeyPress)
 		return () => {
@@ -215,11 +215,11 @@ function PlaySelect({setMenuSection}: Props) {
 
 	function handleKeyPress(e: any) {
 		if (!matchmaking && e.key === 'Escape') {
-			if (activeMode === null) {
-				setMenuSection('main-menu')
-				return
+			if (backStack[0]) {
+				goBack()
+			} else if (activeMode) {
+				setActiveMode(null)
 			}
-			setActiveMode(null)
 		}
 	}
 
