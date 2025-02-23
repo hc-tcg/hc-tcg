@@ -7,10 +7,14 @@ const British: Achievement = {
 	...achievement,
 	numericId: 8,
 	id: 'british',
-	name: "Bri'ish",
-	description:
-		"Use both Xisuma's Cup of Tea and Spooky Stress' Wa'a against the same Hermit",
-	steps: 1,
+	levels: [
+		{
+			name: "Bri'ish",
+			description:
+				"Use both Xisuma's Cup of Tea and Spooky Stress' Wa'a against the same Hermit",
+			steps: 1,
+		},
+	],
 	icon: 'british',
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)

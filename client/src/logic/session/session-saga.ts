@@ -690,10 +690,15 @@ export function* cosmeticSaga() {
 				.map((cos) => cos.id)
 				.includes(action.cosmetic.id)
 			let isUnlocked = true
-			if (action.cosmetic.requires && ACHIEVEMENTS[action.cosmetic.requires]) {
-				const achievement = ACHIEVEMENTS[action.cosmetic.requires]
+			if (
+				action.cosmetic.requires &&
+				ACHIEVEMENTS[action.cosmetic.requires.achievement]
+			) {
+				const achievement = ACHIEVEMENTS[action.cosmetic.requires.achievement]
 				isUnlocked =
-					!!achievementProgress[achievement.numericId]?.completionTime
+					!!achievementProgress[achievement.numericId]?.levels[
+						action.cosmetic.requires.level || 0
+					]?.completionTime
 			}
 			if (DEBUG_CONFIG.unlockAllCosmetics) isUnlocked = true
 			if (!isUnlocked || selected) return
