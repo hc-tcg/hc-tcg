@@ -18,7 +18,6 @@ import SheepStarer from './sheep-starer'
 import SUStainable from './sustainable'
 import TeamStar from './team-star'
 import {
-	AnyWins,
 	BalancedWins,
 	BuilderWins,
 	ExplorerWins,
@@ -68,7 +67,6 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	PranksterWins,
 	MinerWins,
 	ExplorerWins,
-	AnyWins,
 ]
 
 export const ACHIEVEMENTS: Record<string | number, Achievement> =

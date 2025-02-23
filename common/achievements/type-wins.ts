@@ -1,3 +1,5 @@
+import {CardComponent} from '../components'
+import query from '../components/query'
 import {TypeT} from '../types/cards'
 import {achievement} from './defaults'
 import {Achievement} from './types'
@@ -24,11 +26,22 @@ function getTypeWinAchievement(id: number, type: TypeT): Achievement {
 			},
 		],
 		icon: '',
-		onGameEnd(_game, playerEntity, component, outcome) {
-			console.log('Incrementing progress')
-			if (outcome.type !== 'player-won' || outcome.winner !== playerEntity)
+		onGameStart(game, playerEntity, component, observer) {
+			if (
+				game.components.filter(
+					CardComponent,
+					query.card.currentPlayer,
+					query.card.type(type),
+				).length < 7
+			) {
 				return
-			component.incrementGoalProgress({goal: 0})
+			}
+
+			observer.subscribe(game.hooks.onGameEnd, (outcome) => {
+				if (outcome.type !== 'player-won' || outcome.winner !== playerEntity)
+					return
+				component.incrementGoalProgress({goal: 0})
+			})
 		},
 	}
 }
@@ -43,4 +56,3 @@ export const TerraformWins = getTypeWinAchievement(36, 'terraform')
 export const PranksterWins = getTypeWinAchievement(37, 'prankster')
 export const MinerWins = getTypeWinAchievement(38, 'miner')
 export const ExplorerWins = getTypeWinAchievement(39, 'explorer')
-export const AnyWins = getTypeWinAchievement(40, 'any')
