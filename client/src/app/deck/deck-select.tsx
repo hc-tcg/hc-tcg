@@ -4,6 +4,7 @@ import {Deck, Tag} from 'common/types/deck'
 import {sortCardInstances} from 'common/utils/cards'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {getDeckCost} from 'common/utils/ranks'
+import {sortDecks} from 'common/utils/sorting'
 import {getIconPath} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
@@ -74,38 +75,17 @@ function SelectDeck({
 		}, [])
 
 		databaseInfo.tags.push(...newTags)
-		setFilteredDecks(sortDecks(databaseInfo.decks))
+		setFilteredDecks(sortDecks(databaseInfo.decks, settings.deckSortingMethod))
 		setLoadedDeck(deck)
 	}
 
 	// STATE
 	const [oldDatabaseInfo, setOldDatabaseInfo] = useState<DatabaseInfo>(() => {
-		setFilteredDecks(filterDecks(sortDecks(databaseInfo.decks)))
+		setFilteredDecks(
+			filterDecks(sortDecks(databaseInfo.decks, settings.deckSortingMethod)),
+		)
 		return databaseInfo
 	})
-
-	function sortDecks(decks: Array<Deck>): Array<Deck> {
-		return decks.sort((a, b) => {
-			if (settings.deckSortingMethod === 'Alphabetical') {
-				if (a.name === b.name) {
-					return a.code.localeCompare(b.code)
-				}
-				return a.name.localeCompare(b.name)
-			}
-			if (settings.deckSortingMethod === 'First Tag') {
-				const aHasTags = a.tags && a.tags.length > 0
-				const bHasTags = b.tags && b.tags.length > 0
-				if (!aHasTags && !bHasTags) return a.name.localeCompare(b.name)
-				if (!aHasTags && bHasTags) return 1
-				if (aHasTags && !bHasTags) return 0
-				const aFirstTag = a.tags![0].name
-				const bFirstTag = b.tags![0].name
-				return aFirstTag.localeCompare(bFirstTag)
-			}
-			//Default case so something is always returned
-			return 0
-		})
-	}
 
 	function filterDecks(decks: Array<Deck>): Array<Deck> {
 		if (!settings.lastSelectedTag) return decks
@@ -116,7 +96,9 @@ function SelectDeck({
 
 	if (oldDatabaseInfo !== databaseInfo) {
 		setOldDatabaseInfo(databaseInfo)
-		setFilteredDecks(filterDecks(sortDecks(databaseInfo.decks)))
+		setFilteredDecks(
+			filterDecks(sortDecks(databaseInfo.decks, settings.deckSortingMethod)),
+		)
 	}
 
 	const [importedDeck, setImportedDeck] = useState<Deck>({
@@ -212,7 +194,7 @@ function SelectDeck({
 			(deck) => deck.code !== deckToDelete.code,
 		)
 
-		setFilteredDecks(sortDecks(newSavedDecks))
+		setFilteredDecks(sortDecks(newSavedDecks, settings.deckSortingMethod))
 		dispatch({
 			type: localMessages.DATABASE_SET,
 			data: {
@@ -283,7 +265,7 @@ function SelectDeck({
 				<div
 					className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}
 				>
-					<img src={getIconPath(deck)} alt={'deck-icon'} />
+					<img src={getIconPath(deck)} />
 				</div>
 				{deck.name}
 			</li>
@@ -304,7 +286,9 @@ function SelectDeck({
 				direction={'up'}
 				action={(option) => {
 					if (option.includes('No Filter')) {
-						setFilteredDecks(sortDecks(databaseInfo.decks))
+						setFilteredDecks(
+							sortDecks(databaseInfo.decks, settings.deckSortingMethod),
+						)
 						setTagFilter({
 							name: 'No Filter',
 							color: '#ffffff',
@@ -329,6 +313,7 @@ function SelectDeck({
 										tag.color === parsedOption.color,
 								),
 							),
+							settings.deckSortingMethod,
 						),
 					)
 					setTagFilter(parsedOption)
