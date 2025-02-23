@@ -16,9 +16,18 @@ test('Private queue is exited when API game is cancelled (Opponent Code)', async
 
 	await page.getByPlaceholder(' ').fill('Test Player')
 	await page.getByPlaceholder(' ').press('Enter')
-	await page.getByText(' Private Game').click()
-	await page.getByLabel('Enter code:').fill(gameCode)
-	await page.getByLabel('Enter code:').press('Enter')
+
+	await page.getByRole('button', {name: 'Play'}).click()
+
+	await page
+		.locator(
+			'div:nth-child(2) > ._backgroundContainer_10bx1_12 > ._leftOverlay_10bx1_142 > ._button_10bx1_1 > ._spacer_10bx1_161',
+		)
+		.click()
+
+	await page.getByRole('button', {name: 'Join Game'}).click()
+	await page.getByPlaceholder('Enter code...').fill(gameCode)
+	await page.getByRole('button', {name: 'Confirm'}).click()
 
 	await page.getByText('Waiting').waitFor()
 
@@ -30,7 +39,8 @@ test('Private queue is exited when API game is cancelled (Opponent Code)', async
 		}),
 	})
 
-	await page.getByText('Public Game').waitFor()
+	// We should be kicked back to the "Join Private Game" screen
+	await page.getByText('Join Private Game').waitFor()
 })
 
 test('Private queue is exited when API game is cancelled (Spectator Code)', async ({
