@@ -7,10 +7,14 @@ const Untouchable: Achievement = {
 	...achievement,
 	numericId: 11,
 	id: 'untouchabble',
-	name: 'Untouchable',
+	levels: [
+		{
+			name: 'Untouchable',
+			description: 'Take 0 damage from 3 consecutive opponent attacks',
+			steps: 3,
+		},
+	],
 	icon: '',
-	description: 'Take 0 damage from 3 consecutive opponent attacks',
-	steps: 3,
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		if (!player) return

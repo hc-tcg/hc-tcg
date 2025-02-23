@@ -9,9 +9,13 @@ const HotTake: Achievement = {
 	...achievement,
 	numericId: 17,
 	id: 'hot_take',
-	name: 'Hot Take',
-	description: 'Have 3 opponent hermits be on fire simultaneously.',
-	steps: 3,
+	levels: [
+		{
+			name: 'Hot Take',
+			description: 'Have 3 opponent hermits be on fire simultaneously.',
+			steps: 3,
+		},
+	],
 	icon: '',
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)

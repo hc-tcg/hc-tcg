@@ -12,13 +12,13 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		id: 'evilx',
 		name: 'Evil X',
 		borderColor: '#666666',
-		requires: NoDerpcoins.id,
+		requires: {achievement: NoDerpcoins.id},
 	},
 	{
 		id: 'wolf',
 		name: 'Wolf',
 		borderColor: '#dddadb',
-		requires: PackOfWolves.id,
+		requires: {achievement: PackOfWolves.id},
 	},
 	{
 		id: 'pink-sheep',

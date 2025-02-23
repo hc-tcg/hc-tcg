@@ -7,11 +7,13 @@ import {GameOutcome} from '../types/game-state'
 export type Achievement = {
 	id: string
 	numericId: number
-	name: string
-	description: string
-
-	steps: number
 	getProgress: (goals: Record<number, number>) => number
+
+	levels: Array<{
+		name: string
+		description: string
+		steps: number
+	}>
 
 	icon: Cosmetic['id']
 	sidebarDescriptions?: Array<{type: string; name: string}>

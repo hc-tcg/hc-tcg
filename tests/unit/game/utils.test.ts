@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import {Win1} from 'common/achievements/wins'
+import Win from 'common/achievements/wins'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {
 	attack,
@@ -36,7 +36,7 @@ describe('Test Game Utils', () => {
 		let checkedAchievment = false
 		testAchivement(
 			{
-				achievement: Win1,
+				achievement: Win,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
