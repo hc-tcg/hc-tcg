@@ -177,10 +177,12 @@ export function* updateCosmeticSaga(
 	const cosmetic = COSMETICS[action.payload.cosmetic]
 	if (!player) return
 	let isUnlocked = true
-	if (cosmetic?.requires && ACHIEVEMENTS[cosmetic?.requires]) {
-		const achievement = ACHIEVEMENTS[cosmetic?.requires]
+	if (cosmetic?.requires && ACHIEVEMENTS[cosmetic?.requires.achievement]) {
+		const achievement = ACHIEVEMENTS[cosmetic?.requires.achievement]
 		isUnlocked =
-			!!player.achievementProgress[achievement?.numericId]?.completionTime
+			!!player.achievementProgress[achievement?.numericId].levels[
+				cosmetic.requires.level || 0
+			]?.completionTime
 	}
 	if (DEBUG_CONFIG.unlockAllCosmetics) isUnlocked = true
 	if (!cosmetic || !isUnlocked) {
