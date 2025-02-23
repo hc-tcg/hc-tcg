@@ -4,43 +4,6 @@
 	color: var(--text-light);
 }
 
-.playerInfo {
-	position: absolute;
-	top: 1vh;
-	right: 1vh;
-	display: grid;
-	grid-template-areas:
-		"name icon"
-		"deck icon";
-	font-size: 1.5vh;
-	background-color: hsla(0deg, 0%, 0%, 35%);
-	padding: 0.75vh 1vh 0.75vh 1.5vh;
-	border-radius: 0.5vh;
-	user-select: none;
-	font-weight: normal;
-	text-align: right;
-	animation: fadeIn 250ms ease-in-out forwards;
-
-	>img {
-		height: 4vh;
-	}
-
-	#infoName {
-		grid-area: name;
-		font-weight: bold;
-		font-size: 1.8vh;
-	}
-
-	#infoDeck {
-		grid-area: deck;
-	}
-
-	#infoIcon {
-		grid-area: icon;
-		margin-left: 1vh;
-	}
-}
-
 .mainMenuButton {
 	height: 5vh;
 	font-size: 1.8vh;

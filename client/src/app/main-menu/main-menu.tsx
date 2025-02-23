@@ -17,16 +17,6 @@ type Props = {
 }
 
 function MainMenu({setMenuSection}: Props) {
-	const {
-		playerName,
-		playerDeck: playerDeckCode,
-		newPlayer,
-	} = useSelector(getSession)
-	const databaseInfo = useSelector(getLocalDatabaseInfo)
-	const playerDeck = databaseInfo?.decks.find(
-		(deck) => deck.code === playerDeckCode,
-	)
-
 	const handleGame = () => {
 		setMenuSection('play-select')
 	}
@@ -55,19 +45,6 @@ function MainMenu({setMenuSection}: Props) {
 				<></>
 			)}
 			<div className={css.mainmenu}>
-				<div className={css.playerInfo}>
-					<p id={css.infoName}>
-						{welcomeMessage}, {playerName}
-					</p>
-					<p id={css.infoDeck}>
-						{'Active Deck - ' + `${playerDeck ? playerDeck.name : 'None'}`}
-					</p>
-					<img
-						id={css.infoIcon}
-						src={playerDeck ? getIconPath(playerDeck) : getCardTypeIcon('any')}
-						alt="deck-icon"
-					/>
-				</div>
 				<div className={css.content}>
 					<div className={css.logo}>
 						<TcgLogo />

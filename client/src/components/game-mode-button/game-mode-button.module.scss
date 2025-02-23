@@ -1,6 +1,6 @@
-$width: 26vh;
-$expandedWidth: 70vh;
-$height: 40vh;
+$width: 28vh;
+$expandedWidth: 75vh;
+$height: 42vh;
 $time: 0.25s;
 
 .buttonContainer {
@@ -110,11 +110,11 @@ $time: 0.25s;
 	flex-direction: row;
 	top: 1vh;
 	left: 1vh;
-	font-size: 1.2rem;
+	font-size: 1vh;
 	align-items: center;
 	background-color: rgba(0, 0, 0, 0.637);
-	border-radius: 4px;
-	padding: 5px;
+	border-radius: 0.5vh;
+	padding: 0.5vh;
 	border: 1px rgba(0, 0, 0, 0) solid;
 	color: white;
 	transition: opacity $time linear;
@@ -124,7 +124,6 @@ $time: 0.25s;
 	>img {
 		padding-top: 0.85vh;
 		padding-bottom: 0.85vh;
-		font-size: 1.75rem;
 		height: 3.2vh;
 		width: 3.2vh;
 		filter: invert(1);
@@ -180,33 +179,6 @@ $time: 0.25s;
 	opacity: 0%;
 	height: 100%;
 	width: calc(100% - $width);
-}
-
-.viewDeckButton {
-	position: absolute;
-	bottom: 1rem;
-	left: 18vw;
-	opacity: 0%;
-	place-content: center;
-	display: flex;
-	align-items: center;
-	justify-items: center;
-	background-color: var(--gray-700);
-	border-radius: 6px;
-	width: 2.5rem;
-	height: 2.5rem;
-	flex-shrink: 0;
-	cursor: pointer;
-
-	>img {
-		height: 1.5rem;
-		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
-	}
-
-	&:hover {
-		background: var(--gray-600);
-		filter: brightness(1.1);
-	}
 }
 
 .spacer {
@@ -325,7 +297,7 @@ $time: 0.25s;
 	}
 
 	>* {
-		width: calc(70vh - 26vh);
+		width: calc($expandedWidth - $width);
 		height: 100%;
 		animation: timedShow 0.25s forwards;
 	}
@@ -349,16 +321,17 @@ $time: 0.25s;
 				display: flex;
 				flex-direction: row;
 				align-items: center;
-				gap: 0.2rem;
-				margin-right: 0.5rem;
-				padding: 0.3rem;
+				gap: 0.5vh;
+				margin-right: 0.5vh;
+				padding: 0.5vh;
 				user-select: none;
 				cursor: pointer;
-				height: 2.5rem;
+				height: 4vh;
 				white-space: nowrap;
 				text-overflow: ellipsis;
 				overflow: hidden;
 				width: 100%;
+				font-size: 1.5vh;
 
 				&:not(.selectedDeck):hover {
 					filter: brightness(1.2);
@@ -366,9 +339,8 @@ $time: 0.25s;
 				}
 
 				&.selectedDeck {
-					font-size: 1rem;
 					color: gold;
-					text-indent: 3px;
+					text-indent: 0.2vh;
 					transition: all 0.25s ease-in-out;
 					background-color: var(--gray-700);
 				}
@@ -378,6 +350,7 @@ $time: 0.25s;
 					overflow: hidden;
 				}
 
+				// @TODO needs changing to vh, can't do bc no db
 				.multiColoredCircle {
 					width: 0.5rem;
 					height: 2rem;
@@ -394,13 +367,13 @@ $time: 0.25s;
 				.deckImage {
 					display: grid;
 					place-content: center;
-					border-radius: 6px;
-					width: 2rem;
-					height: 2rem;
+					border-radius: 0.5vh;
+					width: 2.75vh;
+					height: 2.75vh;
 					flex-shrink: 0;
 
 					>img {
-						height: 1.5rem;
+						height: 2vh;
 						filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
 					}
 				}
@@ -409,11 +382,11 @@ $time: 0.25s;
 
 		input {
 			box-shadow: inset 0 -4px 1px, inset 1px 1px 0 1px;
-			font-size: 1.2rem;
+			font-size: 1.8vh;
 
 			&::placeholder {
-				font-size: 1rem;
-				padding-left: 0.2rem;
+				font-size: 1.5vh;
+				padding-left: 0.3vh;
 			}
 		}
 
@@ -435,11 +408,11 @@ $time: 0.25s;
 
 		input {
 			box-shadow: inset 0 -1px 1px, inset 1px 1px 0 1px;
-			font-size: 1.2rem;
+			font-size: 1.8vh;
 			text-align: center;
 
 			&::placeholder {
-				font-size: 1rem;
+				font-size: 1.5vh;
 				line-height: 100%;
 			}
 		}
@@ -468,10 +441,10 @@ $time: 0.25s;
 		}
 
 		.deck {
-			gap: 0.5rem;
-			padding: 0.5rem 1rem;
+			gap: 0.5vh;
+			padding: 0.75vh 1.5vh;
 			background-color: var(--gray-600);
-			border-radius: 6px;
+			border-radius: 0.5vh;
 
 			.deckName {
 				text-overflow: ellipsis;
@@ -481,15 +454,15 @@ $time: 0.25s;
 			.deckImage {
 				display: grid;
 				place-content: center;
-				padding: 0.5rem;
-				gap: 0.5rem;
-				height: 2rem;
-				width: 2rem;
+				padding: 0.5vh;
+				gap: 0.5vh;
+				height: 2.75vh;
+				width: 2.75vh;
 				flex-shrink: 0;
-				border-radius: 6px;
+				border-radius: 0.5vh;
 
 				>img {
-					height: 1.5rem;
+					height: 2vh;
 					filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
 				}
 			}
@@ -502,19 +475,19 @@ $time: 0.25s;
 				display: flex;
 				flex-direction: column;
 				align-items: center;
-				gap: 0.5rem;
-				padding: 0.5rem 1rem;
+				gap: 0.5vh;
+				padding: 0.75vh 1.5vh;
 				background-color: var(--gray-600);
-				border-radius: 6px;
+				border-radius: 0.5vh;
 
 				.copy {
 					display: flex;
 					align-items: center;
 					justify-content: center;
 					background-color: var(--gray-700);
-					border-radius: 6px;
-					padding: 0.5rem;
-					gap: 0.5rem;
+					border-radius: 0.5vh;
+					padding: 0.75vh;
+					gap: 0.5vh;
 
 					&:hover {
 						cursor: pointer;

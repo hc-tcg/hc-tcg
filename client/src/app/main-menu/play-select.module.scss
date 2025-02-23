@@ -5,17 +5,21 @@
 	justify-content: center;
 	color: var(--text-light);
 
+	p {
+		font-size: 1.5vh;
+	}
+
 	h2,
 	h3 {
 		filter: drop-shadow(2px 2px 0 var(--text-dark));
 	}
 
 	h2 {
-		font-size: 2rem;
+		font-size: 3vh;
 	}
 
 	h3 {
-		font-size: 1.5rem;
+		font-size: 2.25vh;
 	}
 }
 
@@ -34,14 +38,13 @@
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	gap: 6rem;
 }
 
 .gameTypesButtons {
 	display: grid;
 	grid-auto-flow: column;
 	justify-content: center;
-	grid-gap: 2rem;
+	grid-gap: 3vh;
 }
 
 .top {
@@ -50,30 +53,21 @@
 }
 
 .bossRules {
-	gap: 1vh;
-
-	color: var(--text-light);
-	max-height: 80vh;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 1.5vh;
+	padding: 2vh;
+	animation: timedShow 0.25s forwards;
+	overflow-y: auto;
 
 	ol li {
 		list-style-type: decimal;
 		list-style-position: inside;
 	}
-}
 
-.code {
-	font-size: 2vh;
-	cursor: pointer;
-}
-
-.privateGameCodeArea {
-	display: flex;
-	flex-direction: row;
-	width: 100%;
-
-	>input {
-		flex-grow: 1;
-		height: 2.7rem;
+	.rulesBack {
+		height: 5vh;
 	}
 }
 
@@ -86,7 +80,6 @@
 .clickToChange {
 	margin-top: 0.5vh;
 	margin-bottom: 1.5vh;
-	font-size: 1rem;
 	filter: drop-shadow(2px 2px 0 var(--text-dark));
 	transition: opacity linear 250ms;
 
@@ -100,5 +93,15 @@
 
 	&:hover {
 		scale: 1.05;
+	}
+}
+
+@keyframes timedShow {
+	from {
+		opacity: 0%;
+	}
+
+	to {
+		opacity: 100%;
 	}
 }

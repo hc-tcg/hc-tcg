@@ -1,5 +1,12 @@
 import classNames from 'classnames'
-import {ReactElement, useEffect, useReducer, useRef, useState} from 'react'
+import {
+	ReactElement,
+	ReactNode,
+	useEffect,
+	useReducer,
+	useRef,
+	useState,
+} from 'react'
 import css from './game-mode-button.module.scss'
 import Button from 'components/button'
 import {Deck, Tag} from 'common/types/deck'
@@ -61,7 +68,7 @@ function GameModeButton({
 			setButtonPosition({x: pos.x, y: pos.y, h: pos.height, w: pos.width})
 
 			if (activeMode === mode) {
-				backgroundRef.current.style.translate = 'calc((100vw - 70vh) / 2) 0'
+				backgroundRef.current.style.translate = 'calc((100vw - 75vh) / 2) 0'
 			} else {
 				backgroundRef.current.style.translate = `${pos.x}px 0`
 			}
@@ -90,7 +97,7 @@ function GameModeButton({
 		background.classList.remove(css.shrink, css.show, css.hide)
 		background.classList.add(css.grow)
 
-		background.style.translate = 'calc((100vw - 70vh) / 2) 0'
+		background.style.translate = 'calc((100vw - 75vh) / 2) 0'
 	}
 
 	const shrink = () => {
@@ -160,8 +167,10 @@ function GameModeButton({
 			className={classNames(css.buttonContainer, css.enablePointer)}
 			onMouseDown={(ev) => {
 				if (ev.button !== 0) return
-				setActiveMode(mode)
-				if (mode !== activeMode && onSelect) onSelect()
+				if (mode !== activeMode) {
+					setActiveMode(mode)
+					if (onSelect) onSelect()
+				}
 			}}
 			ref={buttonRef}
 		>
@@ -518,6 +527,20 @@ GameModeButton.OptionsSelect = ({
 			</div>
 		</div>
 	)
+}
+
+interface CustomMenuProps extends ButtonMenuProps {
+	children: ReactNode | ReactNode[]
+}
+
+GameModeButton.CustomMenu = ({
+	activeButtonMenu,
+	id,
+	children,
+}: CustomMenuProps) => {
+	if (activeButtonMenu !== id) return <></>
+
+	return <div className={css.buttonMenu}>{children}</div>
 }
 
 /*
