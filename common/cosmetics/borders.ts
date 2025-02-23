@@ -1,5 +1,5 @@
 import HotTake from '../achievements/hot-take'
-import Innefective from '../achievements/innefective'
+import Innefective from '../achievements/inneffective'
 import {Win10, Win500} from '../achievements/wins'
 import {Border} from './types'
 

@@ -42,6 +42,12 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		requires: SheepStarer.id,
 	},
 	{
+		id: 'slime',
+		name: 'Slime',
+		borderColor: '#497736',
+		requires: undefined,
+	},
+	{
 		id: 'wolf',
 		name: 'Wolf',
 		borderColor: '#dddadb',

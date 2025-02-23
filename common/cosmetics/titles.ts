@@ -2,6 +2,7 @@ import British from '../achievements/british'
 import CertifiedZombie from '../achievements/certified-zombie'
 import DefeatEvilX from '../achievements/defeat-evil-x'
 import Ethogirl from '../achievements/ethogirl'
+import NakedAndScared from '../achievements/naked-and-scared'
 import OreSnatcher from '../achievements/ore-snatcher'
 import PeskyBird from '../achievements/pesky_bird'
 import TeamStar from '../achievements/team-star'
@@ -42,6 +43,11 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		id: 'hermit_gang',
 		name: 'Hermit Gang',
 		requires: TeamStar.id,
+	},
+	{
+		id: 'naked_and_scared',
+		name: 'Naked and Scared',
+		requires: NakedAndScared.id,
 	},
 	{
 		id: 'ore_snatcher',

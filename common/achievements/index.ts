@@ -20,7 +20,7 @@ import {Achievement} from './types'
 import Untouchable from './untouchable'
 import {Win1, Win10, Win100, Win500, Win1000} from './wins'
 import Wipeout from './wipeout'
-import Inneffective from './innefective'
+import Inneffective from './inneffective'
 
 export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	AllCards,
