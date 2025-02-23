@@ -1,4 +1,5 @@
 import British from './british'
+import CantTouchThis from './cant-touch-this'
 import CertifiedZombie from './certified-zombie'
 import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
@@ -30,12 +31,12 @@ import {
 	TerraformWins,
 } from './type-wins'
 import {Achievement} from './types'
-import Untouchable from './untouchable'
 import Win from './wins'
 import Wipeout from './wipeout'
 
 export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	AllCards,
+	CantTouchThis,
 	DeckedOut,
 	Ethogirl,
 	PackOfWolves,
@@ -46,7 +47,6 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	British,
 	ServerLag,
 	PeskyBird,
-	Untouchable,
 	TeamStar,
 	OreSnatcher,
 	SheepStarer,
