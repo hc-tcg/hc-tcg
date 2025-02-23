@@ -9,7 +9,6 @@ import {ACHIEVEMENTS} from 'common/achievements'
 import {CARDS} from 'common/cards'
 import {getStarterPack} from 'common/cards/starter-decks'
 import {defaultAppearance} from 'common/cosmetics/default'
-import {PlayerModel} from 'common/models/player-model'
 import {AchievementProgress} from 'common/types/achievements'
 import {TypeT} from 'common/types/cards'
 import {
@@ -1867,7 +1866,8 @@ export class Database {
 
 	/**Update player achievements with their progress */
 	public async updateAchievements(
-		player: PlayerModel,
+		uuid: string,
+		achievementProgress: AchievementProgress,
 	): Promise<DatabaseResult> {
 		try {
 			type GoalRow = {
@@ -1875,14 +1875,14 @@ export class Database {
 				goal: number
 				progress: number
 			}
-			const goals: GoalRow[] = Object.keys(player.achievementProgress).flatMap(
+			const goals: GoalRow[] = Object.keys(achievementProgress).flatMap(
 				(achievement_id) => {
 					const achievement = this.allAchievements.find(
 						(achievement) =>
 							achievement.numericId.toString() === achievement_id,
 					)
 					if (!achievement) return []
-					const progress = player.achievementProgress[achievement.numericId]
+					const progress = achievementProgress[achievement.numericId]
 					const achievementGoals: GoalRow[] = []
 					Object.keys(progress.goals).forEach((goal_id) => {
 						const goal_id_number = parseInt(goal_id)
@@ -1907,7 +1907,7 @@ export class Database {
 				SET progress = EXCLUDED.progress;
 				`,
 				[
-					goals.map(() => player.uuid),
+					goals.map(() => uuid),
 					goals.map((row) => row.achievment),
 					goals.map((row) => row.goal),
 					goals.map((row) => row.progress),
@@ -1921,13 +1921,13 @@ export class Database {
 			}
 
 			const completion: CompletionTimeRow[] = Object.keys(
-				player.achievementProgress,
+				achievementProgress,
 			).flatMap((achievement_id) => {
 				const achievement = this.allAchievements.find(
 					(achievement) => achievement.numericId.toString() === achievement_id,
 				)
 				if (!achievement) return []
-				const progress = player.achievementProgress[achievement.numericId]
+				const progress = achievementProgress[achievement.numericId]
 				const completionTime: CompletionTimeRow[] = []
 				for (const [i, level] of progress.levels.entries()) {
 					if (!level.completionTime) continue
@@ -1948,7 +1948,7 @@ export class Database {
 				SET completion_time = EXCLUDED.completion_time;
 			     `,
 				[
-					completion.map(() => player.uuid),
+					completion.map(() => uuid),
 					completion.map((row) => row.achievement),
 					completion.map((row) => row.level),
 					completion.map((row) => row.completion_time),

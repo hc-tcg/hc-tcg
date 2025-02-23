@@ -665,4 +665,27 @@ describe('Test Database', () => {
 		expect(returnedDeck2.type).toBe('success')
 		expect(returnedDeck3.type).toBe('success')
 	})
+
+	test('Test achievement progress is saved', async () => {
+		const user = await database.insertUser('Test User')
+		assert(user.type === 'success', 'The user should be created successfully')
+		let player = user.body
+		let completionTime = new Date(Date.now())
+
+		await database.updateAchievements(player.uuid, {
+			1: {goals: {0: 1}, levels: [{completionTime: completionTime}]},
+		})
+
+		let results = await database.getAchievements(player.uuid)
+		assert(
+			results.type === 'success',
+			'The achievements should be retrieved successfully',
+		)
+		let achievements = results.body.achievementData
+
+		expect(achievements[0].goals).toStrictEqual({0: 1})
+		expect(achievements[0].levels).toStrictEqual([
+			{completionTime: completionTime},
+		])
+	})
 })
