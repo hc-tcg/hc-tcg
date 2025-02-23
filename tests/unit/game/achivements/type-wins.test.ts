@@ -1,14 +1,23 @@
 import {describe, expect, test} from '@jest/globals'
-import Win from 'common/achievements/wins'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
+import {BalancedWins} from 'common/achievements/type-wins'
 
-describe('Test win achivement', () => {
-	test('Test win achivement', () => {
+describe('Test type win achivements', () => {
+	test('Test win counts when you 7 hermits of type', () => {
 		testAchivement(
 			{
-				achievement: Win,
-				playerOneDeck: [EthosLabCommon],
+				achievement: BalancedWins,
+				playerOneDeck: [
+					EthosLabCommon,
+					EthosLabCommon,
+					EthosLabCommon,
+					EthosLabCommon,
+					EthosLabCommon,
+					EthosLabCommon,
+					EthosLabCommon,
+				],
+
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
@@ -18,18 +27,18 @@ describe('Test win achivement', () => {
 					yield* attack(game, 'secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
-					expect(Win.getProgress(achievement.goals)).toBeGreaterThanOrEqual(
-						Win.levels[0].steps,
-					)
+					expect(
+						BalancedWins.getProgress(achievement.goals),
+					).toBeGreaterThanOrEqual(1)
 				},
 			},
 			{oneShotMode: true, noItemRequirements: true},
 		)
 	})
-	test('Test win achivement does not count wrong player wins', () => {
+	test('Test win does not count when you have less than 7 hermits', () => {
 		testAchivement(
 			{
-				achievement: Win,
+				achievement: BalancedWins,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
@@ -39,7 +48,7 @@ describe('Test win achivement', () => {
 					yield* attack(game, 'secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
-					expect(Win.getProgress(achievement.goals)).toBeFalsy()
+					expect(BalancedWins.getProgress(achievement.goals)).toBeFalsy()
 				},
 			},
 			{oneShotMode: true, noItemRequirements: true},
