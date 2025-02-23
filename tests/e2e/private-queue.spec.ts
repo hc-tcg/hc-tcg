@@ -2,6 +2,9 @@ import {expect, test} from '@playwright/test'
 
 test.setTimeout(30000)
 
+const privateGameQuery =
+	'div:nth-child(2) > ._backgroundContainer_10bx1_12 > ._leftOverlay_10bx1_142 > ._button_10bx1_1 > ._spacer_10bx1_161'
+
 test('Private queue is exited when API game is cancelled (Opponent Code)', async ({
 	page,
 }) => {
@@ -16,14 +19,9 @@ test('Private queue is exited when API game is cancelled (Opponent Code)', async
 
 	await page.getByPlaceholder(' ').fill('Test Player')
 	await page.getByPlaceholder(' ').press('Enter')
-
 	await page.getByRole('button', {name: 'Play'}).click()
 
-	await page
-		.locator(
-			'div:nth-child(2) > ._backgroundContainer_10bx1_12 > ._leftOverlay_10bx1_142 > ._button_10bx1_1 > ._spacer_10bx1_161',
-		)
-		.click()
+	await page.locator(privateGameQuery).click()
 
 	await page.getByRole('button', {name: 'Join Game'}).click()
 	await page.getByPlaceholder('Enter code...').fill(gameCode)
@@ -57,9 +55,13 @@ test('Private queue is exited when API game is cancelled (Spectator Code)', asyn
 
 	await page.getByPlaceholder(' ').fill('Test Player')
 	await page.getByPlaceholder(' ').press('Enter')
-	await page.getByText(' Private Game').click()
-	await page.getByLabel('Enter code:').fill(spectatorCode)
-	await page.getByLabel('Enter code:').press('Enter')
+
+	await page.getByRole('button', {name: 'Play'}).click()
+	await page.locator(privateGameQuery).click()
+
+	await page.getByRole('button', {name: 'Spectate Game'}).click()
+	await page.getByPlaceholder('Enter spectator code...').fill(spectatorCode)
+	await page.getByRole('button', {name: 'Confirm'}).click()
 
 	await page.getByText('Waiting').waitFor()
 
@@ -71,7 +73,8 @@ test('Private queue is exited when API game is cancelled (Spectator Code)', asyn
 		}),
 	})
 
-	await page.getByText('Public Game').waitFor()
+	// We should be kicked back to the "Spectate Private Game" screen
+	await page.getByText('Spectate Private Game').waitFor()
 })
 
 test('Player is removed from private queue when they press "Cancel" (Opponent Code)', async ({
@@ -88,9 +91,14 @@ test('Player is removed from private queue when they press "Cancel" (Opponent Co
 
 	await page.getByPlaceholder(' ').fill('Test Player')
 	await page.getByPlaceholder(' ').press('Enter')
-	await page.getByText('Private Game').click()
-	await page.getByLabel('Enter code:').fill(gameCode)
-	await page.getByLabel('Enter code:').press('Enter')
+
+	await page.getByRole('button', {name: 'Play'}).click()
+
+	await page.locator(privateGameQuery).click()
+
+	await page.getByRole('button', {name: 'Join Game'}).click()
+	await page.getByPlaceholder('Enter code...').fill(gameCode)
+	await page.getByRole('button', {name: 'Confirm'}).click()
 
 	await page.getByText('Cancel').waitFor()
 
@@ -131,9 +139,12 @@ test('Player is removed from private queue when they press "Cancel" (Spectator C
 
 	await page.getByPlaceholder(' ').fill('Test Player')
 	await page.getByPlaceholder(' ').press('Enter')
-	await page.getByText('Private Game').click()
-	await page.getByLabel('Enter code:').fill(spectatorCode)
-	await page.getByLabel('Enter code:').press('Enter')
+
+	await page.getByRole('button', {name: 'Play'}).click()
+	await page.locator(privateGameQuery).click()
+	await page.getByRole('button', {name: 'Spectate Game'}).click()
+	await page.getByPlaceholder('Enter spectator code...').fill(spectatorCode)
+	await page.getByRole('button', {name: 'Confirm'}).click()
 
 	await page.getByText('Cancel').waitFor()
 
@@ -180,18 +191,24 @@ test('Game starts for players and spectators and places players back on title sc
 	let gameCode = privateGame.gameCode
 	let spectatorCode = privateGame.spectatorCode
 
-	await spectator.getByPlaceholder(' ').fill('Spectator')
+	await spectator.getByPlaceholder(' ').fill('Test Player')
 	await spectator.getByPlaceholder(' ').press('Enter')
-	await spectator.getByText(' Private Game').click()
-	await spectator.getByLabel('Enter code:').fill(spectatorCode)
-	await spectator.getByLabel('Enter code:').press('Enter')
+	await spectator.getByRole('button', {name: 'Play'}).click()
+	await spectator.locator(privateGameQuery).click()
+	await spectator.getByRole('button', {name: 'Spectate Game'}).click()
+	await spectator
+		.getByPlaceholder('Enter spectator code...')
+		.fill(spectatorCode)
+	await spectator.getByRole('button', {name: 'Confirm'}).click()
 
 	for (const player of [playerOne, playerTwo]) {
 		await player.getByPlaceholder(' ').fill('Test Player')
 		await player.getByPlaceholder(' ').press('Enter')
-		await player.getByText(' Private Game').click()
-		await player.getByLabel('Enter code:').fill(gameCode)
-		await player.getByLabel('Enter code:').press('Enter')
+		await player.getByRole('button', {name: 'Play'}).click()
+		await player.locator(privateGameQuery).click()
+		await player.getByRole('button', {name: 'Join Game'}).click()
+		await player.getByPlaceholder('Enter code...').fill(gameCode)
+		await player.getByRole('button', {name: 'Confirm'}).click()
 	}
 
 	// Give the server three seconds to start the game
@@ -212,7 +229,7 @@ test('Game starts for players and spectators and places players back on title sc
 	}
 
 	for (const player of [playerOne, playerTwo, spectator]) {
-		// Verify the player is on the main menu.
-		await player.getByText('Public Game').waitFor()
+		// Verify the player is on the game select menu.
+		await player.getByText('Select a game mode:').waitFor()
 	}
 })
