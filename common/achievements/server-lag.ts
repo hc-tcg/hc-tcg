@@ -9,7 +9,7 @@ const HotTake: Achievement = {
 	id: 'server_lag',
 	name: 'Server Lag',
 	description:
-		'Deal the final blow of the game using a Hermit you got as a prize card',
+		'Deal the final blow of the game using a Hermit you got as a prize card.',
 	steps: 1,
 	icon: '',
 	onGameStart(game, playerEntity, component, observer) {

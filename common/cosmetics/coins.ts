@@ -1,5 +1,6 @@
 import NoDerpcoins from '../achievements/no-derpcoins'
 import PackOfWolves from '../achievements/pack-of-wolves'
+import SheepStareEffect from '../status-effects/sheep-stare'
 import {Coin} from './types'
 
 const CoinDefinitions: Omit<Coin, 'type'>[] = [
@@ -24,7 +25,7 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		id: 'pink-sheep',
 		name: 'Pink Sheep',
 		borderColor: '#de7f9c',
-		requires: undefined,
+		requires: SheepStareEffect.id,
 	},
 	{
 		id: 'cod',

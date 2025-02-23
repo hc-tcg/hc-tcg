@@ -10,7 +10,7 @@ const Designer: Achievement = {
 	...achievement,
 	numericId: 24,
 	id: 'designer',
-	name: 'Designer',
+	name: 'Hermits and Crafting',
 	icon: '',
 	description: "Win a game using a deck that isn't a starter deck.",
 	steps: 1,

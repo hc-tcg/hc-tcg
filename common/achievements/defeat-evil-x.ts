@@ -5,9 +5,9 @@ const DefeatEvilX: Achievement = {
 	...achievement,
 	numericId: 6,
 	id: 'defeat_evil_x',
-	name: 'Evil X-terminated',
+	name: 'Evil X-Terminator',
 	icon: '',
-	description: 'Defeat Evil X',
+	description: 'Defeat Evil X.',
 	steps: 1,
 	onGameEnd(game, playerEntity, component, outcome) {
 		if (!game.state.isEvilXBossGame) return

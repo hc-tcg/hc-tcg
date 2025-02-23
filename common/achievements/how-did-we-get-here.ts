@@ -9,7 +9,7 @@ const HowDidWeGetHere: Achievement = {
 	numericId: 4,
 	id: 'how_did_we_get_here',
 	name: 'How Did We Get Here?',
-	description: 'Have 5 status effects applied to the same Hermit',
+	description: 'Have 5 status effects applied to the same Hermit.',
 	steps: 5,
 	icon: '',
 	onGameStart(game, playerEntity, component, observer) {

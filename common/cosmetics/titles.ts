@@ -32,8 +32,8 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		requires: DefeatEvilX.id,
 	},
 	{
-		id: 'victor',
-		name: 'Victor',
+		id: 'card_slinger',
+		name: 'Card Slinger',
 		requires: Win1.id,
 	},
 	{

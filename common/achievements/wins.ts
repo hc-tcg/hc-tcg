@@ -12,7 +12,7 @@ function winAchievement(
 		id: `wins_${winCount}`,
 		name: name,
 		icon: '',
-		description: `Win ${winCount} games.`,
+		description: `Win ${winCount} game${winCount !== 1 ? 's' : ''}.`,
 		steps: winCount,
 		onGameEnd(_game, playerEntity, component, outcome) {
 			if (outcome.type !== 'player-won' || outcome.winner !== playerEntity)
@@ -22,8 +22,8 @@ function winAchievement(
 	}
 }
 
-export const Win1 = winAchievement('Victor', 25, 1)
-export const Win10 = winAchievement('Victor II', 26, 10)
-export const Win100 = winAchievement('Card slinger', 27, 100)
-export const Win500 = winAchievement('TCG Legend', 28, 500)
-export const Win1000 = winAchievement('TCG Champion', 29, 1000)
+export const Win1 = winAchievement('Card Slinger', 25, 1)
+export const Win10 = winAchievement('TCG Novice', 26, 10)
+export const Win100 = winAchievement('TCG Apprentice', 27, 100)
+export const Win500 = winAchievement('TCG Champion', 28, 500)
+export const Win1000 = winAchievement('TCG Legend', 29, 1000)

@@ -6,9 +6,9 @@ const NoDerpcoins: Achievement = {
 	...achievement,
 	numericId: 7,
 	id: 'no_derpcoins',
-	name: 'No derpcoins required',
+	name: 'No Derpcoins Required',
 	icon: '',
-	description: 'Defeat Evil X using a 0 token deck',
+	description: 'Defeat Evil X using a 0 token deck.',
 	steps: 1,
 	onGameEnd(game, playerEntity, component, outcome) {
 		const player = game.components.get(playerEntity)

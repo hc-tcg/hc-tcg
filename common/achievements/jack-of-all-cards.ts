@@ -10,7 +10,7 @@ const AllCards: Achievement = {
 	...achievement,
 	id: 'all_cards',
 	numericId: 0,
-	name: 'Jack of all cards',
+	name: 'Jack of All Cards',
 	description: 'Win a game using every card from the base set',
 	steps: defaultCards.length,
 	getProgress(goals) {
