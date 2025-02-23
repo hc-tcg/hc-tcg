@@ -15,6 +15,12 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		id: 'server-lag',
 		name: 'Chicken',
 		borderColor: '#CD1414',
+		requires: undefined,
+	},
+	{
+		id: 'cod',
+		name: 'Cod',
+		borderColor: '#7D604D',
 		requires: {achievement: ServerLag.id},
 	},
 	{
