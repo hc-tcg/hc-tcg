@@ -10,7 +10,6 @@ import {TypeT} from 'common/types/cards'
 import {GameHistory} from 'common/types/database'
 import {WithoutFunctions} from 'common/types/server-requests'
 import {sortCards} from 'common/utils/cards'
-import {getIconPath} from 'common/utils/state-gen'
 import Button from 'components/button'
 import CardComponent from 'components/card'
 import Checkbox from 'components/checkbox'
@@ -376,7 +375,7 @@ function Statistics({setMenuSection}: Props) {
 											open: true,
 											title: 'Hash copied!',
 											description: `Copied ${deck.deck.code} to clipboard`,
-											image: getIconPath(deck.deck),
+											image: 'copy',
 										})
 									}}
 								>
