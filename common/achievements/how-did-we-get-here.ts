@@ -11,7 +11,7 @@ const HowDidWeGetHere: Achievement = {
 	levels: [
 		{
 			name: 'How Did We Get Here?',
-			description: 'Have 5 status effects applied to the same Hermit',
+			description: 'Have 5 status effects applied to the same Hermit.',
 			steps: 5,
 		},
 	],

@@ -36,7 +36,7 @@ const TeamStar: Achievement = {
 	icon: '',
 	levels: [
 		{
-			name: 'Team S.T.A.R',
+			name: 'Hermit Gang',
 			description:
 				'Win 5 games using a deck that includes at least 1 Docm77, Wels, False, Impulse, Xisuma and Rendog card.',
 			steps: 5,
