@@ -109,6 +109,7 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 
 	if (cosmetic.requires && achievement && !debugConfig.unlockAllCosmetics) {
 		isUnlocked =
+			achievementProgress[achievement.numericId] &&
 			!!achievementProgress[achievement.numericId].levels[
 				cosmetic.requires.level || 0
 			]?.completionTime

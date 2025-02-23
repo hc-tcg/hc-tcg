@@ -10,7 +10,7 @@ const Wipeout: Achievement = {
 	levels: [
 		{
 			name: 'Wipeout',
-			description: 'Knockout 5 Hermits in the same turn',
+			description: 'Knockout 5 Hermits in the same turn.',
 			steps: 5,
 		},
 	],
