@@ -61,7 +61,7 @@ function GameModeButton({
 			setButtonPosition({x: pos.x, y: pos.y, h: pos.height, w: pos.width})
 
 			if (activeMode === mode) {
-				backgroundRef.current.style.translate = 'calc((100vw - 70vh) / 2) 0'
+				backgroundRef.current.style.translate = 'calc((100vw - 75vh) / 2) 0'
 			} else {
 				backgroundRef.current.style.translate = `${pos.x}px 0`
 			}
@@ -90,7 +90,7 @@ function GameModeButton({
 		background.classList.remove(css.shrink, css.show, css.hide)
 		background.classList.add(css.grow)
 
-		background.style.translate = 'calc((100vw - 70vh) / 2) 0'
+		background.style.translate = 'calc((100vw - 75vh) / 2) 0'
 	}
 
 	const shrink = () => {
