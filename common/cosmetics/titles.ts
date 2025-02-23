@@ -4,6 +4,7 @@ import DefeatEvilX from '../achievements/defeat-evil-x'
 import Ethogirl from '../achievements/ethogirl'
 import OreSnatcher from '../achievements/ore-snatcher'
 import PeskyBird from '../achievements/pesky_bird'
+import TeamStar from '../achievements/team-star'
 import {Win1} from '../achievements/wins'
 import {Title} from './types'
 
@@ -16,6 +17,11 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		id: 'british',
 		name: "Bri'ish",
 		requires: British.id,
+	},
+	{
+		id: 'card_slinger',
+		name: 'Card Slinger',
+		requires: Win1.id,
 	},
 	{
 		id: 'certified-zombie',
@@ -33,9 +39,9 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		requires: DefeatEvilX.id,
 	},
 	{
-		id: 'card_slinger',
-		name: 'Card Slinger',
-		requires: Win1.id,
+		id: 'hermit_gang',
+		name: 'Hermit Gang',
+		requires: TeamStar.id,
 	},
 	{
 		id: 'ore_snatcher',
@@ -43,7 +49,7 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		requires: OreSnatcher.id,
 	},
 	{
-		id: 'ore_snatcher',
+		id: 'pesky_bird',
 		name: 'Pesky Bird',
 		requires: PeskyBird.id,
 	},

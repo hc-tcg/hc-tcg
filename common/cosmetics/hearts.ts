@@ -1,4 +1,7 @@
+import DeckedOut from '../achievements/decked-out'
 import SUStainable from '../achievements/sustainable'
+import Untouchable from '../achievements/untouchable'
+import {Win1000} from '../achievements/wins'
 import {Heart} from './types'
 
 const HeartDefinitions: Omit<Heart, 'type'>[] = [
@@ -7,12 +10,9 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		name: 'Default',
 	},
 	{
-		id: 'soulflame',
-		name: 'Soulflame',
-	},
-	{
-		id: 'silver_heart',
-		name: 'Silver',
+		id: 'gold',
+		name: 'Gold',
+		requires: Win1000.id,
 	},
 	{
 		id: 'emerald',
@@ -20,8 +20,14 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		requires: SUStainable.id,
 	},
 	{
-		id: 'gold',
-		name: 'Gold',
+		id: 'silver_heart',
+		name: 'Silver',
+		requires: Untouchable.id,
+	},
+	{
+		id: 'soulflame',
+		name: 'Soulflame',
+		requires: DeckedOut.id,
 	},
 ]
 

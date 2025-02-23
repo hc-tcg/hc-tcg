@@ -13,12 +13,25 @@ const BackgroundDefinitions: Omit<Background, 'type'>[] = [
 		requires: AllCards.id,
 	},
 	{
-		id: 'balanced',
-		name: 'Flowers',
+		id: 'how_did_we_get_here',
+		name: 'The Nether',
+		requires: HowDidWeGetHere.id,
 	},
 	{
-		id: 'builder',
-		name: 'Plains',
+		id: 'terraform',
+		name: 'Azalea',
+	},
+	{
+		id: 'prankster',
+		name: 'Deep Dark',
+	},
+	{
+		id: 'redstone',
+		name: 'Desert',
+	},
+	{
+		id: 'miner',
+		name: 'Dripstone',
 	},
 	{
 		id: 'explorer',
@@ -29,33 +42,20 @@ const BackgroundDefinitions: Omit<Background, 'type'>[] = [
 		name: 'Farm',
 	},
 	{
-		id: 'terraform',
-		name: 'Azalea',
+		id: 'balanced',
+		name: 'Flowers',
 	},
 	{
-		id: 'pvp',
-		name: 'Taiga',
+		id: 'builder',
+		name: 'Plains',
 	},
 	{
 		id: 'speedrunner',
 		name: 'Stronghold',
 	},
 	{
-		id: 'miner',
-		name: 'Dripstone',
-	},
-	{
-		id: 'redstone',
-		name: 'Desert',
-	},
-	{
-		id: 'prankster',
-		name: 'Deep Dark',
-	},
-	{
-		id: 'how_did_we_get_here',
-		name: 'The Nether',
-		requires: HowDidWeGetHere.id,
+		id: 'pvp',
+		name: 'Taiga',
 	},
 ]
 

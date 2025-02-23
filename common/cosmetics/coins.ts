@@ -1,6 +1,8 @@
 import NoDerpcoins from '../achievements/no-derpcoins'
 import PackOfWolves from '../achievements/pack-of-wolves'
-import SheepStareEffect from '../status-effects/sheep-stare'
+import ServerLag from '../achievements/server-lag'
+import SheepStarer from '../achievements/sheep-starer'
+import {Win100} from '../achievements/wins'
 import {Coin} from './types'
 
 const CoinDefinitions: Omit<Coin, 'type'>[] = [
@@ -10,28 +12,40 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		borderColor: '#e1b530',
 	},
 	{
-		id: 'evilx',
-		name: 'Evil X',
-		borderColor: '#666666',
-		requires: NoDerpcoins.id,
-	},
-	{
-		id: 'wolf',
-		name: 'Wolf',
-		borderColor: '#dddadb',
-		requires: PackOfWolves.id,
-	},
-	{
-		id: 'pink-sheep',
-		name: 'Pink Sheep',
-		borderColor: '#de7f9c',
-		requires: SheepStareEffect.id,
+		id: 'server-lag',
+		name: 'Chicken',
+		borderColor: '#CD1414',
+		requires: ServerLag.id,
 	},
 	{
 		id: 'cod',
 		name: 'Cod',
 		borderColor: '#221F26',
 		requires: undefined,
+	},
+	{
+		id: 'dinnerbone',
+		name: 'Dinnerbone',
+		borderColor: '#e1b530',
+		requires: Win100.id,
+	},
+	{
+		id: 'evilx',
+		name: 'Evil X',
+		borderColor: '#666666',
+		requires: NoDerpcoins.id,
+	},
+	{
+		id: 'pink-sheep',
+		name: 'Pink Sheep',
+		borderColor: '#de7f9c',
+		requires: SheepStarer.id,
+	},
+	{
+		id: 'wolf',
+		name: 'Wolf',
+		borderColor: '#dddadb',
+		requires: PackOfWolves.id,
 	},
 ]
 

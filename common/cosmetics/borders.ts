@@ -1,3 +1,6 @@
+import HotTake from '../achievements/hot-take'
+import Innefective from '../achievements/innefective'
+import {Win10, Win500} from '../achievements/wins'
 import {Border} from './types'
 
 const BorderDefinitions: Omit<Border, 'type'>[] = [
@@ -8,18 +11,22 @@ const BorderDefinitions: Omit<Border, 'type'>[] = [
 	{
 		id: 'green_border',
 		name: 'Emerald',
-	},
-	{
-		id: 'red_border',
-		name: 'Red',
-	},
-	{
-		id: 'silver_border',
-		name: 'Silver',
+		requires: Innefective.id,
 	},
 	{
 		id: 'gold_border',
 		name: 'Gold',
+		requires: Win500.id,
+	},
+	{
+		id: 'red_border',
+		name: 'Red',
+		requires: HotTake.id,
+	},
+	{
+		id: 'silver_border',
+		name: 'Silver',
+		requires: Win10.id,
 	},
 ]
 

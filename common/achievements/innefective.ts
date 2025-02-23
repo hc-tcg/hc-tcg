@@ -1,11 +1,11 @@
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
-const Innefective: Achievement = {
+const Inneffective: Achievement = {
 	...achievement,
 	numericId: 16,
-	id: 'innefective',
-	name: 'Innefective',
+	id: 'inneffective',
+	name: 'Inneffective',
 	icon: '',
 	description: 'Win 10 games using no effect cards.',
 	steps: 10,
@@ -27,4 +27,4 @@ const Innefective: Achievement = {
 	},
 }
 
-export default Innefective
+export default Inneffective
