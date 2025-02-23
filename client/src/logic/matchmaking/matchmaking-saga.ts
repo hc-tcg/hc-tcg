@@ -467,115 +467,94 @@ function* createPrivateGameSaga() {
 	}
 }
 
-// @TODO
 function* createBossGameSaga() {
-	function* matchmaking() {
-		const socket = yield* select(getSocket)
-		const activeDeckResult = yield* getActiveDeckSaga()
+	const socket = yield* select(getSocket)
+	const activeDeckResult = yield* getActiveDeckSaga()
 
-		try {
-			// Send message to server to create the game
-			yield* sendJoinQueueMessage(
-				clientMessages.CREATE_BOSS_GAME,
-				activeDeckResult,
-			)
-			const createBossResponse = yield* race({
-				success: call(
-					receiveMsg(socket, serverMessages.CREATE_BOSS_GAME_SUCCESS),
-				),
-				failure: call(
-					receiveMsg(socket, serverMessages.CREATE_BOSS_GAME_FAILURE),
-				),
-			})
+	try {
+		// Send message to server to create the game
+		yield* sendJoinQueueMessage(
+			clientMessages.CREATE_BOSS_GAME,
+			activeDeckResult,
+		)
+		const createBossResponse = yield* race({
+			success: call(
+				receiveMsg(socket, serverMessages.CREATE_BOSS_GAME_SUCCESS),
+			),
+			failure: call(
+				receiveMsg(socket, serverMessages.CREATE_BOSS_GAME_FAILURE),
+			),
+		})
 
-			if (createBossResponse.failure) {
-				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
-				return
-			}
-
-			yield* call(receiveMsg, socket, localMessages.GAME_START)
+		if (createBossResponse.failure) {
+			// Something went wrong, notify and cancel
 			yield* put<LocalMessage>({
-				type: localMessages.QUEUE_VOICE,
-				lines: ['/voice/EXSTART.ogg'],
+				type: localMessages.TOAST_OPEN,
+				open: true,
+				title: 'Failed to start game!',
+				description: 'Something went wrong. Maybe try reloading the page?',
 			})
-			yield* call(gameSaga)
-		} catch (err) {
-			console.error('Game crashed: ', err)
-		} finally {
-			if (yield* cancelled()) {
-				// Clear state and back to menu
-				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
-				yield* put<LocalMessage>({type: localMessages.GAME_END})
-			}
+			yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
+			return
 		}
-	}
 
-	const result = yield* race({
-		cancel: take('LEAVE_MATCHMAKING'),
-		matchmaking: call(matchmaking),
-	})
-
-	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
-
-	if (result.cancel) {
-		yield* sendMsg({type: clientMessages.CANCEL_BOSS_GAME})
+		yield* call(receiveMsg, socket, localMessages.GAME_START)
+		yield* put<LocalMessage>({
+			type: localMessages.QUEUE_VOICE,
+			lines: ['/voice/EXSTART.ogg'],
+		})
+		yield* call(gameSaga)
+	} catch (err) {
+		console.error('Game crashed: ', err)
+	} finally {
+		if (yield* cancelled()) {
+			// Clear state and back to menu
+			yield* put<LocalMessage>({type: localMessages.GAME_END})
+		}
 	}
 }
 
+// @TODO
 function* createReplayGameSaga(
 	action: LocalMessageTable[typeof localMessages.MATCHMAKING_REPLAY_GAME],
 ) {
-	function* matchmaking() {
-		const socket = yield* select(getSocket)
-		const databaseInfo = yield* select(getLocalDatabaseInfo)
-		const uuid = databaseInfo.userId as string
+	const socket = yield* select(getSocket)
+	const databaseInfo = yield* select(getLocalDatabaseInfo)
+	const uuid = databaseInfo.userId as string
 
-		try {
-			// Send message to server to create the game
-			yield* sendMsg({
-				type: clientMessages.CREATE_REPLAY_GAME,
-				id: action.id,
-				uuid: uuid,
+	try {
+		// Send message to server to create the game
+		yield* sendMsg({
+			type: clientMessages.CREATE_REPLAY_GAME,
+			id: action.id,
+			uuid: uuid,
+		})
+		const result = yield* race({
+			success: call(
+				receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
+			),
+			failure: call(
+				receiveMsg(socket, serverMessages.JOIN_PUBLIC_QUEUE_FAILURE),
+			),
+		})
+
+		if (result.failure) {
+			// Something went wrong, go back
+			yield* put<LocalMessage>({
+				type: localMessages.MATCHMAKING_LEAVE,
 			})
-			const result = yield* race({
-				success: call(
-					receiveMsg(socket, serverMessages.SPECTATE_PRIVATE_GAME_START),
-				),
-				failure: call(
-					receiveMsg(socket, serverMessages.JOIN_PUBLIC_QUEUE_FAILURE),
-				),
-			})
-
-			if (result.failure || !result.success) {
-				// Something went wrong, go back to menu
-				yield* put<LocalMessage>({
-					type: localMessages.MATCHMAKING_LEAVE,
-				})
-				return
-			}
-
-			// We have joined the queue, wait for game start
+			return
+		} else if (result.success) {
+			// Start replay game
 			yield* call(gameSaga, result.success.localGameState)
-		} catch (err) {
-			console.error('Game crashed: ', err)
-		} finally {
-			if (yield* cancelled()) {
-				// Clear state and back to menu
-				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
-				yield* put<LocalMessage>({type: localMessages.GAME_END})
-			}
 		}
-	}
-
-	const result = yield* race({
-		cancel: take('LEAVE_MATCHMAKING'),
-		matchmaking: call(matchmaking),
-	})
-
-	yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
-
-	if (result.cancel) {
-		yield* sendMsg({type: clientMessages.CANCEL_BOSS_GAME})
+	} catch (err) {
+		console.error('Game crashed: ', err)
+	} finally {
+		if (yield* cancelled()) {
+			// Clear state and back to menu
+			yield* put<LocalMessage>({type: localMessages.GAME_END})
+		}
 	}
 }
 
@@ -597,16 +576,17 @@ function* matchmakingSaga() {
 	>(localMessages.MATCHMAKING_SPECTATE_PRIVATE_GAME, function* (action) {
 		yield* spectatePrivateGameSaga(action)
 	})
+	// Create Private Game
 	yield* takeEvery(
 		localMessages.MATCHMAKING_CREATE_PRIVATE_GAME,
 		createPrivateGameSaga,
 	)
-
-	// @TODO
+	// Boss Battle
 	yield* takeEvery(
 		localMessages.MATCHMAKING_CREATE_BOSS_GAME,
 		createBossGameSaga,
 	)
+	// Replay Game
 	yield* takeEvery<
 		LocalMessageTable[typeof localMessages.MATCHMAKING_REPLAY_GAME]
 	>(localMessages.MATCHMAKING_REPLAY_GAME, function* (action) {

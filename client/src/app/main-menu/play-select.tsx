@@ -155,8 +155,6 @@ function PlaySelect({setMenuSection}: Props) {
 	}
 
 	/* Boss game stuff */
-	const [evilXOpen, setEvilXOpen] = useState<boolean>(false)
-
 	function createUICardInstance(card: Card): LocalCardInstance {
 		return {
 			props: WithoutFunctions(card),
@@ -170,13 +168,6 @@ function PlaySelect({setMenuSection}: Props) {
 
 	function removeDisabledExpansions(card: Card) {
 		return !EXPANSIONS[card.expansion].disabled
-	}
-
-	const handleCreateBossGame = () => {
-		const valid = checkForValidation()
-		if (!valid) return
-		setMenuSection('game-landing')
-		dispatch({type: localMessages.MATCHMAKING_CREATE_BOSS_GAME})
 	}
 
 	const nonFunctionalCards = [
@@ -217,6 +208,8 @@ function PlaySelect({setMenuSection}: Props) {
 				goBack()
 			} else if (activeMode) {
 				setActiveMode(null)
+				setActiveButtonMenu(null)
+				setBackStack([])
 			}
 		}
 	}
@@ -241,87 +234,6 @@ function PlaySelect({setMenuSection}: Props) {
 
 	return (
 		<>
-			<Modal
-				setOpen={evilXOpen}
-				title="Rules"
-				onClose={() => setEvilXOpen(!evilXOpen)}
-			>
-				<Modal.Description className={css.bossRules}>
-					<p>
-						That's right, the Hermitcraft TCG has its first boss fight! This is
-						no challenge deck, Evil X cares not for the cards. He brings his own
-						moves, and they are vicious! If you think you can defeat him, you'll
-						need to bring your best game. Be sure to check your audio settings
-						to hear the voice commands during the battle.
-					</p>
-					<h1>Rules</h1>
-					<p>
-						You will always go first but can only have three rows to play on.
-					</p>
-					<p>
-						EX has only one row to play on and has no item slots to attach to
-						his boss card. However, his card has 300hp, comes back again at full
-						health when knocked out, and will perform harder attacks with every
-						life lost.
-					</p>
-					{directlyOppositeCards.length
-						? [
-								<p>
-									EX is always directly opposite your active Hermit for the
-									purposes of:
-								</p>,
-								<div>
-									<CardList
-										tooltipAboveModal={true}
-										cards={directlyOppositeCards}
-										wrap={true}
-										displayTokenCost={false}
-									/>
-								</div>,
-							]
-						: undefined}
-					<p>
-						EX is immune to and cannot be inflicted with Fire, Poison, and
-						Slowness.
-					</p>
-					<p>The following cards don't work in this battle:</p>
-					<div>
-						<CardList
-							tooltipAboveModal={true}
-							cards={nonFunctionalCards}
-							wrap={true}
-							displayTokenCost={false}
-						/>
-					</div>
-					<h1>EX's Moves & Special</h1>
-					<p>Evil X can attack for 50, 70 or 90 damage.</p>
-					<p>
-						After losing a life, EX can also either heal for 150hp, set your
-						active Hermit on fire, or double the damage of his main attack.
-					</p>
-					<p>
-						On his last life, EX can deal 20 damage to all AFK Hermits, discard
-						your active Hermit's attached effect card, or force you to discard
-						an item card from your active Hermit. Discarded effect cards act as
-						if <u>Curse of Vanishing</u> was used and do not trigger from his
-						attack.
-					</p>
-					<p>
-						If a special move disables EX's attack, this only prevents attack
-						damage, being set on fire and damage against AFK Hermits.
-					</p>
-					<p>
-						At the end of EX's ninth turn, even if he cannot attack, he will
-						perform one of two special moves:
-					</p>
-					<ol>
-						<li>Discard your whole hand and draw one new card.</li>
-						<li>
-							Remove all attached item and effect cards from your active Hermit.
-						</li>
-					</ol>
-				</Modal.Description>
-			</Modal>
 			<MenuLayout
 				back={() => {
 					handleLeaveQueue()
@@ -569,33 +481,136 @@ function PlaySelect({setMenuSection}: Props) {
 							}
 							mode="boss"
 							activeMode={activeMode}
-							onSelect={sortDecksByActive}
+							onSelect={() => {
+								addMenuWithBack('bossSelect')
+								sortDecksByActive()
+							}}
 							setActiveMode={setActiveMode}
 							onBack={goBack}
 							disableBack={!!matchmaking}
 						>
-							<div className={css.buttonMenu}>
-								<div className={css.publicConfirm}>
+							<GameModeButton.OptionsSelect
+								id="bossSelect"
+								activeButtonMenu={activeButtonMenu}
+								title="Welcome to your doom."
+								subTitle="That's right, HC-TCG Online has its first boss fight! This is no challenge deck - Evil X cares
+								not for the cards. He brings his own moves, and they are vicious! If you think you can defeat him, you'll
+								need to be on your best game. Make sure your audio is enabled, as you'll need to listen to voice commands
+								during the battle."
+								buttons={[
+									{
+										text: 'Full Rules',
+										onClick() {
+											addMenuWithBack('bossRules')
+										},
+									},
+									{
+										text: 'Challenge Evil X',
+										onClick() {
+											addMenuWithBack('bossChooseDeck')
+										},
+										variant: 'primary',
+									},
+								]}
+							/>
+							<GameModeButton.CustomMenu
+								id="bossRules"
+								activeButtonMenu={activeButtonMenu}
+							>
+								<div className={css.bossRules}>
+									<h3>Full Rules</h3>
 									<p>
-										Confirm your deck before entering a game. If you don't pick
-										one here, your last selected deck will be used.
+										You will always go first but can only have three rows to
+										play on.
 									</p>
-									<div className={css.spacer}></div>
-									<Button
-										className={css.publicJoinButton}
-										onClick={() => setEvilXOpen(true)}
-									>
-										Show Rules
-									</Button>
-									<Button
-										className={css.publicJoinButton}
-										variant={'primary'}
-										onClick={handleCreateBossGame}
-									>
-										Fight Evil X
+									<p>
+										EX has only one row to play on and has no item slots to
+										attach to his boss card. However, his card has 300hp, comes
+										back again at full health when knocked out, and will perform
+										harder attacks with every life lost.
+									</p>
+									{directlyOppositeCards.length
+										? [
+												<p>
+													EX is always directly opposite your active Hermit for
+													the purposes of:
+												</p>,
+												<div>
+													<CardList
+														tooltipAboveModal={true}
+														cards={directlyOppositeCards}
+														wrap={true}
+														displayTokenCost={false}
+													/>
+												</div>,
+											]
+										: undefined}
+									<p>
+										EX is immune to and cannot be inflicted with Fire, Poison,
+										and Slowness.
+									</p>
+									<p>The following cards don't work in this battle:</p>
+									<div>
+										<CardList
+											tooltipAboveModal={true}
+											cards={nonFunctionalCards}
+											wrap={true}
+											displayTokenCost={false}
+										/>
+									</div>
+									<h1>EX's Moves & Special</h1>
+									<p>Evil X can attack for 50, 70 or 90 damage.</p>
+									<p>
+										After losing a life, EX can also either heal for 150hp, set
+										your active Hermit on fire, or double the damage of his main
+										attack.
+									</p>
+									<p>
+										On his last life, EX can deal 20 damage to all AFK Hermits,
+										discard your active Hermit's attached effect card, or force
+										you to discard an item card from your active Hermit.
+										Discarded effect cards act as if <u>Curse of Vanishing</u>{' '}
+										was used and do not trigger from his attack.
+									</p>
+									<p>
+										If a special move disables EX's attack, this only prevents
+										attack damage, being set on fire and damage against AFK
+										Hermits.
+									</p>
+									<p>
+										At the end of EX's ninth turn, even if he cannot attack, he
+										will perform one of two special moves:
+									</p>
+									<ol>
+										<li>Discard your whole hand and draw one new card.</li>
+										<li>
+											Remove all attached item and effect cards from your active
+											Hermit.
+										</li>
+									</ol>
+									<Button className={css.rulesBack} onClick={goBack}>
+										Go Back
 									</Button>
 								</div>
-							</div>
+							</GameModeButton.CustomMenu>
+							<GameModeButton.ChooseDeck
+								activeButtonMenu={activeButtonMenu}
+								id="bossChooseDeck"
+								title="Choose your deck"
+								subTitle="When ready, press the Fight! button to begin."
+								confirmMessage="Fight!"
+								onConfirm={() => {
+									const valid = checkForValidation()
+									if (!valid) return
+
+									dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+									dispatch({
+										type: localMessages.MATCHMAKING_CREATE_BOSS_GAME,
+									})
+								}}
+								decks={decks}
+								onSelectDeck={onSelectDeck}
+							/>
 						</GameModeButton>
 					</div>
 				</div>

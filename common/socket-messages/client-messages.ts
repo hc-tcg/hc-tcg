@@ -16,7 +16,6 @@ export const clientMessages = messages('clientMessages', {
 	CREATE_PRIVATE_GAME: null,
 	CANCEL_PRIVATE_GAME: null,
 	CREATE_BOSS_GAME: null,
-	CANCEL_BOSS_GAME: null,
 	CREATE_REPLAY_GAME: null,
 	REPLAY_OVERVIEW: null,
 	TURN_ACTION: null,
@@ -71,7 +70,6 @@ export type ClientMessages = [
 		code: string
 	},
 	{type: typeof clientMessages.LEAVE_PRIVATE_QUEUE},
-	// @TODO
 	{
 		type: typeof clientMessages.CREATE_BOSS_GAME
 		databaseConnected: true
@@ -82,7 +80,6 @@ export type ClientMessages = [
 		databaseConnected: false
 		activeDeck: Deck
 	},
-	{type: typeof clientMessages.CANCEL_BOSS_GAME},
 	{
 		type: typeof clientMessages.CREATE_PRIVATE_GAME
 		databaseConnected: true

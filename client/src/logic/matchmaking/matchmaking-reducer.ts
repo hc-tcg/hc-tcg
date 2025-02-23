@@ -56,6 +56,7 @@ const matchmakingReducer = (
 			}
 		*/
 		case localMessages.DISCONNECT:
+		case localMessages.GAME_END:
 		case localMessages.MATCHMAKING_LEAVE:
 			return {
 				...state,
