@@ -20,7 +20,6 @@ import {PlayerEntity} from 'common/entities'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {config} from 'dotenv'
 import {Database} from 'server/db/db'
-import Win from 'common/achievements/wins'
 
 describe('Test Database', () => {
 	let database: Database
