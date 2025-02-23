@@ -3,6 +3,7 @@ import CertifiedZombie from '../achievements/certified-zombie'
 import DefeatEvilX from '../achievements/defeat-evil-x'
 import Ethogirl from '../achievements/ethogirl'
 import OreSnatcher from '../achievements/ore-snatcher'
+import PeskyBird from '../achievements/pesky_bird'
 import {Win1} from '../achievements/wins'
 import {Title} from './types'
 
@@ -40,6 +41,11 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		id: 'ore_snatcher',
 		name: 'Ore Snatcher',
 		requires: OreSnatcher.id,
+	},
+	{
+		id: 'ore_snatcher',
+		name: 'Pesky Bird',
+		requires: PeskyBird.id,
 	},
 	{
 		id: 'builder_title',

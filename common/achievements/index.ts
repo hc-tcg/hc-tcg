@@ -1,6 +1,6 @@
 import British from './british'
 import CertifiedZombie from './certified-zombie'
-import DeceptiveSpectacles from './deceptive-spectacles'
+import PeskyBird from './pesky_bird'
 import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
 import Designer from './designer'
@@ -32,7 +32,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	NoDerpcoins,
 	British,
 	ServerLag,
-	DeceptiveSpectacles,
+	PeskyBird,
 	Untouchable,
 	TeamStar,
 	OreSnatcher,
