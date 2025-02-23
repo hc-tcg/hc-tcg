@@ -696,7 +696,7 @@ export function* cosmeticSaga() {
 			) {
 				const achievement = ACHIEVEMENTS[action.cosmetic.requires.achievement]
 				isUnlocked =
-					!!achievementProgress[achievement.numericId].levels[
+					!!achievementProgress[achievement.numericId]?.levels[
 						action.cosmetic.requires.level || 0
 					]?.completionTime
 			}

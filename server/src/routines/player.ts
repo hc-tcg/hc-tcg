@@ -180,7 +180,7 @@ export function* updateCosmeticSaga(
 	if (cosmetic?.requires && ACHIEVEMENTS[cosmetic?.requires.achievement]) {
 		const achievement = ACHIEVEMENTS[cosmetic?.requires.achievement]
 		isUnlocked =
-			!!player.achievementProgress[achievement?.numericId].levels[
+			!!player.achievementProgress[achievement?.numericId]?.levels[
 				cosmetic.requires.level || 0
 			]?.completionTime
 	}
