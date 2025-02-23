@@ -45,17 +45,16 @@ export const localMessages = messages('clientLocalMessages', {
 	EVERY_TOAST_CLOSE: null,
 	USERNAME_SET: null,
 	MINECRAFT_NAME_SET: null,
-	MATCHMAKING_QUEUE_JOIN: null,
-	MATCHMAKING_QUEUE_JOIN_FAILURE: null,
-	MATCHMAKING_BOSS_GAME_CREATE: null,
+	MATCHMAKING_JOIN_PUBLIC_QUEUE: null,
+	MATCHMAKING_JOIN_PRIVATE_QUEUE: null,
+	MATCHMAKING_SPECTATE_PRIVATE_GAME: null,
+	MATCHMAKING_CREATE_PRIVATE_GAME: null,
+	MATCHMAKING_JOIN_QUEUE_SUCCESS: null,
+	MATCHMAKING_CREATE_GAME_SUCCESS: null,
+	MATCHMAKING_CREATE_BOSS_GAME: null,
 	MATCHMAKING_REPLAY_GAME: null,
 	INVALID_REPLAY: null,
-	MATCHMAKING_PRIVATE_GAME_LOBBY: null,
-	MATCHMAKING_CODE_RECIEVED: null,
 	MATCHMAKING_LEAVE: null,
-	MATCHMAKING_CODE_SET: null,
-	MATCHMAKING_WAITING_FOR_PLAYER: null,
-	MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR: null,
 	GAME_LOCAL_STATE_RECIEVED: null,
 	GAME_LOCAL_STATE_SET: null,
 	GAME_START: null,
@@ -138,28 +137,30 @@ type Messages = [
 	{type: typeof localMessages.EVERY_TOAST_CLOSE},
 	{type: typeof localMessages.USERNAME_SET; name: string},
 	{type: typeof localMessages.MINECRAFT_NAME_SET; name: string},
-	{type: typeof localMessages.MATCHMAKING_QUEUE_JOIN},
-	{type: typeof localMessages.MATCHMAKING_BOSS_GAME_CREATE},
+	{type: typeof localMessages.OVERVIEW; id: number},
+	{type: typeof localMessages.MATCHMAKING_JOIN_PUBLIC_QUEUE},
+	{
+		type: typeof localMessages.MATCHMAKING_JOIN_PRIVATE_QUEUE
+		code: string
+	},
+	{
+		type: typeof localMessages.MATCHMAKING_SPECTATE_PRIVATE_GAME
+		code: string
+	},
+	{type: typeof localMessages.MATCHMAKING_JOIN_QUEUE_SUCCESS},
+	{type: typeof localMessages.MATCHMAKING_CREATE_PRIVATE_GAME},
+	{
+		type: typeof localMessages.MATCHMAKING_CREATE_GAME_SUCCESS
+		gameCode: string
+		spectatorCode: string
+	},
+	{type: typeof localMessages.MATCHMAKING_LEAVE},
+	{type: typeof localMessages.MATCHMAKING_CREATE_BOSS_GAME},
 	{
 		type: typeof localMessages.MATCHMAKING_REPLAY_GAME
 		id: number
 	},
 	{type: typeof localMessages.INVALID_REPLAY},
-	{type: typeof localMessages.OVERVIEW; id: number},
-	{
-		type: typeof localMessages.MATCHMAKING_CODE_RECIEVED
-		gameCode: string
-		spectatorCode: string
-	},
-	{type: typeof localMessages.MATCHMAKING_LEAVE},
-	{type: typeof localMessages.MATCHMAKING_LEAVE},
-	{
-		type: typeof localMessages.MATCHMAKING_CODE_SET
-		code: string
-	},
-	{type: typeof localMessages.MATCHMAKING_WAITING_FOR_PLAYER},
-	{type: typeof localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR},
-	{type: typeof localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY},
 	{
 		type: typeof localMessages.GAME_LOCAL_STATE_RECIEVED
 		localGameState: LocalGameState
