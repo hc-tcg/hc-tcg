@@ -3,7 +3,7 @@ import CertifiedZombie from '../achievements/certified-zombie'
 import DefeatEvilX from '../achievements/defeat-evil-x'
 import Ethogirl from '../achievements/ethogirl'
 import OreSnatcher from '../achievements/ore-snatcher'
-import {Win1} from '../achievements/wins'
+import Win from '../achievements/wins'
 import {Title} from './types'
 
 const TitleDefinitions: Omit<Title, 'type'>[] = [
@@ -14,32 +14,32 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 	{
 		id: 'british',
 		name: "Bri'ish",
-		requires: British.id,
+		requires: {achievement: British.id},
 	},
 	{
 		id: 'certified-zombie',
 		name: 'Certified Zombie',
-		requires: CertifiedZombie.id,
+		requires: {achievement: CertifiedZombie.id},
 	},
 	{
 		id: 'ethogirl',
 		name: 'Ethogirl',
-		requires: Ethogirl.id,
+		requires: {achievement: Ethogirl.id},
 	},
 	{
 		id: 'evil_xterminator',
 		name: 'Evil X-Terminator',
-		requires: DefeatEvilX.id,
+		requires: {achievement: DefeatEvilX.id},
 	},
 	{
 		id: 'victor',
 		name: 'Victor',
-		requires: Win1.id,
+		requires: {achievement: Win.id, level: 0},
 	},
 	{
 		id: 'ore_snatcher',
 		name: 'Ore Snatcher',
-		requires: OreSnatcher.id,
+		requires: {achievement: OreSnatcher.id},
 	},
 	{
 		id: 'builder_title',

@@ -10,7 +10,7 @@ const BackgroundDefinitions: Omit<Background, 'type'>[] = [
 	{
 		id: 'classic',
 		name: 'Classic',
-		requires: AllCards.id,
+		requires: {achievement: AllCards.id},
 	},
 	{
 		id: 'balanced',
@@ -55,7 +55,7 @@ const BackgroundDefinitions: Omit<Background, 'type'>[] = [
 	{
 		id: 'how_did_we_get_here',
 		name: 'The Nether',
-		requires: HowDidWeGetHere.id,
+		requires: {achievement: HowDidWeGetHere.id},
 	},
 ]
 
