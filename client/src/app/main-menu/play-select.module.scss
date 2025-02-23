@@ -74,7 +74,6 @@
 .bottomArea {
 	display: flex;
 	flex-direction: column;
-
 }
 
 .clickToChange {
@@ -90,6 +89,7 @@
 
 .appearance {
 	cursor: pointer;
+	width: 500px;
 
 	&:hover {
 		scale: 1.05;
