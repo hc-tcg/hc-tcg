@@ -9,8 +9,8 @@ const CantTouchThis: Achievement = {
 	id: 'cant_touch_this',
 	levels: [
 		{
-			name: "Can't Touch This!",
-			description: 'Take 0 damage from 3 consecutive opponent attacks',
+			name: 'Untouchable',
+			description: 'Take 0 damage from 3 consecutive opponent attacks.',
 			steps: 3,
 		},
 	],

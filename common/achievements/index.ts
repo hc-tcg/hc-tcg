@@ -1,19 +1,19 @@
 import British from './british'
 import CantTouchThis from './cant-touch-this'
 import CertifiedZombie from './certified-zombie'
-import DeceptiveSpectacles from './deceptive-spectacles'
 import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
 import Designer from './designer'
 import Ethogirl from './ethogirl'
 import HotTake from './hot-take'
 import HowDidWeGetHere from './how-did-we-get-here'
-import Innefective from './innefective'
+import Inneffective from './inneffective'
 import AllCards from './jack-of-all-cards'
 import NakedAndScared from './naked-and-scared'
 import NoDerpcoins from './no-derpcoins'
 import OreSnatcher from './ore-snatcher'
 import PackOfWolves from './pack-of-wolves'
+import PeskyBird from './pesky-bird'
 import ServerLag from './server-lag'
 import SheepStarer from './sheep-starer'
 import SUStainable from './sustainable'
@@ -36,6 +36,7 @@ import Wipeout from './wipeout'
 
 export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	AllCards,
+	CantTouchThis,
 	DeckedOut,
 	Ethogirl,
 	PackOfWolves,
@@ -45,8 +46,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	NoDerpcoins,
 	British,
 	ServerLag,
-	DeceptiveSpectacles,
-	CantTouchThis,
+	PeskyBird,
 	TeamStar,
 	OreSnatcher,
 	SheepStarer,
@@ -55,7 +55,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	Designer,
 	CertifiedZombie,
 	SUStainable,
-	Innefective,
+	Inneffective,
 	Win,
 	BalancedWins,
 	BuilderWins,
