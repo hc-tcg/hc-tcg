@@ -1,4 +1,5 @@
 import SUStainable from '../achievements/sustainable'
+import Win from '../achievements/wins'
 import {Heart} from './types'
 
 const HeartDefinitions: Omit<Heart, 'type'>[] = [
@@ -17,11 +18,12 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'emerald',
 		name: 'Emerald',
-		requires: SUStainable.id,
+		requires: {achievement: SUStainable.id},
 	},
 	{
 		id: 'gold',
 		name: 'Gold',
+		requires: {achievement: Win.id, level: 4},
 	},
 ]
 

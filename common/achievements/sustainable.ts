@@ -9,9 +9,13 @@ const SUStainable: Achievement = {
 	...achievement,
 	numericId: 19,
 	id: 'sustainable',
-	name: 'SUStainable',
-	description: 'Compost 100 cards.',
-	steps: 100,
+	levels: [
+		{
+			name: 'SUStainable',
+			description: 'Compost 100 cards.',
+			steps: 100,
+		},
+	],
 	icon: 'sustainable',
 	onGameStart(game, playerEntity, component, observer) {
 		let player = game.components.get(playerEntity)!

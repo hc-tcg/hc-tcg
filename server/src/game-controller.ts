@@ -120,7 +120,10 @@ export class GameController {
 		if (player.achievementProgress) {
 			ACHIEVEMENTS_LIST.forEach((achievement) => {
 				if (!player.achievementProgress[achievement.numericId]) {
-					player.achievementProgress[achievement.numericId] = {goals: {}}
+					player.achievementProgress[achievement.numericId] = {
+						goals: {},
+						levels: [],
+					}
 				}
 				const achievementComponent = this.game.components.new(
 					AchievementComponent,
