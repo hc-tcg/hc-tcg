@@ -20,6 +20,7 @@ import {PlayerEntity} from 'common/entities'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {config} from 'dotenv'
 import {Database} from 'server/db/db'
+import Win from 'common/achievements/wins'
 
 describe('Test Database', () => {
 	let database: Database
@@ -675,9 +676,11 @@ describe('Test Database', () => {
 		let completionTimeTwo = new Date(Date.now())
 
 		await database.updateAchievements(player.uuid, {
-			0: {goals: {0: 1}, levels: [{completionTime: completionTime}]},
-			1: {
-				goals: {0: 3},
+			// Default Evil X achievement
+			6: {goals: {0: 1}, levels: [{completionTime: completionTime}]},
+			// Win Achievement
+			26: {
+				goals: {0: 10},
 				levels: [
 					{completionTime: completionTime},
 					{completionTime: completionTimeTwo},
@@ -686,20 +689,24 @@ describe('Test Database', () => {
 		})
 
 		let results = await database.getAchievements(player.uuid)
+		console.log(results)
 		assert(
 			results.type === 'success',
 			'The achievements should be retrieved successfully',
 		)
 		let achievements = results.body.achievementData
 
-		expect(achievements[0].goals).toStrictEqual({0: 1})
-		expect(achievements[0].levels).toStrictEqual([
+		expect(achievements[6].goals).toStrictEqual({0: 1})
+		expect(achievements[6].levels).toStrictEqual([
 			{completionTime: completionTime},
 		])
-		expect(achievements[1].goals).toStrictEqual({0: 3})
-		expect(achievements[1].levels).toStrictEqual([
+		expect(achievements[26].goals).toStrictEqual({0: 10})
+		expect(achievements[26].levels).toStrictEqual([
 			{completionTime: completionTime},
 			{completionTime: completionTimeTwo},
+			{},
+			{},
+			{},
 		])
 	})
 })

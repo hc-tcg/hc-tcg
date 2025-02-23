@@ -1841,7 +1841,9 @@ export class Database {
 				if (!progress[row['achievement_id']]) {
 					progress[row['achievement_id']] = {
 						goals: {},
-						levels: Array(achievement.levels.length).fill({}),
+						levels: Array(achievement.levels.length)
+							.fill(0)
+							.flatMap(() => [{}]),
 					}
 				}
 

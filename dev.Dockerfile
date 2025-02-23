@@ -19,9 +19,10 @@ RUN npm ci
 COPY common/config/debug-config.example.js common/config/debug-config.js
 COPY version.js version.js
 
-COPY common common
-COPY server server
-COPY client client
+# COPY common common
+# COPY server server
+# COPY client client
+COPY . .
 
-CMD [ "npm", "run", "dev" ]
+CMD [ "npm", "run", "test:db" ]
 
