@@ -22,49 +22,73 @@ export default function AchievementComponent({
 	const progress = progressData
 		? achievement.getProgress(progressData.goals)
 		: 0
-	const completionTime = progressData?.completionTime
 
-	return (
-		<div className={css.achievementContainer}>
-			<img
-				src={icon_url}
-				className={classNames(
-					css.icon,
-					iconCosmetic && iconCosmetic.type === 'background' && css.rounded,
-				)}
-			/>
-			<div className={css.meat}>
-				<div>
-					<div>
-						{achievement.name}
-						<div className={css.achievementDescription}>
-							{achievement.description}
-						</div>
-					</div>
-					<div className={css.achievementPlayers}>
-						3.5% of players have this achievement
-					</div>
-				</div>
-				<div>
-					<div className={css.progressContainer}>
-						<div>
-							{progress}/{achievement.steps}
-						</div>
-						<progress
-							value={progress}
-							max={achievement.steps}
-							className={css.progressBar}
-						></progress>
-					</div>
-					{completionTime ? (
-						<span>
-							Completed: {new Date(completionTime).toLocaleDateString()}
-						</span>
-					) : (
-						''
+	let out = []
+
+	for (const [i, level] of achievement.levels.entries()) {
+		const completionTime = progressData?.levels[i].completionTime
+
+		out.push(
+			<div className={css.achievementContainer}>
+				<img
+					src={icon_url}
+					className={classNames(
+						css.icon,
+						iconCosmetic && iconCosmetic.type === 'background' && css.rounded,
 					)}
+				/>
+				<div className={css.meat}>
+					<div>
+						<div>
+							{level.name}
+							<div className={css.achievementDescription}>
+								{level.description}
+							</div>
+						</div>
+						<div className={css.achievementPlayers}>
+							3.5% of players have this achievement
+						</div>
+						<div className={css.progressContainer}>
+							<progress
+								value={progress}
+								max={level.steps}
+								className={css.progressBar}
+							></progress>
+							<span>
+								{progress}/{level.steps}
+							</span>
+						</div>
+						{completionTime ? (
+							<span>
+								Completed: {new Date(completionTime).toLocaleDateString()}
+							</span>
+						) : (
+							''
+						)}
+					</div>
+					<div>
+						<div className={css.progressContainer}>
+							<div>
+								{progress}/{level.steps}
+							</div>
+							<progress
+								value={progress}
+								max={level.steps}
+								className={css.progressBar}
+							></progress>
+						</div>
+						{completionTime ? (
+							<span>
+								Completed: {new Date(completionTime).toLocaleDateString()}
+							</span>
+						) : (
+							''
+						)}
+					</div>
 				</div>
-			</div>
-		</div>
-	)
+			</div>,
+		)
+	}
+
+	return out
 }

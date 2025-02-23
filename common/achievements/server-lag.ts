@@ -7,10 +7,14 @@ const HotTake: Achievement = {
 	...achievement,
 	numericId: 9,
 	id: 'server_lag',
-	name: 'Server Lag',
-	description:
-		'Deal the final blow of the game using a Hermit you got as a prize card',
-	steps: 1,
+	levels: [
+		{
+			name: 'Server Lag',
+			description:
+				'Deal the final blow of the game using a Hermit you got as a prize card',
+			steps: 1,
+		},
+	],
 	icon: '',
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
