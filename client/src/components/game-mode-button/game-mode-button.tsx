@@ -1,4 +1,12 @@
 import classNames from 'classnames'
+import {ButtonVariant} from 'common/types/buttons'
+import {Deck, Tag} from 'common/types/deck'
+import {getIconPath} from 'common/utils/state-gen'
+import Button from 'components/button'
+import Spinner from 'components/spinner'
+import {CopyIcon} from 'components/svgs'
+import {MatchmakingStatus} from 'logic/matchmaking/matchmaking-types'
+import {getSession} from 'logic/session/session-selectors'
 import {
 	ReactElement,
 	ReactNode,
@@ -7,16 +15,8 @@ import {
 	useRef,
 	useState,
 } from 'react'
-import css from './game-mode-button.module.scss'
-import Button from 'components/button'
-import {Deck, Tag} from 'common/types/deck'
-import {getIconPath} from 'common/utils/state-gen'
 import {useSelector} from 'react-redux'
-import {getSession} from 'logic/session/session-selectors'
-import Spinner from 'components/spinner'
-import {ButtonVariant} from 'common/types/buttons'
-import {MatchmakingStatus} from 'logic/matchmaking/matchmaking-types'
-import {CopyIcon} from 'components/svgs'
+import css from './game-mode-button.module.scss'
 
 interface GameModeButtonProps {
 	image: string

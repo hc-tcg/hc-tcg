@@ -20,13 +20,15 @@ import {EXPANSIONS} from 'common/const/expansions'
 import {CardEntity} from 'common/entities'
 import {Deck} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
+import {sortDecks} from 'common/utils/sorting'
 import {validateDeck} from 'common/utils/validation'
 import Button from 'components/button'
 import CardList from 'components/card-list'
 import GameModeButton from 'components/game-mode-button'
+import {CodeInfo} from 'components/game-mode-button/game-mode-button'
 import MenuLayout from 'components/menu-layout'
-import {Modal} from 'components/modal'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {
 	getGameCode,
 	getSpectatorCode,
@@ -36,11 +38,8 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getSession} from 'logic/session/session-selectors'
 import {useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
-import css from './play-select.module.scss'
 import {CosmeticPreview} from './cosmetics'
-import {sortDecks} from 'common/utils/sorting'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {CodeInfo} from 'components/game-mode-button/game-mode-button'
+import css from './play-select.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void

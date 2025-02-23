@@ -41,8 +41,6 @@ import {
 	take,
 } from 'typed-redux-saga'
 import {safeCall} from 'utils'
-import {BACKGROUNDS} from '../../../common/cosmetics/backgrounds'
-import {BORDERS} from '../../../common/cosmetics/borders'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
