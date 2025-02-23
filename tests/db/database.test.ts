@@ -673,7 +673,7 @@ describe('Test Database', () => {
 		let player = user.body
 
 		let completionTime = new Date(Date.now())
-		let completionTimeTwo = new Date(Date.now())
+		let completionTimeTwo = new Date(18437418)
 
 		await database.updateAchievements(player.uuid, {
 			// Default Evil X achievement
