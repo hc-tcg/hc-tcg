@@ -1,9 +1,9 @@
 import {describe, expect, test} from '@jest/globals'
-import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
 import Designer from 'common/achievements/designer'
-import {STARTER_DECKS} from 'common/cards/starter-decks'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import SmallishbeansCommon from 'common/cards/hermits/smallishbeans-common'
+import {STARTER_DECKS} from 'common/cards/starter-decks'
+import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
 
 describe('Test Designer achievement', () => {
 	test('Test "Designer" does not progress after winning with a Starter Deck', () => {

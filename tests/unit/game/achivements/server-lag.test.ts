@@ -1,4 +1,14 @@
 import {describe, expect, test} from '@jest/globals'
+import ServerLag from 'common/achievements/server-lag'
+import Totem from 'common/cards/attach/totem'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
+import StressMonster101Rare from 'common/cards/hermits/stressmonster101-rare'
+import VintageBeefCommon from 'common/cards/hermits/vintagebeef-common'
+import ZedaphPlaysRare from 'common/cards/hermits/zedaphplays-rare'
+import BalancedItem from 'common/cards/items/balanced-common'
+import LavaBucket from 'common/cards/single-use/lava-bucket'
+import {IronSword} from 'common/cards/single-use/sword'
 import {
 	applyEffect,
 	attack,
@@ -8,16 +18,6 @@ import {
 	playCardFromHand,
 	testAchivement,
 } from '../utils'
-import ServerLag from 'common/achievements/server-lag'
-import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import BalancedItem from 'common/cards/items/balanced-common'
-import VintageBeefCommon from 'common/cards/hermits/vintagebeef-common'
-import StressMonster101Rare from 'common/cards/hermits/stressmonster101-rare'
-import ZedaphPlaysRare from 'common/cards/hermits/zedaphplays-rare'
-import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
-import Totem from 'common/cards/attach/totem'
-import LavaBucket from 'common/cards/single-use/lava-bucket'
-import {IronSword} from 'common/cards/single-use/sword'
 
 describe('Test Server Lag achievement', () => {
 	test('Test "Server Lag" knock-out-win with secondary Succeeds', () => {

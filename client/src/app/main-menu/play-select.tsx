@@ -325,7 +325,7 @@ function PlaySelect({setMenuSection}: Props) {
 								id="privateOptions"
 								title="Select an option"
 								subTitle="Either join a private game created by another player, spectate an existing game, 
-								or create your own game to challenge someone else."
+							or create your own game to challenge someone else."
 								buttons={[
 									{
 										text: 'Join Game',
@@ -493,9 +493,9 @@ function PlaySelect({setMenuSection}: Props) {
 								activeButtonMenu={activeButtonMenu}
 								title="Welcome to your doom."
 								subTitle="That's right, HC-TCG Online has its first boss fight! This is no challenge deck - Evil X cares
-								not for the cards. He brings his own moves, and they are vicious! If you think you can defeat him, you'll
-								need to be on your best game. Make sure your audio is enabled, as you'll need to listen to voice commands
-								during the battle."
+							not for the cards. He brings his own moves, and they are vicious! If you think you can defeat him, you'll
+							need to be on your best game. Make sure your audio is enabled, as you'll need to listen to voice commands
+							during the battle."
 								buttons={[
 									{
 										text: 'Full Rules',
