@@ -115,7 +115,7 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 			]?.completionTime
 	}
 
-	const icon_url = `/images/cosmetics/${cosmetic.type}/${cosmetic.id}.png`
+	const icon_url = `/images/cosmetics/${cosmetic.type}/${cosmetic.type === 'background' && (cosmetic as Background).preview ? (cosmetic as Background).preview : cosmetic.id}.png`
 
 	const item = (
 		<div

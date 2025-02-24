@@ -36,6 +36,12 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		requires: {achievement: NoDerpcoins.id},
 	},
 	{
+		id: 'cat',
+		name: 'Jellie',
+		borderColor: '#C57EA7',
+		requires: undefined,
+	},
+	{
 		id: 'pink-sheep',
 		name: 'Pink Sheep',
 		borderColor: '#de7f9c',
