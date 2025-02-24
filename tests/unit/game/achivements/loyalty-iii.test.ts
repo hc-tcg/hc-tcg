@@ -98,4 +98,36 @@ describe('Test Loyalty III Achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
+	test('Test streak is broken after waiting a turn', () => {
+		testAchivement(
+			{
+				achievement: LoyaltyIII,
+				playerOneDeck: [EthosLabCommon, Trident],
+				playerTwoDeck: [EthosLabCommon],
+				playGame: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Trident, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+					yield* endTurn(game)
+
+					// Rest for a turn
+					yield* endTurn(game)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Trident, 'single_use')
+					yield* attack(game, 'secondary')
+				},
+				checkAchivement(_game, achievement, _outcome) {
+					expect(LoyaltyIII.getProgress(achievement.goals)).toBe(1)
+				},
+			},
+			{noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
 })
