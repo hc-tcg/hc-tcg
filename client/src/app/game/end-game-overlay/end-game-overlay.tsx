@@ -60,6 +60,7 @@ const EndGameOverlay = ({
 		'decked-out': 'ran out of cards.',
 		'timeout-without-hermits': 'ran out of time without an active hermit.',
 		forfeit: 'forfeit the game.',
+		disconnect: 'was disconnected.',
 	}
 
 	switch (myOutcome) {

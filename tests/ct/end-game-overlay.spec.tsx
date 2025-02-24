@@ -47,6 +47,51 @@ test('You lost because your hermits were killed.', async ({mount}) => {
 	await expect(component).toHaveScreenshot()
 })
 
+test('You won because your opponent disconnected!', async ({mount}) => {
+	let entity = 'playerOne' as PlayerEntity
+
+	const component = await mount(
+		<EndGameOverlay
+			nameOfWinner={'Winner Name'}
+			nameOfLoser={'Loser Name'}
+			outcome={{
+				type: 'player-won',
+				winner: entity,
+				victoryReason: 'disconnect',
+			}}
+			viewer={{
+				type: 'player',
+				entity: entity,
+			}}
+		/>,
+	)
+
+	await expect(component).toHaveScreenshot()
+})
+
+test('You lost because you disconnected.', async ({mount}) => {
+	let playerOneEntity = 'playerOne' as PlayerEntity
+	let playerTwoEntity = 'playerTwo' as PlayerEntity
+
+	const component = await mount(
+		<EndGameOverlay
+			nameOfWinner={'Winner Name'}
+			nameOfLoser={'Loser Name'}
+			outcome={{
+				type: 'player-won',
+				winner: playerOneEntity,
+				victoryReason: 'disconnect',
+			}}
+			viewer={{
+				type: 'player',
+				entity: playerTwoEntity,
+			}}
+		/>,
+	)
+
+	await expect(component).toHaveScreenshot()
+})
+
 test('Viewing as spectator shows victory.', async ({mount}) => {
 	let playerOneEntity = 'playerOne' as PlayerEntity
 
