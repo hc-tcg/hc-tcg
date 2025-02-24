@@ -189,12 +189,16 @@ function* createUser(username: string): Generator<any, User> {
 export function* setupData(user: User) {
 	// Setup database info
 	const appearance: Appearance = {
-		title: TITLES[user.title || ''] || defaultAppearance.title,
-		coin: COINS[user.coin || ''] || defaultAppearance.coin,
-		heart: HEARTS[user.heart || ''] || defaultAppearance.heart,
-		background: BACKGROUNDS[user.title || ''] || defaultAppearance.background,
-		border: BORDERS[user.title || ''] || defaultAppearance.border,
+		title: user.title ? TITLES[user.title || ''] : defaultAppearance.title,
+		coin: user.coin ? COINS[user.coin || ''] : defaultAppearance.coin,
+		heart: user.heart ? HEARTS[user.heart || ''] : defaultAppearance.heart,
+		background: user.background
+			? BACKGROUNDS[user.background || '']
+			: defaultAppearance.background,
+		border: user.border ? BORDERS[user.border || ''] : defaultAppearance.border,
 	}
+
+	console.log(appearance)
 
 	yield* put<LocalMessage>({
 		type: localMessages.DATABASE_SET,
