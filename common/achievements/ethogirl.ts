@@ -28,7 +28,6 @@ const Ethogirl: Achievement = {
 			steps: 5,
 		},
 	],
-
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		if (!player) return

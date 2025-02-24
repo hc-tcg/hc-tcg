@@ -15,7 +15,6 @@ const ServerLag: Achievement = {
 			steps: 1,
 		},
 	],
-
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		if (!player) return

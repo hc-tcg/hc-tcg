@@ -12,7 +12,6 @@ const Win: Achievement = {
 		{name: 'TCG Legend', description: 'Win 500 games.', steps: 500},
 		{name: 'TCG Champion', description: 'Win 1000 games.', steps: 1000},
 	],
-
 	onGameEnd(_game, playerEntity, component, outcome) {
 		console.log('Incrementing progress')
 		if (outcome.type !== 'player-won' || outcome.winner !== playerEntity) return

@@ -17,7 +17,6 @@ const Designer: Achievement = {
 			steps: 1,
 		},
 	],
-
 	onGameEnd(game, playerEntity, component, outcome) {
 		const player = game.components.get(playerEntity)
 		if (!player) return
