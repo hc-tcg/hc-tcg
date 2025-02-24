@@ -1,3 +1,4 @@
+import EyeOfTheSpider from '../achievements/eye-of-the-spider'
 import NoDerpcoins from '../achievements/no-derpcoins'
 import PackOfWolves from '../achievements/pack-of-wolves'
 import ServerLag from '../achievements/server-lag'
@@ -17,6 +18,12 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		name: 'Chicken',
 		borderColor: '#CD1414',
 		requires: undefined,
+	},
+	{
+		id: 'cave-spider',
+		name: 'Cave Spider',
+		borderColor: '#840000',
+		requires: {achievement: EyeOfTheSpider.id},
 	},
 	{
 		id: 'cod',
