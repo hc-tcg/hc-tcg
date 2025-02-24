@@ -14,9 +14,9 @@ const CertifiedZombie: Achievement = {
 			description:
 				'Survive with an armor stand as your active hermit for three rounds.',
 			steps: 3,
+			icon: 'certified_zombie',
 		},
 	],
-	icon: 'certified_zombie',
 	onGameStart(game, playerEntity, component, observer) {
 		let player = game.components.get(playerEntity)
 		assert(player, 'Player should be in the ECS')

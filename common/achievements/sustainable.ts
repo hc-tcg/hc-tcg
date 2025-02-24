@@ -14,9 +14,9 @@ const SUStainable: Achievement = {
 			name: 'SUStainable',
 			description: 'Compost 100 cards.',
 			steps: 100,
+			icon: 'emerald',
 		},
 	],
-	icon: 'sustainable',
 	onGameStart(game, playerEntity, component, observer) {
 		let player = game.components.get(playerEntity)!
 

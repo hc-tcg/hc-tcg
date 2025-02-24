@@ -15,9 +15,9 @@ const Designer: Achievement = {
 			name: 'Hermits and Crafting',
 			description: "Win a game using a deck that isn't a starter deck.",
 			steps: 1,
+			icon: 'jellie',
 		},
 	],
-	icon: '',
 	onGameEnd(game, playerEntity, component, outcome) {
 		const player = game.components.get(playerEntity)
 		if (!player) return

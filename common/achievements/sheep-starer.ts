@@ -13,13 +13,13 @@ const SheepStarer: Achievement = {
 	...achievement,
 	numericId: 14,
 	id: 'sheep_starer',
-	icon: '',
 	levels: [
 		{
 			name: 'Sheep Starer',
 			description:
 				'Keep a red HP (100 - 0) Zedaph alive for three consecutive turns.',
 			steps: 3,
+			icon: 'pink_sheep',
 		},
 	],
 	onGameStart(game, playerEntity, component, observer) {

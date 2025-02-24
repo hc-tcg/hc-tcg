@@ -13,9 +13,9 @@ const ServerLag: Achievement = {
 			description:
 				'Deal the final blow of the game using a Hermit you got as a prize card.',
 			steps: 1,
+			icon: 'cod',
 		},
 	],
-	icon: '',
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		if (!player) return

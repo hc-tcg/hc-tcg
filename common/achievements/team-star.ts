@@ -33,13 +33,13 @@ const TeamStar: Achievement = {
 	...achievement,
 	numericId: 12,
 	id: 'team_star',
-	icon: '',
 	levels: [
 		{
 			name: 'Hermit Gang',
 			description:
 				'Win 5 games using a deck that includes at least 1 Docm77, Wels, False, Impulse, Xisuma and Rendog card.',
 			steps: 5,
+			icon: 'hermit_gang',
 		},
 	],
 	onGameEnd(game, playerEntity, component, outcome) {

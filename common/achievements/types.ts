@@ -13,9 +13,9 @@ export type Achievement = {
 		name: string
 		description: string
 		steps: number
+		icon: Cosmetic['id']
 	}>
 
-	icon: Cosmetic['id']
 	sidebarDescriptions?: Array<{type: string; name: string}>
 
 	onGameStart: (

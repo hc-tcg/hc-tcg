@@ -12,9 +12,9 @@ const CantTouchThis: Achievement = {
 			name: "Can't Touch This!",
 			description: 'Take 0 damage from 3 consecutive opponent attacks.',
 			steps: 3,
+			icon: 'silver_heart',
 		},
 	],
-	icon: '',
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		if (!player) return

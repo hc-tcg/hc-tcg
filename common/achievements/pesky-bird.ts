@@ -5,13 +5,13 @@ import {Achievement} from './types'
 const PeskyBird: Achievement = {
 	...achievement,
 	numericId: 10,
-	icon: '',
 	id: 'pesky_bird',
 	levels: [
 		{
 			name: 'Pesky Bird',
 			description: 'Force your opponent to discard 7 cards in one game.',
 			steps: 7,
+			icon: 'pesky_bird',
 		},
 	],
 	onGameStart(game, playerEntity, component, observer) {

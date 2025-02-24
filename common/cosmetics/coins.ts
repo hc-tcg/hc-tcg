@@ -12,7 +12,7 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		borderColor: '#e1b530',
 	},
 	{
-		id: 'server-lag',
+		id: 'server_lag',
 		name: 'Chicken',
 		borderColor: '#CD1414',
 		requires: undefined,
@@ -36,7 +36,7 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		requires: {achievement: NoDerpcoins.id},
 	},
 	{
-		id: 'pink-sheep',
+		id: 'pink_sheep',
 		name: 'Pink Sheep',
 		borderColor: '#de7f9c',
 		requires: {achievement: SheepStarer.id},

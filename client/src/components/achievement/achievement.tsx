@@ -12,13 +12,6 @@ export default function AchievementComponent({
 	achievement,
 	progressData,
 }: Props) {
-	const iconCosmetic = COSMETICS[achievement.icon]
-	let icon_url = ''
-	if (iconCosmetic && iconCosmetic.type === 'title') {
-		icon_url = '/images/cosmetics/title.png'
-	} else if (iconCosmetic) {
-		icon_url = `/images/cosmetics/${iconCosmetic.type}/${iconCosmetic.id}.png`
-	}
 	const progress = progressData
 		? achievement.getProgress(progressData.goals)
 		: 0
@@ -27,6 +20,14 @@ export default function AchievementComponent({
 
 	for (const [i, level] of achievement.levels.entries()) {
 		const completionTime = progressData?.levels[i].completionTime
+		
+		const iconCosmetic = COSMETICS[achievement.levels[i].icon]
+		let icon_url = ''
+		if (iconCosmetic && iconCosmetic.type === 'title') {
+			icon_url = '/images/cosmetics/title.png'
+		} else if (iconCosmetic) {
+			icon_url = `/images/cosmetics/${iconCosmetic.type}/${iconCosmetic.id}.png`
+		}
 
 		out.push(
 			<div className={css.achievementContainer}>
@@ -34,7 +35,7 @@ export default function AchievementComponent({
 					src={icon_url}
 					className={classNames(
 						css.icon,
-						iconCosmetic && iconCosmetic.type === 'background' && css.rounded,
+						iconCosmetic && ['background', 'coin'].includes(iconCosmetic.type) && css.rounded,
 					)}
 				/>
 				<div className={css.meat}>

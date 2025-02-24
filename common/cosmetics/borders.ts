@@ -1,5 +1,5 @@
 import HotTake from '../achievements/hot-take'
-import Innefective from '../achievements/inneffective'
+import Inneffective from '../achievements/inneffective'
 import Win from '../achievements/wins'
 import {Border} from './types'
 
@@ -11,7 +11,7 @@ const BorderDefinitions: Omit<Border, 'type'>[] = [
 	{
 		id: 'green_border',
 		name: 'Emerald',
-		requires: {achievement: Innefective.id},
+		requires: {achievement: Inneffective.id},
 	},
 	{
 		id: 'gold_border',

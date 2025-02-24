@@ -15,12 +15,12 @@ const AllCards: Achievement = {
 			name: 'Jack of all cards',
 			description: 'Win a game using every card from the base set.',
 			steps: defaultCards.length,
+			icon: 'classic',
 		},
 	],
 	getProgress(goals) {
 		return Object.values(goals).filter((goal) => goal > 0).length
 	},
-	icon: 'old_menu',
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		if (!player) return

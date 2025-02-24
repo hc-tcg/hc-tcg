@@ -24,9 +24,9 @@ const OreSnatcher: Achievement = {
 			description:
 				"Use emerald to steal your opponent's gold, iron, diamond, or netherite armor 10 times.",
 			steps: 10,
+			icon: 'ore_snatcher',
 		},
 	],
-	icon: '',
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		if (!player) return

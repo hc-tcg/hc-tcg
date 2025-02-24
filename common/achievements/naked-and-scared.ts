@@ -38,12 +38,12 @@ const NakedAndScared: Achievement = {
 	...achievement,
 	numericId: 15,
 	id: 'naked_and_scared',
-	icon: '',
 	levels: [
 		{
 			name: 'Naked and Scared',
 			description: 'Win 15 games using no healing or armor cards.',
 			steps: 15,
+			icon: 'naked_and_scared',
 		},
 	],
 	onGameStart(game, playerEntity, component, observer) {
