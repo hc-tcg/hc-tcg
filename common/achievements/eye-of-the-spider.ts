@@ -17,7 +17,6 @@ const EyeOfTheSpider: Achievement = {
 			steps: 1,
 		},
 	],
-	icon: '',
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		assert(player)
