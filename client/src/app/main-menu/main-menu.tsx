@@ -110,14 +110,19 @@ function MainMenu({setMenuSection}: Props) {
 					</p>
 					<p>
 						Begin in the place where this all began, Weave nonsense by join
-						date, you'll find that you can. Create a statement that makes sense
-						as a whole, Take the first of each second - you're halfway to your
-						goal!
+						date, you'll find that you can.
+					</p>
+					<p>
+						Create a statement that makes sense as a whole, Take the first of
+						each second - you're halfway to your goal!
 					</p>
 					<p>
 						Select the parts that create a tone, Put them in order, they're no
-						use alone. Then number the hearts to discover the key Triple each
-						part and use - then you'll see!
+						use alone.
+					</p>
+					<p>
+						Then number the hearts to discover the key Triple each part and use
+						- then you'll see!
 					</p>
 					<p>
 						<b>Want to help solve the riddle? Join our discord!</b>
