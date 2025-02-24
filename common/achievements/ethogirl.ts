@@ -42,7 +42,10 @@ const Ethogirl: Achievement = {
 				(_game, slot) =>
 					ETHO_CARDS.includes(slot.getCard()?.props.id as string),
 			)
-			component.bestGoalProgress({goal: 0, progress: boardCards.length})
+			const boardVariants = ETHO_CARDS.filter((id) =>
+				boardCards.some((slot) => slot.getCard()?.props.id === id),
+			)
+			component.bestGoalProgress({goal: 0, progress: boardVariants.length})
 		})
 	},
 }

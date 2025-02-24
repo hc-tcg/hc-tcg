@@ -1,4 +1,4 @@
-import {StatusEffectComponent} from '../components'
+import {PlayerComponent, StatusEffectComponent} from '../components'
 import query from '../components/query'
 import {onTurnEnd} from '../types/priorities'
 import {achievement} from './defaults'
@@ -25,14 +25,24 @@ const HowDidWeGetHere: Achievement = {
 			game.components
 				.filter(
 					StatusEffectComponent,
-					query.effect.targetIsCardAnd(
-						query.card.player(playerEntity),
-						query.card.onBoard,
-						query.card.isHermit,
+					query.some(
+						query.effect.targetIsPlayerAnd(
+							query.player.entity(playerEntity),
+							(_game, player) => player.activeRowEntity !== null,
+						),
+						query.effect.targetIsCardAnd(
+							query.card.player(playerEntity),
+							query.card.onBoard,
+							query.card.isHealth,
+						),
 					),
+					query.not(query.effect.type('hiddenSystem')),
 				)
 				.forEach((statusEffect) => {
-					const target = statusEffect.target.entity
+					const target =
+						statusEffect.target instanceof PlayerComponent
+							? statusEffect.target.getActiveHermit()!.entity
+							: statusEffect.target.entity
 					if (statusEffects[target] === undefined) statusEffects[target] = []
 					statusEffects[target].push(statusEffect)
 				})

@@ -1,5 +1,3 @@
-import {CardComponent} from '../components'
-import {afterAttack} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -16,32 +14,24 @@ const ServerLag: Achievement = {
 		},
 	],
 	icon: '',
-	onGameStart(game, playerEntity, component, observer) {
+	onGameEnd(game, playerEntity, component, outcome) {
+		/** Prevents getting progress from forfeiting after attacking with a prize card */
+		if (
+			outcome.type === 'player-won' &&
+			outcome.victoryReason === 'forfeit' &&
+			outcome.winner !== playerEntity
+		)
+			return
 		const player = game.components.get(playerEntity)
 		if (!player) return
-
-		let latestAttackerPrize = false
-
-		observer.subscribe(game.hooks.onGameEnd, () => {
-			if (!latestAttackerPrize) return
-			component.incrementGoalProgress({goal: 0})
-		})
-
-		observer.subscribeWithPriority(
-			game.hooks.afterAttack,
-			afterAttack.ACHIEVEMENTS,
-			(attack) => {
-				if (
-					attack.player.entity === playerEntity &&
-					attack.attacker instanceof CardComponent &&
-					attack.attacker.prizeCard
-				) {
-					latestAttackerPrize = true
-					return
-				}
-				latestAttackerPrize = false
-			},
+		const playerLatestAttack = player.lastHermitAttackInfo?.at(-1)
+		if (
+			!playerLatestAttack ||
+			playerLatestAttack.turn < game.state.turn.turnNumber ||
+			!playerLatestAttack.attacker.prizeCard
 		)
+			return
+		component.incrementGoalProgress({goal: 0})
 	},
 }
 

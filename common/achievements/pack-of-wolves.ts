@@ -26,10 +26,9 @@ const PackOfWolves: Achievement = {
 				SlotComponent,
 				query.slot.player(playerEntity),
 				query.slot.attach,
-				(_game, slot) => slot.getCard()?.props === Wolf,
+				query.slot.has(Wolf),
 			)
-			if (!component.goals[0]) component.goals[0] = 0
-			component.goals[0] = Math.max(component.goals[0], boardCards.length)
+			component.bestGoalProgress({goal: 0, progress: boardCards.length})
 		})
 	},
 }
