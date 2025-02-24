@@ -4,6 +4,7 @@ import {validateDeck} from 'common/utils/validation'
 import Beef from 'components/beef'
 import Button from 'components/button'
 import {VersionLinks} from 'components/link-container'
+import {Modal} from 'components/modal'
 import TcgLogo from 'components/tcg-logo'
 import UpdatesModal from 'components/updates'
 import debugOptions from 'debug'
@@ -13,7 +14,6 @@ import {getSession, getUpdates} from 'logic/session/session-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
-import {Modal} from 'components/modal'
 
 type Props = {
 	setMenuSection: (section: string) => void
