@@ -8,7 +8,7 @@ const Inneffective: Achievement = {
 	levels: [
 		{
 			name: 'Inneffective',
-			description: 'Win 10 games using no effect cards.',
+			description: 'Win 10 games without using single use effect cards.',
 			steps: 10,
 		},
 	],
@@ -20,7 +20,7 @@ const Inneffective: Achievement = {
 		let usedBannedCard = false
 
 		observer.subscribe(player.hooks.onAttach, (card) => {
-			if (!['attach', 'single_use'].includes(card.props.category)) return
+			if (!['single_use'].includes(card.props.category)) return
 			usedBannedCard = true
 		})
 
