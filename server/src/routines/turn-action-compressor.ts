@@ -120,6 +120,10 @@ function unpackBoardSlot(game: GameModel, byte: number): SlotComponent | null {
 			BoardSlotComponent,
 			query.slot.singleUse,
 		)
+		assert(
+			selectedSlot,
+			'A slot that is not on the game board cannot be selected',
+		)
 		return selectedSlot
 	}
 
@@ -204,9 +208,13 @@ const playCard: ReplayAction = {
 			query.slot.entity(turnAction.slot),
 		)
 
+		assert(slot, 'A slot component should be on the game board')
+
 		const cardIndex = game.currentPlayer
 			.getHand()
 			.findIndex((c) => c.entity === turnAction.card.entity)
+
+		assert(cardIndex, "The card should be in the player's hand")
 
 		return Buffer.concat([
 			packupBoardSlot(game, slot),
@@ -331,6 +339,10 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 				query.slot.currentPlayer,
 				query.slot.entity(turnAction.entity),
 			)
+			assert(
+				slot,
+				'The hermit who is being changed to should be on the game board.',
+			)
 			if (!slot?.inRow()) return null
 			return writeUIntToBuffer(slot.row.index, 1)
 		},
@@ -343,7 +355,11 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 				query.slot.rowIndex(rowIndex),
 			)
 
-			if (!slotComponent) return null
+			assert(
+				slotComponent,
+				'The hermit who is being changed to should be on the game board.',
+			)
+
 			return {
 				type: 'CHANGE_ACTIVE_HERMIT',
 				entity: slotComponent.entity,
