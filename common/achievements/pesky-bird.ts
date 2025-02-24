@@ -5,7 +5,7 @@ import {Achievement} from './types'
 const PeskyBird: Achievement = {
 	...achievement,
 	numericId: 10,
-	icon: '',
+
 	id: 'pesky_bird',
 	levels: [
 		{

@@ -13,7 +13,7 @@ const NoDerpcoins: Achievement = {
 			steps: 1,
 		},
 	],
-	icon: '',
+
 	onGameEnd(game, playerEntity, component, outcome) {
 		const player = game.components.get(playerEntity)
 		if (!player || !game.state.isEvilXBossGame) return

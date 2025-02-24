@@ -38,7 +38,7 @@ const NakedAndScared: Achievement = {
 	...achievement,
 	numericId: 15,
 	id: 'naked_and_scared',
-	icon: '',
+
 	levels: [
 		{
 			name: 'Naked and Scared',
