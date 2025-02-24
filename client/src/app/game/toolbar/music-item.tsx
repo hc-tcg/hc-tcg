@@ -19,11 +19,7 @@ function MusicItem() {
 	}
 
 	return (
-		<button
-			className={css.item}
-			title="Mute Music"
-			onClick={handleSoundChange}
-		>
+		<button className={css.item} title="Mute Music" onClick={handleSoundChange}>
 			<SpeakerIcon level={settings.musicMuted ? 0 : 100} />
 		</button>
 	)
