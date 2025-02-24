@@ -1,6 +1,6 @@
 import {Card} from 'common/cards/types'
-import {COINS} from 'common/coins'
 import {AIComponent} from 'common/components/ai-component'
+import {defaultAppearance} from 'common/cosmetics/default'
 import {GameSettings} from 'common/models/game-model'
 import {CurrentCoinFlip} from 'common/types/game-state'
 import {VirtualAI} from 'common/types/virtual-ai'
@@ -8,6 +8,10 @@ import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import {GameController} from 'server/game-controller'
 import gameSaga, {figureOutGameResult} from 'server/routines/game'
+import {
+	bufferToTurnActions,
+	turnActionsToBuffer,
+} from 'server/routines/turn-action-compressor'
 import {call} from 'typed-redux-saga'
 
 class FuzzyGameController extends GameController {
@@ -22,7 +26,8 @@ function getTestPlayer(playerName: string, deck: Array<Card>) {
 			name: playerName,
 			minecraftName: playerName,
 			censoredName: playerName,
-			selectedCoinHead: 'creeper' as keyof typeof COINS,
+			appearance: defaultAppearance,
+			uuid: '',
 		},
 		deck,
 	}
@@ -109,7 +114,23 @@ export async function testGame(options: {
 		options.playerTwo.AI,
 	)
 
-	await testSaga(call(gameSaga, controller))
+	await testSaga(
+		call(function* () {
+			yield* gameSaga(controller)
+
+			const turnActionsBuffer = yield* turnActionsToBuffer(controller)
+
+			yield* bufferToTurnActions(
+				controller.player1Defs,
+				controller.player2Defs,
+				controller.game.rngSeed,
+				controller.props,
+				turnActionsBuffer,
+			)
+		}),
+	)
+
+	// Then also fuzz the game replays system
 
 	return figureOutGameResult(controller.game)
 }
