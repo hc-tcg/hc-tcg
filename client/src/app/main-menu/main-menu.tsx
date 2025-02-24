@@ -13,6 +13,7 @@ import {getSession, getUpdates} from 'logic/session/session-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
+import {Modal} from 'components/modal'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -80,6 +81,7 @@ function MainMenu({setMenuSection}: Props) {
 
 	const updates = useSelector(getUpdates)
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(true)
+	const [riddleModal, showRiddleModal] = useState<boolean>(true)
 	const latestUpdateView = localStorage.getItem('latestUpdateView')
 
 	const welcomeMessage = newPlayer ? 'Welcome' : 'Welcome Back'
@@ -96,6 +98,39 @@ function MainMenu({setMenuSection}: Props) {
 			) : (
 				<></>
 			)}
+			<Modal
+				setOpen={riddleModal}
+				onClose={() => showRiddleModal(false)}
+				title={'The Riddle'}
+			>
+				<Modal.Description>
+					<p>
+						Our next update is going to be big. So we created a riddle that
+						reveals the release date.
+					</p>
+					<p>
+						Begin in the place where this all began, Weave nonsense by join
+						date, you'll find that you can. Create a statement that makes sense
+						as a whole, Take the first of each second - you're halfway to your
+						goal!
+					</p>
+					<p>
+						Select the parts that create a tone, Put them in order, they're no
+						use alone. Then number the hearts to discover the key Triple each
+						part and use - then you'll see!
+					</p>
+					<p>
+						<b>Want to help solve the riddle? Join our discord!</b>
+					</p>
+					<Button
+						onClick={() => {
+							window.open('https://discord.gg/uk4evqT7Ep')
+						}}
+					>
+						Join Discord
+					</Button>
+				</Modal.Description>
+			</Modal>
 			<div className={css.mainmenu}>
 				<div className={css.playerInfo}>
 					<p id={css.infoName}>
@@ -133,6 +168,13 @@ function MainMenu({setMenuSection}: Props) {
 						</Button>
 						<Button variant="stone" id={css.settings} onClick={handleSettings}>
 							More
+						</Button>
+						<Button
+							variant="primary"
+							id={css.riddle}
+							onClick={() => showRiddleModal(true)}
+						>
+							<div>The Riddle</div>
 						</Button>
 						<Button variant="stone" id={css.logout} onClick={handleLogOut}>
 							Log Out
