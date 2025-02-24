@@ -94,6 +94,7 @@ export async function testGame(options: {
 		{
 			randomizeOrder: false,
 			randomSeed: options.seed,
+			countAchievements: true,
 			settings: {
 				...defaultGameSettings,
 				verboseLogging: options.debug,

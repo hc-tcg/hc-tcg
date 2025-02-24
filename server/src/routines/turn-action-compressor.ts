@@ -213,6 +213,7 @@ const playCard: ReplayAction = {
 		const cardIndex = game.currentPlayer
 			.getHand()
 			.findIndex((c) => c.entity === turnAction.card.entity)
+		console.log(game.components.get(turnAction.card.slot))
 
 		assert(cardIndex !== -1, "The card should be in the player's hand")
 
@@ -701,11 +702,7 @@ export function* turnActionsToBuffer(
 	const newGameController = new GameController(
 		firstPlayerSetupDefs,
 		secondPlayerSetupDefs,
-		{
-			...controller.props,
-			randomSeed: originalGame.rngSeed,
-			randomizeOrder: true,
-		},
+		controller.props,
 	)
 
 	const newGame: GameModel = newGameController.game

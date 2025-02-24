@@ -35,6 +35,7 @@ import {
 	playCardFromHand,
 	testReplayGame,
 } from '../unit/game/utils'
+import String from 'common/cards/attach/string'
 
 function* afterGame(con: GameController) {
 	const turnActionsBuffer = yield* turnActionsToBuffer(con)
