@@ -8,7 +8,7 @@ import {
 	InvisibilityPotionHeadsEffect,
 	InvisibilityPotionTailsEffect,
 } from '../../status-effects/invisibility-potion'
-import {flipCoin} from '../../utils/coinflips'
+import {flipCoin} from '../../utils/coin-flips'
 import {singleUse} from '../defaults'
 import {SingleUse} from '../types'
 

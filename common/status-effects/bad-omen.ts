@@ -12,7 +12,7 @@ const BadOmenEffect: Counter<CardComponent> = {
 	id: 'bad-omen',
 	icon: 'bad-omen',
 	name: 'Bad Omen',
-	description: 'All coinflips are tails.',
+	description: 'All coin flips are tails.',
 	counter: 3,
 	counterType: 'turns',
 

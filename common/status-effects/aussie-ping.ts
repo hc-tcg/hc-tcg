@@ -8,7 +8,7 @@ import query from '../components/query'
 import {GameModel} from '../models/game-model'
 import {CoinFlipResult} from '../types/game-state'
 import {beforeAttack, onTurnEnd} from '../types/priorities'
-import {flipCoin} from '../utils/coinflips'
+import {flipCoin} from '../utils/coin-flips'
 import {
 	GasLightEffect,
 	GasLightPotentialEffect,
