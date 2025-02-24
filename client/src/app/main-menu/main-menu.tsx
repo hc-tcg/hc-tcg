@@ -81,7 +81,7 @@ function MainMenu({setMenuSection}: Props) {
 
 	const updates = useSelector(getUpdates)
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(true)
-	const [riddleModal, showRiddleModal] = useState<boolean>(true)
+	const [riddleModal, showRiddleModal] = useState<boolean>(false)
 	const latestUpdateView = localStorage.getItem('latestUpdateView')
 
 	const welcomeMessage = newPlayer ? 'Welcome' : 'Welcome Back'
