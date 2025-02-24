@@ -16,7 +16,6 @@ const SUStainable: Achievement = {
 			steps: 100,
 		},
 	],
-	icon: 'sustainable',
 	onGameStart(game, playerEntity, component, observer) {
 		let player = game.components.get(playerEntity)!
 
