@@ -786,7 +786,6 @@ export function* createBossGame(
 		name: 'Evil Xisuma',
 		minecraftName: 'EvilXisuma',
 		censoredName: 'Evil Xisuma',
-		deck: [EvilXisumaBoss],
 		virtualAI: ExBossAI,
 		disableDeckingOut: true,
 		appearance: {...defaultAppearance, coin: COINS['evilx']},
@@ -979,7 +978,7 @@ function setupSolitareGame(
 		},
 		{
 			model: opponent,
-			deck: opponent.deck,
+			deck: opponent.virtualAI.getDeck(),
 		},
 		{randomizeOrder: false},
 	)

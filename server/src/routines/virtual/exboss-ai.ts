@@ -154,6 +154,9 @@ function getNextTurnAction(
 const ExBossAI: VirtualAI = {
 	id: 'evilxisuma_boss',
 
+	getDeck() {
+		return [EvilXisumaBoss]
+	},
 	getTurnActions: function* (game, component) {
 		while (true) {
 			yield* getNextTurnAction(game, component)
