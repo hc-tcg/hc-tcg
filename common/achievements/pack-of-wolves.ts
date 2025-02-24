@@ -8,7 +8,6 @@ const PackOfWolves: Achievement = {
 	...achievement,
 	numericId: 3,
 	id: 'pack_of_wolves',
-	icon: '',
 	levels: [
 		{
 			name: 'Pack of Wolves',
