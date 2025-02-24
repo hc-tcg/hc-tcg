@@ -5,6 +5,7 @@ import {achievement} from './defaults'
 import {Achievement} from './types'
 import {afterAttack, beforeAttack} from '../types/priorities'
 import PoisonEffect from '../status-effects/poison'
+import {CardEntity} from '../entities'
 
 const EyeOfTheSpider: Achievement = {
 	...achievement,
@@ -13,7 +14,7 @@ const EyeOfTheSpider: Achievement = {
 	levels: [
 		{
 			name: 'Eye of the Spider',
-			description: 'Knockout a poisoned hermit at 10hp.',
+			description: 'Knock out a poisoned AFK Hermit.',
 			steps: 1,
 		},
 	],
@@ -21,35 +22,26 @@ const EyeOfTheSpider: Achievement = {
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		assert(player)
+		const opponentPlayer = player.opponentPlayer
 
-		let target: RowComponent | null = null
-
-		observer.subscribeWithPriority(
-			game.hooks.beforeAttack,
-			beforeAttack.REACT_TO_DAMAGE,
-			(attack) => {
-				target = null
-
-				let targetHermit = attack.target?.getHermit()
-
-				if (!targetHermit) return
-
-				if (
-					attack.target?.health !== 10 ||
-					!query.card.hasStatusEffect(PoisonEffect)(game, targetHermit)
-				)
-					return
-
-				target = attack.target
-			},
-		)
+		let poisonedHermits: Set<CardEntity> = new Set()
 
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.ACHIEVEMENTS,
-			() => {
-				if (!target) return
-				if (!target.health) {
+			(attack) => {
+				if (!attack.target) return
+				let targetHermit = attack.target?.getHermit()
+				if (!targetHermit) return
+
+				if (query.card.hasStatusEffect(PoisonEffect)(game, targetHermit)) {
+					poisonedHermits.add(targetHermit.entity)
+				}
+
+				if (attack.target?.entity === opponentPlayer.activeRowEntity) return
+				if (attack.target.health) return
+
+				if (poisonedHermits.has(targetHermit.entity)) {
 					component.incrementGoalProgress({goal: 0})
 				}
 			},
