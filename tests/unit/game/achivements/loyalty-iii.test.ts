@@ -4,7 +4,17 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {InstantHealthII} from 'common/cards/single-use/instant-health'
 import Trident from 'common/cards/single-use/trident'
 import query from 'common/components/query'
-import {attack, endTurn, pick, playCardFromHand, testAchivement} from '../utils'
+import {
+	applyEffect,
+	attack,
+	endTurn,
+	forfeit,
+	pick,
+	playCardFromHand,
+	testAchivement,
+} from '../utils'
+import BadOmen from 'common/cards/single-use/bad-omen'
+import {applySingleUse} from 'common/utils/board'
 
 describe('Test Loyalty III Achievement', () => {
 	test('Test achievement is gained after three uses', () => {
@@ -46,6 +56,47 @@ describe('Test Loyalty III Achievement', () => {
 				},
 			},
 			{noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+	test('Test steps is one if using different tridents', () => {
+		testAchivement(
+			{
+				achievement: LoyaltyIII,
+				playerOneDeck: [EthosLabCommon, Trident, Trident],
+				playerTwoDeck: [EthosLabCommon, BadOmen, InstantHealthII],
+				playGame: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Trident, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, InstantHealthII, 'single_use')
+					yield* pick(
+						game,
+						query.slot.active,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+					)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Trident, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* forfeit(game.currentPlayerEntity)
+				},
+				checkAchivement(_game, achievement, _outcome) {
+					expect(LoyaltyIII.getProgress(achievement.goals)).toBe(1)
+				},
+			},
+			{noItemRequirements: true},
 		)
 	})
 })
