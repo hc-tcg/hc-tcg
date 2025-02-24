@@ -25,6 +25,16 @@ const EyeOfTheSpider: Achievement = {
 
 		let poisonedHermits: Set<CardEntity> = new Set()
 
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			for (const hermitEntity in Object.values(poisonedHermits)) {
+				let hermit = game.components.get(hermitEntity as CardEntity)!
+
+				if (!query.card.hasStatusEffect(PoisonEffect)(game, hermit)) {
+					poisonedHermits.delete(hermit.entity)
+				}
+			}
+		})
+
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.ACHIEVEMENTS,
