@@ -93,6 +93,7 @@ nav {
 		"solo-game"
 		"deck"
 		"settings"
+		"riddle"
 		"logout";
 	animation: fadeIn 250ms ease-in-out forwards;
 }
@@ -119,6 +120,16 @@ nav {
 
 #logout {
 	grid-area: logout;
+}
+
+#riddle {
+	grid-area: riddle;
+	height: 3.25rem;
+	font-size: 1.25rem;
+
+	@media screen and (max-width: 720px) {
+		height: 2.5rem;
+	}
 }
 
 .body {
@@ -237,7 +248,7 @@ nav {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: .8vh 0;
+	padding: 0.8vh 0;
 	color: var(--text-light);
 
 	> span {
@@ -443,6 +454,7 @@ nav {
 			"public public"
 			"private-create solo-game"
 			"deck deck"
+			"riddle riddle"
 			"logout settings";
 	}
 }
