@@ -1,6 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import LoyaltyIII from 'common/achievements/loyalty-iii'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import BadOmen from 'common/cards/single-use/bad-omen'
 import {InstantHealthII} from 'common/cards/single-use/instant-health'
 import Trident from 'common/cards/single-use/trident'
 import query from 'common/components/query'
@@ -13,8 +14,6 @@ import {
 	playCardFromHand,
 	testAchivement,
 } from '../utils'
-import BadOmen from 'common/cards/single-use/bad-omen'
-import {applySingleUse} from 'common/utils/board'
 
 describe('Test Loyalty III Achievement', () => {
 	test('Test achievement is gained after three uses', () => {
