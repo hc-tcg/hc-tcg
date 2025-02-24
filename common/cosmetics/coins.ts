@@ -3,6 +3,7 @@ import PackOfWolves from '../achievements/pack-of-wolves'
 import ServerLag from '../achievements/server-lag'
 import SheepStarer from '../achievements/sheep-starer'
 import Win from '../achievements/wins'
+import Wipeout from '../achievements/wipeout'
 import {Coin} from './types'
 
 const CoinDefinitions: Omit<Coin, 'type'>[] = [
@@ -40,6 +41,12 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		name: 'Pink Sheep',
 		borderColor: '#de7f9c',
 		requires: {achievement: SheepStarer.id},
+	},
+	{
+		id: 'skeleton',
+		name: 'Skeleton',
+		borderColor: '#494949',
+		requires: {achievement: Wipeout.id},
 	},
 	{
 		id: 'slime',
