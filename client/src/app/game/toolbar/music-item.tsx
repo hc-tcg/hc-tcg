@@ -4,7 +4,7 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import css from './toolbar.module.scss'
 
-function SoundItem() {
+function MusicItem() {
 	const settings = useSelector(getSettings)
 	const dispatch = useMessageDispatch()
 
@@ -12,8 +12,8 @@ function SoundItem() {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'muted',
-				value: !settings.muted,
+				key: 'musicMuted',
+				value: !settings.musicMuted,
 			},
 		})
 	}
@@ -21,12 +21,12 @@ function SoundItem() {
 	return (
 		<button
 			className={css.item}
-			title="Mute Sounds (M)"
+			title="Mute Music"
 			onClick={handleSoundChange}
 		>
-			<SpeakerIcon level={settings.muted ? 0 : 100} />
+			<SpeakerIcon level={settings.musicMuted ? 0 : 100} />
 		</button>
 	)
 }
 
-export default SoundItem
+export default MusicItem
