@@ -123,6 +123,7 @@ function MainMenu({setMenuSection}: Props) {
 					<p>
 						Then number the hearts to discover the key Triple each part and use
 						- then you'll see!
+
 					</p>
 					<p>
 						<b>Want to help solve the riddle? Join our discord!</b>
