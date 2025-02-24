@@ -214,7 +214,7 @@ const playCard: ReplayAction = {
 			.getHand()
 			.findIndex((c) => c.entity === turnAction.card.entity)
 
-		assert(cardIndex, "The card should be in the player's hand")
+		assert(cardIndex !== null, "The card should be in the player's hand")
 
 		return Buffer.concat([
 			packupBoardSlot(game, slot),
