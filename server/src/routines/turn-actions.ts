@@ -144,6 +144,8 @@ export function playCardAction(
 	)
 	assert(card, 'You can not play a card that is not in the ECS')
 
+	assert(card.slot.type == 'hand', 'The card you play must be in your hand')
+
 	const {currentPlayer} = game
 
 	const pickedSlot = game.components.get(slotEntity)
