@@ -1,6 +1,6 @@
 import {PlayerComponent, StatusEffectComponent} from '../components'
 import query from '../components/query'
-import {onTurnEnd} from '../types/priorities'
+import {afterApply, onTurnEnd} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -52,7 +52,11 @@ const HowDidWeGetHere: Achievement = {
 			component.bestGoalProgress({goal: 0, progress: bestAttempt})
 		}
 
-		observer.subscribe(player.hooks.beforeApply, checkStatusEffects)
+		observer.subscribeWithPriority(
+			player.hooks.afterApply,
+			afterApply.CHECK_BOARD_STATE,
+			checkStatusEffects,
+		)
 		observer.subscribeWithPriority(
 			player.hooks.onTurnEnd,
 			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
