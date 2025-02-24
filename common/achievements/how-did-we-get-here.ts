@@ -15,7 +15,6 @@ const HowDidWeGetHere: Achievement = {
 			steps: 5,
 		},
 	],
-	icon: '',
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		if (!player) return

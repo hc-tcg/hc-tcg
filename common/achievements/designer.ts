@@ -20,7 +20,6 @@ const Designer: Achievement = {
 			steps: 1,
 		},
 	],
-	icon: '',
 	onGameStart(game, playerEntity, component, observer) {
 		const equippedDeckIds = game.components
 			.filter(

@@ -13,7 +13,6 @@ const SheepStarer: Achievement = {
 	...achievement,
 	numericId: 14,
 	id: 'sheep_starer',
-	icon: '',
 	levels: [
 		{
 			name: 'Sheep Starer',

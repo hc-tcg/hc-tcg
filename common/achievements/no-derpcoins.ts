@@ -15,7 +15,6 @@ const NoDerpcoins: Achievement = {
 			steps: 1,
 		},
 	],
-	icon: '',
 	onGameStart(game, playerEntity, component, observer) {
 		if (!game.state.isEvilXBossGame) return
 		const cost = getDeckCost(

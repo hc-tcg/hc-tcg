@@ -15,7 +15,6 @@ const British: Achievement = {
 			steps: 1,
 		},
 	],
-	icon: 'british',
 	onGameStart(game, playerEntity, component, observer) {
 		const player = game.components.get(playerEntity)
 		if (!player) return

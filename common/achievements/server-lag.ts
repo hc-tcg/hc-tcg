@@ -13,7 +13,6 @@ const ServerLag: Achievement = {
 			steps: 1,
 		},
 	],
-	icon: '',
 	onGameEnd(game, playerEntity, component, outcome) {
 		/** Prevents getting progress from forfeiting after attacking with a prize card */
 		if (

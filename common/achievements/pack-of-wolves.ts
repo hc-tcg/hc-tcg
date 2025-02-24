@@ -8,10 +8,9 @@ const PackOfWolves: Achievement = {
 	...achievement,
 	numericId: 3,
 	id: 'pack_of_wolves',
-	icon: '',
 	levels: [
 		{
-			name: 'Pack Of Wolves',
+			name: 'Pack of Wolves',
 			description: 'Have 3 wolves attached to your hermits at the same time.',
 			steps: 3,
 		},
