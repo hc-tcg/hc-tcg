@@ -29,12 +29,15 @@ const CertifiedZombie: Achievement = {
 			() => {
 				if (player.getActiveHermit()?.props.id === ArmorStand.id) {
 					rounds += 1
-					component.bestGoalProgress({goal: 0, progress: rounds})
 				} else {
 					rounds = 0
 				}
 			},
 		)
+
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			component.bestGoalProgress({goal: 0, progress: rounds})
+		})
 	},
 }
 

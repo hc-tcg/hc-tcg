@@ -32,6 +32,7 @@ const British: Achievement = {
 				const targetHermit = attack.target?.getHermit()
 				if (!targetHermit) return
 				if (attack.type !== 'secondary') return
+				if (attack.player.entity !== playerEntity) return
 				const attackerId = attack.attacker?.props.id
 				if (
 					attackerId !== 'xisumavoid_rare' &&
@@ -41,8 +42,15 @@ const British: Achievement = {
 
 				if (!attackedHermits[targetHermit.entity]) {
 					attackedHermits[targetHermit.entity] = attackerId
+					observer.subscribe(targetHermit.hooks.onChangeSlot, (slot) => {
+						if (slot.onBoard()) return
+						delete attackedHermits[targetHermit.entity]
+					})
 					return
-				} else if (attackedHermits[targetHermit.entity] === 'both') {
+				} else if (
+					attackedHermits[targetHermit.entity] === 'both' ||
+					attackedHermits[targetHermit.entity] === attackerId
+				) {
 					return
 				}
 

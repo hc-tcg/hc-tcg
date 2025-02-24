@@ -1,4 +1,4 @@
-import {StatusEffectComponent} from '../components'
+import {CardComponent} from '../components'
 import query from '../components/query'
 import FireEffect from '../status-effects/fire'
 import {afterApply, onTurnEnd} from '../types/priorities'
@@ -22,26 +22,13 @@ const HotTake: Achievement = {
 		if (!player) return
 
 		const checkStatusEffects = () => {
-			const statusEffects: Record<string, StatusEffectComponent[]> = {}
-			game.components
-				.filter(
-					StatusEffectComponent,
-					query.effect.targetIsCardAnd(
-						query.card.player(playerEntity),
-						query.card.onBoard,
-						query.card.isHermit,
-					),
-					query.effect.is(FireEffect),
-				)
-				.forEach((statusEffect) => {
-					const target = statusEffect.target.entity
-					if (statusEffects[target] === undefined) statusEffects[target] = []
-					statusEffects[target].push(statusEffect)
-				})
-			const bestAttempt = Math.max(
-				...Object.values(statusEffects).map((statuses) => statuses.length),
+			const burningHermits = game.components.filter(
+				CardComponent,
+				query.card.opponentPlayer,
+				query.card.onBoard,
+				query.card.hasStatusEffect(FireEffect),
 			)
-			component.bestGoalProgress({goal: 0, progress: bestAttempt})
+			component.bestGoalProgress({goal: 0, progress: burningHermits.length})
 		}
 
 		observer.subscribeWithPriority(
