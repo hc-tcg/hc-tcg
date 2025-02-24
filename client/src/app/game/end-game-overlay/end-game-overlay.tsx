@@ -54,13 +54,18 @@ const EndGameOverlay = ({
 			'The game crashed. Please copy the crash message and report this to the developers.',
 	}
 
-	const REASON_MSG: Record<GameVictoryReason, string> = {
+	const NAME_REASON_MSG: Record<GameVictoryReason, string> = {
 		'no-hermits-on-board': 'lost all hermits.',
 		lives: 'lost all lives.',
 		'decked-out': 'ran out of cards.',
 		'timeout-without-hermits': 'ran out of time without an active hermit.',
 		forfeit: 'forfeit the game.',
 		disconnect: 'was disconnected.',
+	}
+
+	const YOU_REASON_MSG: Record<GameVictoryReason, string> = {
+		...NAME_REASON_MSG,
+		disconnect: 'were disconnected.',
 	}
 
 	switch (myOutcome) {
@@ -96,8 +101,9 @@ const EndGameOverlay = ({
 					<span>
 						{viewer.type === 'spectator' && nameOfLoser}
 						{viewer.type === 'player' &&
-							(myOutcome === 'win' ? nameOfLoser : 'You')}{' '}
-						{REASON_MSG[outcome.victoryReason]}
+							(myOutcome === 'win'
+								? nameOfLoser + ' ' + NAME_REASON_MSG[outcome.victoryReason]
+								: 'You' + YOU_REASON_MSG[outcome.victoryReason])}
 					</span>
 				)}
 
