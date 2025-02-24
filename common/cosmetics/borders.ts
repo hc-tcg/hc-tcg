@@ -1,5 +1,6 @@
 import HotTake from '../achievements/hot-take'
 import Innefective from '../achievements/inneffective'
+import LoyaltyIII from '../achievements/loyalty-iii'
 import Win from '../achievements/wins'
 import {Border} from './types'
 
@@ -7,6 +8,11 @@ const BorderDefinitions: Omit<Border, 'type'>[] = [
 	{
 		id: 'blue',
 		name: 'Blue',
+	},
+	{
+		id: 'copper_border',
+		name: 'Copper',
+		requires: {achievement: LoyaltyIII.id},
 	},
 	{
 		id: 'green_border',
