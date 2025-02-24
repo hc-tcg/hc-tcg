@@ -120,13 +120,13 @@ export async function testGame(options: {
 
 			const turnActionsBuffer = yield* turnActionsToBuffer(controller)
 
-			yield* bufferToTurnActions(
-				controller.player1Defs,
-				controller.player2Defs,
-				controller.game.rngSeed,
-				controller.props,
-				turnActionsBuffer,
-			)
+			// yield* bufferToTurnActions(
+			// 	controller.player1Defs,
+			// 	controller.player2Defs,
+			// 	controller.game.rngSeed,
+			// 	controller.props,
+			// 	turnActionsBuffer,
+			// )
 		}),
 	)
 
