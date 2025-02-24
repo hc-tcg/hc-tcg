@@ -188,7 +188,8 @@
 	width: 100%;
 	height: 100%;
 	border-radius: 50%;
-	border: 4px solid;
+	border-style: solid;
+    border-width: 3.33%;
 	box-shadow: 0 0 8px;
 }
 
@@ -196,7 +197,8 @@
 	width: 8vh;
 	height: 8vh;
 	border-radius: 50%;
-	border: 4px solid;
+	border-style: solid;
+	border-width: 3.33%;
 	box-shadow: 0 0 8px;
 	align-self: center;
 	margin-top: 2rem;
@@ -211,7 +213,7 @@
 	align-items: center;
 
 	> img {
-		width: 33%;
+	width: 33%;
 		height: 33%;
 	}
 }
