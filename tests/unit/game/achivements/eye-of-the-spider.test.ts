@@ -1,5 +1,10 @@
 import {describe, expect, test} from '@jest/globals'
+import EyeOfTheSpider from 'common/achievements/eye-of-the-spider'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
+import Anvil from 'common/cards/single-use/anvil'
+import LavaBucket from 'common/cards/single-use/lava-bucket'
+import SplashPotionOfPoison from 'common/cards/single-use/splash-potion-of-poison'
 import {
 	applyEffect,
 	attack,
@@ -9,11 +14,6 @@ import {
 	playCardFromHand,
 	testAchivement,
 } from '../utils'
-import SplashPotionOfPoison from 'common/cards/single-use/splash-potion-of-poison'
-import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
-import Anvil from 'common/cards/single-use/anvil'
-import EyeOfTheSpider from 'common/achievements/eye-of-the-spider'
-import LavaBucket from 'common/cards/single-use/lava-bucket'
 
 describe('Test Eye of the Spider achivement', () => {
 	test('Test Eye of the Spider achivement', () => {

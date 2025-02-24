@@ -1,11 +1,10 @@
 import assert from 'assert'
-import {RowComponent} from '../components'
 import query from '../components/query'
+import {CardEntity} from '../entities'
+import PoisonEffect from '../status-effects/poison'
+import {afterAttack} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
-import {afterAttack, beforeAttack} from '../types/priorities'
-import PoisonEffect from '../status-effects/poison'
-import {CardEntity} from '../entities'
 
 const EyeOfTheSpider: Achievement = {
 	...achievement,
