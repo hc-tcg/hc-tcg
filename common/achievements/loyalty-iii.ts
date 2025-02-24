@@ -16,7 +16,6 @@ const LoyaltyIII: Achievement = {
 			steps: 3,
 		},
 	],
-	icon: '',
 	onGameStart(game, playerEntity, component, observer) {
 		let player = game.components.get(playerEntity)
 		assert(player)
