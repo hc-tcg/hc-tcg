@@ -58,7 +58,7 @@ function App() {
 
 	const router = () => {
 		if (section === 'game') {
-			return <Game />
+			return <Game setMenuSection={setMenuSection} />
 		} else if (connected && playerName) {
 			enableToast = true
 			switch (menuSection) {
