@@ -9,6 +9,7 @@ import EyeOfTheSpider from './eye-of-the-spider'
 import GoFish from './go-fish'
 import HotTake from './hot-take'
 import HowDidWeGetHere from './how-did-we-get-here'
+import HurtinHermits from './hurtin-hermits'
 import Inneffective from './inneffective'
 import AllCards from './jack-of-all-cards'
 import NakedAndScared from './naked-and-scared'
@@ -47,6 +48,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	PackOfWolves,
 	GoFish,
 	HowDidWeGetHere,
+	HurtinHermits,
 	Wipeout,
 	DefeatEvilX,
 	NoDerpcoins,
