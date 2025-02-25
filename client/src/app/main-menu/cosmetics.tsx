@@ -334,6 +334,16 @@ function Cosmetics({setMenuSection, page}: Props) {
 								<Button
 									onClick={() => {
 										if (!usernameRef.current) return
+										if (usernameRef.current.value.length < 3) {
+											dispatch({
+												type: localMessages.TOAST_OPEN,
+												open: true,
+												title: 'Username Invalid',
+												description:
+													'Your username must be at least 3 characters long.',
+											})
+											return
+										}
 										dispatch({
 											type: localMessages.USERNAME_SET,
 											name: usernameRef.current.value,
