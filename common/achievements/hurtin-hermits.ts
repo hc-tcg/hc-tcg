@@ -4,7 +4,7 @@ import {Achievement} from './types'
 const HurtinHermits: Achievement = {
 	...achievement,
 	numericId: 41,
-	id: 'hertin_hermits',
+	id: 'hurtin_hermits',
 	levels: [
 		{name: "Hurtin' Hermits", description: 'Lose your first game.', steps: 1},
 	],
