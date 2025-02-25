@@ -13,8 +13,6 @@ test("Test Hurtin' Hermits achivement", () => {
 				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 				yield* endTurn(game)
 				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
-				yield* endTurn(game)
 				yield* attack(game, 'secondary')
 			},
 			checkAchivement(_game, achievement, _outcome) {
