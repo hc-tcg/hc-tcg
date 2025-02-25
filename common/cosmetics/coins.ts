@@ -1,4 +1,5 @@
 import EyeOfTheSpider from '../achievements/eye-of-the-spider'
+import GoFish from '../achievements/go-fish'
 import NoDerpcoins from '../achievements/no-derpcoins'
 import PackOfWolves from '../achievements/pack-of-wolves'
 import ServerLag from '../achievements/server-lag'
@@ -17,7 +18,7 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		id: 'server-lag',
 		name: 'Chicken',
 		borderColor: '#CD1414',
-		requires: undefined,
+		requires: {achievement: ServerLag.id},
 	},
 	{
 		id: 'cave-spider',
@@ -29,7 +30,7 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		id: 'cod',
 		name: 'Cod',
 		borderColor: '#7D604D',
-		requires: {achievement: ServerLag.id},
+		requires: {achievement: GoFish.id},
 	},
 	{
 		id: 'dinnerbone',
