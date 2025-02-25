@@ -1,5 +1,11 @@
+import {describe} from 'node:test'
 import {expect, test} from '@jest/globals'
+import TargetedLightning from 'common/achievements/targeted-lightning'
+import LightningRod from 'common/cards/attach/lightning-rod'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import TargetBlock from 'common/cards/single-use/target-block'
+import {RowComponent} from 'common/components'
+import query from 'common/components/query'
 import {
 	attack,
 	endTurn,
@@ -8,12 +14,6 @@ import {
 	playCardFromHand,
 	testAchivement,
 } from '../utils'
-import {describe} from 'node:test'
-import TargetedLightning from 'common/achievements/targeted-lightning'
-import TargetBlock from 'common/cards/single-use/target-block'
-import LightningRod from 'common/cards/attach/lightning-rod'
-import query from 'common/components/query'
-import {RowComponent} from 'common/components'
 
 describe('Test Targeted Lightning achievement', () => {
 	test('Test Targeted Lightning achievement', () => {
