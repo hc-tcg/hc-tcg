@@ -18,6 +18,7 @@ import PeskyBird from './pesky-bird'
 import ServerLag from './server-lag'
 import SheepStarer from './sheep-starer'
 import SUStainable from './sustainable'
+import TargetedLightning from './targeted-lightning'
 import TeamStar from './team-star'
 import {
 	BalancedWins,
@@ -58,6 +59,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	CertifiedZombie,
 	SUStainable,
 	Inneffective,
+	TargetedLightning,
 	Win,
 	BalancedWins,
 	BuilderWins,
