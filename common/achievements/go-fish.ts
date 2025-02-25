@@ -20,10 +20,10 @@ const GoFish: Achievement = {
 		const player = game.components.get(playerEntity)
 		if (!player) return
 
-		let numberOfMendingsAtStartOfTurnOrAfterUsingSingleUse = 0
+		let numberOfMendingsBeforeUse = 0
 
-		observer.subscribe(player.hooks.onTurnStart, () => {
-			numberOfMendingsAtStartOfTurnOrAfterUsingSingleUse = player
+		observer.subscribe(player.hooks.beforeApply, () => {
+			numberOfMendingsBeforeUse = player
 				.getHand()
 				.filter((x) => x.props.id === Mending.id).length
 		})
@@ -39,14 +39,9 @@ const GoFish: Achievement = {
 				.getHand()
 				.filter((x) => x.props.id === Mending.id).length
 
-			if (
-				numberOfMendingsAtStartOfTurnOrAfterUsingSingleUse < numberOfMendingsNow
-			) {
+			if (numberOfMendingsBeforeUse < numberOfMendingsNow) {
 				component.incrementGoalProgress({goal: 0})
 			}
-
-			// We need to recount the number of mendings incase the player uses multiple single use cards in one turn
-			numberOfMendingsAtStartOfTurnOrAfterUsingSingleUse = numberOfMendingsNow
 		})
 	},
 }
