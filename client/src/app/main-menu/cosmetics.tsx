@@ -334,6 +334,7 @@ function Cosmetics({setMenuSection, page}: Props) {
 								<Button
 									onClick={() => {
 										if (!usernameRef.current) return
+										if (usernameRef.current.value.length < 3) return
 										dispatch({
 											type: localMessages.USERNAME_SET,
 											name: usernameRef.current.value,
