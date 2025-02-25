@@ -1,7 +1,7 @@
 import {expect, test} from '@jest/globals'
+import HurtinHermits from 'common/achievements/hurtin-hermits'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
-import HurtinHermits from 'common/achievements/hurtin-hermits'
 
 test("Test Hurtin' Hermits achivement", () => {
 	testAchivement(
