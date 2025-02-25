@@ -32,6 +32,7 @@ import {
 	TerraformWins,
 } from './type-wins'
 import {Achievement} from './types'
+import UselessMachine from './useless-machine'
 import Win from './wins'
 import Wipeout from './wipeout'
 
@@ -50,6 +51,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	ServerLag,
 	PeskyBird,
 	TeamStar,
+	UselessMachine,
 	OreSnatcher,
 	SheepStarer,
 	NakedAndScared,
