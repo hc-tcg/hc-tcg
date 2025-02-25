@@ -605,7 +605,7 @@
 	flex-direction: row;
 	align-items: center;
 	gap: 0.5rem;
-	max-width: calc(clamp(200px, 24rem, 500px) - 7rem - 4px);
+	max-width: 100%;
 	opacity: 100%;
 
 	> div {
