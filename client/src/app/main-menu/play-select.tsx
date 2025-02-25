@@ -38,7 +38,7 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getSession} from 'logic/session/session-selectors'
 import {useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
-import {CosmeticPreview} from './cosmetics'
+import {CosmeticPreview} from './achievements'
 import css from './play-select.module.scss'
 
 type Props = {
