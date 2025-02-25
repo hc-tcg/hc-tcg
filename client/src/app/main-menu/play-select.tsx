@@ -201,7 +201,7 @@ function PlaySelect({setMenuSection}: Props) {
 		}
 	}, [handleKeyPress])
 
-	function handleKeyPress(e: any) {
+	function handleKeyPress(e: KeyboardEvent) {
 		if (!matchmaking && e.key === 'Escape') {
 			if (backStack[0]) {
 				goBack()

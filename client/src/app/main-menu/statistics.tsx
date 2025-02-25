@@ -824,7 +824,7 @@ function Statistics({setMenuSection}: Props) {
 										</div>
 										<div className={css.stat}>
 											<p className={css.statName}>Total Losses</p>
-											<p>{stats.wins + stats.forfeitWins}</p>
+											<p>{stats.losses + stats.forfeitLosses}</p>
 											<p>
 												{padDecimal(
 													(stats.losses + stats.forfeitLosses) /
@@ -987,7 +987,6 @@ function Statistics({setMenuSection}: Props) {
 															)}
 															{game.secondPlayer.name}
 														</div>
-
 														<Button
 															id={css.deck}
 															onClick={() => {

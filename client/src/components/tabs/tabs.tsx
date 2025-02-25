@@ -22,6 +22,7 @@ function Tabs({
 						onClick={() => {
 							if (selected !== tab) setSelected(tab)
 						}}
+						key={tab}
 					>
 						{tab}
 					</div>

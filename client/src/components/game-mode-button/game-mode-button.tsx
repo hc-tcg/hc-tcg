@@ -316,11 +316,11 @@ GameModeButton.ChooseDeck = ({
 				>
 					{deck.tags && deck.tags.length > 0 && (
 						<div className={css.multiColoredCircle}>
-							{deck.tags.map((tag, i2) => (
+							{deck.tags.map((tag, i) => (
 								<div
 									className={css.singleTag}
 									style={{backgroundColor: tag.color}}
-									key={i2}
+									key={i}
 								></div>
 							))}
 						</div>
@@ -366,10 +366,11 @@ GameModeButton.ChooseDeck = ({
 
 							if (option.includes('No Tag')) {
 								setFilteredDecks(filterDecks(decks, {tag: null}))
+								setTagFilter(null)
 							} else {
 								setFilteredDecks(filterDecks(decks, {tag: parsedOption.key}))
+								setTagFilter(parsedOption)
 							}
-							setTagFilter(parsedOption)
 						}}
 						typeFilter={typeFilter}
 						typeFilterAction={(option: string) => {

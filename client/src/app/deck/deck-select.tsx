@@ -120,6 +120,7 @@ export function FilterComponent({
 				}}
 				onKeyDown={(e) => {
 					if (e.key !== 'Escape') return
+					e.stopPropagation()
 					e.currentTarget.blur()
 				}}
 			></input>
