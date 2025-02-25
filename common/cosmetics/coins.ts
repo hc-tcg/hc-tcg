@@ -3,6 +3,7 @@ import NoDerpcoins from '../achievements/no-derpcoins'
 import PackOfWolves from '../achievements/pack-of-wolves'
 import ServerLag from '../achievements/server-lag'
 import SheepStarer from '../achievements/sheep-starer'
+import UselessMachine from '../achievements/useless-machine'
 import Win from '../achievements/wins'
 import Wipeout from '../achievements/wipeout'
 import {Coin} from './types'
@@ -59,7 +60,7 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		id: 'slime',
 		name: 'Slime',
 		borderColor: '#497736',
-		requires: undefined,
+		requires: {achievement: UselessMachine.id},
 	},
 	{
 		id: 'wolf',
