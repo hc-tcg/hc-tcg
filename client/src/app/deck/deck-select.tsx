@@ -116,6 +116,10 @@ function FilterComponent({
 				onChange={(e) => {
 					nameFilterAction(e.target.value)
 				}}
+				onKeyDown={(e) => {
+					if (e.key !== 'Escape') return
+					e.currentTarget.blur()
+				}}
 			></input>
 		</div>
 	)

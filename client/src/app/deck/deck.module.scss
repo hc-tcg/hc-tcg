@@ -634,7 +634,9 @@
 
 	.deckSearchInput {
 		max-width: 5rem;
-		background-color: var(--gray-300);
+		background: var(--gray-400);
+		border: 2px solid var(--gray-900);
+		color: white;
 		align-self: center;
 		min-height: 2rem;
 		line-height: 2rem;
