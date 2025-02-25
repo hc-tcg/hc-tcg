@@ -1,5 +1,4 @@
-import {describe} from 'node:test'
-import {expect, test} from '@jest/globals'
+import {describe, expect, test} from '@jest/globals'
 import TargetedLightning from 'common/achievements/targeted-lightning'
 import LightningRod from 'common/cards/attach/lightning-rod'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
