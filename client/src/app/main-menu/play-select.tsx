@@ -491,27 +491,50 @@ function PlaySelect({setMenuSection}: Props) {
 							<GameModeButton.OptionsSelect
 								id="bossSelect"
 								activeButtonMenu={activeButtonMenu}
-								title="Welcome to your doom."
-								subTitle="That's right, HC-TCG Online has its first boss fight! This is no challenge deck - Evil X cares
-								not for the cards. He brings his own moves, and they are vicious! If you think you can defeat him, you'll
-								need to be on your best game. Make sure your audio is enabled, as you'll need to listen to voice commands
-								during the battle."
+								title="Fight A Boss!"
+								subTitle="Fight either Evil X or Pharoah"
 								buttons={[
 									{
-										text: 'Full Rules',
+										text: 'Evil X',
 										onClick() {
-											addMenuWithBack('bossRules')
+											addMenuWithBack('bossSelectEvilX')
 										},
 									},
 									{
-										text: 'Challenge Evil X',
+										text: 'Pharaoh',
 										onClick() {
-											addMenuWithBack('bossChooseDeck')
+											addMenuWithBack('bossSelectPharaoh')
 										},
-										variant: 'primary',
 									},
 								]}
 							/>
+							<GameModeButton.CustomMenu
+								id="bossSelectEvilX"
+								activeButtonMenu={activeButtonMenu}
+							>
+								<div>
+									<p>
+										"That's right, HC-TCG Online has its first boss fight! This
+										is no challenge deck - Evil X cares not for the cards. He
+										brings his own moves, and they are vicious! If you think you
+										can defeat him, you'll need to be on your best game. Make
+										sure your audio is enabled, as you'll need to listen to
+										voice commands during the battle."
+									</p>
+									<Button
+										onClick={() => addMenuWithBack('bossRules')}
+										variant="primary"
+									>
+										Full Rules
+									</Button>
+									<Button
+										onClick={() => addMenuWithBack('bossChooseDeck')}
+										variant="primary"
+									>
+										Challange Evil X
+									</Button>
+								</div>
+							</GameModeButton.CustomMenu>
 							<GameModeButton.CustomMenu
 								id="bossRules"
 								activeButtonMenu={activeButtonMenu}

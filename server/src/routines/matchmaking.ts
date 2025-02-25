@@ -1,5 +1,4 @@
 import assert from 'assert'
-import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
 import {
 	AchievementComponent,
 	BoardSlotComponent,
