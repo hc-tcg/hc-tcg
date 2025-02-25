@@ -10,6 +10,10 @@
 	&.disabled {
 		filter: grayscale(1) brightness(0.9);
 	}
+
+	&.error-bdubs {
+		background: rgb(255, 0, 0);
+	}
 }
 
 .hermitImage {

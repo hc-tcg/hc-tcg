@@ -29,10 +29,11 @@ const HermitCardModule = memo(({card, displayTokenCost}: HermitCardProps) => {
 	const backgroundImage = getHermitBackground(card)
 	const hermitImage = getCardImage(card)
 	const name = card.shortName || card.name
+	console.log(palette)
 	const nameLength = name.length
 
 	return (
-		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">
+		<svg className={classnames(css.card, css[palette])} width="100%" height="100%" viewBox="0 0 400 400">
 			<defs>
 				<clipPath id="myClip">
 					<rect x="55" y="70" width="290" height="178" />

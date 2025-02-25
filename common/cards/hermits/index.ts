@@ -14,6 +14,7 @@ import Docm77Rare from './docm77-rare'
 import DreamRare from './dream-rare'
 import DwarfImpulseCommon from './dwarfimpulse-common'
 import DwarfImpulseRare from './dwarfimpulse-rare'
+import ErrorBdubs from './error-bdubs'
 import EthosLabCommon from './ethoslab-common'
 import EthosLabRare from './ethoslab-rare'
 import EthosLabUltraRare from './ethoslab-ultra-rare'
@@ -139,6 +140,7 @@ const hermitCardClasses: Array<Card> = [
 	EvilJevinRare,
 	EvilXisumaCommon,
 	EvilXisumaRare,
+	ErrorBdubs,
 	FalseSymmetryCommon,
 	FalseSymmetryRare,
 	FiveAMPearlCommon,
