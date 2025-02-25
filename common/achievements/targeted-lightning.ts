@@ -11,7 +11,7 @@ import {Achievement} from './types'
 const TargetedLightning: Achievement = {
 	...achievement,
 	numericId: 22,
-	id: 'decked_out',
+	id: 'targeted_lightning',
 	levels: [
 		{
 			name: 'Targeted Lightning',
