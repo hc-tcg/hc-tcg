@@ -1,22 +1,17 @@
 import {describe, expect, test} from '@jest/globals'
-import GoFish from 'common/achievements/go-fish'
-import {IronArmor} from 'common/cards/attach/armor'
+import UselessMachine from 'common/achievements/useless-machine'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
+import BalancedItem from 'common/cards/items/balanced-common'
+import Composter from 'common/cards/single-use/composter'
+import FlintAndSteel from 'common/cards/single-use/flint-and-steel'
 import query from 'common/components/query'
 import {
-	applyEffect,
-	attack,
 	endTurn,
 	forfeit,
 	pick,
 	playCardFromHand,
 	testAchivement,
 } from '../utils'
-import Composter from 'common/cards/single-use/composter'
-import BalancedItem from 'common/cards/items/balanced-common'
-import UselessMachine from 'common/achievements/useless-machine'
-import FlintAndSteel from 'common/cards/single-use/flint-and-steel'
 
 describe('Test Useless Machine Achievement', () => {
 	test('Test achievement is gained when drawing two duplicates', () => {
