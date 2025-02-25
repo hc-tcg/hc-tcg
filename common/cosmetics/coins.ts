@@ -1,3 +1,4 @@
+import Designer from '../achievements/designer'
 import EyeOfTheSpider from '../achievements/eye-of-the-spider'
 import GoFish from '../achievements/go-fish'
 import NoDerpcoins from '../achievements/no-derpcoins'
@@ -46,6 +47,12 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		requires: {achievement: NoDerpcoins.id},
 	},
 	{
+		id: 'cat',
+		name: 'Jellie',
+		borderColor: '#C57EA7',
+		requires: {achievement: Designer.id},
+	},
+	{
 		id: 'pink-sheep',
 		name: 'Pink Sheep',
 		borderColor: '#de7f9c',
@@ -68,6 +75,12 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		name: 'Wolf',
 		borderColor: '#dddadb',
 		requires: {achievement: PackOfWolves.id},
+	},
+	{
+		id: 'zombie',
+		name: 'Zombie',
+		borderColor: '#1A1A1A',
+		requires: undefined,
 	},
 ]
 
