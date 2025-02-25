@@ -4,7 +4,7 @@ import {Deck, Tag} from 'common/types/deck'
 import {sortCardInstances} from 'common/utils/cards'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {getDeckCost} from 'common/utils/ranks'
-import {sortDecks} from 'common/utils/sorting'
+import {getDeckTypes, sortDecks} from 'common/utils/decks'
 import {getIconPath} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
@@ -38,6 +38,8 @@ import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
+import {iconDropdownOptions} from './deck-edit'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -47,6 +49,76 @@ type Props = {
 	databaseInfo: DatabaseInfo
 	filteredDecks: Array<Deck>
 	setFilteredDecks: (decks: Array<Deck>) => void
+}
+
+type FilterProps = {
+	tagFilter: Tag
+	tagFilterAction: (s: string) => void
+	typeFilter: string
+	typeFilterAction: (s: string) => void
+	nameFilterAction: (s: string) => void
+}
+
+function FilterComponent({
+	tagFilterAction,
+	tagFilter,
+	typeFilter,
+	typeFilterAction,
+	nameFilterAction,
+}: FilterProps) {
+	const databaseInfo = useSelector(getLocalDatabaseInfo)
+	const tags = databaseInfo.tags
+
+	const tagsDropdownOptions = [{name: 'No Tag', color: '#ffffff'}, ...tags].map(
+		(option) => ({
+			name: option.name,
+			key: JSON.stringify(option),
+			color: option.color,
+		}),
+	)
+
+	return (
+		<div className={css.footerTags}>
+			<Dropdown
+				button={
+					<button className={css.dropdownButton}>
+						<img
+							src={`/images/types/type-${typeFilter === '' ? 'any' : typeFilter}.png`}
+						/>
+					</button>
+				}
+				label="Type Filter"
+				options={iconDropdownOptions}
+				showNames={true}
+				direction={'up'}
+				action={typeFilterAction}
+			/>
+			<Dropdown
+				button={
+					<button className={css.dropdownButton}>
+						<img src="../images/icons/tag.png" alt="tag-icon" />
+					</button>
+				}
+				label="Saved Tags"
+				options={tagsDropdownOptions}
+				showNames={true}
+				direction={'up'}
+				action={tagFilterAction}
+			/>
+			<div
+				className={css.tagBox}
+				style={{backgroundColor: tagFilter.color}}
+			></div>
+			<div className={css.deckTagName}>{tagFilter.name}</div>
+			<input
+				className={css.deckSearchInput}
+				placeholder={'Filter...'}
+				onChange={(e) => {
+					nameFilterAction(e.target.value)
+				}}
+			></input>
+		</div>
+	)
 }
 
 function SelectDeck({
@@ -80,27 +152,6 @@ function SelectDeck({
 	}
 
 	// STATE
-	const [oldDatabaseInfo, setOldDatabaseInfo] = useState<DatabaseInfo>(() => {
-		setFilteredDecks(
-			filterDecks(sortDecks(databaseInfo.decks, settings.deckSortingMethod)),
-		)
-		return databaseInfo
-	})
-
-	function filterDecks(decks: Array<Deck>): Array<Deck> {
-		if (!settings.lastSelectedTag) return decks
-		return decks.filter((deck) =>
-			deck.tags?.find((tag) => tag.key === settings.lastSelectedTag),
-		)
-	}
-
-	if (oldDatabaseInfo !== databaseInfo) {
-		setOldDatabaseInfo(databaseInfo)
-		setFilteredDecks(
-			filterDecks(sortDecks(databaseInfo.decks, settings.deckSortingMethod)),
-		)
-	}
-
 	const [importedDeck, setImportedDeck] = useState<Deck>({
 		name: 'undefined',
 		iconType: 'item',
@@ -126,20 +177,51 @@ function SelectDeck({
 		)
 		if (lastSelectedTag) return lastSelectedTag
 		return {
-			name: 'No Filter',
+			name: 'No Tag',
 			color: '#ffffff',
 			key: '0',
 		}
 	})
+	const [typeFilter, setTypeFilter] = useState<string>('')
+	const [nameFilter, setNameFilter] = useState<string>('')
 
-	const tagsDropdownOptions = [
-		{name: 'No Filter', color: '#ffffff'},
-		...databaseInfo.tags,
-	].map((option) => ({
-		name: option.name,
-		key: JSON.stringify(option),
-		color: option.color,
-	}))
+	function filterDecks(
+		decks: Array<Deck>,
+		d?: {tag?: string; type?: string; name?: string},
+	): Array<Deck> {
+		const compareTag = (d && d.tag) || settings.lastSelectedTag
+		const compareType = (d && d.type) || typeFilter
+		const compareName = d && d.name !== undefined ? d.name : nameFilter
+
+		return decks.filter(
+			(deck) =>
+				(!compareTag || deck.tags?.find((tag) => tag.key === compareTag)) &&
+				(!compareType ||
+					compareType === 'any' ||
+					getDeckTypes(deck.cards.map((card) => card.props.id)).includes(
+						compareType,
+					)) &&
+				(!compareName ||
+					compareName === '' ||
+					deck.name
+						.toLocaleLowerCase()
+						.includes(compareName.toLocaleLowerCase())),
+		)
+	}
+
+	const [oldDatabaseInfo, setOldDatabaseInfo] = useState<DatabaseInfo>(() => {
+		setFilteredDecks(
+			filterDecks(sortDecks(databaseInfo.decks, settings.deckSortingMethod)),
+		)
+		return databaseInfo
+	})
+
+	if (oldDatabaseInfo !== databaseInfo) {
+		setOldDatabaseInfo(databaseInfo)
+		setFilteredDecks(
+			filterDecks(sortDecks(databaseInfo.decks, settings.deckSortingMethod)),
+		)
+	}
 
 	// TOASTS
 	const dispatchToast = (toast: ToastT) =>
@@ -271,68 +353,6 @@ function SelectDeck({
 			</li>
 		)
 	})
-	const footerTags = (
-		<div className={css.footerTags}>
-			<Dropdown
-				button={
-					<button className={css.dropdownButton}>
-						{' '}
-						<img src="../images/icons/tag.png" alt="tag-icon" />
-					</button>
-				}
-				label="Saved Tags"
-				options={tagsDropdownOptions}
-				showNames={true}
-				direction={'up'}
-				action={(option) => {
-					if (option.includes('No Filter')) {
-						setFilteredDecks(
-							sortDecks(databaseInfo.decks, settings.deckSortingMethod),
-						)
-						setTagFilter({
-							name: 'No Filter',
-							color: '#ffffff',
-							key: '0',
-						})
-						dispatch({
-							type: localMessages.SETTINGS_SET,
-							setting: {
-								key: 'lastSelectedTag',
-								value: null,
-							},
-						})
-						return
-					}
-					const parsedOption = JSON.parse(option) as Tag
-					setFilteredDecks(
-						sortDecks(
-							databaseInfo.decks.filter((deck) =>
-								deck.tags.some(
-									(tag) =>
-										tag.name === parsedOption.name &&
-										tag.color === parsedOption.color,
-								),
-							),
-							settings.deckSortingMethod,
-						),
-					)
-					setTagFilter(parsedOption)
-					dispatch({
-						type: localMessages.SETTINGS_SET,
-						setting: {
-							key: 'lastSelectedTag',
-							value: parsedOption.key,
-						},
-					})
-				}}
-			/>
-			<div
-				className={css.tagBox}
-				style={{backgroundColor: tagFilter.color}}
-			></div>
-			{tagFilter.name}
-		</div>
-	)
 
 	const currentDeck = loadedDeck
 	const validationResult = validateDeck(
@@ -363,6 +383,51 @@ function SelectDeck({
 			type: localMessages.SOUND_PLAY,
 			path: pageTurn[Math.floor(Math.random() * pageTurn.length)],
 		})
+	}
+
+	const tagFilterAciton = (option: string) => {
+		if (option.includes('No Filter')) {
+			setFilteredDecks(
+				sortDecks(databaseInfo.decks, settings.deckSortingMethod),
+			)
+			setTagFilter({
+				name: 'No Filter',
+				color: '#ffffff',
+				key: '0',
+			})
+			dispatch({
+				type: localMessages.SETTINGS_SET,
+				setting: {
+					key: 'lastSelectedTag',
+					value: null,
+				},
+			})
+			return
+		}
+		const parsedOption = JSON.parse(option) as Tag
+		setFilteredDecks(filterDecks(databaseInfo.decks, {tag: parsedOption.key}))
+		setTagFilter(parsedOption)
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			setting: {
+				key: 'lastSelectedTag',
+				value: parsedOption.key,
+			},
+		})
+	}
+	const typeFilterAction = (option: string) => {
+		setFilteredDecks(filterDecks(databaseInfo.decks, {type: option}))
+		setTypeFilter(option)
+	}
+
+	const nameFilterAction = (name: string) => {
+		if (name === '') {
+			setNameFilter('')
+			setFilteredDecks(filterDecks(databaseInfo.decks, {name: name}))
+			return
+		}
+		setNameFilter(name)
+		setFilteredDecks(filterDecks(databaseInfo.decks, {name: name}))
 	}
 
 	return (
@@ -529,15 +594,13 @@ function SelectDeck({
 								</div>
 							</div>
 							<div className={css.mobileTags}>
-								{footerTags}
-								<Button
-									variant="default"
-									onClick={() => setShowManageTagsModal(!showManageTagsModal)}
-									size="small"
-									disabled={databaseInfo.noConnection}
-								>
-									<span>Manage Tags</span>
-								</Button>
+								<FilterComponent
+									tagFilter={tagFilter}
+									tagFilterAction={tagFilterAciton}
+									typeFilter={typeFilter}
+									typeFilterAction={typeFilterAction}
+									nameFilterAction={nameFilterAction}
+								></FilterComponent>
 							</div>
 							<div className={css.filterGroup}>
 								<Button
@@ -599,6 +662,14 @@ function SelectDeck({
 								>
 									<ExportIcon />
 									<span>Mass Export</span>
+								</Button>
+								<Button
+									variant="default"
+									onClick={() => setShowManageTagsModal(!showManageTagsModal)}
+									size="small"
+									disabled={databaseInfo.noConnection}
+								>
+									<span>Tags</span>
 								</Button>
 							</div>
 						</div>
@@ -717,7 +788,13 @@ function SelectDeck({
 					footer={
 						<>
 							<div className={css.sidebarFooter} style={{padding: '0.5rem'}}>
-								{footerTags}
+								<FilterComponent
+									tagFilter={tagFilter}
+									tagFilterAction={tagFilterAciton}
+									typeFilter={typeFilter}
+									typeFilterAction={typeFilterAction}
+									nameFilterAction={nameFilterAction}
+								></FilterComponent>
 								<Button variant="primary" onClick={() => setMode('create')}>
 									Create New Deck
 								</Button>

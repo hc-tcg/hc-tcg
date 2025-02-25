@@ -2,7 +2,7 @@ import {defaults} from 'chart.js'
 import classNames from 'classnames'
 import {CARDS} from 'common/cards'
 import {getCardTypeIcon} from 'common/cards/card'
-import {Card as CardType, isHermit, isItem} from 'common/cards/types'
+import {Card as CardType} from 'common/cards/types'
 import debugConfig from 'common/config/debug-config'
 import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
@@ -27,6 +27,7 @@ import {ReactNode, useEffect, useReducer, useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './statistics.module.scss'
+import {getDeckTypes, parseDeckCards} from 'common/utils/decks'
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 
@@ -304,20 +305,6 @@ function Statistics({setMenuSection}: Props) {
 	}
 
 	if (!dataRetrieved) getData()
-
-	const parseDeckCards = (cards: Array<string>) => {
-		return cards.map((card) => CARDS[card])
-	}
-
-	const getDeckTypes = (cards: Array<string>) => {
-		const parsedCards = parseDeckCards(cards)
-		const reducedCards = parsedCards.reduce((r: Array<string>, card) => {
-			if (!isHermit(card) && !isItem(card)) return r
-			if (!r.includes(card.type) && card.type !== 'any') r.push(card.type)
-			return r
-		}, [])
-		return reducedCards.join(', ')
-	}
 
 	const parseDecks = (decks: Array<Record<string, any>>) => {
 		if (!decks) return

@@ -1,3 +1,5 @@
+import {CARDS} from '../cards'
+import {isHermit, isItem} from '../cards/types'
 import {Deck} from '../types/deck'
 
 export function sortDecks(
@@ -33,4 +35,18 @@ export function sortDecks(
 		//Default case so something is always returned
 		return 0
 	})
+}
+
+export const parseDeckCards = (cards: Array<string>) => {
+	return cards.map((card) => CARDS[card])
+}
+
+export const getDeckTypes = (cards: Array<string>) => {
+	const parsedCards = parseDeckCards(cards)
+	const reducedCards = parsedCards.reduce((r: Array<string>, card) => {
+		if (!isHermit(card) && !isItem(card)) return r
+		if (!r.includes(card.type) && card.type !== 'any') r.push(card.type)
+		return r
+	}, [])
+	return reducedCards.join(', ')
 }

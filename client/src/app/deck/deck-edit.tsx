@@ -122,7 +122,7 @@ const EXPANSION_NAMES = [
 	}),
 ]
 
-const iconDropdownOptions = ITEM_DECK_ICONS.map((option) => ({
+export const iconDropdownOptions = ITEM_DECK_ICONS.map((option) => ({
 	name: option,
 	key: option,
 	icon: `/images/types/type-${option}.png`,
