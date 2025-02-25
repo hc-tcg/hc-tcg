@@ -26,13 +26,8 @@ function getNextTurnAction(
 ): AnyTurnActionData {
 	const {player} = component
 
-	let availableActions: Array<TurnAction>
-
-	if (game.currentPlayer.entity === player.entity) {
-		availableActions = game.state.turn.availableActions.slice()
-	} else {
-		availableActions = game.state.turn.opponentAvailableActions.slice()
-	}
+	let availableActions: Array<TurnAction> =
+		component.player.getAavailableActions()
 
 	if (availableActions.length === 0) {
 		throw new Error(

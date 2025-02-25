@@ -415,4 +415,12 @@ export class PlayerComponent {
 
 		return this.hooks.availableEnergy.call(energy)
 	}
+
+	public getAavailableActions() {
+		if (this.game.currentPlayer.entity === this.entity) {
+			return this.game.state.turn.availableActions.slice()
+		} else {
+			return this.game.state.turn.opponentAvailableActions.slice()
+		}
+	}
 }
