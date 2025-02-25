@@ -48,25 +48,6 @@ export const getTimerForSeconds = (
 	return Date.now() - maxTime + seconds * 1000
 }
 
-export function getAvailableEnergy(game: GameModel) {
-	const {currentPlayer} = game
-
-	const energy = game.components
-		.filter(
-			CardComponent,
-			query.card.isItem,
-			query.card.attached,
-			query.card.rowEntity(currentPlayer.activeRowEntity),
-			query.card.slot(query.slot.player(game.currentPlayer.entity)),
-		)
-		.flatMap((card) => {
-			if (!card.isItem()) return []
-			return card.props.energy
-		})
-
-	return currentPlayer.hooks.availableEnergy.call(energy)
-}
-
 export function figureOutGameResult(game: GameModel): GameOutcome {
 	assert(
 		game.endInfo.deadPlayerEntities.length !== 0,
@@ -532,7 +513,7 @@ function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 		if (con.game.settings.showHooksState.enabled) printHooksState(con.game)
 
 		// Available actions code
-		const availableEnergy = getAvailableEnergy(con.game)
+		const availableEnergy = con.game.currentPlayer.getAvailableEnergy()
 		let blockedActions: Array<TurnAction> = []
 		let availableActions = getAvailableActions(con.game, availableEnergy)
 

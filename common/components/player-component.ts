@@ -398,4 +398,21 @@ export class PlayerComponent {
 			},
 		}
 	}
+
+	public getAvailableEnergy() {
+		const energy = this.game.components
+			.filter(
+				CardComponent,
+				query.card.isItem,
+				query.card.attached,
+				query.card.rowEntity(this.activeRowEntity),
+				query.card.slot(query.slot.player(this.entity)),
+			)
+			.flatMap((card) => {
+				if (!card.isItem()) return []
+				return card.props.energy
+			})
+
+		return this.hooks.availableEnergy.call(energy)
+	}
 }
