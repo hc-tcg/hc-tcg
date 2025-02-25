@@ -6,6 +6,7 @@ import DefeatEvilX from './defeat-evil-x'
 import Designer from './designer'
 import Ethogirl from './ethogirl'
 import EyeOfTheSpider from './eye-of-the-spider'
+import GoFish from './go-fish'
 import HotTake from './hot-take'
 import HowDidWeGetHere from './how-did-we-get-here'
 import Inneffective from './inneffective'
@@ -43,6 +44,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	Ethogirl,
 	EyeOfTheSpider,
 	PackOfWolves,
+	GoFish,
 	HowDidWeGetHere,
 	Wipeout,
 	DefeatEvilX,
