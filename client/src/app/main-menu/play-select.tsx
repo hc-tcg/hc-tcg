@@ -503,7 +503,7 @@ function PlaySelect({setMenuSection}: Props) {
 									{
 										text: 'Pharaoh',
 										onClick() {
-											addMenuWithBack('bossSelectPharaoh')
+											addMenuWithBack('pharaohChooseDeck')
 										},
 									},
 								]}
@@ -528,7 +528,7 @@ function PlaySelect({setMenuSection}: Props) {
 										Full Rules
 									</Button>
 									<Button
-										onClick={() => addMenuWithBack('bossChooseDeck')}
+										onClick={() => addMenuWithBack('evilxXChooseDeck')}
 										variant="primary"
 									>
 										Challange Evil X
@@ -617,7 +617,7 @@ function PlaySelect({setMenuSection}: Props) {
 							</GameModeButton.CustomMenu>
 							<GameModeButton.ChooseDeck
 								activeButtonMenu={activeButtonMenu}
-								id="bossChooseDeck"
+								id="evilxXChooseDeck"
 								title="Choose your deck"
 								subTitle="When ready, press the Fight! button to begin."
 								confirmMessage="Fight!"
@@ -628,6 +628,25 @@ function PlaySelect({setMenuSection}: Props) {
 									dispatch({type: localMessages.EVERY_TOAST_CLOSE})
 									dispatch({
 										type: localMessages.MATCHMAKING_CREATE_BOSS_GAME,
+										boss: 'evilx',
+									})
+								}}
+								decks={decks}
+								onSelectDeck={onSelectDeck}
+							/>
+							<GameModeButton.ChooseDeck
+								activeButtonMenu={activeButtonMenu}
+								id="pharaohChooseDeck"
+								title="Choose your deck"
+								subTitle="When ready, press the Fight! button to begin."
+								confirmMessage="Fight!"
+								onConfirm={() => {
+									const valid = checkForValidation()
+									if (!valid) return
+									dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+									dispatch({
+										type: localMessages.MATCHMAKING_CREATE_BOSS_GAME,
+										boss: 'pharaoh',
 									})
 								}}
 								decks={decks}

@@ -46,6 +46,7 @@ import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import {turnActionsToBuffer} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
+import PharaohBossAI from './virtual/pharaohboss-ai'
 
 function setupGame(
 	player1: PlayerModel,
@@ -780,15 +781,34 @@ export function* createBossGame(
 
 	broadcast([player], {type: serverMessages.CREATE_BOSS_GAME_SUCCESS})
 
-	const newBossGameController = setupSolitareGame(player, player.deck, {
-		uuid: '',
-		name: 'Evil Xisuma',
-		minecraftName: 'EvilXisuma',
-		censoredName: 'Evil Xisuma',
-		virtualAI: ExBossAI,
-		disableDeckingOut: true,
-		appearance: {...defaultAppearance, coin: COINS['evilx']},
-	})
+	let bossInfo: OpponentDefs
+	let boss = msg.payload.boss
+
+	if (boss == 'evilx') {
+		bossInfo = {
+			uuid: '',
+			name: 'Evil Xisuma',
+			minecraftName: 'EvilXisuma',
+			censoredName: 'Evil Xisuma',
+			virtualAI: ExBossAI,
+			disableDeckingOut: true,
+			appearance: {...defaultAppearance, coin: COINS['evilx']},
+		}
+	} else if (boss == 'pharaoh') {
+		bossInfo = {
+			uuid: '',
+			name: 'Pharaoh',
+			minecraftName: 'Pharaoh',
+			censoredName: 'Pharaoh',
+			virtualAI: PharaohBossAI,
+			appearance: {...defaultAppearance, coin: COINS['creeper']},
+		}
+	} else {
+		throw new Error('Unknown boss: ' + boss)
+	}
+
+	const newBossGameController = setupSolitareGame(player, player.deck, bossInfo)
+
 	newBossGameController.game.state.isEvilXBossGame = true
 
 	function destroyRow(row: RowComponent) {

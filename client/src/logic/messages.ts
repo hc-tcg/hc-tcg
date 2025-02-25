@@ -155,7 +155,10 @@ type Messages = [
 		spectatorCode: string
 	},
 	{type: typeof localMessages.MATCHMAKING_LEAVE},
-	{type: typeof localMessages.MATCHMAKING_CREATE_BOSS_GAME},
+	{
+		type: typeof localMessages.MATCHMAKING_CREATE_BOSS_GAME
+		boss: 'evilx' | 'pharaoh'
+	},
 	{
 		type: typeof localMessages.MATCHMAKING_REPLAY_GAME
 		id: number

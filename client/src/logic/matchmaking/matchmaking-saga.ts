@@ -55,14 +55,19 @@ function* sendJoinQueueMessage(
 		| ClientMessageTable['CREATE_PRIVATE_GAME']['type']
 		| ClientMessageTable['JOIN_PUBLIC_QUEUE']['type'],
 	activeDeckResult: activeDeckSagaT,
+	boss?: 'evilx' | 'pharaoh',
 ) {
 	if (!activeDeckResult) return
 	if (activeDeckResult.databaseConnected) {
-		yield* sendMsg({
+		let msg: any = {
 			type: messageType,
 			databaseConnected: true,
 			activeDeckCode: activeDeckResult.activeDeckCode,
-		})
+		}
+		if (msg.type === clientMessages.CREATE_BOSS_GAME) {
+			msg.boss = boss
+		}
+		yield* sendMsg(msg)
 	} else {
 		yield* sendMsg({
 			type: messageType,
@@ -467,7 +472,9 @@ function* createPrivateGameSaga() {
 	}
 }
 
-function* createBossGameSaga() {
+function* createBossGameSaga(
+	message: LocalMessageTable[typeof localMessages.MATCHMAKING_CREATE_BOSS_GAME],
+) {
 	const socket = yield* select(getSocket)
 	const activeDeckResult = yield* getActiveDeckSaga()
 
@@ -476,6 +483,7 @@ function* createBossGameSaga() {
 		yield* sendJoinQueueMessage(
 			clientMessages.CREATE_BOSS_GAME,
 			activeDeckResult,
+			message.boss,
 		)
 		const createBossResponse = yield* race({
 			success: call(
