@@ -67,6 +67,7 @@ const PharaohBossAI: VirtualAI = {
 			TurtleShell,
 		]
 	},
+	setup(_game) {},
 	getTurnActions: function* (game, component) {
 		while (true) {
 			yield* getNextTurnAction(game, component)

@@ -7,6 +7,7 @@ export type VirtualAI = {
 	readonly id: string
 
 	getDeck(): Array<Card>
+	setup(game: GameModel): void
 	getTurnActions(
 		game: GameModel,
 		component: AIComponent,

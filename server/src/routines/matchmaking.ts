@@ -1,10 +1,5 @@
 import assert from 'assert'
-import {
-	AchievementComponent,
-	BoardSlotComponent,
-	PlayerComponent,
-	RowComponent,
-} from 'common/components'
+import {AchievementComponent, PlayerComponent} from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {COINS} from 'common/cosmetics/coins'
@@ -809,46 +804,6 @@ export function* createBossGame(
 
 	const newBossGameController = setupSolitareGame(player, player.deck, bossInfo)
 
-	newBossGameController.game.state.isEvilXBossGame = true
-
-	function destroyRow(row: RowComponent) {
-		newBossGameController.game.components
-			.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
-			.forEach((slotEntity) =>
-				newBossGameController.game.components.delete(slotEntity),
-			)
-		newBossGameController.game.components.delete(row.entity)
-	}
-
-	// Remove challenger's rows other than indexes 0, 1, and 2
-	newBossGameController.game.components
-		.filter(
-			RowComponent,
-			query.row.opponentPlayer,
-			(_game, row) => row.index > 2,
-		)
-		.forEach(destroyRow)
-	// Remove boss' rows other than index 0
-	newBossGameController.game.components
-		.filter(
-			RowComponent,
-			query.row.currentPlayer,
-			query.not(query.row.index(0)),
-		)
-		.forEach(destroyRow)
-	// Remove boss' item slots
-	newBossGameController.game.components
-		.filterEntities(
-			BoardSlotComponent,
-			query.slot.currentPlayer,
-			query.slot.item,
-		)
-		.forEach((slotEntity) =>
-			newBossGameController.game.components.delete(slotEntity),
-		)
-
-	newBossGameController.game.settings.disableRewardCards = true
-
 	root.addGame(newBossGameController)
 
 	yield* safeCall(fork, gameManager, newBossGameController)
@@ -1001,6 +956,8 @@ function setupSolitareGame(
 		},
 		{randomizeOrder: false},
 	)
+
+	opponent.virtualAI.setup(con.game)
 
 	const playerEntities = con.game.components.filterEntities(PlayerComponent)
 	con.addViewer({

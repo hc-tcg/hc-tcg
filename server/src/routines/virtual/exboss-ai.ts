@@ -6,6 +6,7 @@ import {
 	BoardSlotComponent,
 	CardComponent,
 	PlayerComponent,
+	RowComponent,
 	StatusEffectComponent,
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
@@ -156,6 +157,42 @@ const ExBossAI: VirtualAI = {
 
 	getDeck() {
 		return [EvilXisumaBoss]
+	},
+	setup(game) {
+		function destroyRow(row: RowComponent) {
+			game.components
+				.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
+				.forEach((slotEntity) => game.components.delete(slotEntity))
+			game.components.delete(row.entity)
+		}
+
+		game.state.isEvilXBossGame = true
+		// Remove challenger's rows other than indexes 0, 1, and 2
+		game.components
+			.filter(
+				RowComponent,
+				query.row.opponentPlayer,
+				(_game, row) => row.index > 2,
+			)
+			.forEach(destroyRow)
+		// Remove boss' rows other than index 0
+		game.components
+			.filter(
+				RowComponent,
+				query.row.currentPlayer,
+				query.not(query.row.index(0)),
+			)
+			.forEach(destroyRow)
+		// Remove boss' item slots
+		game.components
+			.filterEntities(
+				BoardSlotComponent,
+				query.slot.currentPlayer,
+				query.slot.item,
+			)
+			.forEach((slotEntity) => game.components.delete(slotEntity))
+
+		game.settings.disableRewardCards = true
 	},
 	getTurnActions: function* (game, component) {
 		while (true) {
