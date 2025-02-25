@@ -29,7 +29,6 @@ const HermitCardModule = memo(({card, displayTokenCost}: HermitCardProps) => {
 	const backgroundImage = getHermitBackground(card)
 	const hermitImage = getCardImage(card)
 	const name = card.shortName || card.name
-	console.log(palette)
 	const nameLength = name.length
 
 	return (
