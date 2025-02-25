@@ -52,19 +52,21 @@ type Props = {
 }
 
 type FilterProps = {
-	tagFilter: Tag
+	tagFilter: Tag | null
 	tagFilterAction: (s: string) => void
 	typeFilter: string
 	typeFilterAction: (s: string) => void
 	nameFilterAction: (s: string) => void
+	dropdownDirection: 'up' | 'down'
 }
 
-function FilterComponent({
+export function FilterComponent({
 	tagFilterAction,
 	tagFilter,
 	typeFilter,
 	typeFilterAction,
 	nameFilterAction,
+	dropdownDirection,
 }: FilterProps) {
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 	const tags = databaseInfo.tags
@@ -90,7 +92,7 @@ function FilterComponent({
 				label="Type Filter"
 				options={iconDropdownOptions}
 				showNames={true}
-				direction={'up'}
+				direction={dropdownDirection}
 				action={typeFilterAction}
 			/>
 			<Dropdown
@@ -102,14 +104,14 @@ function FilterComponent({
 				label="Saved Tags"
 				options={tagsDropdownOptions}
 				showNames={true}
-				direction={'up'}
+				direction={dropdownDirection}
 				action={tagFilterAction}
 			/>
 			<div
 				className={css.tagBox}
-				style={{backgroundColor: tagFilter.color}}
+				style={{backgroundColor: tagFilter?.color || '#FFFFFF'}}
 			></div>
-			<div className={css.deckTagName}>{tagFilter.name}</div>
+			<div className={css.deckTagName}>{tagFilter?.name || 'No Tag'}</div>
 			<input
 				className={css.deckSearchInput}
 				placeholder={'Search...'}
@@ -191,9 +193,10 @@ function SelectDeck({
 
 	function filterDecks(
 		decks: Array<Deck>,
-		d?: {tag?: string; type?: string; name?: string},
+		d?: {tag?: string | null; type?: string; name?: string},
 	): Array<Deck> {
-		const compareTag = (d && d.tag) || settings.lastSelectedTag
+		const compareTag =
+			d && d.tag === null ? null : (d && d.tag) || settings.lastSelectedTag
 		const compareType = (d && d.type) || typeFilter
 		const compareName = d && d.name !== undefined ? d.name : nameFilter
 
@@ -390,12 +393,10 @@ function SelectDeck({
 	}
 
 	const tagFilterAciton = (option: string) => {
-		if (option.includes('No Filter')) {
-			setFilteredDecks(
-				sortDecks(databaseInfo.decks, settings.deckSortingMethod),
-			)
+		if (option.includes('No Tag')) {
+			setFilteredDecks(filterDecks(databaseInfo.decks, {tag: null}))
 			setTagFilter({
-				name: 'No Filter',
+				name: 'No Tag',
 				color: '#ffffff',
 				key: '0',
 			})
@@ -604,6 +605,7 @@ function SelectDeck({
 									typeFilter={typeFilter}
 									typeFilterAction={typeFilterAction}
 									nameFilterAction={nameFilterAction}
+									dropdownDirection={'up'}
 								></FilterComponent>
 							</div>
 							<div className={css.filterGroup}>
@@ -798,6 +800,7 @@ function SelectDeck({
 									typeFilter={typeFilter}
 									typeFilterAction={typeFilterAction}
 									nameFilterAction={nameFilterAction}
+									dropdownDirection={'up'}
 								></FilterComponent>
 								<Button variant="primary" onClick={() => setMode('create')}>
 									Create New Deck

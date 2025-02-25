@@ -6,6 +6,7 @@ import {CurrentTooltip} from 'components/tooltip/tooltip'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
+	getDropdown,
 	getPlayerName,
 	getSession,
 	getToast,
@@ -26,6 +27,7 @@ import GameSettings from './main-menu/game-settings'
 import PlaySelect from './main-menu/play-select'
 import Settings from './main-menu/settings'
 import Statistics from './main-menu/statistics'
+import {CurrentDropdown} from 'components/dropdown/dropdown'
 
 function App() {
 	const section = useRouter()
@@ -35,6 +37,7 @@ function App() {
 	const connected = useSelector(getSession).connected
 	const toastMessage = useSelector(getToast)
 	const tooltip = useSelector(getTooltip)
+	const dropdown = useSelector(getDropdown)
 	const settings = useSelector(getSettings)
 
 	const lastMenuSection = sessionStorage.getItem('menuSection')
@@ -106,7 +109,13 @@ function App() {
 		<main>
 			{background}
 			{router()}
-			{playerName && !socketStatus && <LostConnection />}
+			{dropdown && (
+				<CurrentDropdown
+					dropdown={dropdown.dropdown}
+					x={dropdown.x}
+					y={dropdown.y}
+				/>
+			)}
 			{tooltip && (
 				<CurrentTooltip
 					tooltip={tooltip.tooltip}
@@ -130,6 +139,7 @@ function App() {
 					})}
 				</ToastContainer>
 			)}
+			{playerName && !socketStatus && <LostConnection />}
 		</main>
 	)
 }

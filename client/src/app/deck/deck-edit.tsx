@@ -536,15 +536,9 @@ function EditDeck({
 								showNames={true}
 								checkboxes={true}
 								checked={expansionQuery}
-								action={(option) =>
-									setExpansionQuery(
-										option === 'any'
-											? []
-											: expansionQuery.includes(option)
-												? expansionQuery.filter((a) => a !== option)
-												: [option, ...expansionQuery],
-									)
-								}
+								checkboxAction={(option) => {
+									setExpansionQuery(option)
+								}}
 							/>
 							<input
 								placeholder="Search cards..."
