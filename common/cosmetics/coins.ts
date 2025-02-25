@@ -1,6 +1,7 @@
 import Designer from '../achievements/designer'
 import EyeOfTheSpider from '../achievements/eye-of-the-spider'
 import GoFish from '../achievements/go-fish'
+import HurtinHermits from '../achievements/hurtin-hermits'
 import NoDerpcoins from '../achievements/no-derpcoins'
 import PackOfWolves from '../achievements/pack-of-wolves'
 import ServerLag from '../achievements/server-lag'
@@ -80,7 +81,7 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		id: 'zombie',
 		name: 'Zombie',
 		borderColor: '#1A1A1A',
-		requires: undefined,
+		requires: {achievement: HurtinHermits.id},
 	},
 ]
 
