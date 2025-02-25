@@ -7,7 +7,7 @@ import {Achievement} from './types'
 
 const GoFish: Achievement = {
 	...achievement,
-	numericId: 5,
+	numericId: 20,
 	id: 'go-fish',
 	levels: [
 		{
