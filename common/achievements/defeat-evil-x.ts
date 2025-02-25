@@ -5,7 +5,6 @@ const DefeatEvilX: Achievement = {
 	...achievement,
 	numericId: 6,
 	id: 'defeat_evil_x',
-	icon: '',
 	levels: [
 		{
 			name: 'Evil X-Terminator',

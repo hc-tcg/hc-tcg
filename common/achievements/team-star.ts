@@ -33,7 +33,6 @@ const TeamStar: Achievement = {
 	...achievement,
 	numericId: 12,
 	id: 'team_star',
-	icon: '',
 	levels: [
 		{
 			name: 'Hermit Gang',
