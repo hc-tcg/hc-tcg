@@ -112,7 +112,7 @@ function FilterComponent({
 			<div className={css.deckTagName}>{tagFilter.name}</div>
 			<input
 				className={css.deckSearchInput}
-				placeholder={'Filter...'}
+				placeholder={'Search...'}
 				onChange={(e) => {
 					nameFilterAction(e.target.value)
 				}}

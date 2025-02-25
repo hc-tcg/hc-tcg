@@ -614,6 +614,8 @@
 	}
 
 	&:has(> :focus) {
+		gap: 0rem;
+
 		div {
 			opacity: 0%;
 			width: 0%;
@@ -622,7 +624,6 @@
 		.tagBox {
 			min-width: 0px;
 		}
-		gap: 0rem;
 	}
 
 	.deckTagName {
