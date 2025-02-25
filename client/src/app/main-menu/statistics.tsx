@@ -10,6 +10,7 @@ import {TypeT} from 'common/types/cards'
 import {GameHistory} from 'common/types/database'
 import {WithoutFunctions} from 'common/types/server-requests'
 import {sortCards} from 'common/utils/cards'
+import {getDeckTypes, parseDeckCards} from 'common/utils/decks'
 import Button from 'components/button'
 import CardComponent from 'components/card'
 import Checkbox from 'components/checkbox'
@@ -27,7 +28,6 @@ import {ReactNode, useEffect, useReducer, useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './statistics.module.scss'
-import {getDeckTypes, parseDeckCards} from 'common/utils/decks'
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 

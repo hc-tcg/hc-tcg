@@ -1,4 +1,5 @@
 import Background from 'components/background'
+import {CurrentDropdown} from 'components/dropdown/dropdown'
 import LostConnection from 'components/lost-connection'
 import Toast from 'components/toast'
 import {ToastContainer} from 'components/toast/toast'
@@ -27,7 +28,6 @@ import GameSettings from './main-menu/game-settings'
 import PlaySelect from './main-menu/play-select'
 import Settings from './main-menu/settings'
 import Statistics from './main-menu/statistics'
-import {CurrentDropdown} from 'components/dropdown/dropdown'
 
 function App() {
 	const section = useRouter()

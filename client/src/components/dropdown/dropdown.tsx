@@ -1,8 +1,8 @@
 import classNames from 'classnames'
-import {ReactNode, useEffect, useRef, useState} from 'react'
-import css from './dropdown.module.scss'
-import {useDispatch} from 'react-redux'
 import {localMessages} from 'logic/messages'
+import {ReactNode, useEffect, useRef, useState} from 'react'
+import {useDispatch} from 'react-redux'
+import css from './dropdown.module.scss'
 
 type DropdownOptions = {
 	name: string

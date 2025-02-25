@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import {ButtonVariant} from 'common/types/buttons'
 import {Deck, Tag} from 'common/types/deck'
+import {getDeckTypes} from 'common/utils/decks'
 import {getIconPath} from 'common/utils/state-gen'
 import Button from 'components/button'
 import Spinner from 'components/spinner'
@@ -16,9 +17,8 @@ import {
 	useState,
 } from 'react'
 import {useSelector} from 'react-redux'
-import css from './game-mode-button.module.scss'
 import {FilterComponent} from '../../app/deck/deck-select'
-import {getDeckTypes} from 'common/utils/decks'
+import css from './game-mode-button.module.scss'
 
 interface GameModeButtonProps {
 	image: string
