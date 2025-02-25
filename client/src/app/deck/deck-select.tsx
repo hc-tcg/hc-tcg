@@ -701,12 +701,20 @@ function SelectDeck({
 							<span>Export Deck</span>
 						</Button>
 						<Button
+							variant="default"
+							size="small"
+							onClick={() => setShowScreenshotModal(true)}
+						>
+							<ViewFullDeckIcon />
+							<span>View Full Deck</span>
+						</Button>
+						<Button
 							variant="primary"
 							size="small"
 							onClick={() => setShowDuplicateDeckModal(true)}
 							leftSlot={CopyIcon()}
 						>
-							<span>Copy Deck</span>
+							<span>Duplicate Deck</span>
 						</Button>
 						{databaseInfo.decks.length > 1 && (
 							<Button
@@ -718,14 +726,6 @@ function SelectDeck({
 								<span>Delete Deck</span>
 							</Button>
 						)}
-						<Button
-							variant="default"
-							size="small"
-							onClick={() => setShowScreenshotModal(true)}
-						>
-							<ViewFullDeckIcon />
-							<span>View Full Deck</span>
-						</Button>
 					</div>
 					{!validationResult.valid && (
 						<div className={css.validationMessage}>
