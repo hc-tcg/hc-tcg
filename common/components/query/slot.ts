@@ -109,6 +109,13 @@ export const index = (
 	return (_game, pos) => pos.onBoard() && index !== null && pos.index === index
 }
 
+export const order = (
+	order: number | null | undefined,
+): ComponentQuery<SlotComponent> => {
+	return (_game, pos) =>
+		(pos.inHand() || pos.inDeck()) && order !== null && pos.order === order
+}
+
 export const rowIndex = (
 	index: number | null | undefined,
 ): ComponentQuery<SlotComponent> => {
