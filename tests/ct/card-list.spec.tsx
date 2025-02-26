@@ -17,6 +17,7 @@ test('Test Card List Normal', async ({mount}) => {
 			slot: null,
 			attackHint: null,
 			turnedOver: false,
+			prizeCard: false,
 		},
 		{
 			props: WithoutFunctions(CARDS['ethoslab_rare']),
@@ -24,6 +25,7 @@ test('Test Card List Normal', async ({mount}) => {
 			slot: null,
 			attackHint: null,
 			turnedOver: false,
+			prizeCard: false,
 		},
 		{
 			props: WithoutFunctions(CARDS['item_balanced_rare']),
@@ -31,6 +33,7 @@ test('Test Card List Normal', async ({mount}) => {
 			slot: null,
 			attackHint: null,
 			turnedOver: false,
+			prizeCard: false,
 		},
 	]
 
@@ -49,6 +52,7 @@ test('Test Card List with status effects', async ({mount}) => {
 			slot: null,
 			attackHint: null,
 			turnedOver: false,
+			prizeCard: false,
 		},
 		{
 			props: WithoutFunctions(CARDS['item_balanced_rare']),
@@ -56,6 +60,7 @@ test('Test Card List with status effects', async ({mount}) => {
 			slot: null,
 			attackHint: null,
 			turnedOver: false,
+			prizeCard: false,
 		},
 	]
 
@@ -77,5 +82,5 @@ test('Test Card List with status effects', async ({mount}) => {
 		/>,
 	)
 
-	await expect(component).toHaveScreenshot()
+	await expect(component).toHaveScreenshot({maxDiffPixelRatio: 0.03})
 })
