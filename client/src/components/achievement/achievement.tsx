@@ -30,14 +30,14 @@ export default function AchievementComponent({
 		if (iconCosmetic && iconCosmetic.type === 'title') {
 			icon_url = '/images/cosmetics/title.png'
 		} else if (iconCosmetic) {
-			icon_url = `/images/cosmetics/${iconCosmetic.type}/${iconCosmetic.id}.png`
+			icon_url = `/images/cosmetics/${iconCosmetic.type}/${iconCosmetic.type === 'background' && iconCosmetic.preview ? iconCosmetic.preview : iconCosmetic.id}.png`
 		}
 
 		let icon
 
 		if (iconCosmetic?.type === 'background') {
 			icon = (
-				<img src={icon_url} className={classNames(css.icon, css.rounded)} />
+				<img src={icon_url} className={classNames(css.icon, css.background)} />
 			)
 		} else if (iconCosmetic?.type === 'coin') {
 			const faceStyle = {
