@@ -24,7 +24,7 @@ import {localMessages} from 'logic/messages'
 import {getSession} from 'logic/session/session-selectors'
 import {useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import css from './cosmsetics.module.scss'
+import css from './achievements.module.scss'
 
 type Pages = 'achievements' | 'rewards'
 
