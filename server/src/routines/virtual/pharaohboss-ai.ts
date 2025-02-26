@@ -29,7 +29,7 @@ import {player} from 'common/components/query/card'
 import {GameModel} from 'common/models/game-model'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
-import {hasEnoughEnergy} from 'common/utils/attacks'
+import {hasEnoughEnergy, remainingEnergy} from 'common/utils/attacks'
 import {PlaneHelper, PointLightHelper} from 'three'
 import {getLocalCard} from 'utils/state-gen'
 
@@ -140,6 +140,7 @@ function shouldPlayItemCard(
 	}
 
 	let activeHermit = pharaoh.getActiveHermit()
+	assert(activeHermit?.isHermit())
 
 	let shouldPowerUpActive =
 		activeHermit?.isHermit() &&
@@ -151,7 +152,13 @@ function shouldPlayItemCard(
 
 	// @todo Play item of correct type
 	if (shouldPowerUpActive) {
-		let canPowerUpHermit = pharaoh.getHand().find((c) => c.isItem())
+		let activeRemainingCost = remainingEnergy(
+			pharaoh.getAvailableEnergy(),
+			activeHermit!.props.secondary.cost,
+		)
+		let canPowerUpHermit = pharaoh
+			.getHand()
+			.find((c) => c.isItem() && activeRemainingCost?.includes(c.props.type))
 		if (canPowerUpHermit) {
 			return [pharaoh.activeRow!, canPowerUpHermit.slot as HandSlotComponent]
 		}
