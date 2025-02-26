@@ -277,7 +277,7 @@ type ChatContentProps = {
 	style?: any
 }
 
-function ChatMessages({
+export function ChatMessages({
 	chatMessages,
 	showLog,
 	profanityFilterEnabled,
