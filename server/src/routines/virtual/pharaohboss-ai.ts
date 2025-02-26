@@ -21,6 +21,7 @@ import {
 	HandSlotComponent,
 	PlayerComponent,
 	RowComponent,
+	SlotComponent,
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
@@ -29,7 +30,8 @@ import {GameModel} from 'common/models/game-model'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
 import {hasEnoughEnergy} from 'common/utils/attacks'
-import {PointLightHelper} from 'three'
+import {PlaneHelper, PointLightHelper} from 'three'
+import {getLocalCard} from 'utils/state-gen'
 
 const howMuchILikeMyHermits: Array<Card['id']> = [
 	PharaohRare.id,
@@ -110,8 +112,24 @@ function getOpponentHermitDamage(
 	return 0
 }
 
-// Start the game! We will not have a hermit on the board at this point.
-function gameStartup() {}
+function gameStartup(
+	game: GameModel,
+	pharaoh: PlayerComponent,
+): AnyTurnActionData {
+	// At the start of start of the game we need to play at least one hermit
+	const hermit = pharaoh.getHand().find((c) => c.isHermit())!
+	const slot = game.components.find(
+		SlotComponent,
+		query.slot.hermit,
+		query.slot.currentPlayer,
+	)!
+
+	return {
+		type: 'PLAY_HERMIT_CARD',
+		slot: slot.entity,
+		card: getLocalCard(game, hermit),
+	}
+}
 
 function shouldPlayItemCard(
 	game: GameModel,
@@ -218,17 +236,51 @@ function swapActiveHermit(
 }
 
 // Get how dangerous it would be if we do not swap hermits
-function getNextTurnAction(game: GameModel, pharaoh: PlayerComponent) {
+function getNextTurnAction(
+	game: GameModel,
+	pharaoh: PlayerComponent,
+): AnyTurnActionData {
+	let availableActions = pharaoh.getAavailableActions()
+
 	let opponentDamge = getOpponentHermitDamage(game, pharaoh)
 	let myActiveHP = pharaoh.activeRow?.health
 
 	if (!myActiveHP) {
 		// We do not have a hermit on the board
-		return gameStartup()
+		return gameStartup(game, pharaoh)
 	}
 
 	if (decideToSwap(game, pharaoh, myActiveHP, opponentDamge)) {
 		return swapActiveHermit(game, pharaoh)
+	}
+
+	const playItemCard = shouldPlayItemCard(game, pharaoh)
+	if (playItemCard) {
+		const [row, slot] = playItemCard
+
+		let itemSlots = row.getItemSlots().filter((x) => !x.getCard())
+		let itemSlotPick = itemSlots[Math.floor(game.rng() * itemSlots.length)]
+
+		return {
+			type: 'PLAY_ITEM_CARD',
+			slot: itemSlotPick.entity,
+			card: getLocalCard(game, slot.getCard()!),
+		}
+	}
+
+	if (availableActions.includes('SECONDARY_ATTACK')) {
+		return {
+			type: 'SECONDARY_ATTACK',
+		}
+	}
+	if (availableActions.includes('PRIMARY_ATTACK')) {
+		return {
+			type: 'PRIMARY_ATTACK',
+		}
+	}
+	// We only end the turn if there is nothing else worth it to do
+	return {
+		type: 'END_TURN',
 	}
 }
 
