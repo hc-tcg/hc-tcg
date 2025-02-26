@@ -19,7 +19,10 @@
 	height: 6vh;
 	margin: 0.5vh;
 
-	&.rounded {
+	&.background {
+		border: 2px black solid;
+		object-fit: cover;
+		object-position: left;
 		border-radius: 50%;
 	}
 }
@@ -96,4 +99,3 @@
 	border-style: solid;
 	border-width: 3.33%;
 }
-
