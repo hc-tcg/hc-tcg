@@ -119,6 +119,32 @@ export function executeExtraAttacks(
 	game.battleLog.sendLogs()
 }
 
+export function remainingEnergy(energy: Array<TypeT>, cost: Array<TypeT>) {
+	let remainingEnergy = energy.slice()
+
+	const specificCost = cost.filter((item) => item !== 'any')
+	const anyCost = cost.filter((item) => item === 'any')
+
+	for (const energyItemRemove of remainingEnergy) {
+		let index = specificCost.findIndex(
+			(energyItem) => energyItem === energyItemRemove,
+		)
+		if (index === -1) {
+			return
+		}
+		specificCost.splice(index, 1)
+	}
+	for (const _i of anyCost) {
+		if (specificCost.length > 0) {
+			specificCost.splice(0, 1)
+		} else if (anyCost.length > 1) {
+			anyCost.slice(0, 1)
+		}
+	}
+
+	return [...anyCost, ...specificCost]
+}
+
 export function hasEnoughEnergy(
 	energy: Array<TypeT>,
 	cost: Array<TypeT>,
