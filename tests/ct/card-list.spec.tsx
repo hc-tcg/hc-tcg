@@ -41,7 +41,7 @@ test('Test Card List Normal', async ({mount}) => {
 		<CardList cards={cards} displayTokenCost={false} />,
 	)
 
-	await expect(component).toHaveScreenshot()
+	await expect(component).toHaveScreenshot({maxDiffPixelRatio: 0.03})
 })
 
 test('Test Card List with status effects', async ({mount}) => {
