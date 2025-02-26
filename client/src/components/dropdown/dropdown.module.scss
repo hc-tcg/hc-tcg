@@ -1,18 +1,22 @@
 .dropdownContainer {
 	position: relative;
+	pointer-events: all;
+	width: min-content;
+	height: min-content;
 }
 
 .dropdownMenu {
 	position: absolute;
 	width: max-content;
+	height: max-content;
 	z-index: 200;
 
 	&.down {
-		top: 100%;
+		top: 0;
 	}
 
 	&.up {
-		bottom: 100%;
+		bottom: calc(100% + 2rem);
 	}
 
 	&.left {
@@ -20,12 +24,13 @@
 	}
 
 	&.right {
-		right: 0;
+		right: -2rem;
 	}
 }
 
 .DropdownMenuContent {
 	min-width: 3rem;
+	position: relative;
 	color: var(--text-light);
 	background-color: var(--gray-900);
 	border-radius: 4px;
@@ -181,4 +186,14 @@
 		opacity: 1;
 		transform: translateY(0);
 	}
+}
+
+.currentDropdown {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	pointer-events: none;
+	overflow: visible;
 }
