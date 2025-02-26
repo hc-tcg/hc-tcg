@@ -3,7 +3,7 @@ import CantTouchThis from './cant-touch-this'
 import CertifiedZombie from './certified-zombie'
 import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
-import Designer from './designer'
+import HermitsAndCrafting from './hermits-and-crafting'
 import Ethogirl from './ethogirl'
 import EyeOfTheSpider from './eye-of-the-spider'
 import GoFish from './go-fish'
@@ -61,7 +61,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	SheepStarer,
 	NakedAndScared,
 	HotTake,
-	Designer,
+	HermitsAndCrafting,
 	CertifiedZombie,
 	SUStainable,
 	Inneffective,

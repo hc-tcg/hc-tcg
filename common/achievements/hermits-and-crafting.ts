@@ -9,7 +9,7 @@ const STARTER_DECK_IDS = STARTER_DECKS.map((deck) =>
 	deck.cards.map((card) => card.id).sort(),
 )
 
-const Designer: Achievement = {
+const HermitsAndCrafting: Achievement = {
 	...achievement,
 	numericId: 24,
 	id: 'designer',
@@ -47,4 +47,4 @@ const Designer: Achievement = {
 	},
 }
 
-export default Designer
+export default HermitsAndCrafting

@@ -1,15 +1,15 @@
 import {describe, expect, test} from '@jest/globals'
-import Designer from 'common/achievements/designer'
+import HermitsAndCrafting from 'common/achievements/hermits-and-crafting'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import SmallishbeansCommon from 'common/cards/hermits/smallishbeans-common'
 import {STARTER_DECKS} from 'common/cards/starter-decks'
 import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
 
-describe('Test Designer achievement', () => {
-	test('Test "Designer" does not progress after winning with a Starter Deck', () => {
+describe('Test Hermits and Crafting achievement', () => {
+	test('Test "Hermits and Crafting" does not progress after winning with a Starter Deck', () => {
 		testAchivement(
 			{
-				achievement: Designer,
+				achievement: HermitsAndCrafting,
 				playerOneDeck: STARTER_DECKS[1].cards,
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
@@ -26,17 +26,17 @@ describe('Test Designer achievement', () => {
 					if (outcome.type === 'player-won') {
 						expect(outcome.winner).toBe(achievement.player)
 					}
-					expect(Designer.getProgress(achievement.goals)).toBeFalsy()
+					expect(HermitsAndCrafting.getProgress(achievement.goals)).toBeFalsy()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, oneShotMode: true},
 		)
 	})
 
-	test('Test "Designer" does progress after winning with a Starter Deck', () => {
+	test('Test "Hermits and Crafting" does progress after winning with a Starter Deck', () => {
 		testAchivement(
 			{
-				achievement: Designer,
+				achievement: HermitsAndCrafting,
 				playerOneDeck: [SmallishbeansCommon],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
@@ -53,7 +53,7 @@ describe('Test Designer achievement', () => {
 					if (outcome.type === 'player-won') {
 						expect(outcome.winner).toBe(achievement.player)
 					}
-					expect(Designer.getProgress(achievement.goals)).toBe(1)
+					expect(HermitsAndCrafting.getProgress(achievement.goals)).toBe(1)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, oneShotMode: true},

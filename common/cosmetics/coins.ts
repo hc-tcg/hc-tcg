@@ -1,4 +1,4 @@
-import Designer from '../achievements/designer'
+import HermitsAndCrafting from '../achievements/hermits-and-crafting'
 import EyeOfTheSpider from '../achievements/eye-of-the-spider'
 import GoFish from '../achievements/go-fish'
 import HurtinHermits from '../achievements/hurtin-hermits'
@@ -51,7 +51,7 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		id: 'cat',
 		name: 'Jellie',
 		borderColor: '#C57EA7',
-		requires: {achievement: Designer.id},
+		requires: {achievement: HermitsAndCrafting.id},
 	},
 	{
 		id: 'pink-sheep',
