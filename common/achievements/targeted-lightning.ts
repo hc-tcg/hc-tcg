@@ -23,10 +23,13 @@ const TargetedLightning: Achievement = {
 		const player = game.components.get(playerEntity)
 		assert(player)
 
+		let incrementGoalProgress = false
+
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.ACHIEVEMENTS,
 			(attack) => {
+				if (incrementGoalProgress) return
 				if (attack.player.entity !== player.entity) return
 				const target = attack.target
 				if (!target || target.health) return
@@ -48,7 +51,12 @@ const TargetedLightning: Achievement = {
 						query.card.slot(query.slot.opponent, query.slot.attach),
 					)
 				) {
-					component.incrementGoalProgress({goal: 0})
+					incrementGoalProgress = true
+					observer.subscribe(target.hooks.onKnockOut, () => {
+						component.incrementGoalProgress({goal: 0})
+						observer.unsubscribe(target.hooks.onKnockOut)
+						incrementGoalProgress = false
+					})
 				}
 			},
 		)

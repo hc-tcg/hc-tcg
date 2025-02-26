@@ -3,6 +3,7 @@ import EyeOfTheSpider from 'common/achievements/eye-of-the-spider'
 import MilkBucket from 'common/cards/attach/milk-bucket'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
+import RenbobRare from 'common/cards/hermits/renbob-rare'
 import Anvil from 'common/cards/single-use/anvil'
 import LavaBucket from 'common/cards/single-use/lava-bucket'
 import SplashPotionOfPoison from 'common/cards/single-use/splash-potion-of-poison'
@@ -19,15 +20,15 @@ import {
 	testAchivement,
 } from '../utils'
 
-describe('Test Eye of the Spider achivement', () => {
-	test('Test Eye of the Spider achivement', () => {
+describe('Test Eye of the Spider achievement', () => {
+	test('"Eye of the Spider" counts multiple attacks as one progress', () => {
 		testAchivement(
 			{
 				achievement: EyeOfTheSpider,
-				playerOneDeck: [EthosLabCommon, SplashPotionOfPoison, Anvil],
+				playerOneDeck: [RenbobRare, SplashPotionOfPoison, Anvil],
 				playerTwoDeck: [GeminiTayCommon, GeminiTayCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, RenbobRare, 'hermit', 0)
 					yield* endTurn(game)
 					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 0)
 					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 1)
@@ -65,15 +66,13 @@ describe('Test Eye of the Spider achivement', () => {
 					yield* forfeit(game.currentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
-					expect(
-						EyeOfTheSpider.getProgress(achievement.goals),
-					).toBeGreaterThanOrEqual(EyeOfTheSpider.levels[0].steps)
+					expect(EyeOfTheSpider.getProgress(achievement.goals)).toBe(1)
 				},
 			},
 			{noItemRequirements: true},
 		)
 	})
-	test('Test Eye of the Spider achivement does not increase when active hermit is knocked out', () => {
+	test('Test Eye of the Spider achievement does not increase when active hermit is knocked out', () => {
 		testAchivement(
 			{
 				achievement: EyeOfTheSpider,
@@ -106,7 +105,7 @@ describe('Test Eye of the Spider achivement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('Test Eye of the Spider achivement does not increase when any AFK is knoced out', () => {
+	test('Test Eye of the Spider achievement does not increase when any AFK is knocked out', () => {
 		testAchivement(
 			{
 				achievement: EyeOfTheSpider,
@@ -151,7 +150,7 @@ describe('Test Eye of the Spider achivement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('Test Eye of the Spider achivement does not increase when poison is remvoed with milk', () => {
+	test('Test Eye of the Spider achievement does not increase when poison is removed with milk', () => {
 		testAchivement(
 			{
 				achievement: EyeOfTheSpider,
