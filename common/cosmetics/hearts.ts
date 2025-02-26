@@ -7,13 +7,13 @@ import {Heart} from './types'
 
 const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
+		id: 'red',
+		name: 'Default',
+	},
+	{
 		id: 'copper',
 		name: 'Copper',
 		requires: {achievement: TargetedLightning.id},
-	},
-	{
-		id: 'red',
-		name: 'Default',
 	},
 	{
 		id: 'gold',
