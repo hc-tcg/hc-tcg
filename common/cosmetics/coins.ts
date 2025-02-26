@@ -1,8 +1,12 @@
+import Designer from '../achievements/designer'
 import EyeOfTheSpider from '../achievements/eye-of-the-spider'
+import GoFish from '../achievements/go-fish'
+import HurtinHermits from '../achievements/hurtin-hermits'
 import NoDerpcoins from '../achievements/no-derpcoins'
 import PackOfWolves from '../achievements/pack-of-wolves'
 import ServerLag from '../achievements/server-lag'
 import SheepStarer from '../achievements/sheep-starer'
+import UselessMachine from '../achievements/useless-machine'
 import Win from '../achievements/wins'
 import Wipeout from '../achievements/wipeout'
 import {Coin} from './types'
@@ -17,7 +21,7 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		id: 'server-lag',
 		name: 'Chicken',
 		borderColor: '#CD1414',
-		requires: undefined,
+		requires: {achievement: ServerLag.id},
 	},
 	{
 		id: 'cave-spider',
@@ -29,7 +33,7 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		id: 'cod',
 		name: 'Cod',
 		borderColor: '#7D604D',
-		requires: {achievement: ServerLag.id},
+		requires: {achievement: GoFish.id},
 	},
 	{
 		id: 'dinnerbone',
@@ -42,6 +46,12 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		name: 'Evil X',
 		borderColor: '#666666',
 		requires: {achievement: NoDerpcoins.id},
+	},
+	{
+		id: 'cat',
+		name: 'Jellie',
+		borderColor: '#C57EA7',
+		requires: {achievement: Designer.id},
 	},
 	{
 		id: 'pink-sheep',
@@ -59,13 +69,19 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		id: 'slime',
 		name: 'Slime',
 		borderColor: '#497736',
-		requires: undefined,
+		requires: {achievement: UselessMachine.id},
 	},
 	{
 		id: 'wolf',
 		name: 'Wolf',
 		borderColor: '#dddadb',
 		requires: {achievement: PackOfWolves.id},
+	},
+	{
+		id: 'zombie',
+		name: 'Zombie',
+		borderColor: '#1A1A1A',
+		requires: {achievement: HurtinHermits.id},
 	},
 ]
 

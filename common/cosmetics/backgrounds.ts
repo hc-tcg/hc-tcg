@@ -23,6 +23,7 @@ const BackgroundDefinitions: Omit<Background, 'type'>[] = [
 		id: 'classic',
 		name: 'Classic',
 		requires: {achievement: AllCards.id},
+		preview: 'classic_preview',
 	},
 	{
 		id: 'balanced',
