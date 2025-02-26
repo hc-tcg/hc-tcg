@@ -1,9 +1,8 @@
 import assert from 'assert'
 import LightningRod from '../cards/attach/lightning-rod'
-import TargetBlock from '../cards/single-use/target-block'
 import {CardComponent} from '../components'
 import query from '../components/query'
-import {Entity} from '../entities'
+import {TargetBlockEffect} from '../status-effects/target-block'
 import {afterAttack} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
@@ -29,22 +28,24 @@ const TargetedLightning: Achievement = {
 			afterAttack.ACHIEVEMENTS,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return
-				attack.getHistory().find((history) => {
-					if (!history.source) return false
-					if (history.type === 'redirect') return false
-					let source = game.components.get(
-						history.source as Entity<CardComponent>,
-					)
-					if (!(source instanceof CardComponent)) return false
-					if (source.props.id !== TargetBlock.id) return false
-					return true
-				})
+				const target = attack.target
+				if (!target || target.health) return
+				const targetEffect = target
+					.getHermit()
+					?.getStatusEffect(TargetBlockEffect)
+				if (!targetEffect) return
+				if (
+					!attack
+						.getHistory('redirect')
+						.find((history) => history.source === targetEffect.entity)
+				)
+					return
 
 				if (
 					game.components.find(
 						CardComponent,
 						query.card.is(LightningRod),
-						query.card.slot(query.slot.opponent, query.slot.active),
+						query.card.slot(query.slot.opponent, query.slot.attach),
 					)
 				) {
 					component.incrementGoalProgress({goal: 0})
