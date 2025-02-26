@@ -99,6 +99,8 @@ export const localMessages = messages('clientLocalMessages', {
 	NEW_PLAYER: null,
 	SHOW_TOOLTIP: null,
 	HIDE_TOOLTIP: null,
+	SHOW_DROPDOWN: null,
+	HIDE_DROPDOWN: null,
 	COSMETICS_SET: null,
 	COSMETIC_UPDATE: null,
 	OVERVIEW: null,
@@ -264,6 +266,13 @@ type Messages = [
 		tooltipWidth: number
 	},
 	{type: typeof localMessages.HIDE_TOOLTIP},
+	{
+		type: typeof localMessages.SHOW_DROPDOWN
+		dropdown: React.ReactNode
+		x: number
+		y: number
+	},
+	{type: typeof localMessages.HIDE_DROPDOWN},
 	{
 		type: typeof localMessages.COSMETICS_SET
 		appearance: Appearance
