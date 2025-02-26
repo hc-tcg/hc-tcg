@@ -924,7 +924,7 @@ export class Database {
 				const replay: Buffer = game.replay
 				let hasReplay = false
 
-				if (replay.length > 4) {
+				if (replay.length >= 4) {
 					const decompressedReplay = huffmanDecompress(replay)
 					if (decompressedReplay && decompressedReplay.readUInt8(0) === 0x01) {
 						hasReplay = true

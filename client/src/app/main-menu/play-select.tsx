@@ -20,7 +20,7 @@ import {EXPANSIONS} from 'common/const/expansions'
 import {CardEntity} from 'common/entities'
 import {Deck} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
-import {sortDecks} from 'common/utils/sorting'
+import {sortDecks} from 'common/utils/decks'
 import {validateDeck} from 'common/utils/validation'
 import Button from 'components/button'
 import CardList from 'components/card-list'
@@ -201,7 +201,7 @@ function PlaySelect({setMenuSection}: Props) {
 		}
 	}, [handleKeyPress])
 
-	function handleKeyPress(e: any) {
+	function handleKeyPress(e: KeyboardEvent) {
 		if (!matchmaking && e.key === 'Escape') {
 			if (backStack[0]) {
 				goBack()

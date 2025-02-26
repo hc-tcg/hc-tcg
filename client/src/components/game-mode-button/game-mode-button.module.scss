@@ -1,6 +1,6 @@
-$width: 28vh;
+$width: 34vh;
 $expandedWidth: 75vh;
-$height: 42vh;
+$height: 52vh;
 $time: 0.25s;
 
 $mobileWidth: 90vw;
@@ -187,6 +187,10 @@ $expandedHeight: 67vh;
 
 .spacer {
 	flex-grow: 1;
+}
+
+.filter {
+	width: 100%;
 }
 
 /* ANIMATIONS */
@@ -384,7 +388,7 @@ $expandedHeight: 67vh;
 			}
 		}
 
-		input {
+		.deckSelectorInput {
 			box-shadow: inset 0 -4px 1px, inset 1px 1px 0 1px;
 			font-size: 1.8vh;
 

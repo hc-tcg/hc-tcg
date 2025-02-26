@@ -122,7 +122,7 @@ const EXPANSION_NAMES = [
 	}),
 ]
 
-const iconDropdownOptions = ITEM_DECK_ICONS.map((option) => ({
+export const iconDropdownOptions = ITEM_DECK_ICONS.map((option) => ({
 	name: option,
 	key: option,
 	icon: `/images/types/type-${option}.png`,
@@ -536,15 +536,9 @@ function EditDeck({
 								showNames={true}
 								checkboxes={true}
 								checked={expansionQuery}
-								action={(option) =>
-									setExpansionQuery(
-										option === 'any'
-											? []
-											: expansionQuery.includes(option)
-												? expansionQuery.filter((a) => a !== option)
-												: [option, ...expansionQuery],
-									)
-								}
+								checkboxAction={(option) => {
+									setExpansionQuery(option)
+								}}
 							/>
 							<input
 								placeholder="Search cards..."

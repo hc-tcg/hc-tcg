@@ -2,7 +2,7 @@ import {defaults} from 'chart.js'
 import classNames from 'classnames'
 import {CARDS} from 'common/cards'
 import {getCardTypeIcon} from 'common/cards/card'
-import {Card as CardType, isHermit, isItem} from 'common/cards/types'
+import {Card as CardType} from 'common/cards/types'
 import debugConfig from 'common/config/debug-config'
 import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
@@ -10,6 +10,7 @@ import {TypeT} from 'common/types/cards'
 import {GameHistory} from 'common/types/database'
 import {WithoutFunctions} from 'common/types/server-requests'
 import {sortCards} from 'common/utils/cards'
+import {getDeckTypes, parseDeckCards} from 'common/utils/decks'
 import Button from 'components/button'
 import CardComponent from 'components/card'
 import Checkbox from 'components/checkbox'
@@ -304,20 +305,6 @@ function Statistics({setMenuSection}: Props) {
 	}
 
 	if (!dataRetrieved) getData()
-
-	const parseDeckCards = (cards: Array<string>) => {
-		return cards.map((card) => CARDS[card])
-	}
-
-	const getDeckTypes = (cards: Array<string>) => {
-		const parsedCards = parseDeckCards(cards)
-		const reducedCards = parsedCards.reduce((r: Array<string>, card) => {
-			if (!isHermit(card) && !isItem(card)) return r
-			if (!r.includes(card.type) && card.type !== 'any') r.push(card.type)
-			return r
-		}, [])
-		return reducedCards.join(', ')
-	}
 
 	const parseDecks = (decks: Array<Record<string, any>>) => {
 		if (!decks) return
@@ -837,7 +824,7 @@ function Statistics({setMenuSection}: Props) {
 										</div>
 										<div className={css.stat}>
 											<p className={css.statName}>Total Losses</p>
-											<p>{stats.wins + stats.forfeitWins}</p>
+											<p>{stats.losses + stats.forfeitLosses}</p>
 											<p>
 												{padDecimal(
 													(stats.losses + stats.forfeitLosses) /
@@ -1000,7 +987,6 @@ function Statistics({setMenuSection}: Props) {
 															)}
 															{game.secondPlayer.name}
 														</div>
-
 														<Button
 															id={css.deck}
 															onClick={() => {
