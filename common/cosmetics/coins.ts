@@ -1,6 +1,6 @@
-import HermitsAndCrafting from '../achievements/hermits-and-crafting'
 import EyeOfTheSpider from '../achievements/eye-of-the-spider'
 import GoFish from '../achievements/go-fish'
+import HermitsAndCrafting from '../achievements/hermits-and-crafting'
 import HurtinHermits from '../achievements/hurtin-hermits'
 import NoDerpcoins from '../achievements/no-derpcoins'
 import PackOfWolves from '../achievements/pack-of-wolves'

@@ -49,7 +49,7 @@ describe('Test How Did We Get Here achievement', () => {
 					expect(HowDidWeGetHere.getProgress(achievement.goals)).toBe(5)
 				},
 			},
-			{noItemRequirements: true, verboseLogging: true},
+			{noItemRequirements: true},
 		)
 	})
 })
