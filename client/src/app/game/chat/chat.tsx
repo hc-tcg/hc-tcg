@@ -263,18 +263,12 @@ export type ChatMessageDisplay = {
 	createdAt: number
 }
 
-type ChatContentProps = {
+type ChatMessagesProps = {
 	chatMessages: Array<ChatMessageDisplay>
 	showLog: boolean
 	profanityFilterEnabled: boolean
 	isSpectating: boolean
 	playerNames: [string?, string?]
-	bindChatPos?: () => {}
-	closeChat?: () => void
-	handleNewMessage?: (e: any) => void
-	toggleBattleLog?: () => void
-	onClick?: (e: any) => void
-	style?: any
 }
 
 export function ChatMessages({
@@ -283,13 +277,7 @@ export function ChatMessages({
 	profanityFilterEnabled,
 	isSpectating,
 	playerNames,
-	bindChatPos,
-	closeChat,
-	handleNewMessage,
-	toggleBattleLog,
-	onClick,
-	style,
-}): any {
+}: ChatMessagesProps) {
 	return (
 		<div className={css.messages}>
 			{chatMessages.map((line, lineNumber) => {
@@ -354,6 +342,20 @@ export function ChatMessages({
 	)
 }
 
+type ChatContentProps = {
+	chatMessages: Array<ChatMessageDisplay>
+	showLog: boolean
+	profanityFilterEnabled: boolean
+	isSpectating: boolean
+	playerNames: [string?, string?]
+	bindChatPos?: () => {}
+	closeChat?: () => void
+	handleNewMessage?: (e: any) => void
+	toggleBattleLog?: () => void
+	onClick?: (e: any) => void
+	style?: any
+}
+
 export const ChatContent = ({
 	chatMessages,
 	showLog,
@@ -402,12 +404,6 @@ export const ChatContent = ({
 						profanityFilterEnabled={profanityFilterEnabled}
 						isSpectating={isSpectating}
 						playerNames={playerNames}
-						bindChatPos={bindChatPos}
-						closeChat={closeChat}
-						handleNewMessage={handleNewMessage}
-						toggleBattleLog={toggleBattleLog}
-						onClick={onClick}
-						style={style}
 					/>
 				</div>
 				<div className={css.formBox}>
