@@ -22,18 +22,22 @@
 	font-size: 1.1rem;
 	color: var(--text-light);
 	font-weight: bold;
-	background: linear-gradient(90deg,
-			hsla(357deg, 58%, 40%, 50%) 10%,
-			hsl(357deg, 58%, 40%, 100%) 50%,
-			hsla(357deg, 58%, 40%, 50%) 90%);
-	border-image: url('/images/cosmetics/border/red.png') 30 / 20px;
+	background: linear-gradient(
+		90deg,
+		hsla(357deg, 58%, 40%, 50%) 10%,
+		hsl(357deg, 58%, 40%, 100%) 50%,
+		hsla(357deg, 58%, 40%, 50%) 90%
+	);
+	border-image: url("/images/cosmetics/border/red_border.png") 30 / 20px;
 
 	&.win {
-		background: linear-gradient(90deg,
-				hsla(192deg, 56%, 58%, 50%) 10%,
-				hsl(192deg, 56%, 58%, 100%) 50%,
-				hsla(192deg, 56%, 58%, 50%) 90%);
-		border-image-source: url('/images/cosmetics/border/blue.png');
+		background: linear-gradient(
+			90deg,
+			hsla(192deg, 56%, 58%, 50%) 10%,
+			hsl(192deg, 56%, 58%, 100%) 50%,
+			hsla(192deg, 56%, 58%, 50%) 90%
+		);
+		border-image-source: url("/images/cosmetics/border/blue.png");
 	}
 
 	button {
@@ -49,7 +53,7 @@
 	grid-template-areas:
 		"main-menu rematch"
 		"replay board";
-	
+
 	#mainMenu {
 		grid-area: main-menu;
 	}
