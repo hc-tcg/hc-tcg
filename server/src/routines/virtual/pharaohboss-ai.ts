@@ -1,5 +1,6 @@
 import assert from 'assert'
 import PharaohRare from 'common/cards/advent-of-tcg/hermits/pharaoh-rare'
+import PythonGBRare from 'common/cards/advent-of-tcg/hermits/pythongb-rare'
 import {DiamondArmor, NetheriteArmor} from 'common/cards/attach/armor'
 import TurtleShell from 'common/cards/attach/turtle-shell'
 import Cubfan135Common from 'common/cards/hermits/cubfan135-common'
@@ -16,13 +17,19 @@ import {InstantHealthII} from 'common/cards/single-use/instant-health'
 import LavaBucket from 'common/cards/single-use/lava-bucket'
 import PotionOfWeakness from 'common/cards/single-use/potion-of-weakness'
 import {Card, Hermit} from 'common/cards/types'
-import {PlayerComponent, RowComponent} from 'common/components'
+import {
+	HandSlotComponent,
+	PlayerComponent,
+	RowComponent,
+} from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
+import {player} from 'common/components/query/card'
 import {GameModel} from 'common/models/game-model'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
 import {hasEnoughEnergy} from 'common/utils/attacks'
+import {PointLightHelper} from 'three'
 
 const howMuchILikeMyHermits: Array<Card['id']> = [
 	PharaohRare.id,
@@ -105,6 +112,37 @@ function getOpponentHermitDamage(
 
 // Start the game! We will not have a hermit on the board at this point.
 function gameStartup() {}
+
+function shouldPlayItemCard(
+	game: GameModel,
+	pharaoh: PlayerComponent,
+): [RowComponent, HandSlotComponent] | null {
+	if (!pharaoh.getAavailableActions().includes('PLAY_ITEM_CARD')) {
+		return null
+	}
+
+	let activeHermit = pharaoh.getActiveHermit()
+
+	let shouldPowerUpActive =
+		activeHermit?.isHermit() &&
+		!hasEnoughEnergy(
+			pharaoh.getAvailableEnergy(),
+			activeHermit?.props.secondary.cost,
+			false,
+		)
+
+	// @todo Play item of correct type
+	if (shouldPowerUpActive) {
+		let canPowerUpHermit = pharaoh.getHand().find((c) => c.isItem())
+		if (canPowerUpHermit) {
+			return [pharaoh.activeRow!, canPowerUpHermit.slot as HandSlotComponent]
+		}
+	}
+
+	return null
+}
+
+function playItemCard() {}
 
 function decideToSwap(
 	game: GameModel,
