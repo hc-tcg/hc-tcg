@@ -150,7 +150,6 @@ function shouldPlayItemCard(
 			false,
 		)
 
-	// @todo Play item of correct type
 	if (shouldPowerUpActive) {
 		let activeRemainingCost = remainingEnergy(
 			pharaoh.getAvailableEnergy(),
@@ -163,6 +162,9 @@ function shouldPlayItemCard(
 			return [pharaoh.activeRow!, canPowerUpHermit.slot as HandSlotComponent]
 		}
 	}
+
+	// If we can't power up the active we want to find a different hermit to power up
+	// @todo
 
 	return null
 }
