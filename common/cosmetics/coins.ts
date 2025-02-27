@@ -1,6 +1,6 @@
-import Designer from '../achievements/designer'
 import EyeOfTheSpider from '../achievements/eye-of-the-spider'
 import GoFish from '../achievements/go-fish'
+import HermitsAndCrafting from '../achievements/hermits-and-crafting'
 import HurtinHermits from '../achievements/hurtin-hermits'
 import NoDerpcoins from '../achievements/no-derpcoins'
 import PackOfWolves from '../achievements/pack-of-wolves'
@@ -51,7 +51,7 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		id: 'cat',
 		name: 'Jellie',
 		borderColor: '#C57EA7',
-		requires: {achievement: Designer.id},
+		requires: {achievement: HermitsAndCrafting.id},
 	},
 	{
 		id: 'pink-sheep',
