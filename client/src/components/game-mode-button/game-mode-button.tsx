@@ -33,6 +33,7 @@ interface GameModeButtonProps {
 	onBack: () => void
 	disableBack: boolean
 	buttonAmount: number
+	disabled?: boolean
 	timerStart?: number
 	timerLength?: number
 }
@@ -49,9 +50,10 @@ function GameModeButton({
 	onSelect,
 	onBack,
 	disableBack,
+	buttonAmount,
+	disabled,
 	timerStart,
 	timerLength,
-	buttonAmount,
 }: GameModeButtonProps) {
 	const buttonRef = useRef<HTMLDivElement>(null)
 	const backgroundRef = useRef<HTMLDivElement>(null)
@@ -203,9 +205,14 @@ function GameModeButton({
 
 	return (
 		<div
-			className={classNames(css.buttonContainer, css.enablePointer)}
+			className={classNames(
+				css.buttonContainer,
+				css.enablePointer,
+				buttonAmount === 4 && css.fourButtons,
+			)}
 			onMouseDown={(ev) => {
 				if (ev.button !== 0) return
+				if (disabled) return
 				if (mode !== activeMode) {
 					setActiveMode(mode)
 					if (onSelect) onSelect()
@@ -214,7 +221,12 @@ function GameModeButton({
 			ref={buttonRef}
 		>
 			<div
-				className={classNames(css.backgroundContainer, css.show)}
+				className={classNames(
+					css.backgroundContainer,
+					css.show,
+					disabled && css.disabled,
+					buttonAmount === 4 && css.fourButtons,
+				)}
 				ref={backgroundRef}
 			>
 				<img
@@ -246,7 +258,7 @@ function GameModeButton({
 						<div className={css.spacer}></div>
 						<div className={css.text}>
 							<h1>{title}</h1>
-							{timerStart && timerLength && (
+							{timerStart !== undefined && timerLength !== undefined && (
 								<div className={css.rematchTimeRemaining}>
 									{timer}s Remaining
 								</div>
@@ -641,30 +653,5 @@ GameModeButton.CustomMenu = ({
 
 	return <div className={css.buttonMenu}>{children}</div>
 }
-
-/*
-				
-							<div className={css.buttonMenu}>
-								{!lobbyCreated && !queueStatus && (
-								)}
-								{lobbyCreated && (
-									<div className={css.queueMenu}>
-										<div>
-											<p>Opponent Code</p>
-											<div className={css.code} onClick={handleCodeClick}>
-												<CopyIcon /> {gameCode}
-											</div>
-											<p>Spectator Code</p>
-											<div
-												className={css.code}
-												onClick={handleSpectatorCodeClick}
-											>
-												<CopyIcon /> {spectatorCode}
-											</div>
-										</div>
-									</div>
-								)}
-							</div>
-				*/
 
 export default GameModeButton

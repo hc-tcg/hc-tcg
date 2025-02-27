@@ -102,16 +102,17 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 	}
 
 	const [hasRematch, setHasRematch] = useState<boolean>(rematch ? true : false)
-	const [buttonAmount, setButtonAmount] = useState<number>(hasRematch ? 4 : 3)
+	const [rematchDisabled, setRematchDisabled] = useState<boolean>(false)
+	const [buttonAmount, setButtonAmount] = useState<number>(rematch ? 4 : 3)
 
 	if (hasRematch && !rematch) {
 		setHasRematch(false)
+		setRematchDisabled(true)
 		if (activeMode === 'rematch') {
 			setActiveMode(null)
 			setActiveButtonMenu(null)
 			setBackStack([])
 		}
-		setButtonAmount(3)
 	}
 
 	const checkForValidation = (): boolean => {
@@ -274,7 +275,12 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 			>
 				<h2 className={css.header}>{header}</h2>
 				<div className={css.gameTypes}>
-					<div className={css.gameTypesButtons}>
+					<div
+						className={classNames(
+							css.gameTypesButtons,
+							buttonAmount === 4 && css.fourButtons,
+						)}
+					>
 						<GameModeButton
 							image={'vintagebeef'}
 							backgroundImage={'gamemodes/public'}
@@ -644,12 +650,14 @@ during the battle."
 								onSelectDeck={onSelectDeck}
 							/>
 						</GameModeButton>
-						{rematch && (
+						{(rematch || rematchDisabled) && (
 							<GameModeButton
 								image={'fiveampearl'}
 								backgroundImage={'gamemodes/rematch'}
 								title={'Rematch'}
-								description={"Click to accept your opponent's Rematch Request."}
+								description={
+									'Click within the time limit to rematch your opponent.'
+								}
 								mode="rematch"
 								activeMode={activeMode}
 								setActiveMode={setActiveMode}
@@ -659,15 +667,16 @@ during the battle."
 								}}
 								onBack={goBack}
 								disableBack={!!matchmaking}
-								timerStart={rematch.time}
+								timerStart={rematch?.time || 0}
 								timerLength={serverConfig.limits.rematchTime}
 								buttonAmount={buttonAmount}
+								disabled={rematchDisabled}
 							>
 								<GameModeButton.ChooseDeck
 									activeButtonMenu={activeButtonMenu}
 									id="rematchChooseDeck"
 									title="Choose your deck"
-									subTitle={`Current score: ${rematch.playerScore} - ${rematch.opponentScore}`}
+									subTitle={`Current score: ${rematch?.playerScore} - ${rematch?.opponentScore}`}
 									confirmMessage="Rematch"
 									onConfirm={() => {
 										const valid = checkForValidation()

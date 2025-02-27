@@ -68,6 +68,14 @@ $expandedHeight: 67vh;
 			scale: 1.05;
 		}
 	}
+
+	&.disabled {
+		filter: grayscale(100%);
+
+		&:hover {
+			scale: 1;
+		}
+	}
 }
 
 .backgroundImage {
@@ -609,6 +617,11 @@ $expandedHeight: 67vh;
 	.buttonContainer {
 		width: $mobileWidth;
 		height: $mobileHeight;
+
+		&.fourButtons {
+			width: $mobileWidth;
+			height: calc($mobileHeight - 4vh);
+		}
 	}
 
 	.backgroundContainer {
@@ -616,6 +629,11 @@ $expandedHeight: 67vh;
 		height: $mobileHeight;
 		top: 0;
 		left: auto;
+
+		&.fourButtons {
+			width: $mobileWidth;
+			height: calc($mobileHeight - 4vh);
+		}
 	}
 
 	@keyframes grow {
@@ -698,5 +716,12 @@ $expandedHeight: 67vh;
 		width: 100%;
 		background-color: var(--gray-900);
 		border: 2px black solid;
+	}
+
+	.rematchTimeRemaining {
+		position: absolute;
+		top: 0px;
+		right: 5.5rem;
+		scale: 0.8;
 	}
 }
