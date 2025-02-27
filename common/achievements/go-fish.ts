@@ -2,6 +2,7 @@ import FishingRod from '../cards/single-use/fishing-rod'
 import Mending from '../cards/single-use/mending'
 import {SlotComponent} from '../components'
 import query from '../components/query'
+import {afterApply} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -28,21 +29,25 @@ const GoFish: Achievement = {
 				.filter((x) => x.props.id === Mending.id).length
 		})
 
-		observer.subscribe(player.hooks.afterApply, () => {
-			let su = game.components
-				.find(SlotComponent, query.slot.singleUse)
-				?.getCard()
-			if (!su) return
-			if (su.props.id !== FishingRod.id) return
+		observer.subscribeWithPriority(
+			player.hooks.afterApply,
+			afterApply.CHECK_BOARD_STATE,
+			() => {
+				let su = game.components
+					.find(SlotComponent, query.slot.singleUse)
+					?.getCard()
+				if (!su) return
+				if (su.props.id !== FishingRod.id) return
 
-			const numberOfMendingsNow = player
-				.getHand()
-				.filter((x) => x.props.id === Mending.id).length
+				const numberOfMendingsNow = player
+					.getHand()
+					.filter((x) => x.props.id === Mending.id).length
 
-			if (numberOfMendingsBeforeUse < numberOfMendingsNow) {
-				component.incrementGoalProgress({goal: 0})
-			}
-		})
+				if (numberOfMendingsBeforeUse < numberOfMendingsNow) {
+					component.incrementGoalProgress({goal: 0})
+				}
+			},
+		)
 	},
 }
 

@@ -18,22 +18,40 @@ const CantTouchThis: Achievement = {
 		const player = game.components.get(playerEntity)
 		if (!player) return
 
+		const {opponentPlayer} = player
+
 		let missedAttacks = 0
+		let wasAttacked = false,
+			tookDamage = false
+
+		observer.subscribe(opponentPlayer.hooks.onTurnStart, () => {
+			wasAttacked = false
+			tookDamage = false
+		})
 
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.ACHIEVEMENTS,
 			(attack) => {
 				if (!(attack.attacker instanceof CardComponent)) return
-				if (attack.attacker.player !== player.opponentPlayer) return
-				if (attack.target?.player !== player) return
-				if (attack.calculateDamage() > 0) {
-					missedAttacks = 0
+				if (attack.player !== opponentPlayer) return
+				if (attack.isBacklash) return
+				wasAttacked = true
+				if (attack.calculateDamage() > 0 && attack.target?.player === player) {
+					tookDamage = true
 				}
-				missedAttacks += 1
-				component.bestGoalProgress({goal: 0, progress: missedAttacks})
 			},
 		)
+
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			if (!wasAttacked) return
+			if (tookDamage) {
+				missedAttacks = 0
+				return
+			}
+			missedAttacks += 1
+			component.bestGoalProgress({goal: 0, progress: missedAttacks})
+		})
 	},
 }
 

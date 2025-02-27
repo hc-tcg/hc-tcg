@@ -1,6 +1,7 @@
 import {SlotComponent, StatusEffectComponent} from '../../../components'
 import query from '../../../components/query'
 import PoisonQuiverEffect from '../../../status-effects/poison-quiver'
+import {afterApply} from '../../../types/priorities'
 import {singleUse} from '../../defaults'
 import {SingleUse} from '../../types'
 
@@ -41,15 +42,23 @@ const ArrowOfPoison: SingleUse = {
 				.apply(player.entity)
 		})
 
-		observer.subscribeBefore(player.hooks.afterApply, () => {
-			// Remove playing a single use from completed actions so it can be done again
-			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
-			player.singleUseCardUsed = false
-		})
+		observer.subscribeWithPriority(
+			player.hooks.afterApply,
+			afterApply.MODIFY_BLOCKED_ACTIONS,
+			() => {
+				// Remove playing a single use from completed actions so it can be done again
+				game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
+				player.singleUseCardUsed = false
+			},
+		)
 
-		observer.subscribe(player.hooks.afterApply, () => {
-			if (component.slot.onBoard()) component.discard()
-		})
+		observer.subscribeWithPriority(
+			player.hooks.afterApply,
+			afterApply.REMOVE_SINGLE_USE,
+			() => {
+				if (component.slot.onBoard()) component.discard()
+			},
+		)
 	},
 }
 

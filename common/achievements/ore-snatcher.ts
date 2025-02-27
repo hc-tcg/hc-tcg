@@ -7,6 +7,7 @@ import {
 import Emerald from '../cards/single-use/emerald'
 import {SlotComponent} from '../components'
 import query from '../components/query'
+import {afterApply} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -30,18 +31,23 @@ const OreSnatcher: Achievement = {
 		const player = game.components.get(playerEntity)
 		if (!player) return
 
-		observer.subscribe(player.hooks.afterApply, () => {
-			const SUSlot = game.components.find(
-				SlotComponent,
-				query.slot.singleUse,
-				query.slot.player(playerEntity),
-			)
-			if (!SUSlot) return
-			if (SUSlot.getCard()?.props !== Emerald) return
-			if (!Armor.includes(player.activeRow?.getAttach()?.props.id || '')) return
+		observer.subscribeWithPriority(
+			player.hooks.afterApply,
+			afterApply.CHECK_BOARD_STATE,
+			() => {
+				const SUSlot = game.components.find(
+					SlotComponent,
+					query.slot.singleUse,
+					query.slot.player(playerEntity),
+				)
+				if (!SUSlot) return
+				if (SUSlot.getCard()?.props !== Emerald) return
+				if (!Armor.includes(player.activeRow?.getAttach()?.props.id || ''))
+					return
 
-			component.incrementGoalProgress({goal: 0})
-		})
+				component.incrementGoalProgress({goal: 0})
+			},
+		)
 	},
 }
 
