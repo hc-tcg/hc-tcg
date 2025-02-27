@@ -8,10 +8,10 @@ import {useSelector} from 'react-redux'
 import ChatItem from './chat-item'
 import ExitItem from './exit-item'
 import ForfeitItem from './forfeit-item'
+import MusicItem from './music-item'
 import SoundItem from './sfx-item'
 import css from './toolbar.module.scss'
 import TooltipsItem from './tooltips-item'
-import MusicItem from './music-item'
 
 function Toolbar() {
 	const gameState = useSelector(getGameState)
