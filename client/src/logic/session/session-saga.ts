@@ -222,7 +222,7 @@ export function* setupData(user: User) {
 		type: localMessages.DATABASE_SET,
 		data: {
 			key: 'achievements',
-			value: user.achievements,
+			value: user.achievements.achievementData,
 		},
 	})
 	yield* put<LocalMessage>({

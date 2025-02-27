@@ -128,19 +128,7 @@ const EndGameOverlay = ({
 					<span>{OUTCOME_MSG[myOutcome]}</span>
 				)}
 				<div className={css.achievementsOverview}>
-					{earnedAchievements.length === 0 ? (
-						<div className={css.noAchievements}>You earned no achievements</div>
-					) : (
-						<div className={css.achievementBox}>
-							<div>{earnedAchievements[0].level.name}</div>
-							<div>{earnedAchievements[0].level.description}</div>
-							<progress
-								value={earnedAchievements[0].newProgress}
-								max={earnedAchievements[0].level.steps}
-								className={css.progressBar}
-							></progress>
-						</div>
-					)}
+					{earnedAchievements.map((a) => a.level.name)}
 				</div>
 				{outcome.type === 'game-crash' && (
 					<Button

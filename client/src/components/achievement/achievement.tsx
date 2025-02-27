@@ -1,20 +1,25 @@
 import classNames from 'classnames'
 import {Achievement} from 'common/achievements/types'
 import {ALL_COSMETICS} from 'common/cosmetics'
-import {ProgressionEntry} from 'common/types/achievements'
+import {AchievementProgress} from 'common/types/achievements'
 import css from './achievement.module.scss'
 
 type Props = {
 	achievement: Achievement
-	progressData: ProgressionEntry | undefined
+	progressData: AchievementProgress
 }
 export default function AchievementComponent({
 	achievement,
 	progressData,
 }: Props) {
-	const progress = progressData
-		? achievement.getProgress(progressData.goals)
+	const progress = progressData[achievement.numericId]
+		? Object.values(progressData[achievement.numericId].goals).reduce(
+				(r, x) => r + x,
+				0,
+			)
 		: 0
+
+	console.log(progress)
 
 	let out = []
 
@@ -55,7 +60,7 @@ export default function AchievementComponent({
 			icon = <img src={icon_url} className={classNames(css.icon)} />
 		}
 
-		const completionTime = progressData?.levels[i].completionTime
+		const completionTime = 0
 
 		out.push(
 			<div className={css.achievementContainer}>

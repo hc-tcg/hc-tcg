@@ -101,6 +101,7 @@ function Board({onClick, localGameState, gameOver, gameEndButton}: Props) {
 				localGameState={localGameState}
 				onClick={(value) => onClick(value, player.entity)}
 				id={css.actions}
+				gameOver={gameOver}
 			/>
 		</div>
 	)
