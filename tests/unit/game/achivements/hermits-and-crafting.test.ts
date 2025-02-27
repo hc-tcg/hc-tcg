@@ -33,7 +33,7 @@ describe('Test Hermits and Crafting achievement', () => {
 		)
 	})
 
-	test('Test "Hermits and Crafting" does progress after winning with a Starter Deck', () => {
+	test('Test "Hermits and Crafting" progresses after winning with a deck that is not a starter deck', () => {
 		testAchivement(
 			{
 				achievement: HermitsAndCrafting,
