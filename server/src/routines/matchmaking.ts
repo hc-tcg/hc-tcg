@@ -218,7 +218,7 @@ function* gameManager(con: GameController) {
 					if (complete && !previouslyComplete) {
 						v.player.achievementProgress[achievement.props.numericId].levels[
 							i
-						].completionTime = new Date()
+						] = {completionTime: new Date()}
 						newAchievements[v.player.id].push({
 							achievementId: achievement.props.numericId,
 							level,
@@ -228,7 +228,7 @@ function* gameManager(con: GameController) {
 					}
 				}
 			})
-			console.log(newAchievements)
+
 			yield* updateAchievements(v.player)
 		}
 
