@@ -29,7 +29,7 @@ function getTypeWinAchievement(id: number, type: TypeT): Achievement {
 			if (
 				game.components.filter(
 					CardComponent,
-					query.card.currentPlayer,
+					query.card.player(playerEntity),
 					query.card.type(type),
 				).length < 7
 			) {

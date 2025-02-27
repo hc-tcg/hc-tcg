@@ -34,6 +34,7 @@ const SheepStarer: Achievement = {
 				const thisTurnRedZedaphs = game.components.filterEntities(
 					CardComponent,
 					query.card.is(...zedaphCards),
+					query.card.currentPlayer,
 					query.card.row(
 						(_game, row) => row.health !== null && row.health <= 90,
 					),
