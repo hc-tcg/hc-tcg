@@ -9,6 +9,7 @@ import css from './end-game-overlay.module.scss'
 import {useEffect, useState} from 'react'
 import serverConfig from 'common/config/server-config'
 import {EarnedAchievement} from 'common/types/achievements'
+import {ACHIEVEMENTS, ACHIEVEMENTS_LIST} from 'common/achievements'
 
 type Props = {
 	outcome: GameOutcome
@@ -130,7 +131,15 @@ const EndGameOverlay = ({
 					{earnedAchievements.length === 0 ? (
 						<div className={css.noAchievements}>You earned no achievements</div>
 					) : (
-						<div>{earnedAchievements.map((a) => a.achievementId)}</div>
+						<div className={css.achievementBox}>
+							<div>{earnedAchievements[0].level.name}</div>
+							<div>{earnedAchievements[0].level.description}</div>
+							<progress
+								value={earnedAchievements[0].newProgress}
+								max={earnedAchievements[0].level.steps}
+								className={css.progressBar}
+							></progress>
+						</div>
 					)}
 				</div>
 				{outcome.type === 'game-crash' && (

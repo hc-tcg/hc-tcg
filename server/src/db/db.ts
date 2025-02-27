@@ -1848,8 +1848,9 @@ export class Database {
 				}
 
 				progress[row['achievement_id']].goals[row['goal_id']] = row['progress']
-				progress[row['achievement_id']].levels[row['level']].completionTime =
-					row['completion_time']
+				progress[row['achievement_id']].levels[row['level']] = {
+					completionTime: row['completion_time'],
+				}
 
 				// If we add a new level of an achievement the user may have the goal complete but will not have the achievement.
 				// This code grants the user the level for the achievement the first time they log in after said update.

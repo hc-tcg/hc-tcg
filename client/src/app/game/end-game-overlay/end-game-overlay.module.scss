@@ -104,6 +104,19 @@
 	border-radius: 5px;
 }
 
+.achievementBox {
+	width: calc(100% - 0.5rem);
+	height: calc(100% - 0.5rem);
+	background-color: var(--gray-600);
+	border-radius: 5px;
+	margin: 0.25rem;
+	text-align: left;
+}
+
+.progressBar {
+	width: 100%;
+}
+
 @keyframes float {
 	from {
 		transform: translateY(0);
