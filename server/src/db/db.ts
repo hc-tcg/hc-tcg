@@ -1078,6 +1078,7 @@ export class Database {
 				},
 				deck: player1Deck.sort((a, b) => a - b),
 				uuid: firstPlayerRows[0].user_id,
+				score: 0,
 			}
 
 			const player2Defs: PlayerSetupDefs & {uuid: string} = {
@@ -1090,6 +1091,7 @@ export class Database {
 				},
 				deck: player2Deck.sort((a, b) => a - b),
 				uuid: secondPlayerRows[0].user_id,
+				score: 0,
 			}
 
 			const replayActions = yield* bufferToTurnActions(

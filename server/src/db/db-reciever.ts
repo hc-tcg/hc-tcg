@@ -6,7 +6,7 @@ import {serverMessages} from 'common/socket-messages/server-messages'
 import {GameOutcome} from 'common/types/game-state'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import root from 'serverRoot'
-import {call} from 'typed-redux-saga'
+import {call, retry} from 'typed-redux-saga'
 import {broadcast} from 'utils/comm'
 import {
 	RecievedClientMessage,
@@ -513,4 +513,17 @@ export function* getOverview(
 		type: serverMessages.REPLAY_OVERVIEW_RECIEVED,
 		battleLog: replay.body.battleLog,
 	})
+}
+
+export function* getAchievementProgress(uuid: string) {
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
+
+	const achievements = yield* call([root.db, root.db.getAchievements], uuid)
+
+	assert(
+		achievements.type === 'success',
+		'This should not fail when the database is connected.',
+	)
+
+	return achievements.body.achievementData
 }

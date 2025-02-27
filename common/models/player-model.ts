@@ -24,6 +24,7 @@ export class PlayerModel {
 		playerName: string,
 		minecraftName: string,
 		uuid: string,
+		achievementProgress: AchievementProgress,
 		socket: Socket,
 	) {
 		this.internalId = Math.random().toString() as PlayerId
@@ -36,7 +37,7 @@ export class PlayerModel {
 		this.censoredName = censorString(playerName)
 		this.socket = socket
 		this.uuid = uuid
-		this.achievementProgress = {}
+		this.achievementProgress = achievementProgress
 		this.appearance = {...defaultAppearance}
 	}
 
