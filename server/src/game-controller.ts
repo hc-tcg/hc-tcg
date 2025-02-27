@@ -107,11 +107,17 @@ export class GameController {
 		this.player2Defs = player2
 
 		if (props.countAchievements) {
-			if (this.player1Defs instanceof PlayerModel) {
-				this.addAchievements(this.player1Defs, this.game.currentPlayerEntity)
+			if (this.player1Defs.model instanceof PlayerModel) {
+				this.addAchievements(
+					this.player1Defs.model,
+					this.game.currentPlayerEntity,
+				)
 			}
-			if (this.player2Defs instanceof PlayerModel) {
-				this.addAchievements(this.player2Defs, this.game.opponentPlayerEntity)
+			if (this.player2Defs.model instanceof PlayerModel) {
+				this.addAchievements(
+					this.player2Defs.model,
+					this.game.opponentPlayerEntity,
+				)
 			}
 		}
 	}
