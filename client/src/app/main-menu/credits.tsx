@@ -28,7 +28,7 @@ function Credits({setMenuSection}: Props) {
 					handle="@_inkGhoul"
 					social="twitter"
 					link="https://twitter.com/_InkGhoul"
-					avatar="https://pbs.twimg.com/profile_images/1779336099556675584/jXzagXkR_400x400.jpg"
+					avatar="https://pbs.twimg.com/profile_images/1884699879282458624/pAJ13-C3_400x400.jpg"
 				/>
 			</div>
 			<h2>Website Developers</h2>

@@ -104,7 +104,7 @@ function Settings({setMenuSection}: Props) {
 			)}
 			<MenuLayout
 				back={() => changeMenuSection('main-menu')}
-				title="More"
+				title="Settings"
 				returnText="Main Menu"
 				className={css.settingsMenu}
 			>
@@ -121,10 +121,17 @@ function Settings({setMenuSection}: Props) {
 					</Slider>
 					<Button
 						variant="default"
-						onClick={handleMuteSound}
+						onClick={handleGameSettings}
 						className={css.mainMenuButton}
 					>
-						Sound: {getBoolDescriptor(!settings.soundMuted)}
+						Game Settings
+					</Button>
+					<Button
+						variant="default"
+						onClick={handleDataSettings}
+						className={css.mainMenuButton}
+					>
+						Data Management
 					</Button>
 					<Button
 						variant="default"
@@ -135,17 +142,17 @@ function Settings({setMenuSection}: Props) {
 					</Button>
 					<Button
 						variant="default"
+						onClick={handleMuteSound}
+						className={css.mainMenuButton}
+					>
+						Sound: {getBoolDescriptor(!settings.soundMuted)}
+					</Button>
+					<Button
+						variant="default"
 						onClick={handlePanoramaToggle}
 						className={css.mainMenuButton}
 					>
 						Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
-					</Button>
-					<Button
-						variant="default"
-						onClick={handleDataSettings}
-						className={css.mainMenuButton}
-					>
-						Data Management
 					</Button>
 					<Button
 						variant="default"
@@ -160,13 +167,6 @@ function Settings({setMenuSection}: Props) {
 						className={css.mainMenuButton}
 					>
 						Updates
-					</Button>
-					<Button
-						variant="default"
-						onClick={handleGameSettings}
-						className={css.mainMenuButton}
-					>
-						Game Settings
 					</Button>
 				</div>
 			</MenuLayout>

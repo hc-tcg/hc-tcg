@@ -159,14 +159,15 @@ function DataSettings({setMenuSection}: Props) {
 		<MenuLayout
 			back={() => setMenuSection('settings')}
 			title="Data Management"
-			returnText="More"
+			returnText="Settings"
 			className={css.settingsMenu}
 		>
 			<h2> Data Management </h2>
 			{modal}
 			<div className={css.settings}>
 				<Button
-					variant="stone"
+					className={css.settingsButton}
+					variant="default"
 					onClick={handleReset(
 						'Reset Settings',
 						'Are you sure you want to reset your settings to the default values?',
@@ -177,7 +178,8 @@ function DataSettings({setMenuSection}: Props) {
 					Reset Settings
 				</Button>
 				<Button
-					variant="stone"
+					className={css.settingsButton}
+					variant="default"
 					onClick={handleReset(
 						'Reset Chat Window',
 						'Are you sure you want to reset the chat window position?',
@@ -205,8 +207,8 @@ function DataSettings({setMenuSection}: Props) {
 				<div className={css.dbInfo}>
 					<div className={classNames(css.dbItem, css.left)}>Secret</div>
 					<Button
+						className={css.viewSecretButton}
 						variant="default"
-						size="small"
 						onClick={() =>
 							setModal(
 								<Modal setOpen title={'User Secret'} onClose={closeModal}>
@@ -249,7 +251,8 @@ function DataSettings({setMenuSection}: Props) {
 					</Button>
 				</div>
 				<Button
-					variant="stone"
+					className={css.settingsButton}
+					variant="default"
 					onClick={setUuidSecretModal((id, secret) => {
 						dispatch({
 							type: localMessages.SET_ID_AND_SECRET,
@@ -265,7 +268,8 @@ function DataSettings({setMenuSection}: Props) {
 					Sync Data
 				</Button>
 				<Button
-					variant="stone"
+					className={css.settingsButton}
+					variant="default"
 					onClick={handleReset(
 						'Reset User Information',
 						'Are you sure you want to reset your user information? It is possible you could lose your information forever if you do not have the same UUID and secret on another device.',

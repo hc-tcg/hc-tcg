@@ -76,31 +76,55 @@ function GameSettings({setMenuSection}: Props) {
 
 	return (
 		<MenuLayout
-			back={() => setMenuSection('main-menu')}
+			back={() => setMenuSection('settings')}
 			title="Game Settings"
-			returnText="Main Menu"
+			returnText="Settings"
 			className={css.settingsMenu}
 		>
 			<h2>Game Settings</h2>
 			<div className={css.settings}>
-				<Button variant="stone" onClick={handleGameSideToggle}>
+				<Button
+					className={css.settingsButton}
+					variant="default"
+					onClick={handleGameSideToggle}
+				>
 					Game Side: {settings.gameSide.toString()}
 				</Button>
-				<Button variant="stone" onClick={handleDialogsChange}>
+				<Button
+					className={css.settingsButton}
+					variant="default"
+					onClick={handleDialogsChange}
+				>
 					Confirmation Dialogs:{' '}
 					{getDescriptor(settings.confirmationDialogsEnabled)}
 				</Button>
-				<Button variant="stone" onClick={handleChatChange}>
+				<Button
+					className={css.settingsButton}
+					variant="default"
+					onClick={handleChatChange}
+				>
 					In-Game Chat: {getDescriptor(settings.chatEnabled)}
 				</Button>
-				<Button variant="stone" onClick={handleProfanityChange}>
+				<Button
+					className={css.settingsButton}
+					variant="default"
+					onClick={handleProfanityChange}
+				>
 					Profanity Filter: {getDescriptor(settings.profanityFilterEnabled)}
 				</Button>
-				<Button variant="stone" onClick={handleSlotHighlightingChange}>
+				<Button
+					className={css.settingsButton}
+					variant="default"
+					onClick={handleSlotHighlightingChange}
+				>
 					Card Slot Highlighting:{' '}
 					{getDescriptor(settings.slotHighlightingEnabled)}
 				</Button>
-				<Button variant="stone" onClick={handleDeckSortingMethod}>
+				<Button
+					className={css.settingsButton}
+					variant="default"
+					onClick={handleDeckSortingMethod}
+				>
 					Deck Sorting Method: {settings.deckSortingMethod}
 				</Button>
 			</div>

@@ -204,6 +204,15 @@ nav {
 	}
 }
 
+.settingsButton {
+	height: 5.5vh;
+}
+
+.viewSecretButton {
+	height: 100%;
+	width: 20%;
+}
+
 .settings {
 	display: grid;
 	grid-template-columns: 1fr;

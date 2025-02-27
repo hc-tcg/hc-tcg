@@ -388,10 +388,10 @@ export function* sendAfterGameInfo(players: Array<PlayerModel>) {
 			[root.db, root.db.getUserGameHistory],
 			player.uuid,
 		)
-		const achievements = yield* call(
-			[root.db, root.db.getAchievements],
-			player.uuid,
-		)
+		//const achievements = yield* call(
+		//	[root.db, root.db.getAchievements],
+		//	player.uuid,
+		//)
 
 		assert(
 			stats.type === 'success',
@@ -401,16 +401,16 @@ export function* sendAfterGameInfo(players: Array<PlayerModel>) {
 			gameHistory.type === 'success',
 			`Retrieving game history should be successful for user ${player.uuid}.`,
 		)
-		assert(
-			achievements.type === 'success',
-			`Retrieving achievements should be successful for user ${player.uuid}.`,
-		)
+		//assert(
+		//	achievements.type === 'success',
+		//	`Retrieving achievements should be successful for user ${player.uuid}.`,
+		//)
 
 		broadcast([player], {
 			type: serverMessages.AFTER_GAME_INFO,
 			stats: stats.body,
 			gameHistory: gameHistory.body,
-			achievements: achievements.body,
+			achievements: {},
 		})
 	}
 }
