@@ -3,20 +3,11 @@ export default {
 	clientDevPort: 3002,
 	clientPath: "client/dist",
 	cors: [
-<<<<<<< Updated upstream
-		"http://localhost:3002",
-		"https://hc-tcg-beta.fly.dev",
-		"https://hc-tcg-testing.fly.dev",
-		"https://hc-tcg.online",
-		"https://testing.hc-tcg.online",
-=======
 		'http://localhost:3002',
-		'http://localhost:9000',
 		'https://hc-tcg-beta.fly.dev',
 		'https://hc-tcg-testing.fly.dev',
 		'https://hc-tcg.online',
 		'https://testing.hc-tcg.online',
->>>>>>> Stashed changes
 	],
 	world: "LTF42",
 	limits: {
