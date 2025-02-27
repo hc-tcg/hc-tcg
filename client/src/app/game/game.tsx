@@ -419,7 +419,10 @@ function Game({setMenuSection}: {setMenuSection: (section: string) => void}) {
 				</div>
 			</div>
 			<div className={css.bottom}>
-				<Toolbar gameOver={gameOver} gameEndButton={() => setGameEndModal(true)}/>
+				<Toolbar
+					gameOver={gameOver}
+					gameEndButton={() => setGameEndModal(true)}
+				/>
 				{(!isSpectator || isReplayer) && <Hand gameOver={gameOver} />}
 			</div>
 			<ModalContainer />

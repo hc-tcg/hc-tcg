@@ -49,6 +49,7 @@ import {turnActionsToBuffer} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
 import {GameOutcome} from 'common/types/game-state'
 import serverConfig from 'common/config/server-config'
+import {EarnedAchievement} from 'common/types/achievements'
 
 function setupGame(
 	player1: PlayerModel,
@@ -183,6 +184,54 @@ function* gameManager(con: GameController) {
 
 		assert(outcome, 'All games should have an outcome after they end')
 
+		if (con.task) yield* cancel(con.task)
+		con.game.hooks.afterGameEnd.call()
+
+		const newAchievements: Record<string, Array<EarnedAchievement>> = {}
+
+		for (let i = 0; i < con.viewers.length; i++) {
+			const v = con.viewers[i]
+			if (v.spectator) return
+			const playerEntity = v.playerOnLeftEntity
+			const achievements = con.game.components.filter(
+				AchievementComponent,
+				(_game, achievement) => achievement.player === playerEntity,
+			)
+			newAchievements[v.player.id] = []
+			achievements.forEach((achievement) => {
+				achievement.props.onGameEnd(
+					con.game,
+					playerEntity,
+					achievement,
+					outcome,
+				)
+
+				for (const [i, level] of achievement.props.levels.entries()) {
+					const complete =
+						achievement.props.getProgress(achievement.goals) >= level.steps
+					const previouslyComplete =
+						!!v.player.achievementProgress[achievement.props.numericId].levels[
+							i
+						]
+					v.player.achievementProgress[achievement.props.numericId].goals =
+						achievement.goals
+					if (complete && !previouslyComplete) {
+						v.player.achievementProgress[achievement.props.numericId].levels[
+							i
+						].completionTime = new Date()
+						newAchievements[v.player.id].push({
+							achievementId: achievement.props.numericId,
+							level,
+							originalProgress: 0,
+							newProgress: achievement.props.getProgress(achievement.goals),
+						})
+					}
+				}
+			})
+			console.log(newAchievements)
+			yield* updateAchievements(v.player)
+		}
+
 		for (const viewer of con.viewers) {
 			const gameState = getLocalGameState(con.game, viewer)
 			if (gameState) {
@@ -202,46 +251,9 @@ function* gameManager(con: GameController) {
 				type: serverMessages.GAME_END,
 				gameState,
 				outcome,
+				earnedAchievements: newAchievements[viewer.player.id],
 			})
 		}
-
-		if (con.task) yield* cancel(con.task)
-		con.game.hooks.afterGameEnd.call()
-
-		yield* all(
-			con.viewers.map((v) => {
-				if (v.spectator) return
-				const playerEntity = v.playerOnLeftEntity
-				const achievements = con.game.components.filter(
-					AchievementComponent,
-					(_game, achievement) => achievement.player === playerEntity,
-				)
-				achievements.forEach((achievement) => {
-					achievement.props.onGameEnd(
-						con.game,
-						playerEntity,
-						achievement,
-						outcome,
-					)
-
-					for (const [i, level] of achievement.props.levels.entries()) {
-						const complete =
-							achievement.props.getProgress(achievement.goals) >= level.steps
-						const previouslyComplete =
-							!!v.player.achievementProgress[achievement.props.numericId]
-								.levels[i]
-						v.player.achievementProgress[achievement.props.numericId].goals =
-							achievement.goals
-						if (complete && !previouslyComplete)
-							// @TODO here is where we see what new achievements have been completed
-							v.player.achievementProgress[achievement.props.numericId].levels[
-								i
-							].completionTime = new Date()
-					}
-				})
-				return updateAchievements(v.player)
-			}),
-		)
 
 		const gameType = con.gameCode ? 'Private' : 'Public'
 		console.info(
@@ -1134,6 +1146,7 @@ export function* createReplayGame(
 		outcome: con.game.outcome
 			? con.game.outcome
 			: {type: 'game-crash', error: 'The replay game did not save properly.'},
+		earnedAchievements: [],
 	})
 
 	delete root.games[con.id]

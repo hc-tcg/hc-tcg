@@ -19,7 +19,7 @@ export default {
 		maxDeckCost: 42,
 		bannedCards: ["evilxisuma_boss", "feather", "item_any_rare"],
 		disabledCards: ["iskallman_common", "iskallman_rare"],
-		rematchTime: 10000,
+		rematchTime: 60000,
 	},
 	logoSubText: "10k games since 1.0!",
 };

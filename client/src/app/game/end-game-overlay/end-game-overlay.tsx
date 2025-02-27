@@ -8,9 +8,11 @@ import {useDispatch} from 'react-redux'
 import css from './end-game-overlay.module.scss'
 import {useEffect, useState} from 'react'
 import serverConfig from 'common/config/server-config'
+import {EarnedAchievement} from 'common/types/achievements'
 
 type Props = {
 	outcome: GameOutcome
+	earnedAchievements: Array<EarnedAchievement>
 	viewer:
 		| {
 				type: 'player'
@@ -27,6 +29,7 @@ type Props = {
 
 const EndGameOverlay = ({
 	outcome,
+	earnedAchievements,
 	viewer,
 	onClose,
 	nameOfWinner,
@@ -124,7 +127,11 @@ const EndGameOverlay = ({
 					<span>{OUTCOME_MSG[myOutcome]}</span>
 				)}
 				<div className={css.achievementsOverview}>
-					<div className={css.noAchievements}>You earned no achievements</div>
+					{earnedAchievements.length === 0 ? (
+						<div className={css.noAchievements}>You earned no achievements</div>
+					) : (
+						<div>{earnedAchievements.map((a) => a.achievementId)}</div>
+					)}
 				</div>
 				{outcome.type === 'game-crash' && (
 					<Button

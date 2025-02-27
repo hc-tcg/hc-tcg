@@ -26,6 +26,7 @@ import {
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
 import {RematchData} from 'common/types/app'
+import {EarnedAchievement} from 'common/types/achievements'
 
 export const localMessages = messages('clientLocalMessages', {
 	SOCKET_CONNECTING: null,
@@ -205,6 +206,7 @@ type Messages = [
 	{
 		type: typeof localMessages.GAME_END_OVERLAY_SHOW
 		outcome: GameOutcome
+		earnedAchievements: Array<EarnedAchievement>
 	},
 	{
 		type: typeof localMessages.GAME_CLOSE

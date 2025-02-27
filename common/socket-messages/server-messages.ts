@@ -1,6 +1,6 @@
 import {Appearance} from '../cosmetics/types'
 import {Message, MessageTable, messages} from '../redux-messages'
-import {AchievementProgress} from '../types/achievements'
+import {AchievementProgress, EarnedAchievement} from '../types/achievements'
 import {RematchData} from '../types/app'
 import {GameHistory, PlayerStats, User} from '../types/database'
 import {ApiDeck, Deck, Tag} from '../types/deck'
@@ -79,6 +79,7 @@ export type ServerMessages = [
 		type: typeof serverMessages.GAME_END
 		gameState: LocalGameState | null
 		outcome: GameOutcome
+		earnedAchievements: Array<EarnedAchievement>
 	},
 	{type: typeof serverMessages.PRIVATE_GAME_TIMEOUT},
 	{type: typeof serverMessages.LEAVE_QUEUE_SUCCESS},

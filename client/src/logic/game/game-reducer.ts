@@ -8,6 +8,7 @@ import {
 import {LocalCardInstance} from 'common/types/server-requests'
 import {LocalMessage, localMessages} from 'logic/messages'
 import {ModalVariant} from './tasks/action-modals-saga'
+import {EarnedAchievement} from 'common/types/achievements'
 
 type LocalGameRoot = {
 	localGameState: LocalGameState | null
@@ -20,6 +21,7 @@ type LocalGameRoot = {
 	} | null
 	endGameOverlay: {
 		outcome: GameOutcome
+		earnedAchievements: Array<EarnedAchievement>
 	} | null
 	chat: Array<Message>
 	battleLog: BattleLogModel | null
@@ -99,6 +101,7 @@ const gameReducer = (
 				...state,
 				endGameOverlay: {
 					outcome: action.outcome,
+					earnedAchievements: action.earnedAchievements,
 				},
 			}
 		case localMessages.CHAT_UPDATE:

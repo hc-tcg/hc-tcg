@@ -6,3 +6,14 @@ export type ProgressionEntry = {
 		completionTime?: Date
 	}>
 }
+
+export type EarnedAchievement = {
+	achievementId: number
+	level: {
+		name: string
+		description: string
+		steps: number
+	}
+	originalProgress: number
+	newProgress: number
+}
