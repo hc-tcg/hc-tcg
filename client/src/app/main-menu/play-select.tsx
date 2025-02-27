@@ -491,27 +491,50 @@ function PlaySelect({setMenuSection}: Props) {
 							<GameModeButton.OptionsSelect
 								id="bossSelect"
 								activeButtonMenu={activeButtonMenu}
-								title="Welcome to your doom."
-								subTitle="That's right, HC-TCG Online has its first boss fight! This is no challenge deck - Evil X cares
-								not for the cards. He brings his own moves, and they are vicious! If you think you can defeat him, you'll
-								need to be on your best game. Make sure your audio is enabled, as you'll need to listen to voice commands
-								during the battle."
+								title="Fight A Boss!"
+								subTitle="Fight either Evil X or Pharoah"
 								buttons={[
 									{
-										text: 'Full Rules',
+										text: 'Evil X',
 										onClick() {
-											addMenuWithBack('bossRules')
+											addMenuWithBack('bossSelectEvilX')
 										},
 									},
 									{
-										text: 'Challenge Evil X',
+										text: 'Pharaoh',
 										onClick() {
-											addMenuWithBack('bossChooseDeck')
+											addMenuWithBack('pharaohChooseDeck')
 										},
-										variant: 'primary',
 									},
 								]}
 							/>
+							<GameModeButton.CustomMenu
+								id="bossSelectEvilX"
+								activeButtonMenu={activeButtonMenu}
+							>
+								<div>
+									<p>
+										"That's right, HC-TCG Online has its first boss fight! This
+										is no challenge deck - Evil X cares not for the cards. He
+										brings his own moves, and they are vicious! If you think you
+										can defeat him, you'll need to be on your best game. Make
+										sure your audio is enabled, as you'll need to listen to
+										voice commands during the battle."
+									</p>
+									<Button
+										onClick={() => addMenuWithBack('bossRules')}
+										variant="primary"
+									>
+										Full Rules
+									</Button>
+									<Button
+										onClick={() => addMenuWithBack('evilxXChooseDeck')}
+										variant="primary"
+									>
+										Challange Evil X
+									</Button>
+								</div>
+							</GameModeButton.CustomMenu>
 							<GameModeButton.CustomMenu
 								id="bossRules"
 								activeButtonMenu={activeButtonMenu}
@@ -594,7 +617,7 @@ function PlaySelect({setMenuSection}: Props) {
 							</GameModeButton.CustomMenu>
 							<GameModeButton.ChooseDeck
 								activeButtonMenu={activeButtonMenu}
-								id="bossChooseDeck"
+								id="evilxXChooseDeck"
 								title="Choose your deck"
 								subTitle="When ready, press the Fight! button to begin."
 								confirmMessage="Fight!"
@@ -605,6 +628,25 @@ function PlaySelect({setMenuSection}: Props) {
 									dispatch({type: localMessages.EVERY_TOAST_CLOSE})
 									dispatch({
 										type: localMessages.MATCHMAKING_CREATE_BOSS_GAME,
+										boss: 'evilx',
+									})
+								}}
+								decks={decks}
+								onSelectDeck={onSelectDeck}
+							/>
+							<GameModeButton.ChooseDeck
+								activeButtonMenu={activeButtonMenu}
+								id="pharaohChooseDeck"
+								title="Choose your deck"
+								subTitle="When ready, press the Fight! button to begin."
+								confirmMessage="Fight!"
+								onConfirm={() => {
+									const valid = checkForValidation()
+									if (!valid) return
+									dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+									dispatch({
+										type: localMessages.MATCHMAKING_CREATE_BOSS_GAME,
+										boss: 'pharaoh',
 									})
 								}}
 								decks={decks}

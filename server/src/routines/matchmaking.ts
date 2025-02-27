@@ -1,11 +1,5 @@
 import assert from 'assert'
-import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
-import {
-	AchievementComponent,
-	BoardSlotComponent,
-	PlayerComponent,
-	RowComponent,
-} from 'common/components'
+import {AchievementComponent, PlayerComponent} from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {COINS} from 'common/cosmetics/coins'
@@ -47,6 +41,7 @@ import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import {turnActionsToBuffer} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
+import PharaohBossAI from './virtual/pharaohboss-ai'
 
 function setupGame(
 	player1: PlayerModel,
@@ -781,55 +776,33 @@ export function* createBossGame(
 
 	broadcast([player], {type: serverMessages.CREATE_BOSS_GAME_SUCCESS})
 
-	const newBossGameController = setupSolitareGame(player, player.deck, {
-		uuid: '',
-		name: 'Evil Xisuma',
-		minecraftName: 'EvilXisuma',
-		censoredName: 'Evil Xisuma',
-		deck: [EvilXisumaBoss],
-		virtualAI: ExBossAI,
-		disableDeckingOut: true,
-		appearance: {...defaultAppearance, coin: COINS['evilx']},
-	})
-	newBossGameController.game.state.isEvilXBossGame = true
+	let bossInfo: OpponentDefs
+	let boss = msg.payload.boss
 
-	function destroyRow(row: RowComponent) {
-		newBossGameController.game.components
-			.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
-			.forEach((slotEntity) =>
-				newBossGameController.game.components.delete(slotEntity),
-			)
-		newBossGameController.game.components.delete(row.entity)
+	if (boss == 'evilx') {
+		bossInfo = {
+			uuid: '',
+			name: 'Evil Xisuma',
+			minecraftName: 'EvilXisuma',
+			censoredName: 'Evil Xisuma',
+			virtualAI: ExBossAI,
+			disableDeckingOut: true,
+			appearance: {...defaultAppearance, coin: COINS['evilx']},
+		}
+	} else if (boss == 'pharaoh') {
+		bossInfo = {
+			uuid: '',
+			name: 'Pharaoh',
+			minecraftName: 'Pharaoh',
+			censoredName: 'Pharaoh',
+			virtualAI: PharaohBossAI,
+			appearance: {...defaultAppearance, coin: COINS['creeper']},
+		}
+	} else {
+		throw new Error('Unknown boss: ' + boss)
 	}
 
-	// Remove challenger's rows other than indexes 0, 1, and 2
-	newBossGameController.game.components
-		.filter(
-			RowComponent,
-			query.row.opponentPlayer,
-			(_game, row) => row.index > 2,
-		)
-		.forEach(destroyRow)
-	// Remove boss' rows other than index 0
-	newBossGameController.game.components
-		.filter(
-			RowComponent,
-			query.row.currentPlayer,
-			query.not(query.row.index(0)),
-		)
-		.forEach(destroyRow)
-	// Remove boss' item slots
-	newBossGameController.game.components
-		.filterEntities(
-			BoardSlotComponent,
-			query.slot.currentPlayer,
-			query.slot.item,
-		)
-		.forEach((slotEntity) =>
-			newBossGameController.game.components.delete(slotEntity),
-		)
-
-	newBossGameController.game.settings.disableRewardCards = true
+	const newBossGameController = setupSolitareGame(player, player.deck, bossInfo)
 
 	root.addGame(newBossGameController)
 
@@ -979,10 +952,12 @@ function setupSolitareGame(
 		},
 		{
 			model: opponent,
-			deck: opponent.deck,
+			deck: opponent.virtualAI.getDeck(),
 		},
 		{randomizeOrder: false},
 	)
+
+	opponent.virtualAI.setup(con.game)
 
 	const playerEntities = con.game.components.filterEntities(PlayerComponent)
 	con.addViewer({

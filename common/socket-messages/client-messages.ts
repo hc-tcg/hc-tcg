@@ -72,13 +72,9 @@ export type ClientMessages = [
 	{type: typeof clientMessages.LEAVE_PRIVATE_QUEUE},
 	{
 		type: typeof clientMessages.CREATE_BOSS_GAME
+		boss: 'evilx' | 'pharaoh'
 		databaseConnected: true
 		activeDeckCode: string
-	},
-	{
-		type: typeof clientMessages.CREATE_BOSS_GAME
-		databaseConnected: false
-		activeDeck: Deck
 	},
 	{
 		type: typeof clientMessages.CREATE_PRIVATE_GAME
