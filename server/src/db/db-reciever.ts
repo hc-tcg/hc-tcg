@@ -6,7 +6,7 @@ import {serverMessages} from 'common/socket-messages/server-messages'
 import {GameOutcome} from 'common/types/game-state'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import root from 'serverRoot'
-import {call, retry} from 'typed-redux-saga'
+import {call} from 'typed-redux-saga'
 import {broadcast} from 'utils/comm'
 import {
 	RecievedClientMessage,
@@ -436,6 +436,7 @@ export function* updateAchievements(player: PlayerModel) {
 		player.achievementProgress,
 	)
 	if (success === 'failure') return false
+
 	return true
 }
 

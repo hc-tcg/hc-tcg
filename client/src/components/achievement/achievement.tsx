@@ -19,8 +19,6 @@ export default function AchievementComponent({
 			)
 		: 0
 
-	console.log(progress)
-
 	let out = []
 
 	for (const [i, level] of achievement.levels.entries()) {
