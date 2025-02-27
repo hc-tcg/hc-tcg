@@ -128,7 +128,9 @@ export class GameController {
 				if (!player.achievementProgress[achievement.numericId]) {
 					player.achievementProgress[achievement.numericId] = {
 						goals: {},
-						levels: [],
+						levels: Array(achievement.levels.length)
+							.fill(0)
+							.flatMap(() => [{}]),
 					}
 				}
 				const achievementComponent = this.game.components.new(
