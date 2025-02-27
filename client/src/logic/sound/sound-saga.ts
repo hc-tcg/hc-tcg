@@ -122,7 +122,7 @@ function* stopVoiceChannel(
 function* settingSaga(): SagaIterator {
 	try {
 		const settings = yield* select(getSettings)
-		if (settings.muted) {
+		if (settings.soundMuted) {
 			musicGainNode.gain.value = 0
 			soundGainNode.gain.value = 0
 			voiceGainNode.gain.value = 0
@@ -130,6 +130,9 @@ function* settingSaga(): SagaIterator {
 			musicGainNode.gain.value = settings.musicVolume / 100
 			soundGainNode.gain.value = settings.soundVolume / 100
 			voiceGainNode.gain.value = settings.voiceVolume / 100
+		}
+		if (settings.musicMuted) {
+			musicGainNode.gain.value = 0
 		}
 	} catch (err) {
 		console.error(err)

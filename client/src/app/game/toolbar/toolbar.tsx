@@ -8,7 +8,8 @@ import {useSelector} from 'react-redux'
 import ChatItem from './chat-item'
 import ExitItem from './exit-item'
 import ForfeitItem from './forfeit-item'
-import SoundItem from './sound-item'
+import MusicItem from './music-item'
+import SoundItem from './sfx-item'
 import css from './toolbar.module.scss'
 import TooltipsItem from './tooltips-item'
 
@@ -104,6 +105,7 @@ function Toolbar() {
 
 			{/* Toggle Sounds */}
 			<SoundItem />
+			<MusicItem />
 
 			{/* Forfeit Game */}
 			{!isSpectator && <ForfeitItem />}
