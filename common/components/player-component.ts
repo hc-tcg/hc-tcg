@@ -14,7 +14,7 @@ import type {
 	UsedHermitAttackInfo,
 } from '../types/game-state'
 import {GameHook, PriorityHook, WaterfallHook} from '../types/hooks'
-import {onCoinFlip, onTurnEnd} from '../types/priorities'
+import {afterApply, onCoinFlip, onTurnEnd} from '../types/priorities'
 import {CardComponent} from './card-component'
 import query from './query'
 import {RowComponent} from './row-component'
@@ -73,7 +73,7 @@ export class PlayerComponent {
 		/** Hook called when a single use card is applied */
 		onApply: GameHook<() => void>
 		/** Hook called after a single use card is applied */
-		afterApply: GameHook<() => void>
+		afterApply: PriorityHook<() => void, typeof afterApply>
 
 		/**
 		 * Hook called once before each attack loop.
@@ -152,7 +152,7 @@ export class PlayerComponent {
 			onDetach: new GameHook(),
 			beforeApply: new GameHook(),
 			onApply: new GameHook(),
-			afterApply: new GameHook(),
+			afterApply: new PriorityHook(afterApply),
 			getAttackRequests: new GameHook(),
 			getAttack: new GameHook(),
 			onTurnStart: new GameHook(),

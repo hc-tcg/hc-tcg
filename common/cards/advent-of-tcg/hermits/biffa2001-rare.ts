@@ -9,7 +9,7 @@ import {PlayerEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
 import {GameValue} from '../../../models/game-value'
 import MuseumCollectionEffect from '../../../status-effects/museum-collection'
-import {beforeAttack, onTurnEnd} from '../../../types/priorities'
+import {afterApply, beforeAttack, onTurnEnd} from '../../../types/priorities'
 import {hermit} from '../../defaults'
 import {Hermit, SingleUse} from '../../types'
 
@@ -97,23 +97,27 @@ const Biffa2001Rare: Hermit = {
 				museumEffect.counter = value
 			})
 
-			newObserver.subscribe(player.hooks.afterApply, () => {
-				oldHandSize = player.getHand().length
-				const record = cardsPlayed.get(game)
-				const value = (record[player.entity] || 0) + 1
-				record[player.entity] = value
-				if (museumEffect) museumEffect.counter = value
-				const singleUse = game.components.find(
-					CardComponent,
-					query.card.slot(query.slot.singleUse),
-				)
-				if (!singleUse) return
-				newObserver.subscribe(singleUse.hooks.onChangeSlot, (newSlot) => {
-					newObserver.unsubscribe(singleUse.hooks.onChangeSlot)
-					if (newSlot.type === 'hand' && newSlot.player === player)
-						oldHandSize = player.getHand().length
-				})
-			})
+			newObserver.subscribeWithPriority(
+				player.hooks.afterApply,
+				afterApply.CHECK_BOARD_STATE,
+				() => {
+					oldHandSize = player.getHand().length
+					const record = cardsPlayed.get(game)
+					const value = (record[player.entity] || 0) + 1
+					record[player.entity] = value
+					if (museumEffect) museumEffect.counter = value
+					const singleUse = game.components.find(
+						CardComponent,
+						query.card.slot(query.slot.singleUse),
+					)
+					if (!singleUse) return
+					newObserver.subscribe(singleUse.hooks.onChangeSlot, (newSlot) => {
+						newObserver.unsubscribe(singleUse.hooks.onChangeSlot)
+						if (newSlot.type === 'hand' && newSlot.player === player)
+							oldHandSize = player.getHand().length
+					})
+				},
+			)
 
 			newObserver.subscribeWithPriority(
 				player.hooks.onTurnEnd,

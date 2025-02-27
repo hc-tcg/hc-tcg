@@ -102,3 +102,16 @@ export const onCoinFlip = createPriorityDictionary({
 	/* Priority for Fortune and Spent Fortune status effect */
 	FORTUNE: null,
 })
+
+export const afterApply = createPriorityDictionary({
+	/** Cards removing status effects that should not remain */
+	CLEAR_STATUS_EFFECT: null,
+	/** Listeners changing what turn actions are blocked */
+	MODIFY_BLOCKED_ACTIONS: null,
+	/** Listeners checking the board state before cards can be moved */
+	CHECK_BOARD_STATE: null,
+	/** Trap Hole taking effects from the single use slot */
+	TRAP_HOLE_STEAL: null,
+	/** Single Use effects returning to owner's hand or being discarded */
+	REMOVE_SINGLE_USE: null,
+})

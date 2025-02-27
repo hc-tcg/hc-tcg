@@ -17,7 +17,7 @@ const SheepStarer: Achievement = {
 		{
 			name: 'Sheep Starer',
 			description:
-				'Keep a red HP (100 - 0) Zedaph alive for three consecutive turns.',
+				'Keep a red HP (90 - 0) Zedaph alive for three consecutive turns.',
 			steps: 3,
 		},
 	],
@@ -35,7 +35,7 @@ const SheepStarer: Achievement = {
 					CardComponent,
 					query.card.is(...zedaphCards),
 					query.card.row(
-						(_game, row) => row.health !== null && row.health <= 100,
+						(_game, row) => row.health !== null && row.health <= 90,
 					),
 				)
 				Object.keys(redZedaphs).forEach((card: string) => {

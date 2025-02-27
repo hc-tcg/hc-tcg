@@ -50,6 +50,7 @@ const EyeOfTheSpider: Achievement = {
 				if (attack.target.health) return
 
 				if (poisonedHermits.has(targetHermit.entity)) {
+					poisonedHermits.delete(targetHermit.entity)
 					component.incrementGoalProgress({goal: 0})
 				}
 			},

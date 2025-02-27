@@ -135,7 +135,7 @@ export class GameModel {
 		 * Locked slots cannot be chosen in some combinator expressions.
 		 */
 		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
-		/** Hook called when the game ends for disposing references */
+		/** Hook called when the game ends for achievements to check how the game ended */
 		onGameEnd: GameHook<(outcome: GameOutcome) => void>
 		/** Hook called when the game ends for disposing references */
 		afterGameEnd: Hook<string, () => void>
