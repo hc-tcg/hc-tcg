@@ -47,8 +47,17 @@ function Settings({setMenuSection}: Props) {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'muted',
-				value: !settings.muted,
+				key: 'soundMuted',
+				value: !settings.soundMuted,
+			},
+		})
+	}
+	const handleMuteMusic = () => {
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			setting: {
+				key: 'musicMuted',
+				value: !settings.musicMuted,
 			},
 		})
 	}
@@ -115,7 +124,14 @@ function Settings({setMenuSection}: Props) {
 						onClick={handleMuteSound}
 						className={css.mainMenuButton}
 					>
-						Sound: {getBoolDescriptor(!settings.muted)}
+						Sound: {getBoolDescriptor(!settings.soundMuted)}
+					</Button>
+					<Button
+						variant="default"
+						onClick={handleMuteMusic}
+						className={css.mainMenuButton}
+					>
+						Music: {getBoolDescriptor(!settings.musicMuted)}
 					</Button>
 					<Button
 						variant="default"
