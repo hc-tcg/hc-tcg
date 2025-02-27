@@ -191,6 +191,7 @@ function* gameManager(con: GameController) {
 		yield* all(
 			con.viewers.map((v) => {
 				if (v.spectator) return
+				newAchievements[v.player.id] = []
 				const playerEntity = v.playerOnLeftEntity
 				const achievements = con.game.components.filter(
 					AchievementComponent,

@@ -1831,7 +1831,7 @@ export class Database {
 				FROM user_goals
 				LEFT JOIN achievement_completion_time
 				ON user_goals.user_id = achievement_completion_time.user_id AND user_goals.achievement_id = achievement_completion_time.achievement_id
-				WHERE user_goals.user_id = $1 AND achievement_completion_time.level != NULL;
+				WHERE user_goals.user_id = $1 AND achievement_completion_time.level IS NOT NULL;
 				`,
 				[playerId],
 			)
