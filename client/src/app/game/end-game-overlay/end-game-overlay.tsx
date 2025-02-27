@@ -6,6 +6,7 @@ import {Modal} from 'components/modal'
 import {localMessages} from 'logic/messages'
 import {useDispatch} from 'react-redux'
 import css from './end-game-overlay.module.scss'
+import {useEffect, useState} from 'react'
 
 type Props = {
 	outcome: GameOutcome
@@ -32,11 +33,18 @@ const EndGameOverlay = ({
 	setMenuSection,
 }: Props) => {
 	const dispatch = useDispatch()
+	const [replayTimeRemaining, setReplayTimeRemaining] = useState<number>(59)
 
 	let animation
 
 	let myOutcome: 'tie' | 'win' | 'loss' | 'crash' | 'timeout' | 'no-viewers' =
 		'tie'
+
+	useEffect(() => {
+		setTimeout(() => {
+			setReplayTimeRemaining(replayTimeRemaining - 1)
+		}, 1000)
+	})
 
 	if (outcome.type === 'tie') {
 		myOutcome = 'tie'
@@ -102,16 +110,19 @@ const EndGameOverlay = ({
 					[css.win]: myOutcome === 'win',
 				})}
 			>
-				{outcome.type === 'player-won' && (
+				{outcome.type === 'player-won' ? (
 					<span>
 						{viewer.type === 'spectator' && nameOfLoser}
 						{viewer.type === 'player' &&
 							(myOutcome === 'win' ? nameOfLoser : 'You')}{' '}
 						{REASON_MSG[outcome.victoryReason]}
 					</span>
+				) : (
+					<span>{OUTCOME_MSG[myOutcome]}</span>
 				)}
-
-				{OUTCOME_MSG[myOutcome]}
+				<div className={css.achievementsOverview}>
+					<div className={css.noAchievements}>You earned no achievements</div>
+				</div>
 				{outcome.type === 'game-crash' && (
 					<Button
 						onClick={() => {
@@ -133,16 +144,26 @@ const EndGameOverlay = ({
 						Main Menu
 					</Button>
 					<Button
-						id={css.rematch}
+						id={css.playAgain}
 						onClick={() => {
-							setMenuSection('play-select')
+							setMenuSection('play-again')
 							dispatch({type: localMessages.GAME_CLOSE})
 						}}
 					>
 						Play again
 					</Button>
-					<Button id={css.viewReplay} onClick={onClose}>
-						View Replay
+					<Button
+						id={css.rematch}
+						disabled={replayTimeRemaining <= 0}
+						onClick={() => {
+							setMenuSection('rematch')
+							dispatch({type: localMessages.GAME_CLOSE})
+						}}
+					>
+						Rematch{' '}
+						<div className={css.replayTimeRemaining}>
+							{replayTimeRemaining > 0 && `${replayTimeRemaining}s`}
+						</div>
 					</Button>
 					<Button id={css.board} onClick={onClose}>
 						View Board

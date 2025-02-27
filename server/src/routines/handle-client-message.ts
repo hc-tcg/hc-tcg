@@ -24,6 +24,7 @@ import {
 	cancelPrivateGame,
 	createBossGame,
 	createPrivateGame,
+	createRematchGame,
 	createReplayGame,
 	joinPrivateGame,
 	joinPublicQueue,
@@ -62,6 +63,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.CREATE_BOSS_GAME:
 			return yield* createBossGame(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.CREATE_REMATCH_GAME:
+			return yield* createRematchGame(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.CREATE_PRIVATE_GAME:

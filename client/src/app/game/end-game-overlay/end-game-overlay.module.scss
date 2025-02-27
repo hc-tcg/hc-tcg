@@ -14,9 +14,9 @@
 }
 
 .description {
-	display: grid;
+	display: flex;
 	place-content: center;
-	padding: 4rem 2rem 2rem;
+	padding: 4rem 4rem 2rem;
 	gap: 1rem;
 	text-align: center;
 	font-size: 1.1rem;
@@ -51,24 +51,57 @@
 	width: 100%;
 	gap: 0.75vh;
 	grid-template-areas:
-		"main-menu rematch"
-		"replay board";
+		"playAgain rematch"
+		"board board"
+		"mainMenu mainMenu";
 
 	#mainMenu {
-		grid-area: main-menu;
+		grid-area: mainMenu;
 	}
 
 	#rematch {
 		grid-area: rematch;
 	}
 
-	#viewReplay {
-		grid-area: replay;
+	#playAgain {
+		grid-area: playAgain;
 	}
 
 	#board {
 		grid-area: board;
 	}
+}
+
+.achievementsOverview {
+	width: 100%;
+	height: 4rem;
+	background-color: var(--gray-900);
+	border: 2px black solid;
+	border-radius: 5px;
+
+	.noAchievements {
+		width: 100%;
+		height: 100%;
+		text-align: center;
+		align-content: center;
+		color: var(--gray-400);
+		font-family: Minecrafter;
+		font-size: 0.9rem;
+	}
+}
+
+.replayTimeRemaining {
+	background-color: var(--gray-500);
+	color: var(--text-light);
+	width: 3rem;
+	height: 2rem;
+	line-height: 2rem;
+	transform: translateY(-0.125rem);
+	border: 2px black solid;
+	align-items: center;
+	text-align: center;
+	justify-content: center;
+	border-radius: 5px;
 }
 
 @keyframes float {

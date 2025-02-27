@@ -25,6 +25,17 @@ export class RootModel {
 			apiSecret?: string
 		}
 	> = {}
+	public awaitingRematch: Record<
+		string,
+		{
+			playerId: string
+			opponentId: string
+			existingScore: number
+			joinedScore: number
+			spectatorCode: string | undefined
+			spectatorsWaiting: Array<string>
+		}
+	> = {}
 	public hooks = {
 		newGame: new Hook<string, (game: GameController) => void>(),
 		gameRemoved: new Hook<string, (game: GameController) => void>(),

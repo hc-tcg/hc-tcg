@@ -34,7 +34,6 @@ import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {eventChannel} from 'redux-saga'
 import {call, delay, put, race, select, take, takeEvery} from 'typed-redux-saga'
-
 export const NO_SOCKET_ASSERT =
 	'The socket should be be defined as soon as the page is opened.'
 
@@ -626,6 +625,11 @@ export function* recieveAfterGameInfo() {
 		const result = yield* race({
 			afterGameInfo: call(receiveMsg(socket, serverMessages.AFTER_GAME_INFO)),
 			invalidReplay: call(receiveMsg(socket, serverMessages.INVALID_REPLAY)),
+			rematchData: call(receiveMsg(socket, serverMessages.SEND_REMATCH)),
+			rematchRequested: call(
+				receiveMsg(socket, serverMessages.REMATCH_REQUESTED),
+			),
+			rematchDenied: call(receiveMsg(socket, serverMessages.REMATCH_DENIED)),
 		})
 		if (result.afterGameInfo) {
 			yield put<LocalMessage>({
@@ -656,6 +660,23 @@ export function* recieveAfterGameInfo() {
 					key: 'invalidReplay',
 					value: true,
 				},
+			})
+		} else if (result.rematchData) {
+			yield* put<LocalMessage>({
+				type: localMessages.RECIEVE_REMATCH,
+				rematch: result.rematchData.rematch,
+			})
+		} else if (result.rematchRequested) {
+			yield put<LocalMessage>({
+				type: localMessages.TOAST_OPEN,
+				open: true,
+				title: 'Rematch Requested',
+				description: `Your last opponent, ${result.rematchRequested.opponentName}, requested a rematch.`,
+			})
+		} else if (result.rematchDenied) {
+			yield* put<LocalMessage>({
+				type: localMessages.RECIEVE_REMATCH,
+				rematch: null,
 			})
 		}
 	}

@@ -35,7 +35,7 @@ import {
 	getStatus,
 } from 'logic/matchmaking/matchmaking-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {getSession} from 'logic/session/session-selectors'
+import {getRematchData, getSession} from 'logic/session/session-selectors'
 import {useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CosmeticPreview} from './cosmetics'
@@ -43,9 +43,10 @@ import css from './play-select.module.scss'
 
 type Props = {
 	setMenuSection: (section: string) => void
+	defaultSection?: string
 }
 
-function PlaySelect({setMenuSection}: Props) {
+function PlaySelect({setMenuSection, defaultSection}: Props) {
 	const dispatch = useMessageDispatch()
 	const matchmaking = useSelector(getStatus)
 	const settings = useSelector(getSettings)
@@ -53,6 +54,7 @@ function PlaySelect({setMenuSection}: Props) {
 	const spectatorCode = useSelector(getSpectatorCode)
 	const {playerDeck} = useSelector(getSession)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
+	const rematch = useSelector(getRematchData)
 
 	const decks = databaseInfo?.decks
 	const [loadedDeck, setLoadedDeck] = useState<Deck | undefined>(
@@ -60,8 +62,21 @@ function PlaySelect({setMenuSection}: Props) {
 	)
 
 	// Menu state
-	const [activeMode, setActiveMode] = useState<string | null>(null)
-	const [activeButtonMenu, setActiveButtonMenu] = useState<string | null>(null)
+	const [activeMode, setActiveMode] = useState<string | null>(
+		defaultSection || null,
+	)
+
+	const getFirstActiveMenu = (section: string) => {
+		if (section === 'public') return 'publicChooseDeck'
+		if (section === 'private') return 'privateOptions'
+		if (section === 'boss') return 'bossSelect'
+		if (section === 'rematch') return 'rematchChooseDeck'
+		return ''
+	}
+
+	const [activeButtonMenu, setActiveButtonMenu] = useState<string | null>(
+		defaultSection ? getFirstActiveMenu(defaultSection) : null,
+	)
 
 	// Back stack
 	const [backStack, setBackStack] = useState<Array<string>>([])
@@ -72,6 +87,7 @@ function PlaySelect({setMenuSection}: Props) {
 		}
 		setActiveButtonMenu(buttonMenu)
 	}
+
 	const goBack = () => {
 		const lastMenu = backStack.splice(-1)[0]
 		if (lastMenu) {
@@ -218,14 +234,14 @@ function PlaySelect({setMenuSection}: Props) {
 		case 'public':
 			header = 'Public Game'
 			break
+		case 'rematch':
+			header = 'Rematch'
+			break
 		case 'private':
 			header = 'Private Game'
 			break
 		case 'boss':
 			header = 'Boss Battle'
-			break
-		case 'tutorial':
-			header = 'Tutorial'
 			break
 		default:
 			break
@@ -611,6 +627,53 @@ function PlaySelect({setMenuSection}: Props) {
 								onSelectDeck={onSelectDeck}
 							/>
 						</GameModeButton>
+						{rematch && (
+							<GameModeButton
+								image={'fiveampearl'}
+								backgroundImage={'gamemodes/rematch'}
+								title={'Rematch'}
+								description={"Click to accept your opponent's Rematch Request."}
+								mode="rematch"
+								activeMode={activeMode}
+								setActiveMode={setActiveMode}
+								onSelect={() => {
+									addMenuWithBack('rematchChooseDeck')
+									sortDecksByActive()
+								}}
+								onBack={goBack}
+								disableBack={!!matchmaking}
+							>
+								<GameModeButton.ChooseDeck
+									activeButtonMenu={activeButtonMenu}
+									id="rematchChooseDeck"
+									title="Choose your deck"
+									subTitle={`Current score: ${rematch.playerScore} - ${rematch.opponentScore}`}
+									confirmMessage="Rematch"
+									onConfirm={() => {
+										const valid = checkForValidation()
+										if (!valid) return
+										dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+										dispatch({type: localMessages.MATCHMAKING_REMATCH})
+										addMenuWithBack('rematchQueue')
+									}}
+									decks={decks}
+									onSelectDeck={onSelectDeck}
+								/>
+								<GameModeButton.Queue
+									activeButtonMenu={activeButtonMenu}
+									id="rematchQueue"
+									joiningMessage="Creating game..."
+									queueMessage="Waiting for opponent..."
+									activeDeck={loadedDeck}
+									matchmakingStatus={matchmaking}
+									cancelMessage="Leave Queue"
+									onCancel={() => {
+										if (matchmaking) handleLeaveQueue()
+										goBack()
+									}}
+								/>
+							</GameModeButton>
+						)}
 					</div>
 				</div>
 				<h3 className={css.appearanceHeader}>In-game Appearance</h3>

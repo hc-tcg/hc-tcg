@@ -25,6 +25,7 @@ import {
 	LocalSetting,
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
+import {RematchData} from 'common/types/app'
 
 export const localMessages = messages('clientLocalMessages', {
 	SOCKET_CONNECTING: null,
@@ -102,6 +103,11 @@ export const localMessages = messages('clientLocalMessages', {
 	COSMETICS_SET: null,
 	COSMETIC_UPDATE: null,
 	OVERVIEW: null,
+	//Rematches
+	RECIEVE_REMATCH: null,
+	RECIEVE_OPPONENT_REMATCH: null,
+	CANCEL_REMATCH: null,
+	MATCHMAKING_REMATCH: null,
 })
 
 type Messages = [
@@ -269,6 +275,10 @@ type Messages = [
 		appearance: Appearance
 	},
 	{type: typeof localMessages.COSMETIC_UPDATE; cosmetic: Cosmetic},
+	{type: typeof localMessages.RECIEVE_REMATCH; rematch: RematchData | null},
+	{type: typeof localMessages.RECIEVE_OPPONENT_REMATCH},
+	{type: typeof localMessages.CANCEL_REMATCH},
+	{type: typeof localMessages.MATCHMAKING_REMATCH},
 ]
 
 /** A message used locally on the client to update global state */

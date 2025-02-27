@@ -1,5 +1,5 @@
 import {PlayerId} from 'common/models/player-model'
-import {ToastData} from 'common/types/app'
+import {RematchData, ToastData} from 'common/types/app'
 import {PlayerInfo, Update} from 'common/types/server-requests'
 import {LocalMessage, localMessages} from 'logic/messages'
 import React from 'react'
@@ -27,6 +27,7 @@ type SessionState = {
 	} | null
 	toast: Array<ToastData>
 	updates: Array<Update>
+	rematch: RematchData | null
 	newPlayer: boolean //If the account was created this session
 }
 
@@ -42,6 +43,7 @@ const defaultState: SessionState = {
 	tooltip: null,
 	toast: [],
 	updates: [],
+	rematch: null,
 	newPlayer: false,
 }
 
@@ -153,6 +155,11 @@ const loginReducer = (
 			return {
 				...state,
 				newPlayer: true,
+			}
+		case localMessages.RECIEVE_REMATCH:
+			return {
+				...state,
+				rematch: action.rematch,
 			}
 		default:
 			return state
