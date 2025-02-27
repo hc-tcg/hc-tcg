@@ -12,7 +12,7 @@ import {PlayerId} from 'common/models/player-model'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {User} from 'common/types/database'
-import {Deck} from 'common/types/deck'
+import {Deck, Tag} from 'common/types/deck'
 import {PlayerInfo} from 'common/types/server-requests'
 import {toLocalCardInstance} from 'common/utils/cards'
 import {generateDatabaseCode} from 'common/utils/database-codes'
@@ -203,6 +203,19 @@ export function* setupData(user: User) {
 		data: {
 			key: 'decks',
 			value: user.decks,
+		},
+	})
+	yield* put<LocalMessage>({
+		type: localMessages.DATABASE_SET,
+		data: {
+			key: 'tags',
+			value: user.decks
+				.reduce((r: Array<Tag>, d) => {
+					const newTags = d.tags.filter((tag) => !r.includes(tag))
+					r.push(...newTags)
+					return r
+				}, [])
+				.sort((a, b) => a.name.localeCompare(b.name)),
 		},
 	})
 	yield* put<LocalMessage>({

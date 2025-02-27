@@ -16,7 +16,6 @@ const CertifiedZombie: Achievement = {
 			steps: 3,
 		},
 	],
-	icon: 'certified_zombie',
 	onGameStart(game, playerEntity, component, observer) {
 		let player = game.components.get(playerEntity)
 		assert(player, 'Player should be in the ECS')
@@ -29,12 +28,15 @@ const CertifiedZombie: Achievement = {
 			() => {
 				if (player.getActiveHermit()?.props.id === ArmorStand.id) {
 					rounds += 1
-					component.bestGoalProgress({goal: 0, progress: rounds})
 				} else {
 					rounds = 0
 				}
 			},
 		)
+
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			component.bestGoalProgress({goal: 0, progress: rounds})
+		})
 	},
 }
 

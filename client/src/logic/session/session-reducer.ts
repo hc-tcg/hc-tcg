@@ -25,6 +25,11 @@ type SessionState = {
 		tooltipHeight: number
 		tooltipWidth: number
 	} | null
+	dropdown: {
+		x: number
+		y: number
+		dropdown: React.ReactNode
+	} | null
 	toast: Array<ToastData>
 	updates: Array<Update>
 	rematch: RematchData | null
@@ -41,6 +46,7 @@ const defaultState: SessionState = {
 	connectingMessage: 'Connecting',
 	connected: false,
 	tooltip: null,
+	dropdown: null,
 	toast: [],
 	updates: [],
 	rematch: null,
@@ -140,6 +146,20 @@ const loginReducer = (
 			return {
 				...state,
 				tooltip: null,
+			}
+		case localMessages.SHOW_DROPDOWN:
+			return {
+				...state,
+				dropdown: {
+					dropdown: action.dropdown,
+					x: action.x,
+					y: action.y,
+				},
+			}
+		case localMessages.HIDE_DROPDOWN:
+			return {
+				...state,
+				dropdown: null,
 			}
 		case localMessages.USERNAME_SET:
 			return {

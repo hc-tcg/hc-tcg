@@ -44,6 +44,10 @@ export const getTooltip = (state: RootState) => {
 	return getSession(state).tooltip
 }
 
+export const getDropdown = (state: RootState) => {
+	return getSession(state).dropdown
+}
+
 export const getUpdates = (state: RootState) => {
 	return getSession(state).updates
 }

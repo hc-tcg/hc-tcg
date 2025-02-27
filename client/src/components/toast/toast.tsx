@@ -164,11 +164,13 @@ export const ToastInner = ({
 			ref={toastRef}
 			onDoubleClick={() => setAliveTime(maxOpenFor)}
 		>
-			{image && isSvgImage ? (
-				<div className={css.svgImage}>{svgImages[image]()}</div>
-			) : (
-				<img src={image} alt="icon" />
-			)}
+			{image ? (
+				isSvgImage ? (
+					<div className={css.svgImage}>{svgImages[image]()}</div>
+				) : (
+					<img src={image} alt="icon" />
+				)
+			) : null}
 			<div className={css.content}>
 				<div className={css.title}>{title}</div>
 				<div className={css.description}>{description}</div>

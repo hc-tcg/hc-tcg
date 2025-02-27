@@ -3,10 +3,13 @@ import CantTouchThis from './cant-touch-this'
 import CertifiedZombie from './certified-zombie'
 import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
-import Designer from './designer'
 import Ethogirl from './ethogirl'
+import EyeOfTheSpider from './eye-of-the-spider'
+import GoFish from './go-fish'
+import HermitsAndCrafting from './hermits-and-crafting'
 import HotTake from './hot-take'
 import HowDidWeGetHere from './how-did-we-get-here'
+import HurtinHermits from './hurtin-hermits'
 import Inneffective from './inneffective'
 import AllCards from './jack-of-all-cards'
 import NakedAndScared from './naked-and-scared'
@@ -17,6 +20,7 @@ import PeskyBird from './pesky-bird'
 import ServerLag from './server-lag'
 import SheepStarer from './sheep-starer'
 import SUStainable from './sustainable'
+import TargetedLightning from './targeted-lightning'
 import TeamStar from './team-star'
 import {
 	BalancedWins,
@@ -31,6 +35,7 @@ import {
 	TerraformWins,
 } from './type-wins'
 import {Achievement} from './types'
+import UselessMachine from './useless-machine'
 import Win from './wins'
 import Wipeout from './wipeout'
 
@@ -39,8 +44,11 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	CantTouchThis,
 	DeckedOut,
 	Ethogirl,
+	EyeOfTheSpider,
 	PackOfWolves,
+	GoFish,
 	HowDidWeGetHere,
+	HurtinHermits,
 	Wipeout,
 	DefeatEvilX,
 	NoDerpcoins,
@@ -48,14 +56,16 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	ServerLag,
 	PeskyBird,
 	TeamStar,
+	UselessMachine,
 	OreSnatcher,
 	SheepStarer,
 	NakedAndScared,
 	HotTake,
-	Designer,
+	HermitsAndCrafting,
 	CertifiedZombie,
 	SUStainable,
 	Inneffective,
+	TargetedLightning,
 	Win,
 	BalancedWins,
 	BuilderWins,
