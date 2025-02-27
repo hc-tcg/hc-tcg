@@ -48,6 +48,7 @@ import gameSaga, {getTimerForSeconds} from './game'
 import {turnActionsToBuffer} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
 import {GameOutcome} from 'common/types/game-state'
+import serverConfig from 'common/config/server-config'
 
 function setupGame(
 	player1: PlayerModel,
@@ -327,7 +328,7 @@ function* gameManager(con: GameController) {
 				opponentScore: player1Score,
 			},
 		})
-		yield* delay(60000)
+		yield* delay(serverConfig.limits.rematchTime)
 		broadcast(gamePlayers, {type: serverMessages.SEND_REMATCH, rematch: null})
 	}
 }

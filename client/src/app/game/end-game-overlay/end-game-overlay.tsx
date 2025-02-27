@@ -7,6 +7,7 @@ import {localMessages} from 'logic/messages'
 import {useDispatch} from 'react-redux'
 import css from './end-game-overlay.module.scss'
 import {useEffect, useState} from 'react'
+import serverConfig from 'common/config/server-config'
 
 type Props = {
 	outcome: GameOutcome
@@ -33,7 +34,9 @@ const EndGameOverlay = ({
 	setMenuSection,
 }: Props) => {
 	const dispatch = useDispatch()
-	const [replayTimeRemaining, setReplayTimeRemaining] = useState<number>(59)
+	const [replayTimeRemaining, setReplayTimeRemaining] = useState<number>(
+		serverConfig.limits.rematchTime / 1000 - 1,
+	)
 
 	let animation
 
@@ -161,7 +164,7 @@ const EndGameOverlay = ({
 						}}
 					>
 						Rematch{' '}
-						<div className={css.replayTimeRemaining}>
+						<div className={css.rematchTimeRemaining}>
 							{replayTimeRemaining > 0 && `${replayTimeRemaining}s`}
 						</div>
 					</Button>

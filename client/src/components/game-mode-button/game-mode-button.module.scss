@@ -579,6 +579,22 @@ $expandedHeight: 67vh;
 	}
 }
 
+.rematchTimeRemaining {
+	background-color: rgb(217, 119, 147);
+	color: black;
+	transform: translateY(-0.125rem);
+	width: max-content;
+	padding: 5px;
+	margin-top: 0.5rem;
+	margin-left: -3px;
+	margin-bottom: 0.5rem;
+	align-items: baseline;
+	text-align: center;
+	justify-content: center;
+	border-radius: 5px;
+	font-size: 1rem;
+}
+
 @keyframes timedShow {
 	from {
 		opacity: 0%;

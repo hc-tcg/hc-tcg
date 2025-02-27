@@ -36,10 +36,11 @@ import {
 } from 'logic/matchmaking/matchmaking-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getRematchData, getSession} from 'logic/session/session-selectors'
-import {useEffect, useState} from 'react'
+import {useEffect, useReducer, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CosmeticPreview} from './achievements'
 import css from './play-select.module.scss'
+import serverConfig from 'common/config/server-config'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -98,6 +99,19 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 			setActiveButtonMenu(null)
 			setBackStack([])
 		}
+	}
+
+	const [hasRematch, setHasRematch] = useState<boolean>(rematch ? true : false)
+	const [buttonAmount, setButtonAmount] = useState<number>(hasRematch ? 4 : 3)
+
+	if (hasRematch && !rematch) {
+		setHasRematch(false)
+		if (activeMode === 'rematch') {
+			setActiveMode(null)
+			setActiveButtonMenu(null)
+			setBackStack([])
+		}
+		setButtonAmount(3)
 	}
 
 	const checkForValidation = (): boolean => {
@@ -277,6 +291,7 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 							}}
 							onBack={goBack}
 							disableBack={!!matchmaking}
+							buttonAmount={buttonAmount}
 						>
 							<GameModeButton.ChooseDeck
 								activeButtonMenu={activeButtonMenu}
@@ -335,6 +350,7 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 							}}
 							onBack={goBack}
 							disableBack={!!matchmaking}
+							buttonAmount={buttonAmount}
 						>
 							<GameModeButton.OptionsSelect
 								activeButtonMenu={activeButtonMenu}
@@ -503,6 +519,7 @@ or create your own game to challenge someone else."
 							setActiveMode={setActiveMode}
 							onBack={goBack}
 							disableBack={!!matchmaking}
+							buttonAmount={buttonAmount}
 						>
 							<GameModeButton.OptionsSelect
 								id="bossSelect"
@@ -642,6 +659,9 @@ during the battle."
 								}}
 								onBack={goBack}
 								disableBack={!!matchmaking}
+								timerStart={rematch.time}
+								timerLength={serverConfig.limits.rematchTime}
+								buttonAmount={buttonAmount}
 							>
 								<GameModeButton.ChooseDeck
 									activeButtonMenu={activeButtonMenu}
