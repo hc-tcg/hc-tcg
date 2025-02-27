@@ -20,7 +20,7 @@ import {EXPANSIONS} from 'common/const/expansions'
 import {CardEntity} from 'common/entities'
 import {Deck} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
-import {sortDecks} from 'common/utils/sorting'
+import {sortDecks} from 'common/utils/decks'
 import {validateDeck} from 'common/utils/validation'
 import Button from 'components/button'
 import CardList from 'components/card-list'
@@ -38,7 +38,7 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getSession} from 'logic/session/session-selectors'
 import {useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
-import {CosmeticPreview} from './cosmetics'
+import {CosmeticPreview} from './achievements'
 import css from './play-select.module.scss'
 
 type Props = {
@@ -201,7 +201,7 @@ function PlaySelect({setMenuSection}: Props) {
 		}
 	}, [handleKeyPress])
 
-	function handleKeyPress(e: any) {
+	function handleKeyPress(e: KeyboardEvent) {
 		if (!matchmaking && e.key === 'Escape') {
 			if (backStack[0]) {
 				goBack()
@@ -325,7 +325,7 @@ function PlaySelect({setMenuSection}: Props) {
 								id="privateOptions"
 								title="Select an option"
 								subTitle="Either join a private game created by another player, spectate an existing game, 
-								or create your own game to challenge someone else."
+or create your own game to challenge someone else."
 								buttons={[
 									{
 										text: 'Join Game',
@@ -493,9 +493,9 @@ function PlaySelect({setMenuSection}: Props) {
 								activeButtonMenu={activeButtonMenu}
 								title="Welcome to your doom."
 								subTitle="That's right, HC-TCG Online has its first boss fight! This is no challenge deck - Evil X cares
-								not for the cards. He brings his own moves, and they are vicious! If you think you can defeat him, you'll
-								need to be on your best game. Make sure your audio is enabled, as you'll need to listen to voice commands
-								during the battle."
+not for the cards. He brings his own moves, and they are vicious! If you think you can defeat him, you'll
+need to be on your best game. Make sure your audio is enabled, as you'll need to listen to voice commands
+during the battle."
 								buttons={[
 									{
 										text: 'Full Rules',

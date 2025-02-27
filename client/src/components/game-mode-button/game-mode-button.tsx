@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import {ButtonVariant} from 'common/types/buttons'
 import {Deck, Tag} from 'common/types/deck'
+import {getDeckTypes} from 'common/utils/decks'
 import {getIconPath} from 'common/utils/state-gen'
 import Button from 'components/button'
 import Spinner from 'components/spinner'
@@ -16,6 +17,7 @@ import {
 	useState,
 } from 'react'
 import {useSelector} from 'react-redux'
+import {FilterComponent} from '../../app/deck/deck-select'
 import css from './game-mode-button.module.scss'
 
 interface GameModeButtonProps {
@@ -267,14 +269,43 @@ GameModeButton.ChooseDeck = ({
 	const {playerDeck} = useSelector(getSession)
 	const inputRef = useRef<HTMLInputElement>(null)
 
+	const [filteredDecks, setFilteredDecks] = useState<Array<Deck>>(decks)
+	const [tagFilter, setTagFilter] = useState<Tag | null>(null)
+	const [typeFilter, setTypeFilter] = useState<string>('')
+	const [nameFilter, setNameFilter] = useState<string>('')
+
 	const decksHaveTags =
 		decks.reduce((tags: Array<Tag>, decks) => {
 			return [...tags, ...decks.tags]
 		}, []).length > 0
 
+	function filterDecks(
+		decks: Array<Deck>,
+		d?: {tag?: string | null; type?: string; name?: string},
+	): Array<Deck> {
+		const compareTag = d && d.tag === null ? null : (d && d.tag) || tagFilter
+		const compareType = (d && d.type) || typeFilter
+		const compareName = d && d.name !== undefined ? d.name : nameFilter
+
+		return decks.filter(
+			(deck) =>
+				(!compareTag || deck.tags?.find((tag) => tag.key === compareTag)) &&
+				(!compareType ||
+					compareType === 'any' ||
+					getDeckTypes(deck.cards.map((card) => card.props.id)).includes(
+						compareType,
+					)) &&
+				(!compareName ||
+					compareName === '' ||
+					deck.name
+						.toLocaleLowerCase()
+						.includes(compareName.toLocaleLowerCase())),
+		)
+	}
+
 	const deckSelector = (
 		<div className={css.deckSelector}>
-			{decks.map((deck, i) => (
+			{filteredDecks.map((deck, i) => (
 				<div
 					className={classNames(
 						css.deck,
@@ -285,11 +316,11 @@ GameModeButton.ChooseDeck = ({
 				>
 					{deck.tags && deck.tags.length > 0 && (
 						<div className={css.multiColoredCircle}>
-							{deck.tags.map((tag, i2) => (
+							{deck.tags.map((tag, i) => (
 								<div
 									className={css.singleTag}
 									style={{backgroundColor: tag.color}}
-									key={i2}
+									key={i}
 								></div>
 							))}
 						</div>
@@ -327,13 +358,39 @@ GameModeButton.ChooseDeck = ({
 			<div className={css.chooseDeck}>
 				<h3>{title}</h3>
 				<p>{subTitle}</p>
+				<div className={css.filter}>
+					<FilterComponent
+						tagFilter={tagFilter}
+						tagFilterAction={(option: string) => {
+							const parsedOption = JSON.parse(option) as Tag
+
+							if (option.includes('No Tag')) {
+								setFilteredDecks(filterDecks(decks, {tag: null}))
+								setTagFilter(null)
+							} else {
+								setFilteredDecks(filterDecks(decks, {tag: parsedOption.key}))
+								setTagFilter(parsedOption)
+							}
+						}}
+						typeFilter={typeFilter}
+						typeFilterAction={(option: string) => {
+							setFilteredDecks(filterDecks(decks, {type: option}))
+							setTypeFilter(option)
+						}}
+						nameFilterAction={(name: string) => {
+							setFilteredDecks(filterDecks(decks, {name}))
+							setNameFilter(name)
+						}}
+						dropdownDirection={'down'}
+					></FilterComponent>
+				</div>
 				{deckSelector}
 				{requestCode ? (
 					<div className={css.row}>
 						<input
 							type="text"
 							ref={inputRef}
-							className={css.largeButton}
+							className={classNames(css.largeButton, css.deckSelectorInput)}
 							placeholder="Enter code..."
 							spellCheck={false}
 						/>

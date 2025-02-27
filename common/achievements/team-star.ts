@@ -10,6 +10,8 @@ import WelsknightCommon from '../cards/hermits/welsknight-common'
 import WelsknightRare from '../cards/hermits/welsknight-rare'
 import XisumavoidCommon from '../cards/hermits/xisumavoid-common'
 import XisumavoidRare from '../cards/hermits/xisumavoid-rare'
+import {CardComponent} from '../components'
+import query from '../components/query'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -33,7 +35,6 @@ const TeamStar: Achievement = {
 	...achievement,
 	numericId: 12,
 	id: 'team_star',
-	icon: '',
 	levels: [
 		{
 			name: 'Hermit Gang',
@@ -42,25 +43,20 @@ const TeamStar: Achievement = {
 			steps: 5,
 		},
 	],
-	onGameEnd(game, playerEntity, component, outcome) {
-		const player = game.components.get(playerEntity)
-		if (!player) return
-
-		if (outcome.type !== 'player-won') return
-		if (outcome.winner !== playerEntity) return
-
-		const playerDeck = player.getDeck().map((card) => card.props.id)
-		let containsAllMembers = true
-		members.forEach((member) => {
-			let containsMember = false
-			member.forEach((card) => {
-				if (!playerDeck.includes(card)) return
-				containsMember = true
-			})
-			containsAllMembers &&= containsMember
-		})
+	onGameStart(game, playerEntity, component, observer) {
+		const playerDeck = game.components
+			.filter(CardComponent, query.card.player(playerEntity))
+			.map((card) => card.props.id)
+		const containsAllMembers = members.every((member) =>
+			member.some((id) => playerDeck.includes(id)),
+		)
 		if (!containsAllMembers) return
-		component.incrementGoalProgress({goal: 0})
+
+		observer.subscribe(game.hooks.onGameEnd, (outcome) => {
+			if (outcome.type !== 'player-won') return
+			if (outcome.winner !== playerEntity) return
+			component.incrementGoalProgress({goal: 0})
+		})
 	},
 }
 

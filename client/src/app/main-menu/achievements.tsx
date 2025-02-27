@@ -24,7 +24,7 @@ import {localMessages} from 'logic/messages'
 import {getSession} from 'logic/session/session-selectors'
 import {useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import css from './cosmsetics.module.scss'
+import css from './achievements.module.scss'
 
 type Pages = 'achievements' | 'rewards'
 
@@ -115,7 +115,7 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 			]?.completionTime
 	}
 
-	const icon_url = `/images/cosmetics/${cosmetic.type}/${cosmetic.id}.png`
+	const icon_url = `/images/cosmetics/${cosmetic.type}/${cosmetic.type === 'background' && (cosmetic as Background).preview ? (cosmetic as Background).preview : cosmetic.id}.png`
 
 	const item = (
 		<div
@@ -334,6 +334,16 @@ function Cosmetics({setMenuSection, page}: Props) {
 								<Button
 									onClick={() => {
 										if (!usernameRef.current) return
+										if (usernameRef.current.value.length < 3) {
+											dispatch({
+												type: localMessages.TOAST_OPEN,
+												open: true,
+												title: 'Username Invalid',
+												description:
+													'Your username must be at least 3 characters long.',
+											})
+											return
+										}
 										dispatch({
 											type: localMessages.USERNAME_SET,
 											name: usernameRef.current.value,

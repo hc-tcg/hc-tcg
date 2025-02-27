@@ -8,10 +8,9 @@ const PackOfWolves: Achievement = {
 	...achievement,
 	numericId: 3,
 	id: 'pack_of_wolves',
-	icon: '',
 	levels: [
 		{
-			name: 'Pack Of Wolves',
+			name: 'Pack of Wolves',
 			description: 'Have 3 wolves attached to your hermits at the same time.',
 			steps: 3,
 		},
@@ -26,10 +25,9 @@ const PackOfWolves: Achievement = {
 				SlotComponent,
 				query.slot.player(playerEntity),
 				query.slot.attach,
-				(_game, slot) => slot.getCard()?.props === Wolf,
+				query.slot.has(Wolf),
 			)
-			if (!component.goals[0]) component.goals[0] = 0
-			component.goals[0] = Math.max(component.goals[0], boardCards.length)
+			component.bestGoalProgress({goal: 0, progress: boardCards.length})
 		})
 	},
 }

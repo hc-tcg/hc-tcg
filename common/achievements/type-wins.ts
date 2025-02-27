@@ -25,12 +25,11 @@ function getTypeWinAchievement(id: number, type: TypeT): Achievement {
 				steps: 100,
 			},
 		],
-		icon: '',
 		onGameStart(game, playerEntity, component, observer) {
 			if (
 				game.components.filter(
 					CardComponent,
-					query.card.currentPlayer,
+					query.card.player(playerEntity),
 					query.card.type(type),
 				).length < 7
 			) {
