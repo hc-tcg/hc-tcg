@@ -1,14 +1,14 @@
 import cn from 'classnames'
+import serverConfig from 'common/config/server-config'
 import {PlayerEntity} from 'common/entities'
+import {EarnedAchievement} from 'common/types/achievements'
 import {GameOutcome, GameVictoryReason} from 'common/types/game-state'
 import Button from 'components/button'
 import {Modal} from 'components/modal'
 import {localMessages} from 'logic/messages'
+import {useEffect, useReducer, useRef, useState} from 'react'
 import {useDispatch} from 'react-redux'
 import css from './end-game-overlay.module.scss'
-import {useEffect, useReducer, useRef, useState} from 'react'
-import serverConfig from 'common/config/server-config'
-import {EarnedAchievement} from 'common/types/achievements'
 
 type Props = {
 	outcome: GameOutcome

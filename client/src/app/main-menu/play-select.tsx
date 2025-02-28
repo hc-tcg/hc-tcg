@@ -16,6 +16,7 @@ import SplashPotionOfPoison from 'common/cards/single-use/splash-potion-of-poiso
 import Spyglass from 'common/cards/single-use/spyglass'
 import TargetBlock from 'common/cards/single-use/target-block'
 import {Card} from 'common/cards/types'
+import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
 import {CardEntity} from 'common/entities'
 import {Deck} from 'common/types/deck'
@@ -36,11 +37,10 @@ import {
 } from 'logic/matchmaking/matchmaking-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getRematchData, getSession} from 'logic/session/session-selectors'
-import {useEffect, useReducer, useState} from 'react'
+import {useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CosmeticPreview} from './achievements'
 import css from './play-select.module.scss'
-import serverConfig from 'common/config/server-config'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -103,7 +103,7 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 
 	const [hasRematch, setHasRematch] = useState<boolean>(rematch ? true : false)
 	const [rematchDisabled, setRematchDisabled] = useState<boolean>(false)
-	const [buttonAmount, setButtonAmount] = useState<number>(rematch ? 4 : 3)
+	const [buttonAmount, _setButtonAmount] = useState<number>(rematch ? 4 : 3)
 
 	if (hasRematch && !rematch) {
 		setHasRematch(false)

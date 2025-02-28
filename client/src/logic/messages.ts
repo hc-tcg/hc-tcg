@@ -2,6 +2,8 @@ import {Appearance, Cosmetic} from 'common/cosmetics/types'
 import {PlayerEntity} from 'common/entities'
 import {PlayerId} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
+import {EarnedAchievement} from 'common/types/achievements'
+import {RematchData} from 'common/types/app'
 import {HermitAttackType} from 'common/types/attack'
 import {Deck, Tag} from 'common/types/deck'
 import {
@@ -25,8 +27,6 @@ import {
 	LocalSetting,
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
-import {RematchData} from 'common/types/app'
-import {EarnedAchievement} from 'common/types/achievements'
 
 export const localMessages = messages('clientLocalMessages', {
 	SOCKET_CONNECTING: null,
