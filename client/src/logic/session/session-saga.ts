@@ -16,6 +16,7 @@ import {Deck, Tag} from 'common/types/deck'
 import {PlayerInfo} from 'common/types/server-requests'
 import {toLocalCardInstance} from 'common/utils/cards'
 import {generateDatabaseCode} from 'common/utils/database-codes'
+import {BASE_URL} from '../../constants'
 import {
 	getAchievements,
 	getAppearance,
@@ -126,7 +127,7 @@ function* authenticateUser(
 		secret: secret,
 	}
 
-	const auth = yield* call(fetch, `${window.location.origin}/api/auth/`, {
+	const auth = yield* call(fetch, `${BASE_URL}/api/auth/`, {
 		headers,
 	})
 
@@ -150,14 +151,10 @@ function* createUser(username: string): Generator<any, User> {
 		username: username,
 	}
 
-	const userInfo = yield* call(
-		fetch,
-		`${window.location.origin}/api/createUser/`,
-		{
-			method: 'POST',
-			headers,
-		},
-	)
+	const userInfo = yield* call(fetch, `${BASE_URL}/api/createUser/`, {
+		method: 'POST',
+		headers,
+	})
 
 	if (userInfo.status === 500) {
 		const user = getNonDatabaseUser()
