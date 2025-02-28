@@ -5,7 +5,6 @@ import {EarnedAchievement} from 'common/types/achievements'
 import {GameOutcome, GameVictoryReason} from 'common/types/game-state'
 import Button from 'components/button'
 import {Modal} from 'components/modal'
-import {localMessages} from 'logic/messages'
 import {useEffect, useReducer, useRef, useState} from 'react'
 import css from './end-game-overlay.module.scss'
 
@@ -23,8 +22,8 @@ type Props = {
 	onClose?: () => void
 	nameOfWinner: string | null
 	nameOfLoser: string | null
-	setMenuSection: (section: string) => void
-	dispatchGameClose: () => void
+	setMenuSection?: (section: string) => void
+	dispatchGameClose?: () => void
 }
 
 type SmallAchievementProps = {
@@ -293,8 +292,8 @@ const EndGameOverlay = ({
 					<Button
 						id={css.mainMenu}
 						onClick={() => {
-							setMenuSection('main-menu')
-							dispatchGameClose()
+							setMenuSection && setMenuSection('main-menu')
+							dispatchGameClose && dispatchGameClose()
 						}}
 					>
 						Main Menu
@@ -302,8 +301,8 @@ const EndGameOverlay = ({
 					<Button
 						id={css.playAgain}
 						onClick={() => {
-							setMenuSection('play-again')
-							dispatchGameClose()
+							setMenuSection && setMenuSection('play-again')
+							dispatchGameClose && dispatchGameClose()
 						}}
 					>
 						Play again
@@ -312,8 +311,8 @@ const EndGameOverlay = ({
 						id={css.rematch}
 						disabled={disableReplay}
 						onClick={() => {
-							setMenuSection('rematch')
-							dispatchGameClose()
+							setMenuSection && setMenuSection('rematch')
+							dispatchGameClose && dispatchGameClose()
 						}}
 					>
 						Rematch
