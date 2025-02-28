@@ -212,9 +212,6 @@ function* gameManager(con: GameController) {
 				)
 				const newProgress = achievement.props.getProgress(achievement.goals)
 
-				if (achievement.props.id === Win.id) {
-					console.log(originalProgress, newProgress)
-				}
 				if (originalProgress === newProgress) return
 
 				v.player.updateAchievementProgress(
@@ -246,8 +243,6 @@ function* gameManager(con: GameController) {
 
 			yield* updateAchievements(v.player)
 		}
-
-		console.log(newAchievements)
 
 		for (const viewer of con.viewers) {
 			const gameState = getLocalGameState(con.game, viewer)
