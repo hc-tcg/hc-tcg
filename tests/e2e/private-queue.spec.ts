@@ -228,6 +228,6 @@ test('Game starts for players and spectators and places players back on main men
 
 	for (const player of [playerOne, playerTwo, spectator]) {
 		// Verify the player is on the game select menu.
-		await player.getByText('Play').waitFor()
+		await player.getByRole('button', {name: 'Play'}).waitFor()
 	}
 })
