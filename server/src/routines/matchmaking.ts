@@ -215,6 +215,8 @@ function* gameManager(con: GameController) {
 				console.log(v.player.achievementProgress[achievement.props.numericId].goals)
 				console.log(achievement.goals)
 
+				console.log(v.player.id)
+
 				const originalProgress = achievement.props.getProgress(
 					v.player.achievementProgress[achievement.props.numericId].goals,
 				)
