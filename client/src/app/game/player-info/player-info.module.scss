@@ -48,11 +48,11 @@
 .background {
 	position: absolute;
 	height: 66px;
-	width: 604px;
+	width: 600px;
 	margin-top: 0px;
-	margin-left: -22px;
+	margin-left: -19px;
 	backdrop-filter: grayscale(80%) brightness(60%);
-	border: 4px solid var(--gray-300);
+	border: 3px solid var(--gray-900);
 
 	&.active {
 		display: none;
@@ -60,7 +60,7 @@
 
 	&.right {
 		margin-left: 0px;
-		margin-right: -22px;
+		margin-right: -19px;
 	}
 }
 
