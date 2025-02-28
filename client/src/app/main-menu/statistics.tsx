@@ -8,6 +8,7 @@ import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
 import {TypeT} from 'common/types/cards'
 import {GameHistory} from 'common/types/database'
+import {Tag} from 'common/types/deck'
 import {WithoutFunctions} from 'common/types/server-requests'
 import {sortCards} from 'common/utils/cards'
 import {getDeckTypes, parseDeckCards} from 'common/utils/decks'
@@ -27,6 +28,7 @@ import {localMessages} from 'logic/messages'
 import {ReactNode, useEffect, useReducer, useRef, useState} from 'react'
 import {Bar} from 'react-chartjs-2'
 import {useDispatch, useSelector} from 'react-redux'
+import {FilterComponent} from '../deck/deck-select'
 import css from './statistics.module.scss'
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
@@ -160,6 +162,63 @@ function Statistics({setMenuSection}: Props) {
 		useState<boolean>(false)
 	const [showOverviewModal, setShowOverviewModal] = useState<boolean>(false)
 	const [currentGame, setCurrentGame] = useState<GameHistory | null>(null)
+
+	const [filteredGames, setFilteredGames] =
+		useState<Array<GameHistory>>(gameHistory)
+	const [tagFilter, setTagFilter] = useState<Tag | null>(null)
+	const [typeFilter, setTypeFilter] = useState<string>('')
+	const [nameFilter, setNameFilter] = useState<string>('')
+	const [opponentNameFilter, setOpponentNameFilter] = useState<string>('')
+
+	function filterGames(
+		games: Array<GameHistory>,
+		d?: {
+			tag?: string | null
+			type?: string
+			name?: string
+			opponentName?: string
+		},
+	): Array<GameHistory> {
+		const compareTag = d && d.tag === null ? null : (d && d.tag) || tagFilter
+		const compareType = (d && d.type) || typeFilter
+		const compareName = d && d.name !== undefined ? d.name : nameFilter
+		const compareOpponentName =
+			d && d.opponentName !== undefined ? d.opponentName : opponentNameFilter
+
+		return games.filter((game) => {
+			const otherPlayer =
+				game.firstPlayer.uuid === databaseInfo.userId
+					? game.firstPlayer
+					: game.secondPlayer
+			return (
+				(!compareTag ||
+					game.usedDeck.tags?.find((tag) => tag.key === compareTag)) &&
+				(!compareType ||
+					compareType === 'any' ||
+					getDeckTypes(
+						game.usedDeck.cards.map((card) => card.props.id),
+					).includes(compareType)) &&
+				(!compareName ||
+					compareName === '' ||
+					game.usedDeck.name
+						.toLocaleLowerCase()
+						.includes(compareName.toLocaleLowerCase())) &&
+				(!compareOpponentName ||
+					compareOpponentName === '' ||
+					otherPlayer.name.includes(compareOpponentName))
+			)
+		})
+	}
+
+	const opponentNameFilterAction = (name: string) => {
+		if (name === '') {
+			setOpponentNameFilter('')
+			setFilteredGames(filterGames(gameHistory, {opponentName: name}))
+			return
+		}
+		setOpponentNameFilter(name)
+		setFilteredGames(filterGames(gameHistory, {opponentName: name}))
+	}
 
 	const handleReplayGame = (game: GameHistory) => {
 		setCurrentGame(game)
@@ -899,162 +958,212 @@ function Statistics({setMenuSection}: Props) {
 								<Tabs selected={tab} setSelected={setTab} tabs={tabs} />
 								<div className={css.tableArea}>
 									<div className={css.gameHistory}>
-										<div className={css.gameHistoryHeader}>Game History</div>
-										{gameHistory.map((game) => {
-											const startTime = new Date(game.startTime)
-											return (
-												<div className={css.gameHistoryBox}>
-													<div
-														className={classNames(
-															css.gameAreaMiddle,
-															settings.gameSide === 'Right' && css.reverseSide,
-														)}
-													>
-														<div id={css.playerHead}>
-															<div className={css.playerHead}>
-																<img
-																	src={`https://mc-heads.net/head/${game.firstPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/right`}
-																	alt="player head"
-																/>
-															</div>
-														</div>
-														<div id={css.opponentHead}>
-															<div className={css.playerHead}>
-																<img
-																	src={`https://mc-heads.net/head/${game.secondPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/left`}
-																	alt="player head"
-																/>
-															</div>
-														</div>
+										<div className={css.gameHistoryHeader}>
+											<div className={css.filter}>
+												<div className={css.filterHeader}>Filter by Deck</div>
+												<FilterComponent
+													tagFilter={tagFilter}
+													tagFilterAction={(option: string) => {
+														const parsedOption = JSON.parse(option) as Tag
+
+														if (option.includes('No Tag')) {
+															setFilteredGames(
+																filterGames(gameHistory, {tag: null}),
+															)
+															setTagFilter(null)
+														} else {
+															setFilteredGames(
+																filterGames(gameHistory, {
+																	tag: parsedOption.key,
+																}),
+															)
+															setTagFilter(parsedOption)
+														}
+													}}
+													typeFilter={typeFilter}
+													typeFilterAction={(option: string) => {
+														setFilteredGames(
+															filterGames(gameHistory, {type: option}),
+														)
+														setTypeFilter(option)
+													}}
+													nameFilterAction={(name: string) => {
+														setFilteredGames(filterGames(gameHistory, {name}))
+														setNameFilter(name)
+													}}
+													dropdownDirection={'down'}
+												></FilterComponent>
+											</div>
+											<div className={css.filter}>
+												<div className={css.filterHeader}>
+													Filter by Opponent Name
+												</div>
+												<input
+													placeholder={'Search...'}
+													onChange={(e) => {
+														opponentNameFilterAction(e.target.value)
+													}}
+												></input>
+											</div>
+										</div>
+										<div className={css.gameHistoryGames}>
+											{filteredGames.map((game) => {
+												const startTime = new Date(game.startTime)
+												return (
+													<div className={css.gameHistoryBox}>
 														<div
 															className={classNames(
-																css.playerName,
-																settings.gameSide === 'Right' &&
-																	css.reverseSide,
-																game.firstPlayer.uuid === databaseInfo.userId &&
-																	css.me,
-															)}
-														>
-															{game.firstPlayer.uuid === game.winner && (
-																<img
-																	src={'images/icons/trophy.png'}
-																	className={css.trophy}
-																/>
-															)}
-															{game.firstPlayer.name}
-														</div>
-														<div
-															className={classNames(
-																css.winAndLoss,
+																css.gameAreaMiddle,
 																settings.gameSide === 'Right' &&
 																	css.reverseSide,
 															)}
 														>
+															<div id={css.playerHead}>
+																<div className={css.playerHead}>
+																	<img
+																		src={`https://mc-heads.net/head/${game.firstPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/right`}
+																		alt="player head"
+																	/>
+																</div>
+															</div>
+															<div id={css.opponentHead}>
+																<div className={css.playerHead}>
+																	<img
+																		src={`https://mc-heads.net/head/${game.secondPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/left`}
+																		alt="player head"
+																	/>
+																</div>
+															</div>
 															<div
 																className={classNames(
-																	game.winner === databaseInfo.userId &&
-																		css.win,
-																	game.winner !== databaseInfo.userId &&
-																		css.loss,
-																	css.me,
+																	css.playerName,
+																	settings.gameSide === 'Right' &&
+																		css.reverseSide,
+																	game.firstPlayer.uuid ===
+																		databaseInfo.userId && css.me,
 																)}
 															>
-																{game.winner === databaseInfo.userId
-																	? 'W'
-																	: 'L'}
-															</div>{' '}
-															<div className={css.dash}>-</div>{' '}
-															<div>
-																{game.winner === databaseInfo.userId
-																	? 'L'
-																	: 'W'}
+																{game.firstPlayer.uuid === game.winner && (
+																	<img
+																		src={'images/icons/trophy.png'}
+																		className={css.trophy}
+																	/>
+																)}
+																{game.firstPlayer.name}
 															</div>
-														</div>
-														<div
-															className={classNames(
-																css.playerName,
-																settings.gameSide === 'Right' &&
-																	css.reverseSide,
-																game.secondPlayer.uuid ===
-																	databaseInfo.userId && css.me,
-															)}
-														>
-															{game.secondPlayer.uuid === game.winner && (
-																<img
-																	src={'images/icons/trophy.png'}
-																	className={css.trophy}
-																/>
-															)}
-															{game.secondPlayer.name}
-														</div>
-														<Button
-															id={css.deck}
-															onClick={() => {
-																setScreenshotDeckModalContents(
-																	sortCards(
-																		parseDeckCards(
-																			game.usedDeck.cards.map(
-																				(card) => card.props.id,
+															<div
+																className={classNames(
+																	css.winAndLoss,
+																	settings.gameSide === 'Right' &&
+																		css.reverseSide,
+																)}
+															>
+																<div
+																	className={classNames(
+																		game.winner === databaseInfo.userId &&
+																			css.win,
+																		game.winner !== databaseInfo.userId &&
+																			css.loss,
+																		css.me,
+																	)}
+																>
+																	{game.winner === databaseInfo.userId
+																		? 'W'
+																		: 'L'}
+																</div>{' '}
+																<div className={css.dash}>-</div>{' '}
+																<div>
+																	{game.winner === databaseInfo.userId
+																		? 'L'
+																		: 'W'}
+																</div>
+															</div>
+															<div
+																className={classNames(
+																	css.playerName,
+																	settings.gameSide === 'Right' &&
+																		css.reverseSide,
+																	game.secondPlayer.uuid ===
+																		databaseInfo.userId && css.me,
+																)}
+															>
+																{game.secondPlayer.uuid === game.winner && (
+																	<img
+																		src={'images/icons/trophy.png'}
+																		className={css.trophy}
+																	/>
+																)}
+																{game.secondPlayer.name}
+															</div>
+															<Button
+																id={css.deck}
+																onClick={() => {
+																	setScreenshotDeckModalContents(
+																		sortCards(
+																			parseDeckCards(
+																				game.usedDeck.cards.map(
+																					(card) => card.props.id,
+																				),
 																			),
 																		),
-																	),
-																)
-															}}
-														>
-															View Deck
-														</Button>
-														{game.hasReplay && (
-															<Button
-																id={css.replay}
-																onClick={() => handleReplayGame(game)}
+																	)
+																}}
 															>
-																Watch Replay
+																View Deck
 															</Button>
-														)}
-														{game.hasReplay && (
-															<Button
-																id={css.overview}
-																onClick={() => handleOverview(game)}
-															>
-																Overview
-															</Button>
-														)}
-														<div id={css.time} className={css.timeAndturns}>
-															{startTime.getMonth() + 1}/{startTime.getDate()}
-															<span className={css.hideOnMobile}>
-																/{startTime.getFullYear() - 2000},{' '}
-															</span>
-															<span>
-																{startTime.getHours() % 12}:
-																{startTime
-																	.getMinutes()
-																	.toString()
-																	.padStart(2, '0')}{' '}
-																{startTime.getHours() >= 12 ? 'PM' : 'AM'}
-															</span>
-														</div>
-														<div id={css.turns} className={css.hideOnMobile}>
-															{game.length.minutes}m{game.length.seconds}.
-															{Math.floor(game.length.milliseconds / 10)}s |{' '}
-															{game.turns} Turns
-														</div>
-														<div
-															id={css.turns}
-															className={classNames(
-																css.showOnMobile,
-																css.timeAndturns,
+															{game.hasReplay && (
+																<Button
+																	id={css.replay}
+																	onClick={() => handleReplayGame(game)}
+																>
+																	Watch Replay
+																</Button>
 															)}
-														>
-															<div>
-																{game.length.minutes}m{game.length.seconds}.
-																{Math.floor(game.length.milliseconds / 10)}s
+															{game.hasReplay && (
+																<Button
+																	id={css.overview}
+																	onClick={() => handleOverview(game)}
+																>
+																	Overview
+																</Button>
+															)}
+															<div id={css.time} className={css.timeAndturns}>
+																{startTime.getMonth() + 1}/{startTime.getDate()}
+																<span className={css.hideOnMobile}>
+																	/{startTime.getFullYear() - 2000},{' '}
+																</span>
+																<span>
+																	{startTime.getHours() % 12}:
+																	{startTime
+																		.getMinutes()
+																		.toString()
+																		.padStart(2, '0')}{' '}
+																	{startTime.getHours() >= 12 ? 'PM' : 'AM'}
+																</span>
 															</div>
-															<div>{game.turns} Turns</div>
+															<div id={css.turns} className={css.hideOnMobile}>
+																{game.length.minutes}m{game.length.seconds}.
+																{Math.floor(game.length.milliseconds / 10)}s |{' '}
+																{game.turns} Turns
+															</div>
+															<div
+																id={css.turns}
+																className={classNames(
+																	css.showOnMobile,
+																	css.timeAndturns,
+																)}
+															>
+																<div>
+																	{game.length.minutes}m{game.length.seconds}.
+																	{Math.floor(game.length.milliseconds / 10)}s
+																</div>
+																<div>{game.turns} Turns</div>
+															</div>
 														</div>
 													</div>
-												</div>
-											)
-										})}
+												)
+											})}
+										</div>
 									</div>
 								</div>
 							</div>
@@ -1077,7 +1186,7 @@ function Statistics({setMenuSection}: Props) {
 										{showDropdown ? 'Hide' : 'Show'} Parameters
 									</div>
 								</div>
-								<div className={css.tableArea}>
+								<div className={classNames(css.tableArea, css.hof)}>
 									{dataRetrieved && getTable()}
 									{!dataRetrieved && (
 										<div className={css.loadingIndicator}>
