@@ -126,7 +126,7 @@ function* authenticateUser(
 		secret: secret,
 	}
 
-	const auth = yield* call(fetch, 'http://localhost:9000/api/auth/', {
+	const auth = yield* call(fetch, `${window.location.origin}/api/auth/`, {
 		headers,
 	})
 
@@ -150,7 +150,7 @@ function* createUser(username: string): Generator<any, User> {
 		username: username,
 	}
 
-	const userInfo = yield* call(fetch, 'http://localhost:9000/api/createUser/', {
+	const userInfo = yield* call(fetch, `${window.location.origin}/api/createUser/`, {
 		method: 'POST',
 		headers,
 	})
