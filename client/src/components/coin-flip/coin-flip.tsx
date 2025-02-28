@@ -18,8 +18,8 @@ const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
 
 	const coins = tosses.map((face, index) => {
 		const coinPics = [
-			<img src={'/images/cosmetics/coin/tails.png'} />,
 			<img src={`/images/cosmetics/coin/${COSMETICS[headImage].id}.png`} />,
+			<img src={'/images/cosmetics/coin/tails.png'} />,
 		]
 
 		const flipOffset =
