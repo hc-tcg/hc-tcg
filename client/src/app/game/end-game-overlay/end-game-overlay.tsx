@@ -331,7 +331,7 @@ const EndGameOverlay = ({
 						}}
 					>
 						Rematch
-						<ReplayTimer displayFakeTime></ReplayTimer>
+						<ReplayTimer displayFakeTime={displayFakeTime}></ReplayTimer>
 					</Button>
 					<Button id={css.board} onClick={onClose}>
 						View Board
