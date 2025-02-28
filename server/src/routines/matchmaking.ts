@@ -50,6 +50,8 @@ import ExBossAI from './virtual/exboss-ai'
 import {GameOutcome} from 'common/types/game-state'
 import serverConfig from 'common/config/server-config'
 import {EarnedAchievement} from 'common/types/achievements'
+import {generateDatabaseCodeWithSeed} from 'common/utils/database-codes'
+import Win from 'common/achievements/wins'
 
 function setupGame(
 	player1: PlayerModel,
@@ -210,13 +212,19 @@ function* gameManager(con: GameController) {
 					achievement,
 					outcome,
 				)
+				console.log(v.player.achievementProgress[achievement.props.numericId].goals)
+				console.log(achievement.goals)
 
 				const originalProgress = achievement.props.getProgress(
 					v.player.achievementProgress[achievement.props.numericId].goals,
 				)
 				const newProgress = achievement.props.getProgress(achievement.goals)
 
+				if (achievement.props.id === Win.id) {
+					console.log(originalProgress, newProgress)
+				}
 				if (originalProgress === newProgress) return
+				console.log('updating progress')
 
 				v.player.updateAchievementProgress(
 					achievement.props.numericId,
@@ -231,8 +239,7 @@ function* gameManager(con: GameController) {
 					}
 
 					if (
-						newProgress !== originalProgress &&
-						newProgress &&
+						newProgress > originalProgress &&
 						newProgress <= level.steps &&
 						(i === 0 || achievement.props.levels[i - 1].steps < newProgress)
 					) {

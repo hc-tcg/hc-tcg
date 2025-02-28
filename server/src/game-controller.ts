@@ -115,11 +115,19 @@ export class GameController {
 
 		if (props.countAchievements) {
 			if (this.player1Defs.model instanceof PlayerModel) {
-				console.log("Adding achievements", this.game.components.get(playerOneEntity)?.playerName, this.player1Defs.model.name)
+				console.log(
+					'Adding achievements',
+					this.game.components.get(playerOneEntity)?.playerName,
+					this.player1Defs.model.name,
+				)
 				this.addAchievements(this.player1Defs.model, playerOneEntity)
 			}
 			if (this.player2Defs.model instanceof PlayerModel) {
-				console.log("Adding achievemnts", this.game.components.get(playerTwoEntity)?.playerName, this.player2Defs.model.name)
+				console.log(
+					'Adding achievemnts',
+					this.game.components.get(playerTwoEntity)?.playerName,
+					this.player2Defs.model.name,
+				)
 				this.addAchievements(this.player2Defs.model, playerTwoEntity)
 			}
 		}
@@ -139,7 +147,11 @@ export class GameController {
 				const achievementComponent = this.game.components.new(
 					AchievementComponent,
 					achievement,
-					player.achievementProgress[achievement.numericId]?.goals,
+					JSON.parse(
+						JSON.stringify(
+							player.achievementProgress[achievement.numericId]?.goals,
+						),
+					),
 					playerEntity,
 				)
 				const achievementObserver = this.game.components.new(
