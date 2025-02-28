@@ -223,7 +223,7 @@ test('Game starts for players and spectators and places players back on game mod
 	await playerOne.getByText('Forfeit', {exact: true}).click()
 
 	for (const player of [playerOne, playerTwo, spectator]) {
-		await player.getByText('Return').click()
+		await player.getByText('Main Menu').click()
 	}
 
 	for (const player of [playerOne, playerTwo, spectator]) {
