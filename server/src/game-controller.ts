@@ -106,12 +106,29 @@ export class GameController {
 		this.player1Defs = player1
 		this.player2Defs = player2
 
+		let playerOneEntity = this.game.arePlayersSwapped
+			? this.game.currentPlayerEntity
+			: this.game.opponentPlayerEntity
+		let playerTwoEntity = this.game.arePlayersSwapped
+			? this.game.opponentPlayerEntity
+			: this.game.currentPlayerEntity
+
 		if (props.countAchievements) {
-			if (this.player1Defs instanceof PlayerModel) {
-				this.addAchievements(this.player1Defs, this.game.currentPlayerEntity)
+			if (this.player1Defs.model instanceof PlayerModel) {
+				console.log(
+					'Adding achievements',
+					this.game.components.get(playerOneEntity)?.playerName,
+					this.player1Defs.model.name,
+				)
+				this.addAchievements(this.player1Defs.model, playerOneEntity)
 			}
-			if (this.player2Defs instanceof PlayerModel) {
-				this.addAchievements(this.player2Defs, this.game.opponentPlayerEntity)
+			if (this.player2Defs.model instanceof PlayerModel) {
+				console.log(
+					'Adding achievemnts',
+					this.game.components.get(playerTwoEntity)?.playerName,
+					this.player2Defs.model.name,
+				)
+				this.addAchievements(this.player2Defs.model, playerTwoEntity)
 			}
 		}
 	}
@@ -122,13 +139,19 @@ export class GameController {
 				if (!player.achievementProgress[achievement.numericId]) {
 					player.achievementProgress[achievement.numericId] = {
 						goals: {},
-						levels: [],
+						levels: Array(achievement.levels.length)
+							.fill(0)
+							.flatMap(() => [{}]),
 					}
 				}
 				const achievementComponent = this.game.components.new(
 					AchievementComponent,
 					achievement,
-					player.achievementProgress[achievement.numericId]?.goals,
+					JSON.parse(
+						JSON.stringify(
+							player.achievementProgress[achievement.numericId]?.goals,
+						),
+					),
 					playerEntity,
 				)
 				const achievementObserver = this.game.components.new(

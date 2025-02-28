@@ -1,12 +1,16 @@
 import cn from 'classnames'
+import serverConfig from 'common/config/server-config'
 import {PlayerEntity} from 'common/entities'
+import {EarnedAchievement} from 'common/types/achievements'
 import {GameOutcome, GameVictoryReason} from 'common/types/game-state'
 import Button from 'components/button'
 import {Modal} from 'components/modal'
+import {useEffect, useReducer, useRef, useState} from 'react'
 import css from './end-game-overlay.module.scss'
 
 type Props = {
 	outcome: GameOutcome
+	earnedAchievements: Array<EarnedAchievement>
 	viewer:
 		| {
 				type: 'player'
@@ -18,15 +22,169 @@ type Props = {
 	onClose?: () => void
 	nameOfWinner: string | null
 	nameOfLoser: string | null
+	setMenuSection?: (section: string) => void
+	dispatchGameClose?: () => void
+}
+
+type SmallAchievementProps = {
+	achievement: EarnedAchievement
+	index: number
+	amount: number
+}
+
+const SmallAchievement = ({
+	achievement,
+	index,
+	amount,
+}: SmallAchievementProps) => {
+	const levelInfo = achievement.level
+	const fillRef = useRef<HTMLDivElement>(null)
+	const barRef = useRef<HTMLDivElement>(null)
+	const [, reload] = useReducer((x) => x + 1, 0)
+	const [init, setInit] = useState<boolean>(false)
+	const [offset, setOffset] = useState<number>(index)
+
+	const gap = 1
+
+	const setPosition = () => {
+		if (!fillRef.current || !barRef.current) return
+
+		setInit(true)
+
+		if (amount !== 1) {
+			setOffset(offset <= 0 ? amount - 1 : offset - 1)
+
+			barRef.current?.animate(
+				{
+					left: [
+						`${12.5 + offset * (75 + gap)}%`,
+						`${12.5 + offset * (75 + gap)}%`,
+						`${12.5 + (offset - 1) * (75 + gap)}%`,
+						`${12.5 + (offset - 1) * (75 + gap)}%`,
+					],
+					offset: [0.0, 0.8, 0.99, 1.0],
+				},
+				{
+					duration: 5000,
+					easing: 'ease-in-out',
+					fill: 'forwards',
+				},
+			)
+		}
+
+		if (offset !== 0) return
+
+		const fillAnimation: Record<any, Array<any>> = {
+			width: [
+				`${100 * (achievement.originalProgress / achievement.level.steps)}%`,
+				`${100 * (achievement.newProgress / achievement.level.steps)}%`,
+				`${100 * (achievement.newProgress / achievement.level.steps)}%`,
+				`${amount === 1 ? 100 * (achievement.newProgress / achievement.level.steps) : 100 * (achievement.originalProgress / achievement.level.steps)}%`,
+			],
+			offset: [0.0, 0.5, 0.99, 1.0],
+		}
+
+		if (amount === 1 && init) return
+
+		if (achievement.newProgress === achievement.level.steps) {
+			fillAnimation.backgroundColor = [
+				'rgb(86, 184, 208)',
+				'rgb(121, 208, 86)',
+				'rgb(121, 208, 86)',
+				'rgb(86, 184, 208)',
+			]
+		}
+
+		fillRef.current?.animate(fillAnimation, {
+			duration: 5000,
+			easing: 'ease-in-out',
+			fill: 'forwards',
+		})
+	}
+
+	useEffect(() => {
+		const timeout = setInterval(() => {
+			setPosition()
+		}, 5000)
+
+		return () => {
+			clearInterval(timeout)
+		}
+	})
+
+	if (!init && fillRef && barRef) {
+		setPosition()
+	} else if (!init) {
+		reload()
+	}
+
+	return (
+		<div
+			className={css.smallAchievementBox}
+			style={{left: `${12.5 + index * (75 + gap)}%`}}
+			ref={barRef}
+		>
+			<div className={css.nameAndProgress}>
+				<div>{levelInfo.name}</div>
+				<div>
+					{achievement.newProgress}/{levelInfo.steps}
+				</div>
+			</div>
+			<div className={css.achievementDescription}>{levelInfo.description}</div>
+			<div className={css.progressBar}>
+				<div
+					className={css.full}
+					ref={fillRef}
+					style={{
+						width: `${100 * (achievement.originalProgress / achievement.level.steps)}%`,
+					}}
+				></div>
+			</div>
+		</div>
+	)
+}
+
+const ReplayTimer = ({}: {}) => {
+	const [replayTimeRemaining, setReplayTimeRemaining] = useState<number>(
+		serverConfig.limits.rematchTime / 1000 - 1,
+	)
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			setReplayTimeRemaining(replayTimeRemaining - 1)
+		}, 1000)
+		return () => {
+			clearTimeout(timeout)
+		}
+	})
+
+	return (
+		<div className={css.rematchTimeRemaining}>
+			{replayTimeRemaining > 0 && `${replayTimeRemaining}s`}
+		</div>
+	)
 }
 
 const EndGameOverlay = ({
 	outcome,
+	earnedAchievements,
 	viewer,
 	onClose,
 	nameOfWinner,
 	nameOfLoser,
+	setMenuSection,
+	dispatchGameClose,
 }: Props) => {
+	const [disableReplay, setDisableReplay] = useState<boolean>(false)
+
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			setDisableReplay(true)
+		}, serverConfig.limits.rematchTime)
+		return () => {
+			clearTimeout(timeout)
+		}
+	})
+
 	let animation
 
 	let myOutcome: 'tie' | 'win' | 'loss' | 'crash' | 'timeout' | 'no-viewers' =
@@ -102,7 +260,7 @@ const EndGameOverlay = ({
 					[css.win]: myOutcome === 'win',
 				})}
 			>
-				{outcome.type === 'player-won' && (
+				{outcome.type === 'player-won' ? (
 					<span>
 						{viewer.type === 'spectator' &&
 							nameOfLoser + ' ' + NAME_REASON_MSG[outcome.victoryReason]}
@@ -111,9 +269,23 @@ const EndGameOverlay = ({
 								? nameOfLoser + ' ' + NAME_REASON_MSG[outcome.victoryReason]
 								: 'You ' + YOU_REASON_MSG[outcome.victoryReason])}
 					</span>
+				) : (
+					<span>{OUTCOME_MSG[myOutcome]}</span>
 				)}
-
-				{OUTCOME_MSG[myOutcome]}
+				<div className={css.achievementsOverview}>
+					{earnedAchievements.length > 0 ? (
+						earnedAchievements.map((a, i) => (
+							<SmallAchievement
+								achievement={a}
+								key={i}
+								index={i}
+								amount={earnedAchievements.length}
+							></SmallAchievement>
+						))
+					) : (
+						<div className={css.noAchievements}>You Earned No Achivements</div>
+					)}
+				</div>
 				{outcome.type === 'game-crash' && (
 					<Button
 						onClick={() => {
@@ -124,7 +296,40 @@ const EndGameOverlay = ({
 					</Button>
 				)}
 
-				<Button onClick={onClose}>Return to Main Menu</Button>
+				<div className={css.endOptions}>
+					<Button
+						id={css.mainMenu}
+						onClick={() => {
+							setMenuSection && setMenuSection('main-menu')
+							dispatchGameClose && dispatchGameClose()
+						}}
+					>
+						Main Menu
+					</Button>
+					<Button
+						id={css.playAgain}
+						onClick={() => {
+							setMenuSection && setMenuSection('play-again')
+							dispatchGameClose && dispatchGameClose()
+						}}
+					>
+						Play again
+					</Button>
+					<Button
+						id={css.rematch}
+						disabled={disableReplay}
+						onClick={() => {
+							setMenuSection && setMenuSection('rematch')
+							dispatchGameClose && dispatchGameClose()
+						}}
+					>
+						Rematch
+						<ReplayTimer></ReplayTimer>
+					</Button>
+					<Button id={css.board} onClick={onClose}>
+						View Board
+					</Button>
+				</div>
 			</Modal.Description>
 		</Modal>
 	)

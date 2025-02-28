@@ -25,6 +25,10 @@
 	flex-direction: column;
 }
 
+.gameFiltersDropdown {
+	display: none;
+}
+
 .hallOfFameTable {
 	background-color: #000;
 	color: var(--text-light);
@@ -149,10 +153,14 @@
 .tableArea {
 	width: 100%;
 	flex-grow: 1;
-	overflow-y: scroll;
 	border: 2px black solid;
 	border-top: 0px;
 	background-color: var(--gray-600);
+	overflow: hidden;
+
+	&.hof {
+		overflow-y: scroll;
+	}
 }
 
 .dropdownButton {
@@ -241,7 +249,6 @@
 	height: 100%;
 	display: flex;
 	flex-direction: column;
-	gap: 1rem;
 	padding: 1rem;
 }
 
@@ -252,6 +259,15 @@
 	background-color: var(--gray-900);
 	color: var(--text-light);
 	border-radius: 10px;
+}
+
+.gameHistoryGames {
+	height: 100%;
+	width: 100%;
+	overflow-y: scroll;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
 }
 
 .playerHead {
@@ -328,9 +344,37 @@
 .gameHistoryHeader {
 	width: min(95%, 800px);
 	align-self: center;
+	display: flex;
+	flex-direction: row;
 	color: var(--text-light);
-	font-size: 1.5rem;
-	font-family: MinecraftBold;
+	gap: 0.5rem;
+	margin-bottom: 1rem;
+
+	.filter {
+		width: 50%;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+
+		.filterHeader {
+			font-size: 1.2rem;
+		}
+
+		input {
+			max-width: 5rem;
+			background: var(--gray-400);
+			border: 2px solid var(--gray-900);
+			color: white;
+			align-self: center;
+			min-height: 2rem;
+			line-height: 2rem;
+			flex-grow: 1;
+			text-overflow: ellipsis;
+			width: 100%;
+			max-width: 100%;
+			height: min-content;
+		}
+	}
 }
 
 .playerName {
@@ -569,6 +613,26 @@
 		}
 	}
 
+	.gameFiltersDropdown {
+		width: 96vw;
+		height: 81vh;
+		position: absolute;
+		top: 18vh;
+		display: flex;
+		flex-direction: column;
+		padding: 1rem;
+		gap: 1rem;
+		color: var(--text-light);
+		background-color: var(--gray-900);
+		z-index: 100;
+
+		&.hideOnMobile {
+			height: 0px;
+			width: 0px;
+			pointer-events: none;
+		}
+	}
+
 	.showOnMobile {
 		display: flex;
 	}
@@ -592,7 +656,6 @@
 	.tableArea {
 		height: 100%;
 		width: 100%;
-		overflow: scroll;
 	}
 
 	.actionColumn {
@@ -608,16 +671,6 @@
 		flex-direction: column;
 	}
 
-	.winAndLoss {
-		height: 100%;
-		align-items: center;
-
-		> div {
-			height: 100%;
-			margin-top: 50%;
-		}
-	}
-
 	.hallOfFameTableGrid {
 		tr > td {
 			width: 20%;
@@ -629,12 +682,11 @@
 	}
 
 	.gameAreaMiddle {
+		scale: 0.9;
 		grid-template-areas:
-			"playerHead winAndLoss winAndLoss opponentHead"
-			"playerHead winAndLoss winAndLoss opponentHead"
-			"playerHead deck deck opponentHead"
-			"me replay replay opponent"
-			"time overview overview turns";
+			"me me me opponent opponent opponent"
+			"deck deck replay replay overview overview"
+			"time time time turns turns turns";
 
 		&.reverseSide {
 			grid-template-areas:
@@ -644,5 +696,13 @@
 				"opponent replay replay me"
 				"time overview overview turns";
 		}
+	}
+
+	.playerHead {
+		display: none;
+	}
+
+	.winAndLoss {
+		display: none;
 	}
 }

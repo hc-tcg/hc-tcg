@@ -2,6 +2,8 @@ import {Appearance, Cosmetic} from 'common/cosmetics/types'
 import {PlayerEntity} from 'common/entities'
 import {PlayerId} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
+import {EarnedAchievement} from 'common/types/achievements'
+import {RematchData} from 'common/types/app'
 import {HermitAttackType} from 'common/types/attack'
 import {Deck, Tag} from 'common/types/deck'
 import {
@@ -65,7 +67,7 @@ export const localMessages = messages('clientLocalMessages', {
 	GAME_ATTACK_START: null,
 	GAME_TURN_ACTION: null,
 	GAME_END_OVERLAY_SHOW: null,
-	GAME_END_OVERLAY_HIDE: null,
+	GAME_CLOSE: null,
 	GAME_COIN_FLIP_SET: null,
 	GAME_OPPONENT_CONNECTION_SET: null,
 	GAME_ACTIONS_HERMIT_CHANGE_CONFIRM: null,
@@ -104,6 +106,11 @@ export const localMessages = messages('clientLocalMessages', {
 	COSMETICS_SET: null,
 	COSMETIC_UPDATE: null,
 	OVERVIEW: null,
+	//Rematches
+	RECIEVE_REMATCH: null,
+	RECIEVE_OPPONENT_REMATCH: null,
+	CANCEL_REMATCH: null,
+	MATCHMAKING_REMATCH: null,
 })
 
 type Messages = [
@@ -199,9 +206,10 @@ type Messages = [
 	{
 		type: typeof localMessages.GAME_END_OVERLAY_SHOW
 		outcome: GameOutcome
+		earnedAchievements: Array<EarnedAchievement>
 	},
 	{
-		type: typeof localMessages.GAME_END_OVERLAY_HIDE
+		type: typeof localMessages.GAME_CLOSE
 	},
 	{
 		type: typeof localMessages.GAME_COIN_FLIP_SET
@@ -278,6 +286,10 @@ type Messages = [
 		appearance: Appearance
 	},
 	{type: typeof localMessages.COSMETIC_UPDATE; cosmetic: Cosmetic},
+	{type: typeof localMessages.RECIEVE_REMATCH; rematch: RematchData | null},
+	{type: typeof localMessages.RECIEVE_OPPONENT_REMATCH},
+	{type: typeof localMessages.CANCEL_REMATCH},
+	{type: typeof localMessages.MATCHMAKING_REMATCH},
 ]
 
 /** A message used locally on the client to update global state */

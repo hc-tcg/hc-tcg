@@ -68,6 +68,14 @@ $expandedHeight: 67vh;
 			scale: 1.05;
 		}
 	}
+
+	&.disabled {
+		filter: grayscale(100%);
+
+		&:hover {
+			scale: 1;
+		}
+	}
 }
 
 .backgroundImage {
@@ -579,6 +587,22 @@ $expandedHeight: 67vh;
 	}
 }
 
+.rematchTimeRemaining {
+	background-color: rgb(217, 119, 147);
+	color: black;
+	transform: translateY(-0.125rem);
+	width: max-content;
+	padding: 5px;
+	margin-top: 0.5rem;
+	margin-left: -3px;
+	margin-bottom: 0.5rem;
+	align-items: baseline;
+	text-align: center;
+	justify-content: center;
+	border-radius: 5px;
+	font-size: 1rem;
+}
+
 @keyframes timedShow {
 	from {
 		opacity: 0%;
@@ -593,6 +617,11 @@ $expandedHeight: 67vh;
 	.buttonContainer {
 		width: $mobileWidth;
 		height: $mobileHeight;
+
+		&.fourButtons {
+			width: $mobileWidth;
+			height: calc($mobileHeight - 4vh);
+		}
 	}
 
 	.backgroundContainer {
@@ -600,6 +629,11 @@ $expandedHeight: 67vh;
 		height: $mobileHeight;
 		top: 0;
 		left: auto;
+
+		&.fourButtons {
+			width: $mobileWidth;
+			height: calc($mobileHeight - 4vh);
+		}
 	}
 
 	@keyframes grow {
@@ -682,5 +716,12 @@ $expandedHeight: 67vh;
 		width: 100%;
 		background-color: var(--gray-900);
 		border: 2px black solid;
+	}
+
+	.rematchTimeRemaining {
+		position: absolute;
+		top: 0px;
+		right: 5.5rem;
+		scale: 0.8;
 	}
 }

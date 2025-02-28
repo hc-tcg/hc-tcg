@@ -45,6 +45,10 @@
 	grid-auto-flow: column;
 	justify-content: center;
 	grid-gap: 3vh;
+
+	.fourButtons {
+		grid-gap: 2vh;
+	}
 }
 
 .top {
@@ -109,6 +113,11 @@
 @media screen and (max-width: 720px) {
 	.gameTypesButtons {
 		grid-auto-flow: row;
+		grid-gap: 1.5vh;
+
+		.fourButtons {
+			grid-gap: 1.5vh;
+		}
 	}
 
 	.header {

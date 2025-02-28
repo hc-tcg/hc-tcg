@@ -48,13 +48,11 @@ const matchmakingReducer = (
 				gameCode: action.gameCode,
 				spectatorCode: action.spectatorCode,
 			}
-		/*
-		case localMessages.MATCHMAKING_BOSS_GAME_CREATE:
+		case localMessages.MATCHMAKING_REMATCH:
 			return {
 				...state,
-				status: 'loading',
+				status: 'joining_queue',
 			}
-		*/
 		case localMessages.DISCONNECT:
 		case localMessages.GAME_END:
 		case localMessages.MATCHMAKING_LEAVE:

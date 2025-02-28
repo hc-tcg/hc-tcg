@@ -1,4 +1,5 @@
 import {BattleLogModel} from 'common/models/battle-log-model'
+import {EarnedAchievement} from 'common/types/achievements'
 import {
 	GameOutcome,
 	LocalCurrentCoinFlip,
@@ -20,6 +21,7 @@ type LocalGameRoot = {
 	} | null
 	endGameOverlay: {
 		outcome: GameOutcome
+		earnedAchievements: Array<EarnedAchievement>
 	} | null
 	chat: Array<Message>
 	battleLog: BattleLogModel | null
@@ -99,6 +101,7 @@ const gameReducer = (
 				...state,
 				endGameOverlay: {
 					outcome: action.outcome,
+					earnedAchievements: action.earnedAchievements,
 				},
 			}
 		case localMessages.CHAT_UPDATE:

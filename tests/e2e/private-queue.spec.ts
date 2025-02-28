@@ -171,7 +171,7 @@ test('Player is removed from private queue when they press "Cancel" (Spectator C
 	).toStrictEqual([])
 })
 
-test('Game starts for players and spectators and places players back on game mode selection screen.', async ({
+test('Game starts for players and spectators and places players back on main menu.', async ({
 	context,
 	page: playerOne,
 }) => {
@@ -223,11 +223,11 @@ test('Game starts for players and spectators and places players back on game mod
 	await playerOne.getByText('Forfeit', {exact: true}).click()
 
 	for (const player of [playerOne, playerTwo, spectator]) {
-		await player.getByText('Return').click()
+		await player.getByText('Main Menu').click()
 	}
 
 	for (const player of [playerOne, playerTwo, spectator]) {
 		// Verify the player is on the game select menu.
-		await player.getByText('Select a game mode:').waitFor()
+		await player.getByRole('button', {name: 'Play'}).waitFor()
 	}
 })

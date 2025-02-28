@@ -34,7 +34,7 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 	{
 		id: 'card_slinger',
 		name: 'Card Slinger',
-		requires: {achievement: Win.id, level: 1},
+		requires: {achievement: Win.id, level: 0},
 	},
 	{
 		id: 'certified-zombie',
@@ -60,11 +60,6 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		id: 'naked_and_scared',
 		name: 'Naked and Scared',
 		requires: {achievement: NakedAndScared.id},
-	},
-	{
-		id: 'victor',
-		name: 'Victor',
-		requires: {achievement: Win.id, level: 0},
 	},
 	{
 		id: 'ore_snatcher',
