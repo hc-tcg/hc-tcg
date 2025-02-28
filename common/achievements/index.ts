@@ -12,6 +12,7 @@ import HowDidWeGetHere from './how-did-we-get-here'
 import HurtinHermits from './hurtin-hermits'
 import Inneffective from './inneffective'
 import AllCards from './jack-of-all-cards'
+import LoyaltyIII from './loyalty-iii'
 import NakedAndScared from './naked-and-scared'
 import NoDerpcoins from './no-derpcoins'
 import OreSnatcher from './ore-snatcher'
@@ -66,6 +67,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	SUStainable,
 	Inneffective,
 	TargetedLightning,
+	LoyaltyIII,
 	Win,
 	BalancedWins,
 	BuilderWins,
