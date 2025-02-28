@@ -266,7 +266,6 @@ const EndGameOverlay = ({
 				) : (
 					<span>{OUTCOME_MSG[myOutcome]}</span>
 				)}
-				<span>You earned {earnedAchievements.length} achievements.</span>
 				<div className={css.achievementsOverview}>
 					{earnedAchievements.length > 0 ? (
 						earnedAchievements.map((a, i) => (
