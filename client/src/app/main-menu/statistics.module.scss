@@ -25,6 +25,10 @@
 	flex-direction: column;
 }
 
+.gameFiltersDropdown {
+	display: none;
+}
+
 .hallOfFameTable {
 	background-color: #000;
 	color: var(--text-light);
@@ -609,6 +613,26 @@
 		}
 	}
 
+	.gameFiltersDropdown {
+		width: 96vw;
+		height: 81vh;
+		position: absolute;
+		top: 18vh;
+		display: flex;
+		flex-direction: column;
+		padding: 1rem;
+		gap: 1rem;
+		color: var(--text-light);
+		background-color: var(--gray-900);
+		z-index: 100;
+
+		&.hideOnMobile {
+			height: 0px;
+			width: 0px;
+			pointer-events: none;
+		}
+	}
+
 	.showOnMobile {
 		display: flex;
 	}
@@ -647,16 +671,6 @@
 		flex-direction: column;
 	}
 
-	.winAndLoss {
-		height: 100%;
-		align-items: center;
-
-		> div {
-			height: 100%;
-			margin-top: 50%;
-		}
-	}
-
 	.hallOfFameTableGrid {
 		tr > td {
 			width: 20%;
@@ -668,12 +682,11 @@
 	}
 
 	.gameAreaMiddle {
+		scale: 0.9;
 		grid-template-areas:
-			"playerHead winAndLoss winAndLoss opponentHead"
-			"playerHead winAndLoss winAndLoss opponentHead"
-			"playerHead deck deck opponentHead"
-			"me replay replay opponent"
-			"time overview overview turns";
+			"me me me opponent opponent opponent"
+			"deck deck replay replay overview overview"
+			"time time time turns turns turns";
 
 		&.reverseSide {
 			grid-template-areas:
@@ -683,5 +696,13 @@
 				"opponent replay replay me"
 				"time overview overview turns";
 		}
+	}
+
+	.playerHead {
+		display: none;
+	}
+
+	.winAndLoss {
+		display: none;
 	}
 }

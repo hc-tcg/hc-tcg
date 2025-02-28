@@ -263,6 +263,7 @@ function Statistics({setMenuSection}: Props) {
 	const [endpointBefore, setEndpointBefore] = useState<number | null>(null)
 	const [endpointAfter, setEndpointAfter] = useState<number | null>(null)
 	const [showDropdown, setShowDropdown] = useState<boolean>(false)
+	const [showGameFilters, setShowGameFilters] = useState<boolean>(false)
 
 	const [cardOrderBy, setCardOrderBy] =
 		useState<keyof typeof cardOrderByOptions>('winrate')
@@ -956,9 +957,75 @@ function Statistics({setMenuSection}: Props) {
 						{tab === 'My Games' && (
 							<div className={css.fullLeftArea}>
 								<Tabs selected={tab} setSelected={setTab} tabs={tabs} />
+								<div className={css.optionsButtonArea}>
+									<div
+										className={css.showOptionsButton}
+										onClick={() => setShowGameFilters(!showGameFilters)}
+									>
+										{showGameFilters ? 'Hide' : 'Show'} Filters
+									</div>
+								</div>
+								<div
+									className={classNames(
+										css.gameFiltersDropdown,
+										!showGameFilters && css.hideOnMobile,
+									)}
+								>
+									<div className={css.filter}>
+										<div className={css.filterHeader}>Filter by Deck</div>
+										<FilterComponent
+											tagFilter={tagFilter}
+											tagFilterAction={(option: string) => {
+												const parsedOption = JSON.parse(option) as Tag
+
+												if (option.includes('No Tag')) {
+													setFilteredGames(
+														filterGames(gameHistory, {tag: null}),
+													)
+													setTagFilter(null)
+												} else {
+													setFilteredGames(
+														filterGames(gameHistory, {
+															tag: parsedOption.key,
+														}),
+													)
+													setTagFilter(parsedOption)
+												}
+											}}
+											typeFilter={typeFilter}
+											typeFilterAction={(option: string) => {
+												setFilteredGames(
+													filterGames(gameHistory, {type: option}),
+												)
+												setTypeFilter(option)
+											}}
+											nameFilterAction={(name: string) => {
+												setFilteredGames(filterGames(gameHistory, {name}))
+												setNameFilter(name)
+											}}
+											dropdownDirection={'down'}
+										></FilterComponent>
+									</div>
+									<div className={css.filter}>
+										<div className={css.filterHeader}>
+											Filter by Opponent Name
+										</div>
+										<input
+											placeholder={'Search...'}
+											onChange={(e) => {
+												opponentNameFilterAction(e.target.value)
+											}}
+										></input>
+									</div>
+								</div>
 								<div className={css.tableArea}>
 									<div className={css.gameHistory}>
-										<div className={css.gameHistoryHeader}>
+										<div
+											className={classNames(
+												css.gameHistoryHeader,
+												css.hideOnMobile,
+											)}
+										>
 											<div className={css.filter}>
 												<div className={css.filterHeader}>Filter by Deck</div>
 												<FilterComponent
@@ -1144,7 +1211,7 @@ function Statistics({setMenuSection}: Props) {
 															<div id={css.turns} className={css.hideOnMobile}>
 																{game.length.minutes}m{game.length.seconds}.
 																{Math.floor(game.length.milliseconds / 10)}s |{' '}
-																{game.turns} Turns
+																{game.turns} Turn{game.turns !== 1 && 's'}
 															</div>
 															<div
 																id={css.turns}
@@ -1157,7 +1224,9 @@ function Statistics({setMenuSection}: Props) {
 																	{game.length.minutes}m{game.length.seconds}.
 																	{Math.floor(game.length.milliseconds / 10)}s
 																</div>
-																<div>{game.turns} Turns</div>
+																<div>
+																	{game.turns} Turn{game.turns !== 1 && 's'}
+																</div>
 															</div>
 														</div>
 													</div>
