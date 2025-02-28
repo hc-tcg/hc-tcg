@@ -88,6 +88,7 @@ test('You lost because you disconnected.', async ({mount}) => {
 				type: 'player',
 				entity: playerTwoEntity,
 			}}
+			earnedAchievements={[]}
 		/>,
 	)
 
