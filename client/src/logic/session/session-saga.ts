@@ -150,10 +150,14 @@ function* createUser(username: string): Generator<any, User> {
 		username: username,
 	}
 
-	const userInfo = yield* call(fetch, `${window.location.origin}/api/createUser/`, {
-		method: 'POST',
-		headers,
-	})
+	const userInfo = yield* call(
+		fetch,
+		`${window.location.origin}/api/createUser/`,
+		{
+			method: 'POST',
+			headers,
+		},
+	)
 
 	if (userInfo.status === 500) {
 		const user = getNonDatabaseUser()
