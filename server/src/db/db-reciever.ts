@@ -436,6 +436,7 @@ export function* updateAchievements(player: PlayerModel) {
 		player.achievementProgress,
 	)
 	if (success === 'failure') return false
+
 	return true
 }
 
@@ -513,4 +514,17 @@ export function* getOverview(
 		type: serverMessages.REPLAY_OVERVIEW_RECIEVED,
 		battleLog: replay.body.battleLog,
 	})
+}
+
+export function* getAchievementProgress(uuid: string) {
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
+
+	const achievements = yield* call([root.db, root.db.getAchievements], uuid)
+
+	assert(
+		achievements.type === 'success',
+		'This should not fail when the database is connected.',
+	)
+
+	return achievements.body.achievementData
 }

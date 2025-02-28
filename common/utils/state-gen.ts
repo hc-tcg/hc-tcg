@@ -20,6 +20,7 @@ import {fisherYatesShuffle} from './fisher-yates'
 export type PlayerSetupDefs = {
 	model: PlayerDefs
 	deck: Array<number | string | Card>
+	score: number
 }
 
 type ComponentSetupOptions = {

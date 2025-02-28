@@ -34,7 +34,7 @@ import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {eventChannel} from 'redux-saga'
 import {call, delay, put, race, select, take, takeEvery} from 'typed-redux-saga'
-
+import {BASE_URL} from '../../constants'
 export const NO_SOCKET_ASSERT =
 	'The socket should be be defined as soon as the page is opened.'
 
@@ -127,7 +127,7 @@ function* authenticateUser(
 		secret: secret,
 	}
 
-	const auth = yield* call(fetch, 'http://localhost:9000/api/auth/', {
+	const auth = yield* call(fetch, `${BASE_URL}/api/auth/`, {
 		headers,
 	})
 
@@ -151,7 +151,7 @@ function* createUser(username: string): Generator<any, User> {
 		username: username,
 	}
 
-	const userInfo = yield* call(fetch, 'http://localhost:9000/api/createUser/', {
+	const userInfo = yield* call(fetch, `${BASE_URL}/api/createUser/`, {
 		method: 'POST',
 		headers,
 	})
@@ -223,7 +223,7 @@ export function* setupData(user: User) {
 		type: localMessages.DATABASE_SET,
 		data: {
 			key: 'achievements',
-			value: user.achievements,
+			value: user.achievements.achievementData,
 		},
 	})
 	yield* put<LocalMessage>({
@@ -639,6 +639,11 @@ export function* recieveAfterGameInfo() {
 		const result = yield* race({
 			afterGameInfo: call(receiveMsg(socket, serverMessages.AFTER_GAME_INFO)),
 			invalidReplay: call(receiveMsg(socket, serverMessages.INVALID_REPLAY)),
+			rematchData: call(receiveMsg(socket, serverMessages.SEND_REMATCH)),
+			rematchRequested: call(
+				receiveMsg(socket, serverMessages.REMATCH_REQUESTED),
+			),
+			rematchDenied: call(receiveMsg(socket, serverMessages.REMATCH_DENIED)),
 		})
 		if (result.afterGameInfo) {
 			yield put<LocalMessage>({
@@ -659,7 +664,7 @@ export function* recieveAfterGameInfo() {
 				type: localMessages.DATABASE_SET,
 				data: {
 					key: 'achievements',
-					value: result.afterGameInfo.achievements,
+					value: result.afterGameInfo.achievements.achievementData,
 				},
 			})
 		} else if (result.invalidReplay) {
@@ -669,6 +674,23 @@ export function* recieveAfterGameInfo() {
 					key: 'invalidReplay',
 					value: true,
 				},
+			})
+		} else if (result.rematchData) {
+			yield* put<LocalMessage>({
+				type: localMessages.RECIEVE_REMATCH,
+				rematch: result.rematchData.rematch,
+			})
+		} else if (result.rematchRequested) {
+			yield put<LocalMessage>({
+				type: localMessages.TOAST_OPEN,
+				open: true,
+				title: 'Rematch Requested',
+				description: `Your last opponent, ${result.rematchRequested.opponentName}, requested a rematch.`,
+			})
+		} else if (result.rematchDenied) {
+			yield* put<LocalMessage>({
+				type: localMessages.RECIEVE_REMATCH,
+				rematch: null,
 			})
 		}
 	}

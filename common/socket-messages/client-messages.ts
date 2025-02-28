@@ -16,6 +16,7 @@ export const clientMessages = messages('clientMessages', {
 	CREATE_PRIVATE_GAME: null,
 	CANCEL_PRIVATE_GAME: null,
 	CREATE_BOSS_GAME: null,
+	CREATE_REMATCH_GAME: null,
 	CREATE_REPLAY_GAME: null,
 	REPLAY_OVERVIEW: null,
 	TURN_ACTION: null,
@@ -95,6 +96,22 @@ export type ClientMessages = [
 		type: typeof clientMessages.CREATE_REPLAY_GAME
 		id: number
 		uuid: string
+	},
+	{
+		type: typeof clientMessages.CREATE_REMATCH_GAME
+		databaseConnected: true
+		activeDeckCode: string
+		opponentId: string
+		score: number
+		spectatorCode: string | null
+	},
+	{
+		type: typeof clientMessages.CREATE_REMATCH_GAME
+		databaseConnected: false
+		activeDeck: Deck
+		opponentId: string
+		score: number
+		spectatorCode: string | null
 	},
 	{
 		type: typeof clientMessages.TURN_ACTION

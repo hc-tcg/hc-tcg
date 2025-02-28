@@ -55,3 +55,7 @@ export const getUpdates = (state: RootState) => {
 export const getIsNewPlayer = (state: RootState) => {
 	return getSession(state).newPlayer
 }
+
+export const getRematchData = (state: RootState) => {
+	return getSession(state).rematch
+}

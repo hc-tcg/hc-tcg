@@ -68,7 +68,7 @@ $grid-size: 25px;
 			"effect effect hermit hermit hermit hermit hermit hermit health health health item3 item3";
 	}
 
-	&:hover {
+	&.reacts:hover {
 		filter: brightness(110%);
 	}
 }
@@ -150,7 +150,7 @@ $grid-size: 25px;
 		padding: 5%;
 	}
 
-	&:hover {
+	&.reacts:hover {
 		.frame {
 			box-shadow: 0 0 5px #333;
 		}
@@ -158,6 +158,10 @@ $grid-size: 25px;
 		&.attach .frame {
 			box-shadow: 0 0 3px #ddd;
 		}
+	}
+
+	div {
+		pointer-events: none;
 	}
 }
 

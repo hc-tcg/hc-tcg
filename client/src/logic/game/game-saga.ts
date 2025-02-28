@@ -239,7 +239,11 @@ function* gameSaga(initialGameState?: LocalGameState) {
 		if (result.game) {
 			throw new Error('Unexpected game ending')
 		} else if (result.gameEnd) {
-			const {gameState: newGameState, outcome} = result.gameEnd
+			const {
+				gameState: newGameState,
+				outcome,
+				earnedAchievements,
+			} = result.gameEnd
 			if (newGameState) {
 				yield call(coinFlipSaga, newGameState)
 				yield putResolve<LocalMessage>({
@@ -251,6 +255,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 			yield put<LocalMessage>({
 				type: localMessages.GAME_END_OVERLAY_SHOW,
 				outcome,
+				earnedAchievements,
 			})
 		}
 	} catch (err) {
@@ -258,10 +263,11 @@ function* gameSaga(initialGameState?: LocalGameState) {
 		yield put<LocalMessage>({
 			type: localMessages.GAME_END_OVERLAY_SHOW,
 			outcome: {type: 'game-crash', error: `${(err as Error).stack}`},
+			earnedAchievements: [],
 		})
 	} finally {
 		const hasOverlay = yield* select(getEndGameOverlay)
-		if (hasOverlay) yield take(localMessages.GAME_END_OVERLAY_HIDE)
+		if (hasOverlay) yield take(localMessages.GAME_CLOSE)
 		console.log('Game ended')
 		yield put<LocalMessage>({type: localMessages.GAME_END})
 		yield cancel(backgroundTasks)
