@@ -34,6 +34,7 @@ import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {eventChannel} from 'redux-saga'
 import {call, delay, put, race, select, take, takeEvery} from 'typed-redux-saga'
+import {BASE_URL} from '../../constants'
 export const NO_SOCKET_ASSERT =
 	'The socket should be be defined as soon as the page is opened.'
 
@@ -126,7 +127,7 @@ function* authenticateUser(
 		secret: secret,
 	}
 
-	const auth = yield* call(fetch, `${window.location.origin}/api/auth/`, {
+	const auth = yield* call(fetch, `${BASE_URL}/api/auth/`, {
 		headers,
 	})
 
@@ -150,14 +151,10 @@ function* createUser(username: string): Generator<any, User> {
 		username: username,
 	}
 
-	const userInfo = yield* call(
-		fetch,
-		`${window.location.origin}/api/createUser/`,
-		{
-			method: 'POST',
-			headers,
-		},
-	)
+	const userInfo = yield* call(fetch, `${BASE_URL}/api/createUser/`, {
+		method: 'POST',
+		headers,
+	})
 
 	if (userInfo.status === 500) {
 		const user = getNonDatabaseUser()

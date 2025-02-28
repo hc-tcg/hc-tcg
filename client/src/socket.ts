@@ -1,13 +1,9 @@
 import {SocketType} from 'logic/socket/socket-reducer'
 import io from 'socket.io-client'
-
-const url =
-	__ENV__ === 'development'
-		? `${window.location.protocol}//${window.location.hostname}:${__PORT__}`
-		: window.location.protocol + '//' + window.location.host
+import {BASE_URL} from './constants'
 
 export function newSocket(): SocketType {
-	const socket = io(url, {autoConnect: false})
+	const socket = io(BASE_URL, {autoConnect: false})
 
 	socket.on('error', (error) => {
 		console.log('Socket error: ', error)
