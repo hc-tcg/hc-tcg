@@ -25,6 +25,7 @@ import {getSession} from 'logic/session/session-selectors'
 import {useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './achievements.module.scss'
+import {Achievement} from 'common/achievements/types'
 
 type Pages = 'achievements' | 'rewards'
 
@@ -85,7 +86,10 @@ export function CosmeticPreview() {
 	)
 }
 
-const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
+const CosmeticItem = ({
+	cosmetic,
+	achievement,
+}: {cosmetic: Cosmetic; achievement: Achievement | null}) => {
 	const dispatch = useDispatch()
 	const achievementProgress = useSelector(getAchievements)
 	const appearance = useSelector(getAppearance)
@@ -102,10 +106,6 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 	let isUnlocked = true
 
 	let isSelected = cosmetics.find((c) => c.id === cosmetic.id)
-
-	const achievement = cosmetic.requires
-		? ACHIEVEMENTS[cosmetic.requires.achievement]
-		: null
 
 	if (cosmetic.requires && achievement && !debugConfig.unlockAllCosmetics) {
 		isUnlocked =
@@ -186,6 +186,25 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 		</div>
 	)
 
+	return (
+		<div className={css.cosmeticBox}>
+			{item}
+			{cosmetic.type !== 'title' && (
+				<div
+					className={classNames(css.cosmeticName, isUnlocked && css.unlocked)}
+				>
+					{cosmetic.name}
+				</div>
+			)}
+		</div>
+	)
+}
+
+const CosmeticTooltipItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
+	const achievement = cosmetic.requires
+		? ACHIEVEMENTS[cosmetic.requires.achievement]
+		: null
+
 	const tooltip = achievement ? (
 		<div className={css.tooltip}>
 			<b>{achievement.levels[cosmetic.requires?.level || 0].name}</b>
@@ -198,20 +217,9 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 	)
 
 	return (
-		<div className={css.cosmeticBox}>
-			{achievement || cosmetic.name.length > 0 ? (
-				<Tooltip tooltip={tooltip}>{item}</Tooltip>
-			) : (
-				item
-			)}
-			{cosmetic.type !== 'title' && (
-				<div
-					className={classNames(css.cosmeticName, isUnlocked && css.unlocked)}
-				>
-					{cosmetic.name}
-				</div>
-			)}
-		</div>
+		<Tooltip tooltip={tooltip}>
+			<CosmeticItem cosmetic={cosmetic} achievement={achievement} />
+		</Tooltip>
 	)
 }
 
@@ -280,31 +288,41 @@ function Cosmetics({setMenuSection, page}: Props) {
 									<div className={css.sectionHeader}>Backgrounds</div>
 									<div className={css.cosmetics}>
 										{sortedCosmetics.background.map((cosmetic) => (
-											<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+											<CosmeticTooltipItem
+												cosmetic={cosmetic}
+											></CosmeticTooltipItem>
 										))}
 									</div>
 									<div className={css.sectionHeader}>Borders</div>
 									<div className={css.cosmetics}>
 										{sortedCosmetics.border.map((cosmetic) => (
-											<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+											<CosmeticTooltipItem
+												cosmetic={cosmetic}
+											></CosmeticTooltipItem>
 										))}
 									</div>
 									<div className={css.sectionHeader}>Coins</div>
 									<div className={css.cosmetics}>
 										{sortedCosmetics.coin.map((cosmetic) => (
-											<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+											<CosmeticTooltipItem
+												cosmetic={cosmetic}
+											></CosmeticTooltipItem>
 										))}
 									</div>
 									<div className={css.sectionHeader}>Hearts</div>
 									<div className={css.cosmetics}>
 										{sortedCosmetics.heart.map((cosmetic) => (
-											<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+											<CosmeticTooltipItem
+												cosmetic={cosmetic}
+											></CosmeticTooltipItem>
 										))}
 									</div>
 									<div className={css.sectionHeader}>Titles</div>
 									<div className={css.cosmetics}>
 										{sortedCosmetics.title.map((cosmetic) => (
-											<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+											<CosmeticTooltipItem
+												cosmetic={cosmetic}
+											></CosmeticTooltipItem>
 										))}
 									</div>
 								</div>
