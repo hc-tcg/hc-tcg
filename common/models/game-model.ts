@@ -206,10 +206,9 @@ export class GameModel {
 			extraStartingCards: settings.extraStartingCards,
 		})
 
-		this.arePlayersSwapped =
-			swapPlayers >= 0.5 && options.randomizeOrder ? true : false
+		this.arePlayersSwapped = options.randomizeOrder ? swapPlayers >= 0.5 : false
 
-		this.state = getGameState(this, !this.arePlayersSwapped)
+		this.state = getGameState(this, this.arePlayersSwapped)
 		this.voiceLineQueue = []
 	}
 
