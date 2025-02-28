@@ -107,11 +107,11 @@ export class GameController {
 		this.player2Defs = player2
 
 		let playerOneEntity = this.game.arePlayersSwapped
-			? this.game.opponentPlayerEntity
-			: this.game.currentPlayerEntity
-		let playerTwoEntity = this.game.arePlayersSwapped
 			? this.game.currentPlayerEntity
 			: this.game.opponentPlayerEntity
+		let playerTwoEntity = this.game.arePlayersSwapped
+			? this.game.opponentPlayerEntity
+			: this.game.currentPlayerEntity
 
 		if (props.countAchievements) {
 			if (this.player1Defs.model instanceof PlayerModel) {
