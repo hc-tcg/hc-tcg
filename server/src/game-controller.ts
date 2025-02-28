@@ -115,9 +115,11 @@ export class GameController {
 
 		if (props.countAchievements) {
 			if (this.player1Defs.model instanceof PlayerModel) {
+				console.log("Adding achievements", this.game.components.get(playerOneEntity)?.playerName, this.player1Defs.model.name)
 				this.addAchievements(this.player1Defs.model, playerOneEntity)
 			}
 			if (this.player2Defs.model instanceof PlayerModel) {
+				console.log("Adding achievemnts", this.game.components.get(playerTwoEntity)?.playerName, this.player2Defs.model.name)
 				this.addAchievements(this.player2Defs.model, playerTwoEntity)
 			}
 		}

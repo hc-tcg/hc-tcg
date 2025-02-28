@@ -29,7 +29,6 @@ export type PlayerDefs = {
 	censoredName: string
 	appearance: Appearance
 	disableDeckingOut?: true
-	achievementProgress?: AchievementProgress
 }
 
 export class PlayerComponent {

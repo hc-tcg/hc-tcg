@@ -209,7 +209,7 @@ export class GameModel {
 		this.arePlayersSwapped =
 			swapPlayers >= 0.5 && options.randomizeOrder ? true : false
 
-		this.state = getGameState(this, this.arePlayersSwapped)
+		this.state = getGameState(this, !this.arePlayersSwapped)
 		this.voiceLineQueue = []
 	}
 

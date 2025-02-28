@@ -198,7 +198,7 @@ function* gameManager(con: GameController) {
 				(_game, achievement) => achievement.player === playerEntity,
 			)
 
-			console.log(v.player.id)
+			console.log(v.player.name)
 
 			console.log(playerEntity)
 			console.log(achievements.length)
