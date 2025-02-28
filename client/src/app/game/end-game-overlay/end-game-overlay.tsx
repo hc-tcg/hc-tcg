@@ -9,7 +9,6 @@ import css from './end-game-overlay.module.scss'
 import {useEffect, useReducer, useRef, useState} from 'react'
 import serverConfig from 'common/config/server-config'
 import {EarnedAchievement} from 'common/types/achievements'
-import {ACHIEVEMENTS} from 'common/achievements'
 
 type Props = {
 	outcome: GameOutcome
@@ -42,14 +41,19 @@ const SmallAchievement = ({
 	const levelInfo = achievement.level
 	const fillRef = useRef<HTMLDivElement>(null)
 	const barRef = useRef<HTMLDivElement>(null)
+	const [, reload] = useReducer((x) => x + 1, 0)
+	const [init, setInit] = useState<boolean>(false)
 	const [offset, setOffset] = useState<number>(index)
 
 	const gap = 1
 
-	useEffect(() => {
-		const timeout = setInterval(() => {
-			if (!fillRef || !barRef) return
-			setOffset(offset < 0 ? amount - 2 : offset - 1)
+	const setPosition = () => {
+		if (!fillRef.current || !barRef.current) return
+
+		setInit(true)
+
+		if (amount !== 1) {
+			setOffset(offset <= 0 ? amount - 1 : offset - 1)
 
 			barRef.current?.animate(
 				{
@@ -59,41 +63,66 @@ const SmallAchievement = ({
 						`${12.5 + (offset - 1) * (75 + gap)}%`,
 						`${12.5 + (offset - 1) * (75 + gap)}%`,
 					],
-					offset: [0.0, 0.5, 0.9, 1.0],
+					offset: [0.0, 0.8, 0.99, 1.0],
 				},
 				{
-					duration: 6000,
+					duration: 5000,
 					easing: 'ease-in-out',
 					fill: 'forwards',
 				},
 			)
+		}
 
-			fillRef.current?.animate(
-				{
-					width: [
-						`${100 * (achievement.originalProgress / achievement.level.steps)}%`,
-						`${100 * (achievement.newProgress / achievement.level.steps)}%`,
-						`${100 * (achievement.newProgress / achievement.level.steps)}%`,
-					],
-					offset: [0.0, 0.5, 1.0],
-				},
-				{
-					duration: 6000,
-					easing: 'ease-in-out',
-					fill: 'forwards',
-				},
-			)
-		}, 6000)
+		if (offset !== 0) return
+
+		const fillAnimation: Record<any, Array<any>> = {
+			width: [
+				`${100 * (achievement.originalProgress / achievement.level.steps)}%`,
+				`${100 * (achievement.newProgress / achievement.level.steps)}%`,
+				`${100 * (achievement.newProgress / achievement.level.steps)}%`,
+				`${amount === 1 ? 100 * (achievement.newProgress / achievement.level.steps) : 100 * (achievement.originalProgress / achievement.level.steps)}%`,
+			],
+			offset: [0.0, 0.5, 0.99, 1.0],
+		}
+
+		if (amount === 1 && init) return
+
+		if (achievement.newProgress === achievement.level.steps) {
+			fillAnimation.backgroundColor = [
+				'rgb(86, 184, 208)',
+				'rgb(121, 208, 86)',
+				'rgb(121, 208, 86)',
+				'rgb(86, 184, 208)',
+			]
+		}
+
+		fillRef.current?.animate(fillAnimation, {
+			duration: 5000,
+			easing: 'ease-in-out',
+			fill: 'forwards',
+		})
+	}
+
+	useEffect(() => {
+		const timeout = setInterval(() => {
+			setPosition()
+		}, 5000)
 
 		return () => {
 			clearInterval(timeout)
 		}
 	})
 
+	if (!init && fillRef && barRef) {
+		setPosition()
+	} else if (!init) {
+		reload()
+	}
+
 	return (
 		<div
 			className={css.smallAchievementBox}
-			style={{left: `calc(${75 + gap}% - 12.5%)`}}
+			style={{left: `${12.5 + index * (75 + gap)}%`}}
 			ref={barRef}
 		>
 			<div className={css.nameAndProgress}>
