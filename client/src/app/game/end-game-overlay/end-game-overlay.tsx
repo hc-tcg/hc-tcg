@@ -30,28 +30,55 @@ type Props = {
 
 type SmallAchievementProps = {
 	achievement: EarnedAchievement
+	index: number
+	amount: number
 }
 
-const SmallAchievement = ({achievement}: SmallAchievementProps) => {
-	const achievementData = ACHIEVEMENTS[achievement.achievementId]
+const SmallAchievement = ({
+	achievement,
+	index,
+	amount,
+}: SmallAchievementProps) => {
 	const levelInfo = achievement.level
 	const fillRef = useRef<HTMLDivElement>(null)
+	const barRef = useRef<HTMLDivElement>(null)
+	const [offset, setOffset] = useState<number>(index)
+
+	const gap = 1
 
 	useEffect(() => {
 		const timeout = setInterval(() => {
-			if (!fillRef) return
-			console.log('timeout')
-			fillRef.current?.animate(
-				[
-					{
-						width: `${100 * (achievement.originalProgress / achievement.level.steps)}%`,
-					},
-					{
-						width: `${100 * (achievement.newProgress / achievement.level.steps)}%`,
-					},
-				],
+			if (!fillRef || !barRef) return
+			setOffset(offset < 0 ? amount - 2 : offset - 1)
+
+			barRef.current?.animate(
 				{
-					duration: 1500,
+					left: [
+						`${12.5 + offset * (75 + gap)}%`,
+						`${12.5 + offset * (75 + gap)}%`,
+						`${12.5 + (offset - 1) * (75 + gap)}%`,
+						`${12.5 + (offset - 1) * (75 + gap)}%`,
+					],
+					offset: [0.0, 0.5, 0.9, 1.0],
+				},
+				{
+					duration: 6000,
+					easing: 'ease-in-out',
+					fill: 'forwards',
+				},
+			)
+
+			fillRef.current?.animate(
+				{
+					width: [
+						`${100 * (achievement.originalProgress / achievement.level.steps)}%`,
+						`${100 * (achievement.newProgress / achievement.level.steps)}%`,
+						`${100 * (achievement.newProgress / achievement.level.steps)}%`,
+					],
+					offset: [0.0, 0.5, 1.0],
+				},
+				{
+					duration: 6000,
 					easing: 'ease-in-out',
 					fill: 'forwards',
 				},
@@ -64,12 +91,26 @@ const SmallAchievement = ({achievement}: SmallAchievementProps) => {
 	})
 
 	return (
-		<div className={css.smallAchievementBox}>
-			<div>
-				{levelInfo.name} ({achievement.newProgress}/{levelInfo.steps})
+		<div
+			className={css.smallAchievementBox}
+			style={{left: `calc(${75 + gap}% - 12.5%)`}}
+			ref={barRef}
+		>
+			<div className={css.nameAndProgress}>
+				<div>{levelInfo.name}</div>
+				<div>
+					{achievement.newProgress}/{levelInfo.steps}
+				</div>
 			</div>
+			<div className={css.achievementDescription}>{levelInfo.description}</div>
 			<div className={css.progressBar}>
-				<div className={css.full} ref={fillRef}></div>
+				<div
+					className={css.full}
+					ref={fillRef}
+					style={{
+						width: `${100 * (achievement.originalProgress / achievement.level.steps)}%`,
+					}}
+				></div>
 			</div>
 		</div>
 	)
@@ -196,10 +237,16 @@ const EndGameOverlay = ({
 				) : (
 					<span>{OUTCOME_MSG[myOutcome]}</span>
 				)}
+				<span>You earned {earnedAchievements.length} achievements.</span>
 				<div className={css.achievementsOverview}>
 					{earnedAchievements.length > 0 ? (
-						earnedAchievements.map((a) => (
-							<SmallAchievement achievement={a}></SmallAchievement>
+						earnedAchievements.map((a, i) => (
+							<SmallAchievement
+								achievement={a}
+								key={i}
+								index={i}
+								amount={earnedAchievements.length}
+							></SmallAchievement>
 						))
 					) : (
 						<div className={css.noAchievements}>You Earned No Achivements</div>

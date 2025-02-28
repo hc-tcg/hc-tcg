@@ -74,10 +74,12 @@
 
 .achievementsOverview {
 	width: 100%;
-	height: 4rem;
+	height: 5rem;
 	background-color: var(--gray-900);
 	border: 2px black solid;
 	border-radius: 5px;
+
+	clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
 
 	.noAchievements {
 		width: 100%;
@@ -104,13 +106,42 @@
 	border-radius: 5px;
 }
 
-.achievementBox {
-	width: calc(100% - 0.5rem);
-	height: calc(100% - 0.5rem);
-	background-color: var(--gray-600);
-	border-radius: 5px;
-	margin: 0.25rem;
+.smallAchievementBox {
+	position: absolute;
+	height: 100%;
+	width: 75%;
+	top: 37%;
+}
+
+.nameAndProgress {
+	display: flex;
+	flex-direction: row;
+	font-size: 1rem;
+
+	:first-child {
+		flex-grow: 1;
+		text-align: left;
+		font-family: Minecrafter;
+		font-weight: normal;
+		padding-left: 2px;
+	}
+
+	:not(:first-child) {
+		text-align: right;
+		color: var(--gray-200);
+		padding-right: 2px;
+	}
+}
+
+.achievementDescription {
+	font-size: 0.8rem;
+	font-weight: normal;
 	text-align: left;
+	padding-left: 2px;
+	overflow: hidden;
+	text-wrap: nowrap;
+	text-overflow: ellipsis;
+	color: var(--gray-200);
 }
 
 .progressBar {
