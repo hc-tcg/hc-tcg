@@ -6,10 +6,10 @@ import {Modal} from 'components/modal'
 import {localMessages} from 'logic/messages'
 import {useDispatch} from 'react-redux'
 import css from './end-game-overlay.module.scss'
-import {useEffect, useState} from 'react'
+import {useEffect, useReducer, useRef, useState} from 'react'
 import serverConfig from 'common/config/server-config'
 import {EarnedAchievement} from 'common/types/achievements'
-import {ACHIEVEMENTS, ACHIEVEMENTS_LIST} from 'common/achievements'
+import {ACHIEVEMENTS} from 'common/achievements'
 
 type Props = {
 	outcome: GameOutcome
@@ -28,6 +28,73 @@ type Props = {
 	setMenuSection: (section: string) => void
 }
 
+type SmallAchievementProps = {
+	achievement: EarnedAchievement
+}
+
+const SmallAchievement = ({achievement}: SmallAchievementProps) => {
+	const achievementData = ACHIEVEMENTS[achievement.achievementId]
+	const levelInfo = achievement.level
+	const fillRef = useRef<HTMLDivElement>(null)
+
+	useEffect(() => {
+		const timeout = setInterval(() => {
+			if (!fillRef) return
+			console.log('timeout')
+			fillRef.current?.animate(
+				[
+					{
+						width: `${100 * (achievement.originalProgress / achievement.level.steps)}%`,
+					},
+					{
+						width: `${100 * (achievement.newProgress / achievement.level.steps)}%`,
+					},
+				],
+				{
+					duration: 1500,
+					easing: 'ease-in-out',
+					fill: 'forwards',
+				},
+			)
+		}, 6000)
+
+		return () => {
+			clearInterval(timeout)
+		}
+	})
+
+	return (
+		<div className={css.smallAchievementBox}>
+			<div>
+				{levelInfo.name} ({achievement.newProgress}/{levelInfo.steps})
+			</div>
+			<div className={css.progressBar}>
+				<div className={css.full} ref={fillRef}></div>
+			</div>
+		</div>
+	)
+}
+
+const ReplayTimer = ({}: {}) => {
+	const [replayTimeRemaining, setReplayTimeRemaining] = useState<number>(
+		serverConfig.limits.rematchTime / 1000 - 1,
+	)
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			setReplayTimeRemaining(replayTimeRemaining - 1)
+		}, 1000)
+		return () => {
+			clearTimeout(timeout)
+		}
+	})
+
+	return (
+		<div className={css.rematchTimeRemaining}>
+			{replayTimeRemaining > 0 && `${replayTimeRemaining}s`}
+		</div>
+	)
+}
+
 const EndGameOverlay = ({
 	outcome,
 	earnedAchievements,
@@ -38,20 +105,22 @@ const EndGameOverlay = ({
 	setMenuSection,
 }: Props) => {
 	const dispatch = useDispatch()
-	const [replayTimeRemaining, setReplayTimeRemaining] = useState<number>(
-		serverConfig.limits.rematchTime / 1000 - 1,
-	)
+
+	const [disableReplay, setDisableReplay] = useState<boolean>(false)
+
+	useEffect(() => {
+		const timeout = setTimeout(() => {
+			setDisableReplay(true)
+		}, serverConfig.limits.rematchTime)
+		return () => {
+			clearTimeout(timeout)
+		}
+	})
 
 	let animation
 
 	let myOutcome: 'tie' | 'win' | 'loss' | 'crash' | 'timeout' | 'no-viewers' =
 		'tie'
-
-	useEffect(() => {
-		setTimeout(() => {
-			setReplayTimeRemaining(replayTimeRemaining - 1)
-		}, 1000)
-	})
 
 	if (outcome.type === 'tie') {
 		myOutcome = 'tie'
@@ -128,7 +197,13 @@ const EndGameOverlay = ({
 					<span>{OUTCOME_MSG[myOutcome]}</span>
 				)}
 				<div className={css.achievementsOverview}>
-					{earnedAchievements.map((a) => a.level.name)}
+					{earnedAchievements.length > 0 ? (
+						earnedAchievements.map((a) => (
+							<SmallAchievement achievement={a}></SmallAchievement>
+						))
+					) : (
+						<div className={css.noAchievements}>You Earned No Achivements</div>
+					)}
 				</div>
 				{outcome.type === 'game-crash' && (
 					<Button
@@ -161,16 +236,14 @@ const EndGameOverlay = ({
 					</Button>
 					<Button
 						id={css.rematch}
-						disabled={replayTimeRemaining <= 0}
+						disabled={disableReplay}
 						onClick={() => {
 							setMenuSection('rematch')
 							dispatch({type: localMessages.GAME_CLOSE})
 						}}
 					>
-						Rematch{' '}
-						<div className={css.rematchTimeRemaining}>
-							{replayTimeRemaining > 0 && `${replayTimeRemaining}s`}
-						</div>
+						Rematch
+						<ReplayTimer></ReplayTimer>
 					</Button>
 					<Button id={css.board} onClick={onClose}>
 						View Board

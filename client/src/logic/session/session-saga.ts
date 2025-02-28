@@ -663,7 +663,7 @@ export function* recieveAfterGameInfo() {
 				type: localMessages.DATABASE_SET,
 				data: {
 					key: 'achievements',
-					value: result.afterGameInfo.achievements,
+					value: result.afterGameInfo.achievements.achievementData,
 				},
 			})
 		} else if (result.invalidReplay) {

@@ -1,8 +1,13 @@
 import {Appearance} from '../cosmetics/types'
 import {Message, MessageTable, messages} from '../redux-messages'
-import {AchievementProgress, EarnedAchievement} from '../types/achievements'
+import {EarnedAchievement} from '../types/achievements'
 import {RematchData} from '../types/app'
-import {GameHistory, PlayerStats, User} from '../types/database'
+import {
+	AchievementData,
+	GameHistory,
+	PlayerStats,
+	User,
+} from '../types/database'
 import {ApiDeck, Deck, Tag} from '../types/deck'
 import {GameOutcome, LocalGameState} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
@@ -123,7 +128,7 @@ export type ServerMessages = [
 		type: typeof serverMessages.AFTER_GAME_INFO
 		stats: PlayerStats
 		gameHistory: Array<GameHistory>
-		achievements: AchievementProgress
+		achievements: AchievementData
 	},
 	{type: typeof serverMessages.CURRENT_IMPORT_RECIEVED; deck: ApiDeck | null},
 	{type: typeof serverMessages.DATABASE_FAILURE; error: string | undefined},

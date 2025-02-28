@@ -188,48 +188,68 @@ function* gameManager(con: GameController) {
 		con.game.hooks.afterGameEnd.call()
 
 		const newAchievements: Record<string, Array<EarnedAchievement>> = {}
-		yield* all(
-			con.viewers.map((v) => {
-				if (v.spectator) return
-				newAchievements[v.player.id] = []
-				const playerEntity = v.playerOnLeftEntity
-				const achievements = con.game.components.filter(
-					AchievementComponent,
-					(_game, achievement) => achievement.player === playerEntity,
-				)
-				achievements.forEach((achievement) => {
-					achievement.props.onGameEnd(
-						con.game,
-						playerEntity,
-						achievement,
-						outcome,
-					)
+		for (let k = 0; k < con.viewers.length; k++) {
+			const v = con.viewers[k]
+			if (v.spectator) continue
+			const playerEntity = v.playerOnLeftEntity
+			newAchievements[playerEntity] = []
+			const achievements = con.game.components.filter(
+				AchievementComponent,
+				(_game, achievement) => achievement.player === playerEntity,
+			)
 
-					for (const [i, level] of achievement.props.levels.entries()) {
-						const complete =
-							achievement.props.getProgress(achievement.goals) >= level.steps
-						const previouslyComplete =
-							!!v.player.achievementProgress[achievement.props.numericId]
-								.levels[i].completionTime
-						if (complete && !previouslyComplete) {
-							v.player.achievementProgress[achievement.props.numericId].levels[
-								i
-							].completionTime = new Date()
-							newAchievements[v.player.id].push({
-								achievementId: achievement.props.numericId,
-								level,
-								originalProgress: 0,
-								newProgress: achievement.props.getProgress(achievement.goals),
-							})
-						}
-							
+			console.log(v.player.id)
+
+			console.log(playerEntity)
+			console.log(achievements.length)
+
+			achievements.forEach((achievement) => {
+				achievement.props.onGameEnd(
+					con.game,
+					playerEntity,
+					achievement,
+					outcome,
+				)
+
+				const originalProgress = achievement.props.getProgress(
+					v.player.achievementProgress[achievement.props.numericId].goals,
+				)
+				const newProgress = achievement.props.getProgress(achievement.goals)
+
+				if (originalProgress === newProgress) return
+
+				v.player.updateAchievementProgress(
+					achievement.props.numericId,
+					achievement.goals,
+				)
+
+				for (const [i, level] of achievement.props.levels.entries()) {
+					if (newProgress >= level.steps) {
+						v.player.achievementProgress[achievement.props.numericId].levels[
+							i
+						] = {completionTime: new Date()}
 					}
-					v.player.achievementProgress[achievement.props.numericId].goals =
-						achievement.goals
-				})
-				return updateAchievements(v.player)
-			}),
-		)
+
+					if (
+						newProgress !== originalProgress &&
+						newProgress &&
+						newProgress <= level.steps &&
+						(i === 0 || achievement.props.levels[i - 1].steps < newProgress)
+					) {
+						newAchievements[playerEntity].push({
+							achievementId: achievement.props.numericId,
+							level,
+							originalProgress: originalProgress || 0,
+							newProgress: newProgress,
+						})
+					}
+				}
+			})
+
+			yield* updateAchievements(v.player)
+		}
+
+		console.log(newAchievements)
 
 		for (const viewer of con.viewers) {
 			const gameState = getLocalGameState(con.game, viewer)
@@ -250,7 +270,9 @@ function* gameManager(con: GameController) {
 				type: serverMessages.GAME_END,
 				gameState,
 				outcome,
-				earnedAchievements: newAchievements[viewer.player.id],
+				earnedAchievements: !viewer.spectator
+					? newAchievements[viewer.playerOnLeftEntity]
+					: [],
 			})
 		}
 
@@ -1000,8 +1022,6 @@ export function* createRematchGame(
 	}
 
 	waitingInfo.joinedScore = score
-
-	console.log('adding game')
 
 	const newGame = setupGame(
 		player,

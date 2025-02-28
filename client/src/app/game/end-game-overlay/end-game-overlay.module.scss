@@ -115,6 +115,20 @@
 
 .progressBar {
 	width: 100%;
+	height: 15px;
+	background-color: var(--gray-600);
+	border-radius: 5px;
+	border: 2px black solid;
+
+	.full {
+		width: 100%;
+		height: 100%;
+		border-radius: 5px;
+		background-image: linear-gradient(90deg, #56b8d0, #82e5fd);
+		box-shadow: inset 2px -2px #18444e;
+		border-right: 1px #d3f2fa solid;
+		animation-fill-mode: forwards;
+	}
 }
 
 @keyframes float {
