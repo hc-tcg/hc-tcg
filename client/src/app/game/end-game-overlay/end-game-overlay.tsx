@@ -24,6 +24,8 @@ type Props = {
 	nameOfLoser: string | null
 	setMenuSection?: (section: string) => void
 	dispatchGameClose?: () => void
+	// Display fake time to ensure consistency in component tests for visuals
+	displayFakeTime?: boolean
 }
 
 type SmallAchievementProps = {
@@ -144,7 +146,11 @@ const SmallAchievement = ({
 	)
 }
 
-const ReplayTimer = ({}: {}) => {
+const ReplayTimer = ({displayFakeTime}: {displayFakeTime: boolean}) => {
+	if (displayFakeTime) {
+		return <div className={css.rematchTimeRemaining}>0</div>
+	}
+
 	const [replayTimeRemaining, setReplayTimeRemaining] = useState<number>(
 		serverConfig.limits.rematchTime / 1000 - 1,
 	)
@@ -173,6 +179,7 @@ const EndGameOverlay = ({
 	nameOfLoser,
 	setMenuSection,
 	dispatchGameClose,
+	displayFakeTime = false,
 }: Props) => {
 	const [disableReplay, setDisableReplay] = useState<boolean>(false)
 
@@ -324,7 +331,7 @@ const EndGameOverlay = ({
 						}}
 					>
 						Rematch
-						<ReplayTimer></ReplayTimer>
+						<ReplayTimer displayFakeTime={displayFakeTime}></ReplayTimer>
 					</Button>
 					<Button id={css.board} onClick={onClose}>
 						View Board
