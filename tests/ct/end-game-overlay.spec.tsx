@@ -65,6 +65,7 @@ test('You won because your opponent disconnected!', async ({mount}) => {
 				type: 'player',
 				entity: entity,
 			}}
+			earnedAchievements={[]}
 		/>,
 	)
 
