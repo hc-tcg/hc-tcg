@@ -16,7 +16,6 @@ import {Deck, Tag} from 'common/types/deck'
 import {PlayerInfo} from 'common/types/server-requests'
 import {toLocalCardInstance} from 'common/utils/cards'
 import {generateDatabaseCode} from 'common/utils/database-codes'
-import {BASE_URL} from '../../constants'
 import {
 	getAchievements,
 	getAppearance,
@@ -35,6 +34,7 @@ import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {eventChannel} from 'redux-saga'
 import {call, delay, put, race, select, take, takeEvery} from 'typed-redux-saga'
+import {BASE_URL} from '../../constants'
 export const NO_SOCKET_ASSERT =
 	'The socket should be be defined as soon as the page is opened.'
 
