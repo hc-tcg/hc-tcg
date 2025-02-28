@@ -200,11 +200,6 @@ function* gameManager(con: GameController) {
 				(_game, achievement) => achievement.player === playerEntity,
 			)
 
-			console.log(v.player.name)
-
-			console.log(playerEntity)
-			console.log(achievements.length)
-
 			achievements.forEach((achievement) => {
 				achievement.props.onGameEnd(
 					con.game,
@@ -212,10 +207,6 @@ function* gameManager(con: GameController) {
 					achievement,
 					outcome,
 				)
-				console.log(v.player.achievementProgress[achievement.props.numericId].goals)
-				console.log(achievement.goals)
-
-				console.log(v.player.id)
 
 				const originalProgress = achievement.props.getProgress(
 					v.player.achievementProgress[achievement.props.numericId].goals,
@@ -226,7 +217,6 @@ function* gameManager(con: GameController) {
 					console.log(originalProgress, newProgress)
 				}
 				if (originalProgress === newProgress) return
-				console.log('updating progress')
 
 				v.player.updateAchievementProgress(
 					achievement.props.numericId,
