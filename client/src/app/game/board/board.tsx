@@ -20,10 +20,12 @@ type Props = {
 		index?: number,
 	) => void
 	localGameState: LocalGameState
+	gameOver: boolean
+	gameEndButton: () => void
 }
 
 // TODO - Use selectors instead of passing gameState
-function Board({onClick, localGameState}: Props) {
+function Board({onClick, localGameState, gameOver, gameEndButton}: Props) {
 	const settings = useSelector(getSettings)
 	const player = useSelector(getPlayerState)
 	const opponent = useSelector(getOpponentState)
@@ -67,6 +69,7 @@ function Board({onClick, localGameState}: Props) {
 							}
 							type={direction}
 							statusEffects={localGameState.statusEffects}
+							gameOver={gameOver}
 						/>
 					)
 				})}
@@ -78,7 +81,7 @@ function Board({onClick, localGameState}: Props) {
 		<div className={css.gameBoard}>
 			<div className={css.playerInfoSection}>
 				<PlayerInfo player={leftPlayer} direction="left" />
-				<Timer />
+				<Timer gameOver={gameOver} />
 				<PlayerInfo player={rightPlayer} direction="right" />
 			</div>
 
@@ -88,6 +91,8 @@ function Board({onClick, localGameState}: Props) {
 					localGameState={localGameState}
 					onClick={(value) => onClick(value, player.entity)}
 					id={css.actions}
+					gameEndButton={gameEndButton}
+					gameOver={gameOver}
 				/>
 				{PlayerBoard(rightPlayer, 'right')}
 			</div>
@@ -96,6 +101,7 @@ function Board({onClick, localGameState}: Props) {
 				localGameState={localGameState}
 				onClick={(value) => onClick(value, player.entity)}
 				id={css.actions}
+				gameOver={gameOver}
 			/>
 		</div>
 	)

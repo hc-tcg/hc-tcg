@@ -119,6 +119,9 @@ export class GameModel {
 
 	/** The objects used in the game. */
 	public components: ComponentTable
+
+	public arePlayersSwapped: boolean
+
 	public hooks: {
 		/** Hook called before the main attack loop, for every attack from any source */
 		beforeAttack: PriorityHook<
@@ -203,10 +206,9 @@ export class GameModel {
 			extraStartingCards: settings.extraStartingCards,
 		})
 
-		this.state = getGameState(
-			this,
-			swapPlayers >= 0.5 && options.randomizeOrder ? true : false,
-		)
+		this.arePlayersSwapped = options.randomizeOrder ? swapPlayers >= 0.5 : false
+
+		this.state = getGameState(this, this.arePlayersSwapped)
 		this.voiceLineQueue = []
 	}
 

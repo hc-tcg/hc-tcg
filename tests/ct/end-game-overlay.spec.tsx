@@ -18,6 +18,7 @@ test('You won by killing all hermits!', async ({mount}) => {
 				type: 'player',
 				entity: entity,
 			}}
+			earnedAchievements={[]}
 		/>,
 	)
 
@@ -41,6 +42,7 @@ test('You lost because your hermits were killed.', async ({mount}) => {
 				type: 'player',
 				entity: playerTwoEntity,
 			}}
+			earnedAchievements={[]}
 		/>,
 	)
 
@@ -62,6 +64,7 @@ test('Viewing as spectator shows victory.', async ({mount}) => {
 			viewer={{
 				type: 'spectator',
 			}}
+			earnedAchievements={[]}
 		/>,
 	)
 
@@ -77,6 +80,7 @@ test('Game crash displays correctly.', async ({mount}) => {
 			viewer={{
 				type: 'spectator',
 			}}
+			earnedAchievements={[]}
 		/>,
 	)
 
@@ -92,6 +96,7 @@ test('Game timeout displays correctly.', async ({mount}) => {
 			viewer={{
 				type: 'spectator',
 			}}
+			earnedAchievements={[]}
 		/>,
 	)
 

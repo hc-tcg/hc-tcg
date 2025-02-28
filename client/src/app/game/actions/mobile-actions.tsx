@@ -21,10 +21,11 @@ import css from './actions.module.scss'
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
 	localGameState: LocalGameState
+	gameOver: boolean
 	id?: string
 }
 
-const MobileActions = ({onClick, localGameState, id}: Props) => {
+const MobileActions = ({onClick, localGameState, gameOver, id}: Props) => {
 	const currentPlayer = useSelector(
 		getPlayerStateByEntity(localGameState.turn.currentPlayerEntity),
 	)
@@ -117,6 +118,7 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 					type={'single_use'}
 					onClick={handleClick}
 					entity={singleUse?.slot}
+					gameOver={gameOver}
 				/>
 			</div>
 		)

@@ -263,12 +263,12 @@ function Cosmetics({setMenuSection, page}: Props) {
 					<div className={css.itemSelector}>
 						{tab === 'achievements' && (
 							<div className={css.achievements}>
-								{ACHIEVEMENTS_LIST.map((achievement) => {
+								{ACHIEVEMENTS_LIST.map((achievement, i) => {
 									return (
 										<AchievementComponent
-											key={achievement.numericId}
+											key={i}
 											achievement={achievement}
-											progressData={progressData[achievement.numericId]}
+											progressData={progressData}
 										/>
 									)
 								})}

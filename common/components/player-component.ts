@@ -4,7 +4,6 @@ import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
 import type {GameModel} from '../models/game-model'
 import {StatusEffect} from '../status-effects/status-effect'
-import {AchievementProgress} from '../types/achievements'
 import type {HermitAttackType} from '../types/attack'
 import type {TypeT} from '../types/cards'
 import type {
@@ -29,7 +28,6 @@ export type PlayerDefs = {
 	censoredName: string
 	appearance: Appearance
 	disableDeckingOut?: true
-	achievementProgress?: AchievementProgress
 }
 
 export class PlayerComponent {
