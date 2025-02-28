@@ -136,6 +136,9 @@ function EndGameOverlayContainer({
 			}
 			onClose={() => setModalVisible(false)}
 			setMenuSection={setMenuSection}
+			dispatchGameClose={() => {
+				dispatch({type: localMessages.GAME_CLOSE})
+			}}
 		/>
 	)
 }
