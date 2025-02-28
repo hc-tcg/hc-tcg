@@ -46,6 +46,10 @@ const SmallAchievement = ({
 	const [init, setInit] = useState<boolean>(false)
 	const [offset, setOffset] = useState<number>(index)
 
+	const onMobile = window.screen.width <= 720
+
+	const ma = onMobile ? 85 : 75
+
 	const gap = 1
 
 	const setPosition = () => {
@@ -59,10 +63,10 @@ const SmallAchievement = ({
 			barRef.current?.animate(
 				{
 					left: [
-						`${12.5 + offset * (75 + gap)}%`,
-						`${12.5 + offset * (75 + gap)}%`,
-						`${12.5 + (offset - 1) * (75 + gap)}%`,
-						`${12.5 + (offset - 1) * (75 + gap)}%`,
+						`${12.5 + offset * (ma + gap)}%`,
+						`${12.5 + offset * (ma + gap)}%`,
+						`${12.5 + (offset - 1) * (ma + gap)}%`,
+						`${12.5 + (offset - 1) * (ma + gap)}%`,
 					],
 					offset: [0.0, 0.8, 0.99, 1.0],
 				},
