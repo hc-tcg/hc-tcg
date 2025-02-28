@@ -19,6 +19,7 @@ test('You won by killing all hermits!', async ({mount}) => {
 				entity: entity,
 			}}
 			earnedAchievements={[]}
+			displayFakeTime={true}
 		/>,
 	)
 
@@ -43,6 +44,7 @@ test('You lost because your hermits were killed.', async ({mount}) => {
 				entity: playerTwoEntity,
 			}}
 			earnedAchievements={[]}
+			displayFakeTime={true}
 		/>,
 	)
 
@@ -66,6 +68,7 @@ test('You won because your opponent disconnected!', async ({mount}) => {
 				entity: entity,
 			}}
 			earnedAchievements={[]}
+			displayFakeTime={true}
 		/>,
 	)
 
@@ -90,6 +93,7 @@ test('You lost because you disconnected.', async ({mount}) => {
 				entity: playerTwoEntity,
 			}}
 			earnedAchievements={[]}
+			displayFakeTime={true}
 		/>,
 	)
 
@@ -112,6 +116,7 @@ test('Viewing as spectator shows victory.', async ({mount}) => {
 				type: 'spectator',
 			}}
 			earnedAchievements={[]}
+			displayFakeTime={true}
 		/>,
 	)
 
@@ -128,6 +133,7 @@ test('Game crash displays correctly.', async ({mount}) => {
 				type: 'spectator',
 			}}
 			earnedAchievements={[]}
+			displayFakeTime={true}
 		/>,
 	)
 
@@ -144,6 +150,7 @@ test('Game timeout displays correctly.', async ({mount}) => {
 				type: 'spectator',
 			}}
 			earnedAchievements={[]}
+			displayFakeTime={true}
 		/>,
 	)
 
