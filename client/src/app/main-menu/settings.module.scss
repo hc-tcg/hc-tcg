@@ -1,0 +1,243 @@
+.bigHallOfFameArea {
+	width: 100vw;
+	height: 100vh;
+	right: 0px;
+	top: 0px;
+	position: absolute;
+	display: flex;
+}
+
+.mainHallOfFameArea {
+	width: 80%;
+	margin-left: 10%;
+	margin-right: 10%;
+	margin-top: 6vh;
+	margin-bottom: 1%;
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+}
+
+.fullLeftArea {
+	width: 90%;
+	overflow-x: hidden;
+	flex-grow: 1;
+	display: flex;
+	flex-direction: row;
+}
+
+.tabContainer {
+    width: 25%;
+}
+
+.settingsArea {
+	width: 100%;
+	border: 2px black solid;
+	border-left: 0px;
+	background-color: var(--gray-600);
+	overflow: hidden;
+    padding: 1vh;
+
+	display: flex;
+    gap: 1vh;
+	flex-direction: column;
+
+    .settingItem {
+        height: 5.5vh;
+        width: 100%;
+        flex-shrink: 1;
+    }
+
+    .twoSettings {
+        display: flex;
+        gap: 2vh;
+        align-items: center;
+        height: 5.5vh;
+
+        .settingItem {
+            width: 50%;
+        }
+    }
+}
+
+.creditsHeader {
+    width: 100%;
+    color: var(--text-light);
+    text-align: center;
+    text-decoration: underline;
+    margin-top: 2vh;
+}
+
+.developerContainer {
+	display: flex;
+    align-items: center;
+	flex-wrap: wrap;
+    gap: 0.5vh;
+}
+
+.showOnMobile {
+	display: none;
+}
+
+// Mobile
+@media (max-width: 720px) {
+	.bigHallOfFameArea {
+		width: 100%;
+		height: 100%;
+		left: 0px;
+		top: 0px;
+		position: absolute;
+		display: flex;
+		overflow: hidden;
+	}
+
+	.mainHallOfFameArea {
+		margin-top: 6vh;
+		margin-left: 2%;
+		margin-right: 2%;
+		margin-bottom: 2%;
+		gap: 0px;
+		height: auto;
+		width: auto;
+		border: 0px;
+		height: 93%;
+		width: 96%;
+		display: flex;
+		flex-direction: column;
+	}
+
+
+	.showOnMobile {
+		display: flex;
+	}
+
+	.hideOnMobile {
+		display: none;
+	}
+
+	.tableArea {
+		height: 100%;
+		width: 100%;
+	}
+
+	.fullLeftArea {
+		width: 100%;
+	}
+}
+
+.settingsPage {
+	width: 100%;
+	height: 100%;
+}
+
+.settingsMenu {
+	max-width: 70vh;
+	margin-inline: auto;
+	padding: 1vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: stretch;
+
+	h2 {
+		font-size: 3vh;
+		color: var(--text-light);
+		margin-bottom: 2vh;
+		margin-top: 2vh;
+		filter: drop-shadow(1px 1px 0 var(--text-dark));
+	}
+}
+
+.settingsButton {
+	height: 5.5vh;
+}
+
+.viewSecretButton {
+	height: 100%;
+	width: 20%;
+}
+
+.settings {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1vh;
+	width: 100%;
+	margin-bottom: 2vh;
+}
+
+.resetModal {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 0.5vh;
+	margin: 0.5vh;
+}
+
+.resetModalDescription {
+	padding: 1vh;
+}
+
+.resetModalButton {
+	width: 50%;
+}
+
+.settingsMultipleRows {
+	display: grid;
+	grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+	grid-template-columns: 1fr 1fr;
+	grid-auto-flow: column;
+	gap: 1vh;
+	width: 100%;
+	margin-bottom: 2vh;
+}
+
+.dbInfo {
+	text-shadow: 0.1vh 0.1vh 0.2vh black, -0.1vh -0.1vh 0.2vh black;
+	background: hsla(0deg, 0%, 0%, 55%);
+	border-radius: 0.5vh;
+	padding: 1vh 2vh;
+	display: flex;
+	flex-direction: row;
+}
+
+.dbItem {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1vh 0;
+	color: var(--text-light);
+	font-size: 2vh;
+	user-select: text;
+
+	&.left {
+		flex-grow: 1;
+	}
+
+	&.right {
+		text-align: right;
+		flex-grow: 1;
+		justify-content: end;
+	}
+}
+
+.copy {
+	display: grid;
+	place-content: center;
+	background: var(--gray-900);
+	color: white;
+	padding: 0.4rem;
+	height: 2rem;
+	min-width: 2rem;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.warning {
+	color: rgb(215, 23, 23);
+	text-align: center;
+	padding: 0.5rem;
+}
+
+.input {
+	width: 50vh;
+}

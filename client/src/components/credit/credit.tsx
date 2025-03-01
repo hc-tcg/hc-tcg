@@ -1,7 +1,7 @@
 import classnames from 'classnames'
 import css from './credit.module.scss'
 
-interface Props {
+export interface CreditProps {
 	name: string
 	social: string
 	handle: string
@@ -9,7 +9,8 @@ interface Props {
 	avatar: string
 }
 
-const Credit = ({name, social, handle, link, avatar}: Props) => {
+const Credit = ({props}: {props: CreditProps}) => {
+	const {name, social, handle, link, avatar} = props
 	const hasLink = link !== undefined
 	const content = (
 		<>
