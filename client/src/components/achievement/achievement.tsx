@@ -3,6 +3,7 @@ import {Achievement} from 'common/achievements/types'
 import {ALL_COSMETICS} from 'common/cosmetics'
 import {AchievementProgress} from 'common/types/achievements'
 import css from './achievement.module.scss'
+import AllCards from 'common/achievements/jack-of-all-cards'
 
 type Props = {
 	achievement: Achievement
@@ -12,12 +13,13 @@ export default function AchievementComponent({
 	achievement,
 	progressData,
 }: Props) {
-	const progress = progressData[achievement.numericId]
-		? Object.values(progressData[achievement.numericId].goals).reduce(
-				(r, x) => r + x,
-				0,
-			)
-		: 0
+	if (achievement.id !== AllCards.id) return null
+
+	const progress =
+		progressData[achievement.numericId] !== undefined
+			? achievement.getProgress(progressData[achievement.numericId])
+			: 0
+	console.log(progressData[achievement.numericId])
 
 	let out = []
 
