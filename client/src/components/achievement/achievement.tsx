@@ -12,12 +12,10 @@ export default function AchievementComponent({
 	achievement,
 	progressData,
 }: Props) {
-	const progress = progressData[achievement.numericId]
-		? Object.values(progressData[achievement.numericId].goals).reduce(
-				(r, x) => r + x,
-				0,
-			)
-		: 0
+	const progress =
+		progressData[achievement.numericId] !== undefined
+			? achievement.getProgress(progressData[achievement.numericId].goals)
+			: 0
 
 	let out = []
 
