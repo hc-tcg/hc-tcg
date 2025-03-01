@@ -730,7 +730,7 @@ during the battle."
 					<i>Click to change</i>
 				</p>
 				<div
-					className={matchmaking ? undefined : css.appearance}
+					className={css.appearance}
 					onClick={() => !matchmaking && setMenuSection('cosmetics')}
 				>
 					<CosmeticPreview />
