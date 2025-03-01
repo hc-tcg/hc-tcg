@@ -281,7 +281,7 @@ function GameModeButton({
 								}}
 							>
 								<div className={css.title}>
-									Rematch {!onMobile && 'your last '} opponent
+									Rematch {!onMobile && 'your last opponent'}
 								</div>
 								<div className={css.rematchTimeRemaining}>
 									{timer}s {!onMobile && 'Remaining'}
@@ -293,6 +293,7 @@ function GameModeButton({
 								className={classNames(
 									css.text,
 									css.rematch,
+									css.cancel,
 									activeMode === mode && css.hide,
 								)}
 								onMouseDown={(ev) => {
@@ -303,7 +304,7 @@ function GameModeButton({
 									onRematchCancel()
 								}}
 							>
-								<div className={css.title}>Cancel Rematch</div>
+								<div className={css.title}>Cancel {!onMobile && 'Rematch'}</div>
 							</div>
 						)}
 					</div>

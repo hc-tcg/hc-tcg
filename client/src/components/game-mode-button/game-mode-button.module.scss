@@ -762,6 +762,7 @@ $expandedHeight: 67vh;
 		&.rematch {
 			top: 65%;
 			height: min-content;
+			height: 2.5rem;
 			line-height: 1rem;
 			margin-top: 0;
 			display: flex;
@@ -772,6 +773,14 @@ $expandedHeight: 67vh;
 			align-items: center;
 			justify-content: center;
 			padding: 0.5rem;
+
+			> div {
+				transform: translateY(-0.125rem);
+			}
+		}
+
+		&.cancel {
+			left: 42%;
 		}
 	}
 
