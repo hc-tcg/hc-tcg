@@ -18,6 +18,7 @@ export const clientMessages = messages('clientMessages', {
 	CREATE_BOSS_GAME: null,
 	CREATE_REMATCH_GAME: null,
 	CREATE_REPLAY_GAME: null,
+	LEAVE_REMATCH_GAME: null,
 	REPLAY_OVERVIEW: null,
 	TURN_ACTION: null,
 	FORFEIT: null,
@@ -102,7 +103,8 @@ export type ClientMessages = [
 		databaseConnected: true
 		activeDeckCode: string
 		opponentId: string
-		score: number
+		playerScore: number
+		opponentScore: number
 		spectatorCode: string | null
 	},
 	{
@@ -110,9 +112,11 @@ export type ClientMessages = [
 		databaseConnected: false
 		activeDeck: Deck
 		opponentId: string
-		score: number
+		playerScore: number
+		opponentScore: number
 		spectatorCode: string | null
 	},
+	{type: typeof clientMessages.LEAVE_REMATCH_GAME},
 	{
 		type: typeof clientMessages.TURN_ACTION
 		playerEntity: PlayerEntity

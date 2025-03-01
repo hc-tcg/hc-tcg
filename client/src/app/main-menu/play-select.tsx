@@ -656,6 +656,8 @@ during the battle."
 								onSelectDeck={onSelectDeck}
 							/>
 						</GameModeButton>
+					</div>
+					<div className={css.rematchWindow}>
 						{activeMode === 'rematch' && (
 							<GameModeButton
 								image={'fiveampearl'}

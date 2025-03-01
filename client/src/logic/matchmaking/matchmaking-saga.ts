@@ -100,7 +100,8 @@ function* sendJoinPrivateQueueMessage(
 function* sendRematchQueueMessage(
 	activeDeckResult: activeDeckSagaT,
 	opponentId: string,
-	score: number,
+	playerScore: number,
+	opponentScore: number,
 	spectatorCode: string | null,
 ) {
 	if (!activeDeckResult) return
@@ -110,7 +111,8 @@ function* sendRematchQueueMessage(
 			databaseConnected: true,
 			activeDeckCode: activeDeckResult.activeDeckCode,
 			opponentId,
-			score,
+			playerScore,
+			opponentScore,
 			spectatorCode,
 		})
 	} else {
@@ -119,7 +121,8 @@ function* sendRematchQueueMessage(
 			databaseConnected: false,
 			activeDeck: activeDeckResult.activeDeck,
 			opponentId,
-			score,
+			playerScore,
+			opponentScore,
 			spectatorCode,
 		})
 	}
@@ -547,50 +550,67 @@ function* createBossGameSaga() {
 
 // Rematches
 function* createRematchSaga() {
-	const socket = yield* select(getSocket)
-	const rematch = yield* select(getRematchData)
-	const activeDeckResult = yield* getActiveDeckSaga()
+	function* matchmaking() {
+		const socket = yield* select(getSocket)
+		const rematch = yield* select(getRematchData)
+		const activeDeckResult = yield* getActiveDeckSaga()
 
-	if (!rematch) return
+		if (!rematch) return
 
-	try {
-		// Send message to server to create the game
-		yield* sendRematchQueueMessage(
-			activeDeckResult,
-			rematch.opponentId,
-			rematch.playerScore,
-			rematch.spectatorCode,
-		)
-		const createRematchResponse = yield* race({
-			success: call(receiveMsg(socket, serverMessages.CREATE_REMATCH_SUCCESS)),
-			failure: call(receiveMsg(socket, serverMessages.CREATE_REMATCH_FAILURE)),
-		})
-
-		if (createRematchResponse.failure) {
-			// Something went wrong, notify and cancel
-			yield* put<LocalMessage>({
-				type: localMessages.TOAST_OPEN,
-				open: true,
-				title: 'Failed to start game!',
-				description: 'Your opponent already declined a rematch.',
+		try {
+			// Send message to server to create the game
+			yield* sendRematchQueueMessage(
+				activeDeckResult,
+				rematch.opponentId,
+				rematch.playerScore,
+				rematch.opponentScore,
+				rematch.spectatorCode,
+			)
+			const createRematchResponse = yield* race({
+				success: call(
+					receiveMsg(socket, serverMessages.CREATE_REMATCH_SUCCESS),
+				),
+				failure: call(
+					receiveMsg(socket, serverMessages.CREATE_REMATCH_FAILURE),
+				),
 			})
-			yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
-			return
-		}
 
-		yield* put<LocalMessage>({
-			type: localMessages.MATCHMAKING_JOIN_QUEUE_SUCCESS,
-		})
+			if (createRematchResponse.failure) {
+				// Something went wrong, notify and cancel
+				yield* put<LocalMessage>({
+					type: localMessages.TOAST_OPEN,
+					open: true,
+					title: 'Failed to start game!',
+					description: 'Your opponent already declined a rematch.',
+				})
+				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
+				return
+			}
 
-		yield call(receiveMsg(socket, serverMessages.GAME_START))
-		yield call(gameSaga)
-	} catch (err) {
-		console.error('Game crashed: ', err)
-	} finally {
-		if (yield* cancelled()) {
-			// Clear state and back to menu
-			yield* put<LocalMessage>({type: localMessages.GAME_END})
+			yield* put<LocalMessage>({
+				type: localMessages.MATCHMAKING_JOIN_QUEUE_SUCCESS,
+			})
+
+			yield call(receiveMsg(socket, serverMessages.GAME_START))
+			yield call(gameSaga)
+		} catch (err) {
+			console.error('Game crashed: ', err)
+		} finally {
+			if (yield* cancelled()) {
+				// Clear state and back to menu
+				yield* put<LocalMessage>({type: localMessages.GAME_END})
+			}
 		}
+	}
+
+	const result = yield* race({
+		leave: take(localMessages.MATCHMAKING_LEAVE), // We pressed the leave button
+		matchmaking: call(matchmaking),
+	})
+
+	if (result.leave) {
+		// Tell the server we left the queue
+		yield* sendMsg({type: clientMessages.LEAVE_REMATCH_GAME})
 	}
 }
 
