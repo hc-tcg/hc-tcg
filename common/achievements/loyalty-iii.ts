@@ -7,7 +7,7 @@ import {Achievement} from './types'
 
 const LoyaltyIII: Achievement = {
 	...achievement,
-	numericId: 26,
+	numericId: 23,
 	id: 'loyalty-iii',
 	levels: [
 		{

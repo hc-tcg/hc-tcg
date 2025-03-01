@@ -8,7 +8,7 @@ import {Achievement} from './types'
 
 const EyeOfTheSpider: Achievement = {
 	...achievement,
-	numericId: 5,
+	numericId: 24,
 	id: 'eye-of-the-spider',
 	levels: [
 		{
