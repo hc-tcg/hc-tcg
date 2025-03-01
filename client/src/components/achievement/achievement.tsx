@@ -13,8 +13,6 @@ export default function AchievementComponent({
 	achievement,
 	progressData,
 }: Props) {
-	if (achievement.id !== AllCards.id) return null
-
 	const progress =
 		progressData[achievement.numericId] !== undefined
 			? achievement.getProgress(progressData[achievement.numericId].goals)
