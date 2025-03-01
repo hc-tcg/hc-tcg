@@ -35,7 +35,6 @@ import {getSocket} from 'logic/socket/socket-selectors'
 import {eventChannel} from 'redux-saga'
 import {call, delay, put, race, select, take, takeEvery} from 'typed-redux-saga'
 import {BASE_URL} from '../../constants'
-import {achievement} from 'common/achievements/defaults'
 export const NO_SOCKET_ASSERT =
 	'The socket should be be defined as soon as the page is opened.'
 

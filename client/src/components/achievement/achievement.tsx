@@ -3,7 +3,6 @@ import {Achievement} from 'common/achievements/types'
 import {ALL_COSMETICS} from 'common/cosmetics'
 import {AchievementProgress} from 'common/types/achievements'
 import css from './achievement.module.scss'
-import AllCards from 'common/achievements/jack-of-all-cards'
 
 type Props = {
 	achievement: Achievement
