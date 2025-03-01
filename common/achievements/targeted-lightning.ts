@@ -1,4 +1,3 @@
-import assert from 'assert'
 import LightningRod from '../cards/attach/lightning-rod'
 import {CardComponent} from '../components'
 import query from '../components/query'

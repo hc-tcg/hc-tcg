@@ -8,7 +8,8 @@ const Inneffective: Achievement = {
 	levels: [
 		{
 			name: 'Inneffective',
-			description: 'Win 10 games without having single use effect cards in your deck.',
+			description:
+				'Win 10 games without having single use effect cards in your deck.',
 			steps: 10,
 		},
 	],
