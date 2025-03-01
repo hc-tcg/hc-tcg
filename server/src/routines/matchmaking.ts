@@ -265,6 +265,7 @@ function* gameManager(con: GameController) {
 				earnedAchievements: !viewer.spectator
 					? newAchievements[viewer.playerOnLeftEntity]
 					: [],
+				gameEndTime: Date.now(),
 			})
 		}
 
@@ -1158,6 +1159,7 @@ export function* createReplayGame(
 			? con.game.outcome
 			: {type: 'game-crash', error: 'The replay game did not save properly.'},
 		earnedAchievements: [],
+		gameEndTime: Date.now(),
 	})
 
 	delete root.games[con.id]

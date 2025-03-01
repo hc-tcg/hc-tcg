@@ -11,6 +11,7 @@ import css from './end-game-overlay.module.scss'
 type Props = {
 	outcome: GameOutcome
 	earnedAchievements: Array<EarnedAchievement>
+	gameEndTime: number
 	viewer:
 		| {
 				type: 'player'
@@ -150,14 +151,20 @@ const SmallAchievement = ({
 	)
 }
 
-const ReplayTimer = ({displayFakeTime}: {displayFakeTime: boolean}) => {
+const ReplayTimer = ({
+	displayFakeTime,
+	timerStart,
+}: {displayFakeTime: boolean; timerStart: number}) => {
 	if (displayFakeTime) {
 		return <div className={css.rematchTimeRemaining}>0</div>
 	}
 
+	const timerLength = serverConfig.limits.rematchTime
+
 	const [replayTimeRemaining, setReplayTimeRemaining] = useState<number>(
-		serverConfig.limits.rematchTime / 1000 - 1,
+		Math.max(Math.floor((timerStart - Date.now() + timerLength) / 1000), 0),
 	)
+
 	useEffect(() => {
 		const timeout = setTimeout(() => {
 			setReplayTimeRemaining(replayTimeRemaining - 1)
@@ -177,6 +184,7 @@ const ReplayTimer = ({displayFakeTime}: {displayFakeTime: boolean}) => {
 const EndGameOverlay = ({
 	outcome,
 	earnedAchievements,
+	gameEndTime,
 	viewer,
 	onClose,
 	nameOfWinner,
@@ -335,7 +343,10 @@ const EndGameOverlay = ({
 						}}
 					>
 						Rematch
-						<ReplayTimer displayFakeTime={displayFakeTime}></ReplayTimer>
+						<ReplayTimer
+							displayFakeTime={displayFakeTime}
+							timerStart={gameEndTime}
+						></ReplayTimer>
 					</Button>
 					<Button id={css.board} onClick={onClose}>
 						View Board

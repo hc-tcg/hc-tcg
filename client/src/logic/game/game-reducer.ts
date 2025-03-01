@@ -22,6 +22,7 @@ type LocalGameRoot = {
 	endGameOverlay: {
 		outcome: GameOutcome
 		earnedAchievements: Array<EarnedAchievement>
+		gameEndTime: number
 	} | null
 	chat: Array<Message>
 	battleLog: BattleLogModel | null
@@ -102,6 +103,7 @@ const gameReducer = (
 				endGameOverlay: {
 					outcome: action.outcome,
 					earnedAchievements: action.earnedAchievements,
+					gameEndTime: action.gameEndTime,
 				},
 			}
 		case localMessages.CHAT_UPDATE:
