@@ -429,7 +429,6 @@ export function* getDeck(code: string) {
 
 export function* updateAchievements(player: PlayerModel) {
 	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
-	console.log(player.achievementProgress)
 
 	const {type: success} = yield* call(
 		[root.db, root.db.updateAchievements],
