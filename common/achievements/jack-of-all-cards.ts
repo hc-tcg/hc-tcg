@@ -20,10 +20,7 @@ const AllCards: Achievement = {
 	getProgress(goals) {
 		return Object.values(goals).filter((goal) => goal > 0).length
 	},
-	onGameStart(game, playerEntity, component, observer) {
-		const player = game.components.get(playerEntity)
-		if (!player) return
-
+	onGameStart(game, player, component, observer) {
 		const playedCards: Set<Card['numericId']> = new Set()
 
 		observer.subscribe(player.hooks.onAttach, (card) => {
@@ -32,7 +29,7 @@ const AllCards: Achievement = {
 		})
 
 		observer.subscribe(game.hooks.onGameEnd, (outcome) => {
-			if (outcome.type !== 'player-won' || outcome.winner !== playerEntity)
+			if (outcome.type !== 'player-won' || outcome.winner !== player.entity)
 				return
 			for (const card of playedCards.values()) {
 				component.bestGoalProgress({goal: card, progress: 1})

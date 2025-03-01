@@ -21,10 +21,7 @@ const SheepStarer: Achievement = {
 			steps: 3,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		const player = game.components.get(playerEntity)
-		if (!player) return
-
+	onGameStart(game, player, component, observer) {
 		const redZedaphs: Record<CardEntity, number> = {}
 
 		observer.subscribeWithPriority(

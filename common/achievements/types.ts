@@ -1,5 +1,8 @@
-import {AchievementComponent, ObserverComponent} from '../components'
-import {PlayerEntity} from '../entities'
+import {
+	AchievementComponent,
+	ObserverComponent,
+	PlayerComponent,
+} from '../components'
 import {GameModel} from '../models/game-model'
 import {GameOutcome} from '../types/game-state'
 
@@ -18,13 +21,13 @@ export type Achievement = {
 
 	onGameStart: (
 		game: GameModel,
-		playerEntity: PlayerEntity,
+		playerEntity: PlayerComponent,
 		component: AchievementComponent,
 		observer: ObserverComponent,
 	) => void
 	onGameEnd: (
 		game: GameModel,
-		playerEntity: PlayerEntity,
+		playerEntity: PlayerComponent,
 		component: AchievementComponent,
 		outcome: GameOutcome,
 	) => void

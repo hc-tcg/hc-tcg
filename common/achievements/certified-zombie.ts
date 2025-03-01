@@ -1,4 +1,3 @@
-import assert from 'assert'
 import ArmorStand from '../cards/attach/armor-stand'
 import {onTurnEnd} from '../types/priorities'
 import {achievement} from './defaults'
@@ -16,10 +15,7 @@ const CertifiedZombie: Achievement = {
 			steps: 3,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		let player = game.components.get(playerEntity)
-		assert(player, 'Player should be in the ECS')
-
+	onGameStart(_game, player, component, observer) {
 		let rounds = 0
 
 		observer.subscribeWithPriority(

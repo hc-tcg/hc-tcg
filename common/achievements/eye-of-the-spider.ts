@@ -17,9 +17,7 @@ const EyeOfTheSpider: Achievement = {
 			steps: 1,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		const player = game.components.get(playerEntity)
-		assert(player)
+	onGameStart(game, player, component, observer) {
 		const opponentPlayer = player.opponentPlayer
 
 		let poisonedHermits: Set<CardEntity> = new Set()

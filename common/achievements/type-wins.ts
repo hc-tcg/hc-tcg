@@ -25,11 +25,11 @@ function getTypeWinAchievement(id: number, type: TypeT): Achievement {
 				steps: 100,
 			},
 		],
-		onGameStart(game, playerEntity, component, observer) {
+		onGameStart(game, player, component, observer) {
 			if (
 				game.components.filter(
 					CardComponent,
-					query.card.player(playerEntity),
+					query.card.player(player.entity),
 					query.card.type(type),
 				).length < 7
 			) {
@@ -37,7 +37,7 @@ function getTypeWinAchievement(id: number, type: TypeT): Achievement {
 			}
 
 			observer.subscribe(game.hooks.onGameEnd, (outcome) => {
-				if (outcome.type !== 'player-won' || outcome.winner !== playerEntity)
+				if (outcome.type !== 'player-won' || outcome.winner !== player.entity)
 					return
 				component.incrementGoalProgress({goal: 0})
 			})
