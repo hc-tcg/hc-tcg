@@ -56,9 +56,11 @@ const NakedAndScared: Achievement = {
 			usedBannedCard = true
 		})
 
-		observer.subscribe(game.hooks.onGameEnd, () => {
+		observer.subscribe(game.hooks.onGameEnd, (outcome) => {
 			if (usedBannedCard) return
-			component.incrementGoalProgress({goal: 0})
+			if (outcome.type === 'player-won' && outcome.winner === player.entity) {
+				component.incrementGoalProgress({goal: 0})
+			}
 		})
 	},
 }
