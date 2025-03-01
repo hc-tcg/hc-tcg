@@ -52,7 +52,8 @@ const gameReducer = (
 			// I really don't know if its a good idea to automatically close modals besides the forfeit modal, but I am too scared
 			// too stop all modals from automatically closing.
 			let nextOpenedModal =
-				state.openedModal !== null && state.openedModal.id === 'forfeit'
+				state.openedModal !== null &&
+				(state.openedModal.id === 'forfeit' || state.openedModal.id === 'exit')
 					? state.openedModal
 					: null
 			const newGame: LocalGameRoot = {
