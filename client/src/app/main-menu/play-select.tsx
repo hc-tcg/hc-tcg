@@ -104,6 +104,11 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 	const [hasRematch, setHasRematch] = useState<boolean>(rematch ? true : false)
 	const [rematchDisabled, setRematchDisabled] = useState<boolean>(false)
 
+	const rematchCancel = () => {
+		if (!rematch) return
+		dispatch({type: localMessages.CANCEL_REMATCH})
+	}
+
 	if (hasRematch && !rematch) {
 		setHasRematch(false)
 		setRematchDisabled(true)
@@ -298,6 +303,7 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 								addMenuWithBack('rematchChooseDeck')
 								sortDecksByActive()
 							}}
+							onRematchCancel={rematchCancel}
 						>
 							<GameModeButton.ChooseDeck
 								activeButtonMenu={activeButtonMenu}
@@ -363,6 +369,7 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 								addMenuWithBack('rematchChooseDeck')
 								sortDecksByActive()
 							}}
+							onRematchCancel={rematchCancel}
 						>
 							<GameModeButton.OptionsSelect
 								activeButtonMenu={activeButtonMenu}

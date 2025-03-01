@@ -2,6 +2,7 @@ import {Cosmetic} from '../cosmetics/types'
 import {PlayerEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
 import {Message, MessageTable, messages} from '../redux-messages'
+import {RematchData} from '../types/app'
 import {Deck, Tag} from '../types/deck'
 import {AnyTurnActionData} from '../types/turn-action-data'
 
@@ -19,6 +20,7 @@ export const clientMessages = messages('clientMessages', {
 	CREATE_REMATCH_GAME: null,
 	CREATE_REPLAY_GAME: null,
 	LEAVE_REMATCH_GAME: null,
+	CANCEL_REMATCH: null,
 	REPLAY_OVERVIEW: null,
 	TURN_ACTION: null,
 	FORFEIT: null,
@@ -162,6 +164,7 @@ export type ClientMessages = [
 	{type: typeof clientMessages.DELETE_TAG; tag: Tag},
 	{type: typeof clientMessages.SET_COSMETIC; cosmetic: Cosmetic['id']},
 	{type: typeof clientMessages.REPLAY_OVERVIEW; id: number},
+	{type: typeof clientMessages.CANCEL_REMATCH; rematch: RematchData},
 ]
 
 export type ClientMessage = Message<ClientMessages>

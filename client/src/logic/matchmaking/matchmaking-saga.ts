@@ -614,6 +614,13 @@ function* createRematchSaga() {
 	}
 }
 
+// Rematches
+function* cancelRematchSaga() {
+	const rematch = yield* select(getRematchData)
+	if (!rematch) return
+	yield* sendMsg({type: clientMessages.CANCEL_REMATCH, rematch})
+}
+
 // @TODO
 function* createReplayGameSaga(
 	action: LocalMessageTable[typeof localMessages.MATCHMAKING_REPLAY_GAME],
@@ -694,6 +701,7 @@ function* matchmakingSaga() {
 	})
 	// Rematch
 	yield* takeEvery(localMessages.MATCHMAKING_REMATCH, createRematchSaga)
+	yield* takeEvery(localMessages.CANCEL_REMATCH, cancelRematchSaga)
 }
 
 export default matchmakingSaga

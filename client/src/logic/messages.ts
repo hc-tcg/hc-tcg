@@ -108,7 +108,6 @@ export const localMessages = messages('clientLocalMessages', {
 	OVERVIEW: null,
 	//Rematches
 	RECIEVE_REMATCH: null,
-	RECIEVE_OPPONENT_REMATCH: null,
 	CANCEL_REMATCH: null,
 	MATCHMAKING_REMATCH: null,
 })
@@ -288,7 +287,6 @@ type Messages = [
 	},
 	{type: typeof localMessages.COSMETIC_UPDATE; cosmetic: Cosmetic},
 	{type: typeof localMessages.RECIEVE_REMATCH; rematch: RematchData | null},
-	{type: typeof localMessages.RECIEVE_OPPONENT_REMATCH},
 	{type: typeof localMessages.CANCEL_REMATCH},
 	{type: typeof localMessages.MATCHMAKING_REMATCH},
 ]

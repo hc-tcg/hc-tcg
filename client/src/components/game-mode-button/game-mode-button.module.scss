@@ -185,14 +185,22 @@ $expandedHeight: 67vh;
 			inset 1px 1px 0 0 var(--gray-100),
 			inset -1px -5px 0 0 var(--gray-100);
 		margin-left: 2vh;
-		margin-top: 2vh;
-		height: 5rem;
+		margin-top: 0.5vh;
 		scale: 1;
 		transform: scale(1);
 		transform-origin: center;
 		opacity: 100%;
+		height: min-content;
 		transition: scale 0.05s ease-out, opacity 0.1s ease-in,
 			transform 0.2s ease-in, height 0.2s ease-in, margin-top 0.2s ease-in;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 0.25rem;
+
+		> div {
+			transform: translateY(-0.75rem);
+		}
 
 		&.hide {
 			transform: scale(0);

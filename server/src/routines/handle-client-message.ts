@@ -22,6 +22,7 @@ import {chatMessage} from './background/chat'
 import spectatorLeaveSaga from './background/spectators'
 import {
 	cancelPrivateGame,
+	cancelRematch,
 	createBossGame,
 	createPrivateGame,
 	createRematchGame,
@@ -96,6 +97,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.LEAVE_REMATCH_GAME:
 			return yield* leaveRematchGame(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.CANCEL_REMATCH:
+			return yield* cancelRematch(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.CREATE_REPLAY_GAME:

@@ -847,6 +847,16 @@ export function* leaveRematchGame(
 	delete root.awaitingRematch[playerId]
 }
 
+export function* cancelRematch(
+	msg: RecievedClientMessage<typeof clientMessages.CANCEL_REMATCH>,
+) {
+	const player = root.players[msg.playerId]
+	const opponentPlayer = root.players[msg.payload.rematch.opponentId]
+	delete root.awaitingRematch[opponentPlayer.id]
+	delete root.awaitingRematch[player.id]
+	broadcast([player, opponentPlayer], {type: serverMessages.REMATCH_DENIED})
+}
+
 export function* createBossGame(
 	msg: RecievedClientMessage<typeof clientMessages.CREATE_BOSS_GAME>,
 ) {

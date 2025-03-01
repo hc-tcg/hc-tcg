@@ -37,6 +37,7 @@ interface GameModeButtonProps {
 	timerLength?: number
 	enableRematch: boolean
 	onRematchSelect?: () => void
+	onRematchCancel?: () => void
 }
 
 function GameModeButton({
@@ -56,6 +57,7 @@ function GameModeButton({
 	timerLength,
 	enableRematch,
 	onRematchSelect,
+	onRematchCancel,
 }: GameModeButtonProps) {
 	const buttonRef = useRef<HTMLDivElement>(null)
 	const backgroundRef = useRef<HTMLDivElement>(null)
@@ -284,6 +286,24 @@ function GameModeButton({
 								<div className={css.rematchTimeRemaining}>
 									{timer}s {!onMobile && 'Remaining'}
 								</div>
+							</div>
+						)}
+						{enableRematch && (
+							<div
+								className={classNames(
+									css.text,
+									css.rematch,
+									activeMode === mode && css.hide,
+								)}
+								onMouseDown={(ev) => {
+									ev.stopPropagation()
+									if (ev.button !== 0) return
+									if (disabled) return
+									if (!onRematchCancel) return
+									onRematchCancel()
+								}}
+							>
+								<div className={css.title}>Cancel Rematch</div>
 							</div>
 						)}
 					</div>
