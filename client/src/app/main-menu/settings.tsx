@@ -260,6 +260,10 @@ function Settings({setMenuSection}: Props) {
 		dispatch({type: localMessages.SOUND_SECTION_CHANGE, section: section})
 		setMenuSection(section)
 	}
+	const handleDataSettings = () => changeMenuSection('data-settings')
+	const handleGameSettings = () => changeMenuSection('game-settings')
+
+	const handleCredits = () => changeMenuSection('credits')
 
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(false)
 

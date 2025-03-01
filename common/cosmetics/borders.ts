@@ -9,16 +9,16 @@ const BorderDefinitions: Omit<Border, 'type'>[] = [
 		id: 'blue',
 		name: 'Blue',
 	},
-	//{
-	//	id: 'copper_border',
-	//	name: 'Copper',
-	//	requires: {achievement: LoyaltyIII.id},
-	//},
-	//{
-	//	id: 'green_border',
-	//	name: 'Emerald',
-	//	requires: {achievement: Innefective.id},
-	//},
+	{
+		id: 'copper_border',
+		name: 'Copper',
+		requires: {achievement: LoyaltyIII.id},
+	},
+	{
+		id: 'green_border',
+		name: 'Emerald',
+		requires: {achievement: Innefective.id},
+	},
 	{
 		id: 'gold_border',
 		name: 'Gold',

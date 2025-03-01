@@ -20,21 +20,21 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		name: 'Gold',
 		requires: {achievement: Win.id, level: 4},
 	},
-	//{
-	//	id: 'emerald',
-	//	name: 'Emerald',
-	//	requires: {achievement: SUStainable.id},
-	//},
-	//{
-	//	id: 'silver_heart',
-	//	name: 'Silver',
-	//	requires: {achievement: CantTouchThis.id},
-	//},
-	//{
-	//	id: 'soulflame',
-	//	name: 'Soulflame',
-	//	requires: {achievement: DeckedOut.id},
-	//},
+	{
+		id: 'emerald',
+		name: 'Emerald',
+		requires: {achievement: SUStainable.id},
+	},
+	{
+		id: 'silver_heart',
+		name: 'Silver',
+		requires: {achievement: CantTouchThis.id},
+	},
+	{
+		id: 'soulflame',
+		name: 'Soulflame',
+		requires: {achievement: DeckedOut.id},
+	},
 ]
 
 export const ALL_HEARTS: Heart[] = HeartDefinitions.map((heart) => ({

@@ -133,6 +133,7 @@ export type GameOutcome =
 
 export type GameVictoryReason =
 	| 'forfeit'
+	| 'disconnect'
 	| 'no-hermits-on-board'
 	| 'timeout-without-hermits'
 	| 'decked-out'

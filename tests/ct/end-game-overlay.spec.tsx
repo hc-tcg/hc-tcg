@@ -19,6 +19,7 @@ test('You won by killing all hermits!', async ({mount}) => {
 				entity: entity,
 			}}
 			earnedAchievements={[]}
+			displayFakeTime={true}
 		/>,
 	)
 
@@ -43,6 +44,56 @@ test('You lost because your hermits were killed.', async ({mount}) => {
 				entity: playerTwoEntity,
 			}}
 			earnedAchievements={[]}
+			displayFakeTime={true}
+		/>,
+	)
+
+	await expect(component).toHaveScreenshot()
+})
+
+test('You won because your opponent disconnected!', async ({mount}) => {
+	let entity = 'playerOne' as PlayerEntity
+
+	const component = await mount(
+		<EndGameOverlay
+			nameOfWinner={'Winner Name'}
+			nameOfLoser={'Loser Name'}
+			outcome={{
+				type: 'player-won',
+				winner: entity,
+				victoryReason: 'disconnect',
+			}}
+			viewer={{
+				type: 'player',
+				entity: entity,
+			}}
+			earnedAchievements={[]}
+			displayFakeTime={true}
+		/>,
+	)
+
+	await expect(component).toHaveScreenshot()
+})
+
+test('You lost because you disconnected.', async ({mount}) => {
+	let playerOneEntity = 'playerOne' as PlayerEntity
+	let playerTwoEntity = 'playerTwo' as PlayerEntity
+
+	const component = await mount(
+		<EndGameOverlay
+			nameOfWinner={'Winner Name'}
+			nameOfLoser={'Loser Name'}
+			outcome={{
+				type: 'player-won',
+				winner: playerOneEntity,
+				victoryReason: 'disconnect',
+			}}
+			viewer={{
+				type: 'player',
+				entity: playerTwoEntity,
+			}}
+			earnedAchievements={[]}
+			displayFakeTime={true}
 		/>,
 	)
 
@@ -65,6 +116,7 @@ test('Viewing as spectator shows victory.', async ({mount}) => {
 				type: 'spectator',
 			}}
 			earnedAchievements={[]}
+			displayFakeTime={true}
 		/>,
 	)
 
@@ -81,6 +133,7 @@ test('Game crash displays correctly.', async ({mount}) => {
 				type: 'spectator',
 			}}
 			earnedAchievements={[]}
+			displayFakeTime={true}
 		/>,
 	)
 
@@ -97,6 +150,7 @@ test('Game timeout displays correctly.', async ({mount}) => {
 				type: 'spectator',
 			}}
 			earnedAchievements={[]}
+			displayFakeTime={true}
 		/>,
 	)
 

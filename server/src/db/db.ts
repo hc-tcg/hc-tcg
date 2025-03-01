@@ -263,7 +263,7 @@ export class Database {
 			assert(playerUuid, 'The player UUID should be defined.')
 
 			const decks = await this.getDecksFromUuid(playerUuid)
-			//const achievements = await this.getAchievements(playerUuid)
+			const achievements = await this.getAchievements(playerUuid)
 			const stats = await this.getUserStats(playerUuid)
 			const gameHistory = await this.getUserGameHistory(playerUuid)
 
@@ -271,10 +271,10 @@ export class Database {
 				decks.type === 'success',
 				'If the UUID is defined, retrieving decks should not fail.',
 			)
-			//assert(
-			//	achievements.type === 'success',
-			//	'If the UUID is defined, retrieving achievements should not fail.',
-			//)
+			assert(
+				achievements.type === 'success',
+				'If the UUID is defined, retrieving achievements should not fail.',
+			)
 			assert(
 				stats.type === 'success',
 				'If the UUID is defined, retrieving stats should not fail.',
@@ -297,7 +297,7 @@ export class Database {
 					background: user.rows[0]['background'],
 					border: user.rows[0]['border'],
 					decks: decks.body,
-					achievements: {achievementData: []},
+					achievements: achievements.body,
 					stats: stats.body,
 					gameHistory: gameHistory.body,
 				},

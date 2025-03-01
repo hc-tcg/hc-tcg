@@ -24,6 +24,8 @@ type Props = {
 	nameOfLoser: string | null
 	setMenuSection?: (section: string) => void
 	dispatchGameClose?: () => void
+	// Display fake time to ensure consistency in component tests for visuals
+	displayFakeTime?: boolean
 }
 
 type SmallAchievementProps = {
@@ -144,7 +146,11 @@ const SmallAchievement = ({
 	)
 }
 
-const ReplayTimer = ({}: {}) => {
+const ReplayTimer = ({displayFakeTime}: {displayFakeTime: boolean}) => {
+	if (displayFakeTime) {
+		return <div className={css.rematchTimeRemaining}>0</div>
+	}
+
 	const [replayTimeRemaining, setReplayTimeRemaining] = useState<number>(
 		serverConfig.limits.rematchTime / 1000 - 1,
 	)
@@ -173,6 +179,7 @@ const EndGameOverlay = ({
 	nameOfLoser,
 	setMenuSection,
 	dispatchGameClose,
+	displayFakeTime = false,
 }: Props) => {
 	const [disableReplay, setDisableReplay] = useState<boolean>(false)
 
@@ -217,12 +224,18 @@ const EndGameOverlay = ({
 			'The game crashed. Please copy the crash message and report this to the developers.',
 	}
 
-	const REASON_MSG: Record<GameVictoryReason, string> = {
+	const NAME_REASON_MSG: Record<GameVictoryReason, string> = {
 		'no-hermits-on-board': 'lost all hermits.',
 		lives: 'lost all lives.',
 		'decked-out': 'ran out of cards.',
 		'timeout-without-hermits': 'ran out of time without an active hermit.',
 		forfeit: 'forfeit the game.',
+		disconnect: 'was disconnected.',
+	}
+
+	const YOU_REASON_MSG: Record<GameVictoryReason, string> = {
+		...NAME_REASON_MSG,
+		disconnect: 'were disconnected.',
 	}
 
 	switch (myOutcome) {
@@ -256,10 +269,12 @@ const EndGameOverlay = ({
 			>
 				{outcome.type === 'player-won' ? (
 					<span>
-						{viewer.type === 'spectator' && nameOfLoser}
+						{viewer.type === 'spectator' &&
+							nameOfLoser + ' ' + NAME_REASON_MSG[outcome.victoryReason]}
 						{viewer.type === 'player' &&
-							(myOutcome === 'win' ? nameOfLoser : 'You')}{' '}
-						{REASON_MSG[outcome.victoryReason]}
+							(myOutcome === 'win'
+								? nameOfLoser + ' ' + NAME_REASON_MSG[outcome.victoryReason]
+								: 'You ' + YOU_REASON_MSG[outcome.victoryReason])}
 					</span>
 				) : (
 					<span>{OUTCOME_MSG[myOutcome]}</span>
@@ -316,7 +331,7 @@ const EndGameOverlay = ({
 						}}
 					>
 						Rematch
-						<ReplayTimer></ReplayTimer>
+						<ReplayTimer displayFakeTime={displayFakeTime}></ReplayTimer>
 					</Button>
 					<Button id={css.board} onClick={onClose}>
 						View Board

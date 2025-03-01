@@ -155,7 +155,7 @@ function* gameManager(con: GameController) {
 			assert(remainingPlayer, 'There is no way there is no remaining player.')
 			con.game.outcome = {
 				type: 'player-won',
-				victoryReason: 'forfeit',
+				victoryReason: 'disconnect',
 				winner: remainingPlayer,
 			}
 		}
