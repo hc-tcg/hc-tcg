@@ -12,8 +12,9 @@ const DeckedOut: Achievement = {
 			description: 'Win a game by your opponent running out of cards.',
 		},
 	],
-	onGameEnd(_game, playerEntity, component, outcome) {
-		if (outcome.type !== 'player-won' || outcome.winner !== playerEntity) return
+	onGameEnd(_game, player, component, outcome) {
+		if (outcome.type !== 'player-won' || outcome.winner !== player.entity)
+			return
 		if (outcome.victoryReason !== 'decked-out') return
 		component.incrementGoalProgress({goal: 0})
 	},
