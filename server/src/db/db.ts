@@ -1873,7 +1873,6 @@ export class Database {
 					}
 				}
 			})
-			console.log(progress)
 
 			return {
 				type: 'success',
