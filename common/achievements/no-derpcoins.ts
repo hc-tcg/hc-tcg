@@ -15,17 +15,17 @@ const NoDerpcoins: Achievement = {
 			steps: 1,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
+	onGameStart(game, player, component, observer) {
 		if (!game.state.isEvilXBossGame) return
 		const cost = getDeckCost(
 			game.components
-				.filter(CardComponent, query.card.player(playerEntity))
+				.filter(CardComponent, query.card.player(player.entity))
 				.map((card) => card.props),
 		)
 		if (cost > 0) return
 		observer.subscribe(game.hooks.onGameEnd, (outcome) => {
 			if (outcome.type !== 'player-won') return
-			if (outcome.winner !== playerEntity) return
+			if (outcome.winner !== player.entity) return
 			component.incrementGoalProgress({goal: 0})
 		})
 	},

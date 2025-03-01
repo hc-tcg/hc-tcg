@@ -15,10 +15,7 @@ const HowDidWeGetHere: Achievement = {
 			steps: 5,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		const player = game.components.get(playerEntity)
-		if (!player) return
-
+	onGameStart(game, player, component, observer) {
 		const checkStatusEffects = () => {
 			const statusEffects: Record<string, StatusEffectComponent[]> = {}
 			game.components
@@ -26,11 +23,11 @@ const HowDidWeGetHere: Achievement = {
 					StatusEffectComponent,
 					query.some(
 						query.effect.targetIsPlayerAnd(
-							query.player.entity(playerEntity),
+							query.player.entity(player.entity),
 							(_game, player) => player.activeRowEntity !== null,
 						),
 						query.effect.targetIsCardAnd(
-							query.card.player(playerEntity),
+							query.card.player(player.entity),
 							query.card.onBoard,
 							query.card.isHealth,
 						),

@@ -198,13 +198,14 @@ function* gameManager(con: GameController) {
 				(_game, achievement) => achievement.player === playerEntity,
 			)
 
+			let player = con.game.components.get(playerEntity)
+			assert(
+				player,
+				"There should definitely be a player on the left if there is an entity, if there isn't, something went really wrong",
+			)
+
 			achievements.forEach((achievement) => {
-				achievement.props.onGameEnd(
-					con.game,
-					playerEntity,
-					achievement,
-					outcome,
-				)
+				achievement.props.onGameEnd(con.game, player, achievement, outcome)
 
 				const originalProgress = achievement.props.getProgress(
 					v.player.achievementProgress[achievement.props.numericId].goals,

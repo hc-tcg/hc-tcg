@@ -13,17 +13,14 @@ const PeskyBird: Achievement = {
 			steps: 7,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		const player = game.components.get(playerEntity)
-		if (!player) return
-
+	onGameStart(game, player, component, observer) {
 		let forcedDiscards = 0
 
 		// Let it be known that I hate this
 		game.components.filter(CardComponent).forEach((cardComponent) => {
 			observer.subscribe(cardComponent.hooks.onChangeSlot, (newSlot) => {
 				if (!newSlot.inDiscardPile()) return
-				if (game.currentPlayerEntity !== playerEntity) return
+				if (game.currentPlayerEntity !== player.entity) return
 				forcedDiscards += 1
 				component.bestGoalProgress({goal: 0, progress: forcedDiscards})
 			})

@@ -17,10 +17,7 @@ const GoFish: Achievement = {
 			steps: 1,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		const player = game.components.get(playerEntity)
-		if (!player) return
-
+	onGameStart(game, player, component, observer) {
 		let numberOfMendingsBeforeUse = 0
 
 		observer.subscribe(player.hooks.beforeApply, () => {
