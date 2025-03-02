@@ -4,7 +4,6 @@ import ErrorBanner from 'components/error-banner'
 import {VersionLinks} from 'components/link-container'
 import Spinner from 'components/spinner'
 import TcgLogo from 'components/tcg-logo'
-import {Toaster} from 'components/toast/toast'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
 	getConnecting,
@@ -57,67 +56,64 @@ const Login = () => {
 	}
 
 	return (
-		<>
-			<Toaster />
-			<div className={css.loginBackground}>
-				<div className={css.loginContainer}>
-					<TcgLogo />
-					{connecting ? (
-						<div className={css.connecting}>
-							<Spinner />
-							<p>{connectingMessage}</p>
-						</div>
-					) : (
-						<div>
-							<form className={css.nameForm} onSubmit={handlePlayerName}>
-								<div className={css.customInput}>
-									<input
-										maxLength={25}
-										name="playerName"
-										placeholder=" "
-										autoFocus
-										id="username"
-									></input>
-									<label htmlFor="username">Player Name</label>
-								</div>
-								<Button variant="stone" type="submit">
-									Next
-								</Button>
-							</form>
-							<p> Sync to an existing account </p>
-							<form className={css.nameForm} onSubmit={handleSync}>
-								<div className={css.customInput}>
-									<input
-										maxLength={100}
-										name="UUID"
-										placeholder=" "
-										autoFocus
-										id="uuid"
-									></input>
-									<label htmlFor="uuid">Account UUID</label>
-								</div>
-								<div className={css.customInput}>
-									<input
-										maxLength={100}
-										name="Secret"
-										placeholder=" "
-										autoFocus
-										id="secret"
-									></input>
-									<label htmlFor="secret">Account Secret</label>
-								</div>
-								<Button variant="stone" type="submit">
-									Next
-								</Button>
-							</form>
-						</div>
-					)}
-					{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
-					<VersionLinks />
-					<Beef />
-				</div>
+		<div className={css.loginBackground}>
+			<div className={css.loginContainer}>
+				<TcgLogo />
+				{connecting ? (
+					<div className={css.connecting}>
+						<Spinner />
+						<p>{connectingMessage}</p>
+					</div>
+				) : (
+					<div>
+						<form className={css.nameForm} onSubmit={handlePlayerName}>
+							<div className={css.customInput}>
+								<input
+									maxLength={25}
+									name="playerName"
+									placeholder=" "
+									autoFocus
+									id="username"
+								></input>
+								<label htmlFor="username">Player Name</label>
+							</div>
+							<Button variant="stone" type="submit">
+								Next
+							</Button>
+						</form>
+						<p> Sync to an existing account </p>
+						<form className={css.nameForm} onSubmit={handleSync}>
+							<div className={css.customInput}>
+								<input
+									maxLength={100}
+									name="UUID"
+									placeholder=" "
+									autoFocus
+									id="uuid"
+								></input>
+								<label htmlFor="uuid">Account UUID</label>
+							</div>
+							<div className={css.customInput}>
+								<input
+									maxLength={100}
+									name="Secret"
+									placeholder=" "
+									autoFocus
+									id="secret"
+								></input>
+								<label htmlFor="secret">Account Secret</label>
+							</div>
+							<Button variant="stone" type="submit">
+								Next
+							</Button>
+						</form>
+					</div>
+				)}
+				{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
+				<VersionLinks />
+				<Beef />
 			</div>
-		</>
+		</div>
 	)
 }
 
