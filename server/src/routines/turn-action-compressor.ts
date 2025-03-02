@@ -44,8 +44,8 @@ const DRAG_CARDS_TYPE = 3
 
 type ReplayAction = {
 	value: number
-	// If bytes is variable, the following 4 bytes are used for length
-	bytes: number | 'variable'
+	bytes: number
+	variableBytes?: boolean
 	compress: (game: GameModel, turnAction: any) => Buffer | null
 	decompress: (game: GameModel, buffer: Buffer) => AnyTurnActionData | null
 }
@@ -372,7 +372,8 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	},
 	MODAL_REQUEST: {
 		value: 0x0c,
-		bytes: 'variable',
+		bytes: 0,
+		variableBytes: true,
 		compress(game, turnAction: ModalResult) {
 			function compressSelectCards(result: LocalSelectCards.Result) {
 				const buffer = Buffer.concat([
@@ -656,7 +657,7 @@ function turnActionToBuffer(
 	)
 
 	if (argumentsBuffer) {
-		if (replayActions[action.type].bytes === 'variable') {
+		if (replayActions[action.type].variableBytes) {
 			const lengthBuffer = writeUIntToBuffer(
 				argumentsBuffer.length,
 				VARIABLE_BYTE_MAX,
@@ -776,7 +777,7 @@ export function* bufferToTurnActions(
 		cursor += 1 + timeFormat
 		let turnAction: AnyTurnActionData | null = null
 
-		if (action.bytes !== 'variable') {
+		if (!action.variableBytes) {
 			const bytes = actionsBuffer.subarray(cursor, cursor + action.bytes)
 			cursor += action.bytes
 			turnAction = action.decompress(con.game, bytes)

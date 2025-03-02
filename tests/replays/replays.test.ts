@@ -35,24 +35,40 @@ import {
 	playCardFromHand,
 	testReplayGame,
 } from '../unit/game/utils'
+import FarmerBeefRare from 'common/cards/hermits/farmerbeef-rare'
+import {STARTER_DECKS} from 'common/cards/starter-decks'
+import assert from 'assert'
+import BoomerBdubsCommon from 'common/cards/hermits/boomerbdubs-common'
+import PranksterItem from 'common/cards/items/prankster-common'
+import VintageBeefCommon from 'common/cards/hermits/vintagebeef-common'
+import {DiamondArmor} from 'common/cards/attach/armor'
+import {InstantHealthII} from 'common/cards/single-use/instant-health'
+import LlamadadRare from 'common/cards/hermits/llamadad-rare'
+import MumboJumboRare from 'common/cards/hermits/mumbojumbo-rare'
+import GoldenAxe from 'common/cards/single-use/golden-axe'
+import Fortune from 'common/cards/single-use/fortune'
+import FishingRod from 'common/cards/single-use/fishing-rod'
+import FrenchralisRare from 'common/cards/hermits/frenchralis-rare'
+import {DiamondSword} from 'common/cards/single-use/sword'
+import TNT from 'common/cards/single-use/tnt'
 
 function* afterGame(con: GameController) {
 	const turnActionsBuffer = yield* turnActionsToBuffer(con)
 
-	const turnActions = (yield* bufferToTurnActions(
+	const turnActions = yield* bufferToTurnActions(
 		con.player1Defs,
 		con.player2Defs,
 		con.game.rngSeed,
 		con.props,
 		turnActionsBuffer,
-	)).replay
+	)
 
 	expect(con.game.turnActions.map((action) => action.action)).toStrictEqual(
-		turnActions.map((action) => action.action),
+		turnActions.replay.map((action) => action.action),
 	)
 
 	expect(con.game.turnActions.map((action) => action.player)).toStrictEqual(
-		turnActions.map((action) => action.player),
+		turnActions.replay.map((action) => action.player),
 	)
 }
 
@@ -168,20 +184,33 @@ describe('Test Replays', () => {
 
 	test('Test select attack modal works properly', () => {
 		testReplayGame({
-			playerOneDeck: [EthosLabCommon],
+			playerOneDeck: [FarmerBeefRare, FarmDoubleItem],
 			playerTwoDeck: [EvilXisumaRare, BalancedDoubleItem],
 			gameSaga: function* (con) {
 				const game = con.game
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				yield* playCardFromHand(game, FarmerBeefRare, 'hermit', 0)
+				yield* playCardFromHand(game, FarmDoubleItem, 'item', 0, 0)
 				yield* endTurn(game)
 
 				yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 0)
 				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 0)
 				yield* attack(game, 'secondary')
 				yield* finishModalRequest(game, {
+					pick: 'primary',
+				})
+				yield* endTurn(game)
+
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield* attack(game, 'secondary')
+				yield* finishModalRequest(game, {
 					pick: 'secondary',
 				})
+				yield* endTurn(game)
+
+				yield* attack(game, 'primary')
 				yield* endTurn(game)
 
 				yield* forfeit(con.game.currentPlayer.entity)
@@ -207,6 +236,162 @@ describe('Test Replays', () => {
 				yield* changeActiveHermit(game, 1)
 
 				yield* forfeit(con.game.currentPlayer.entity)
+			},
+			afterGame: afterGame,
+		})
+	})
+
+	test('Test a full game', () => {
+		const playerOneDeck = STARTER_DECKS.find(
+			(deck) => deck.name === 'Balanced Deck #1',
+		)
+		const playerTwoDeck = STARTER_DECKS.find(
+			(deck) => deck.name === 'Prankster Deck #2',
+		)
+
+		assert(playerOneDeck, 'The deck should exist.')
+		assert(playerTwoDeck, 'The deck should exist.')
+
+		testReplayGame({
+			playerOneDeck: playerOneDeck.cards.sort(
+				(a, b) => a.numericId - b.numericId,
+			),
+			playerTwoDeck: playerTwoDeck.cards.sort(
+				(a, b) => a.numericId - b.numericId,
+			),
+			seed: '0.ea5a6943997d7',
+			shuffleDeck: true,
+			gameSaga: function* (con) {
+				const game = con.game
+
+				yield* playCardFromHand(game, BoomerBdubsCommon, 'hermit', 3)
+				yield* playCardFromHand(game, PranksterItem, 'item', 3, 0)
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 3)
+				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 3, 0)
+				yield* playCardFromHand(game, DiamondArmor, 'attach', 3)
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, PranksterItem, 'item', 3, 1)
+				yield* playCardFromHand(game, InstantHealthII, 'single_use')
+				yield* pick(
+					game,
+					query.slot.active,
+					query.slot.currentPlayer,
+					query.slot.hermit,
+				)
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, LlamadadRare, 'hermit', 4)
+				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 4, 0)
+				yield* playCardFromHand(game, DiamondArmor, 'attach', 4)
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, MumboJumboRare, 'hermit', 4)
+				yield* playCardFromHand(game, PranksterItem, 'item', 4, 0)
+				yield* playCardFromHand(game, GoldenAxe, 'single_use')
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield changeActiveHermit(game, 4)
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield changeActiveHermit(game, 4)
+				yield* playCardFromHand(game, PranksterItem, 'item', 4, 1)
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 3)
+				yield* playCardFromHand(game, BalancedItem, 'item', 3, 0)
+				yield* playCardFromHand(game, Fortune, 'single_use')
+				yield* applyEffect(game)
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, FishingRod, 'single_use')
+				yield* applyEffect(game)
+				yield* playCardFromHand(game, FrenchralisRare, 'hermit', 3)
+				yield* playCardFromHand(game, PranksterItem, 'item', 3, 0)
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, PranksterItem, 'item', 3, 1)
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield* changeActiveHermit(game, 3)
+				yield* playCardFromHand(game, BalancedItem, 'item', 3, 2)
+				yield* playCardFromHand(game, DiamondArmor, 'attach', 3)
+				yield* playCardFromHand(game, DiamondSword, 'single_use')
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield* changeActiveHermit(game, 3)
+				yield* playCardFromHand(game, FishingRod, 'single_use')
+				yield* applyEffect(game)
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, TNT, 'single_use')
+				yield* attack(game, 'secondary')
+				yield* finishModalRequest(game, {
+					pick: 'secondary',
+				})
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, InstantHealthII, 'single_use')
+				yield* pick(
+					game,
+					query.slot.active,
+					query.slot.currentPlayer,
+					query.slot.hermit,
+				)
+				yield* attack(game, 'primary')
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, Fortune, 'single_use')
+				yield* applyEffect(game)
+				yield* attack(game, 'secondary')
+				yield* finishModalRequest(game, {
+					pick: 'secondary',
+				})
+				yield* endTurn(game)
+
+				yield* attack(game, 'primary')
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, FrenchralisRare, 'hermit', 4)
+				yield* attack(game, 'secondary')
+				yield* finishModalRequest(game, {
+					pick: 'secondary',
+				})
+				yield* endTurn(game)
+
+				yield* attack(game, 'primary')
+				yield* endTurn(game)
+
+				yield* attack(game, 'primary')
+				yield* endTurn(game)
 			},
 			afterGame: afterGame,
 		})
