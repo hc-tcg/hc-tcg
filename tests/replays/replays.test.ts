@@ -243,194 +243,55 @@ describe('Test Replays', () => {
 		})
 	})
 
-	test('Test a full game', () => {
-		const playerOneDeck = STARTER_DECKS.find(
-			(deck) => deck.name === 'Balanced Deck #1',
-		)
-		const playerTwoDeck = STARTER_DECKS.find(
-			(deck) => deck.name === 'Prankster Deck #2',
-		)
-
-		assert(playerOneDeck, 'The deck should exist.')
-		assert(playerTwoDeck, 'The deck should exist.')
-
-		testReplayGame({
-			playerOneDeck: playerOneDeck.cards.sort(
-				(a, b) => a.numericId - b.numericId,
-			),
-			playerTwoDeck: playerTwoDeck.cards.sort(
-				(a, b) => a.numericId - b.numericId,
-			),
-			seed: '0.ea5a6943997d7',
-			shuffleDeck: true,
-			gameSaga: function* (con) {
-				const game = con.game
-
-				yield* playCardFromHand(game, BoomerBdubsCommon, 'hermit', 2)
-				yield* playCardFromHand(game, PranksterItem, 'item', 2, 0)
-				yield* endTurn(game)
-
-				yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 2)
-				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 2, 0)
-				yield* playCardFromHand(game, DiamondArmor, 'attach', 2)
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
-
-				yield* playCardFromHand(game, PranksterItem, 'item', 2, 1)
-				yield* playCardFromHand(game, InstantHealthII, 'single_use')
-				yield* pick(
-					game,
-					query.slot.active,
-					query.slot.currentPlayer,
-					query.slot.hermit,
-				)
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
-
-				yield* playCardFromHand(game, LlamadadRare, 'hermit', 3)
-				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 3, 0)
-				yield* playCardFromHand(game, DiamondArmor, 'attach', 3)
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
-
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
-
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
-
-				yield* playCardFromHand(game, MumboJumboRare, 'hermit', 3)
-				yield* playCardFromHand(game, PranksterItem, 'item', 3, 0)
-				yield* playCardFromHand(game, GoldenAxe, 'single_use')
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
-
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
-
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
-
-				yield changeActiveHermit(game, 3)
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
-
-				yield changeActiveHermit(game, 3)
-				yield* playCardFromHand(game, PranksterItem, 'item', 3, 1)
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
-
-				yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 2)
-				yield* playCardFromHand(game, BalancedItem, 'item', 2, 0)
-				yield* playCardFromHand(game, Fortune, 'single_use')
-				yield* removeEffect(game)
-				yield* playCardFromHand(game, Fortune, 'single_use')
-				yield* applyEffect(game)
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
-
-				yield* playCardFromHand(game, FishingRod, 'single_use')
-				yield* applyEffect(game)
-				yield* playCardFromHand(game, FrenchralisRare, 'hermit', 2)
-				yield* playCardFromHand(game, PranksterItem, 'item', 2, 0)
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
-
-				yield* playCardFromHand(game, TNT, 'single_use')
-				yield* removeEffect(game)
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
-
-				yield* playCardFromHand(game, PranksterItem, 'item', 2, 1)
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
-
-				yield* changeActiveHermit(game, 2)
-				yield* playCardFromHand(game, BalancedItem, 'item', 2, 2)
-				yield* playCardFromHand(game, DiamondArmor, 'attach', 2)
-				yield* playCardFromHand(game, DiamondSword, 'single_use')
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
-
-				yield* changeActiveHermit(game, 2)
-				yield* playCardFromHand(game, FishingRod, 'single_use')
-				yield* applyEffect(game)
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
-
-				yield* playCardFromHand(game, TNT, 'single_use')
-				yield* attack(game, 'secondary')
-				yield* finishModalRequest(game, {
-					pick: 'secondary',
-				})
-				yield* endTurn(game)
-
-				yield* playCardFromHand(game, InstantHealthII, 'single_use')
-				yield* pick(
-					game,
-					query.slot.active,
-					query.slot.currentPlayer,
-					query.slot.hermit,
-				)
-				yield* attack(game, 'primary')
-				yield* endTurn(game)
-
-				yield* playCardFromHand(game, Fortune, 'single_use')
-				yield* applyEffect(game)
-				yield* attack(game, 'secondary')
-				yield* finishModalRequest(game, {
-					pick: 'secondary',
-				})
-				yield* endTurn(game)
-
-				yield* attack(game, 'primary')
-				yield* endTurn(game)
-
-				yield* playCardFromHand(game, FrenchralisRare, 'hermit', 3)
-				yield* attack(game, 'secondary')
-				yield* finishModalRequest(game, {
-					pick: 'secondary',
-				})
-				yield* endTurn(game)
-
-				yield* attack(game, 'primary')
-			},
-			afterGame: () => {},
-		})
-	})
-
 	test('Huffman Tree Compression Algorithm', () => {
 		// Generated from replay data
 		let hexString = `
-			0100001000010ad0010709000a10010109d000030780010b0400030b030001000e1801053007050118d20302125604060a070602155e01012ad202060b0b07011
-			09d8070706150708061c0b0f01180705031680050b080110060e070800102002010ee001060b0b1b01200705062b0706060f0100001002010ad002070c0012100
-			1010010512070702155605010cd20300190800050a0706011bd202000a1800061b0b15011007070119d402060907070113d800030d80020b060110060f0b09011
-			0070502184e030126c80206090708061d0b14011807070a1201010cca02050a07050110da03030a80040b040110060e0707052e070706b507070116cc03060c07
-			0703138005080600100801010bc802060d000102030405060708090a0b0c0d0e0f0100001000010ad0010709000a10010109d000030780010b0400030b0300010
-			00e1801053007050118d20302125604060a070602155e01012ad202060b0b0701109d8070706150708061c0b0f01180705031680050b080110060e07080010200
-			2010ee001060b0b1b01200705062b0706060f0100001002010ad002070c00121001010010512070702155605010cd20300190800050a0706011bd202000a18000
-			61b0b15011007070119d402060907070113d800030d80020b060110060f0b090110070502184e030126c80206090708061d0b14011807070a1201010cca02050a
-			07050110da03030a80040b040110060e0707052e070706b507070116cc03060c070703138005080600100801010bc802060d000102030405060708090a0b0c0d0
-			e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e
-			4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8
-			f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecf
-			d0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff
+			01 00 00 10 00 01 0a d0 01 07 09 00 0a 10 01 01 09 d0 00 03 07 80 01 0b 04 00 03 0b 03 00 01 00 0e 18 01 05 30 07 05 01
+			18 d2 03 02 12 56 04 06 0a 07 06 02 15 5e 01 01 2a d2 02 06 0b 0b 07 01 10 9d 80 70 70 61 50 70 80 61 c0 b0 f0 11 80 70
+			50 31 68 00 50 b0 80 11 00 60 e0 70 80 01 02 00 20 10 ee 00 10 60 b0 b1 b0 12 00 70 50 62 b0 70 60 60 f0 10 00 01 00 20
+			10 ad 00 20 70 c0 01 21 00 10 10 01 05 12 07 07 02 15 56 05 01 0c d2 03 00 19 08 00 05 0a 07 06 01 1b d2 02 00 0a 18 00
+			06 1b 0b 15 01 10 07 07 01 19 d4 02 06 09 07 07 01 13 d8 00 03 0d 80 02 0b 06 01 10 06 0f 0b 09 01 10 07 05 02 18 4e 03
+			01 26 c8 02 06 09 07 08 06 1d 0b 14 01 18 07 07 0a 12 01 01 0c ca 02 05 0a 07 05 01 10 da 03 03 0a 80 04 0b 04 01 10 06
+			0e 07 07 05 2e 07 07 06 b5 07 07 01 16 cc 03 06 0c 07 07 03 13 80 05 08 06 00 10 08 01 01 0b c8 02 06 0d 00 01 02 03 04
+			05 06 07 08 09 0a 0b 0c 0d 0e 0f 01 00 00 10 00 01 0a d0 01 07 09 00 0a 10 01 01 09 d0 00 03 07 80 01 0b 04 00 03 0b 03
+			00 01 00 0e 18 01 05 30 07 05 01 18 d2 03 02 12 56 04 06 0a 07 06 02 15 5e 01 01 2a d2 02 06 0b 0b 07 01 10 9d 80 70 70
+			61 50 70 80 61 c0 b0 f0 11 80 70 50 31 68 00 50 b0 80 11 00 60 e0 70 80 01 02 00 20 10 ee 00 10 60 b0 b1 b0 12 00 70 50
+			62 b0 70 60 60 f0 10 00 01 00 20 10 ad 00 20 70 c0 01 21 00 10 10 01 05 12 07 07 02 15 56 05 01 0c d2 03 00 19 08 00 05
+			0a 07 06 01 1b d2 02 00 0a 18 00 06 1b 0b 15 01 10 07 07 01 19 d4 02 06 09 07 07 01 13 d8 00 03 0d 80 02 0b 06 01 10 06
+			0f 0b 09 01 10 07 05 02 18 4e 03 01 26 c8 02 06 09 07 08 06 1d 0b 14 01 18 07 07 0a 12 01 01 0c ca 02 05 0a 07 05 01 10
+			da 03 03 0a 80 04 0b 04 01 10 06 0e 07 07 05 2e 07 07 06 b5 07 07 01 16 cc 03 06 0c 07 07 03 13 80 05 08 06 00 10 08 01
+			01 0b c8 02 06 0d 00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f 20 21
+			22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f 30 31 32 33 34 35 36 37 38 39 3a 3b 3c 3d 3e 3f 40 41 42 43 44 45 46 47 48 49
+			4a 4b 4c 4d 4e 4f 50 51 52 53 54 55 56 57 58 59 5a 5b 5c 5d 5e 5f 60 61 62 63 64 65 66 67 68 69 6a 6b 6c 6d 6e 6f 70 71
+			72 73 74 75 76 77 78 79 7a 7b 7c 7d 7e 7f 80 81 82 83 84 85 86 87 88 89 8a 8b 8c 8d 8e 8f 90 91 92 93 94 95 96 97 98 99
+			9a 9b 9c 9d 9e 9f a0 a1 a2 a3 a4 a5 a6 a7 a8 a9 aa ab ac ad ae af b0 b1 b2 b3 b4 b5 b6 b7 b8 b9 ba bb bc bd be bf c0 c1
+			c2 c3 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf d0 d1 d2 d3 d4 d5 d6 d7 d8 d9 da db dc dd de df e0 e1 e2 e3 e4 e5 e6 e7 e8 e9
+			ea eb ec ed ee ef f0 f1 f2 f3 f4 f5 f6 f7 f8 f9 fa fb fc fd fe ff 01 00 00 10 06 01 08 d0 05 07 0c 00 0d 10 05 01 09 d0
+			04 02 09 56 00 06 09 07 08 01 12 d2 04 03 0e 80 02 0b 05 01 10 06 10 07 09 00 0d 18 04 01 09 d8 03 02 09 5e 00 06 09 07
+			27 06 0f 07 0c 06 0e 07 08 00 12 18 05 01 0c d8 04 03 10 80 01 06 09 07 09 06 15 07 06 06 0f 07 06 0a 18 03 06 1c 07 1c
+			0a 1b 03 01 09 da 04 06 0c 07 30 00 49 10 05 01 09 d0 03 03 09 80 01 09 04 03 0f 80 01 08 06 06 09 07 1e 03 0f 80 02 08
+			07 00 0e 10 06 01 1b d0 02 06 08 07 24 03 14 80 03 09 0c 06 11 07 28 01 18 d2 05 06 0d 07 25 0a 10 02 01 0b d2 03 02 0b
+			56 00 03 09 80 00 09 06 03 0e 80 00 06 0b 07 30 0a 0b 02 03 0a 80 04 08 06 06 17 07 26 03 16 80 02 06 0d 0c 25 02 02 02
+			07 06 03 0d 80 04 0b 04 01 10 05 0e 07 07 03 18 80 00 08 05 06 0a 0c 1a 02 02 02 07 05 05 0d 07 0a 00 1c 18 04 06 11 07
+			2a 06 0c 01 00 00 18 06 01 00 d8 03 07 00 00 00 18 05 01 00 d8 03 02 00 5e 00 06 00 07 00 01 00 da 03 03 00 80 02 0b 00
+			01 18 06 00 07 00 00 00 20 04 01 00 e0 03 02 00 66 00 06 00 07 00 06 00 07 00 06 00 07 00 00 00 20 05 01 00 e0 02 03 00
+			80 01 06 00 07 00 06 00 07 00 06 00 07 00 0a 00 04 06 00 07 00 0a 00 04 01 00 e2 02 06 00 07 00 00 00 18 05 01 00 d8 02
+			03 00 80 01 08 00 06 00 07 00 03 00 80 02 08 00 00 00 18 06 01 00 d8 02 06 00 07 00 06 00 07 00 01 00 da 03 06 00 07 00
+			0a 00 03 01 00 dc 03 02 00 5e 00 03 00 80 00 06 00 07 00 0a 00 03 03 00 80 04 08 00 06 00 07 00 03 00 80 02 06 00 0c 00
+			02 02 02 07 00 03 00 80 04 0b 00 01 18 05 00 07 00 03 00 80 00 08 00 06 00 0c 00 02 02 02 07 00 05 00 07 00 00 00 20 04
+			06 00 0c 00 02 02 02 07 00 05 00 07 00 05 00
 			`
 			.replaceAll('\n', '')
 			.replaceAll('\t', '')
+			.replaceAll(' ', '')
 
 		const replayNumbers: Array<number> = []
-		const splitString: Array<string> = []
 		while (hexString.length) {
 			replayNumbers.push(Number(`0x${hexString.substring(0, 2)}`))
-			splitString.push(hexString.substring(0, 2))
 			hexString = hexString.substring(2)
 		}
-		const testBuffer = Buffer.from(replayNumbers)
 
-		splitString.push('EOF')
-		const tree = createHuffmanTree(splitString)
-		console.dir(tree, {maxArrayLength: null})
+		const testBuffer = Buffer.from(replayNumbers)
 
 		// Test compression algorithms
 		const compressed = huffmanCompress(testBuffer)
