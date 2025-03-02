@@ -62,7 +62,6 @@ function App() {
 		if (section === 'game') {
 			return <Game setMenuSection={setMenuSection} />
 		} else if (connected && playerName) {
-			enableToast = true
 			switch (menuSection) {
 				case 'deck':
 					return <Deck setMenuSection={menuSectionSet} />
