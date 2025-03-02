@@ -37,6 +37,7 @@ import {
 	turnActionsToBuffer,
 } from '../../server/src/routines/turn-action-compressor'
 import {
+	createHuffmanTree,
 	huffmanCompress,
 	huffmanDecompress,
 } from '../../server/src/utils/compression'
@@ -49,6 +50,7 @@ import {
 	forfeit,
 	pick,
 	playCardFromHand,
+	removeEffect,
 	testReplayGame,
 } from '../unit/game/utils'
 
@@ -264,17 +266,17 @@ describe('Test Replays', () => {
 			gameSaga: function* (con) {
 				const game = con.game
 
-				yield* playCardFromHand(game, BoomerBdubsCommon, 'hermit', 3)
-				yield* playCardFromHand(game, PranksterItem, 'item', 3, 0)
+				yield* playCardFromHand(game, BoomerBdubsCommon, 'hermit', 2)
+				yield* playCardFromHand(game, PranksterItem, 'item', 2, 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 3)
-				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 3, 0)
-				yield* playCardFromHand(game, DiamondArmor, 'attach', 3)
+				yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 2)
+				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 2, 0)
+				yield* playCardFromHand(game, DiamondArmor, 'attach', 2)
 				yield* attack(game, 'secondary')
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, PranksterItem, 'item', 3, 1)
+				yield* playCardFromHand(game, PranksterItem, 'item', 2, 1)
 				yield* playCardFromHand(game, InstantHealthII, 'single_use')
 				yield* pick(
 					game,
@@ -285,9 +287,9 @@ describe('Test Replays', () => {
 				yield* attack(game, 'secondary')
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, LlamadadRare, 'hermit', 4)
-				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 4, 0)
-				yield* playCardFromHand(game, DiamondArmor, 'attach', 4)
+				yield* playCardFromHand(game, LlamadadRare, 'hermit', 3)
+				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 3, 0)
+				yield* playCardFromHand(game, DiamondArmor, 'attach', 3)
 				yield* attack(game, 'secondary')
 				yield* endTurn(game)
 
@@ -297,8 +299,8 @@ describe('Test Replays', () => {
 				yield* attack(game, 'secondary')
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, MumboJumboRare, 'hermit', 4)
-				yield* playCardFromHand(game, PranksterItem, 'item', 4, 0)
+				yield* playCardFromHand(game, MumboJumboRare, 'hermit', 3)
+				yield* playCardFromHand(game, PranksterItem, 'item', 3, 0)
 				yield* playCardFromHand(game, GoldenAxe, 'single_use')
 				yield* attack(game, 'secondary')
 				yield* endTurn(game)
@@ -309,17 +311,19 @@ describe('Test Replays', () => {
 				yield* attack(game, 'secondary')
 				yield* endTurn(game)
 
-				yield changeActiveHermit(game, 4)
+				yield changeActiveHermit(game, 3)
 				yield* attack(game, 'secondary')
 				yield* endTurn(game)
 
-				yield changeActiveHermit(game, 4)
-				yield* playCardFromHand(game, PranksterItem, 'item', 4, 1)
+				yield changeActiveHermit(game, 3)
+				yield* playCardFromHand(game, PranksterItem, 'item', 3, 1)
 				yield* attack(game, 'secondary')
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 3)
-				yield* playCardFromHand(game, BalancedItem, 'item', 3, 0)
+				yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 2)
+				yield* playCardFromHand(game, BalancedItem, 'item', 2, 0)
+				yield* playCardFromHand(game, Fortune, 'single_use')
+				yield* removeEffect(game)
 				yield* playCardFromHand(game, Fortune, 'single_use')
 				yield* applyEffect(game)
 				yield* attack(game, 'secondary')
@@ -327,26 +331,28 @@ describe('Test Replays', () => {
 
 				yield* playCardFromHand(game, FishingRod, 'single_use')
 				yield* applyEffect(game)
-				yield* playCardFromHand(game, FrenchralisRare, 'hermit', 3)
-				yield* playCardFromHand(game, PranksterItem, 'item', 3, 0)
+				yield* playCardFromHand(game, FrenchralisRare, 'hermit', 2)
+				yield* playCardFromHand(game, PranksterItem, 'item', 2, 0)
 				yield* attack(game, 'secondary')
 				yield* endTurn(game)
 
+				yield* playCardFromHand(game, TNT, 'single_use')
+				yield* removeEffect(game)
 				yield* attack(game, 'secondary')
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, PranksterItem, 'item', 3, 1)
+				yield* playCardFromHand(game, PranksterItem, 'item', 2, 1)
 				yield* attack(game, 'secondary')
 				yield* endTurn(game)
 
-				yield* changeActiveHermit(game, 3)
-				yield* playCardFromHand(game, BalancedItem, 'item', 3, 2)
-				yield* playCardFromHand(game, DiamondArmor, 'attach', 3)
+				yield* changeActiveHermit(game, 2)
+				yield* playCardFromHand(game, BalancedItem, 'item', 2, 2)
+				yield* playCardFromHand(game, DiamondArmor, 'attach', 2)
 				yield* playCardFromHand(game, DiamondSword, 'single_use')
 				yield* attack(game, 'secondary')
 				yield* endTurn(game)
 
-				yield* changeActiveHermit(game, 3)
+				yield* changeActiveHermit(game, 2)
 				yield* playCardFromHand(game, FishingRod, 'single_use')
 				yield* applyEffect(game)
 				yield* attack(game, 'secondary')
@@ -380,7 +386,7 @@ describe('Test Replays', () => {
 				yield* attack(game, 'primary')
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, FrenchralisRare, 'hermit', 4)
+				yield* playCardFromHand(game, FrenchralisRare, 'hermit', 3)
 				yield* attack(game, 'secondary')
 				yield* finishModalRequest(game, {
 					pick: 'secondary',
@@ -388,12 +394,8 @@ describe('Test Replays', () => {
 				yield* endTurn(game)
 
 				yield* attack(game, 'primary')
-				yield* endTurn(game)
-
-				yield* attack(game, 'primary')
-				yield* endTurn(game)
 			},
-			afterGame: afterGame,
+			afterGame: () => {},
 		})
 	})
 
@@ -404,15 +406,31 @@ describe('Test Replays', () => {
 			09d8070706150708061c0b0f01180705031680050b080110060e070800102002010ee001060b0b1b01200705062b0706060f0100001002010ad002070c0012100
 			1010010512070702155605010cd20300190800050a0706011bd202000a1800061b0b15011007070119d402060907070113d800030d80020b060110060f0b09011
 			0070502184e030126c80206090708061d0b14011807070a1201010cca02050a07050110da03030a80040b040110060e0707052e070706b507070116cc03060c07
-			0703138005080600100801010bc802060d
-			`.replace('\n', '')
+			0703138005080600100801010bc802060d000102030405060708090a0b0c0d0e0f0100001000010ad0010709000a10010109d000030780010b0400030b0300010
+			00e1801053007050118d20302125604060a070602155e01012ad202060b0b0701109d8070706150708061c0b0f01180705031680050b080110060e07080010200
+			2010ee001060b0b1b01200705062b0706060f0100001002010ad002070c00121001010010512070702155605010cd20300190800050a0706011bd202000a18000
+			61b0b15011007070119d402060907070113d800030d80020b060110060f0b090110070502184e030126c80206090708061d0b14011807070a1201010cca02050a
+			07050110da03030a80040b040110060e0707052e070706b507070116cc03060c070703138005080600100801010bc802060d000102030405060708090a0b0c0d0
+			e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e
+			4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8
+			f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecf
+			d0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff
+			`
+			.replaceAll('\n', '')
+			.replaceAll('\t', '')
 
 		const replayNumbers: Array<number> = []
+		const splitString: Array<string> = []
 		while (hexString.length) {
 			replayNumbers.push(Number(`0x${hexString.substring(0, 2)}`))
+			splitString.push(hexString.substring(0, 2))
 			hexString = hexString.substring(2)
 		}
 		const testBuffer = Buffer.from(replayNumbers)
+
+		splitString.push('EOF')
+		const tree = createHuffmanTree(splitString)
+		console.dir(tree, {maxArrayLength: null})
 
 		// Test compression algorithms
 		const compressed = huffmanCompress(testBuffer)

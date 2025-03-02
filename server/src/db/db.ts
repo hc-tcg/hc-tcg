@@ -1029,8 +1029,7 @@ export class Database {
 			const seed: string = game['seed']
 
 			const replay: Buffer = game['replay']
-			// const decompressedReplay: Buffer | null = huffmanDecompress(replay)
-			const decompressedReplay = replay
+			const decompressedReplay: Buffer | null = huffmanDecompress(replay)
 
 			if (
 				!decompressedReplay ||
@@ -1102,6 +1101,8 @@ export class Database {
 				{},
 				decompressedReplay,
 			)
+
+			console.log(replayActions.replay)
 
 			return {
 				type: 'success',
@@ -1250,7 +1251,7 @@ export class Database {
 				firstPlayerWon = false
 			}
 
-			const _compressedReplay = huffmanCompress(replay)
+			const compressedReplay = huffmanCompress(replay)
 
 			await this.pool.query(
 				"INSERT INTO games (start_time, completion_time, winner, loser, winner_deck_code, loser_deck_code, outcome, seed, turns, first_player_won, replay, opponent_code) VALUES(CURRENT_TIMESTAMP - $1 * '1 millisecond'::interval,CURRENT_TIMESTAMP,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
@@ -1264,7 +1265,7 @@ export class Database {
 					seed,
 					turns,
 					firstPlayerWon,
-					replay,
+					compressedReplay,
 					opponentCode,
 				],
 			)
