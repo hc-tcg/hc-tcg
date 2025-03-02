@@ -266,7 +266,16 @@ export function* setupData(user: User) {
 	})
 }
 
-export function* loginSaga() {
+type LoginResult =
+	| {
+			success: true
+	  }
+	| {
+			success: false
+			reason: string
+	  }
+
+function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 	const socket = yield* select(getSocket)
 	const session = loadSession()
 
@@ -364,8 +373,11 @@ export function* loginSaga() {
 
 		clearSession()
 		socket.disconnect()
-		location.reload()
-		return
+
+		return {
+			success: false,
+			reason: 'Invalid credentials provided.',
+		}
 	}
 
 	if (result.timeout) {
@@ -375,13 +387,20 @@ export function* loginSaga() {
 			type: localMessages.DISCONNECT,
 			errorMessage: 'timeout',
 		})
-		return
+		return {
+			success: false,
+			reason: 'Connection timed out.',
+		}
 	}
 
 	window.history.replaceState({}, '', window.location.pathname)
 
 	if (result.playerReconnected) {
-		if (!session) return
+		if (!session)
+			return {
+				success: false,
+				reason: 'Session did not exist, please report this error',
+			}
 
 		const secret = localStorage.getItem('databaseInfo:secret')
 		const userId = localStorage.getItem('databaseInfo:userId')
@@ -441,6 +460,25 @@ export function* loginSaga() {
 
 		yield put<LocalMessage>({
 			type: localMessages.CONNECTED,
+		})
+	}
+
+	return {success: true}
+}
+
+export function* loginSaga() {
+	while (true) {
+		let result = yield* trySingleLoginAttempt()
+		if (result.success === true) {
+			break
+		}
+
+		// Otherwise the login failed, so lets send a toast and try again
+		yield put<LocalMessage>({
+			type: localMessages.TOAST_OPEN,
+			open: true,
+			title: 'Failed To Log In',
+			description: result.reason,
 		})
 	}
 }

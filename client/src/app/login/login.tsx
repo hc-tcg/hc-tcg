@@ -34,7 +34,25 @@ const Login = () => {
 	const handlePlayerName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
 		const name = ev.currentTarget.playerName.value.trim()
-		if (name.length > 0) dispatch({type: localMessages.LOGIN, name: name})
+		if (name.length > 0)
+			dispatch({
+				type: localMessages.LOGIN,
+				login_type: 'new-account',
+				name: name,
+			})
+	}
+
+	const handleSync = (ev: React.SyntheticEvent<HTMLFormElement>) => {
+		ev.preventDefault()
+		const uuid = ev.currentTarget.uuid.value.trim()
+		const secret = ev.currentTarget.secret.value.trim()
+		if (uuid.length > 0 && secret.length > 0)
+			dispatch({
+				type: localMessages.LOGIN,
+				login_type: 'sync',
+				uuid: uuid,
+				secret: secret,
+			})
 	}
 
 	return (
@@ -47,21 +65,49 @@ const Login = () => {
 						<p>{connectingMessage}</p>
 					</div>
 				) : (
-					<form className={css.nameForm} onSubmit={handlePlayerName}>
-						<div className={css.customInput}>
-							<input
-								maxLength={25}
-								name="playerName"
-								placeholder=" "
-								autoFocus
-								id="username"
-							></input>
-							<label htmlFor="username">Player Name</label>
-						</div>
-						<Button variant="stone" type="submit">
-							Next
-						</Button>
-					</form>
+					<div>
+						<form className={css.nameForm} onSubmit={handlePlayerName}>
+							<div className={css.customInput}>
+								<input
+									maxLength={25}
+									name="playerName"
+									placeholder=" "
+									autoFocus
+									id="username"
+								></input>
+								<label htmlFor="username">Player Name</label>
+							</div>
+							<Button variant="stone" type="submit">
+								Next
+							</Button>
+						</form>
+						<p> Sync to an existing account </p>
+						<form className={css.nameForm} onSubmit={handleSync}>
+							<div className={css.customInput}>
+								<input
+									maxLength={25}
+									name="UUID"
+									placeholder=" "
+									autoFocus
+									id="uuid"
+								></input>
+								<label htmlFor="uuid">Account UUID</label>
+							</div>
+							<div className={css.customInput}>
+								<input
+									maxLength={25}
+									name="UUID"
+									placeholder=" "
+									autoFocus
+									id="uuid"
+								></input>
+								<label htmlFor="uuid">Account Secret</label>
+							</div>
+							<Button variant="stone" type="submit">
+								Next
+							</Button>
+						</form>
+					</div>
 				)}
 				{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
 				<VersionLinks />

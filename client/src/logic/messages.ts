@@ -117,7 +117,13 @@ type Messages = [
 	{type: typeof localMessages.SOCKET_CONNECTING},
 	{type: typeof localMessages.SOCKET_DISCONNECT},
 	{type: typeof localMessages.SOCKET_CONNECT_ERROR},
-	{type: typeof localMessages.LOGIN; name: string},
+	{type: typeof localMessages.LOGIN; login_type: 'new-account'; name: string},
+	{
+		type: typeof localMessages.LOGIN
+		login_type: 'sync'
+		uuid: string
+		secret: string
+	},
 	{
 		type: typeof localMessages.PLAYER_SESSION_SET
 		player: {
