@@ -110,7 +110,7 @@
 	position: absolute;
 	height: 100%;
 	width: 75%;
-	top: 37%;
+	top: 32%;
 }
 
 .nameAndProgress {
@@ -169,5 +169,34 @@
 
 	to {
 		transform: translateY(-5px);
+	}
+}
+
+@media screen and (max-width: 720px) {
+	.description {
+		padding: 0.5rem;
+		padding-top: 2rem;
+	}
+
+	.animation {
+		top: -2.7rem;
+	}
+
+	.smallAchievementBox {
+		top: 23.5%;
+	}
+
+	.nameAndProgress {
+		font-size: 0.9rem;
+		text-wrap: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	.endOptions {
+		grid-template-areas:
+			"playAgain"
+			"rematch"
+			"board"
+			"mainMenu";
 	}
 }

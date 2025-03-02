@@ -7,6 +7,7 @@ export type SocketType = {
 	auth: {
 		version: string | null
 		playerName: string
+		minecraftName: string
 		playerId: PlayerId
 		playerUuid: string
 		playerSecret: string

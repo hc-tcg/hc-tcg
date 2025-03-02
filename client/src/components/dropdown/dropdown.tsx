@@ -44,47 +44,75 @@ const Dropdown = ({
 	const filterMenuRef = useRef<HTMLDivElement>(null)
 	const [newChecked, setChecked] = useState<Array<string>>(checked || [])
 
-	const onMouseUp = (e: MouseEvent) => {
+	const calculateShow = (x: number, y: number) => {
 		const boundingBox = buttonRef.current?.getBoundingClientRect()
 		const menuBoundingBox = filterMenuRef.current?.getBoundingClientRect()
 
 		if (
 			!checkboxes &&
 			boundingBox &&
-			(e.x > boundingBox.right ||
-				e.x < boundingBox.left ||
-				e.y > boundingBox.bottom ||
-				e.y < boundingBox.top)
-		)
+			(x > boundingBox.right ||
+				x < boundingBox.left ||
+				y > boundingBox.bottom ||
+				y < boundingBox.top)
+		) {
 			dispatch({
 				type: localMessages.HIDE_DROPDOWN,
 			})
+		}
 
 		if (
 			checkboxes &&
 			menuBoundingBox &&
 			boundingBox &&
-			(e.x > boundingBox.right ||
-				e.x < boundingBox.left ||
-				e.y > boundingBox.bottom ||
-				e.y < boundingBox.top) &&
-			(e.x > menuBoundingBox.right ||
-				e.x < menuBoundingBox.left ||
-				e.y > menuBoundingBox.bottom ||
-				e.y < menuBoundingBox.top)
+			(x > boundingBox.right ||
+				x < boundingBox.left ||
+				y > boundingBox.bottom ||
+				y < boundingBox.top) &&
+			(x > menuBoundingBox.right ||
+				x < menuBoundingBox.left ||
+				y > menuBoundingBox.bottom ||
+				y < menuBoundingBox.top)
 		)
 			dispatch({
 				type: localMessages.HIDE_DROPDOWN,
 			})
 	}
 
+	const onTouchStart = (e: TouchEvent) => {
+		calculateShow(e.touches[0].clientX, e.touches[0].clientY)
+	}
+
+	const onMouseUp = (e: MouseEvent) => {
+		calculateShow(e.x, e.y)
+	}
+
 	useEffect(() => {
 		window.addEventListener('mouseup', onMouseUp, false)
+		window.addEventListener('touchstart', onTouchStart, false)
 
 		return () => {
-			window.removeEventListener('mouseup', onMouseUp, false)
+			window.addEventListener('mouseup', onMouseUp, false)
+			window.removeEventListener('touchstart', onTouchStart, false)
 		}
 	})
+
+	const mouseDownAction = (option: {key?: string; name: string}) => {
+		if (!checkboxes && action) {
+			action(option.key || option.name)
+		}
+		if (!checkboxes || !option.key) return
+		const ch = [...newChecked]
+		const updatedChecked =
+			option.key === 'any'
+				? []
+				: ch.includes(option.key)
+					? ch.filter((a) => a !== option.key)
+					: [option.key, ...ch]
+
+		setChecked(updatedChecked)
+		if (checkboxAction) checkboxAction(updatedChecked)
+	}
 
 	return (
 		<div className={css.dropdownContainer}>
@@ -127,22 +155,8 @@ const Dropdown = ({
 							{options.map((option, i) => (
 								<div
 									key={option.key || option.name}
-									onMouseUp={() => {
-										if (!checkboxes && action) {
-											action(option.key || option.name)
-										}
-										if (!checkboxes || !option.key) return
-										const ch = [...newChecked]
-										const updatedChecked =
-											option.key === 'any'
-												? []
-												: ch.includes(option.key)
-													? ch.filter((a) => a !== option.key)
-													: [option.key, ...ch]
-
-										setChecked(updatedChecked)
-										if (checkboxAction) checkboxAction(updatedChecked)
-									}}
+									onTouchStart={() => mouseDownAction(option)}
+									onMouseUp={() => mouseDownAction(option)}
 									className={css.DropdownMenuItem}
 								>
 									{checkboxes && (

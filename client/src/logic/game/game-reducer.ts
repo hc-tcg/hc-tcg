@@ -22,6 +22,7 @@ type LocalGameRoot = {
 	endGameOverlay: {
 		outcome: GameOutcome
 		earnedAchievements: Array<EarnedAchievement>
+		gameEndTime: number
 	} | null
 	chat: Array<Message>
 	battleLog: BattleLogModel | null
@@ -51,7 +52,8 @@ const gameReducer = (
 			// I really don't know if its a good idea to automatically close modals besides the forfeit modal, but I am too scared
 			// too stop all modals from automatically closing.
 			let nextOpenedModal =
-				state.openedModal !== null && state.openedModal.id === 'forfeit'
+				state.openedModal !== null &&
+				(state.openedModal.id === 'forfeit' || state.openedModal.id === 'exit')
 					? state.openedModal
 					: null
 			const newGame: LocalGameRoot = {
@@ -102,6 +104,7 @@ const gameReducer = (
 				endGameOverlay: {
 					outcome: action.outcome,
 					earnedAchievements: action.earnedAchievements,
+					gameEndTime: action.gameEndTime,
 				},
 			}
 		case localMessages.CHAT_UPDATE:
