@@ -1,4 +1,3 @@
-import assert from 'assert'
 import query from '../components/query'
 import {CardEntity} from '../entities'
 import PoisonEffect from '../status-effects/poison'

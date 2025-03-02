@@ -1,4 +1,3 @@
-import assert from 'assert'
 import Trident from '../cards/single-use/trident'
 import {CardEntity} from '../entities'
 import {afterAttack} from '../types/priorities'

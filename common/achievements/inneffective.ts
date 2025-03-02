@@ -8,20 +8,22 @@ const Inneffective: Achievement = {
 	levels: [
 		{
 			name: 'Inneffective',
-			description: 'Win 10 games without using single use effect cards.',
+			description:
+				'Win 10 games without having single use effect cards in your deck.',
 			steps: 10,
 		},
 	],
 	onGameStart(game, player, component, observer) {
-		let usedBannedCard = false
+		let deckHasBannedCards = false
 
-		observer.subscribe(player.hooks.onAttach, (card) => {
-			if (!['single_use'].includes(card.props.category)) return
-			usedBannedCard = true
-		})
+		for (const card of player.getDeck()) {
+			if (card.props.category.includes('single_use')) {
+				deckHasBannedCards = true
+			}
+		}
 
 		observer.subscribe(game.hooks.onGameEnd, (outcome) => {
-			if (usedBannedCard) return
+			if (deckHasBannedCards) return
 			if (outcome.type === 'player-won' && outcome.winner === player.entity) {
 				component.incrementGoalProgress({goal: 0})
 			}
