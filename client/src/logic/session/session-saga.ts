@@ -121,7 +121,7 @@ function getNonDatabaseUser(): User {
 function* authenticateUser(
 	playerUuid: string,
 	secret: string,
-): Generator<any, User> {
+): Generator<any, User | null> {
 	const headers = {
 		userId: playerUuid,
 		secret: secret,
@@ -140,6 +140,11 @@ function* authenticateUser(
 			},
 		})
 		return getNonDatabaseUser()
+	}
+
+	// Authentication failed
+	if (auth.status === 401) {
+		return null
 	}
 
 	const userResponse = (yield* call([auth, auth.json])) as User
@@ -284,64 +289,79 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 	console.log('session saga: ', session)
 
 	if (!session) {
-		const secret = localStorage.getItem('databaseInfo:secret')
-		const userId = localStorage.getItem('databaseInfo:userId')
+		let secret = localStorage.getItem('databaseInfo:secret')
+		let userId = localStorage.getItem('databaseInfo:userId')
 
 		if (!secret || !userId) {
 			// Create a new user here
 			yield* put<LocalMessage>({type: localMessages.NOT_CONNECTING})
 
-			const {name} = yield* take<LocalMessageTable[typeof localMessages.LOGIN]>(
-				localMessages.LOGIN,
-			)
+			const loginMessage = yield* take<
+				LocalMessageTable[typeof localMessages.LOGIN]
+			>(localMessages.LOGIN)
 
-			localStorage.setItem('playerName', name)
+			if (loginMessage.login_type === 'new-account') {
+				const {name} = loginMessage
 
-			const userResponse = yield* createUser(name)
+				localStorage.setItem('playerName', name)
 
-			yield* put<LocalMessage>({
-				type: localMessages.SET_ID_AND_SECRET,
-				userId: userResponse.uuid,
-				secret: userResponse.secret,
-			})
+				const userResponse = yield* createUser(name)
 
-			yield* put<LocalMessage>({
-				type: localMessages.SELECT_DECK,
-				deck: userResponse.decks[0],
-			})
-			localStorage.setItem('activeDeck', userResponse.decks[0].code)
+				yield* put<LocalMessage>({
+					type: localMessages.SET_ID_AND_SECRET,
+					userId: userResponse.uuid,
+					secret: userResponse.secret,
+				})
 
-			socket.auth = {
-				...socket.auth,
-				playerUuid: userResponse.uuid,
-				playerName: userResponse.username,
-				minecraftName: userResponse.minecraftName || userResponse.username,
-				version: getClientVersion(),
+				yield* put<LocalMessage>({
+					type: localMessages.SELECT_DECK,
+					deck: userResponse.decks[0],
+				})
+				localStorage.setItem('activeDeck', userResponse.decks[0].code)
+
+				socket.auth = {
+					...socket.auth,
+					playerUuid: userResponse.uuid,
+					playerName: userResponse.username,
+					minecraftName: userResponse.minecraftName || userResponse.username,
+					version: getClientVersion(),
+				}
+				yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
+				socket.connect()
+
+				yield* setupData(userResponse)
+				return {success: true}
+			} else {
+				userId = loginMessage.uuid
+				secret = loginMessage.secret
 			}
-			yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
-			socket.connect()
-
-			yield* setupData(userResponse)
-		} else {
-			const userResponse = yield* authenticateUser(userId, secret)
-
-			yield* put<LocalMessage>({
-				type: localMessages.CONNECTING_MESSAGE,
-				message: 'Singing in',
-			})
-
-			socket.auth = {
-				...socket.auth,
-				playerUuid: userResponse.uuid,
-				playerName: userResponse.username,
-				minecraftName: userResponse.minecraftName || userResponse.username,
-				version: getClientVersion(),
-			}
-			yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
-			socket.connect()
-
-			yield* setupData(userResponse)
 		}
+
+		const userResponse = yield* authenticateUser(userId, secret)
+
+		yield* put<LocalMessage>({
+			type: localMessages.CONNECTING_MESSAGE,
+			message: 'Singing in',
+		})
+
+		if (!userResponse) {
+			return {
+				success: false,
+				reason: 'There was an authentication failure',
+			}
+		}
+
+		socket.auth = {
+			...socket.auth,
+			playerUuid: userResponse.uuid,
+			playerName: userResponse.username,
+			minecraftName: userResponse.minecraftName || userResponse.username,
+			version: getClientVersion(),
+		}
+		yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
+		socket.connect()
+
+		yield* setupData(userResponse)
 	} else {
 		yield* put<LocalMessage>({
 			type: localMessages.CONNECTING_MESSAGE,
