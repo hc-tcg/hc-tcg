@@ -58,9 +58,7 @@ const Login = () => {
 							></input>
 							<label htmlFor="username">Player Name</label>
 						</div>
-						<Button variant="stone" type="submit">
-							Next
-						</Button>
+						<Button type="submit">Next</Button>
 					</form>
 				)}
 				{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
