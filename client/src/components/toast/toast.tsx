@@ -1,8 +1,6 @@
 import {CopyIcon} from 'components/svgs'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {getToast} from 'logic/session/session-selectors'
 import {useEffect, useLayoutEffect, useRef, useState} from 'react'
-import {useSelector} from 'react-redux'
 import css from './toast.module.scss'
 
 const svgImages: Record<string, () => JSX.Element> = {copy: CopyIcon}
@@ -183,26 +181,6 @@ export const ToastInner = ({
 
 export const ToastContainer = ({children}: ContainerProps) => {
 	return <div className={css.toastContainer}>{...children}</div>
-}
-
-// This object is incharge of toast popups. It should be added to the react tree where toasts should be visible.
-export const Toaster = () => {
-	const toastMessage = useSelector(getToast)
-	return (
-		<ToastContainer>
-			{toastMessage.map((toast, i) => {
-				return (
-					<ToastMessage
-						title={toast.toast.title}
-						description={toast.toast.description}
-						image={toast.toast.image}
-						id={toast.id}
-						key={i}
-					/>
-				)
-			})}
-		</ToastContainer>
-	)
 }
 
 export default ToastMessage
