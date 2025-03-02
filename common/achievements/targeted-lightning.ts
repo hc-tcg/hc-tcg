@@ -1,4 +1,3 @@
-import assert from 'assert'
 import LightningRod from '../cards/attach/lightning-rod'
 import {CardComponent} from '../components'
 import query from '../components/query'
@@ -19,10 +18,7 @@ const TargetedLightning: Achievement = {
 				'Knock out an AFK Hermit with target block while the opponent has a lightning rod on the board.',
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		const player = game.components.get(playerEntity)
-		assert(player)
-
+	onGameStart(game, player, component, observer) {
 		let incrementGoalProgress = false
 
 		observer.subscribeWithPriority(

@@ -85,6 +85,7 @@ export type ServerMessages = [
 		gameState: LocalGameState | null
 		outcome: GameOutcome
 		earnedAchievements: Array<EarnedAchievement>
+		gameEndTime: number
 	},
 	{type: typeof serverMessages.PRIVATE_GAME_TIMEOUT},
 	{type: typeof serverMessages.LEAVE_QUEUE_SUCCESS},

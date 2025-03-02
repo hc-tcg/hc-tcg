@@ -30,8 +30,8 @@ export class RootModel {
 		{
 			playerId: string
 			opponentId: string
-			existingScore: number
-			joinedScore: number
+			playerScore: number
+			opponentScore: number
 			spectatorCode: string | undefined
 			spectatorsWaiting: Array<string>
 		}

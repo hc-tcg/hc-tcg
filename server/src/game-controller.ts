@@ -1,5 +1,9 @@
 import {ACHIEVEMENTS_LIST} from 'common/achievements'
-import {AchievementComponent, ObserverComponent} from 'common/components'
+import {
+	AchievementComponent,
+	ObserverComponent,
+	PlayerComponent,
+} from 'common/components'
 import {PlayerEntity} from 'common/entities'
 import {
 	GameModel,
@@ -106,34 +110,37 @@ export class GameController {
 		this.player1Defs = player1
 		this.player2Defs = player2
 
-		let playerOneEntity = this.game.arePlayersSwapped
-			? this.game.currentPlayerEntity
-			: this.game.opponentPlayerEntity
-		let playerTwoEntity = this.game.arePlayersSwapped
-			? this.game.opponentPlayerEntity
-			: this.game.currentPlayerEntity
+		let playerOne = this.game.arePlayersSwapped
+			? this.game.currentPlayer
+			: this.game.opponentPlayer
+		let playerTwo = this.game.arePlayersSwapped
+			? this.game.opponentPlayer
+			: this.game.currentPlayer
 
 		if (props.countAchievements) {
 			if (this.player1Defs.model instanceof PlayerModel) {
 				console.log(
 					'Adding achievements',
-					this.game.components.get(playerOneEntity)?.playerName,
+					playerOne.playerName,
 					this.player1Defs.model.name,
 				)
-				this.addAchievements(this.player1Defs.model, playerOneEntity)
+				this.addAchievements(this.player1Defs.model, playerOne)
 			}
 			if (this.player2Defs.model instanceof PlayerModel) {
 				console.log(
 					'Adding achievemnts',
-					this.game.components.get(playerTwoEntity)?.playerName,
+					playerTwo.playerName,
 					this.player2Defs.model.name,
 				)
-				this.addAchievements(this.player2Defs.model, playerTwoEntity)
+				this.addAchievements(this.player2Defs.model, playerTwo)
 			}
 		}
 	}
 
-	public addAchievements(player: PlayerModel, playerEntity: PlayerEntity) {
+	public addAchievements(
+		player: PlayerModel,
+		playerComponent: PlayerComponent,
+	) {
 		if (player.achievementProgress) {
 			ACHIEVEMENTS_LIST.forEach((achievement) => {
 				if (!player.achievementProgress[achievement.numericId]) {
@@ -152,7 +159,7 @@ export class GameController {
 							player.achievementProgress[achievement.numericId]?.goals,
 						),
 					),
-					playerEntity,
+					playerComponent.entity,
 				)
 				const achievementObserver = this.game.components.new(
 					ObserverComponent,
@@ -160,7 +167,7 @@ export class GameController {
 				)
 				achievementComponent.props.onGameStart(
 					this.game,
-					playerEntity,
+					playerComponent,
 					achievementComponent,
 					achievementObserver,
 				)

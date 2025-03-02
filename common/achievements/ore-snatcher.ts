@@ -27,10 +27,7 @@ const OreSnatcher: Achievement = {
 			steps: 10,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		const player = game.components.get(playerEntity)
-		if (!player) return
-
+	onGameStart(game, player, component, observer) {
 		observer.subscribeWithPriority(
 			player.hooks.afterApply,
 			afterApply.CHECK_BOARD_STATE,
@@ -38,7 +35,7 @@ const OreSnatcher: Achievement = {
 				const SUSlot = game.components.find(
 					SlotComponent,
 					query.slot.singleUse,
-					query.slot.player(playerEntity),
+					query.slot.player(player.entity),
 				)
 				if (!SUSlot) return
 				if (SUSlot.getCard()?.props !== Emerald) return

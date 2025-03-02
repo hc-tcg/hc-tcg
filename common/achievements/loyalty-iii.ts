@@ -1,4 +1,3 @@
-import assert from 'assert'
 import Trident from '../cards/single-use/trident'
 import {CardEntity} from '../entities'
 import {afterAttack} from '../types/priorities'
@@ -7,7 +6,7 @@ import {Achievement} from './types'
 
 const LoyaltyIII: Achievement = {
 	...achievement,
-	numericId: 26,
+	numericId: 23,
 	id: 'loyalty-iii',
 	levels: [
 		{
@@ -16,9 +15,7 @@ const LoyaltyIII: Achievement = {
 			steps: 3,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		let player = game.components.get(playerEntity)
-		assert(player)
+	onGameStart(game, player, component, observer) {
 		let lastTrident: CardEntity | null = null
 		let steps = 0
 		let usedTridentThisTurn = false
@@ -35,7 +32,7 @@ const LoyaltyIII: Achievement = {
 			game.hooks.afterAttack,
 			afterAttack.ACHIEVEMENTS,
 			(attack) => {
-				if (attack.player.entity !== playerEntity) return
+				if (attack.player.entity !== player.entity) return
 				if (attack.attacker?.props.id !== Trident.id) {
 					return
 				}

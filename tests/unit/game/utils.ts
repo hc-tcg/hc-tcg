@@ -457,7 +457,7 @@ export function testAchivement(
 
 		options.achievement.onGameStart(
 			game,
-			player.entity,
+			player,
 			achievementComponent,
 			achievementObserver,
 		)
@@ -468,7 +468,7 @@ export function testAchivement(
 	let then = function (game: GameModel, gameOutcome: GameOutcome) {
 		options.achievement.onGameEnd(
 			game,
-			player.entity,
+			player,
 			achievementComponent,
 			gameOutcome,
 		)

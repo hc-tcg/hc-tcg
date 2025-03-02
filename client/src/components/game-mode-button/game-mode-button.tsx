@@ -32,10 +32,12 @@ interface GameModeButtonProps {
 	onSelect: () => void
 	onBack: () => void
 	disableBack: boolean
-	buttonAmount: number
 	disabled?: boolean
 	timerStart?: number
 	timerLength?: number
+	enableRematch: boolean
+	onRematchSelect?: () => void
+	onRematchCancel?: () => void
 }
 
 function GameModeButton({
@@ -50,10 +52,12 @@ function GameModeButton({
 	onSelect,
 	onBack,
 	disableBack,
-	buttonAmount,
 	disabled,
 	timerStart,
 	timerLength,
+	enableRematch,
+	onRematchSelect,
+	onRematchCancel,
 }: GameModeButtonProps) {
 	const buttonRef = useRef<HTMLDivElement>(null)
 	const backgroundRef = useRef<HTMLDivElement>(null)
@@ -205,11 +209,7 @@ function GameModeButton({
 
 	return (
 		<div
-			className={classNames(
-				css.buttonContainer,
-				css.enablePointer,
-				buttonAmount === 4 && css.fourButtons,
-			)}
+			className={classNames(css.buttonContainer, css.enablePointer)}
 			onMouseDown={(ev) => {
 				if (ev.button !== 0) return
 				if (disabled) return
@@ -225,7 +225,6 @@ function GameModeButton({
 					css.backgroundContainer,
 					css.show,
 					disabled && css.disabled,
-					buttonAmount === 4 && css.fourButtons,
 				)}
 				ref={backgroundRef}
 			>
@@ -256,15 +255,58 @@ function GameModeButton({
 							className={css.hermitImage}
 						></img>
 						<div className={css.spacer}></div>
-						<div className={css.text}>
-							<h1>{title}</h1>
-							{timerStart !== undefined && timerLength !== undefined && (
-								<div className={css.rematchTimeRemaining}>
-									{timer}s Remaining
-								</div>
+						<div
+							className={classNames(
+								css.text,
+								enableRematch && activeMode !== mode && css.makeHigherOnMobile,
 							)}
+						>
+							<h1>{title}</h1>
 							<p>{description}</p>
 						</div>
+						{enableRematch && (
+							<div
+								className={classNames(
+									css.text,
+									css.rematch,
+									activeMode === mode && css.hide,
+								)}
+								onMouseDown={(ev) => {
+									ev.stopPropagation()
+									if (ev.button !== 0) return
+									if (disabled) return
+									if (!onRematchSelect) return
+									setActiveMode('rematch')
+									onRematchSelect()
+								}}
+							>
+								<div className={css.title}>
+									Rematch {!onMobile && 'your last opponent'}
+								</div>
+								<div className={css.rematchTimeRemaining}>
+									{timer}s {!onMobile && 'Remaining'}
+								</div>
+							</div>
+						)}
+						{enableRematch && (
+							<div
+								className={classNames(
+									css.text,
+									css.rematch,
+									css.cancel,
+									activeMode === mode && css.hide,
+								)}
+								onMouseDown={(ev) => {
+									ev.stopPropagation()
+									if (ev.button !== 0) return
+									if (disabled) return
+									if (!onRematchCancel) return
+									onRematchCancel()
+								}}
+							>
+								<div className={css.title}>Cancel {!onMobile && 'Rematch'}</div>
+							</div>
+						)}
 					</div>
 				</div>
 				<div ref={rightOverlayRef} className={css.rightOverlay}>

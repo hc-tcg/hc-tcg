@@ -14,10 +14,7 @@ const Wipeout: Achievement = {
 			steps: 3,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		const player = game.components.get(playerEntity)
-		if (!player) return
-
+	onGameStart(game, player, component, observer) {
 		let knockouts = 0
 
 		game.components

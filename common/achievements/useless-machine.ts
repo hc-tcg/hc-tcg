@@ -16,10 +16,7 @@ const UselessMachine: Achievement = {
 			steps: 2,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		const player = game.components.get(playerEntity)
-		if (!player) return
-
+	onGameStart(game, player, component, observer) {
 		let playerHand: Array<string> = []
 
 		observer.subscribe(player.hooks.beforeApply, () => {

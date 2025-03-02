@@ -27,10 +27,13 @@ describe('Test unique IDs', () => {
 	})
 	test('Test achievements effects have unique IDs', () => {
 		let achievements: Array<string> = []
+		let numericIds: Array<number> = []
 
 		for (const achievement of ACHIEVEMENTS_LIST) {
 			expect(achievements).not.toContain(achievement.id)
 			achievements.push(achievement.id)
+			expect(numericIds).not.toContain(achievement.numericId)
+			numericIds.push(achievement.numericId)
 		}
 	})
 })
