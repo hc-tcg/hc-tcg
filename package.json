@@ -88,7 +88,7 @@
 		"test:vunit": "UNIT_VERBOSE=true jest tests/unit/ --detect-open-handles",
 		"test:unit-v": "npm run test:unit-verbose",
 		"test:db": "jest tests/db/",
-		"test:replays": "jest tests/replays/",
+		"test:replays": "jest tests/replays/ --detect-open-handles",
 		"test:starter-decks": "jest tests/unit/game/starter-decks.test.ts",
 		"test:snapshot": "jest tests/snapshots/ --env jsdom",
 		"test:snapshot-update": "jest tests/snapshots/ --env jsdom --updateSnapshot",

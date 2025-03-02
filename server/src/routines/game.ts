@@ -419,7 +419,7 @@ export function handleSingleTurnAction(
 				'MODAL_REQUEST',
 				'END_TURN',
 			].includes(actionType) || availableActions.includes(actionType),
-			`Players cannot be able to use a blocked action. This may be because the user does not have enough energy for the attack. \n Action:${JSON.stringify(turnAction.action, null, 2)}`,
+			`Players cannot be able to use a blocked action. This may be because the user does not have enough energy for the attack. \n Action:${JSON.stringify(turnAction.action, null, 2)} \n Player: ${turnAction.playerEntity} \n Active: ${con.game.components.find(PlayerComponent, query.player.entity(turnAction.playerEntity))?.getActiveHermit()?.props.id}`,
 		)
 		switch (actionType) {
 			case 'PLAY_HERMIT_CARD':
