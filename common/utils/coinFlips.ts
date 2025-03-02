@@ -36,6 +36,10 @@ export function flipCoin(
 	times: number = 1,
 	currentPlayer: PlayerComponent | null = null,
 ): Array<CoinFlipResult> {
+	if (times == 0) {
+		return []
+	}
+
 	const forceHeads = playerTossingCoin.game.settings.forceCoinFlip
 
 	let coinFlips: Array<{
