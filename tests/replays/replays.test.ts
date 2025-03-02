@@ -1,34 +1,19 @@
-import assert from 'assert'
 import {describe, expect, test} from '@jest/globals'
 import Brush from 'common/cards/advent-of-tcg/single-use/brush'
 import Feather from 'common/cards/advent-of-tcg/single-use/feather'
-import {DiamondArmor} from 'common/cards/attach/armor'
-import BoomerBdubsCommon from 'common/cards/hermits/boomerbdubs-common'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import EvilXisumaRare from 'common/cards/hermits/evilxisuma_rare'
 import FalseSymmetryRare from 'common/cards/hermits/falsesymmetry-rare'
 import FarmerBeefRare from 'common/cards/hermits/farmerbeef-rare'
-import FrenchralisRare from 'common/cards/hermits/frenchralis-rare'
 import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
-import LlamadadRare from 'common/cards/hermits/llamadad-rare'
-import MumboJumboRare from 'common/cards/hermits/mumbojumbo-rare'
 import RendogCommon from 'common/cards/hermits/rendog-common'
 import TangoTekRare from 'common/cards/hermits/tangotek-rare'
-import VintageBeefCommon from 'common/cards/hermits/vintagebeef-common'
 import VintageBeefRare from 'common/cards/hermits/vintagebeef-rare'
 import BalancedItem from 'common/cards/items/balanced-common'
 import BalancedDoubleItem from 'common/cards/items/balanced-rare'
 import BuilderItem from 'common/cards/items/builder-common'
 import FarmDoubleItem from 'common/cards/items/farm-rare'
 import MinerItem from 'common/cards/items/miner-common'
-import PranksterItem from 'common/cards/items/prankster-common'
-import FishingRod from 'common/cards/single-use/fishing-rod'
-import Fortune from 'common/cards/single-use/fortune'
-import GoldenAxe from 'common/cards/single-use/golden-axe'
-import {InstantHealthII} from 'common/cards/single-use/instant-health'
-import {DiamondSword} from 'common/cards/single-use/sword'
-import TNT from 'common/cards/single-use/tnt'
-import {STARTER_DECKS} from 'common/cards/starter-decks'
 import query from 'common/components/query'
 import {DragCards} from 'common/types/modal-requests'
 import {GameController} from 'server/game-controller'
@@ -37,7 +22,6 @@ import {
 	turnActionsToBuffer,
 } from '../../server/src/routines/turn-action-compressor'
 import {
-	createHuffmanTree,
 	huffmanCompress,
 	huffmanDecompress,
 } from '../../server/src/utils/compression'
@@ -50,7 +34,6 @@ import {
 	forfeit,
 	pick,
 	playCardFromHand,
-	removeEffect,
 	testReplayGame,
 } from '../unit/game/utils'
 

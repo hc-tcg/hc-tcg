@@ -40,6 +40,7 @@ import {
 import {afterAttack, beforeAttack} from '../types/priorities'
 import {rowRevive} from '../types/priorities'
 import {PickRequest} from '../types/server-requests'
+import {newIncrementor} from '../utils/game'
 import {newRandomNumberGenerator} from '../utils/random'
 import {
 	PlayerSetupDefs,
@@ -48,7 +49,6 @@ import {
 } from '../utils/state-gen'
 import {AttackModel, ReadonlyAttackModel} from './attack-model'
 import {BattleLogModel} from './battle-log-model'
-import {newIncrementor} from '../utils/game'
 
 export type GameSettings = {
 	maxTurnTime: number
