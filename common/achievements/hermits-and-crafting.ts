@@ -11,7 +11,7 @@ const STARTER_DECK_IDS = STARTER_DECKS.map((deck) =>
 
 const HermitsAndCrafting: Achievement = {
 	...achievement,
-	numericId: 24,
+	numericId: 25,
 	id: 'designer',
 	levels: [
 		{
