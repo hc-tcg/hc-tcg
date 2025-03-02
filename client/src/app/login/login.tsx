@@ -102,7 +102,7 @@ const Login = () => {
 							<form className={css.nameForm} onSubmit={handleSync}>
 								<div className={css.customInput}>
 									<input
-										maxLength={25}
+										maxLength={100}
 										name="UUID"
 										placeholder=" "
 										autoFocus
@@ -112,7 +112,7 @@ const Login = () => {
 								</div>
 								<div className={css.customInput}>
 									<input
-										maxLength={25}
+										maxLength={100}
 										name="Secret"
 										placeholder=" "
 										autoFocus

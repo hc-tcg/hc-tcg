@@ -347,7 +347,8 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 		if (!userResponse) {
 			return {
 				success: false,
-				reason: 'There was an authentication failure',
+				reason:
+					'There was an authentication failure. Please check that your UUID and secret and correct.',
 			}
 		}
 
