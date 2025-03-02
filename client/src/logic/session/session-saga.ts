@@ -438,6 +438,12 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 		}
 
 		const userResponse = yield* authenticateUser(userId, secret)
+		if (!userResponse) {
+			return {
+				success: false,
+				reason: 'There was an authentication failure.',
+			}
+		}
 		yield* setupData(userResponse)
 
 		console.log('User reconnected')
