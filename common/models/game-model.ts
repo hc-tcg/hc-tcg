@@ -48,6 +48,7 @@ import {
 } from '../utils/state-gen'
 import {AttackModel, ReadonlyAttackModel} from './attack-model'
 import {BattleLogModel} from './battle-log-model'
+import {newIncrementor} from '../utils/game'
 
 export type GameSettings = {
 	maxTurnTime: number
@@ -98,6 +99,8 @@ export function gameSettingsFromEnv(): GameSettings {
 
 export class GameModel {
 	public rng: () => number
+	public nextEntity: () => number
+	private entityCount: number
 
 	public readonly id: string
 	public readonly settings: GameSettings
@@ -178,6 +181,8 @@ export class GameModel {
 		assert(rngSeed.length < 16, 'Game RNG seed must be under 16 characters')
 		this.rngSeed = rngSeed
 		this.rng = newRandomNumberGenerator(rngSeed)
+		this.entityCount = 0
+		this.nextEntity = newIncrementor()
 		const swapPlayers = this.rng()
 
 		this.battleLog = new BattleLogModel(this)

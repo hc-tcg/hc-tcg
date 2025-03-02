@@ -528,6 +528,7 @@ export function testReplayGame(options: {
 				verboseLogging: true,
 				forceCoinFlip: false,
 				disableDeckOut: false,
+				disableRewardCards: false,
 			},
 		},
 	)

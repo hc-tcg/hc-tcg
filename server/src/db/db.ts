@@ -1102,8 +1102,6 @@ export class Database {
 				decompressedReplay,
 			)
 
-			console.log(replayActions.replay)
-
 			return {
 				type: 'success',
 				body: {
