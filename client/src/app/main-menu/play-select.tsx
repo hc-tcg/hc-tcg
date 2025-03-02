@@ -103,7 +103,11 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 
 	const [hasRematch, setHasRematch] = useState<boolean>(rematch ? true : false)
 	const [rematchDisabled, setRematchDisabled] = useState<boolean>(false)
-	const [buttonAmount, _setButtonAmount] = useState<number>(rematch ? 4 : 3)
+
+	const rematchCancel = () => {
+		if (!rematch) return
+		dispatch({type: localMessages.CANCEL_REMATCH})
+	}
 
 	if (hasRematch && !rematch) {
 		setHasRematch(false)
@@ -275,12 +279,7 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 			>
 				<h2 className={css.header}>{header}</h2>
 				<div className={css.gameTypes}>
-					<div
-						className={classNames(
-							css.gameTypesButtons,
-							buttonAmount === 4 && css.fourButtons,
-						)}
-					>
+					<div className={classNames(css.gameTypesButtons)}>
 						<GameModeButton
 							image={'vintagebeef'}
 							backgroundImage={'gamemodes/public'}
@@ -297,7 +296,14 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 							}}
 							onBack={goBack}
 							disableBack={!!matchmaking}
-							buttonAmount={buttonAmount}
+							enableRematch={!!rematch && !rematch.spectatorCode}
+							timerStart={rematch?.time}
+							timerLength={serverConfig.limits.rematchTime}
+							onRematchSelect={() => {
+								addMenuWithBack('rematchChooseDeck')
+								sortDecksByActive()
+							}}
+							onRematchCancel={rematchCancel}
 						>
 							<GameModeButton.ChooseDeck
 								activeButtonMenu={activeButtonMenu}
@@ -356,7 +362,14 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 							}}
 							onBack={goBack}
 							disableBack={!!matchmaking}
-							buttonAmount={buttonAmount}
+							enableRematch={!!rematch && !!rematch.spectatorCode}
+							timerStart={rematch?.time}
+							timerLength={serverConfig.limits.rematchTime}
+							onRematchSelect={() => {
+								addMenuWithBack('rematchChooseDeck')
+								sortDecksByActive()
+							}}
+							onRematchCancel={rematchCancel}
 						>
 							<GameModeButton.OptionsSelect
 								activeButtonMenu={activeButtonMenu}
@@ -525,7 +538,7 @@ or create your own game to challenge someone else."
 							setActiveMode={setActiveMode}
 							onBack={goBack}
 							disableBack={!!matchmaking}
-							buttonAmount={buttonAmount}
+							enableRematch={false}
 						>
 							<GameModeButton.OptionsSelect
 								id="bossSelect"
@@ -650,7 +663,9 @@ during the battle."
 								onSelectDeck={onSelectDeck}
 							/>
 						</GameModeButton>
-						{(rematch || rematchDisabled) && (
+					</div>
+					<div className={css.rematchWindow}>
+						{activeMode === 'rematch' && (
 							<GameModeButton
 								image={'fiveampearl'}
 								backgroundImage={'gamemodes/rematch'}
@@ -669,8 +684,8 @@ during the battle."
 								disableBack={!!matchmaking}
 								timerStart={rematch?.time || 0}
 								timerLength={serverConfig.limits.rematchTime}
-								buttonAmount={buttonAmount}
 								disabled={rematchDisabled}
+								enableRematch={false}
 							>
 								<GameModeButton.ChooseDeck
 									activeButtonMenu={activeButtonMenu}
@@ -715,7 +730,7 @@ during the battle."
 					<i>Click to change</i>
 				</p>
 				<div
-					className={matchmaking ? undefined : css.appearance}
+					className={css.appearance}
 					onClick={() => !matchmaking && setMenuSection('cosmetics')}
 				>
 					<CosmeticPreview />

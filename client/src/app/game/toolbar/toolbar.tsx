@@ -114,10 +114,9 @@ function Toolbar({
 			{!isSpectator && !gameOver && <ForfeitItem />}
 
 			{/* Forfeit Game */}
-			{isSpectator ||
-				(gameOver && (
-					<ExitItem gameOver={gameOver} gameEndButton={gameEndButton} />
-				))}
+			{(isSpectator || gameOver) && (
+				<ExitItem gameOver={gameOver} gameEndButton={gameEndButton} />
+			)}
 		</div>
 	)
 }

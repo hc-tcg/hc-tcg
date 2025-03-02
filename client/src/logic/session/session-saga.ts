@@ -306,6 +306,7 @@ export function* loginSaga() {
 				...socket.auth,
 				playerUuid: userResponse.uuid,
 				playerName: userResponse.username,
+				minecraftName: userResponse.minecraftName || userResponse.username,
 				version: getClientVersion(),
 			}
 			yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
@@ -324,6 +325,7 @@ export function* loginSaga() {
 				...socket.auth,
 				playerUuid: userResponse.uuid,
 				playerName: userResponse.username,
+				minecraftName: userResponse.minecraftName || userResponse.username,
 				version: getClientVersion(),
 			}
 			yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
@@ -430,6 +432,9 @@ export function* loginSaga() {
 			...socket.auth,
 			playerUuid: localStorage.getItem('database:userId') as string,
 			playerName: result.playerInfo.player.playerName,
+			minecraftName:
+				result.playerInfo.player.minecraftName ||
+				result.playerInfo.player.playerName,
 			playerId: result.playerInfo.player.playerId,
 			playerSecret: result.playerInfo.player.playerSecret,
 		}
