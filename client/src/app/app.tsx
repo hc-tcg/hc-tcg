@@ -1,8 +1,7 @@
 import Background from 'components/background'
 import {CurrentDropdown} from 'components/dropdown/dropdown'
 import LostConnection from 'components/lost-connection'
-import Toast from 'components/toast'
-import {ToastContainer} from 'components/toast/toast'
+import {Toaster} from 'components/toast/toast'
 import {CurrentTooltip} from 'components/tooltip/tooltip'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
@@ -10,7 +9,6 @@ import {
 	getDropdown,
 	getPlayerName,
 	getSession,
-	getToast,
 	getTooltip,
 } from 'logic/session/session-selectors'
 import {getSocketStatus} from 'logic/socket/socket-selectors'
@@ -35,7 +33,6 @@ function App() {
 	const playerName = useSelector(getPlayerName)
 	const socketStatus = useSelector(getSocketStatus)
 	const connected = useSelector(getSession).connected
-	const toastMessage = useSelector(getToast)
 	const tooltip = useSelector(getTooltip)
 	const dropdown = useSelector(getDropdown)
 	const settings = useSelector(getSettings)
@@ -137,21 +134,7 @@ function App() {
 					tooltipWidth={tooltip.tooltipWidth}
 				/>
 			)}
-			{enableToast && (
-				<ToastContainer>
-					{toastMessage.map((toast, i) => {
-						return (
-							<Toast
-								title={toast.toast.title}
-								description={toast.toast.description}
-								image={toast.toast.image}
-								id={toast.id}
-								key={i}
-							/>
-						)
-					})}
-				</ToastContainer>
-			)}
+			{enableToast && <Toaster />}
 			{playerName && !socketStatus && <LostConnection />}
 		</main>
 	)

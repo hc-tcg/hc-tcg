@@ -4,13 +4,12 @@ import ErrorBanner from 'components/error-banner'
 import {VersionLinks} from 'components/link-container'
 import Spinner from 'components/spinner'
 import TcgLogo from 'components/tcg-logo'
-import Toast, {ToastContainer} from 'components/toast/toast'
+import {Toaster} from 'components/toast/toast'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
 	getConnecting,
 	getConnectingMessage,
 	getErrorType,
-	getToast,
 } from 'logic/session/session-selectors'
 import React from 'react'
 import {useSelector} from 'react-redux'
@@ -32,7 +31,6 @@ const Login = () => {
 	const connecting = useSelector(getConnecting)
 	const errorType = useSelector(getErrorType)
 	const connectingMessage = useSelector(getConnectingMessage)
-	const toastMessage = useSelector(getToast)
 
 	const handlePlayerName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
@@ -60,19 +58,7 @@ const Login = () => {
 
 	return (
 		<>
-			<ToastContainer>
-				{toastMessage.map((toast, i) => {
-					return (
-						<Toast
-							title={toast.toast.title}
-							description={toast.toast.description}
-							image={toast.toast.image}
-							id={toast.id}
-							key={i}
-						/>
-					)
-				})}
-			</ToastContainer>
+			<Toaster />
 			<div className={css.loginBackground}>
 				<div className={css.loginContainer}>
 					<TcgLogo />
