@@ -37,7 +37,7 @@ export function flipCoin(
 	times: number = 1,
 	currentPlayer: PlayerComponent | null = null,
 ): Array<CoinFlipResult> {
-	assert(times >= 0, "You can not flip a negative amount of coins")
+	assert(times >= 0, 'You can not flip a negative amount of coins')
 
 	if (times === 0) {
 		return []
