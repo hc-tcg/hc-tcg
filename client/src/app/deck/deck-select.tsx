@@ -101,7 +101,7 @@ export function FilterComponent({
 						<img src="../images/icons/tag.png" alt="tag-icon" />
 					</button>
 				}
-				label="Saved Tags"
+				label="Tag Filter"
 				options={tagsDropdownOptions}
 				showNames={true}
 				direction={dropdownDirection}
