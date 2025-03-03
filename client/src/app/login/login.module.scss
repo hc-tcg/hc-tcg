@@ -183,7 +183,7 @@
 	}
 }
 
-@media screen and (max-width: 80vh) {
+@media screen and (max-width: 720px) {
 	.customInput {
 		height: 3rem;
 		width: 60vw;
@@ -196,9 +196,34 @@
 		}
 	}
 
+	.syncing {
+		position: absolute;
+		top: 25%;
+		height: 90%;
+		justify-content: center;
+		left: 0;
+		width: 100%;
+		translate: 0px -25vh;
+	}
+
+	.textBlurb {
+		font-size: 0.9rem;
+		overflow: scroll;
+	}
+
 	.loginButton {
 		height: 3rem;
 		min-width: 4rem;
+	}
+
+	.logo {
+		scale: 1;
+	}
+
+	.hideOnMobile {
+		opacity: 0;
+		scale: 0;
+		transition: scale 0.5s, opacity 0.2s;
 	}
 }
 

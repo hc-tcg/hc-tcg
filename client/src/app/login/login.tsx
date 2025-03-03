@@ -65,7 +65,9 @@ const Login = () => {
 	return (
 		<div className={css.loginBackground}>
 			<div className={css.loginContainer}>
-				<TcgLogo />
+				<div className={classNames(css.logo, syncing && css.hideOnMobile)}>
+					<TcgLogo />
+				</div>
 				{connecting ? (
 					<div className={css.connecting}>
 						<Spinner />
