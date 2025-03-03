@@ -92,8 +92,11 @@
 }
 
 .appearance {
+	width: min(65vh, 90vw);
+}
+
+.appearanceClickable {
 	cursor: pointer;
-	width: min(500px, 90vw);
 
 	&:hover {
 		scale: 1.05;
