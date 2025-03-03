@@ -35,6 +35,7 @@ import {getSocket} from 'logic/socket/socket-selectors'
 import {eventChannel} from 'redux-saga'
 import {call, delay, put, race, select, take, takeEvery} from 'typed-redux-saga'
 import {BASE_URL} from '../../constants'
+import {ConnectionError} from './session-reducer'
 export const NO_SOCKET_ASSERT =
 	'The socket should be be defined as soon as the page is opened.'
 
@@ -277,7 +278,7 @@ type LoginResult =
 	  }
 	| {
 			success: false
-			reason: string
+			reason: ConnectionError
 	  }
 
 function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
@@ -347,8 +348,7 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 			if (!userResponse) {
 				return {
 					success: false,
-					reason:
-						'There was an authentication failure. Please check that your UUID and secret and correct.',
+					reason: 'bad_auth',
 				}
 			}
 
@@ -398,20 +398,16 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 
 		return {
 			success: false,
-			reason: 'There was a connection error',
+			reason: 'timeout',
 		}
 	}
 
 	if (result.timeout) {
 		clearSession()
 		socket.disconnect()
-		yield put<LocalMessage>({
-			type: localMessages.DISCONNECT,
-			errorMessage: 'timeout',
-		})
 		return {
 			success: false,
-			reason: 'Connection timed out.',
+			reason: 'timeout',
 		}
 	}
 
@@ -419,10 +415,7 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 
 	if (result.playerReconnected) {
 		if (!session)
-			return {
-				success: false,
-				reason: 'Session did not exist, please report this error',
-			}
+			throw new Error('The session should ALWAYS exist if the user logged in.')
 
 		const secret = localStorage.getItem('databaseInfo:secret')
 		const userId = localStorage.getItem('databaseInfo:userId')
@@ -442,7 +435,7 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 		if (!userResponse) {
 			return {
 				success: false,
-				reason: 'There was an authentication failure.',
+				reason: 'bad_auth',
 			}
 		}
 		yield* setupData(userResponse)
@@ -503,10 +496,8 @@ export function* loginSaga() {
 
 		// Otherwise the login failed, so lets send a toast and try again
 		yield put<LocalMessage>({
-			type: localMessages.TOAST_OPEN,
-			open: true,
-			title: 'Failed To Log In',
-			description: result.reason,
+			type: localMessages.DISCONNECT,
+			errorMessage: result.reason,
 		})
 	}
 }

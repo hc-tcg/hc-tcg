@@ -27,6 +27,7 @@ import {
 	LocalSetting,
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
+import {ConnectionError} from './session/session-reducer'
 
 export const localMessages = messages('clientLocalMessages', {
 	SOCKET_CONNECTING: null,
@@ -137,7 +138,7 @@ type Messages = [
 	{type: typeof localMessages.NOT_CONNECTING},
 	{type: typeof localMessages.CONNECTED},
 	{type: typeof localMessages.CONNECTING_MESSAGE; message: string},
-	{type: typeof localMessages.DISCONNECT; errorMessage?: string},
+	{type: typeof localMessages.DISCONNECT; errorMessage?: ConnectionError},
 	{type: typeof localMessages.LOGOUT},
 	{type: typeof localMessages.UPDATES_LOAD; updates: Array<Update>},
 	{

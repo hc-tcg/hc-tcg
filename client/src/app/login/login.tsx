@@ -14,7 +14,7 @@ import React from 'react'
 import {useSelector} from 'react-redux'
 import css from './login.module.scss'
 
-const getLoginError = (errorType: string) => {
+const getLoginError = (errorType: ConnectionError) => {
 	if (!errorType) return null
 	if (errorType === 'session_expired') return 'Your session has expired.'
 	if (errorType === 'timeout') return 'Connection attempt took too long.'
@@ -22,6 +22,8 @@ const getLoginError = (errorType: string) => {
 	if (errorType === 'invalid_version')
 		return 'There has been a game update. Please refresh the website.'
 	if (errorType === 'xhr poll error') return "Can't reach the server."
+	if (errorType === 'bad_auth')
+		return 'Authentication failed. Please check your UUID and secret are correct.'
 	return errorType.substring(0, 150)
 }
 
