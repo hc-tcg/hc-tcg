@@ -318,7 +318,7 @@ export function* loginSaga() {
 
 			yield* put<LocalMessage>({
 				type: localMessages.CONNECTING_MESSAGE,
-				message: 'Singing in',
+				message: 'Authenticating',
 			})
 
 			socket.auth = {
