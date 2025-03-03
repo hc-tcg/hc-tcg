@@ -383,21 +383,6 @@ nav {
 	width: 50vh;
 }
 
-/* DESKTOP */
-@media (min-width: 80vh) {
-	nav {
-		margin-top: 6vh;
-		display: grid;
-		gap: 0.5vh;
-		grid-template-columns: 1fr 1fr;
-		grid-template-areas:
-			"public public"
-			"deck deck"
-			"achievements achievements"
-			"statistics settings";
-	}
-}
-
 @keyframes fadeIn {
 	from {
 		opacity: 0;
