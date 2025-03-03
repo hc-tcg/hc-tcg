@@ -5,6 +5,7 @@ import {VersionLinks} from 'components/link-container'
 import Spinner from 'components/spinner'
 import TcgLogo from 'components/tcg-logo'
 import {localMessages, useMessageDispatch} from 'logic/messages'
+import {ConnectionError} from 'logic/session/session-reducer'
 import {
 	getConnecting,
 	getConnectingMessage,
