@@ -31,11 +31,7 @@ function Router() {
 	const section = useRouter()
 	const dispatch = useMessageDispatch()
 	const playerName = useSelector(getPlayerName)
-	const socketStatus = useSelector(getSocketStatus)
 	const connected = useSelector(getSession).connected
-	const tooltip = useSelector(getTooltip)
-	const dropdown = useSelector(getDropdown)
-	const settings = useSelector(getSettings)
 
 	const lastMenuSection = sessionStorage.getItem('menuSection')
 
@@ -104,6 +100,39 @@ function Router() {
 		return <Login />
 	}
 
+	return <main>{router()}</main>
+}
+
+function Dropdown() {
+	const dropdown = useSelector(getDropdown)
+	return (
+		dropdown && (
+			<CurrentDropdown
+				dropdown={dropdown.dropdown}
+				x={dropdown.x}
+				y={dropdown.y}
+			/>
+		)
+	)
+}
+
+function Tooltips() {
+	const tooltip = useSelector(getTooltip)
+	return (
+		tooltip && (
+			<CurrentTooltip
+				tooltip={tooltip.tooltip}
+				anchor={tooltip.anchor}
+				tooltipHeight={tooltip.tooltipHeight}
+				tooltipWidth={tooltip.tooltipWidth}
+			/>
+		)
+	)
+}
+
+function SiteBackground() {
+	const settings = useSelector(getSettings)
+
 	const background = useMemo(() => {
 		return (
 			<Background
@@ -113,28 +142,14 @@ function Router() {
 		)
 	}, [settings.panoramaEnabled])
 
-	return (
-		<main>
-			{background}
-			{router()}
-			{dropdown && (
-				<CurrentDropdown
-					dropdown={dropdown.dropdown}
-					x={dropdown.x}
-					y={dropdown.y}
-				/>
-			)}
-			{tooltip && (
-				<CurrentTooltip
-					tooltip={tooltip.tooltip}
-					anchor={tooltip.anchor}
-					tooltipHeight={tooltip.tooltipHeight}
-					tooltipWidth={tooltip.tooltipWidth}
-				/>
-			)}
-			{playerName && !socketStatus && <LostConnection />}
-		</main>
-	)
+	return background
+}
+
+function SocketStatus() {
+	const playerName = useSelector(getPlayerName)
+	const socketStatus = useSelector(getSocketStatus)
+
+	return playerName && !socketStatus && <LostConnection />
 }
 
 function App() {
@@ -142,6 +157,10 @@ function App() {
 		<>
 			<Router />
 			<Toaster />
+			<Dropdown />
+			<Tooltips />
+			<SiteBackground />
+			<SocketStatus />
 		</>
 	)
 }
