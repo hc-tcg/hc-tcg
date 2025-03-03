@@ -41,7 +41,7 @@ test('sync works as expected', async ({context}) => {
 
 	await newTab.getByLabel('Account UUID').fill(userId)
 	await newTab.getByLabel('Account Secret').fill(secret)
-	await page.getByRole('button', {name: 'Sync'}).press('Enter')
+	await newTab.getByRole('button', {name: 'Sync'}).press('Enter')
 
 	await page.waitForFunction(() => global.getState().session.connected)
 	expect(await page.evaluate(() => global.getState().session.playerName)).toBe(
