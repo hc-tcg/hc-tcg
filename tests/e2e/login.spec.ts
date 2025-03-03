@@ -40,7 +40,7 @@ test('sync works as expected', async ({context}) => {
 	assert(secret)
 
 	await newTab.getByLabel('Account UUID').fill(userId)
-	await newTab.getByLabel('Account Secret').press(secret)
+	await newTab.getByLabel('Account Secret').fill(secret)
 	await page.getByText('Sync').press('Enter')
 
 	await page.waitForFunction(() => global.getState().session.connected)
@@ -55,7 +55,7 @@ test('login works after initial attempt fails', async ({context}) => {
 
 	// Bogus data that will make the login attempt fail
 	await page.getByLabel('Account UUID').fill('zundazundazunda')
-	await page.getByLabel('Account Secret').press('mochimochimochi')
+	await page.getByLabel('Account Secret').fill('mochimochimochi')
 	await page.getByText('Sync').press('Enter')
 
 	await page.getByLabel('Player Name').waitFor()
