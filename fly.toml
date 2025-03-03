@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for hc-tcg on 2024-11-14T00:34:36-05:00
+# fly.toml app configuration file generated for hc-tcg-closed-beta on 2025-02-28T07:27:56Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'hc-tcg'
+app = 'hc-tcg-closed-beta'
 primary_region = 'bos'
 kill_signal = 'SIGINT'
 kill_timeout = '15s'
@@ -13,7 +13,14 @@ kill_timeout = '15s'
   auto_rollback = true
 
 [build]
-  image = 'benji42/hc-tcg:latest'
+
+[http_service]
+  internal_port = 9000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
 
 [[services]]
   protocol = 'tcp'
@@ -40,4 +47,6 @@ kill_timeout = '15s'
     grace_period = '4s'
 
 [[vm]]
-  size = 'shared-cpu-4x'
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1

@@ -93,11 +93,11 @@ nav {
 	display: grid;
 	gap: 0.75vh;
 	grid-template-areas:
-        "public"
-        "deck"
-        "achievements"
-        "settings"
-        "more";
+		"public"
+		"deck"
+		"achievements"
+		"settings"
+		"more";
 	animation: fadeIn 250ms ease-in-out forwards;
 }
 
@@ -202,6 +202,15 @@ nav {
 		margin-top: 2vh;
 		filter: drop-shadow(1px 1px 0 var(--text-dark));
 	}
+}
+
+.settingsButton {
+	height: 5.5vh;
+}
+
+.viewSecretButton {
+	height: 100%;
+	width: 20%;
 }
 
 .settings {

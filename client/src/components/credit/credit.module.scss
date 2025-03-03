@@ -42,11 +42,15 @@
 	}
 }
 
-a.credit:hover {
-	text-decoration: underline;
+a.credit {
+	color: white;
 
-	.avatar {
-		box-shadow: 0 0 0.3vh 0.1vh black;
+	&:hover {
+		text-decoration: underline;
+
+		.avatar {
+			box-shadow: 0 0 0.3vh 0.1vh black;
+		}
 	}
 }
 
