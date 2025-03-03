@@ -32,6 +32,7 @@ interface GameModeButtonProps {
 	onSelect: () => void
 	onBack: () => void
 	disableBack: boolean
+	mobileTop: number
 	disabled?: boolean
 	timerStart?: number
 	timerLength?: number
@@ -52,6 +53,7 @@ function GameModeButton({
 	onSelect,
 	onBack,
 	disableBack,
+	mobileTop,
 	disabled,
 	timerStart,
 	timerLength,
@@ -71,7 +73,7 @@ function GameModeButton({
 			: 0,
 	)
 
-	const onMobile = window.screen.width <= 720
+	const onMobile = window.screen.width / window.screen.height <= 1
 
 	const [buttonPosition, setButtonPosition] = useState<{
 		x: number
@@ -82,7 +84,7 @@ function GameModeButton({
 	const [, reload] = useReducer((x) => x + 1, 0)
 
 	const transform = 'calc((100vw - 75vh) / 2) 0'
-	const mobileTransform = '0 10vh'
+	const mobileTransform = `0 ${mobileTop}px`
 
 	const handleResize = () => {
 		if (!buttonRef.current || !backgroundRef.current) {
@@ -95,7 +97,7 @@ function GameModeButton({
 				backgroundRef.current.style.translate = onMobile
 					? mobileTransform
 					: transform
-			} else if (window.screen.width <= 720) {
+			} else if (onMobile) {
 				backgroundRef.current.style.translate = `0 ${pos.y}px`
 			} else {
 				backgroundRef.current.style.translate = `${pos.x}px 0`
