@@ -78,7 +78,7 @@ const Login = () => {
 								<label htmlFor="username">Player Name</label>
 							</div>
 							<Button variant="stone" type="submit">
-								Next
+								Create Account
 							</Button>
 						</form>
 						<p> Sync to an existing account </p>
@@ -104,7 +104,7 @@ const Login = () => {
 								<label htmlFor="secret">Account Secret</label>
 							</div>
 							<Button variant="stone" type="submit">
-								Next
+								Sync
 							</Button>
 						</form>
 					</div>
