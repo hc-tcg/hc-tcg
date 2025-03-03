@@ -11,9 +11,10 @@ import {
 	getConnectingMessage,
 	getErrorType,
 } from 'logic/session/session-selectors'
-import React from 'react'
+import React, {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './login.module.scss'
+import classNames from 'classnames'
 
 const getLoginError = (errorType: ConnectionError) => {
 	if (!errorType) return null
@@ -22,10 +23,10 @@ const getLoginError = (errorType: ConnectionError) => {
 	if (errorType === 'invalid_name') return 'Your name is not valid.'
 	if (errorType === 'invalid_version')
 		return 'There has been a game update. Please refresh the website.'
-	if (errorType === 'xhr poll error') return "Can't reach the server."
+	if (errorType === 'xhr poll_error') return "Can't reach the server."
 	if (errorType === 'bad_auth')
 		return 'Authentication failed. Please check your UUID and secret are correct.'
-	return errorType.substring(0, 150)
+	return (errorType as string).substring(0, 150)
 }
 
 const Login = () => {
@@ -34,15 +35,18 @@ const Login = () => {
 	const errorType = useSelector(getErrorType)
 	const connectingMessage = useSelector(getConnectingMessage)
 
+	const [syncing, setSyncing] = useState<boolean>(false)
+
 	const handlePlayerName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
 		const name = ev.currentTarget.playerName.value.trim()
-		if (name.length > 0)
+		if (name.length > 0) {
 			dispatch({
 				type: localMessages.LOGIN,
 				login_type: 'new-account',
 				name: name,
 			})
+		}
 	}
 
 	const handleSync = (ev: React.SyntheticEvent<HTMLFormElement>) => {
@@ -69,7 +73,13 @@ const Login = () => {
 					</div>
 				) : (
 					<div>
-						<form className={css.nameForm} onSubmit={handlePlayerName}>
+						<form
+							className={classNames(
+								css.nameForm,
+								syncing && css.currentlySyncing,
+							)}
+							onSubmit={handlePlayerName}
+						>
 							<div className={css.customInput}>
 								<input
 									maxLength={25}
@@ -80,36 +90,81 @@ const Login = () => {
 								></input>
 								<label htmlFor="username">Player Name</label>
 							</div>
-							<Button variant="stone" type="submit">
-								Create Account
+							<Button
+								className={css.loginButton}
+								variant={'primary'}
+								type="submit"
+							>
+								Play
 							</Button>
 						</form>
-						<p> Sync to an existing account </p>
-						<form className={css.nameForm} onSubmit={handleSync}>
-							<div className={css.customInput}>
-								<input
-									maxLength={100}
-									name="UUID"
-									placeholder=" "
-									autoFocus
-									id="uuid"
-								></input>
-								<label htmlFor="uuid">Account UUID</label>
-							</div>
-							<div className={css.customInput}>
-								<input
-									maxLength={100}
-									name="Secret"
-									placeholder=" "
-									autoFocus
-									id="secret"
-								></input>
-								<label htmlFor="secret">Account Secret</label>
-							</div>
-							<Button variant="stone" type="submit">
-								Sync
+						<div
+							className={classNames(
+								css.syncContainer,
+								syncing && css.currentlySyncing,
+							)}
+						>
+							<Button
+								type="submit"
+								className={css.loginButton}
+								onClick={() => {
+									setSyncing(true)
+								}}
+							>
+								Or Sync Device
 							</Button>
-						</form>
+						</div>
+						<div className={classNames(css.syncing, syncing && css.selected)}>
+							<div className={css.textBlurb}>
+								<p>
+									Here, you can sync the user of this device to another device
+									you use to play HC TCG Online. This will be make all of your
+									data the same on both devices, and automatically update when
+									you play on the other device. Your other device's UUID and
+									Secret can be found by{' '}
+									<span className={css.highlight}>
+										clicking on Settings, and then clicking on the Data tab
+									</span>
+									.
+								</p>
+							</div>
+							<form className={css.syncingForm} onSubmit={handleSync}>
+								<div className={css.infoInput}>
+									<input
+										maxLength={100}
+										name="UUID"
+										placeholder="UUID"
+										autoFocus
+										id="uuid"
+									></input>
+								</div>
+								<div className={css.infoInput}>
+									<input
+										maxLength={100}
+										name="Secret"
+										placeholder="Secret"
+										autoFocus
+										id="secret"
+									></input>
+								</div>
+								<div className={css.syncButtons}>
+									<Button
+										className={classNames(css.loginButton, css.syncButton)}
+										onClick={() => {
+											setSyncing(false)
+										}}
+									>
+										Go Back
+									</Button>
+									<Button
+										type="submit"
+										className={classNames(css.loginButton, css.syncButton)}
+									>
+										Sync
+									</Button>
+								</div>
+							</form>
+						</div>
 					</div>
 				)}
 				{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}

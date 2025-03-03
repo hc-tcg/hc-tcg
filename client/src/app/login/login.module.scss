@@ -15,7 +15,7 @@
 	align-items: center;
 	gap: 2vh;
 	margin-top: 10vw;
-	font-size: 2.5vh;
+	font-size: 1.5rem;
 	line-height: 100%;
 	text-align: center;
 	color: var(--text-light);
@@ -27,22 +27,57 @@
 	margin-top: 15vw;
 	margin-bottom: 2vh;
 	animation: fadeIn 250ms ease-in-out forwards;
+	align-items: center;
+	justify-content: center;
+	transition: margin-top 0.2s, margin-bottom 0.2s;
+	opacity: 1;
+
+	&.currentlySyncing {
+		opacity: 0;
+		animation: fadeOut 200ms ease-in-out forwards;
+		margin-top: 0vw;
+		margin-bottom: 0vw;
+		height: 0px;
+		z-index: -1;
+	}
 
 	> * {
-		font-size: 1.5vh;
+		font-size: 1rem;
 		line-height: 100%;
 	}
 }
 
+.syncingForm {
+	display: flex;
+	flex-direction: column;
+	animation: fadeIn 250ms ease-in-out forwards;
+	align-items: center;
+	justify-content: center;
+	width: min(450px, 90%);
+	align-self: center;
+
+	> * {
+		font-size: 1rem;
+		line-height: 100%;
+	}
+}
+
+.syncButtons {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+}
+
 .customInput {
 	position: relative;
-	height: 5.5vh;
+	height: 3.5rem;
 	width: 35vh;
 
 	label {
 		line-height: normal;
 		position: absolute;
-		font-size: 2vh;
+		font-size: 1.2rem;
+		line-height: 1.4rem;
 		color: var(--gray-700);
 		transition: top 150ms, left 150ms;
 		top: 1.65vh;
@@ -59,8 +94,9 @@
 		border-radius: 0;
 		border: 0.3vh solid #000;
 		width: 100%;
-		height: 5.5vh;
-		font-size: 2vh;
+		height: 3.5rem;
+		line-height: 3.5rem;
+		font-size: 1.2rem;
 
 		&:focus-visible + label,
 		&:not(:placeholder-shown) + label {
@@ -72,16 +108,95 @@
 	}
 }
 
+.infoInput {
+	height: 3.5rem;
+	width: 100%;
+
+	input {
+		padding-left: 1vh;
+		padding-right: 0;
+		border-radius: 0;
+		border: 0.3vh solid #000;
+		width: 100%;
+		height: 3.5rem;
+		line-height: 3.5rem;
+		font-size: 1rem;
+	}
+}
+
+.syncing {
+	transform: scaleY(0);
+	transition: transform 0.2s;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 1rem;
+
+	&.selected {
+		transform: scaleY(1);
+	}
+}
+
+.syncContainer {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: opacity 0.2s;
+	opacity: 1;
+	height: 100%;
+
+	&.currentlySyncing {
+		transform: scaleY(0);
+		opacity: 0;
+		height: 0px;
+	}
+}
+
+.loginButton {
+	height: 3.5rem;
+	min-width: 8rem;
+}
+
+.syncButton {
+	width: 50%;
+}
+
+.textBlurb {
+	font-size: 1rem;
+	color: var(--text-light);
+	background-color: var(--gray-900);
+	border: 2px black solid;
+	padding: 0.5rem;
+	border-radius: 5px;
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	max-width: min(600px, 90%);
+	line-height: 1.5rem;
+
+	.highlight {
+		background-color: var(--gray-600);
+		border-radius: 5px;
+		padding: 0.25rem;
+	}
+}
+
 @media screen and (max-width: 80vh) {
 	.customInput {
-		height: 5vh;
+		height: 3rem;
 		width: 60vw;
 		label {
 			top: 1.4vh;
+			line-height: 1.8rem;
 		}
 		input {
-			height: 5vh;
+			height: 3rem;
 		}
+	}
+
+	.loginButton {
+		height: 3rem;
+		min-width: 4rem;
 	}
 }
 
@@ -95,8 +210,9 @@
 	border: 2px solid var(--color-error-highlight);
 	background: var(--color-error);
 	color: var(--text-light);
-	font-size: 1.7vh;
-	filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 35%)) drop-shadow(0 2px 10px rgba(0, 0, 0, 50%));
+	font-size: 1.1rem;
+	filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 35%))
+		drop-shadow(0 2px 10px rgba(0, 0, 0, 50%));
 	animation: shake 150ms forwards;
 }
 
@@ -129,6 +245,16 @@
 
 	to {
 		opacity: 1;
+	}
+}
+
+@keyframes fadeOut {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
 	}
 }
 
