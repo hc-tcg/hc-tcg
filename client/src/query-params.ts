@@ -18,12 +18,15 @@ if (DEBUG) {
 	if (JSON.parse(urlParams.get('showUpdatesModal') || '{}') === false) {
 		queryOptions.showUpdatesModal = false
 	}
-	if (urlParams.get('spectate')) {
-		queryOptions.spectate = urlParams.get('spectate') ?? undefined
-	}
-	if (urlParams.get('fight')) {
-		queryOptions.fight = urlParams.get('fight') ?? undefined
-	}
 }
+
+if (urlParams.get('spectate')) {
+	queryOptions.spectate = urlParams.get('spectate') ?? undefined
+}
+if (urlParams.get('fight')) {
+	queryOptions.fight = urlParams.get('fight') ?? undefined
+}
+
+console.log(urlParams)
 
 export default queryOptions

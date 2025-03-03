@@ -89,21 +89,25 @@ function Router() {
 				case 'play-select':
 					return <PlaySelect setMenuSection={menuSectionSet} />
 				case 'play-select-spectate':
+					const spectateCode = queryOptions.spectate
 					queryOptions.spectate = undefined
 					return (
 						<PlaySelect
 							setMenuSection={menuSectionSet}
 							defaultSection={'private'}
 							firstActiveMenu="privateSpectateGame"
+							prefillSpectatorCode={spectateCode}
 						/>
 					)
 				case 'play-select-fight':
+					const joinCode = queryOptions.fight
 					queryOptions.fight = undefined
 					return (
 						<PlaySelect
 							setMenuSection={menuSectionSet}
 							defaultSection={'private'}
 							firstActiveMenu="privateJoinGame"
+							prefillJoinCode={joinCode}
 						/>
 					)
 				case 'play-again':

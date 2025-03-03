@@ -46,8 +46,8 @@ type Props = {
 	setMenuSection: (section: string) => void
 	defaultSection?: string
 	firstActiveMenu?: string
-	prefillSpectatorCode: string
-	prefillJoinCode: string
+	prefillSpectatorCode?: string
+	prefillJoinCode?: string
 }
 
 function PlaySelect({

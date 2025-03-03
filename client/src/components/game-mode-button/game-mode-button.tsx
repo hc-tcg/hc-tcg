@@ -475,6 +475,7 @@ GameModeButton.ChooseDeck = ({
 							placeholder="Enter code..."
 							spellCheck={false}
 							value={defaultCode}
+							data-testid="join-code-input"
 						/>
 						{confirmButton}
 					</div>
@@ -521,6 +522,7 @@ GameModeButton.EnterCode = ({
 					placeholder={placeholder}
 					spellCheck={false}
 					value={content}
+					data-testid="spectate-code-input"
 				/>
 				<Button
 					className={css.largeButton}
