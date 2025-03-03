@@ -580,6 +580,13 @@
 	height: 2rem;
 }
 
+.noResults {
+	padding: 0.5rem 0;
+	color: var(--text-light);
+	width: 100%;
+	text-align: center;
+}
+
 // Mobile
 @media (max-width: 720px) {
 	.bigHallOfFameArea {

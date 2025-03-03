@@ -394,6 +394,13 @@ $expandedHeight: 67vh;
 					}
 				}
 			}
+
+			.noResults {
+				padding: 0.5rem 0;
+				color: var(--text-light);
+				width: 100%;
+				text-align: center;
+			}
 		}
 
 		.deckSelectorInput {

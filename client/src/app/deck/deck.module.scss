@@ -667,6 +667,13 @@
 	flex-grow: 1;
 }
 
+.noResults {
+	padding: 0.5rem 0;
+	color: var(--text-light);
+	width: 100%;
+	text-align: center;
+}
+
 /* MOBILE */
 @media screen and (max-width: 720px) {
 	.hideOnMobile {
