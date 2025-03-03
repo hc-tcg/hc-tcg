@@ -101,8 +101,6 @@ const Card = (props: CardReactProps) => {
 						<img
 							className={css.renderedCardImage}
 							src={getRenderedCardImage(props.card, displayTokenCost)}
-							width="100%"
-							height="100%"
 						/>
 					</div>
 				)}

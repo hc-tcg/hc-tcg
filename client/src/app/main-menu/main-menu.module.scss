@@ -43,7 +43,7 @@
 
 .mainMenuButton {
 	height: 5vh;
-	font-size: 1.8vh;
+	font-size: 2vh;
 	padding: 3vh;
 }
 
@@ -381,21 +381,6 @@ nav {
 
 .input {
 	width: 50vh;
-}
-
-/* DESKTOP */
-@media (min-width: 80vh) {
-	nav {
-		margin-top: 6vh;
-		display: grid;
-		gap: 0.5vh;
-		grid-template-columns: 1fr 1fr;
-		grid-template-areas:
-			"public public"
-			"deck deck"
-			"achievements achievements"
-			"statistics settings";
-	}
 }
 
 @keyframes fadeIn {
