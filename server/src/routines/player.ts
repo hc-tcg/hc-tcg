@@ -85,7 +85,9 @@ export function* playerConnectedSaga(
 		return
 	}
 
-	const achievementProgress = yield* getAchievementProgress(playerUuid)
+	const achievementProgress = root.db.connected
+		? yield* getAchievementProgress(playerUuid)
+		: {}
 
 	const newPlayer = new PlayerModel(
 		playerName,
