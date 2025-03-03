@@ -5,6 +5,7 @@ import {VersionLinks} from 'components/link-container'
 import Spinner from 'components/spinner'
 import TcgLogo from 'components/tcg-logo'
 import {localMessages, useMessageDispatch} from 'logic/messages'
+import {ConnectionError} from 'logic/session/session-reducer'
 import {
 	getConnecting,
 	getConnectingMessage,
@@ -14,7 +15,7 @@ import React from 'react'
 import {useSelector} from 'react-redux'
 import css from './login.module.scss'
 
-const getLoginError = (errorType: string) => {
+const getLoginError = (errorType: ConnectionError) => {
 	if (!errorType) return null
 	if (errorType === 'session_expired') return 'Your session has expired.'
 	if (errorType === 'timeout') return 'Connection attempt took too long.'
@@ -22,6 +23,8 @@ const getLoginError = (errorType: string) => {
 	if (errorType === 'invalid_version')
 		return 'There has been a game update. Please refresh the website.'
 	if (errorType === 'xhr poll error') return "Can't reach the server."
+	if (errorType === 'bad_auth')
+		return 'Authentication failed. Please check your UUID and secret are correct.'
 	return errorType.substring(0, 150)
 }
 
@@ -34,7 +37,25 @@ const Login = () => {
 	const handlePlayerName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
 		const name = ev.currentTarget.playerName.value.trim()
-		if (name.length > 0) dispatch({type: localMessages.LOGIN, name: name})
+		if (name.length > 0)
+			dispatch({
+				type: localMessages.LOGIN,
+				login_type: 'new-account',
+				name: name,
+			})
+	}
+
+	const handleSync = (ev: React.SyntheticEvent<HTMLFormElement>) => {
+		ev.preventDefault()
+		const uuid = ev.currentTarget.uuid.value.trim()
+		const secret = ev.currentTarget.secret.value.trim()
+		if (uuid.length > 0 && secret.length > 0)
+			dispatch({
+				type: localMessages.LOGIN,
+				login_type: 'sync',
+				uuid: uuid,
+				secret: secret,
+			})
 	}
 
 	return (
@@ -47,21 +68,49 @@ const Login = () => {
 						<p>{connectingMessage}</p>
 					</div>
 				) : (
-					<form className={css.nameForm} onSubmit={handlePlayerName}>
-						<div className={css.customInput}>
-							<input
-								maxLength={25}
-								name="playerName"
-								placeholder=" "
-								autoFocus
-								id="username"
-							></input>
-							<label htmlFor="username">Player Name</label>
-						</div>
-						<Button variant="stone" type="submit">
-							Next
-						</Button>
-					</form>
+					<div>
+						<form className={css.nameForm} onSubmit={handlePlayerName}>
+							<div className={css.customInput}>
+								<input
+									maxLength={25}
+									name="playerName"
+									placeholder=" "
+									autoFocus
+									id="username"
+								></input>
+								<label htmlFor="username">Player Name</label>
+							</div>
+							<Button variant="stone" type="submit">
+								Create Account
+							</Button>
+						</form>
+						<p> Sync to an existing account </p>
+						<form className={css.nameForm} onSubmit={handleSync}>
+							<div className={css.customInput}>
+								<input
+									maxLength={100}
+									name="UUID"
+									placeholder=" "
+									autoFocus
+									id="uuid"
+								></input>
+								<label htmlFor="uuid">Account UUID</label>
+							</div>
+							<div className={css.customInput}>
+								<input
+									maxLength={100}
+									name="Secret"
+									placeholder=" "
+									autoFocus
+									id="secret"
+								></input>
+								<label htmlFor="secret">Account Secret</label>
+							</div>
+							<Button variant="stone" type="submit">
+								Sync
+							</Button>
+						</form>
+					</div>
 				)}
 				{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
 				<VersionLinks />
