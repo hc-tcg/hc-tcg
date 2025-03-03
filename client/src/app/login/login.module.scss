@@ -126,13 +126,15 @@
 
 .syncing {
 	transform: scaleY(0);
-	transition: transform 0.2s;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	margin-top: 1rem;
+	opacity: 0;
 
 	&.selected {
+		opacity: 1;
+		transition: transform 0.2s, opacity 0.3s;
 		transform: scaleY(1);
 	}
 }
