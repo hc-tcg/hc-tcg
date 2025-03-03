@@ -1,26 +1,25 @@
+import classNames from 'classnames'
 import Button from 'components/button'
+import Credit from 'components/credit'
+import {CreditProps} from 'components/credit/credit'
+import DeveloperCredit from 'components/credit/developer-credit'
+import Dropdown from 'components/dropdown'
 import MenuLayout from 'components/menu-layout'
+import {Modal} from 'components/modal'
 import Slider from 'components/slider'
+import {CopyIcon} from 'components/svgs'
+import Tabs from 'components/tabs/tabs'
 import UpdatesModal from 'components/updates'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
+import {
+	LocalSetting,
+	LocalSettings,
+} from 'logic/local-settings/local-settings-reducer'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import React, {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './settings.module.scss'
-import classNames from 'classnames'
-import Tabs from 'components/tabs/tabs'
-import Credit from 'components/credit'
-import {CreditProps} from 'components/credit/credit'
-import DeveloperCredit from 'components/credit/developer-credit'
-import {Modal} from 'components/modal'
-import {CopyIcon} from 'components/svgs'
-import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
-import DropdownButton from 'components/dropdown'
-import {
-	LocalSetting,
-	LocalSettings,
-} from 'logic/local-settings/local-settings-reducer'
-import Dropdown from 'components/dropdown'
 
 const designers: CreditProps[] = [
 	{
@@ -266,7 +265,7 @@ const MusicSetting = ({id, name}: SoundProps) => {
 			</Slider>
 			<ToggleButton
 				name={name ? name : toTitleCase(id) + ' Sound'}
-				targetSetting={id + 'Muted' as MuteSetting}
+				targetSetting={(id + 'Muted') as MuteSetting}
 			/>
 		</div>
 	)
@@ -304,9 +303,7 @@ function Settings({setMenuSection}: Props) {
 	}
 
 	const handleViewUpdates = () => {
-		setModal(<UpdatesModal
-			onClose={closeModal}
-		/>)
+		setModal(<UpdatesModal onClose={closeModal} />)
 	}
 
 	const handleReset = (
@@ -456,9 +453,19 @@ function Settings({setMenuSection}: Props) {
 								verticalDirection="left"
 							/>
 						</div>
-						<div className={classNames(css.tabContainer, css.showOnMobile, css.categoryDropdown)}>
+						<div
+							className={classNames(
+								css.tabContainer,
+								css.showOnMobile,
+								css.categoryDropdown,
+							)}
+						>
 							<Dropdown
-								button={<Button className={css.fullWidth}>{toTitleCase(tab)} ▼</Button>}
+								button={
+									<Button className={css.fullWidth}>
+										{toTitleCase(tab)} ▼
+									</Button>
+								}
 								label={'Select settings'}
 								showNames={true}
 								options={tabs.map((tab) => ({name: tab}))}
@@ -469,12 +476,14 @@ function Settings({setMenuSection}: Props) {
 							<div className={css.settingsArea}>
 								<hr />
 								<h2 className={css.categoryHeader}>General</h2>
-								<ToggleButton name="Panorama" targetSetting='panoramaEnabled' />
+								<ToggleButton name="Panorama" targetSetting="panoramaEnabled" />
 								<ToggleButton
 									name="Deck Sorting Method"
 									targetSetting="deckSortingMethod"
 									useSetting={true}
-									inverter={(side) => (side === 'Alphabetical' ? 'First Tag' : 'Alphabetical')}
+									inverter={(side) =>
+										side === 'Alphabetical' ? 'First Tag' : 'Alphabetical'
+									}
 								/>
 								<Button
 									variant="default"
@@ -500,16 +509,16 @@ function Settings({setMenuSection}: Props) {
 							<div className={css.settingsArea}>
 								<hr />
 								<h2 className={css.categoryHeader}>Global</h2>
-								<MusicSetting id='global'/>
+								<MusicSetting id="global" />
 								<hr />
 								<h2 className={css.categoryHeader}>Sound Effects</h2>
-								<MusicSetting id='sfx' name='Sound Effects'/>
+								<MusicSetting id="sfx" name="Sound Effects" />
 								<hr />
 								<h2 className={css.categoryHeader}>Music</h2>
-								<MusicSetting id='music'/>
+								<MusicSetting id="music" />
 								<hr />
 								<h2 className={css.categoryHeader}>Voicelines</h2>
-								<MusicSetting id='voice'/>
+								<MusicSetting id="voice" />
 								<hr />
 							</div>
 						)}

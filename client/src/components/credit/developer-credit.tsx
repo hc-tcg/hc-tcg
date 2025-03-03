@@ -1,7 +1,7 @@
 import classnames from 'classnames'
 import Tooltip from 'components/tooltip'
-import css from './credit.module.scss'
 import {CreditProps} from './credit'
+import css from './credit.module.scss'
 
 const DeveloperCredit = ({props}: {props: CreditProps}) => {
 	const {name, social, handle, link, avatar} = props
