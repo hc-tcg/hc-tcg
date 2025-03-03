@@ -1,5 +1,5 @@
-import {expect, test} from '@playwright/test'
 import assert from 'assert'
+import {expect, test} from '@playwright/test'
 
 test('username login works as expected', async ({context}) => {
 	const page = await context.newPage()
