@@ -1,7 +1,7 @@
 import {expect, test} from '@playwright/test'
 import assert from 'assert'
 
-test('sync worked as expected', async ({context}) => {
+test('sync works as expected', async ({context}) => {
 	const page = await context.newPage()
 	await page.goto('/?showUpdatesModal=false')
 
@@ -16,6 +16,9 @@ test('sync worked as expected', async ({context}) => {
 	const userId = await page.evaluate(() =>
 		localStorage.getItem('databaseInfo:userId'),
 	)
+
+	/* Clear local storage to prevent auto login */
+	await page.evaluate(() => window.localStorage.clear());
 
 	const newTab = await context.newPage()
 	await newTab.goto('/?showUpdatesModal=false')

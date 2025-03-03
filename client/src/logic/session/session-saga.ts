@@ -330,39 +330,40 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 				socket.connect()
 
 				yield* setupData(userResponse)
-				return {success: true}
 			} else {
 				userId = loginMessage.uuid
 				secret = loginMessage.secret
 			}
-		}
 
-		const userResponse = yield* authenticateUser(userId, secret)
+			if (userId && secret) {
+				const userResponse = yield* authenticateUser(userId, secret)
 
-		yield* put<LocalMessage>({
-			type: localMessages.CONNECTING_MESSAGE,
-			message: 'Singing in',
-		})
+				yield* put<LocalMessage>({
+					type: localMessages.CONNECTING_MESSAGE,
+					message: 'Singing in',
+				})
 
-		if (!userResponse) {
-			return {
-				success: false,
-				reason:
-					'There was an authentication failure. Please check that your UUID and secret and correct.',
+				if (!userResponse) {
+					return {
+						success: false,
+						reason:
+							'There was an authentication failure. Please check that your UUID and secret and correct.',
+					}
+				}
+
+				socket.auth = {
+					...socket.auth,
+					playerUuid: userResponse.uuid,
+					playerName: userResponse.username,
+					minecraftName: userResponse.minecraftName || userResponse.username,
+					version: getClientVersion(),
+				}
+				yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
+				socket.connect()
+
+				yield* setupData(userResponse)
 			}
 		}
-
-		socket.auth = {
-			...socket.auth,
-			playerUuid: userResponse.uuid,
-			playerName: userResponse.username,
-			minecraftName: userResponse.minecraftName || userResponse.username,
-			version: getClientVersion(),
-		}
-		yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
-		socket.connect()
-
-		yield* setupData(userResponse)
 	} else {
 		yield* put<LocalMessage>({
 			type: localMessages.CONNECTING_MESSAGE,
