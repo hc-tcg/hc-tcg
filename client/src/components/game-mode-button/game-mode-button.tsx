@@ -77,7 +77,7 @@ function GameModeButton({
 	} | null>(null)
 	const [, reload] = useReducer((x) => x + 1, 0)
 
-	const transform = 'calc((100vw - 75vh) / 2) 0'
+	const transform = 'calc((100vw - 85vh) / 2) 0'
 	const mobileTransform = '0 10vh'
 
 	const handleResize = () => {
