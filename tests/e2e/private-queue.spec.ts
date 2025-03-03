@@ -14,8 +14,8 @@ test('Private queue is exited when API game is cancelled (Opponent Code)', async
 	let gameCode = privateGame.gameCode
 	let apiSecret = privateGame.apiSecret
 
-	await page.getByPlaceholder(' ').fill('Test Player')
-	await page.getByPlaceholder(' ').press('Enter')
+	await page.getByPlaceholder('Player Name').fill('Test Player')
+	await page.getByPlaceholder('Player Name').press('Enter')
 	await page.getByRole('button', {name: 'Play'}).click()
 
 	await page.getByRole('heading', {name: 'Private Game'}).click()
@@ -50,8 +50,8 @@ test('Private queue is exited when API game is cancelled (Spectator Code)', asyn
 	let spectatorCode = privateGame.spectatorCode
 	let apiSecret = privateGame.apiSecret
 
-	await page.getByPlaceholder(' ').fill('Test Player')
-	await page.getByPlaceholder(' ').press('Enter')
+	await page.getByPlaceholder('Player Name').fill('Test Player')
+	await page.getByPlaceholder('Player Name').press('Enter')
 
 	await page.getByRole('button', {name: 'Play'}).click()
 	await page.getByRole('heading', {name: 'Private Game'}).click()
@@ -86,8 +86,8 @@ test('Player is removed from private queue when they press "Cancel" (Opponent Co
 	let gameCode = privateGame.gameCode
 	let apiSecret = privateGame.apiSecret
 
-	await page.getByPlaceholder(' ').fill('Test Player')
-	await page.getByPlaceholder(' ').press('Enter')
+	await page.getByPlaceholder('Player Name').fill('Test Player')
+	await page.getByPlaceholder('Player Name').press('Enter')
 
 	await page.getByRole('button', {name: 'Play'}).click()
 
@@ -134,8 +134,8 @@ test('Player is removed from private queue when they press "Cancel" (Spectator C
 	let spectatorCode = privateGame.spectatorCode
 	let apiSecret = privateGame.apiSecret
 
-	await page.getByPlaceholder(' ').fill('Test Player')
-	await page.getByPlaceholder(' ').press('Enter')
+	await page.getByPlaceholder('Player Name').fill('Test Player')
+	await page.getByPlaceholder('Player Name').press('Enter')
 
 	await page.getByRole('button', {name: 'Play'}).click()
 	await page.getByRole('heading', {name: 'Private Game'}).click()
@@ -189,8 +189,8 @@ test('Game starts for players and spectators and places players back on main men
 	let gameCode = privateGame.gameCode
 	let spectatorCode = privateGame.spectatorCode
 
-	await spectator.getByPlaceholder(' ').fill('Test Player')
-	await spectator.getByPlaceholder(' ').press('Enter')
+	await spectator.getByPlaceholder('Player Name').fill('Test Player')
+	await spectator.getByPlaceholder('Player Name').press('Enter')
 	await spectator.getByRole('button', {name: 'Play'}).click()
 	await spectator.getByRole('heading', {name: 'Private Game'}).click()
 	await spectator.getByRole('button', {name: 'Spectate Game'}).click()
@@ -200,8 +200,8 @@ test('Game starts for players and spectators and places players back on main men
 	await spectator.getByRole('button', {name: 'Confirm'}).click()
 
 	for (const player of [playerOne, playerTwo]) {
-		await player.getByPlaceholder(' ').fill('Test Player')
-		await player.getByPlaceholder(' ').press('Enter')
+		await player.getByPlaceholder('Player Name').fill('Test Player')
+		await player.getByPlaceholder('Player Name').press('Enter')
 		await player.getByRole('button', {name: 'Play'}).click()
 		await player.getByRole('heading', {name: 'Private Game'}).click()
 		await player.getByRole('button', {name: 'Join Game'}).click()

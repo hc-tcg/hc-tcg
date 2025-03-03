@@ -3,8 +3,8 @@ import {expect, test} from '@playwright/test'
 test('is still connected after reload', async ({page}) => {
 	await page.goto('/?showUpdatesModal=false')
 
-	await page.getByPlaceholder(' ').fill('Test Player')
-	await page.getByPlaceholder(' ').press('Enter')
+	await page.getByPlaceholder('Player Name').fill('Test Player')
+	await page.getByPlaceholder('Player Name').press('Enter')
 
 	await page.waitForFunction(() => global.getState().session.connected)
 	expect(await page.evaluate(() => global.getState().session.playerName)).toBe(
@@ -25,8 +25,8 @@ test('player does not stay in queue after reloading the page', async ({
 }) => {
 	await page.goto('/?showUpdatesModal=false')
 
-	await page.getByPlaceholder(' ').fill('Test Player')
-	await page.getByPlaceholder(' ').press('Enter')
+	await page.getByPlaceholder('Player Name').fill('Test Player')
+	await page.getByPlaceholder('Player Name').press('Enter')
 
 	await page.waitForFunction(() => {
 		console.log(global.getState().session.connected)
@@ -68,10 +68,10 @@ test('Game state updates if socket is restarted during game.', async ({
 	await playerOne.goto('/?showUpdatesModal=false')
 	await playerTwo.goto('/?showUpdatesModal=false')
 
-	await playerOne.getByPlaceholder(' ').fill('Test Player')
-	await playerOne.getByPlaceholder(' ').press('Enter')
-	await playerTwo.getByPlaceholder(' ').fill('Test Player')
-	await playerTwo.getByPlaceholder(' ').press('Enter')
+	await playerOne.getByPlaceholder('Player Name').fill('Test Player')
+	await playerOne.getByPlaceholder('Player Name').press('Enter')
+	await playerTwo.getByPlaceholder('Player Name').fill('Test Player')
+	await playerTwo.getByPlaceholder('Player Name').press('Enter')
 
 	await playerOne.getByRole('button', {name: 'Play'}).click()
 	await playerOne.getByRole('heading', {name: 'Public Game'}).click()
