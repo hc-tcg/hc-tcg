@@ -2,6 +2,7 @@ import British from '../achievements/british'
 import CertifiedZombie from '../achievements/certified-zombie'
 import DefeatEvilX from '../achievements/defeat-evil-x'
 import Ethogirl from '../achievements/ethogirl'
+import IsGreat from '../achievements/is-great'
 import NakedAndScared from '../achievements/naked-and-scared'
 import OreSnatcher from '../achievements/ore-snatcher'
 import PeskyBird from '../achievements/pesky-bird'
@@ -65,6 +66,11 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		id: 'ore_snatcher',
 		name: 'Ore Snatcher',
 		requires: {achievement: OreSnatcher.id},
+	},
+	{
+		id: 'is_great',
+		name: '...is Great',
+		requires: {achievement: IsGreat.id},
 	},
 	{
 		id: 'pesky_bird',

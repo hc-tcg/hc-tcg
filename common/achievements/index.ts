@@ -1,6 +1,7 @@
 import British from './british'
 import CantTouchThis from './cant-touch-this'
 import CertifiedZombie from './certified-zombie'
+import CloseCall from './close-call'
 import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
 import Ethogirl from './ethogirl'
@@ -11,6 +12,7 @@ import HotTake from './hot-take'
 import HowDidWeGetHere from './how-did-we-get-here'
 import HurtinHermits from './hurtin-hermits'
 import Inneffective from './inneffective'
+import IsGreat from './is-great'
 import AllCards from './jack-of-all-cards'
 import LoyaltyIII from './loyalty-iii'
 import NakedAndScared from './naked-and-scared'
@@ -68,6 +70,8 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	Inneffective,
 	TargetedLightning,
 	LoyaltyIII,
+	CloseCall,
+	IsGreat,
 	Win,
 	BalancedWins,
 	BuilderWins,
