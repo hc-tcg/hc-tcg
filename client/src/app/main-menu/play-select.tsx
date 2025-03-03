@@ -45,9 +45,18 @@ import css from './play-select.module.scss'
 type Props = {
 	setMenuSection: (section: string) => void
 	defaultSection?: string
+	firstActiveMenu?: string
+	prefillSpectatorCode?: string
+	prefillJoinCode?: string
 }
 
-function PlaySelect({setMenuSection, defaultSection}: Props) {
+function PlaySelect({
+	setMenuSection,
+	defaultSection,
+	firstActiveMenu,
+	prefillJoinCode,
+	prefillSpectatorCode,
+}: Props) {
 	const dispatch = useMessageDispatch()
 	const matchmaking = useSelector(getStatus)
 	const settings = useSelector(getSettings)
@@ -70,6 +79,7 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 	)
 
 	const getFirstActiveMenu = (section: string) => {
+		if (firstActiveMenu) return firstActiveMenu
 		if (section === 'public') return 'publicChooseDeck'
 		if (section === 'private') return 'privateOptions'
 		if (section === 'boss') return 'bossSelect'
@@ -414,6 +424,7 @@ or create your own game to challenge someone else."
 								subTitle="Choose your deck, enter the code, and then press the Confirm button to begin."
 								confirmMessage="Confirm"
 								requestCode
+								defaultCode={prefillJoinCode}
 								onConfirm={(code) => {
 									const valid = checkForValidation()
 									if (!valid) return
@@ -445,6 +456,7 @@ or create your own game to challenge someone else."
 								subTitle="Enter the spectator code, then press the Confirm button to join the game."
 								placeholder="Enter spectator code..."
 								confirmMessage="Confirm"
+								defaultCode={prefillSpectatorCode}
 								onConfirm={(code) => {
 									if (!code || code.length !== 6) {
 										dispatch({

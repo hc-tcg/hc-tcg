@@ -48,6 +48,8 @@ Creates a new game and returns the codes to join it. The game code will time out
 | `spectatorCode` | string |              Code spectators use to join the game. |
 | `apiSecret`     | string | Code used to cancel games made with the HC-TCG API |
 | `timeOutAt`     |  int   |   Time when the game code will no longer be valid. |
+| `spectateUrl`   |  int   |     The URL players can use to spectate this game. |
+| `joinUrl`       |  int   |        The URL a player can use to join this game. |
 
 -   `DELETE /api/games/cancel`
 
