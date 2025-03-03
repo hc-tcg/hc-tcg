@@ -1,5 +1,5 @@
 $width: 34vh;
-$expandedWidth: 75vh;
+$expandedWidth: 85vh;
 $height: 52vh;
 $time: 0.25s;
 
@@ -246,6 +246,8 @@ $expandedHeight: $mobileHeight * 3 + 1.5 * 3;
 
 .filter {
 	width: 100%;
+	margin: 1vh;
+	margin-bottom: 0;
 }
 
 /* ANIMATIONS */
@@ -717,7 +719,7 @@ $expandedHeight: $mobileHeight * 3 + 1.5 * 3;
 	}
 
 	.spacer {
-		display: none;
+		max-height: 2vh;
 	}
 
 	.text {
