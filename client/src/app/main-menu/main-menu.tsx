@@ -6,11 +6,11 @@ import {VersionLinks} from 'components/link-container'
 import {Modal} from 'components/modal'
 import TcgLogo from 'components/tcg-logo'
 import UpdatesModal from 'components/updates'
-import queryOptions from 'query-params'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {getSession, getUpdates} from 'logic/session/session-selectors'
 import {useState} from 'react'
 import {useSelector} from 'react-redux'
+import queryOptions from '../../query-params'
 import css from './main-menu.module.scss'
 
 type Props = {

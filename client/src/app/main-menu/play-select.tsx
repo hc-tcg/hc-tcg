@@ -39,6 +39,7 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getRematchData, getSession} from 'logic/session/session-selectors'
 import {useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
+import queryOptions from '../../query-params'
 import {CosmeticPreview} from './achievements'
 import css from './play-select.module.scss'
 
@@ -68,6 +69,14 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 	)
 
 	const getFirstActiveMenu = (section: string) => {
+		if (queryOptions.spectate) {
+			return 'privateSpectateGame'
+		}
+
+		if (queryOptions.fight) {
+			return 'privateJoinGame'
+		}
+
 		if (section === 'public') return 'publicChooseDeck'
 		if (section === 'private') return 'privateOptions'
 		if (section === 'boss') return 'bossSelect'
@@ -90,6 +99,10 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 	}
 
 	const goBack = () => {
+		/* If we used one of the quick url play features, clear it here */
+		queryOptions.fight = undefined
+		queryOptions.spectate = undefined
+
 		const lastMenu = backStack.splice(-1)[0]
 		if (lastMenu) {
 			setActiveButtonMenu(lastMenu)
@@ -405,6 +418,7 @@ or create your own game to challenge someone else."
 								subTitle="Choose your deck, enter the code, and then press the Confirm button to begin."
 								confirmMessage="Confirm"
 								requestCode
+								defaultCode={queryOptions.fight}
 								onConfirm={(code) => {
 									const valid = checkForValidation()
 									if (!valid) return
@@ -436,6 +450,7 @@ or create your own game to challenge someone else."
 								subTitle="Enter the spectator code, then press the Confirm button to join the game."
 								placeholder="Enter spectator code..."
 								confirmMessage="Confirm"
+								defaultCode={queryOptions.spectate}
 								onConfirm={(code) => {
 									if (!code || code.length !== 6) {
 										dispatch({

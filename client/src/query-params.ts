@@ -15,7 +15,7 @@ const queryOptions: QueryOptions = {
 }
 
 if (DEBUG) {
-	if (JSON.parse(urlParams.get('showUpdatesModal') || '') === false) {
+	if (JSON.parse(urlParams.get('showUpdatesModal') || '{}') === false) {
 		queryOptions.showUpdatesModal = false
 	}
 	if (urlParams.get('spectate')) {
