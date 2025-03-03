@@ -1,6 +1,5 @@
 .cosmeticsLayout {
 	width: 100vw;
-	height: 95vh;
 	margin-top: 5vh;
 	display: flex;
 	justify-content: center;
@@ -36,9 +35,6 @@
 }
 
 .body2 {
-	flex-grow: 1;
-	height: 100%;
-	width: 100%;
 	overflow-y: hidden;
 	display: flex;
 	flex-direction: column;
