@@ -332,6 +332,7 @@ interface ChooseDeckProps extends ButtonMenuProps {
 	onConfirm: (code?: string) => void
 	onSelectDeck: (deck: Deck) => void
 	decks: Deck[]
+	defaultCode?: string
 }
 
 GameModeButton.ChooseDeck = ({
@@ -344,6 +345,7 @@ GameModeButton.ChooseDeck = ({
 	onConfirm,
 	onSelectDeck,
 	decks,
+	defaultCode,
 }: ChooseDeckProps) => {
 	if (activeButtonMenu !== id) return <></>
 
@@ -478,6 +480,8 @@ GameModeButton.ChooseDeck = ({
 							className={classNames(css.largeButton, css.deckSelectorInput)}
 							placeholder="Enter code..."
 							spellCheck={false}
+							value={defaultCode}
+							data-testid="join-code-input"
 						/>
 						{confirmButton}
 					</div>
@@ -494,6 +498,7 @@ interface EnterCodeProps extends ButtonMenuProps {
 	placeholder: string
 	confirmMessage: string
 	onConfirm: (code: string) => void
+	defaultCode?: string
 }
 
 GameModeButton.EnterCode = ({
@@ -504,6 +509,7 @@ GameModeButton.EnterCode = ({
 	placeholder,
 	confirmMessage,
 	onConfirm,
+	defaultCode: content,
 }: EnterCodeProps) => {
 	if (activeButtonMenu !== id) return <></>
 
@@ -521,6 +527,8 @@ GameModeButton.EnterCode = ({
 					className={css.largeButton}
 					placeholder={placeholder}
 					spellCheck={false}
+					value={content}
+					data-testid="spectate-code-input"
 				/>
 				<Button
 					className={css.largeButton}

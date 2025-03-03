@@ -68,8 +68,8 @@ export function addApi(app: Express) {
 		res.send(getPublicGameCount())
 	})
 
-	app.get('/api/games/create', (_req, res) => {
-		res.send(createApiGame())
+	app.get('/api/games/create', (req, res) => {
+		res.send(createApiGame(requestUrlRoot(req)))
 	})
 
 	app.get('/api/games/queue/length', (_req, res) => {
