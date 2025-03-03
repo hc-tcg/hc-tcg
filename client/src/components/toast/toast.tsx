@@ -1,9 +1,9 @@
 import {CopyIcon} from 'components/svgs'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {useEffect, useLayoutEffect, useRef, useState} from 'react'
-import css from './toast.module.scss'
 import {getToast} from 'logic/session/session-selectors'
+import {useEffect, useLayoutEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
+import css from './toast.module.scss'
 
 const svgImages: Record<string, () => JSX.Element> = {copy: CopyIcon}
 

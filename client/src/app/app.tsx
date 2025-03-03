@@ -1,6 +1,7 @@
 import Background from 'components/background'
 import {CurrentDropdown} from 'components/dropdown/dropdown'
 import LostConnection from 'components/lost-connection'
+import {Toaster} from 'components/toast/toast'
 import {CurrentTooltip} from 'components/tooltip/tooltip'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
@@ -25,7 +26,6 @@ import GameSettings from './main-menu/game-settings'
 import PlaySelect from './main-menu/play-select'
 import Settings from './main-menu/settings'
 import Statistics from './main-menu/statistics'
-import {Toaster} from 'components/toast/toast'
 
 function Router() {
 	const section = useRouter()
