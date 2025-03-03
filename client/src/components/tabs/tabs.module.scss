@@ -41,7 +41,18 @@
 }
 
 @media (max-width: 720px) {
+	.tab {
+		width: 100%;
+	}
+
 	.tabs {
-		height: 7vh;
+		min-height: 6vh;
+		height: 6vh;
+		width: 100%;
+	}
+
+	.afterTabs {
+		flex-grow: 0;
+		width: 0px;
 	}
 }

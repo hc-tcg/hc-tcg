@@ -37,7 +37,7 @@ import {
 } from 'logic/matchmaking/matchmaking-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getRematchData, getSession} from 'logic/session/session-selectors'
-import {useEffect, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CosmeticPreview} from './achievements'
 import css from './play-select.module.scss'
@@ -56,6 +56,8 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 	const {playerDeck} = useSelector(getSession)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 	const rematch = useSelector(getRematchData)
+
+	const gameTypeButtonsRef = useRef<HTMLDivElement>(null)
 
 	const decks = databaseInfo?.decks
 	const [loadedDeck, setLoadedDeck] = useState<Deck | undefined>(
@@ -118,6 +120,8 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 			setBackStack([])
 		}
 	}
+
+	const mobileTop = gameTypeButtonsRef.current?.getBoundingClientRect().top || 0
 
 	const checkForValidation = (): boolean => {
 		if (!playerDeck || !loadedDeck) {
@@ -279,7 +283,10 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 			>
 				<h2 className={css.header}>{header}</h2>
 				<div className={css.gameTypes}>
-					<div className={classNames(css.gameTypesButtons)}>
+					<div
+						className={classNames(css.gameTypesButtons)}
+						ref={gameTypeButtonsRef}
+					>
 						<GameModeButton
 							image={'vintagebeef'}
 							backgroundImage={'gamemodes/public'}
@@ -296,6 +303,7 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 							}}
 							onBack={goBack}
 							disableBack={!!matchmaking}
+							mobileTop={mobileTop}
 							enableRematch={!!rematch && !rematch.spectatorCode}
 							timerStart={rematch?.time}
 							timerLength={serverConfig.limits.rematchTime}
@@ -362,6 +370,7 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 							}}
 							onBack={goBack}
 							disableBack={!!matchmaking}
+							mobileTop={mobileTop}
 							enableRematch={!!rematch && !!rematch.spectatorCode}
 							timerStart={rematch?.time}
 							timerLength={serverConfig.limits.rematchTime}
@@ -538,6 +547,7 @@ or create your own game to challenge someone else."
 							setActiveMode={setActiveMode}
 							onBack={goBack}
 							disableBack={!!matchmaking}
+							mobileTop={mobileTop}
 							enableRematch={false}
 						>
 							<GameModeButton.OptionsSelect
@@ -682,6 +692,7 @@ during the battle."
 								}}
 								onBack={goBack}
 								disableBack={!!matchmaking}
+								mobileTop={mobileTop}
 								timerStart={rematch?.time || 0}
 								timerLength={serverConfig.limits.rematchTime}
 								disabled={rematchDisabled}
