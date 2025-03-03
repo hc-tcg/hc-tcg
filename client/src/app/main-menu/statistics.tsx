@@ -1011,7 +1011,7 @@ function Statistics({setMenuSection}: Props) {
 											Filter by Opponent Name
 										</div>
 										<input
-											placeholder={'Search...'}
+											placeholder={'Opponent name...'}
 											onChange={(e) => {
 												opponentNameFilterAction(e.target.value)
 											}}
@@ -1066,7 +1066,8 @@ function Statistics({setMenuSection}: Props) {
 													Filter by Opponent Name
 												</div>
 												<input
-													placeholder={'Search...'}
+													className={css.opponentInput}
+													placeholder={'Opponent name...'}
 													onChange={(e) => {
 														opponentNameFilterAction(e.target.value)
 													}}
