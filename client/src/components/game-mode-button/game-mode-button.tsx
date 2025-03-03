@@ -384,41 +384,45 @@ GameModeButton.ChooseDeck = ({
 		)
 	}
 
+	const filteredDecksHtml = filteredDecks.map((deck, i) => (
+		<div
+			className={classNames(
+				css.deck,
+				playerDeck && deck.code === playerDeck && css.selectedDeck,
+			)}
+			key={i}
+			onClick={() => onSelectDeck(deck)}
+		>
+			{deck.tags && deck.tags.length > 0 && (
+				<div className={css.multiColoredCircle}>
+					{deck.tags.map((tag, i) => (
+						<div
+							className={css.singleTag}
+							style={{backgroundColor: tag.color}}
+							key={i}
+						></div>
+					))}
+				</div>
+			)}
+			{decksHaveTags && deck.tags.length === 0 && (
+				<div className={css.multiColoredCircle}>
+					<div className={css.singleTag}></div>
+				</div>
+			)}
+			<div className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}>
+				<img src={getIconPath(deck)} />
+			</div>
+			<div className={css.deckName}>{deck.name}</div>
+		</div>
+	))
+
 	const deckSelector = (
 		<div className={css.deckSelector}>
-			{filteredDecks.map((deck, i) => (
-				<div
-					className={classNames(
-						css.deck,
-						playerDeck && deck.code === playerDeck && css.selectedDeck,
-					)}
-					key={i}
-					onClick={() => onSelectDeck(deck)}
-				>
-					{deck.tags && deck.tags.length > 0 && (
-						<div className={css.multiColoredCircle}>
-							{deck.tags.map((tag, i) => (
-								<div
-									className={css.singleTag}
-									style={{backgroundColor: tag.color}}
-									key={i}
-								></div>
-							))}
-						</div>
-					)}
-					{decksHaveTags && deck.tags.length === 0 && (
-						<div className={css.multiColoredCircle}>
-							<div className={css.singleTag}></div>
-						</div>
-					)}
-					<div
-						className={classNames(css.deckImage, css.usesIcon, css[deck.icon])}
-					>
-						<img src={getIconPath(deck)} />
-					</div>
-					<div className={css.deckName}>{deck.name}</div>
-				</div>
-			))}
+			{filteredDecksHtml.length ? (
+				filteredDecksHtml
+			) : (
+				<p className={css.noResults}>No decks found.</p>
+			)}
 		</div>
 	)
 

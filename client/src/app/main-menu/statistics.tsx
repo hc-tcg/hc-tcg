@@ -826,6 +826,131 @@ function Statistics({setMenuSection}: Props) {
 		)
 	}
 
+	const filteredGamesHtml = filteredGames.map((game) => {
+		const startTime = new Date(game.startTime)
+		return (
+			<div className={css.gameHistoryBox}>
+				<div
+					className={classNames(
+						css.gameAreaMiddle,
+						settings.gameSide === 'Right' && css.reverseSide,
+					)}
+				>
+					<div id={css.playerHead}>
+						<div className={css.playerHead}>
+							<img
+								src={`https://mc-heads.net/head/${game.firstPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/right`}
+								alt="player head"
+							/>
+						</div>
+					</div>
+					<div id={css.opponentHead}>
+						<div className={css.playerHead}>
+							<img
+								src={`https://mc-heads.net/head/${game.secondPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/left`}
+								alt="player head"
+							/>
+						</div>
+					</div>
+					<div
+						className={classNames(
+							css.playerName,
+							settings.gameSide === 'Right' && css.reverseSide,
+							game.firstPlayer.uuid === databaseInfo.userId && css.me,
+						)}
+					>
+						{game.firstPlayer.uuid === game.winner && (
+							<img src={'images/icons/trophy.png'} className={css.trophy} />
+						)}
+						{game.firstPlayer.name}
+					</div>
+					<div
+						className={classNames(
+							css.winAndLoss,
+							settings.gameSide === 'Right' && css.reverseSide,
+						)}
+					>
+						<div
+							className={classNames(
+								game.winner === databaseInfo.userId && css.win,
+								game.winner !== databaseInfo.userId && css.loss,
+								css.me,
+							)}
+						>
+							{game.winner === databaseInfo.userId ? 'W' : 'L'}
+						</div>{' '}
+						<div className={css.dash}>-</div>{' '}
+						<div>{game.winner === databaseInfo.userId ? 'L' : 'W'}</div>
+					</div>
+					<div
+						className={classNames(
+							css.playerName,
+							settings.gameSide === 'Right' && css.reverseSide,
+							game.secondPlayer.uuid === databaseInfo.userId && css.me,
+						)}
+					>
+						{game.secondPlayer.uuid === game.winner && (
+							<img src={'images/icons/trophy.png'} className={css.trophy} />
+						)}
+						{game.secondPlayer.name}
+					</div>
+					<Button
+						id={css.deck}
+						onClick={() => {
+							setScreenshotDeckModalContents(
+								sortCards(
+									parseDeckCards(
+										game.usedDeck.cards.map((card) => card.props.id),
+									),
+								),
+							)
+						}}
+					>
+						View Deck
+					</Button>
+					{game.hasReplay && (
+						<Button id={css.replay} onClick={() => handleReplayGame(game)}>
+							Watch Replay
+						</Button>
+					)}
+					{game.hasReplay && (
+						<Button id={css.overview} onClick={() => handleOverview(game)}>
+							Overview
+						</Button>
+					)}
+					<div id={css.time} className={css.timeAndturns}>
+						{startTime.getMonth() + 1}/{startTime.getDate()}
+						<span className={css.hideOnMobile}>
+							/{startTime.getFullYear() - 2000},{' '}
+						</span>
+						<span>
+							{startTime.getHours() % 12}:
+							{startTime.getMinutes().toString().padStart(2, '0')}{' '}
+							{startTime.getHours() >= 12 ? 'PM' : 'AM'}
+						</span>
+					</div>
+					<div id={css.turns} className={css.hideOnMobile}>
+						{game.length.minutes}m{game.length.seconds}.
+						{Math.floor(game.length.milliseconds / 10)}s | {game.turns} Turn
+						{game.turns !== 1 && 's'}
+					</div>
+					<div
+						id={css.turns}
+						className={classNames(css.showOnMobile, css.timeAndturns)}
+					>
+						<div>
+							{game.length.minutes}m{game.length.seconds}.
+							{Math.floor(game.length.milliseconds / 10)}s
+						</div>
+						<div>
+							{game.turns} Turn{game.turns !== 1 && 's'}
+						</div>
+					</div>
+				</div>
+			</div>
+		)
+	})
+
 	const tabs = ['Statistics', 'My Games', 'Hall of Fame']
 
 	return (
@@ -1011,7 +1136,7 @@ function Statistics({setMenuSection}: Props) {
 											Filter by Opponent Name
 										</div>
 										<input
-											placeholder={'Search...'}
+											placeholder={'Opponent name...'}
 											onChange={(e) => {
 												opponentNameFilterAction(e.target.value)
 											}}
@@ -1066,7 +1191,8 @@ function Statistics({setMenuSection}: Props) {
 													Filter by Opponent Name
 												</div>
 												<input
-													placeholder={'Search...'}
+													className={css.opponentInput}
+													placeholder={'Opponent name...'}
 													onChange={(e) => {
 														opponentNameFilterAction(e.target.value)
 													}}
@@ -1074,164 +1200,11 @@ function Statistics({setMenuSection}: Props) {
 											</div>
 										</div>
 										<div className={css.gameHistoryGames}>
-											{filteredGames.map((game) => {
-												const startTime = new Date(game.startTime)
-												return (
-													<div className={css.gameHistoryBox}>
-														<div
-															className={classNames(
-																css.gameAreaMiddle,
-																settings.gameSide === 'Right' &&
-																	css.reverseSide,
-															)}
-														>
-															<div id={css.playerHead}>
-																<div className={css.playerHead}>
-																	<img
-																		src={`https://mc-heads.net/head/${game.firstPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/right`}
-																		alt="player head"
-																	/>
-																</div>
-															</div>
-															<div id={css.opponentHead}>
-																<div className={css.playerHead}>
-																	<img
-																		src={`https://mc-heads.net/head/${game.secondPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/left`}
-																		alt="player head"
-																	/>
-																</div>
-															</div>
-															<div
-																className={classNames(
-																	css.playerName,
-																	settings.gameSide === 'Right' &&
-																		css.reverseSide,
-																	game.firstPlayer.uuid ===
-																		databaseInfo.userId && css.me,
-																)}
-															>
-																{game.firstPlayer.uuid === game.winner && (
-																	<img
-																		src={'images/icons/trophy.png'}
-																		className={css.trophy}
-																	/>
-																)}
-																{game.firstPlayer.name}
-															</div>
-															<div
-																className={classNames(
-																	css.winAndLoss,
-																	settings.gameSide === 'Right' &&
-																		css.reverseSide,
-																)}
-															>
-																<div
-																	className={classNames(
-																		game.winner === databaseInfo.userId &&
-																			css.win,
-																		game.winner !== databaseInfo.userId &&
-																			css.loss,
-																		css.me,
-																	)}
-																>
-																	{game.winner === databaseInfo.userId
-																		? 'W'
-																		: 'L'}
-																</div>{' '}
-																<div className={css.dash}>-</div>{' '}
-																<div>
-																	{game.winner === databaseInfo.userId
-																		? 'L'
-																		: 'W'}
-																</div>
-															</div>
-															<div
-																className={classNames(
-																	css.playerName,
-																	settings.gameSide === 'Right' &&
-																		css.reverseSide,
-																	game.secondPlayer.uuid ===
-																		databaseInfo.userId && css.me,
-																)}
-															>
-																{game.secondPlayer.uuid === game.winner && (
-																	<img
-																		src={'images/icons/trophy.png'}
-																		className={css.trophy}
-																	/>
-																)}
-																{game.secondPlayer.name}
-															</div>
-															<Button
-																id={css.deck}
-																onClick={() => {
-																	setScreenshotDeckModalContents(
-																		sortCards(
-																			parseDeckCards(
-																				game.usedDeck.cards.map(
-																					(card) => card.props.id,
-																				),
-																			),
-																		),
-																	)
-																}}
-															>
-																View Deck
-															</Button>
-															{game.hasReplay && (
-																<Button
-																	id={css.replay}
-																	onClick={() => handleReplayGame(game)}
-																>
-																	Watch Replay
-																</Button>
-															)}
-															{game.hasReplay && (
-																<Button
-																	id={css.overview}
-																	onClick={() => handleOverview(game)}
-																>
-																	Overview
-																</Button>
-															)}
-															<div id={css.time} className={css.timeAndturns}>
-																{startTime.getMonth() + 1}/{startTime.getDate()}
-																<span className={css.hideOnMobile}>
-																	/{startTime.getFullYear() - 2000},{' '}
-																</span>
-																<span>
-																	{startTime.getHours() % 12}:
-																	{startTime
-																		.getMinutes()
-																		.toString()
-																		.padStart(2, '0')}{' '}
-																	{startTime.getHours() >= 12 ? 'PM' : 'AM'}
-																</span>
-															</div>
-															<div id={css.turns} className={css.hideOnMobile}>
-																{game.length.minutes}m{game.length.seconds}.
-																{Math.floor(game.length.milliseconds / 10)}s |{' '}
-																{game.turns} Turn{game.turns !== 1 && 's'}
-															</div>
-															<div
-																id={css.turns}
-																className={classNames(
-																	css.showOnMobile,
-																	css.timeAndturns,
-																)}
-															>
-																<div>
-																	{game.length.minutes}m{game.length.seconds}.
-																	{Math.floor(game.length.milliseconds / 10)}s
-																</div>
-																<div>
-																	{game.turns} Turn{game.turns !== 1 && 's'}
-																</div>
-															</div>
-														</div>
-													</div>
-												)
-											})}
+											{filteredGamesHtml.length ? (
+												filteredGamesHtml
+											) : (
+												<p className={css.noResults}>No games found.</p>
+											)}
 										</div>
 									</div>
 								</div>
