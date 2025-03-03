@@ -111,7 +111,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 				return (
 					<EditDeck
 						back={() => setMode('select')}
-						title={'Deck Editor'}
+						title={'Edit Deck'}
 						saveDeck={(returnedDeck) => saveDeckInternal(returnedDeck)}
 						updateDeck={(returnedDeck) => updateDeckInternal(returnedDeck)}
 						deleteDeck={deleteDeckInternal}
@@ -123,7 +123,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 				return (
 					<EditDeck
 						back={() => setMode('select')}
-						title={'Deck Creation'}
+						title={'Create Deck'}
 						saveDeck={(returnedDeck) => saveDeckInternal(returnedDeck)}
 						updateDeck={(returnedDeck) => updateDeckInternal(returnedDeck)}
 						deleteDeck={deleteDeckInternal}

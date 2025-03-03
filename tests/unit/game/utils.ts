@@ -525,6 +525,10 @@ export function testReplayGame(options: {
 			settings: {
 				...defaultGameSettings,
 				shuffleDeck: options.shuffleDeck || false,
+				verboseLogging: true,
+				forceCoinFlip: false,
+				disableDeckOut: false,
+				disableRewardCards: false,
 			},
 		},
 	)

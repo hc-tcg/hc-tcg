@@ -19,3 +19,11 @@ export function getFormattedName(cardId: string, opponent: boolean) {
 
 	return `${formatting}${cardInfo.name}$`
 }
+
+export function newIncrementor() {
+	let x = 1
+	return function () {
+		x += 1
+		return x
+	}
+}

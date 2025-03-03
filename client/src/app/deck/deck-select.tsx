@@ -101,7 +101,7 @@ export function FilterComponent({
 						<img src="../images/icons/tag.png" alt="tag-icon" />
 					</button>
 				}
-				label="Saved Tags"
+				label="Tag Filter"
 				options={tagsDropdownOptions}
 				showNames={true}
 				direction={dropdownDirection}
@@ -322,7 +322,7 @@ function SelectDeck({
 			return [...tags, ...decks.tags]
 		}, []).length > 0
 
-	const deckList: ReactNode = filteredDecks.map((deck: Deck, i: number) => {
+	const deckList = filteredDecks.map((deck: Deck, i: number) => {
 		return (
 			<li
 				className={classNames(
@@ -488,7 +488,7 @@ function SelectDeck({
 				onConfirm={() => saveDeck(importedDeck)}
 			/>
 			<DeckLayout
-				title="Deck Selection"
+				title="Deck Editor"
 				back={backToMenu}
 				returnText="Back To Menu"
 			>
@@ -596,7 +596,13 @@ function SelectDeck({
 									/>
 								</div>
 								<div className={css.deckListContainer}>
-									<div className={css.deckList}>{deckList}</div>
+									<div className={css.deckList}>
+										{deckList.length ? (
+											deckList
+										) : (
+											<p className={css.noResults}>No decks found.</p>
+										)}
+									</div>
 								</div>
 							</div>
 							<div className={css.mobileTags}>
@@ -836,7 +842,11 @@ function SelectDeck({
 						</>
 					}
 				>
-					{deckList}
+					{deckList.length ? (
+						deckList
+					) : (
+						<p className={css.noResults}>No decks found.</p>
+					)}
 				</DeckLayout.Sidebar>
 			</DeckLayout>
 		</>

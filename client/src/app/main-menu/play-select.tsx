@@ -37,7 +37,7 @@ import {
 } from 'logic/matchmaking/matchmaking-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getRematchData, getSession} from 'logic/session/session-selectors'
-import {useEffect, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CosmeticPreview} from './achievements'
 import css from './play-select.module.scss'
@@ -56,6 +56,8 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 	const {playerDeck} = useSelector(getSession)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 	const rematch = useSelector(getRematchData)
+
+	const gameTypeButtonsRef = useRef<HTMLDivElement>(null)
 
 	const decks = databaseInfo?.decks
 	const [loadedDeck, setLoadedDeck] = useState<Deck | undefined>(
@@ -103,7 +105,11 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 
 	const [hasRematch, setHasRematch] = useState<boolean>(rematch ? true : false)
 	const [rematchDisabled, setRematchDisabled] = useState<boolean>(false)
-	const [buttonAmount, _setButtonAmount] = useState<number>(rematch ? 4 : 3)
+
+	const rematchCancel = () => {
+		if (!rematch) return
+		dispatch({type: localMessages.CANCEL_REMATCH})
+	}
 
 	if (hasRematch && !rematch) {
 		setHasRematch(false)
@@ -114,6 +120,8 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 			setBackStack([])
 		}
 	}
+
+	const mobileTop = gameTypeButtonsRef.current?.getBoundingClientRect().top || 0
 
 	const checkForValidation = (): boolean => {
 		if (!playerDeck || !loadedDeck) {
@@ -276,10 +284,8 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 				<h2 className={css.header}>{header}</h2>
 				<div className={css.gameTypes}>
 					<div
-						className={classNames(
-							css.gameTypesButtons,
-							buttonAmount === 4 && css.fourButtons,
-						)}
+						className={classNames(css.gameTypesButtons)}
+						ref={gameTypeButtonsRef}
 					>
 						<GameModeButton
 							image={'vintagebeef'}
@@ -297,7 +303,15 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 							}}
 							onBack={goBack}
 							disableBack={!!matchmaking}
-							buttonAmount={buttonAmount}
+							mobileTop={mobileTop}
+							enableRematch={!!rematch && !rematch.spectatorCode}
+							timerStart={rematch?.time}
+							timerLength={serverConfig.limits.rematchTime}
+							onRematchSelect={() => {
+								addMenuWithBack('rematchChooseDeck')
+								sortDecksByActive()
+							}}
+							onRematchCancel={rematchCancel}
 						>
 							<GameModeButton.ChooseDeck
 								activeButtonMenu={activeButtonMenu}
@@ -356,7 +370,15 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 							}}
 							onBack={goBack}
 							disableBack={!!matchmaking}
-							buttonAmount={buttonAmount}
+							mobileTop={mobileTop}
+							enableRematch={!!rematch && !!rematch.spectatorCode}
+							timerStart={rematch?.time}
+							timerLength={serverConfig.limits.rematchTime}
+							onRematchSelect={() => {
+								addMenuWithBack('rematchChooseDeck')
+								sortDecksByActive()
+							}}
+							onRematchCancel={rematchCancel}
 						>
 							<GameModeButton.OptionsSelect
 								activeButtonMenu={activeButtonMenu}
@@ -525,7 +547,8 @@ or create your own game to challenge someone else."
 							setActiveMode={setActiveMode}
 							onBack={goBack}
 							disableBack={!!matchmaking}
-							buttonAmount={buttonAmount}
+							mobileTop={mobileTop}
+							enableRematch={false}
 						>
 							<GameModeButton.OptionsSelect
 								id="bossSelect"
@@ -650,7 +673,9 @@ during the battle."
 								onSelectDeck={onSelectDeck}
 							/>
 						</GameModeButton>
-						{(rematch || rematchDisabled) && (
+					</div>
+					<div className={css.rematchWindow}>
+						{activeMode === 'rematch' && (
 							<GameModeButton
 								image={'fiveampearl'}
 								backgroundImage={'gamemodes/rematch'}
@@ -667,10 +692,11 @@ during the battle."
 								}}
 								onBack={goBack}
 								disableBack={!!matchmaking}
+								mobileTop={mobileTop}
 								timerStart={rematch?.time || 0}
 								timerLength={serverConfig.limits.rematchTime}
-								buttonAmount={buttonAmount}
 								disabled={rematchDisabled}
+								enableRematch={false}
 							>
 								<GameModeButton.ChooseDeck
 									activeButtonMenu={activeButtonMenu}

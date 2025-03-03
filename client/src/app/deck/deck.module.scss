@@ -635,7 +635,6 @@
 	}
 
 	.deckSearchInput {
-		max-width: 5rem;
 		background: var(--gray-400);
 		border: 2px solid var(--gray-900);
 		color: white;
@@ -644,10 +643,14 @@
 		line-height: 2rem;
 		flex-grow: 1;
 		text-overflow: ellipsis;
+		max-width: 100%;
 
 		&:focus {
 			width: 100%;
-			max-width: 100%;
+		}
+
+		&::placeholder {
+			color: var(--gray-200);
 		}
 	}
 }
@@ -662,6 +665,13 @@
 
 .removeButton {
 	flex-grow: 1;
+}
+
+.noResults {
+	padding: 0.5rem 0;
+	color: var(--text-light);
+	width: 100%;
+	text-align: center;
 }
 
 /* MOBILE */
@@ -683,7 +693,7 @@
 		background-color: var(--gray-800);
 		border-left: solid 2px black;
 		height: 100%;
-		overflow: scroll;
+		overflow: auto;
 	}
 
 	.mobileDeckPreview {

@@ -1,18 +1,22 @@
 .cosmeticsLayout {
 	width: 100vw;
-	height: 100vh;
+	margin-top: 5vh;
 	display: flex;
 	justify-content: center;
+	position: absolute;
+	top: 0;
+	left: 0;
 }
 
 .body {
-	padding: 1vh;
+	margin: 1vh;
 	display: block;
 	display: flex;
 	flex-direction: row;
 	max-width: 80rem;
 	width: 100%;
-	height: 95vh;
+	max-height: 95vh;
+	overflow: hidden;
 
 	h2 {
 		font-size: 3vh;
@@ -29,23 +33,19 @@
 	align-items: center;
 	justify-content: center;
 }
+
 .body2 {
-	flex-grow: 1;
-	height: 100%;
-	width: 100%;
 	overflow-y: hidden;
 	display: flex;
 	flex-direction: column;
 }
 
 .itemSelector {
-	flex-grow: 1;
 	padding: 1rem;
 	border: 2px black solid;
 	border-top: 0px;
 	background-color: var(--gray-600);
-	height: 100%;
-	overflow-y: hidden;
+	overflow-y: auto;
 }
 
 .nameSelector {
@@ -69,7 +69,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 0.5vh;
-	overflow-y: scroll;
+	overflow-y: auto;
 	height: 100%;
 }
 
@@ -82,7 +82,7 @@
 
 .cosmeticsContainerContainer {
 	height: 100%;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 .cosmetics {
@@ -312,7 +312,6 @@
 			filter: drop-shadow(0 2px 0 hsla(0deg, 0%, 0%, 35%));
 			text-overflow: ellipsis;
 			white-space: nowrap;
-			width: 40ch;
 			overflow: hidden;
 		}
 
@@ -359,5 +358,9 @@ h2 {
 
 	.hideOnMobile {
 		display: none;
+	}
+
+	.tooltip {
+		max-width: 90vw;
 	}
 }
