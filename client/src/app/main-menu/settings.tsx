@@ -13,10 +13,14 @@ import Credit from 'components/credit'
 import {CreditProps} from 'components/credit/credit'
 import DeveloperCredit from 'components/credit/developer-credit'
 import {Modal} from 'components/modal'
-import { CopyIcon } from 'components/svgs'
-import { getLocalDatabaseInfo } from 'logic/game/database/database-selectors'
-
-type Social = 'discord' | 'github' | 'gitlab' | 'twitter'
+import {CopyIcon} from 'components/svgs'
+import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
+import DropdownButton from 'components/dropdown'
+import {
+	LocalSetting,
+	LocalSettings,
+} from 'logic/local-settings/local-settings-reducer'
+import Dropdown from 'components/dropdown'
 
 const designers: CreditProps[] = [
 	{
@@ -181,158 +185,128 @@ const developers: CreditProps[] = [
 	},
 ]
 
+const getBoolDescriptor = (value: boolean) => {
+	return value ? 'Enabled' : 'Disabled'
+}
+
+const getPercentDescriptor = (value: number) => {
+	if (value !== 0) return `${value}%`
+	return 'Disabled'
+}
+
+type ToggleProps = {
+	targetSetting: keyof LocalSettings
+	name: string
+	useSetting?: boolean
+	inverter?: (
+		setting: LocalSettings[keyof LocalSettings],
+	) => LocalSettings[keyof LocalSettings]
+}
+
+const ToggleButton = ({
+	targetSetting,
+	name,
+	useSetting,
+	inverter,
+}: ToggleProps) => {
+	const dispatch = useMessageDispatch()
+	const settings = useSelector(getSettings)
+	const toggle = () =>
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			setting: {
+				key: targetSetting,
+				value: inverter
+					? inverter(settings[targetSetting])
+					: !settings[targetSetting],
+			} as LocalSetting,
+		})
+
+	return (
+		<Button className={css.settingItem} variant="default" onClick={toggle}>
+			{name}:{' '}
+			{useSetting
+				? (settings[targetSetting] as string)
+				: getBoolDescriptor(settings[targetSetting] as boolean)}
+		</Button>
+	)
+}
+
+type VolumeSetting =
+	| 'globalVolume'
+	| 'sfxVolume'
+	| 'musicVolume'
+	| 'voiceVolume'
+type MuteSetting = 'globalMuted' | 'sfxMuted' | 'musicMuted' | 'voiceMuted'
+
+type SoundProps = {
+	id: 'global' | 'sfx' | 'music' | 'voice'
+	name?: string
+}
+
+const MusicSetting = ({id, name}: SoundProps) => {
+	const dispatch = useMessageDispatch()
+	const settings = useSelector(getSettings)
+	const value = settings[(id + 'Volume') as VolumeSetting]
+
+	const handleChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			setting: {
+				key: (id + 'Volume') as VolumeSetting,
+				value: parseInt(ev.currentTarget.value),
+			},
+		})
+	}
+
+	return (
+		<div className={css.twoSettings}>
+			<Slider className={css.settingItem} value={value} onInput={handleChange}>
+				{name} Volume: {getPercentDescriptor(value)}
+			</Slider>
+			<ToggleButton
+				name={name ? name : toTitleCase(id) + ' Sound'}
+				targetSetting={id + 'Muted' as MuteSetting}
+			/>
+		</div>
+	)
+}
+
+function toTitleCase(s: string) {
+	return s[0].toUpperCase() + s.slice(1)
+}
+
 type Props = {
 	setMenuSection: (section: string) => void
 }
 
 function Settings({setMenuSection}: Props) {
 	const dispatch = useMessageDispatch()
-	const settings = useSelector(getSettings)
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 
 	const [tab, setTab] = useState<string>('general')
 	const tabs = ['general', 'sound', 'game', 'data']
 
-	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
-		dispatch({
-			type: localMessages.SETTINGS_SET,
-			setting: {
-				key: 'soundVolume',
-				value: parseInt(ev.currentTarget.value),
-			},
-		})
-	}
-	const handleMusicChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
-		dispatch({
-			type: localMessages.SETTINGS_SET,
-			setting: {
-				key: 'musicVolume',
-				value: parseInt(ev.currentTarget.value),
-			},
-		})
-	}
-	const handleVoiceChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
-		dispatch({
-			type: localMessages.SETTINGS_SET,
-			setting: {
-				key: 'voiceVolume',
-				value: parseInt(ev.currentTarget.value),
-			},
-		})
-		dispatch({type: localMessages.PLAY_VOICE_TEST})
-	}
-	const handleMuteSound = () => {
-		dispatch({
-			type: localMessages.SETTINGS_SET,
-			setting: {
-				key: 'soundMuted',
-				value: !settings.soundMuted,
-			},
-		})
-	}
-	const handleMuteMusic = () => {
-		dispatch({
-			type: localMessages.SETTINGS_SET,
-			setting: {
-				key: 'musicMuted',
-				value: !settings.musicMuted,
-			},
-		})
-	}
-
-	const handlePanoramaToggle = () => {
-		dispatch({
-			type: localMessages.SETTINGS_SET,
-			setting: {
-				key: 'panoramaEnabled',
-				value: !settings.panoramaEnabled,
-			},
-		})
-	}
-	const getBoolDescriptor = (value: boolean) => {
-		return value ? 'Enabled' : 'Disabled'
-	}
-	const getPercentDescriptor = (value: number) => {
-		if (value !== 0) return `${value}%`
-		return 'Disabled'
-	}
 	const changeMenuSection = (section: string) => {
 		dispatch({type: localMessages.SOUND_SECTION_CHANGE, section: section})
 		setMenuSection(section)
 	}
-	const handleDataSettings = () => changeMenuSection('data-settings')
-	const handleGameSettings = () => changeMenuSection('game-settings')
 
-	const handleCredits = () => changeMenuSection('credits')
-
-	const [updatesOpen, setUpdatesOpen] = useState<boolean>(false)
-
-	const handleUpdates = () => {
-		setUpdatesOpen(true)
-	}
-
-	const handleDialogsChange = () => {
-		dispatch({
-			type: localMessages.SETTINGS_SET,
-			setting: {
-				key: 'confirmationDialogsEnabled',
-				value: !settings.confirmationDialogsEnabled,
-			},
-		})
-	}
-	const handleGameSideToggle = () => {
-		const gameSide = settings.gameSide === 'Left' ? 'Right' : 'Left'
-		dispatch({
-			type: localMessages.SETTINGS_SET,
-			setting: {
-				key: 'gameSide',
-				value: gameSide,
-			},
-		})
-	}
-	const handleChatChange = () => {
-		dispatch({
-			type: localMessages.SETTINGS_SET,
-			setting: {
-				key: 'chatEnabled',
-				value: !settings.chatEnabled,
-			},
-		})
-	}
-	const handleProfanityChange = () => {
-		dispatch({
-			type: localMessages.SETTINGS_SET,
-			setting: {
-				key: 'profanityFilterEnabled',
-				value: !settings.profanityFilterEnabled,
-			},
-		})
-	}
-	const handleSlotHighlightingChange = () => {
-		dispatch({
-			type: localMessages.SETTINGS_SET,
-			setting: {
-				key: 'slotHighlightingEnabled',
-				value: !settings.slotHighlightingEnabled,
-			},
-		})
-	}
-	const handleDeckSortingMethod = () => {
-		dispatch({
-			type: localMessages.SETTINGS_SET,
-			setting: {
-				key: 'deckSortingMethod',
-				value:
-					settings.deckSortingMethod === 'Alphabetical'
-						? 'First Tag'
-						: 'Alphabetical',
-			},
-		})
-	}
-
-	const resetChatWindow = () => {
+	const handleResetChatWindow = () => {
 		dispatch({type: localMessages.SETTINGS_RESET, key: 'chatPosition'})
 		dispatch({type: localMessages.SETTINGS_RESET, key: 'chatSize'})
+	}
+
+	const [modal, setModal] = useState<any>(null)
+
+	const closeModal = () => {
+		setModal(null)
+	}
+
+	const handleViewUpdates = () => {
+		setModal(<UpdatesModal
+			onClose={closeModal}
+		/>)
 	}
 
 	const handleReset = (
@@ -385,12 +359,6 @@ function Settings({setMenuSection}: Props) {
 				</Modal>,
 			)
 		}
-	}
-
-	const [modal, setModal] = useState<any>(null)
-
-	const closeModal = () => {
-		setModal(null)
 	}
 
 	const setUuidSecretModal = (
@@ -463,20 +431,13 @@ function Settings({setMenuSection}: Props) {
 							</Button>
 						</div>
 					</form>
-				</Modal>
+				</Modal>,
 			)
 		}
 	}
 
 	return (
 		<>
-			{updatesOpen && (
-				<UpdatesModal
-					onClose={() => {
-						setUpdatesOpen(!updatesOpen)
-					}}
-				/>
-			)}
 			{modal}
 			<MenuLayout
 				back={() => changeMenuSection('main-menu')}
@@ -486,284 +447,246 @@ function Settings({setMenuSection}: Props) {
 			>
 				<div className={css.bigHallOfFameArea}>
 					<div className={css.mainHallOfFameArea}>
-						<div className={css.fullLeftArea}>
-							<div className={css.tabContainer}>
-								<Tabs
-									selected={tab}
-									setSelected={setTab}
-									tabs={tabs}
-									vertical={true}
-									verticalDirection="left"
+						<div className={classNames(css.tabContainer, css.hideOnMobile)}>
+							<Tabs
+								selected={tab}
+								setSelected={setTab}
+								tabs={tabs}
+								vertical={true}
+								verticalDirection="left"
+							/>
+						</div>
+						<div className={classNames(css.tabContainer, css.showOnMobile, css.categoryDropdown)}>
+							<Dropdown
+								button={<Button className={css.fullWidth}>{toTitleCase(tab)} ▼</Button>}
+								label={'Select settings'}
+								showNames={true}
+								options={tabs.map((tab) => ({name: tab}))}
+								action={setTab}
+							/>
+						</div>
+						{tab === 'general' && (
+							<div className={css.settingsArea}>
+								<hr />
+								<h2 className={css.categoryHeader}>General</h2>
+								<ToggleButton name="Panorama" targetSetting='panoramaEnabled' />
+								<ToggleButton
+									name="Deck Sorting Method"
+									targetSetting="deckSortingMethod"
+									useSetting={true}
+									inverter={(side) => (side === 'Alphabetical' ? 'First Tag' : 'Alphabetical')}
 								/>
-							</div>
-							{tab === 'general' && (
-								<div className={css.settingsArea}>
-									<Button
-										variant="default"
-										onClick={handlePanoramaToggle}
-										className={css.settingItem}
-									>
-										Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
-									</Button>
-									<Button
-										variant="default"
-										onClick={handleUpdates}
-										className={css.settingItem}
-									>
-										Updates
-									</Button>
-									<h2 className={css.creditsHeader}>Credits</h2>
-									{designers.map((designer) => (
-										<Credit props={designer} />
+								<Button
+									variant="default"
+									onClick={handleViewUpdates}
+									className={css.settingItem}
+								>
+									Updates
+								</Button>
+								<hr />
+								<h2 className={css.categoryHeader}>Credits</h2>
+								{designers.map((designer) => (
+									<Credit props={designer} />
+								))}
+								<div className={css.developerContainer}>
+									{developers.map((developer) => (
+										<DeveloperCredit props={developer} />
 									))}
-									<div className={css.developerContainer}>
-										{developers.map((developer) => (
-											<DeveloperCredit props={developer} />
-										))}
-									</div>
 								</div>
-							)}
-							{tab === 'sound' && (
-								<div className={css.settingsArea}>
-									<div className={css.twoSettings}>
-										<Slider
-											className={css.settingItem}
-											value={settings.soundVolume}
-											onInput={handleSoundChange}
-										>
-											Sound Effect Volume:{' '}
-											{getPercentDescriptor(settings.soundVolume)}
-										</Slider>
-										<Button
-											className={css.settingItem}
-											variant="default"
-											onClick={handleMuteSound}
-										>
-											Sound: {getBoolDescriptor(!settings.soundMuted)}
-										</Button>
+								<hr />
+							</div>
+						)}
+						{tab === 'sound' && (
+							<div className={css.settingsArea}>
+								<hr />
+								<h2 className={css.categoryHeader}>Global</h2>
+								<MusicSetting id='global'/>
+								<hr />
+								<h2 className={css.categoryHeader}>Sound Effects</h2>
+								<MusicSetting id='sfx' name='Sound Effects'/>
+								<hr />
+								<h2 className={css.categoryHeader}>Music</h2>
+								<MusicSetting id='music'/>
+								<hr />
+								<h2 className={css.categoryHeader}>Voicelines</h2>
+								<MusicSetting id='voice'/>
+								<hr />
+							</div>
+						)}
+						{tab === 'game' && (
+							<div className={css.settingsArea}>
+								<hr />
+								<h2 className={css.categoryHeader}>Chat</h2>
+								<ToggleButton name="In-Game Chat" targetSetting="chatEnabled" />
+								<ToggleButton
+									name="Profanity Filter"
+									targetSetting="profanityFilterEnabled"
+								/>
+								<hr />
+								<h2 className={css.categoryHeader}>Apearance</h2>
+								<ToggleButton
+									name="Game Side"
+									targetSetting="gameSide"
+									useSetting={true}
+									inverter={(side) => (side === 'Left' ? 'Right' : 'Left')}
+								/>
+								<ToggleButton
+									name="Card Slot Highlighting"
+									targetSetting="slotHighlightingEnabled"
+								/>
+								<ToggleButton
+									name="Confirmation Dialogs"
+									targetSetting="confirmationDialogsEnabled"
+								/>
+								<hr />
+							</div>
+						)}
+						{tab === 'data' && (
+							<div className={css.settingsArea}>
+								<hr />
+								<h2 className={css.categoryHeader}>Reset</h2>
+								<Button
+									className={css.settingsButton}
+									variant="default"
+									onClick={handleReset(
+										'Reset Settings',
+										'Are you sure you want to reset your settings to the default values?',
+										'Your settings have been reset.',
+										() => dispatch({type: localMessages.ALL_SETTINGS_RESET}),
+									)}
+								>
+									Reset Settings
+								</Button>
+								<Button
+									className={css.settingsButton}
+									variant="default"
+									onClick={handleReset(
+										'Reset Chat Window',
+										'Are you sure you want to reset the chat window position?',
+										'The chat window has been reset.',
+										handleResetChatWindow,
+									)}
+								>
+									Reset Chat Window
+								</Button>
+								<hr />
+								<h2 className={css.categoryHeader}>Authentication</h2>
+								<div className={classNames(css.dbInfo, css.mobileColumn)}>
+									<div className={css.dbItem}>UUID</div>
+									<div className={classNames(css.dbItem, css.right)}>
+										{databaseInfo.userId}
 									</div>
-									<div className={css.twoSettings}>
-										<Slider
-											className={css.settingItem}
-											value={settings.musicVolume}
-											onInput={handleMusicChange}
-										>
-											Music Volume: {getPercentDescriptor(settings.musicVolume)}
-										</Slider>
-										<Button
-											className={css.settingItem}
-											variant="default"
-											onClick={handleMuteMusic}
-										>
-											Music: {getBoolDescriptor(!settings.musicMuted)}
-										</Button>
-									</div>
-									<div className={css.twoSettings}>
-										<Slider
-											className={css.settingItem}
-											value={settings.voiceVolume}
-											onInput={handleVoiceChange}
-										>
-											Voice Lines Volume:{' '}
-											{getPercentDescriptor(settings.voiceVolume)}
-										</Slider>
-										<div className={css.settingItem}></div>
-									</div>
+									<button
+										className={css.copy}
+										onClick={() => {
+											if (databaseInfo.userId)
+												navigator.clipboard.writeText(databaseInfo.userId)
+										}}
+									>
+										{CopyIcon()}
+									</button>
 								</div>
-							)}
-							{tab === 'game' && (
-								<div className={css.settingsArea}>
+								<div className={css.dbInfo}>
+									<div className={classNames(css.dbItem, css.left)}>Secret</div>
 									<Button
-										className={css.settingsButton}
+										className={css.viewSecretButton}
 										variant="default"
-										onClick={handleGameSideToggle}
-									>
-										Game Side: {settings.gameSide.toString()}
-									</Button>
-									<Button
-										className={css.settingsButton}
-										variant="default"
-										onClick={handleDialogsChange}
-									>
-										Confirmation Dialogs:{' '}
-										{getBoolDescriptor(settings.confirmationDialogsEnabled)}
-									</Button>
-									<Button
-										className={css.settingsButton}
-										variant="default"
-										onClick={handleChatChange}
-									>
-										In-Game Chat: {getBoolDescriptor(settings.chatEnabled)}
-									</Button>
-									<Button
-										className={css.settingsButton}
-										variant="default"
-										onClick={handleProfanityChange}
-									>
-										Profanity Filter:{' '}
-										{getBoolDescriptor(settings.profanityFilterEnabled)}
-									</Button>
-									<Button
-										className={css.settingsButton}
-										variant="default"
-										onClick={handleSlotHighlightingChange}
-									>
-										Card Slot Highlighting:{' '}
-										{getBoolDescriptor(settings.slotHighlightingEnabled)}
-									</Button>
-									<Button
-										className={css.settingsButton}
-										variant="default"
-										onClick={handleDeckSortingMethod}
-									>
-										Deck Sorting Method: {settings.deckSortingMethod}
-									</Button>
-								</div>
-							)}
-							{tab === 'data' && (
-								<div className={css.settingsArea}>
-									<Button
-										className={css.settingsButton}
-										variant="default"
-										onClick={handleReset(
-											'Reset Settings',
-											'Are you sure you want to reset your settings to the default values?',
-											'Your settings have been reset.',
-											() => dispatch({type: localMessages.ALL_SETTINGS_RESET}),
-										)}
-									>
-										Reset Settings
-									</Button>
-									<Button
-										className={css.settingsButton}
-										variant="default"
-										onClick={handleReset(
-											'Reset Chat Window',
-											'Are you sure you want to reset the chat window position?',
-											'The chat window has been reset.',
-											resetChatWindow,
-										)}
-									>
-										Reset Chat Window
-									</Button>
-									<div className={css.dbInfo}>
-										<div className={css.dbItem}>UUID</div>
-										<div className={classNames(css.dbItem, css.right)}>
-											{databaseInfo.userId}
-										</div>
-										<button
-											className={css.copy}
-											onClick={() => {
-												if (databaseInfo.userId)
-													navigator.clipboard.writeText(databaseInfo.userId)
-											}}
-										>
-											{CopyIcon()}
-										</button>
-									</div>
-									<div className={css.dbInfo}>
-										<div className={classNames(css.dbItem, css.left)}>
-											Secret
-										</div>
-										<Button
-											className={css.viewSecretButton}
-											variant="default"
-											onClick={() =>
-												setModal(
-													<Modal
-														setOpen
-														title={'User Secret'}
-														onClose={closeModal}
-													>
-														<p className={css.warning}>
-															<b>⚠ DO NOT share your secret with anyone.</b>
-														</p>
-														<p className={css.warning}>
-															Only view and copy this when you need to sync your
-															account to another device. You do not need to give
-															this data to any external applications.
-														</p>
-														<div className={css.dbInfo}>
-															<div className={classNames(css.dbItem, css.left)}>
-																{databaseInfo.secret}
-															</div>
-															<button
-																className={css.copy}
-																onClick={() => {
-																	if (databaseInfo.secret)
-																		navigator.clipboard.writeText(
-																			databaseInfo.secret,
-																		)
-																}}
-															>
-																{CopyIcon()}
-															</button>
+										onClick={() =>
+											setModal(
+												<Modal
+													setOpen
+													title={'User Secret'}
+													onClose={closeModal}
+												>
+													<p className={css.warning}>
+														<b>⚠ DO NOT share your secret with anyone.</b>
+													</p>
+													<p className={css.warning}>
+														Only view and copy this when you need to sync your
+														account to another device. You do not need to give
+														this data to any external applications.
+													</p>
+													<div className={css.dbInfo}>
+														<div className={classNames(css.dbItem, css.left)}>
+															{databaseInfo.secret}
 														</div>
-														<div className={css.resetModal}>
-															<Button
-																className={css.resetModalButton}
-																variant="default"
-																onClick={closeModal}
-															>
-																Confirm
-															</Button>
-														</div>
-													</Modal>,
-												)
-											}
-										>
-											View Secret
-										</Button>
-									</div>
-									<Button
-										className={css.settingsButton}
-										variant="default"
-										onClick={setUuidSecretModal((id, secret) => {
+														<button
+															className={css.copy}
+															onClick={() => {
+																if (databaseInfo.secret)
+																	navigator.clipboard.writeText(
+																		databaseInfo.secret,
+																	)
+															}}
+														>
+															{CopyIcon()}
+														</button>
+													</div>
+													<div className={css.resetModal}>
+														<Button
+															className={css.resetModalButton}
+															variant="default"
+															onClick={closeModal}
+														>
+															Confirm
+														</Button>
+													</div>
+												</Modal>,
+											)
+										}
+									>
+										View Secret
+									</Button>
+								</div>
+								<Button
+									className={css.settingsButton}
+									variant="default"
+									onClick={setUuidSecretModal((id, secret) => {
+										dispatch({
+											type: localMessages.SET_ID_AND_SECRET,
+											userId: id,
+											secret: secret,
+										})
+										setMenuSection('main-menu')
+										dispatch({
+											type: localMessages.LOGOUT,
+										})
+									})}
+								>
+									Sync Data
+								</Button>
+								<Button
+									className={css.settingsButton}
+									variant="default"
+									onClick={handleReset(
+										'Reset User Information',
+										'Are you sure you want to reset your user information? It is possible you could lose your information forever if you do not have the same UUID and secret on another device.',
+										'User information has been reset.',
+										() => {
 											dispatch({
-												type: localMessages.SET_ID_AND_SECRET,
-												userId: id,
-												secret: secret,
+												type: localMessages.RESET_ID_AND_SECRET,
 											})
+											dispatch({
+												type: localMessages.SETTINGS_SET,
+												setting: {
+													key: 'lastSelectedTag',
+													value: null,
+												},
+											})
+										},
+										() => {
 											setMenuSection('main-menu')
 											dispatch({
 												type: localMessages.LOGOUT,
 											})
-										})}
-									>
-										Sync Data
-									</Button>
-									<Button
-										className={css.settingsButton}
-										variant="default"
-										onClick={handleReset(
-											'Reset User Information',
-											'Are you sure you want to reset your user information? It is possible you could lose your information forever if you do not have the same UUID and secret on another device.',
-											'User information has been reset.',
-											() => {
-												dispatch({
-													type: localMessages.RESET_ID_AND_SECRET,
-												})
-												dispatch({
-													type: localMessages.SETTINGS_SET,
-													setting: {
-														key: 'lastSelectedTag',
-														value: null,
-													},
-												})
-											},
-											() => {
-												setMenuSection('main-menu')
-												dispatch({
-													type: localMessages.LOGOUT,
-												})
-											},
-										)}
-									>
-										Reset User Information
-									</Button>
-								</div>
-							)}
-						</div>
+										},
+									)}
+								>
+									Reset User Information
+								</Button>
+								<hr />
+							</div>
+						)}
 					</div>
 				</div>
 			</MenuLayout>

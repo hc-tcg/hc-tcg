@@ -1,11 +1,14 @@
 import {LocalMessage, localMessages} from 'logic/messages'
 
 export type LocalSettings = {
-	soundVolume: number
+	globalVolume: number
+	globalMuted: boolean
+	sfxVolume: number
+	sfxMuted: boolean
 	musicVolume: number
-	voiceVolume: number
-	soundMuted: boolean
 	musicMuted: boolean
+	voiceVolume: number
+	voiceMuted: boolean
 	profanityFilterEnabled: boolean
 	showChatWindow: boolean
 	chatEnabled: boolean
@@ -27,11 +30,14 @@ export type LocalSetting = {
 }[keyof LocalSettings]
 
 const defaultSettings: LocalSettings = {
-	soundVolume: 100,
+	globalVolume: 100,
+	globalMuted: false,
+	sfxVolume: 100,
+	sfxMuted: false,
 	musicVolume: 75,
-	voiceVolume: 75,
-	soundMuted: false,
 	musicMuted: false,
+	voiceVolume: 75,
+	voiceMuted: false,
 	profanityFilterEnabled: true,
 	chatEnabled: true,
 	confirmationDialogsEnabled: true,

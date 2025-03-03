@@ -1,9 +1,11 @@
 import classnames from 'classnames'
 import css from './credit.module.scss'
 
+type Social = 'discord' | 'github' | 'gitlab' | 'twitter'
+
 export interface CreditProps {
 	name: string
-	social: string
+	social: Social
 	handle: string
 	link?: string
 	avatar: string
