@@ -488,7 +488,7 @@ function SelectDeck({
 				onConfirm={() => saveDeck(importedDeck)}
 			/>
 			<DeckLayout
-				title="Deck Selection"
+				title="Deck Editor"
 				back={backToMenu}
 				returnText="Back To Menu"
 			>

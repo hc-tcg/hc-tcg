@@ -486,7 +486,7 @@ function EditDeck({
 				onCancel={() => setShowUnsavedModal(!showUnsavedModal)}
 				onConfirm={back}
 			/>
-			<DeckLayout title={title} back={handleBack} returnText="Deck Selection">
+			<DeckLayout title={title} back={handleBack} returnText="Deck Editor">
 				<DeckLayout.Main
 					header={
 						<>
