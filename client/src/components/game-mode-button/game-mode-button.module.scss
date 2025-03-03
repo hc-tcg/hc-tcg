@@ -199,6 +199,8 @@ $expandedHeight: 67vh;
 
 .filter {
 	width: 100%;
+	margin: 1vh;
+	margin-bottom: 0;
 }
 
 /* ANIMATIONS */
@@ -675,7 +677,7 @@ $expandedHeight: 67vh;
 	}
 
 	.spacer {
-		display: none;
+		max-height: 2vh;
 	}
 
 	.text {
