@@ -106,7 +106,7 @@
 	}
 }
 
-@media screen and (max-width: 720px) {
+@media (orientation: portrait) {
 	.gameTypesButtons {
 		grid-auto-flow: row;
 		grid-gap: 1.5vh;
