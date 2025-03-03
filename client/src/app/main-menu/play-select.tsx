@@ -39,7 +39,6 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getRematchData, getSession} from 'logic/session/session-selectors'
 import {useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
-import queryOptions from '../../query-params'
 import {CosmeticPreview} from './achievements'
 import css from './play-select.module.scss'
 
@@ -51,7 +50,13 @@ type Props = {
 	prefillJoinCode: string
 }
 
-function PlaySelect({setMenuSection, defaultSection, firstActiveMenu, prefillJoinCode, prefillSpectatorCode}: Props) {
+function PlaySelect({
+	setMenuSection,
+	defaultSection,
+	firstActiveMenu,
+	prefillJoinCode,
+	prefillSpectatorCode,
+}: Props) {
 	const dispatch = useMessageDispatch()
 	const matchmaking = useSelector(getStatus)
 	const settings = useSelector(getSettings)
