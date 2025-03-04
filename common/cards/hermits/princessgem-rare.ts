@@ -78,7 +78,7 @@ const PrincessGemRare: Hermit = {
 								RoyalProtectionEffect,
 								component.entity,
 							)
-							.apply(pickedSlot.getCard()?.entity)
+							.apply(pickedSlot.card?.entity)
 					},
 				})
 			},

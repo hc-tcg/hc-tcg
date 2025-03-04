@@ -349,7 +349,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 					const opponentSlot = Boolean((slotType & 0b1000) >> 3)
 
 					if ((slotType & 0b0111) === 0) {
-						const retrievedCard = unpackBoardSlot(game, argument)?.getCard()
+						const retrievedCard = unpackBoardSlot(game, argument)?.card
 						if (retrievedCard) cards.push(retrievedCard.entity)
 					} else if ((slotType & 0b0111) === 1) {
 						if (opponentSlot) {

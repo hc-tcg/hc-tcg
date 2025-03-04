@@ -79,7 +79,7 @@ export class SlotComponent {
 		)
 	}
 
-	public getCard() {
+	get card() {
 		return this.game.components.get(this.cardEntity)
 	}
 }

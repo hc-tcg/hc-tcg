@@ -95,7 +95,7 @@ const ZombieCleoRare: Hermit = {
 					canPick: pickCondition,
 					onResult: (pickedSlot) => {
 						const pickedCard =
-							pickedSlot.getCard() as CardComponent<Hermit> | null
+							pickedSlot.card as CardComponent<Hermit> | null
 						if (!pickedCard) return
 
 						game.addCopyAttackModalRequest({

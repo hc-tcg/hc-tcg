@@ -141,7 +141,7 @@ export class BattleLogModel {
 
 		const cardRow = card.slot.inRow() ? card.slot.row : null
 		const pickedRow = pickedSlot?.inRow() ? pickedSlot.row : null
-		const pickedCard = pickedSlot?.getCard()
+		const pickedCard = pickedSlot?.card
 
 		const thisFlip = coinFlips.find((flip) => flip.card == card.entity)
 		const invalid = '$bINVALID VALUE$'

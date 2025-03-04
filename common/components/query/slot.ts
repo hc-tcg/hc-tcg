@@ -30,7 +30,7 @@ export function player(
 
 /** Return true if the spot is empty. */
 export const empty: ComponentQuery<SlotComponent> = (_game, pos) => {
-	if (pos.getCard() === null) return true
+	if (pos.card === null) return true
 	// Slots will become empty if the row is at 0 health when knock-outs are checked
 	if (pos.inRow() && !pos.row.health) return true
 	return false
@@ -129,7 +129,7 @@ export const entity = (
 
 export const has = (...cards: Array<Card>): ComponentQuery<SlotComponent> => {
 	return (_game, pos) => {
-		let card = pos.getCard()
+		let card = pos.card
 		if (!card) return false
 		return cards.map((x) => x.id).includes(card.props.id)
 	}

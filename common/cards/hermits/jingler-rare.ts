@@ -56,7 +56,7 @@ const JinglerRare: Hermit = {
 					message: 'Pick 1 card from your hand to discard',
 					canPick: query.every(query.slot.opponent, query.slot.hand),
 					onResult(pickedSlot) {
-						pickedSlot.getCard()?.discard()
+						pickedSlot.card?.discard()
 					},
 					onTimeout() {
 						game.components

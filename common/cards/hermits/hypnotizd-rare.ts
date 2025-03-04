@@ -67,7 +67,7 @@ const HypnotizdRare: Hermit = {
 				if (!activeRow) return
 
 				const items = (activeRow.getItemSlots() as SlotComponent[]).filter(
-					(slot) => slot.getCard() && !query.slot.frozen(game, slot),
+					(slot) => slot.card && !query.slot.frozen(game, slot),
 				)
 				const pickCondition = (_game: GameModel, value: SlotComponent) =>
 					items.includes(value)
@@ -93,11 +93,11 @@ const HypnotizdRare: Hermit = {
 					message: 'Choose an item to discard from your active Hermit.',
 					canPick: pickCondition,
 					onResult(pickedSlot) {
-						item = pickedSlot.getCard()
+						item = pickedSlot.card
 					},
 					onTimeout() {
 						item =
-							game.components.find(SlotComponent, pickCondition)?.getCard() ||
+							game.components.find(SlotComponent, pickCondition)?.card ||
 							null
 					},
 				}

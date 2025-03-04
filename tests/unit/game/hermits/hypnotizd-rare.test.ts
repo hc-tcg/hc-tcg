@@ -96,7 +96,7 @@ describe('Test Rare Hypnotizd', () => {
 								query.slot.rowIndex(0),
 								query.slot.index(0),
 							)
-							?.getCard(),
+							?.card,
 					).toBe(null)
 				},
 			},
@@ -229,7 +229,7 @@ describe('Test Rare Hypnotizd', () => {
 								query.slot.rowIndex(0),
 								query.slot.index(0),
 							)
-							?.getCard(),
+							?.card,
 					).not.toBe(null)
 				},
 			},

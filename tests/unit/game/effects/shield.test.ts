@@ -38,7 +38,7 @@ describe('Test Shield', () => {
 								query.slot.attach,
 								query.slot.rowIndex(0),
 							)
-							?.getCard(),
+							?.card,
 					).toBe(null)
 				},
 			},

@@ -111,7 +111,7 @@ describe('Test DM Tango Lackey', () => {
 							query.slot.rowIndex(1),
 							query.slot.index(0),
 						)
-						?.getCard()?.props,
+						?.card?.props,
 				).toStrictEqual(MinerItem)
 			},
 		})
@@ -144,7 +144,7 @@ describe('Test DM Tango Lackey', () => {
 							query.slot.rowIndex(0),
 							query.slot.index(0),
 						)
-						?.getCard()?.props,
+						?.card?.props,
 				).toStrictEqual(MinerItem)
 			},
 		})

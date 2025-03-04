@@ -153,7 +153,7 @@ export function playCardAction(
 	)
 
 	assert(
-		!pickedSlot.getCard(),
+		!pickedSlot.card,
 		'You can not play a card in a slot with a card in it',
 	)
 
@@ -375,7 +375,7 @@ export function pickRequestAction(
 
 	assert(canPick, 'Invalid slots can not be picked.')
 
-	const card = slotInfo.getCard()
+	const card = slotInfo.card
 
 	// Because Worm Man, all cards need to be flipped over to normal once they're picked
 	if (card) card.turnedOver = false

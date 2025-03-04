@@ -307,7 +307,7 @@ function* testPuppetryDiscardingItem(game: GameModel) {
 				query.slot.rowIndex(0),
 				query.slot.index(0),
 			)
-			?.getCard(),
+			?.card,
 	).toBe(null)
 }
 

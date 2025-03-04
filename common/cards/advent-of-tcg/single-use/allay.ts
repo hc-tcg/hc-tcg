@@ -15,7 +15,7 @@ const pickCondition = query.every(
 	query.slot.hand,
 	query.not(query.slot.has(Clock)),
 	(game, slot) => {
-		const card = slot.getCard()
+		const card = slot.card
 		if (!card?.isSingleUse() && !card?.isAttach()) return false
 		// Prevent infinite loop
 		if (query.card.is(Allay)(game, card)) return false
@@ -58,7 +58,7 @@ const Allay: SingleUse = {
 			message: 'Pick an effect card in your hand to show your opponent.',
 			canPick: pickCondition,
 			onResult(pickedSlot) {
-				const pickedCard = pickedSlot.getCard()
+				const pickedCard = pickedSlot.card
 
 				if (!pickedCard) return
 

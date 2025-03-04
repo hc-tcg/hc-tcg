@@ -251,7 +251,7 @@ describe('Test Cyberpunk Impulse', () => {
 							query.slot.rowIndex(0),
 							query.slot.index(0),
 						)
-						?.getCard()?.props,
+						?.card?.props,
 				).toStrictEqual(FarmDoubleItem)
 				expect(
 					game.components
@@ -262,7 +262,7 @@ describe('Test Cyberpunk Impulse', () => {
 							query.slot.rowIndex(1),
 							query.slot.index(0),
 						)
-						?.getCard()?.props,
+						?.card?.props,
 				).toStrictEqual(FarmItem)
 				expect(
 					game.currentPlayer.getDiscarded().map((card) => card.props),
