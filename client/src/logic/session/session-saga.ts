@@ -186,6 +186,13 @@ function* setupDeckData(socket: any) {
 			value: stats.stats,
 		},
 	})
+	yield put<LocalMessage>({
+		type: localMessages.DATABASE_SET,
+		data: {
+			key: 'gameHistory',
+			value: stats.gameHistory,
+		},
+	})
 }
 
 export function* updateAchievements(socket: any) {
