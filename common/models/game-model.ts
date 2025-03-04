@@ -470,21 +470,21 @@ export class GameModel {
 	): void {
 		if (!slotA || !slotB) return
 
-		const slotACards = this.components.filter(
+		const slotACard = this.components.find(
 			CardComponent,
 			query.card.slotEntity(slotA.entity),
 		)
-		const slotBCards = this.components.filter(
+		const slotBCard = this.components.find(
 			CardComponent,
 			query.card.slotEntity(slotB.entity),
 		)
 
-		slotACards.forEach((card) => {
-			card.attach(slotB)
-		})
-		slotBCards.forEach((card) => {
-			card.attach(slotA)
-		})
+		slotACard?.attach(slotB)
+		slotBCard?.attach(slotA)
+
+		/* I don't know why these two lines are required, but don't delete them because the tests fail! */
+		slotA.cardEntity = slotBCard?.entity ?? null
+		slotB.cardEntity = slotACard?.entity ?? null
 	}
 
 	public getPickableSlots(

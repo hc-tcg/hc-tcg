@@ -29,6 +29,7 @@ export class SlotComponent {
 		this.entity = entity
 		this.game = game
 		this.defs = defs
+		this.cardEntity = null
 	}
 
 	// The implementation of these type guards are in the subclasses. The regular slot component
