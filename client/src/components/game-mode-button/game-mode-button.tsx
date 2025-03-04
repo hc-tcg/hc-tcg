@@ -333,6 +333,7 @@ interface ChooseDeckProps extends ButtonMenuProps {
 	onSelectDeck: (deck: Deck) => void
 	decks: Deck[]
 	defaultCode?: string
+	disableButton?: boolean
 }
 
 GameModeButton.ChooseDeck = ({
@@ -341,6 +342,7 @@ GameModeButton.ChooseDeck = ({
 	title,
 	subTitle,
 	requestCode = false,
+	disableButton = false,
 	confirmMessage,
 	onConfirm,
 	onSelectDeck,
@@ -435,6 +437,7 @@ GameModeButton.ChooseDeck = ({
 				onConfirm(inputRef.current?.value ?? undefined)
 			}}
 			variant="primary"
+			disabled={disableButton}
 		>
 			{confirmMessage}
 		</Button>
