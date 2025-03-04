@@ -128,12 +128,10 @@ export const entity = (
 }
 
 export const has = (...cards: Array<Card>): ComponentQuery<SlotComponent> => {
-	return (game, pos) => {
-		return game.components.exists(
-			CardComponent,
-			query.card.is(...cards),
-			query.card.slotEntity(pos.entity),
-		)
+	return (_game, pos) => {
+		let card = pos.getCard()
+		if (!card) return false
+		return cards.map((x) => x.id).includes(card.props.id)
 	}
 }
 
