@@ -1,5 +1,4 @@
 import cn from 'classnames'
-import {LocalGameState} from 'common/types/game-state'
 import {SlotInfo} from 'common/types/server-requests'
 import Button from 'components/button'
 import CoinFlip from 'components/coin-flip'
@@ -12,7 +11,6 @@ import {
 	getIsSpectator,
 	getPlayerEntity,
 	getPlayerState,
-	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
