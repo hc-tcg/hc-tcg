@@ -83,10 +83,8 @@ const Login = () => {
 							onSubmit={handlePlayerName}
 						>
 							<h1>Welcome to HC-TCG Online</h1>
-							<div>
-								Play the game that took the Hermitcraft Commuity by Storm.
-							</div>
-							<div>To get started, choose a name!</div>
+							<p>Play the game that took the Hermitcraft Commuity by Storm.</p>
+							<p>To get started, choose a name!</p>
 							<div className={css.inputArea}>
 								<div className={css.customInput}>
 									<input
@@ -113,7 +111,7 @@ const Login = () => {
 								syncing && css.currentlySyncing,
 							)}
 						>
-							<div>Or, if you've already logged in on another device </div>
+							<p>Or, if you've already logged in on another device </p>
 							<Button
 								type="submit"
 								className={css.loginButton}
