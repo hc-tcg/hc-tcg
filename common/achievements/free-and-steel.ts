@@ -1,3 +1,4 @@
+import FlintAndSteel from '../cards/single-use/flint-and-steel'
 import {SlotComponent} from '../components'
 import query from '../components/query'
 import {afterApply} from '../types/priorities'
@@ -30,7 +31,7 @@ const FreeAndSteel: Achievement = {
 					.find(SlotComponent, query.slot.singleUse)
 					?.getCard()
 				if (!su) return
-				if (su.props.id !== FreeAndSteel.id) return
+				if (su.props.id !== FlintAndSteel.id) return
 
 				if (playerHandSize == 0) {
 					component.incrementGoalProgress({goal: 0})
