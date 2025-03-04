@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import {PlayerEntity, SlotEntity} from 'common/entities'
+import {PlayerEntity, RowEntity, SlotEntity} from 'common/entities'
 import {BoardSlotTypeT, SlotTypeT} from 'common/types/cards'
 import {LocalRowState} from 'common/types/game-state'
 import {LocalCardInstance} from 'common/types/server-requests'
@@ -31,17 +31,16 @@ const getSlotByLocation = (
 type BoardRowProps = {
 	type: 'left' | 'right'
 	player?: PlayerEntity
+	entity: RowEntity
 	onClick: (
 		entity: SlotEntity,
 		type: SlotTypeT,
 		card: LocalCardInstance | null,
 		index: number,
 	) => void
-	rowState: LocalRowState
-	active: boolean
 }
 
-const BoardRow = ({type, player, onClick, rowState, active}: BoardRowProps) => {
+const BoardRow = ({type, player, onClick}: BoardRowProps) => {
 	const settings = useSelector(getSettings)
 	const selectedCard = useSelector(getSelectedCard)
 	const statusEffects = useSelector(getStatusEffects)
