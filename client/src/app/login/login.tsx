@@ -83,7 +83,7 @@ const Login = () => {
 							onSubmit={handlePlayerName}
 						>
 							<h1>Welcome to HC-TCG Online</h1>
-							<p>Play the game that took the Hermitcraft Commuity by Storm.</p>
+							<p>Play the game that took the Hermitcraft community by storm.</p>
 							<p>To get started, choose a name!</p>
 							<div className={css.inputArea}>
 								<div className={css.customInput}>
