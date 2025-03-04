@@ -6,6 +6,7 @@ import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
 import Ethogirl from './ethogirl'
 import EyeOfTheSpider from './eye-of-the-spider'
+import AcquiredHardware from './acquired-hardware'
 import GoFish from './go-fish'
 import HermitsAndCrafting from './hermits-and-crafting'
 import HotTake from './hot-take'
@@ -44,6 +45,7 @@ import Wipeout from './wipeout'
 
 export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	AllCards,
+	AcquiredHardware,
 	CantTouchThis,
 	DeckedOut,
 	Ethogirl,
