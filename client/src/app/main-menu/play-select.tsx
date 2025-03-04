@@ -480,8 +480,8 @@ or create your own game to challenge someone else."
 								activeButtonMenu={activeButtonMenu}
 								id="createPrivateGame"
 								title="Create Private Game"
-								subTitle="Choose your deck, then press the Create Game button to begin."
-								confirmMessage="Create Game"
+								subTitle="Choose your deck, then press the Confirm button to begin."
+								confirmMessage="Confirm"
 								onConfirm={() => {
 									const valid = checkForValidation()
 									if (!valid) return
@@ -753,7 +753,10 @@ during the battle."
 					<i>Click to change</i>
 				</p>
 				<div
-					className={css.appearance}
+					className={classNames(
+						css.appearance,
+						!matchmaking && css.appearanceClickable,
+					)}
 					onClick={() => !matchmaking && setMenuSection('cosmetics')}
 				>
 					<CosmeticPreview />
