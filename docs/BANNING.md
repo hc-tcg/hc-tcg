@@ -1,6 +1,6 @@
 ## How To Ban A User
 
-Unforunately, banning is a little scuffed right now, but theres a system.
+To ban a user, you must connect to the postgres database and run the following SQL.
 
 ```sh
 # Open Postgres On The Fly App

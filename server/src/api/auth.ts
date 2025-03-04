@@ -27,7 +27,7 @@ export async function authenticateUser(
 	}
 
 	if (userInfo.body.banned) {
-		return [401, 'You are banned :(']
+		return [401, 'You are banned']
 	}
 
 	return [200, userInfo.body]
