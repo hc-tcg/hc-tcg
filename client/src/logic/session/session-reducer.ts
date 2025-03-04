@@ -29,6 +29,8 @@ type SessionState = {
 		x: number
 		y: number
 		dropdown: React.ReactNode
+		direction: 'up' | 'down'
+		align: 'left' | 'right'
 	} | null
 	toast: Array<ToastData>
 	updates: Array<Update>
@@ -154,6 +156,8 @@ const loginReducer = (
 					dropdown: action.dropdown,
 					x: action.x,
 					y: action.y,
+					direction: action.direction,
+					align: action.align,
 				},
 			}
 		case localMessages.HIDE_DROPDOWN:
