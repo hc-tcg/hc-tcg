@@ -223,7 +223,7 @@ function* gameManager(con: GameController) {
 				)
 
 				for (const [i, level] of achievement.props.levels.entries()) {
-					if (newProgress >= level.steps) {
+					if (newProgress >= level.steps && originalProgress < level.steps) {
 						v.player.achievementProgress[achievement.props.numericId].levels[
 							i
 						] = {completionTime: new Date()}
@@ -236,7 +236,7 @@ function* gameManager(con: GameController) {
 					) {
 						newAchievements[playerEntity].push({
 							achievementId: achievement.props.numericId,
-							level,
+							level: {index: i, ...level},
 							originalProgress: originalProgress || 0,
 							newProgress: newProgress,
 						})

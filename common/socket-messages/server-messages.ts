@@ -22,6 +22,7 @@ export const serverMessages = messages('serverMessages', {
 	OPPONENT_CONNECTION: null,
 	GAME_START: null,
 	GAME_END: null,
+	ACHIEVEMENT_COMPLETE: null,
 	PRIVATE_GAME_TIMEOUT: null,
 	LEAVE_QUEUE_SUCCESS: null,
 	LEAVE_QUEUE_FAILURE: null,
@@ -87,6 +88,10 @@ export type ServerMessages = [
 		outcome: GameOutcome
 		earnedAchievements: Array<EarnedAchievement>
 		gameEndTime: number
+	},
+	{
+		type: typeof serverMessages.ACHIEVEMENT_COMPLETE
+		achievement: EarnedAchievement
 	},
 	{type: typeof serverMessages.PRIVATE_GAME_TIMEOUT},
 	{type: typeof serverMessages.LEAVE_QUEUE_SUCCESS},
