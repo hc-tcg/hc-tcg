@@ -115,6 +115,7 @@ function getNonDatabaseUser(): User {
 			topCards: [],
 		},
 		gameHistory: [],
+		banned: false,
 	}
 }
 
