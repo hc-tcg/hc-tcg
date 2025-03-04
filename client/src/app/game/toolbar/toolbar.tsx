@@ -116,6 +116,9 @@ function Toolbar({
 			<SoundItem />
 			<MusicItem />
 
+			{/* Spectator Code */}
+			{<SpectatorCodeButton spectatorCode={spectatorCode} />}
+
 			{/* Forfeit Game */}
 			{!isSpectator && !gameOver && <ForfeitItem />}
 
@@ -123,9 +126,6 @@ function Toolbar({
 			{(isSpectator || gameOver) && (
 				<ExitItem gameOver={gameOver} gameEndButton={gameEndButton} />
 			)}
-
-			{/* Spectator Code */}
-			{<SpectatorCodeButton spectatorCode={spectatorCode} />}
 		</div>
 	)
 }
