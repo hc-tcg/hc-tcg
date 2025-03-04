@@ -160,7 +160,7 @@ const MobileActions = ({onClick, id}: Props) => {
 
 			{isSpectator && !currentCoinFlip && (
 				<div className={classNames(css.actionSection, css.status)}>
-					{currentPlayer.censoredPlayerName}'s Turn
+					{currentPlayer?.censoredPlayerName}'s Turn
 				</div>
 			)}
 
