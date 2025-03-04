@@ -396,10 +396,6 @@ h2 {
 }
 
 @media screen and (max-width: 720px) {
-	.body {
-		flex-direction: column;
-	}
-
 	.leftSideCosmetics {
 		width: 95vw;
 		gap: 1rem;
@@ -416,5 +412,30 @@ h2 {
 
 	.cosmeticsTitles {
 		grid-template-columns: 1fr;
+	}
+
+	.achievementsHeader {
+		flex-direction: column;
+		gap: 0.25rem;
+		margin-bottom: 0.5rem;
+		justify-content: left;
+		height: 5.5rem;
+
+		.sectionHeader {
+			display: none;
+		}
+
+		input {
+			height: 1.5rem;
+			width: 100%;
+		}
+	}
+
+	.checkboxes {
+		width: 100%;
+	}
+
+	.achievements {
+		height: calc(100% - 6rem);
 	}
 }
