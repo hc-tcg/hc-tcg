@@ -1,5 +1,5 @@
-import css from './toolbar.module.scss'
 import {CopyIcon} from 'components/svgs'
+import css from './toolbar.module.scss'
 
 function SpectatorCodeButton({spectatorCode}: {spectatorCode?: string | null}) {
 	if (!spectatorCode) return null

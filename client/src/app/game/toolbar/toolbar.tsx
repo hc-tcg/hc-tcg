@@ -1,6 +1,10 @@
 import {sortCardInstances} from 'common/utils/cards'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
-import {getGameState, getIsSpectator, getSpectatorCodeInGame} from 'logic/game/game-selectors'
+import {
+	getGameState,
+	getIsSpectator,
+	getSpectatorCodeInGame,
+} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getPlayerDeckCode} from 'logic/session/session-selectors'
@@ -10,9 +14,9 @@ import ExitItem from './exit-item'
 import ForfeitItem from './forfeit-item'
 import MusicItem from './music-item'
 import SoundItem from './sfx-item'
+import SpectatorCodeButton from './spectator-code-button'
 import css from './toolbar.module.scss'
 import TooltipsItem from './tooltips-item'
-import SpectatorCodeButton from './spectator-code-button'
 
 function Toolbar({
 	gameOver,

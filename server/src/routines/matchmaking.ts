@@ -119,7 +119,7 @@ function* gameManager(con: GameController) {
 
 		con.broadcastToViewers({
 			type: serverMessages.GAME_START,
-			spectatorCode: con.spectatorCode,
+			spectatorCode: con.spectatorCode ?? undefined,
 		})
 		root.hooks.newGame.call(con)
 		con.task = yield* spawn(gameSaga, con)
