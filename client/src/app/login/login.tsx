@@ -123,17 +123,16 @@ const Login = () => {
 							</Button>
 						</div>
 						<div className={classNames(css.syncing, syncing && css.selected)}>
+							<h1>Sync Account</h1>
 							<div className={css.textBlurb}>
 								<p>
-									Here, you can sync the user of this device to another device
-									you use to play HC TCG Online. This will be make all of your
-									data the same on both devices, and automatically update when
-									you play on the other device. Your other device's UUID and
-									Secret can be found by{' '}
+									Enter your UUID and Secret to connect your Account. These can
+									be found by{' '}
 									<span className={css.highlight}>
-										clicking on Settings, and then clicking on the Data tab
-									</span>
-									.
+										clicking on Settings, then the Data Management tab in-game.
+									</span>{' '}
+									Your account data will automatically sync between all
+									connected devices.
 								</p>
 							</div>
 							<form className={css.syncingForm} onSubmit={handleSync}>
@@ -175,9 +174,11 @@ const Login = () => {
 						</div>
 					</div>
 				)}
-				<div className={css.errorBanner}>
-					{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
-				</div>
+				{!syncing && (
+					<div className={css.errorBanner}>
+						{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
+					</div>
+				)}
 				<VersionLinks />
 				<Beef />
 			</div>
