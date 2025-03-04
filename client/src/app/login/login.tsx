@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import Beef from 'components/beef'
 import Button from 'components/button'
 import ErrorBanner from 'components/error-banner'
@@ -14,7 +15,6 @@ import {
 import React, {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './login.module.scss'
-import classNames from 'classnames'
 
 const getLoginError = (errorType: ConnectionError) => {
 	if (!errorType) return null
@@ -82,23 +82,30 @@ const Login = () => {
 							)}
 							onSubmit={handlePlayerName}
 						>
-							<div className={css.customInput}>
-								<input
-									maxLength={25}
-									name="playerName"
-									placeholder=" "
-									autoFocus
-									id="username"
-								></input>
-								<label htmlFor="username">Player Name</label>
+							<h1>Welcome to HC-TCG Online</h1>
+							<div>
+								Play the game that took the Hermitcraft Commuity by Storm.
 							</div>
-							<Button
-								className={css.loginButton}
-								variant={'primary'}
-								type="submit"
-							>
-								Play
-							</Button>
+							<div>To get started, choose a name!</div>
+							<div className={css.inputArea}>
+								<div className={css.customInput}>
+									<input
+										maxLength={25}
+										name="playerName"
+										placeholder=" "
+										autoFocus
+										id="username"
+									></input>
+									<label htmlFor="username">Player Name</label>
+								</div>
+								<Button
+									className={css.loginButton}
+									variant={'primary'}
+									type="submit"
+								>
+									Play
+								</Button>
+							</div>
 						</form>
 						<div
 							className={classNames(
@@ -106,6 +113,7 @@ const Login = () => {
 								syncing && css.currentlySyncing,
 							)}
 						>
+							<div>Or, if you've already logged in on another device </div>
 							<Button
 								type="submit"
 								className={css.loginButton}
@@ -113,7 +121,7 @@ const Login = () => {
 									setSyncing(true)
 								}}
 							>
-								Or Sync Device
+								Sync Account
 							</Button>
 						</div>
 						<div className={classNames(css.syncing, syncing && css.selected)}>

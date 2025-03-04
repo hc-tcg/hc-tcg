@@ -24,13 +24,15 @@
 
 .nameForm {
 	display: flex;
-	margin-top: 15vw;
+	margin-top: 5vh;
 	margin-bottom: 2vh;
 	animation: fadeIn 250ms ease-in-out forwards;
 	align-items: center;
 	justify-content: center;
 	transition: margin-top 0.2s, margin-bottom 0.2s;
 	opacity: 1;
+	flex-direction: column;
+	gap: 1rem;
 
 	&.currentlySyncing {
 		opacity: 0;
@@ -45,6 +47,25 @@
 		font-size: 1rem;
 		line-height: 100%;
 	}
+
+	> h1 {
+		font-size: 1.5rem;
+		color: white;
+		filter: drop-shadow(1px 2px black);
+	}
+
+	> div {
+		font-size: 1rem;
+		color: white;
+		filter: drop-shadow(1px 2px black);
+		text-align: center;
+	}
+}
+
+.inputArea {
+	margin-top: 2rem;
+	display: flex;
+	flex-direction: row;
 }
 
 .syncingForm {
@@ -142,6 +163,8 @@
 .syncContainer {
 	width: 100%;
 	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
 	align-items: center;
 	justify-content: center;
 	transition: opacity 0.2s;
@@ -152,6 +175,13 @@
 		transform: scaleY(0);
 		opacity: 0;
 		height: 0px;
+	}
+
+	> div {
+		font-size: 1rem;
+		color: white;
+		filter: drop-shadow(1px 2px black);
+		text-align: center;
 	}
 }
 
@@ -282,13 +312,5 @@
 
 	to {
 		opacity: 0;
-	}
-}
-
-// DESKTOP
-@media (min-width: 80vh) {
-	.nameForm,
-	.connecting {
-		margin-top: min(11.5vh, 13vw);
 	}
 }
