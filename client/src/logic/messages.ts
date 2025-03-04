@@ -186,7 +186,7 @@ type Messages = [
 		localGameState: LocalGameState
 		time: number
 	},
-	{type: typeof localMessages.GAME_START},
+	{type: typeof localMessages.GAME_START; spectatorCode?: string},
 	{type: typeof localMessages.GAME_END},
 	{
 		type: typeof localMessages.GAME_CARD_SELECTED_SET

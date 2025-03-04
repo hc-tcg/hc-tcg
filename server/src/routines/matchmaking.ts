@@ -117,7 +117,10 @@ function* gameManager(con: GameController) {
 			root.getGameIds().length,
 		)
 
-		con.broadcastToViewers({type: serverMessages.GAME_START})
+		con.broadcastToViewers({
+			type: serverMessages.GAME_START,
+			spectatorCode: con.spectatorCode ?? undefined,
+		})
 		root.hooks.newGame.call(con)
 		con.task = yield* spawn(gameSaga, con)
 
@@ -1039,7 +1042,8 @@ export function* createRematchGame(
 		existingPlayer.deck,
 		waitingInfo.opponentScore,
 		waitingInfo.playerScore,
-		spectatorCode || undefined,
+		undefined,
+		spectatorCode ?? undefined,
 	)
 	root.addGame(newGame)
 

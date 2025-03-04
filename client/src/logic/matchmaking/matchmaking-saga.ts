@@ -179,7 +179,7 @@ function* joinPublicQueueSaga() {
 			})
 
 			yield call(receiveMsg(socket, serverMessages.GAME_START))
-			yield call(gameSaga)
+			yield call(gameSaga, {})
 		} catch (err) {
 			console.error('Game crashed: ', err)
 		} finally {
@@ -254,7 +254,9 @@ function* joinPrivateQueueSaga({
 			})
 
 			if (queueResponse.gameStart) {
-				yield* call(gameSaga)
+				yield* call(gameSaga, {
+					spectatorCode: queueResponse.gameStart?.spectatorCode,
+				})
 				return
 			}
 
@@ -350,7 +352,9 @@ function* spectatePrivateGameSaga({
 
 			if (result.spectateSuccess) {
 				// Succesfully joined a game as spectator, start the game saga
-				yield* call(gameSaga, result.spectateSuccess.localGameState)
+				yield* call(gameSaga, {
+					initialGameState: result.spectateSuccess.localGameState,
+				})
 			} else if (result.spectateWaiting) {
 				// Succesfully joined as spectator, waiting for game to start
 				let result = yield* race({
@@ -365,7 +369,9 @@ function* spectatePrivateGameSaga({
 					),
 				})
 				if (result.spectatePrivateGame) {
-					yield* call(gameSaga, result.spectatePrivateGame.localGameState)
+					yield* call(gameSaga, {
+						initialGameState: result.spectatePrivateGame.localGameState,
+					})
 					return
 				}
 				if (result.cancelled) {
@@ -465,7 +471,9 @@ function* createPrivateGameSaga() {
 				})
 
 				if (queueResponse.gameStart) {
-					yield* call(gameSaga)
+					yield* call(gameSaga, {
+						spectatorCode: queueResponse.gameStart.spectatorCode,
+					})
 					return
 				}
 
@@ -537,7 +545,7 @@ function* createBossGameSaga() {
 			type: localMessages.QUEUE_VOICE,
 			lines: ['/voice/EXSTART.ogg'],
 		})
-		yield* call(gameSaga)
+		yield* call(gameSaga, {})
 	} catch (err) {
 		console.error('Game crashed: ', err)
 	} finally {
@@ -591,8 +599,11 @@ function* createRematchSaga() {
 				type: localMessages.MATCHMAKING_JOIN_QUEUE_SUCCESS,
 			})
 
-			yield call(receiveMsg(socket, serverMessages.GAME_START))
-			yield call(gameSaga)
+			const gameStart = yield* call(
+				receiveMsg(socket, serverMessages.GAME_START),
+			)
+			console.log(gameStart)
+			yield call(gameSaga, {spectatorCode: gameStart.spectatorCode})
 		} catch (err) {
 			console.error('Game crashed: ', err)
 		} finally {
@@ -653,7 +664,7 @@ function* createReplayGameSaga(
 			return
 		} else if (result.success) {
 			// Start replay game
-			yield* call(gameSaga, result.success.localGameState)
+			yield* call(gameSaga, {initialGameState: result.success.localGameState})
 		}
 	} catch (err) {
 		console.error('Game crashed: ', err)
