@@ -42,6 +42,7 @@ import {Achievement} from './types'
 import UselessMachine from './useless-machine'
 import Win from './wins'
 import Wipeout from './wipeout'
+import PoePoeEnforcer from './poe-poe-enforcer'
 
 export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	AllCards,
@@ -51,6 +52,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	Ethogirl,
 	EyeOfTheSpider,
 	PackOfWolves,
+	PoePoeEnforcer,
 	GoFish,
 	HowDidWeGetHere,
 	HurtinHermits,
