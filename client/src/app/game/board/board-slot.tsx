@@ -1,5 +1,5 @@
 import classnames from 'classnames'
-import {CardEntity, SlotEntity} from 'common/entities'
+import {SlotEntity} from 'common/entities'
 import {SlotTypeT} from 'common/types/cards'
 import {LocalRowState} from 'common/types/game-state'
 import {
@@ -13,11 +13,9 @@ import {
 	getPickRequestPickableSlots,
 	getPlayerEntity,
 	getSelectedCard,
-	getStatusEffects,
 } from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {useSelector} from 'react-redux'
-import {RootState} from 'store'
 import StatusEffectContainer from './board-status-effects'
 import css from './board.module.scss'
 
@@ -32,24 +30,19 @@ export type SlotProps = {
 	statusEffects?: Array<LocalStatusEffectInstance>
 }
 
-const getStatusEffectsForSlot =
-	(slotType: SlotTypeT, card: CardEntity | null) => (state: RootState) => {
-		return getStatusEffects(state).filter(
-			(a) =>
-				a.target.type === 'card' &&
-				a.target.card === card &&
-				slotType != 'hermit',
-		)
-	}
-
-const Slot = ({type, entity, onClick, card, active, cssId}: SlotProps) => {
+const Slot = ({
+	type,
+	entity,
+	onClick,
+	card,
+	active,
+	cssId,
+	statusEffects,
+}: SlotProps) => {
 	const settings = useSelector(getSettings)
 	const cardsCanBePlacedIn = useSelector(getCardsCanBePlacedIn)
 	const pickRequestPickableCard = useSelector(getPickRequestPickableSlots)
 	const selectedCard = useSelector(getSelectedCard)
-	const statusEffects = useSelector(
-		getStatusEffectsForSlot(type, card?.entity ?? null),
-	)
 	const playerEntity = useSelector(getPlayerEntity)
 	const currentPlayerEntity = useSelector(getCurrentPlayerEntity)
 

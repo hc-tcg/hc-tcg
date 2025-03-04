@@ -114,6 +114,12 @@ const BoardRow = ({
 				rowState={rowState}
 				active={active}
 				key={slotType + '-' + slotIndex}
+				statusEffects={statusEffects.filter(
+					(a) =>
+						a.target.type === 'card' &&
+						a.target.card === slot.card.entity &&
+						slotType != 'hermit',
+				)}
 				type={slotType}
 			/>
 		)
