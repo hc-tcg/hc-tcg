@@ -1,9 +1,11 @@
 import cn from 'classnames'
+import {PlayerEntity} from 'common/entities'
 import {LocalPlayerState} from 'common/types/game-state'
 import {
 	getGameState,
 	getOpponentConnection,
 	getPlayerEntity,
+	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getSocketStatus} from 'logic/socket/socket-selectors'
@@ -11,13 +13,14 @@ import {useSelector} from 'react-redux'
 import css from './player-info.module.scss'
 
 type Props = {
-	player: LocalPlayerState
+	playerEntity: PlayerEntity
 	direction: 'left' | 'right'
 }
 
-function PlayerInfo({player, direction}: Props) {
+function PlayerInfo({playerEntity, direction}: Props) {
 	const gameState = useSelector(getGameState)
-	const playerEntity = useSelector(getPlayerEntity)
+	const player = useSelector(getPlayerStateByEntity(playerEntity))
+	const watchingPlayerEntity = useSelector(getPlayerEntity)
 	const opponentConnected = useSelector(getOpponentConnection)
 	const playerConnected = useSelector(getSocketStatus) === 'connected'
 	const settings = useSelector(getSettings)
@@ -49,8 +52,8 @@ function PlayerInfo({player, direction}: Props) {
 	}
 
 	const connected =
-		player.entity === playerEntity ? playerConnected : opponentConnected
-	const thisPlayer = gameState.turn.currentPlayerEntity === player.entity
+		playerEntity === watchingPlayerEntity ? playerConnected : opponentConnected
+	const thisPlayer = gameState.turn.currentPlayerEntity === playerEntity
 	const headDirection = direction === 'left' ? 'right' : 'left'
 	const playerTag = '' // TODO: Implement player tags...
 	// Player tags ideally would be a list of predetermined phrases

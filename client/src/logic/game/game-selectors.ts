@@ -10,6 +10,10 @@ export const getGameState = (state: RootState): LocalGameState | null => {
 	return getGame(state).localGameState
 }
 
+export const getTurnNumber = (state: RootState): number => {
+	return getGame(state).localGameState?.turn.turnNumber || 0
+}
+
 export const getIsSpectator = (state: RootState): boolean => {
 	return getGameState(state)?.isSpectator || false
 }
@@ -68,6 +72,12 @@ export const getOpponentState = (state: RootState) => {
 	return getPlayerStateByEntity(playerEntity)(state)
 }
 
+export const getCurrentPlayerEntity = (state: RootState) => {
+	const gameState = getGameState(state)
+	if (!gameState) return null
+	return gameState.turn.currentPlayerEntity
+}
+
 export const getCurrentPlayerState = (state: RootState) => {
 	const gameState = getGameState(state)
 	if (!gameState) return null
@@ -95,6 +105,10 @@ export const getSelectedCard = (state: RootState) => {
 	return getGame(state).selectedCard
 }
 
+export const getStatusEffects = (state: RootState) => {
+	return getGame(state).localGameState?.statusEffects || []
+}
+
 export const getOpenedModal = (state: RootState) => {
 	return getGame(state).openedModal
 }
@@ -109,6 +123,10 @@ export const getPickRequestPickableSlots = (state: RootState) => {
 
 export const getCurrentPickMessage = (state: RootState) => {
 	return getGameState(state)?.currentPickMessage || null
+}
+
+export const getCurrentModalData = (state: RootState) => {
+	return getGameState(state)?.currentModalData || null
 }
 
 export const getEndGameOverlay = (state: RootState) => {

@@ -1,6 +1,5 @@
 import cn from 'classnames'
 import classNames from 'classnames'
-import {LocalGameState} from 'common/types/game-state'
 import {SlotInfo} from 'common/types/server-requests'
 import Button from 'components/button'
 import CoinFlip from 'components/coin-flip'
@@ -8,10 +7,10 @@ import {
 	getAvailableActions,
 	getCurrentCoinFlip,
 	getCurrentPickMessage,
+	getCurrentPlayerState,
 	getGameState,
 	getIsSpectator,
 	getPlayerState,
-	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
@@ -20,14 +19,11 @@ import css from './actions.module.scss'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
-	localGameState: LocalGameState
 	id?: string
 }
 
-const MobileActions = ({onClick, localGameState, id}: Props) => {
-	const currentPlayer = useSelector(
-		getPlayerStateByEntity(localGameState.turn.currentPlayerEntity),
-	)
+const MobileActions = ({onClick, id}: Props) => {
+	const currentPlayer = useSelector(getCurrentPlayerState)
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
 	const isSpectator = useSelector(getIsSpectator)
@@ -164,7 +160,7 @@ const MobileActions = ({onClick, localGameState, id}: Props) => {
 
 			{isSpectator && !currentCoinFlip && (
 				<div className={classNames(css.actionSection, css.status)}>
-					{currentPlayer.censoredPlayerName}'s Turn
+					{currentPlayer?.censoredPlayerName}'s Turn
 				</div>
 			)}
 

@@ -1,14 +1,19 @@
 import cn from 'classnames'
-import {PlayerEntity, SlotEntity} from 'common/entities'
+import {PlayerEntity, RowEntity, SlotEntity} from 'common/entities'
 import {BoardSlotTypeT, SlotTypeT} from 'common/types/cards'
 import {LocalRowState} from 'common/types/game-state'
+import {LocalCardInstance} from 'common/types/server-requests'
 import {
-	LocalCardInstance,
-	LocalStatusEffectInstance,
-} from 'common/types/server-requests'
-import {getGameState, getSelectedCard} from 'logic/game/game-selectors'
+	getCurrentPlayerEntity,
+	getPickRequestPickableSlots,
+	getPlayerEntity,
+	getPlayerStateByEntity,
+	getSelectedCard,
+	getStatusEffects,
+} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {useSelector} from 'react-redux'
+import {RootState} from 'store'
 import HealthSlot from './board-health'
 import Slot from './board-slot'
 import StatusEffectContainer from './board-status-effects'
@@ -27,34 +32,54 @@ const getSlotByLocation = (
 
 type BoardRowProps = {
 	type: 'left' | 'right'
-	player?: PlayerEntity
+	boardForPlayerEntity: PlayerEntity
+	rowEntity: RowEntity
 	onClick: (
 		entity: SlotEntity,
 		type: SlotTypeT,
 		card: LocalCardInstance | null,
 		index: number,
 	) => void
-	rowState: LocalRowState
-	active: boolean
-	statusEffects: Array<LocalStatusEffectInstance>
+}
+
+function getRowState(playerEntity: PlayerEntity, rowEntity: RowEntity) {
+	return (state: RootState) => {
+		return getPlayerStateByEntity(playerEntity)(state).board.rows.find(
+			(x) => x.entity === rowEntity,
+		)
+	}
+}
+
+function isActiveRow(playerEntity: PlayerEntity, rowEntity: RowEntity) {
+	return (state: RootState) => {
+		return (
+			getPlayerStateByEntity(playerEntity)(state).board.activeRow ===
+				rowEntity || false
+		)
+	}
 }
 
 const BoardRow = ({
 	type,
-	player,
+	boardForPlayerEntity: player,
+	rowEntity,
 	onClick,
-	rowState,
-	active,
-	statusEffects,
 }: BoardRowProps) => {
 	const settings = useSelector(getSettings)
-	const localGameState = useSelector(getGameState)
 	const selectedCard = useSelector(getSelectedCard)
+	const statusEffects = useSelector(getStatusEffects)
+	const playerEntity = useSelector(getPlayerEntity)
+	const currentPickableSlots = useSelector(getPickRequestPickableSlots)
+	const currentPlayerEntity = useSelector(getCurrentPlayerEntity)
+	const rowState = useSelector(getRowState(player, rowEntity))
+	const active = useSelector(isActiveRow(player, rowEntity))
+
+	if (!rowState) throw new Error('Row state should always be defined')
 
 	let shouldDim = !!(
 		settings.slotHighlightingEnabled &&
-		(selectedCard || localGameState?.currentPickableSlots) &&
-		localGameState?.turn.currentPlayerEntity === localGameState?.playerEntity
+		(selectedCard || currentPickableSlots) &&
+		currentPlayerEntity === playerEntity
 	)
 
 	const itemSlots = rowState.items.length
@@ -65,6 +90,7 @@ const BoardRow = ({
 		'attach',
 		'hermit',
 	]
+
 	const slots = slotTypes.map((slotType, slotIndex) => {
 		const slot = getSlotByLocation(slotType, slotIndex, rowState)
 		const cssId = slotType === 'item' ? slotType + (slotIndex + 1) : slotType
@@ -88,13 +114,13 @@ const BoardRow = ({
 				rowState={rowState}
 				active={active}
 				key={slotType + '-' + slotIndex}
-				type={slotType}
 				statusEffects={statusEffects.filter(
 					(a) =>
 						a.target.type === 'card' &&
 						a.target.card === slot.card?.entity &&
 						slotType != 'hermit',
 				)}
+				type={slotType}
 			/>
 		)
 	})

@@ -5,6 +5,9 @@ import {equalCard} from 'common/utils/cards'
 import CardList from 'components/card-list'
 import {
 	getAvailableActions,
+	getCurrentModalData,
+	getCurrentPickMessage,
+	getCurrentPlayerEntity,
 	getEndGameOverlay,
 	getGameState,
 	getIsSpectator,
@@ -13,6 +16,7 @@ import {
 	getPlayerEntity,
 	getPlayerState,
 	getSelectedCard,
+	getTurnNumber,
 } from 'logic/game/game-selectors'
 import {
 	MODAL_COMPONENTS,
@@ -309,15 +313,48 @@ function RequiresAvaiableActions() {
 	return null
 }
 
+function PickRequestSound() {
+	const currentPlayerEntity = useSelector(getCurrentPlayerEntity)
+	const playerEntity = useSelector(getPlayerEntity)
+	const currentPickMessage = useSelector(getCurrentPickMessage)
+	const currentModalData = useSelector(getCurrentModalData)
+	const dispatch = useMessageDispatch()
+
+	// Play sound on custom modal or pick request activation
+	useEffect(() => {
+		const someCustom = currentPickMessage || currentModalData
+		if (someCustom && currentPlayerEntity !== playerEntity) {
+			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
+		}
+	}, [currentPickMessage, currentModalData])
+
+	return null
+}
+
+function TurnStartSound() {
+	const turnNumber = useSelector(getTurnNumber)
+	const playerEntity = useSelector(getPlayerEntity)
+	const currentPlayerEntity = useSelector(getCurrentPlayerEntity)
+	const dispatch = useMessageDispatch()
+
+	// Play SFX on turn start or when the player enters a game
+	useEffect(() => {
+		if (turnNumber === 1 || currentPlayerEntity === playerEntity) {
+			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
+		}
+	}, [currentPlayerEntity])
+
+	return null
+}
+
 function Game() {
-	const gameState = useSelector(getGameState)
 	const hasPlayerState = useSelector(
 		(root: RootState) => getPlayerState(root) !== null,
 	)
 	const dispatch = useMessageDispatch()
 	const isSpectator = useSelector(getIsSpectator)
 
-	if (!gameState || !hasPlayerState) return <p>Loading</p>
+	if (!hasPlayerState) return <p>Loading</p>
 	const [gameScale, setGameScale] = useState<number>(1)
 	const gameWrapperRef = useRef<HTMLDivElement>(null)
 	const gameRef = useRef<HTMLDivElement>(null)
@@ -347,28 +384,6 @@ function Game() {
 		setGameScale(scale)
 	}
 
-	// Play SFX on turn start or when the player enters a game
-	useEffect(() => {
-		if (
-			gameState.turn.turnNumber === 1 ||
-			gameState.turn.currentPlayerEntity === gameState.playerEntity
-		) {
-			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
-		}
-	}, [gameState.turn.currentPlayerEntity])
-
-	// Play sound on custom modal or pick request activation
-	useEffect(() => {
-		const someCustom =
-			gameState.currentPickMessage || gameState.currentModalData
-		if (
-			someCustom &&
-			gameState.turn.currentPlayerEntity !== gameState.playerEntity
-		) {
-			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
-		}
-	}, [gameState.currentPickMessage, gameState.currentModalData])
-
 	// Initialize Game Screen Resizing and Event Listeners
 	useEffect(() => {
 		handleResize()
@@ -389,7 +404,7 @@ function Game() {
 					style={{transform: `scale(${gameScale})`}}
 				>
 					<div className={css.grid} />
-					<Board onClick={handleBoardClick} localGameState={gameState} />
+					<Board onClick={handleBoardClick} />
 				</div>
 			</div>
 			<div className={css.bottom}>
@@ -400,6 +415,8 @@ function Game() {
 			<Chat />
 			<EndGameOverlayContainer />)
 			<RequiresAvaiableActions />
+			<PickRequestSound />
+			<TurnStartSound />
 		</div>
 	)
 }
