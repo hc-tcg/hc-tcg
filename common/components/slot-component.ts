@@ -1,4 +1,5 @@
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
+import { CardEntity } from '../entities'
 import type {GameModel} from '../models/game-model'
 import type {SlotTypeT} from '../types/cards'
 import {CardComponent} from './card-component'
@@ -21,6 +22,8 @@ export class SlotComponent {
 	readonly game: GameModel
 	readonly entity: SlotEntity
 	private readonly defs: BoardSlotDefs
+
+	cardEntity: CardEntity | null
 
 	constructor(game: GameModel, entity: SlotEntity, defs: BoardSlotDefs) {
 		this.entity = entity
