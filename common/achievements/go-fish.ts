@@ -32,7 +32,7 @@ const GoFish: Achievement = {
 			() => {
 				let su = game.components
 					.find(SlotComponent, query.slot.singleUse)
-					?.getCard()
+					?.card
 				if (!su) return
 				if (su.props.id !== FishingRod.id) return
 
