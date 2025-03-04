@@ -1,9 +1,9 @@
 import classNames from 'classnames'
 import {localMessages} from 'logic/messages'
+import {getDropdown} from 'logic/session/session-selectors'
 import {ReactNode, useEffect, useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './dropdown.module.scss'
-import {getDropdown} from 'logic/session/session-selectors'
 
 type DropdownOptions = {
 	name: string
