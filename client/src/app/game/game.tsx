@@ -326,7 +326,7 @@ function Game() {
 	const dispatch = useMessageDispatch()
 	const isSpectator = useSelector(getIsSpectator)
 
-	if (!gameState || !hasPlayerState) return <p>Loading</p>
+	if (!hasPlayerState) return <p>Loading</p>
 	const [gameScale, setGameScale] = useState<number>(1)
 	const gameWrapperRef = useRef<HTMLDivElement>(null)
 	const gameRef = useRef<HTMLDivElement>(null)

@@ -65,7 +65,6 @@ function Board({onClick}: Props) {
 								handleRowClick(rowIndex, player.entity, ...args)
 							}
 							type={direction}
-							statusEffects={localGameState.statusEffects}
 						/>
 					)
 				})}
@@ -84,7 +83,6 @@ function Board({onClick}: Props) {
 			<div className={css.actualBoard}>
 				{PlayerBoard(leftPlayer, 'left')}
 				<Actions
-					localGameState={localGameState}
 					onClick={(value) => onClick(value, player.entity)}
 					id={css.actions}
 				/>
@@ -92,7 +90,6 @@ function Board({onClick}: Props) {
 			</div>
 
 			<MobileActions
-				localGameState={localGameState}
 				onClick={(value) => onClick(value, player.entity)}
 				id={css.actions}
 			/>

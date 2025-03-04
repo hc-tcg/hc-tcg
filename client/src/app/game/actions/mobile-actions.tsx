@@ -8,6 +8,8 @@ import {
 	getAvailableActions,
 	getCurrentCoinFlip,
 	getCurrentPickMessage,
+	getCurrentPlayerEntity,
+	getCurrentPlayerState,
 	getGameState,
 	getIsSpectator,
 	getPlayerState,
@@ -20,14 +22,11 @@ import css from './actions.module.scss'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
-	localGameState: LocalGameState
 	id?: string
 }
 
-const MobileActions = ({onClick, localGameState, id}: Props) => {
-	const currentPlayer = useSelector(
-		getPlayerStateByEntity(localGameState.turn.currentPlayerEntity),
-	)
+const MobileActions = ({onClick, id}: Props) => {
+	const currentPlayer = useSelector(getCurrentPlayerState)
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
 	const isSpectator = useSelector(getIsSpectator)
