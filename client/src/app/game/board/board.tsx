@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {PlayerEntity, RowEntity, SlotEntity} from 'common/entities'
 import {SlotTypeT} from 'common/types/cards'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
@@ -46,8 +45,9 @@ function Board({onClick}: Props) {
 	const leftPlayerRows = side === 'Left' ? playerRows : opponentRows
 	const rightPlayerRows = side === 'Right' ? playerRows : opponentRows
 
-	assert(leftPlayerEntity)
-	assert(rightPlayerEntity)
+	if (!leftPlayerEntity) throw new Error('There should be a left player entity')
+	if (!rightPlayerEntity)
+		throw new Error('There should be a right player entity')
 
 	const handleRowClick = (
 		rowIndex: number,
@@ -76,10 +76,10 @@ function Board({onClick}: Props) {
 					return (
 						<BoardRow
 							key={row}
-							player={
+							boardForPlayerEntity={
 								direction === 'left' ? leftPlayerEntity : rightPlayerEntity
 							}
-							entity={row}
+							rowEntity={row}
 							onClick={(...args) =>
 								handleRowClick(rowIndex, playerEntity, ...args)
 							}

@@ -7,11 +7,13 @@ import {
 	getCurrentPlayerEntity,
 	getPickRequestPickableSlots,
 	getPlayerEntity,
+	getPlayerStateByEntity,
 	getSelectedCard,
 	getStatusEffects,
 } from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {useSelector} from 'react-redux'
+import {RootState} from 'store'
 import HealthSlot from './board-health'
 import Slot from './board-slot'
 import StatusEffectContainer from './board-status-effects'
@@ -30,8 +32,8 @@ const getSlotByLocation = (
 
 type BoardRowProps = {
 	type: 'left' | 'right'
-	player?: PlayerEntity
-	entity: RowEntity
+	boardForPlayerEntity: PlayerEntity
+	rowEntity: RowEntity
 	onClick: (
 		entity: SlotEntity,
 		type: SlotTypeT,
@@ -40,13 +42,38 @@ type BoardRowProps = {
 	) => void
 }
 
-const BoardRow = ({type, player, onClick}: BoardRowProps) => {
+function getRowState(playerEntity: PlayerEntity, rowEntity: RowEntity) {
+	return (state: RootState) => {
+		return getPlayerStateByEntity(playerEntity)(state).board.rows.find(
+			(x) => x.entity === rowEntity,
+		)
+	}
+}
+
+function getActiveRow(playerEntity: PlayerEntity) {
+	return (state: RootState) => {
+		return getPlayerStateByEntity(playerEntity)(state).board.activeRow
+	}
+}
+
+const BoardRow = ({
+	type,
+	boardForPlayerEntity: player,
+	rowEntity,
+	onClick,
+}: BoardRowProps) => {
 	const settings = useSelector(getSettings)
 	const selectedCard = useSelector(getSelectedCard)
 	const statusEffects = useSelector(getStatusEffects)
 	const playerEntity = useSelector(getPlayerEntity)
 	const currentPickableSlots = useSelector(getPickRequestPickableSlots)
 	const currentPlayerEntity = useSelector(getCurrentPlayerEntity)
+	const rowState = useSelector(getRowState(player, rowEntity))
+	const activeRow = useSelector(getActiveRow(player))
+
+	const active = rowEntity === activeRow
+
+	if (!rowState) throw new Error('Row state should always be defined')
 
 	let shouldDim = !!(
 		settings.slotHighlightingEnabled &&
@@ -62,6 +89,7 @@ const BoardRow = ({type, player, onClick}: BoardRowProps) => {
 		'attach',
 		'hermit',
 	]
+
 	const slots = slotTypes.map((slotType, slotIndex) => {
 		const slot = getSlotByLocation(slotType, slotIndex, rowState)
 		const cssId = slotType === 'item' ? slotType + (slotIndex + 1) : slotType

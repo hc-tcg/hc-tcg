@@ -1,4 +1,5 @@
 import cn from 'classnames'
+import {PlayerEntity} from 'common/entities'
 import {LocalPlayerState} from 'common/types/game-state'
 import {
 	getGameState,
@@ -10,7 +11,6 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getSocketStatus} from 'logic/socket/socket-selectors'
 import {useSelector} from 'react-redux'
 import css from './player-info.module.scss'
-import {PlayerEntity} from 'common/entities'
 
 type Props = {
 	playerEntity: PlayerEntity
