@@ -52,8 +52,8 @@ const Composter: SingleUse = {
 				)(game, pos)
 			},
 			onResult(pickedSlot) {
-				firstPickedSlot?.getCard()?.discard()
-				pickedSlot.getCard()?.discard()
+				firstPickedSlot?.card?.discard()
+				pickedSlot.card?.discard()
 
 				applySingleUse(game, component.slot)
 

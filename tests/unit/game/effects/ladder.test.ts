@@ -42,14 +42,12 @@ describe('Test Ladder', () => {
 					)
 
 					expect(
-						game.components
-							.find(
-								SlotComponent,
-								query.slot.currentPlayer,
-								query.slot.hermit,
-								query.slot.rowIndex(0),
-							)
-							?.getCard()?.props,
+						game.components.find(
+							SlotComponent,
+							query.slot.currentPlayer,
+							query.slot.hermit,
+							query.slot.rowIndex(0),
+						)?.card?.props,
 					).toBe(SmallishbeansCommon)
 
 					expect(
@@ -61,37 +59,31 @@ describe('Test Ladder', () => {
 					).toBe(EthosLabCommon.health - EthosLabCommon.primary.damage)
 
 					expect(
-						game.components
-							.find(
-								SlotComponent,
-								query.slot.currentPlayer,
-								query.slot.item,
-								query.slot.index(0),
-								query.slot.rowIndex(0),
-							)
-							?.getCard(),
+						game.components.find(
+							SlotComponent,
+							query.slot.currentPlayer,
+							query.slot.item,
+							query.slot.index(0),
+							query.slot.rowIndex(0),
+						)?.card,
 					).not.toBe(null)
 
 					expect(
-						game.components
-							.find(
-								SlotComponent,
-								query.slot.currentPlayer,
-								query.slot.attach,
-								query.slot.rowIndex(0),
-							)
-							?.getCard(),
+						game.components.find(
+							SlotComponent,
+							query.slot.currentPlayer,
+							query.slot.attach,
+							query.slot.rowIndex(0),
+						)?.card,
 					).not.toBe(null)
 
 					expect(
-						game.components
-							.find(
-								SlotComponent,
-								query.slot.currentPlayer,
-								query.slot.hermit,
-								query.slot.rowIndex(1),
-							)
-							?.getCard()?.props,
+						game.components.find(
+							SlotComponent,
+							query.slot.currentPlayer,
+							query.slot.hermit,
+							query.slot.rowIndex(1),
+						)?.card?.props,
 					).toBe(EthosLabCommon)
 
 					expect(
@@ -103,26 +95,22 @@ describe('Test Ladder', () => {
 					).toBe(SmallishbeansCommon.health)
 
 					expect(
-						game.components
-							.find(
-								SlotComponent,
-								query.slot.currentPlayer,
-								query.slot.item,
-								query.slot.index(0),
-								query.slot.rowIndex(1),
-							)
-							?.getCard(),
+						game.components.find(
+							SlotComponent,
+							query.slot.currentPlayer,
+							query.slot.item,
+							query.slot.index(0),
+							query.slot.rowIndex(1),
+						)?.card,
 					).toBe(null)
 
 					expect(
-						game.components
-							.find(
-								SlotComponent,
-								query.slot.currentPlayer,
-								query.slot.attach,
-								query.slot.rowIndex(1),
-							)
-							?.getCard(),
+						game.components.find(
+							SlotComponent,
+							query.slot.currentPlayer,
+							query.slot.attach,
+							query.slot.rowIndex(1),
+						)?.card,
 					).toBe(null)
 				},
 			},

@@ -1,11 +1,6 @@
 import {ComponentQuery} from '.'
 import query from '.'
-import {
-	CardComponent,
-	RowComponent,
-	SlotComponent,
-	StatusEffectComponent,
-} from '..'
+import {RowComponent, SlotComponent, StatusEffectComponent} from '..'
 import {Card} from '../../cards/types'
 import {PlayerEntity, RowEntity, SlotEntity} from '../../entities'
 import {StatusEffect} from '../../status-effects/status-effect'
@@ -29,12 +24,8 @@ export function player(
 }
 
 /** Return true if the spot is empty. */
-export const empty: ComponentQuery<SlotComponent> = (game, pos) => {
-	let card = game.components.find(
-		CardComponent,
-		query.card.slotEntity(pos.entity),
-	)
-	if (!card) return true
+export const empty: ComponentQuery<SlotComponent> = (_game, pos) => {
+	if (pos.card === null) return true
 	// Slots will become empty if the row is at 0 health when knock-outs are checked
 	if (pos.inRow() && !pos.row.health) return true
 	return false
@@ -132,12 +123,10 @@ export const entity = (
 }
 
 export const has = (...cards: Array<Card>): ComponentQuery<SlotComponent> => {
-	return (game, pos) => {
-		return game.components.exists(
-			CardComponent,
-			query.card.is(...cards),
-			query.card.slotEntity(pos.entity),
-		)
+	return (_game, pos) => {
+		let card = pos.card
+		if (!card) return false
+		return cards.map((x) => x.id).includes(card.props.id)
 	}
 }
 

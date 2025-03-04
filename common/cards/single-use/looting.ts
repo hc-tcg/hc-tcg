@@ -47,7 +47,7 @@ const Looting: SingleUse = {
 				message: 'Pick an item card to add to your hand',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					const card = pickedSlot.getCard()
+					const card = pickedSlot.card
 					if (!card) return
 					card.draw(player.entity)
 				},

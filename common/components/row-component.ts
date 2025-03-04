@@ -69,7 +69,7 @@ export class RowComponent {
 							'cyberpunkimpulse_rare' === value.getHermit()?.props.id,
 					),
 					(_game, value) => {
-						const card = value.getCard()
+						const card = value.card
 						if (!card?.isItem()) return false
 						return card.props.energy.includes('farm')
 					},
