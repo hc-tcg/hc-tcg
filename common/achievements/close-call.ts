@@ -19,6 +19,8 @@ const CloseCall: Achievement = {
 		if (outcome.type !== 'player-won' || outcome.winner !== player.entity)
 			return
 
+		if (player.lives !== 1) return
+
 		let hermits = game.components.filter(
 			SlotComponent,
 			query.slot.hermit,
