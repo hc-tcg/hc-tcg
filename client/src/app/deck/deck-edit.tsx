@@ -206,7 +206,7 @@ const addTag = (
 	if (tag.name.length === 0) return
 	ev.currentTarget.tag.value = ''
 	setTags([...tags, tag])
-	setColor(color)
+	setColor('#F00')
 }
 
 const addCreatedTag = (
