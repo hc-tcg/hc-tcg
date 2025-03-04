@@ -13,6 +13,7 @@ import HermitsAndCrafting from './hermits-and-crafting'
 import HotTake from './hot-take'
 import HowDidWeGetHere from './how-did-we-get-here'
 import HurtinHermits from './hurtin-hermits'
+import IBuy from './ibuy'
 import Inneffective from './inneffective'
 import IsGreat from './is-great'
 import AllCards from './jack-of-all-cards'
@@ -70,6 +71,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	SheepStarer,
 	NakedAndScared,
 	HotTake,
+	IBuy,
 	HermitsAndCrafting,
 	CertifiedZombie,
 	SUStainable,

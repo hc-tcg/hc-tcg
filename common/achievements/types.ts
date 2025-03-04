@@ -21,13 +21,13 @@ export type Achievement = {
 
 	onGameStart: (
 		game: GameModel,
-		playerEntity: PlayerComponent,
+		player: PlayerComponent,
 		component: AchievementComponent,
 		observer: ObserverComponent,
 	) => void
 	onGameEnd: (
 		game: GameModel,
-		playerEntity: PlayerComponent,
+		player: PlayerComponent,
 		component: AchievementComponent,
 		outcome: GameOutcome,
 	) => void
