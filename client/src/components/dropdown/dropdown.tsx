@@ -149,7 +149,7 @@ const Dropdown = ({
 							{options.map((option, i) => (
 								<div
 									key={option.key || option.name}
-									onTouchStart={() => mouseDownAction(option)}
+									onMouseDown={() => mouseDownAction(option)}
 									className={css.DropdownMenuItem}
 								>
 									{checkboxes && (
@@ -258,7 +258,7 @@ const DropdownButton = ({
 			),
 			x: boundingBox.x,
 			y: boundingBox.y,
-			direction: direction,
+			direction: direction || 'down',
 			align: align || 'left',
 		})
 	}
