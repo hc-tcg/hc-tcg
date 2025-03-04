@@ -86,7 +86,8 @@ export class Database {
 					coin varchar(255),
 					heart varchar(255),
 					background varchar(255),
-					border varchar(255)
+					border varchar(255),
+					banned boolean DEFAULT false NOT NULL
 				);
 				CREATE TABLE IF NOT EXISTS decks(
 					user_id uuid REFERENCES users(user_id),
@@ -300,6 +301,7 @@ export class Database {
 					achievements: achievements.body,
 					stats: stats.body,
 					gameHistory: gameHistory.body,
+					banned: user.rows[0]['banned'],
 				},
 			}
 		} catch (e) {
