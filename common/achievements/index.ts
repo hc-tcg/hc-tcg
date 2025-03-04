@@ -43,6 +43,7 @@ import UselessMachine from './useless-machine'
 import Win from './wins'
 import Wipeout from './wipeout'
 import PoePoeEnforcer from './poe-poe-enforcer'
+import FreeAndSteel from './free-and-steel'
 
 export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	AllCards,
@@ -53,6 +54,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	EyeOfTheSpider,
 	PackOfWolves,
 	PoePoeEnforcer,
+	FreeAndSteel,
 	GoFish,
 	HowDidWeGetHere,
 	HurtinHermits,
