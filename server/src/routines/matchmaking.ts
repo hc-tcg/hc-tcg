@@ -1042,7 +1042,7 @@ export function* createRematchGame(
 		existingPlayer.deck,
 		waitingInfo.opponentScore,
 		waitingInfo.playerScore,
-		spectatorCode || undefined,
+		spectatorCode ?? undefined,
 	)
 	root.addGame(newGame)
 

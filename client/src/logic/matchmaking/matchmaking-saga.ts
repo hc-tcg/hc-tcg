@@ -602,6 +602,7 @@ function* createRematchSaga() {
 			const gameStart = yield* call(
 				receiveMsg(socket, serverMessages.GAME_START),
 			)
+			console.log(gameStart)
 			yield call(gameSaga, {spectatorCode: gameStart.spectatorCode})
 		} catch (err) {
 			console.error('Game crashed: ', err)
