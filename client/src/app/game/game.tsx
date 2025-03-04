@@ -313,13 +313,41 @@ function RequiresAvaiableActions() {
 	return null
 }
 
-function Game() {
+function PickRequestSound() {
+	const currentPlayerEntity = useSelector(getCurrentPlayerEntity)
+	const playerEntity = useSelector(getPlayerEntity)
+	const currentPickMessage = useSelector(getCurrentPickMessage)
+	const currentModalData = useSelector(getCurrentModalData)
+	const dispatch = useMessageDispatch()
+
+	// Play sound on custom modal or pick request activation
+	useEffect(() => {
+		const someCustom = currentPickMessage || currentModalData
+		if (someCustom && currentPlayerEntity !== playerEntity) {
+			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
+		}
+	}, [currentPickMessage, currentModalData])
+
+	return null
+}
+
+function TurnStartSound() {
 	const turnNumber = useSelector(getTurnNumber)
 	const playerEntity = useSelector(getPlayerEntity)
 	const currentPlayerEntity = useSelector(getCurrentPlayerEntity)
-	const currentPickMessage = useSelector(getCurrentPickMessage)
-	const currentModalData = useSelector(getCurrentModalData)
+	const dispatch = useMessageDispatch()
 
+	// Play SFX on turn start or when the player enters a game
+	useEffect(() => {
+		if (turnNumber === 1 || currentPlayerEntity === playerEntity) {
+			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
+		}
+	}, [currentPlayerEntity])
+
+	return null
+}
+
+function Game() {
 	const hasPlayerState = useSelector(
 		(root: RootState) => getPlayerState(root) !== null,
 	)
@@ -356,21 +384,6 @@ function Game() {
 		setGameScale(scale)
 	}
 
-	// Play SFX on turn start or when the player enters a game
-	useEffect(() => {
-		if (turnNumber === 1 || currentPlayerEntity === playerEntity) {
-			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
-		}
-	}, [currentPlayerEntity])
-
-	// Play sound on custom modal or pick request activation
-	useEffect(() => {
-		const someCustom = currentPickMessage || currentModalData
-		if (someCustom && currentPlayerEntity !== playerEntity) {
-			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
-		}
-	}, [currentPickMessage, currentModalData])
-
 	// Initialize Game Screen Resizing and Event Listeners
 	useEffect(() => {
 		handleResize()
@@ -402,6 +415,8 @@ function Game() {
 			<Chat />
 			<EndGameOverlayContainer />)
 			<RequiresAvaiableActions />
+			<PickRequestSound />
+			<TurnStartSound />
 		</div>
 	)
 }
