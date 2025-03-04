@@ -8,6 +8,7 @@ import {
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
+import serverConfig from 'common/config/server-config'
 import {COINS} from 'common/cosmetics/coins'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
@@ -16,7 +17,9 @@ import {
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {EarnedAchievement} from 'common/types/achievements'
 import {Deck} from 'common/types/deck'
+import {GameOutcome} from 'common/types/game-state'
 import {formatText} from 'common/utils/formatting'
 import {OpponentDefs} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
@@ -53,6 +56,8 @@ function setupGame(
 	player2: PlayerModel,
 	player1Deck: Deck,
 	player2Deck: Deck,
+	player1Score: number,
+	player2Score: number,
 	gameCode?: string,
 	spectatorCode?: string,
 	apiSecret?: string,
@@ -63,12 +68,14 @@ function setupGame(
 			deck: player1Deck.cards
 				.map((card) => card.props.numericId)
 				.sort((a, b) => a - b),
+			score: player1Score,
 		},
 		{
 			model: player2,
 			deck: player2Deck.cards
 				.map((card) => card.props.numericId)
 				.sort((a, b) => a - b),
+			score: player2Score,
 		},
 		{gameCode, spectatorCode, apiSecret, countAchievements: true},
 	)
@@ -177,6 +184,65 @@ function* gameManager(con: GameController) {
 
 		assert(outcome, 'All games should have an outcome after they end')
 
+		if (con.task) yield* cancel(con.task)
+		con.game.hooks.afterGameEnd.call()
+
+		const newAchievements: Record<string, Array<EarnedAchievement>> = {}
+		for (let k = 0; k < con.viewers.length; k++) {
+			const v = con.viewers[k]
+			if (v.spectator) continue
+			const playerEntity = v.playerOnLeftEntity
+			newAchievements[playerEntity] = []
+			const achievements = con.game.components.filter(
+				AchievementComponent,
+				(_game, achievement) => achievement.player === playerEntity,
+			)
+
+			achievements.forEach((achievement) => {
+				achievement.props.onGameEnd(
+					con.game,
+					playerEntity,
+					achievement,
+					outcome,
+				)
+
+				const originalProgress = achievement.props.getProgress(
+					v.player.achievementProgress[achievement.props.numericId].goals,
+				)
+				const newProgress = achievement.props.getProgress(achievement.goals)
+
+				if (originalProgress === newProgress) return
+
+				v.player.updateAchievementProgress(
+					achievement.props.numericId,
+					achievement.goals,
+				)
+
+				for (const [i, level] of achievement.props.levels.entries()) {
+					if (newProgress >= level.steps) {
+						v.player.achievementProgress[achievement.props.numericId].levels[
+							i
+						] = {completionTime: new Date()}
+					}
+
+					if (
+						newProgress > originalProgress &&
+						newProgress <= level.steps &&
+						(i === 0 || achievement.props.levels[i - 1].steps < newProgress)
+					) {
+						newAchievements[playerEntity].push({
+							achievementId: achievement.props.numericId,
+							level,
+							originalProgress: originalProgress || 0,
+							newProgress: newProgress,
+						})
+					}
+				}
+			})
+
+			yield* updateAchievements(v.player)
+		}
+
 		for (const viewer of con.viewers) {
 			const gameState = getLocalGameState(con.game, viewer)
 			if (gameState) {
@@ -196,46 +262,11 @@ function* gameManager(con: GameController) {
 				type: serverMessages.GAME_END,
 				gameState,
 				outcome,
+				earnedAchievements: !viewer.spectator
+					? newAchievements[viewer.playerOnLeftEntity]
+					: [],
 			})
 		}
-
-		if (con.task) yield* cancel(con.task)
-		con.game.hooks.afterGameEnd.call()
-
-		yield* all(
-			con.viewers.map((v) => {
-				if (v.spectator) return
-				const playerEntity = v.playerOnLeftEntity
-				const achievements = con.game.components.filter(
-					AchievementComponent,
-					(_game, achievement) => achievement.player === playerEntity,
-				)
-				achievements.forEach((achievement) => {
-					achievement.props.onGameEnd(
-						con.game,
-						playerEntity,
-						achievement,
-						outcome,
-					)
-
-					for (const [i, level] of achievement.props.levels.entries()) {
-						const complete =
-							achievement.props.getProgress(achievement.goals) >= level.steps
-						const previouslyComplete =
-							!!v.player.achievementProgress[achievement.props.numericId]
-								.levels[i]
-						v.player.achievementProgress[achievement.props.numericId].goals =
-							achievement.goals
-						if (complete && !previouslyComplete)
-							// @TODO here is where we see what new achievements have been completed
-							v.player.achievementProgress[achievement.props.numericId].levels[
-								i
-							].completionTime = new Date()
-					}
-				})
-				return updateAchievements(v.player)
-			}),
-		)
 
 		const gameType = con.gameCode ? 'Private' : 'Public'
 		console.info(
@@ -283,8 +314,47 @@ function* gameManager(con: GameController) {
 				turnActionsBuffer,
 				con.gameCode,
 			)
-			yield* sendAfterGameInfo(gamePlayers)
 		}
+		yield* sendAfterGameInfo(gamePlayers)
+		const rematchTime = Date.now()
+
+		const getGameScore = (
+			outcome: GameOutcome | undefined,
+			player: PlayerId,
+		) => {
+			assert(outcome, "A game can't end without an outcome.")
+			if (outcome.type === 'tie') return 0.5
+			if (outcome.type === 'player-won' && winnerPlayerId === player) return 1
+			return 0
+		}
+
+		const player1Score =
+			getGameScore(con.game.outcome, gamePlayers[0].id) + con.player1Defs.score
+		const player2Score =
+			getGameScore(con.game.outcome, gamePlayers[1].id) + con.player2Defs.score
+
+		broadcast([gamePlayers[0]], {
+			type: serverMessages.SEND_REMATCH,
+			rematch: {
+				opponentId: gamePlayers[1].id,
+				time: rematchTime,
+				spectatorCode: con.spectatorCode,
+				playerScore: player1Score,
+				opponentScore: player2Score,
+			},
+		})
+		broadcast([gamePlayers[1]], {
+			type: serverMessages.SEND_REMATCH,
+			rematch: {
+				opponentId: gamePlayers[0].id,
+				time: rematchTime,
+				spectatorCode: con.spectatorCode,
+				playerScore: player2Score,
+				opponentScore: player1Score,
+			},
+		})
+		yield* delay(serverConfig.limits.rematchTime)
+		broadcast(gamePlayers, {type: serverMessages.SEND_REMATCH, rematch: null})
 	}
 }
 
@@ -320,10 +390,28 @@ function* randomMatchmakingSaga() {
 			const player2Id = root.queue[index + 1]
 			const player1 = root.players[player1Id]
 			const player2 = root.players[player2Id]
-
 			if (player1 && player2 && player1.deck && player2.deck) {
 				playersToRemove.push(player1.id, player2.id)
-				const newGame = setupGame(player1, player2, player1.deck, player2.deck)
+
+				if (player1 && root.awaitingRematch[player1Id]) {
+					const opponent =
+						root.players[root.awaitingRematch[player1Id].opponentId]
+					broadcast([player1, opponent], {type: serverMessages.REMATCH_DENIED})
+				}
+				if (player2 && root.awaitingRematch[player2Id]) {
+					const opponent =
+						root.players[root.awaitingRematch[player2Id].opponentId]
+					broadcast([player2, opponent], {type: serverMessages.REMATCH_DENIED})
+				}
+
+				const newGame = setupGame(
+					player1,
+					player2,
+					player1.deck,
+					player2.deck,
+					0,
+					0,
+				)
 				root.addGame(newGame)
 				yield* safeCall(fork, gameManager, newGame)
 			} else {
@@ -530,6 +618,8 @@ export function* joinPrivateGame(
 			existingPlayer,
 			player.deck,
 			existingPlayer.deck,
+			0,
+			0,
 			root.privateQueue[code].gameCode,
 			root.privateQueue[code].spectatorCode,
 			root.privateQueue[code].apiSecret,
@@ -646,9 +736,11 @@ export function* spectatePrivateGame(
 	}
 
 	// No existing game yet, check for a game that hasn't started
-	let gameQueue = Object.values(root.privateQueue).find(
-		(q) => q.spectatorCode === code,
-	)
+	const gameQueue = [
+		...Object.values(root.privateQueue),
+		...Object.values(root.awaitingRematch),
+	].find((q) => q.spectatorCode === code)
+
 	if (!gameQueue) {
 		broadcast([player], {type: serverMessages.INVALID_CODE})
 		return
@@ -836,6 +928,138 @@ export function* createBossGame(
 	yield* safeCall(fork, gameManager, newBossGameController)
 }
 
+export function* createRematchGame(
+	msg: RecievedClientMessage<typeof clientMessages.CREATE_REMATCH_GAME>,
+) {
+	const playerId = msg.playerId
+	const {opponentId, spectatorCode, score} = msg.payload
+	const player = root.players[playerId]
+	const opponent = root.players[opponentId]
+
+	yield* updateDeckSaga(player, msg.payload)
+
+	if (!player) {
+		console.info('[Join rematch game] Player not found: ', playerId)
+		return
+	}
+
+	if (
+		!player.deck ||
+		!validateDeck(player.deck.cards.map((card) => card.props)).valid
+	) {
+		console.info(
+			'[Join rematch game] Player tried to join private game with an invalid deck: ',
+			playerId,
+		)
+		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
+		return
+	}
+
+	if (inGame(playerId) || inQueue(playerId)) {
+		console.info(
+			'[Join private game] Player is already in game or queue:',
+			player.name,
+		)
+		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
+		return
+	}
+
+	// Find the code in the rematch queue
+	const waitingInfo = root.awaitingRematch[opponentId]
+	if (!waitingInfo) {
+		// Assign this player to the game
+		root.awaitingRematch[playerId] = {
+			playerId: playerId,
+			opponentId: opponentId,
+			existingScore: score,
+			joinedScore: 0,
+			spectatorCode: spectatorCode || undefined,
+			spectatorsWaiting: [],
+		}
+		broadcast([player], {type: serverMessages.CREATE_REMATCH_SUCCESS})
+		console.info(`${player.name} requested a rematch from their last opponent`)
+		broadcast([opponent], {
+			type: serverMessages.REMATCH_REQUESTED,
+			opponentName: opponent.name,
+		})
+		return
+	}
+
+	// Remove rematch player from waiting queue
+	delete root.awaitingRematch[opponentId]
+
+	// If we want to join our own game, that is an error
+	if (waitingInfo.playerId === player.id) {
+		console.info(
+			'[Join rematch game]: Player attempted to join their own rematch!',
+		)
+		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
+		return
+	}
+
+	// Create new game for these 2 players
+	const existingPlayer = root.players[opponentId]
+	if (!existingPlayer) {
+		console.info(
+			'[Join rematch game]: Player waiting in queue no longer exists!',
+		)
+		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
+		return
+	}
+
+	if (!existingPlayer.deck) {
+		console.info('[Join rematch game]: Player waiting in queue has no deck!')
+		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
+		return
+	}
+
+	waitingInfo.joinedScore = score
+
+	const newGame = setupGame(
+		player,
+		existingPlayer,
+		player.deck,
+		existingPlayer.deck,
+		waitingInfo.joinedScore,
+		waitingInfo.existingScore,
+		spectatorCode || undefined,
+	)
+	root.addGame(newGame)
+
+	console.info(`Joining rematch game: ${player.name}.`)
+
+	broadcast([player], {type: serverMessages.CREATE_REMATCH_SUCCESS})
+
+	for (const playerId of waitingInfo.spectatorsWaiting) {
+		const player = root.players[playerId]
+		newGame.chat.push({
+			sender: {
+				type: 'viewer',
+				id: player.id,
+			},
+			message: formatText(`$s${player.name}$ $ystarted spectating$`),
+			createdAt: Date.now(),
+		})
+	}
+
+	for (const playerId of waitingInfo.spectatorsWaiting) {
+		const viewer = newGame.addViewer({
+			player: root.players[playerId],
+			spectator: true,
+			playerOnLeft: newGame.game.state.order[0],
+			replayer: false,
+		})
+		let gameState = getLocalGameState(newGame.game, viewer)
+
+		broadcast([root.players[playerId]], {
+			type: serverMessages.SPECTATE_PRIVATE_GAME_START,
+			localGameState: gameState,
+		})
+	}
+
+	yield* safeCall(fork, gameManager, newGame)
+}
+
 //@Todo fix games from just timing out when player leaves
 export function* createReplayGame(
 	msg: RecievedClientMessage<typeof clientMessages.CREATE_REPLAY_GAME>,
@@ -933,6 +1157,7 @@ export function* createReplayGame(
 		outcome: con.game.outcome
 			? con.game.outcome
 			: {type: 'game-crash', error: 'The replay game did not save properly.'},
+		earnedAchievements: [],
 	})
 
 	delete root.games[con.id]
@@ -976,10 +1201,12 @@ function setupSolitareGame(
 		{
 			model: player,
 			deck: playerDeck.cards.map((card) => card.props.numericId),
+			score: 0,
 		},
 		{
 			model: opponent,
 			deck: opponent.deck,
+			score: 0,
 		},
 		{randomizeOrder: false},
 	)

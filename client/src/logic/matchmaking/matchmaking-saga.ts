@@ -7,7 +7,10 @@ import {Deck} from 'common/types/deck'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import gameSaga from 'logic/game/game-saga'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
-import {getPlayerDeckCode} from 'logic/session/session-selectors'
+import {
+	getPlayerDeckCode,
+	getRematchData,
+} from 'logic/session/session-selectors'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {
@@ -90,6 +93,34 @@ function* sendJoinPrivateQueueMessage(
 			databaseConnected: false,
 			activeDeck: activeDeckResult.activeDeck,
 			code,
+		})
+	}
+}
+
+function* sendRematchQueueMessage(
+	activeDeckResult: activeDeckSagaT,
+	opponentId: string,
+	score: number,
+	spectatorCode: string | null,
+) {
+	if (!activeDeckResult) return
+	if (activeDeckResult.databaseConnected) {
+		yield* sendMsg({
+			type: clientMessages.CREATE_REMATCH_GAME,
+			databaseConnected: true,
+			activeDeckCode: activeDeckResult.activeDeckCode,
+			opponentId,
+			score,
+			spectatorCode,
+		})
+	} else {
+		yield* sendMsg({
+			type: clientMessages.CREATE_REMATCH_GAME,
+			databaseConnected: false,
+			activeDeck: activeDeckResult.activeDeck,
+			opponentId,
+			score,
+			spectatorCode,
 		})
 	}
 }
@@ -514,6 +545,55 @@ function* createBossGameSaga() {
 	}
 }
 
+// Rematches
+function* createRematchSaga() {
+	const socket = yield* select(getSocket)
+	const rematch = yield* select(getRematchData)
+	const activeDeckResult = yield* getActiveDeckSaga()
+
+	if (!rematch) return
+
+	try {
+		// Send message to server to create the game
+		yield* sendRematchQueueMessage(
+			activeDeckResult,
+			rematch.opponentId,
+			rematch.playerScore,
+			rematch.spectatorCode,
+		)
+		const createRematchResponse = yield* race({
+			success: call(receiveMsg(socket, serverMessages.CREATE_REMATCH_SUCCESS)),
+			failure: call(receiveMsg(socket, serverMessages.CREATE_REMATCH_FAILURE)),
+		})
+
+		if (createRematchResponse.failure) {
+			// Something went wrong, notify and cancel
+			yield* put<LocalMessage>({
+				type: localMessages.TOAST_OPEN,
+				open: true,
+				title: 'Failed to start game!',
+				description: 'Your opponent already declined a rematch.',
+			})
+			yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
+			return
+		}
+
+		yield* put<LocalMessage>({
+			type: localMessages.MATCHMAKING_JOIN_QUEUE_SUCCESS,
+		})
+
+		yield call(receiveMsg(socket, serverMessages.GAME_START))
+		yield call(gameSaga)
+	} catch (err) {
+		console.error('Game crashed: ', err)
+	} finally {
+		if (yield* cancelled()) {
+			// Clear state and back to menu
+			yield* put<LocalMessage>({type: localMessages.GAME_END})
+		}
+	}
+}
+
 // @TODO
 function* createReplayGameSaga(
 	action: LocalMessageTable[typeof localMessages.MATCHMAKING_REPLAY_GAME],
@@ -592,6 +672,8 @@ function* matchmakingSaga() {
 	>(localMessages.MATCHMAKING_REPLAY_GAME, function* (action) {
 		yield* createReplayGameSaga(action)
 	})
+	// Rematch
+	yield* takeEvery(localMessages.MATCHMAKING_REMATCH, createRematchSaga)
 }
 
 export default matchmakingSaga

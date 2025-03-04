@@ -7,10 +7,11 @@ import {
 	getAvailableActions,
 	getCurrentCoinFlip,
 	getCurrentPickMessage,
-	getCurrentPlayerState,
+	getCurrentPlayerEntity,
 	getGameState,
 	getIsSpectator,
 	getPlayerState,
+	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
@@ -19,11 +20,13 @@ import css from './actions.module.scss'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
+	gameOver: boolean
 	id?: string
 }
 
-const MobileActions = ({onClick, id}: Props) => {
-	const currentPlayer = useSelector(getCurrentPlayerState)
+const MobileActions = ({onClick, gameOver, id}: Props) => {
+	const currnetPlayerEntity = useSelector(getCurrentPlayerEntity)!
+	const currentPlayer = useSelector(getPlayerStateByEntity(currnetPlayerEntity))
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
 	const isSpectator = useSelector(getIsSpectator)
@@ -113,6 +116,7 @@ const MobileActions = ({onClick, id}: Props) => {
 					type={'single_use'}
 					onClick={handleClick}
 					entity={singleUse?.slot}
+					gameOver={gameOver}
 				/>
 			</div>
 		)

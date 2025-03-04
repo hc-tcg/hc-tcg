@@ -1078,6 +1078,7 @@ export class Database {
 				},
 				deck: player1Deck.sort((a, b) => a - b),
 				uuid: firstPlayerRows[0].user_id,
+				score: 0,
 			}
 
 			const player2Defs: PlayerSetupDefs & {uuid: string} = {
@@ -1090,6 +1091,7 @@ export class Database {
 				},
 				deck: player2Deck.sort((a, b) => a - b),
 				uuid: secondPlayerRows[0].user_id,
+				score: 0,
 			}
 
 			const replayActions = yield* bufferToTurnActions(
@@ -1829,7 +1831,7 @@ export class Database {
 				FROM user_goals
 				LEFT JOIN achievement_completion_time
 				ON user_goals.user_id = achievement_completion_time.user_id AND user_goals.achievement_id = achievement_completion_time.achievement_id
-				WHERE user_goals.user_id = $1;
+				WHERE user_goals.user_id = $1 AND achievement_completion_time.level IS NOT NULL;
 				`,
 				[playerId],
 			)
@@ -1848,8 +1850,9 @@ export class Database {
 				}
 
 				progress[row['achievement_id']].goals[row['goal_id']] = row['progress']
-				progress[row['achievement_id']].levels[row['level']].completionTime =
-					row['completion_time']
+				progress[row['achievement_id']].levels[row['level']] = {
+					completionTime: row['completion_time'],
+				}
 
 				// If we add a new level of an achievement the user may have the goal complete but will not have the achievement.
 				// This code grants the user the level for the achievement the first time they log in after said update.

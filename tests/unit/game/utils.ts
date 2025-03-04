@@ -43,6 +43,7 @@ function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 			uuid: '',
 		},
 		deck,
+		score: 0,
 	}
 }
 
@@ -359,6 +360,7 @@ export function testBossFight(
 				disableDeckingOut: true,
 			},
 			deck: [EvilXisumaBoss],
+			score: 0,
 		},
 		{
 			randomizeOrder: false,

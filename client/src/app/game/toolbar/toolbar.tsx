@@ -13,7 +13,10 @@ import SoundItem from './sfx-item'
 import css from './toolbar.module.scss'
 import TooltipsItem from './tooltips-item'
 
-function Toolbar() {
+function Toolbar({
+	gameOver,
+	gameEndButton,
+}: {gameOver: boolean; gameEndButton: () => void}) {
 	const gameState = useSelector(getGameState)
 	const settings = useSelector(getSettings)
 	const isSpectator = useSelector(getIsSpectator)
@@ -108,10 +111,13 @@ function Toolbar() {
 			<MusicItem />
 
 			{/* Forfeit Game */}
-			{!isSpectator && <ForfeitItem />}
+			{!isSpectator && !gameOver && <ForfeitItem />}
 
 			{/* Forfeit Game */}
-			{isSpectator && <ExitItem />}
+			{isSpectator ||
+				(gameOver && (
+					<ExitItem gameOver={gameOver} gameEndButton={gameEndButton} />
+				))}
 		</div>
 	)
 }

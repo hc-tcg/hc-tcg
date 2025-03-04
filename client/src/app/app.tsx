@@ -61,7 +61,7 @@ function App() {
 
 	const router = () => {
 		if (section === 'game') {
-			return <Game />
+			return <Game setMenuSection={setMenuSection} />
 		} else if (connected && playerName) {
 			enableToast = true
 			switch (menuSection) {
@@ -87,7 +87,20 @@ function App() {
 					return <Credits setMenuSection={menuSectionSet} />
 				case 'play-select':
 					return <PlaySelect setMenuSection={menuSectionSet} />
-
+				case 'play-again':
+					return (
+						<PlaySelect
+							setMenuSection={menuSectionSet}
+							defaultSection={'public'}
+						/>
+					)
+				case 'rematch':
+					return (
+						<PlaySelect
+							setMenuSection={menuSectionSet}
+							defaultSection={'rematch'}
+						/>
+					)
 				case 'main-menu':
 				default:
 					return <MainMenu setMenuSection={menuSectionSet} />

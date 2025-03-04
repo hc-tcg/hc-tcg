@@ -10,7 +10,12 @@ import {
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalGameState} from 'common/types/game-state'
 import {censorString} from 'common/utils/formatting'
-import {setAppearance, setMinecraftName, setUsername} from 'db/db-reciever'
+import {
+	getAchievementProgress,
+	setAppearance,
+	setMinecraftName,
+	setUsername,
+} from 'db/db-reciever'
 import {GameController} from 'game-controller'
 import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
 import {getGame} from 'selectors'
@@ -80,10 +85,13 @@ export function* playerConnectedSaga(
 		return
 	}
 
+	const achievementProgress = yield* getAchievementProgress(playerUuid)
+
 	const newPlayer = new PlayerModel(
 		playerName,
 		minecraftName,
 		playerUuid,
+		achievementProgress,
 		socket,
 	)
 	if (deck) newPlayer.setPlayerDeck(deck)
@@ -182,7 +190,7 @@ export function* updateCosmeticSaga(
 		isUnlocked =
 			!!player.achievementProgress[achievement?.numericId]?.levels[
 				cosmetic.requires.level || 0
-			]?.completionTime
+			]
 	}
 	if (DEBUG_CONFIG.unlockAllCosmetics) isUnlocked = true
 	if (!cosmetic || !isUnlocked) {

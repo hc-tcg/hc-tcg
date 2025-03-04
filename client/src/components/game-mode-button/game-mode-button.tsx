@@ -32,6 +32,10 @@ interface GameModeButtonProps {
 	onSelect: () => void
 	onBack: () => void
 	disableBack: boolean
+	buttonAmount: number
+	disabled?: boolean
+	timerStart?: number
+	timerLength?: number
 }
 
 function GameModeButton({
@@ -46,6 +50,10 @@ function GameModeButton({
 	onSelect,
 	onBack,
 	disableBack,
+	buttonAmount,
+	disabled,
+	timerStart,
+	timerLength,
 }: GameModeButtonProps) {
 	const buttonRef = useRef<HTMLDivElement>(null)
 	const backgroundRef = useRef<HTMLDivElement>(null)
@@ -53,6 +61,11 @@ function GameModeButton({
 	const returnButtonRef = useRef<HTMLDivElement>(null)
 
 	const [lastMode, setLastMode] = useState<string | null>(null)
+	const [timer, setTimer] = useState(
+		timerStart && timerLength
+			? Math.max(Math.floor((timerStart - Date.now() + timerLength) / 1000), 0)
+			: 0,
+	)
 
 	const onMobile = window.screen.width <= 720
 
@@ -85,6 +98,15 @@ function GameModeButton({
 			}
 		}
 	}
+
+	//Handle Timer
+	useEffect(() => {
+		if (timerLength === undefined && timerStart === undefined) return
+		setTimeout(() => {
+			if (timer <= 0) return
+			setTimer(timer - 1)
+		}, 1000)
+	})
 
 	useEffect(() => {
 		if (!buttonPosition) {
@@ -183,9 +205,14 @@ function GameModeButton({
 
 	return (
 		<div
-			className={classNames(css.buttonContainer, css.enablePointer)}
+			className={classNames(
+				css.buttonContainer,
+				css.enablePointer,
+				buttonAmount === 4 && css.fourButtons,
+			)}
 			onMouseDown={(ev) => {
 				if (ev.button !== 0) return
+				if (disabled) return
 				if (mode !== activeMode) {
 					setActiveMode(mode)
 					if (onSelect) onSelect()
@@ -194,7 +221,12 @@ function GameModeButton({
 			ref={buttonRef}
 		>
 			<div
-				className={classNames(css.backgroundContainer, css.show)}
+				className={classNames(
+					css.backgroundContainer,
+					css.show,
+					disabled && css.disabled,
+					buttonAmount === 4 && css.fourButtons,
+				)}
 				ref={backgroundRef}
 			>
 				<img
@@ -226,6 +258,11 @@ function GameModeButton({
 						<div className={css.spacer}></div>
 						<div className={css.text}>
 							<h1>{title}</h1>
+							{timerStart !== undefined && timerLength !== undefined && (
+								<div className={css.rematchTimeRemaining}>
+									{timer}s Remaining
+								</div>
+							)}
 							<p>{description}</p>
 						</div>
 					</div>
@@ -616,30 +653,5 @@ GameModeButton.CustomMenu = ({
 
 	return <div className={css.buttonMenu}>{children}</div>
 }
-
-/*
-				
-							<div className={css.buttonMenu}>
-								{!lobbyCreated && !queueStatus && (
-								)}
-								{lobbyCreated && (
-									<div className={css.queueMenu}>
-										<div>
-											<p>Opponent Code</p>
-											<div className={css.code} onClick={handleCodeClick}>
-												<CopyIcon /> {gameCode}
-											</div>
-											<p>Spectator Code</p>
-											<div
-												className={css.code}
-												onClick={handleSpectatorCodeClick}
-											>
-												<CopyIcon /> {spectatorCode}
-											</div>
-										</div>
-									</div>
-								)}
-							</div>
-				*/
 
 export default GameModeButton

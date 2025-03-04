@@ -23,6 +23,8 @@ type Props = {
 		row?: number,
 		index?: number,
 	) => void
+	gameOver: boolean
+	gameEndButton: () => void
 }
 
 function getPlayerRowEntities(playerEntity: PlayerEntity) {
@@ -33,7 +35,8 @@ function getPlayerRowEntities(playerEntity: PlayerEntity) {
 	}
 }
 
-function Board({onClick}: Props) {
+// TODO - Use selectors instead of passing gameState
+function Board({onClick, gameOver, gameEndButton}: Props) {
 	const settings = useSelector(getSettings)
 	const playerEntity = useSelector(getPlayerEntity)
 	const opponentEntity = useSelector(getOpponentEntity)
@@ -84,6 +87,7 @@ function Board({onClick}: Props) {
 								handleRowClick(rowIndex, playerEntity, ...args)
 							}
 							type={direction}
+							gameOver={gameOver}
 						/>
 					)
 				})}
@@ -95,7 +99,7 @@ function Board({onClick}: Props) {
 		<div className={css.gameBoard}>
 			<div className={css.playerInfoSection}>
 				<PlayerInfo playerEntity={leftPlayerEntity} direction="left" />
-				<Timer />
+				<Timer gameOver={gameOver} />
 				<PlayerInfo playerEntity={rightPlayerEntity} direction="right" />
 			</div>
 
@@ -104,6 +108,8 @@ function Board({onClick}: Props) {
 				<Actions
 					onClick={(value) => onClick(value, playerEntity)}
 					id={css.actions}
+					gameEndButton={gameEndButton}
+					gameOver={gameOver}
 				/>
 				{PlayerBoard(rightPlayerEntity, rightPlayerRows, 'right')}
 			</div>
@@ -111,6 +117,7 @@ function Board({onClick}: Props) {
 			<MobileActions
 				onClick={(value) => onClick(value, playerEntity)}
 				id={css.actions}
+				gameOver={gameOver}
 			/>
 		</div>
 	)
