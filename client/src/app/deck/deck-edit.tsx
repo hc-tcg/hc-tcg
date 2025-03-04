@@ -283,6 +283,7 @@ function EditDeck({
 	const [validDeckName, setValidDeckName] = useState<boolean>(true)
 	const [isPublic, setIsPublic] = useState<boolean>(loadedDeck.public)
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
+	const [showClearCardsModal, setShowClearCardsModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
 	const [color, setColor] = useState('#ff0000')
 	const [nextKey, setNextKey] = useState<string>(generateDatabaseCode())
@@ -490,7 +491,15 @@ function EditDeck({
 				onCancel={() => setShowUnsavedModal(!showUnsavedModal)}
 				onConfirm={back}
 			/>
-			<DeckLayout title={title} back={handleBack} returnText="Deck Editor">
+			<ConfirmModal
+				setOpen={showClearCardsModal}
+				title="Remove all cards"
+				description="Are you sure you want to remove all cards from your deck?"
+				confirmButtonText="Clear"
+				onCancel={() => {}}
+				onConfirm={clearDeck}
+			/>
+			<DeckLayout title={title} back={handleBack} returnText="Deck Selection">
 				<DeckLayout.Main
 					header={
 						<>
@@ -740,7 +749,7 @@ function EditDeck({
 									<Button
 										variant="default"
 										size="small"
-										onClick={clearDeck}
+										onClick={() => setShowClearCardsModal(true)}
 										className={css.removeButton}
 									>
 										Remove All

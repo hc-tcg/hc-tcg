@@ -1473,7 +1473,7 @@ function Statistics({setMenuSection}: Props) {
 			{showInvalidReplayModal && (
 				<Modal
 					setOpen
-					title={'Invalid Replay Requeted'}
+					title={'Invalid Replay Requested'}
 					onClose={() => {
 						setShowInvalidReplayModal(false)
 						dispatch({
