@@ -38,6 +38,7 @@
 	overflow-y: hidden;
 	display: flex;
 	flex-direction: column;
+	width: 100%;
 }
 
 .itemSelector {
@@ -45,7 +46,8 @@
 	border: 2px black solid;
 	border-top: 0px;
 	background-color: var(--gray-600);
-	overflow-y: auto;
+	overflow-y: hidden;
+	height: 100%;
 }
 
 .nameSelector {
@@ -57,11 +59,38 @@
 	width: 100%;
 }
 
+.achievementsHeader {
+	display: flex;
+	gap: 2rem;
+	flex-direction: row;
+	position: static;
+	color: white;
+	font-size: 1rem;
+	margin-bottom: 1rem;
+	height: 2rem;
+	align-items: center;
+}
+
 .appearanceHeader {
 	color: white;
 	width: 100%;
 	text-align: center;
 	padding-bottom: 1rem;
+}
+
+.checkboxes {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+	height: 25px;
+	line-height: 25px;
+}
+
+.achievementsInput {
+	height: 2rem;
+	background-color: var(--gray-300);
+	color: black;
+	flex-grow: 1;
 }
 
 .achievements {
@@ -70,7 +99,7 @@
 	flex-direction: column;
 	gap: 0.5vh;
 	overflow-y: auto;
-	height: 100%;
+	height: calc(100% - 2.7rem);
 }
 
 .cosmeticsContainer {
@@ -93,6 +122,14 @@
 	flex-wrap: wrap;
 }
 
+.cosmeticsTitles {
+	display: grid;
+	grid-auto-flow: row;
+	width: 100%;
+	grid-template-columns: 1fr 1fr;
+	gap: 1vh;
+}
+
 .cosmeticItem {
 	height: 12vh;
 	width: 12vh;
@@ -110,6 +147,11 @@
 
 	background-color: var(--gray-700);
 	transform: translateY(0px);
+
+	&.title {
+		height: 2rem;
+		width: 100%;
+	}
 
 	&:not(.unlocked) {
 		background-color: var(--gray-900);
@@ -161,8 +203,16 @@
 	font-size: 0.9rem;
 	color: var(--text-light);
 
-	filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black)
-		drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
+	:not(img) {
+		filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black)
+			drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
+	}
+
+	> img {
+		margin-right: 0.5rem;
+		filter: drop-shadow(1px 0px 0 white) drop-shadow(-1px 0px 0 white)
+			drop-shadow(0px 1px 0 white) drop-shadow(0px -1px 0 white);
+	}
 }
 
 .cosmeticBorder {
@@ -346,14 +396,16 @@ h2 {
 }
 
 @media screen and (max-width: 720px) {
-	.body {
-		flex-direction: column;
-	}
-
 	.leftSideCosmetics {
 		width: 95vw;
 		gap: 1rem;
 		margin-left: 0rem;
+	}
+
+	.body {
+		&.rewardsBody {
+			flex-direction: column;
+		}
 	}
 
 	.hideOnMobile {
@@ -362,5 +414,34 @@ h2 {
 
 	.tooltip {
 		max-width: 90vw;
+	}
+
+	.cosmeticsTitles {
+		grid-template-columns: 1fr;
+	}
+
+	.achievementsHeader {
+		flex-direction: column;
+		gap: 0.25rem;
+		margin-bottom: 0.5rem;
+		justify-content: left;
+		height: 5.5rem;
+
+		.sectionHeader {
+			display: none;
+		}
+
+		input {
+			height: 1.5rem;
+			width: 100%;
+		}
+	}
+
+	.checkboxes {
+		width: 100%;
+	}
+
+	.achievements {
+		height: calc(100% - 6rem);
 	}
 }
