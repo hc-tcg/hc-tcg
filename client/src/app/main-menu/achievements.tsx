@@ -14,6 +14,7 @@ import {
 } from 'common/cosmetics/types'
 import AchievementComponent from 'components/achievement'
 import Button from 'components/button'
+import Checkbox from 'components/checkbox'
 import MenuLayout from 'components/menu-layout'
 import Tabs from 'components/tabs/tabs'
 import Tooltip from 'components/tooltip'
@@ -26,7 +27,6 @@ import {getSession} from 'logic/session/session-selectors'
 import {useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './achievements.module.scss'
-import Checkbox from 'components/checkbox'
 
 type Pages = 'achievements' | 'rewards'
 
