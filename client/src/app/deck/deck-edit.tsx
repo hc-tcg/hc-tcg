@@ -489,9 +489,8 @@ function EditDeck({
 			/>
 			<ConfirmModal
 				setOpen={showClearCardsModal}
-				title="Clear all cards"
 				title="Remove all cards"
-				description="Are you sure you want to remove all the cards in your deck?"
+				description="Are you sure you want to remove all cards from your deck?"
 				confirmButtonText="Clear"
 				onCancel={() => {}}
 				onConfirm={clearDeck}
