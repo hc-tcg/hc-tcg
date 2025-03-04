@@ -204,6 +204,7 @@ const addTag = (
 	if (tags.includes(tag)) return
 	if (tags.length >= 3) return
 	if (tag.name.length === 0) return
+	ev.currentTarget.tag.value = ''
 	setTags([...tags, tag])
 	setColor(color)
 }
@@ -456,9 +457,12 @@ function EditDeck({
 	}
 	const saveAndReturn = (deck: Deck, type: 'insert' | 'update') => {
 		const newTags = deck.tags.reduce((r: Array<Tag>, tag) => {
-			if (databaseInfo.tags.find((subtag) => subtag.key === tag.key)) return r
+			if ([...databaseInfo.tags, ...r].find((subtag) => subtag.key === tag.key))
+				return r
 			return [...r, tag]
 		}, [])
+
+		console.log(newTags)
 
 		databaseInfo.tags.push(...newTags)
 		if (type === 'insert') saveDeck(deck)
@@ -824,11 +828,7 @@ function EditDeck({
 												className={css.fullTag}
 												onClick={() =>
 													setTags(
-														tags.filter(
-															(subtag) =>
-																subtag.name !== tag.name &&
-																subtag.color !== tag.color,
-														),
+														tags.filter((subtag) => subtag.key !== tag.key),
 													)
 												}
 											>
