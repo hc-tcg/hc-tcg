@@ -1,6 +1,6 @@
 import {PlayerEntity, SlotEntity} from 'common/entities'
 import {SlotTypeT} from 'common/types/cards'
-import {LocalGameState, LocalPlayerState} from 'common/types/game-state'
+import {LocalPlayerState} from 'common/types/game-state'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
 import {getOpponentState, getPlayerState} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
@@ -19,11 +19,10 @@ type Props = {
 		row?: number,
 		index?: number,
 	) => void
-	localGameState: LocalGameState
 }
 
 // TODO - Use selectors instead of passing gameState
-function Board({onClick, localGameState}: Props) {
+function Board({onClick}: Props) {
 	const settings = useSelector(getSettings)
 	const player = useSelector(getPlayerState)
 	const opponent = useSelector(getOpponentState)

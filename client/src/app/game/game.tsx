@@ -5,6 +5,9 @@ import {equalCard} from 'common/utils/cards'
 import CardList from 'components/card-list'
 import {
 	getAvailableActions,
+	getCurrentModalData,
+	getCurrentPickMessage,
+	getCurrentPlayerEntity,
 	getEndGameOverlay,
 	getGameState,
 	getIsSpectator,
@@ -13,6 +16,7 @@ import {
 	getPlayerEntity,
 	getPlayerState,
 	getSelectedCard,
+	getTurnNumber,
 } from 'logic/game/game-selectors'
 import {
 	MODAL_COMPONENTS,
@@ -310,7 +314,12 @@ function RequiresAvaiableActions() {
 }
 
 function Game() {
-	const gameState = useSelector(getGameState)
+	const turnNumber = useSelector(getTurnNumber)
+	const playerEntity = useSelector(getPlayerEntity)
+	const currentPlayerEntity = useSelector(getCurrentPlayerEntity)
+	const currentPickMessage = useSelector(getCurrentPickMessage)
+	const currentModalData = useSelector(getCurrentModalData)
+
 	const hasPlayerState = useSelector(
 		(root: RootState) => getPlayerState(root) !== null,
 	)
@@ -349,25 +358,18 @@ function Game() {
 
 	// Play SFX on turn start or when the player enters a game
 	useEffect(() => {
-		if (
-			gameState.turn.turnNumber === 1 ||
-			gameState.turn.currentPlayerEntity === gameState.playerEntity
-		) {
+		if (turnNumber === 1 || currentPlayerEntity === playerEntity) {
 			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
 		}
-	}, [gameState.turn.currentPlayerEntity])
+	}, [currentPlayerEntity])
 
 	// Play sound on custom modal or pick request activation
 	useEffect(() => {
-		const someCustom =
-			gameState.currentPickMessage || gameState.currentModalData
-		if (
-			someCustom &&
-			gameState.turn.currentPlayerEntity !== gameState.playerEntity
-		) {
+		const someCustom = currentPickMessage || currentModalData
+		if (someCustom && currentPlayerEntity !== playerEntity) {
 			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
 		}
-	}, [gameState.currentPickMessage, gameState.currentModalData])
+	}, [currentPickMessage, currentModalData])
 
 	// Initialize Game Screen Resizing and Event Listeners
 	useEffect(() => {
@@ -389,7 +391,7 @@ function Game() {
 					style={{transform: `scale(${gameScale})`}}
 				>
 					<div className={css.grid} />
-					<Board onClick={handleBoardClick} localGameState={gameState} />
+					<Board onClick={handleBoardClick} />
 				</div>
 			</div>
 			<div className={css.bottom}>

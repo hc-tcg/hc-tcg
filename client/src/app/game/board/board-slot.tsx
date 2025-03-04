@@ -1,5 +1,5 @@
 import classnames from 'classnames'
-import {SlotEntity} from 'common/entities'
+import {CardEntity, SlotEntity} from 'common/entities'
 import {SlotTypeT} from 'common/types/cards'
 import {LocalRowState} from 'common/types/game-state'
 import {
@@ -9,12 +9,15 @@ import {
 import Card from 'components/card'
 import {
 	getCardsCanBePlacedIn,
-	getGameState,
+	getCurrentPlayerEntity,
 	getPickRequestPickableSlots,
+	getPlayerEntity,
 	getSelectedCard,
+	getStatusEffects,
 } from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {useSelector} from 'react-redux'
+import {RootState} from 'store'
 import StatusEffectContainer from './board-status-effects'
 import css from './board.module.scss'
 
@@ -28,20 +31,27 @@ export type SlotProps = {
 	cssId?: string
 	statusEffects?: Array<LocalStatusEffectInstance>
 }
-const Slot = ({
-	type,
-	entity,
-	onClick,
-	card,
-	active,
-	statusEffects,
-	cssId,
-}: SlotProps) => {
+
+const getStatusEffectsForSlot =
+	(slotType: SlotTypeT, card: CardEntity | null) => (state: RootState) => {
+		return getStatusEffects(state).filter(
+			(a) =>
+				a.target.type === 'card' &&
+				a.target.card === card &&
+				slotType != 'hermit',
+		)
+	}
+
+const Slot = ({type, entity, onClick, card, active, cssId}: SlotProps) => {
 	const settings = useSelector(getSettings)
 	const cardsCanBePlacedIn = useSelector(getCardsCanBePlacedIn)
 	const pickRequestPickableCard = useSelector(getPickRequestPickableSlots)
 	const selectedCard = useSelector(getSelectedCard)
-	const localGameState = useSelector(getGameState)
+	const statusEffects = useSelector(
+		getStatusEffectsForSlot(type, card?.entity ?? null),
+	)
+	const playerEntity = useSelector(getPlayerEntity)
+	const currentPlayerEntity = useSelector(getCurrentPlayerEntity)
 
 	const frameImg =
 		type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
@@ -77,9 +87,7 @@ const Slot = ({
 	let isClickable = false
 
 	if (
-		(localGameState &&
-			localGameState.playerEntity ===
-				localGameState.turn.currentPlayerEntity) ||
+		playerEntity === currentPlayerEntity ||
 		pickRequestPickableCard !== null
 	) {
 		isPickable = getIsPickable()
@@ -120,7 +128,7 @@ const Slot = ({
 			) : (
 				<img draggable="false" className={css.frame} src={frameImg} />
 			)}
-			<StatusEffectContainer statusEffects={statusEffects || []} />
+			<StatusEffectContainer statusEffects={statusEffects} />
 		</button>
 	)
 }

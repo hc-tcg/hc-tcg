@@ -2,11 +2,14 @@ import cn from 'classnames'
 import {PlayerEntity, SlotEntity} from 'common/entities'
 import {BoardSlotTypeT, SlotTypeT} from 'common/types/cards'
 import {LocalRowState} from 'common/types/game-state'
+import {LocalCardInstance} from 'common/types/server-requests'
 import {
-	LocalCardInstance,
-	LocalStatusEffectInstance,
-} from 'common/types/server-requests'
-import {getGameState, getSelectedCard} from 'logic/game/game-selectors'
+	getCurrentPlayerEntity,
+	getPickRequestPickableSlots,
+	getPlayerEntity,
+	getSelectedCard,
+	getStatusEffects,
+} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {useSelector} from 'react-redux'
 import HealthSlot from './board-health'
@@ -36,25 +39,20 @@ type BoardRowProps = {
 	) => void
 	rowState: LocalRowState
 	active: boolean
-	statusEffects: Array<LocalStatusEffectInstance>
 }
 
-const BoardRow = ({
-	type,
-	player,
-	onClick,
-	rowState,
-	active,
-	statusEffects,
-}: BoardRowProps) => {
+const BoardRow = ({type, player, onClick, rowState, active}: BoardRowProps) => {
 	const settings = useSelector(getSettings)
-	const localGameState = useSelector(getGameState)
 	const selectedCard = useSelector(getSelectedCard)
+	const statusEffects = useSelector(getStatusEffects)
+	const playerEntity = useSelector(getPlayerEntity)
+	const currentPickableSlots = useSelector(getPickRequestPickableSlots)
+	const currentPlayerEntity = useSelector(getCurrentPlayerEntity)
 
 	let shouldDim = !!(
 		settings.slotHighlightingEnabled &&
-		(selectedCard || localGameState?.currentPickableSlots) &&
-		localGameState?.turn.currentPlayerEntity === localGameState?.playerEntity
+		(selectedCard || currentPickableSlots) &&
+		currentPlayerEntity === playerEntity
 	)
 
 	const itemSlots = rowState.items.length
@@ -89,12 +87,6 @@ const BoardRow = ({
 				active={active}
 				key={slotType + '-' + slotIndex}
 				type={slotType}
-				statusEffects={statusEffects.filter(
-					(a) =>
-						a.target.type === 'card' &&
-						a.target.card === slot.card?.entity &&
-						slotType != 'hermit',
-				)}
 			/>
 		)
 	})
