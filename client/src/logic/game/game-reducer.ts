@@ -28,6 +28,7 @@ type LocalGameRoot = {
 	battleLog: BattleLogModel | null
 	currentCoinFlip: LocalCurrentCoinFlip | null
 	opponentConnected: boolean
+	spectatorCode: string | null
 }
 
 const defaultState: LocalGameRoot = {
@@ -41,6 +42,7 @@ const defaultState: LocalGameRoot = {
 	battleLog: null,
 	currentCoinFlip: null,
 	opponentConnected: true,
+	spectatorCode: null,
 }
 
 const gameReducer = (
@@ -86,6 +88,10 @@ const gameReducer = (
 				chat: [],
 				battleLog: null,
 				opponentConnected: true,
+				spectatorCode:
+					action.type === localMessages.GAME_START
+						? (action.spectatorCode ?? null)
+						: null,
 			}
 
 		case localMessages.GAME_CARD_SELECTED_SET:
@@ -122,6 +128,7 @@ const gameReducer = (
 				...state,
 				currentCoinFlip: action.coinFlip,
 			}
+
 		// Update the board for the current player. This is used to put cards on the board before the
 		// server sends the new state.
 		// This updates based on outside mutations because I am so confused by redux and I want to ship
