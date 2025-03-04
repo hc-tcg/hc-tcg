@@ -38,7 +38,7 @@ const OreSnatcher: Achievement = {
 					query.slot.player(player.entity),
 				)
 				if (!SUSlot) return
-				if (SUSlot.getCard()?.props !== Emerald) return
+				if (SUSlot.card?.props !== Emerald) return
 				if (!Armor.includes(player.activeRow?.getAttach()?.props.id || ''))
 					return
 
