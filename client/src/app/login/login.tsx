@@ -175,7 +175,9 @@ const Login = () => {
 						</div>
 					</div>
 				)}
-				{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
+				<div className={css.errorBanner}>
+					{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
+				</div>
 				<VersionLinks />
 				<Beef />
 			</div>
