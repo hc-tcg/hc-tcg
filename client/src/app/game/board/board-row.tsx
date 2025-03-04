@@ -50,9 +50,10 @@ function getRowState(playerEntity: PlayerEntity, rowEntity: RowEntity) {
 	}
 }
 
-function getActiveRow(playerEntity: PlayerEntity) {
+function isActiveRow(playerEntity: PlayerEntity, rowEntity: RowEntity) {
 	return (state: RootState) => {
-		return getPlayerStateByEntity(playerEntity)(state).board.activeRow
+		return (getPlayerStateByEntity(playerEntity)(state).board.activeRow =
+			rowEntity)
 	}
 }
 
@@ -69,9 +70,7 @@ const BoardRow = ({
 	const currentPickableSlots = useSelector(getPickRequestPickableSlots)
 	const currentPlayerEntity = useSelector(getCurrentPlayerEntity)
 	const rowState = useSelector(getRowState(player, rowEntity))
-	const activeRow = useSelector(getActiveRow(player))
-
-	const active = rowEntity === activeRow
+	const active = useSelector(isActiveRow(player, rowEntity))
 
 	if (!rowState) throw new Error('Row state should always be defined')
 
