@@ -143,6 +143,8 @@ function Dropdown() {
 				dropdown={dropdown.dropdown}
 				x={dropdown.x}
 				y={dropdown.y}
+				direction={dropdown.direction}
+				align={dropdown.align}
 			/>
 		)
 	)

@@ -279,6 +279,8 @@ type Messages = [
 		dropdown: React.ReactNode
 		x: number
 		y: number
+		direction: 'up' | 'down'
+		align: 'left' | 'right'
 	},
 	{type: typeof localMessages.HIDE_DROPDOWN},
 	{

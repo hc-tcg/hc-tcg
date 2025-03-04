@@ -79,21 +79,15 @@ const Dropdown = ({
 			})
 	}
 
-	const onTouchStart = (e: TouchEvent) => {
-		calculateShow(e.touches[0].clientX, e.touches[0].clientY)
-	}
-
 	const onMouseUp = (e: MouseEvent) => {
 		calculateShow(e.x, e.y)
 	}
 
 	useEffect(() => {
 		window.addEventListener('mouseup', onMouseUp, false)
-		window.addEventListener('touchstart', onTouchStart, false)
 
 		return () => {
 			window.removeEventListener('mouseup', onMouseUp, false)
-			window.removeEventListener('touchstart', onTouchStart, false)
 		}
 	})
 
@@ -155,8 +149,7 @@ const Dropdown = ({
 							{options.map((option, i) => (
 								<div
 									key={option.key || option.name}
-									onTouchStart={() => mouseDownAction(option)}
-									onMouseUp={() => mouseDownAction(option)}
+									onMouseDown={() => mouseDownAction(option)}
 									className={css.DropdownMenuItem}
 								>
 									{checkboxes && (
@@ -265,6 +258,8 @@ const DropdownButton = ({
 			),
 			x: boundingBox.x,
 			y: boundingBox.y,
+			direction: direction || 'down',
+			align: align || 'left',
 		})
 	}
 
@@ -285,16 +280,28 @@ export const CurrentDropdown = ({
 	dropdown,
 	x,
 	y,
-}: {dropdown: ReactNode; x: number; y: number}) => {
+	direction,
+	align,
+}: {
+	dropdown: ReactNode
+	x: number
+	y: number
+	direction: 'up' | 'down'
+	align: 'left' | 'right'
+}) => {
 	return (
 		<div
 			className={css.currentDropdown}
 			style={{
-				top: `calc(${y}px + 2rem)`,
-				left: x,
+				top: direction === 'down' ? `calc(${y}px + 2rem)` : 0,
+				left: align === 'left' ? x : 0,
 				overflow: 'hidden',
-				height: `calc(${window.screen.height - y}px - 2rem)`,
-				width: window.screen.width - x,
+				height:
+					direction === 'down'
+						? `calc(${window.screen.height - y}px - 2rem)`
+						: y,
+				width:
+					align === 'left' ? window.screen.width - x : `calc(${x}px + 2rem)`,
 			}}
 		>
 			{dropdown}
