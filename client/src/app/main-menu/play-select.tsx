@@ -329,6 +329,7 @@ function PlaySelect({
 								title="Choose your deck"
 								subTitle="When ready, press the Join Queue button to begin."
 								confirmMessage="Join Queue"
+								disableButton={loadedDeck === undefined}
 								onConfirm={() => {
 									const valid = checkForValidation()
 									if (!valid) return
@@ -425,6 +426,7 @@ or create your own game to challenge someone else."
 								confirmMessage="Confirm"
 								requestCode
 								defaultCode={prefillJoinCode}
+								disableButton={loadedDeck === undefined}
 								onConfirm={(code) => {
 									const valid = checkForValidation()
 									if (!valid) return
@@ -480,8 +482,9 @@ or create your own game to challenge someone else."
 								activeButtonMenu={activeButtonMenu}
 								id="createPrivateGame"
 								title="Create Private Game"
-								subTitle="Choose your deck, then press the Create Game button to begin."
-								confirmMessage="Create Game"
+								subTitle="Choose your deck, then press the Confirm button to begin."
+								confirmMessage="Confirm"
+								disableButton={loadedDeck === undefined}
 								onConfirm={() => {
 									const valid = checkForValidation()
 									if (!valid) return
@@ -672,6 +675,7 @@ during the battle."
 								title="Choose your deck"
 								subTitle="When ready, press the Fight! button to begin."
 								confirmMessage="Fight!"
+								disableButton={loadedDeck === undefined}
 								onConfirm={() => {
 									const valid = checkForValidation()
 									if (!valid) return
@@ -716,6 +720,7 @@ during the battle."
 									title="Choose your deck"
 									subTitle={`Current score: ${rematch?.playerScore} - ${rematch?.opponentScore}`}
 									confirmMessage="Rematch"
+									disableButton={loadedDeck === undefined}
 									onConfirm={() => {
 										const valid = checkForValidation()
 										if (!valid) return
@@ -753,7 +758,10 @@ during the battle."
 					<i>Click to change</i>
 				</p>
 				<div
-					className={css.appearance}
+					className={classNames(
+						css.appearance,
+						!matchmaking && css.appearanceClickable,
+					)}
 					onClick={() => !matchmaking && setMenuSection('cosmetics')}
 				>
 					<CosmeticPreview />
