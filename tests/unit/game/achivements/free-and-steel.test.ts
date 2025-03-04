@@ -1,23 +1,15 @@
 import {describe, expect, test} from '@jest/globals'
-import GoFish from 'common/achievements/go-fish'
-import {GoldArmor, IronArmor} from 'common/cards/attach/armor'
+import FreeAndSteel from 'common/achievements/free-and-steel'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
-import FishingRod from 'common/cards/single-use/fishing-rod'
-import Mending from 'common/cards/single-use/mending'
-import query from 'common/components/query'
+import BalancedItem from 'common/cards/items/balanced-common'
+import FlintAndSteel from 'common/cards/single-use/flint-and-steel'
 import {
 	applyEffect,
-	attack,
 	endTurn,
 	forfeit,
-	pick,
 	playCardFromHand,
 	testAchivement,
 } from '../utils'
-import FreeAndSteel from 'common/achievements/free-and-steel'
-import FlintAndSteel from 'common/cards/single-use/flint-and-steel'
-import BalancedItem from 'common/cards/items/balanced-common'
 
 describe('Test Free & Steel Achievement', () => {
 	test('Test achievement is when hand only contains flint and steel', () => {
