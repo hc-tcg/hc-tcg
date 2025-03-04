@@ -1,7 +1,7 @@
 import {CopyIcon} from 'components/svgs'
+import {localMessages} from 'logic/messages'
+import {useDispatch} from 'react-redux'
 import css from './toolbar.module.scss'
-import { useDispatch } from 'react-redux'
-import { localMessages } from 'logic/messages'
 
 function SpectatorCodeButton({spectatorCode}: {spectatorCode?: string | null}) {
 	if (!spectatorCode) return null
