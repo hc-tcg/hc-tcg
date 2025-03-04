@@ -39,9 +39,13 @@ test('sync works as expected', async ({context}) => {
 	assert(userId)
 	assert(secret)
 
-	await newTab.getByLabel('Account UUID').fill(userId)
-	await newTab.getByLabel('Account Secret').fill(secret)
-	await newTab.getByRole('button', {name: 'Sync'}).press('Enter')
+	await newTab.getByRole('button', {name: 'Sync Account'}).press('Enter')
+	await newTab.getByPlaceholder('UUID').fill(userId)
+	await newTab.getByPlaceholder('Secret').fill(secret)
+	// Match to "Sync" but not "Sync Account"
+	await newTab
+		.getByRole('button', {name: new RegExp('Sync[^w]')})
+		.press('Enter')
 
 	await page.waitForFunction(() => global.getState().session.connected)
 	expect(await page.evaluate(() => global.getState().session.playerName)).toBe(
