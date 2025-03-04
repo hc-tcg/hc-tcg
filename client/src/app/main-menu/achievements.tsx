@@ -270,7 +270,9 @@ function Cosmetics({setMenuSection, page}: Props) {
 			returnText="Main Menu"
 			className={css.cosmeticsLayout}
 		>
-			<div className={css.body}>
+			<div
+				className={classNames(css.body, tab === 'rewards' && css.rewardsBody)}
+			>
 				<div className={css.body2}>
 					<Tabs
 						selected={tab}

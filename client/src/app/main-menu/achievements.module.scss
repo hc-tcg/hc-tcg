@@ -402,6 +402,12 @@ h2 {
 		margin-left: 0rem;
 	}
 
+	.body {
+		&.rewardsBody {
+			flex-direction: column;
+		}
+	}
+
 	.hideOnMobile {
 		display: none;
 	}
