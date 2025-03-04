@@ -58,9 +58,11 @@ test('login works after initial attempt fails', async ({context}) => {
 	await page.goto('/?showUpdatesModal=false')
 
 	// Bogus data that will make the login attempt fail
-	await page.getByLabel('Account UUID').fill('zundazundazunda')
-	await page.getByLabel('Account Secret').fill('mochimochimochi')
-	await page.getByRole('button', {name: 'Sync'}).press('Enter')
+	await page.getByRole('button', {name: 'Sync Account'}).press('Enter')
+	await page.getByPlaceholder('UUID').fill('zundazundazunda')
+	await page.getByPlaceholder('Secret').fill('mochimochimochi')
+	// Match to "Sync" but not "Sync Account"
+	await page.getByRole('button', {name: new RegExp('Sync[^w]')}).press('Enter')
 
 	await page.getByLabel('Player Name').waitFor()
 	await page.getByLabel('Player Name').fill('Test Player')
