@@ -52,8 +52,10 @@ function getRowState(playerEntity: PlayerEntity, rowEntity: RowEntity) {
 
 function isActiveRow(playerEntity: PlayerEntity, rowEntity: RowEntity) {
 	return (state: RootState) => {
-		return (getPlayerStateByEntity(playerEntity)(state).board.activeRow =
-			rowEntity)
+		return (
+			getPlayerStateByEntity(playerEntity)(state).board.activeRow ===
+				rowEntity || false
+		)
 	}
 }
 
