@@ -121,7 +121,7 @@ const Slot = ({
 			) : (
 				<img draggable="false" className={css.frame} src={frameImg} />
 			)}
-			<StatusEffectContainer statusEffects={statusEffects} />
+			<StatusEffectContainer statusEffects={statusEffects || []} />
 		</button>
 	)
 }

@@ -117,7 +117,7 @@ const BoardRow = ({
 				statusEffects={statusEffects.filter(
 					(a) =>
 						a.target.type === 'card' &&
-						a.target.card === slot.card.entity &&
+						a.target.card === slot.card?.entity &&
 						slotType != 'hermit',
 				)}
 				type={slotType}
