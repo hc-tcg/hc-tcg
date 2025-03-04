@@ -1,11 +1,6 @@
 import {ComponentQuery} from '.'
 import query from '.'
-import {
-	CardComponent,
-	RowComponent,
-	SlotComponent,
-	StatusEffectComponent,
-} from '..'
+import {RowComponent, SlotComponent, StatusEffectComponent} from '..'
 import {Card} from '../../cards/types'
 import {PlayerEntity, RowEntity, SlotEntity} from '../../entities'
 import {StatusEffect} from '../../status-effects/status-effect'

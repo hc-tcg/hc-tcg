@@ -243,26 +243,22 @@ describe('Test Cyberpunk Impulse', () => {
 				yield* endTurn(game)
 
 				expect(
-					game.components
-						.find(
-							SlotComponent,
-							query.slot.currentPlayer,
-							query.slot.item,
-							query.slot.rowIndex(0),
-							query.slot.index(0),
-						)
-						?.card?.props,
+					game.components.find(
+						SlotComponent,
+						query.slot.currentPlayer,
+						query.slot.item,
+						query.slot.rowIndex(0),
+						query.slot.index(0),
+					)?.card?.props,
 				).toStrictEqual(FarmDoubleItem)
 				expect(
-					game.components
-						.find(
-							SlotComponent,
-							query.slot.currentPlayer,
-							query.slot.item,
-							query.slot.rowIndex(1),
-							query.slot.index(0),
-						)
-						?.card?.props,
+					game.components.find(
+						SlotComponent,
+						query.slot.currentPlayer,
+						query.slot.item,
+						query.slot.rowIndex(1),
+						query.slot.index(0),
+					)?.card?.props,
 				).toStrictEqual(FarmItem)
 				expect(
 					game.currentPlayer.getDiscarded().map((card) => card.props),

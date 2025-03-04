@@ -103,15 +103,13 @@ describe('Test DM Tango Lackey', () => {
 				yield* attack(game, 'primary')
 				expect(game.state.pickRequests).toHaveLength(0)
 				expect(
-					game.components
-						.find(
-							SlotComponent,
-							query.slot.currentPlayer,
-							query.slot.item,
-							query.slot.rowIndex(1),
-							query.slot.index(0),
-						)
-						?.card?.props,
+					game.components.find(
+						SlotComponent,
+						query.slot.currentPlayer,
+						query.slot.item,
+						query.slot.rowIndex(1),
+						query.slot.index(0),
+					)?.card?.props,
 				).toStrictEqual(MinerItem)
 			},
 		})
@@ -136,15 +134,13 @@ describe('Test DM Tango Lackey', () => {
 					query.slot.index(0),
 				)
 				expect(
-					game.components
-						.find(
-							SlotComponent,
-							query.slot.currentPlayer,
-							query.slot.item,
-							query.slot.rowIndex(0),
-							query.slot.index(0),
-						)
-						?.card?.props,
+					game.components.find(
+						SlotComponent,
+						query.slot.currentPlayer,
+						query.slot.item,
+						query.slot.rowIndex(0),
+						query.slot.index(0),
+					)?.card?.props,
 				).toStrictEqual(MinerItem)
 			},
 		})

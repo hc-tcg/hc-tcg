@@ -88,15 +88,13 @@ describe('Test Rare Hypnotizd', () => {
 					).toBe(EthosLabCommon.health - 40 /*Bow damage*/)
 
 					expect(
-						game.components
-							.find(
-								SlotComponent,
-								query.slot.currentPlayer,
-								query.slot.item,
-								query.slot.rowIndex(0),
-								query.slot.index(0),
-							)
-							?.card,
+						game.components.find(
+							SlotComponent,
+							query.slot.currentPlayer,
+							query.slot.item,
+							query.slot.rowIndex(0),
+							query.slot.index(0),
+						)?.card,
 					).toBe(null)
 				},
 			},
@@ -221,15 +219,13 @@ describe('Test Rare Hypnotizd', () => {
 					).toBe(EthosLabCommon.health)
 
 					expect(
-						game.components
-							.find(
-								SlotComponent,
-								query.slot.currentPlayer,
-								query.slot.item,
-								query.slot.rowIndex(0),
-								query.slot.index(0),
-							)
-							?.card,
+						game.components.find(
+							SlotComponent,
+							query.slot.currentPlayer,
+							query.slot.item,
+							query.slot.rowIndex(0),
+							query.slot.index(0),
+						)?.card,
 					).not.toBe(null)
 				},
 			},

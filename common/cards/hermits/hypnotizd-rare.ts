@@ -97,8 +97,7 @@ const HypnotizdRare: Hermit = {
 					},
 					onTimeout() {
 						item =
-							game.components.find(SlotComponent, pickCondition)?.card ||
-							null
+							game.components.find(SlotComponent, pickCondition)?.card || null
 					},
 				}
 
