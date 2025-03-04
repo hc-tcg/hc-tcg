@@ -8,10 +8,19 @@
 	text-shadow: 0.1vh 0.1vh 0.2vh black, -0.1vh -0.1vh 0.2vh black;
 	text-decoration: none;
 	margin-bottom: 10px;
-	background: hsla(0deg, 0%, 0%, 55%);
+	background: var(--gray-900);
 	padding: 0.5vh;
 	border-radius: 5px;
 	width: 100%;
+	border: 2px black solid;
+
+	&.completed {
+		background: linear-gradient(
+			90deg,
+			hsl(49, 24%, 13%),
+			hsl(49, 38%, 20%)
+		);
+	}
 }
 
 .icon {
@@ -25,6 +34,15 @@
 		object-position: left;
 		border-radius: 50%;
 	}
+
+	&.title {
+		image-rendering: crisp-edges;
+		width: 5vh;
+		height: 5vh;
+		margin: 1vh;
+		filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black)
+			drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
+	}
 }
 
 .progressBar {
@@ -37,14 +55,13 @@
 	width: 100%;
 	display: flex;
 	align-items: center;
-	gap: 1rem;
+	justify-self: center;
+	gap: 0.5rem;
 
-	> div {
+	:not(.progressBar) {
 		text-align: right;
-	}
-
-	> progress {
-		flex-grow: 1;
+		width: 5rem;
+		direction: rtl;
 	}
 }
 
@@ -52,12 +69,6 @@
 	font-size: 0.8rem;
 	text-shadow: none;
 	color: lightgray;
-}
-
-.achievementPlayers {
-	font-size: 0.8rem;
-	text-shadow: none;
-	color: var(--gray-300);
 }
 
 .aroundOverlay {
@@ -69,26 +80,85 @@
 	height: 6vh;
 }
 
-.meat {
+.mainArea {
 	width: 100%;
 	display: flex;
 	flex-direction: row;
+	align-items: center;
+}
 
-	:first-child {
-		flex-grow: 1;
+.rightSide {
+	width: 90%;
+}
+
+.leftSide {
+	width: 100%;
+}
+
+.progressBar {
+	flex-grow: 1;
+	height: 15px;
+	background-color: var(--gray-600);
+	border-radius: 5px;
+	border: 2px black solid;
+
+	.full {
+		width: 100%;
+		height: 100%;
+		border-radius: 5px;
+		background-color: #56b8d0;
+		box-shadow: inset 2px -2px #18444e;
+		border-right: 1px #d3f2fa solid;
+		animation-fill-mode: forwards;
 	}
 
-	:not(:first-child) {
-		width: 50%;
+	.completed {
+		background-color: rgb(208, 180, 86);
+		box-shadow: inset 2px -2px rgb(80, 65, 16);
+		border-right: 1px #fae9d3 solid;
 	}
 }
 
+.trophy {
+	height: 16px;
+	image-rendering: crisp-edges;
+	margin-right: 0.5rem;
+}
+
+.completionTime {
+	width: 100%;
+	text-align: right;
+	padding-right: 1rem;
+	color: var(--gray-200);
+}
+
 @media screen and (max-width: 720px) {
-	.meat {
+	.mainArea {
 		flex-direction: column;
-		:not(:first-child) {
-			width: 100%;
+	}
+
+	.progressContainer {
+		flex-direction: row-reverse;
+		font-size: 0.8rem;
+		margin: 0.5rem;
+		margin-left: 0;
+
+		:not(.progressBar) {
+			text-align: center;
+			width: min-content;
+			direction: ltr;
+			padding-right: 0.5rem;
 		}
+	}
+
+	.rightSide {
+		width: 100%;
+	}
+
+	.completionTime {
+		font-size: 0.8rem;
+		padding-right: 0rem;
+		text-align: left;
 	}
 }
 

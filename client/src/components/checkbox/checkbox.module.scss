@@ -1,9 +1,10 @@
 .container {
 	position: relative;
+	display: inline-block;
 	cursor: pointer;
 	user-select: none;
-	width: 18px;
-	height: 18px;
+	min-width: 25px;
+	min-height: 25px;
 }
 
 .originalCheckbox {
@@ -20,11 +21,18 @@
 	border: 2px black solid;
 	width: 25px;
 	height: 25px;
-	right: 0px;
 	cursor: pointer;
 
 	&:active {
 		transform: translateY(1px);
+	}
+
+	&.left {
+		left: 0px;
+	}
+
+	&.right {
+		right: 0px;
 	}
 }
 

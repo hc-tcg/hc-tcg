@@ -26,6 +26,7 @@ import {getSession} from 'logic/session/session-selectors'
 import {useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './achievements.module.scss'
+import Checkbox from 'components/checkbox'
 
 type Pages = 'achievements' | 'rewards'
 
@@ -119,7 +120,7 @@ const CosmeticItem = ({
 
 	const item = (
 		<div
-			className={classNames(css.cosmeticItem, {
+			className={classNames(css.cosmeticItem, css[cosmetic.type], {
 				[css.unlocked]: isUnlocked,
 				[css.selected]: isSelected,
 			})}
@@ -143,7 +144,10 @@ const CosmeticItem = ({
 			}}
 		>
 			{cosmetic.type === 'title' && (
-				<div className={css.cosmeticTitle}>{cosmetic.name || 'No Title'}</div>
+				<div className={css.cosmeticTitle}>
+					{!isUnlocked && <img src="/images/lock.png" />}
+					{cosmetic.name || 'No Title'}
+				</div>
 			)}
 			{cosmetic.type === 'background' && (
 				<img
@@ -178,7 +182,7 @@ const CosmeticItem = ({
 					}}
 				></div>
 			)}
-			{!isUnlocked && (
+			{!isUnlocked && cosmetic.type !== 'title' && (
 				<div className={css.lockOverlay}>
 					<img src="/images/lock.png" />
 				</div>
@@ -227,7 +231,12 @@ function Cosmetics({setMenuSection, page}: Props) {
 	const dispatch = useDispatch()
 
 	const cosmetics = useSelector(getAppearance)
+
 	const [tab, selectTab] = useState<Pages>(page)
+	const [hideUnobtained, setHideUnobtained] = useState<boolean>(false)
+	const [hideObtained, setHideObtained] = useState<boolean>(false)
+	const [achievementsSearch, setAchievementsSearch] = useState<string>('')
+
 	const progressData = useSelector(getAchievements)
 
 	const usernameRef = useRef<HTMLInputElement>(null)
@@ -270,17 +279,47 @@ function Cosmetics({setMenuSection, page}: Props) {
 					/>
 					<div className={css.itemSelector}>
 						{tab === 'achievements' && (
-							<div className={css.achievements}>
-								{ACHIEVEMENTS_LIST.map((achievement, i) => {
-									return (
-										<AchievementComponent
-											key={i}
-											achievement={achievement}
-											progressData={progressData}
-										/>
-									)
-								})}
-							</div>
+							<>
+								<div className={css.achievementsHeader}>
+									<div className={css.sectionHeader}>Your Achievements</div>
+									<input
+										placeholder={'Search Achievements...'}
+										className={css.achievementsInput}
+										defaultValue={achievementsSearch}
+										onChange={(e) => {
+											setAchievementsSearch(e.target.value)
+										}}
+									></input>
+									<div className={css.checkboxes}>
+										<div>Hide Obtained Achievements</div>
+										<Checkbox
+											onCheck={() => setHideObtained(!hideObtained)}
+											defaultChecked={hideObtained}
+										></Checkbox>
+									</div>
+									<div className={css.checkboxes}>
+										<div>Hide Unobtained Achievements</div>
+										<Checkbox
+											onCheck={() => setHideUnobtained(!hideUnobtained)}
+											defaultChecked={hideUnobtained}
+										></Checkbox>
+									</div>
+								</div>
+								<div className={css.achievements}>
+									{ACHIEVEMENTS_LIST.map((achievement, i) => {
+										return (
+											<AchievementComponent
+												key={i}
+												achievement={achievement}
+												progressData={progressData}
+												hideUnobtained={hideUnobtained}
+												hideObtained={hideObtained}
+												filter={achievementsSearch}
+											/>
+										)
+									})}
+								</div>
+							</>
 						)}
 						{tab === 'rewards' && (
 							<div className={css.cosmeticsContainerContainer}>
@@ -318,7 +357,7 @@ function Cosmetics({setMenuSection, page}: Props) {
 										))}
 									</div>
 									<div className={css.sectionHeader}>Titles</div>
-									<div className={css.cosmetics}>
+									<div className={css.cosmeticsTitles}>
 										{sortedCosmetics.title.map((cosmetic) => (
 											<CosmeticTooltipItem
 												cosmetic={cosmetic}

@@ -96,8 +96,8 @@ const SmallAchievement = ({
 		if (achievement.newProgress === achievement.level.steps) {
 			fillAnimation.backgroundColor = [
 				'rgb(86, 184, 208)',
-				'rgb(121, 208, 86)',
-				'rgb(121, 208, 86)',
+				'rgb(208, 180, 86)',
+				'rgb(208, 180, 86)',
 				'rgb(86, 184, 208)',
 			]
 		}
