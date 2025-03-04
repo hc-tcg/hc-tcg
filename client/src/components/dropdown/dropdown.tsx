@@ -1,8 +1,9 @@
 import classNames from 'classnames'
 import {localMessages} from 'logic/messages'
 import {ReactNode, useEffect, useRef, useState} from 'react'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import css from './dropdown.module.scss'
+import {getDropdown} from 'logic/session/session-selectors'
 
 type DropdownOptions = {
 	name: string
@@ -42,20 +43,19 @@ const Dropdown = ({
 }: Props & {buttonRef: React.RefObject<HTMLButtonElement>}) => {
 	const dispatch = useDispatch()
 	const filterMenuRef = useRef<HTMLDivElement>(null)
+	const [newMenu, setNewMenu] = useState<boolean>(true)
 	const [newChecked, setChecked] = useState<Array<string>>(checked || [])
 
 	const calculateShow = (x: number, y: number) => {
 		const boundingBox = buttonRef.current?.getBoundingClientRect()
 		const menuBoundingBox = filterMenuRef.current?.getBoundingClientRect()
 
-		if (
-			!checkboxes &&
-			boundingBox &&
-			(x > boundingBox.right ||
-				x < boundingBox.left ||
-				y > boundingBox.bottom ||
-				y < boundingBox.top)
-		) {
+		if (newMenu) {
+			setNewMenu(false)
+			return
+		}
+
+		if (!checkboxes) {
 			dispatch({
 				type: localMessages.HIDE_DROPDOWN,
 			})
@@ -92,7 +92,7 @@ const Dropdown = ({
 		window.addEventListener('touchstart', onTouchStart, false)
 
 		return () => {
-			window.addEventListener('mouseup', onMouseUp, false)
+			window.removeEventListener('mouseup', onMouseUp, false)
 			window.removeEventListener('touchstart', onTouchStart, false)
 		}
 	})
@@ -231,10 +231,19 @@ const DropdownButton = ({
 }: Props) => {
 	const dispatch = useDispatch()
 	const buttonRef = useRef<HTMLButtonElement>(null)
+	const dropdown = useSelector(getDropdown)
 
 	const dispatchDropdown = () => {
 		if (!buttonRef.current) return
 		const boundingBox = buttonRef.current.getBoundingClientRect()
+
+		if (dropdown) {
+			dispatch({
+				type: localMessages.HIDE_DROPDOWN,
+			})
+			return
+		}
+
 		dispatch({
 			type: localMessages.SHOW_DROPDOWN,
 			dropdown: (
@@ -280,7 +289,13 @@ export const CurrentDropdown = ({
 	return (
 		<div
 			className={css.currentDropdown}
-			style={{top: `calc(${y}px + 2rem)`, left: x}}
+			style={{
+				top: `calc(${y}px + 2rem)`,
+				left: x,
+				overflow: 'hidden',
+				height: `calc(${window.screen.height - y}px - 2rem)`,
+				width: window.screen.width - x,
+			}}
 		>
 			{dropdown}
 		</div>
