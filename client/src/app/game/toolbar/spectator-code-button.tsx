@@ -14,7 +14,7 @@ function SpectatorCodeButton({spectatorCode}: {spectatorCode?: string | null}) {
 			type: localMessages.TOAST_OPEN,
 			open: true,
 			title: 'Code copied!',
-			description: `Copied spectator code to clipboard.`,
+			description: 'Copied spectator code to clipboard.',
 			image: 'copy',
 		})
 	}
