@@ -7,8 +7,6 @@ export type LocalSettings = {
 	musicVolume: number
 	musicVolumeStore: number
 	voiceVolume: number
-	soundMuted: boolean
-	musicMuted: boolean
 	profanityFilterEnabled: boolean
 	showChatWindow: boolean
 	chatEnabled: boolean
@@ -36,8 +34,6 @@ const defaultSettings: LocalSettings = {
 	musicVolume: 75,
 	musicVolumeStore: 100,
 	voiceVolume: 75,
-	soundMuted: false,
-	musicMuted: false,
 	profanityFilterEnabled: true,
 	chatEnabled: true,
 	confirmationDialogsEnabled: true,
