@@ -1842,6 +1842,7 @@ export class Database {
 			const progress: AchievementProgress = {}
 			result.rows.forEach((row) => {
 				let achievement = ACHIEVEMENTS[row['achievement_id']]
+				if (!achievement) return
 
 				if (progress[row['achievement_id']] === undefined) {
 					progress[row['achievement_id']] = {
@@ -2027,6 +2028,78 @@ export class Database {
 			return {
 				type: 'success',
 				body: undefined,
+			}
+		} catch (e) {
+			console.log(e)
+			return {
+				type: 'failure',
+				reason: `${e}`,
+			}
+		}
+	}
+
+	public async getPlayerAchievementProgress(
+		achievement: Achievement,
+		player: string,
+	): Promise<DatabaseResult<{progress: number}>> {
+		try {
+			const result = await this.pool.query(
+				`
+				SELECT user_goals.achievement_id, user_goals.goal_id, user_goals.progress
+				FROM user_goals
+				WHERE user_goals.achievement_id = $1 AND user_goals.user_id = $2;
+				`,
+				[achievement.numericId, player],
+			)
+			const goals = result.rows.reduce((goalRecord, row) => {
+				goalRecord[row['goal_id']] = row['progress']
+				return goalRecord
+			}, {})
+			return {
+				type: 'success',
+				body: {
+					progress: achievement.getProgress(goals),
+				},
+			}
+		} catch (e) {
+			console.log(e)
+			return {
+				type: 'failure',
+				reason: `${e}`,
+			}
+		}
+	}
+
+	public async getAchievementPercentageCompletion(
+		achievement: Achievement,
+		level: number,
+	): Promise<DatabaseResult<{percent: number}>> {
+		try {
+			const playerCount = await this.pool.query(
+				"SELECT count(*) FROM users;"
+			)
+			const result = await this.pool.query(
+				`
+				SELECT user_goals.achievement_id, user_goals.user_id, user_goals.goal_id, user_goals.progress
+				FROM user_goals
+				WHERE user_goals.achievement_id = $1;
+				`,
+				[achievement.numericId],
+			)
+			const allGoals = result.rows.reduce((goalRecord, row) => {
+				if (!goalRecord[row['user_id']])
+					goalRecord[row['user_id']] = {}
+				goalRecord[row['user_id']][row['goal_id']] = row['progress']
+				return goalRecord
+			}, {})
+			const completers = Object.values(allGoals).filter(
+				(goals) =>
+					achievement.getProgress(goals as Record<string, number>) >=
+					achievement.levels[level].steps,
+			).length
+			return {
+				type: 'success',
+				body: {percent: 100 * completers / playerCount.rows[0]['count']},
 			}
 		} catch (e) {
 			console.log(e)

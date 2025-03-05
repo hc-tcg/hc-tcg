@@ -2,7 +2,12 @@ import {DEBUG} from 'common/config'
 import {NumberOrNull} from 'common/utils/database-codes'
 import {Express} from 'express'
 import root from 'serverRoot'
-import {achievements} from './achievements'
+import {
+	achievements,
+	overallAchievementProgress,
+	PlayerAchievementProgressQuery,
+	playerProgress,
+} from './achievements'
 import {authenticateUser, createUser} from './auth'
 import {cards, deckCost, getDeckInformation, ranks, types} from './cards'
 import {
@@ -150,6 +155,27 @@ export function addApi(app: Express) {
 
 	app.get('/api/achievements', async (req, res) => {
 		res.send(achievements(requestUrlRoot(req)))
+	})
+
+	app.get('/api/achievements/player-progress', async (req, res) => {
+		const query = PlayerAchievementProgressQuery.parse(req.query)
+		if (!query.achievementId || !query.uuid) {
+			res.statusCode = 400
+			res.send({reason: 'Must pass achievementId and uuid.'})
+			return
+		}
+		const ret = await playerProgress(query.achievementId, query.uuid)
+		res.statusCode = ret[0]
+		res.send(ret[1])
+	})
+
+	app.get('/api/achievements/:achievement/:level', async (req, res) => {
+		const ret = await overallAchievementProgress(
+			req.params.achievement,
+			NumberOrNull(req.params.level) || 0,
+		)
+		res.statusCode = ret[0]
+		res.send(ret[1])
 	})
 
 	if (DEBUG) {

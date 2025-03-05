@@ -1,6 +1,8 @@
-import {ACHIEVEMENTS_LIST} from 'common/achievements'
+import root from 'serverRoot'
+import {ACHIEVEMENTS, ACHIEVEMENTS_LIST} from 'common/achievements'
 import {Achievement} from 'common/achievements/types'
 import {ALL_COSMETICS} from 'common/cosmetics'
+import {z} from 'zod'
 
 type LevelResponse = {
 	achievementId: string
@@ -59,4 +61,76 @@ export function achievements(url: string) {
 	return ACHIEVEMENTS_LIST.flatMap((achievement) =>
 		achievementToResponseLevels(achievement, url),
 	)
+}
+
+export const PlayerAchievementProgressQuery = z.object({
+	achievementId: z.string().nullish(),
+	uuid: z.string().nullish(),
+})
+
+export async function playerProgress(
+	achievementId: string,
+	player: string,
+): Promise<[number, Record<string, any>]> {
+	const achievement = ACHIEVEMENTS[achievementId]
+	if (!root.db?.connected)
+		return [
+			501,
+			{
+				reason: 'Endpoint is unavailable because database is disabled',
+			},
+		]
+	let progress = await root.db?.getPlayerAchievementProgress(
+		achievement,
+		player,
+	)
+
+	if (progress.type === 'failure') {
+		return [
+			500,
+			{
+				reason: progress.reason,
+			},
+		]
+	}
+	return [200, progress.body]
+}
+
+export async function overallAchievementProgress(
+	achievementId: string,
+	level: number,
+): Promise<[number, Record<string, any>]> {
+	const achievement = ACHIEVEMENTS[achievementId]
+	if (!achievement)
+		return [
+			404,
+			{
+				reason: 'Achievement not found',
+			}
+		]
+	if (level >= achievement.levels.length)
+		return [
+			404,
+			{
+				reason: 'Level not found',
+			}
+		]
+	if (!root.db?.connected)
+		return [
+			501,
+			{
+				reason: 'Endpoint is unavailable because database is disabled',
+			},
+		]
+	let progress = await root.db?.getAchievementPercentageCompletion(achievement, level)
+
+	if (progress.type === 'failure') {
+		return [
+			500,
+			{
+				reason: progress.reason,
+			},
+		]
+	}
+	return [200, progress.body]
 }
