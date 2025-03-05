@@ -13,16 +13,14 @@ const ServerLag: Achievement = {
 			steps: 1,
 		},
 	],
-	onGameEnd(game, playerEntity, component, outcome) {
+	onGameEnd(game, player, component, outcome) {
 		/** Prevents getting progress from forfeiting after attacking with a prize card */
 		if (
 			outcome.type === 'player-won' &&
 			outcome.victoryReason === 'forfeit' &&
-			outcome.winner !== playerEntity
+			outcome.winner !== player.entity
 		)
 			return
-		const player = game.components.get(playerEntity)
-		if (!player) return
 		const playerLatestAttack = player.lastHermitAttackInfo?.at(-1)
 		if (
 			!playerLatestAttack ||

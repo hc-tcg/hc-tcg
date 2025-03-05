@@ -117,7 +117,10 @@ function* gameManager(con: GameController) {
 			root.getGameIds().length,
 		)
 
-		con.broadcastToViewers({type: serverMessages.GAME_START})
+		con.broadcastToViewers({
+			type: serverMessages.GAME_START,
+			spectatorCode: con.spectatorCode ?? undefined,
+		})
 		root.hooks.newGame.call(con)
 		con.task = yield* spawn(gameSaga, con)
 
@@ -198,13 +201,14 @@ function* gameManager(con: GameController) {
 				(_game, achievement) => achievement.player === playerEntity,
 			)
 
+			let player = con.game.components.get(playerEntity)
+			assert(
+				player,
+				"There should definitely be a player on the left if there is an entity, if there isn't, something went really wrong",
+			)
+
 			achievements.forEach((achievement) => {
-				achievement.props.onGameEnd(
-					con.game,
-					playerEntity,
-					achievement,
-					outcome,
-				)
+				achievement.props.onGameEnd(con.game, player, achievement, outcome)
 
 				const originalProgress = achievement.props.getProgress(
 					v.player.achievementProgress[achievement.props.numericId].goals,
@@ -265,6 +269,7 @@ function* gameManager(con: GameController) {
 				earnedAchievements: !viewer.spectator
 					? newAchievements[viewer.playerOnLeftEntity]
 					: [],
+				gameEndTime: Date.now(),
 			})
 		}
 
@@ -837,6 +842,25 @@ export function* leavePrivateQueue(
 	}
 }
 
+export function* leaveRematchGame(
+	msg: RecievedClientMessage<typeof clientMessages.LEAVE_REMATCH_GAME>,
+) {
+	const player = root.players[msg.playerId]
+	console.info(`[Rematch] ${player.name} left the rematch game they started.`)
+	const {playerId} = msg
+	delete root.awaitingRematch[playerId]
+}
+
+export function* cancelRematch(
+	msg: RecievedClientMessage<typeof clientMessages.CANCEL_REMATCH>,
+) {
+	const player = root.players[msg.playerId]
+	const opponentPlayer = root.players[msg.payload.rematch.opponentId]
+	delete root.awaitingRematch[opponentPlayer.id]
+	delete root.awaitingRematch[player.id]
+	broadcast([player, opponentPlayer], {type: serverMessages.REMATCH_DENIED})
+}
+
 export function* createBossGame(
 	msg: RecievedClientMessage<typeof clientMessages.CREATE_BOSS_GAME>,
 ) {
@@ -932,7 +956,7 @@ export function* createRematchGame(
 	msg: RecievedClientMessage<typeof clientMessages.CREATE_REMATCH_GAME>,
 ) {
 	const playerId = msg.playerId
-	const {opponentId, spectatorCode, score} = msg.payload
+	const {opponentId, spectatorCode, playerScore, opponentScore} = msg.payload
 	const player = root.players[playerId]
 	const opponent = root.players[opponentId]
 
@@ -971,13 +995,15 @@ export function* createRematchGame(
 		root.awaitingRematch[playerId] = {
 			playerId: playerId,
 			opponentId: opponentId,
-			existingScore: score,
-			joinedScore: 0,
+			playerScore: playerScore,
+			opponentScore: opponentScore,
 			spectatorCode: spectatorCode || undefined,
 			spectatorsWaiting: [],
 		}
 		broadcast([player], {type: serverMessages.CREATE_REMATCH_SUCCESS})
-		console.info(`${player.name} requested a rematch from their last opponent`)
+		console.info(
+			`[Rematch] ${player.name} requested a rematch from their last opponent`,
+		)
 		broadcast([opponent], {
 			type: serverMessages.REMATCH_REQUESTED,
 			opponentName: opponent.name,
@@ -990,9 +1016,7 @@ export function* createRematchGame(
 
 	// If we want to join our own game, that is an error
 	if (waitingInfo.playerId === player.id) {
-		console.info(
-			'[Join rematch game]: Player attempted to join their own rematch!',
-		)
+		console.info('[Rematch]: Player attempted to join their own rematch!')
 		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
 		return
 	}
@@ -1000,33 +1024,30 @@ export function* createRematchGame(
 	// Create new game for these 2 players
 	const existingPlayer = root.players[opponentId]
 	if (!existingPlayer) {
-		console.info(
-			'[Join rematch game]: Player waiting in queue no longer exists!',
-		)
+		console.info('[Rematch]: Player waiting in queue no longer exists!')
 		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
 		return
 	}
 
 	if (!existingPlayer.deck) {
-		console.info('[Join rematch game]: Player waiting in queue has no deck!')
+		console.info('[Rematch]: Player waiting in queue has no deck!')
 		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
 		return
 	}
-
-	waitingInfo.joinedScore = score
 
 	const newGame = setupGame(
 		player,
 		existingPlayer,
 		player.deck,
 		existingPlayer.deck,
-		waitingInfo.joinedScore,
-		waitingInfo.existingScore,
-		spectatorCode || undefined,
+		waitingInfo.opponentScore,
+		waitingInfo.playerScore,
+		undefined,
+		spectatorCode ?? undefined,
 	)
 	root.addGame(newGame)
 
-	console.info(`Joining rematch game: ${player.name}.`)
+	console.info(`[Rematch] Joining rematch game: ${player.name}.`)
 
 	broadcast([player], {type: serverMessages.CREATE_REMATCH_SUCCESS})
 
@@ -1158,6 +1179,7 @@ export function* createReplayGame(
 			? con.game.outcome
 			: {type: 'game-crash', error: 'The replay game did not save properly.'},
 		earnedAchievements: [],
+		gameEndTime: Date.now(),
 	})
 
 	delete root.games[con.id]

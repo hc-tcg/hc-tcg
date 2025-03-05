@@ -27,6 +27,7 @@ import {
 	LocalSetting,
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
+import {ConnectionError} from './session/session-reducer'
 
 export const localMessages = messages('clientLocalMessages', {
 	SOCKET_CONNECTING: null,
@@ -108,7 +109,6 @@ export const localMessages = messages('clientLocalMessages', {
 	OVERVIEW: null,
 	//Rematches
 	RECIEVE_REMATCH: null,
-	RECIEVE_OPPONENT_REMATCH: null,
 	CANCEL_REMATCH: null,
 	MATCHMAKING_REMATCH: null,
 })
@@ -118,7 +118,13 @@ type Messages = [
 	{type: typeof localMessages.SOCKET_CONNECTING},
 	{type: typeof localMessages.SOCKET_DISCONNECT},
 	{type: typeof localMessages.SOCKET_CONNECT_ERROR},
-	{type: typeof localMessages.LOGIN; name: string},
+	{type: typeof localMessages.LOGIN; login_type: 'new-account'; name: string},
+	{
+		type: typeof localMessages.LOGIN
+		login_type: 'sync'
+		uuid: string
+		secret: string
+	},
 	{
 		type: typeof localMessages.PLAYER_SESSION_SET
 		player: {
@@ -132,7 +138,7 @@ type Messages = [
 	{type: typeof localMessages.NOT_CONNECTING},
 	{type: typeof localMessages.CONNECTED},
 	{type: typeof localMessages.CONNECTING_MESSAGE; message: string},
-	{type: typeof localMessages.DISCONNECT; errorMessage?: string},
+	{type: typeof localMessages.DISCONNECT; errorMessage?: ConnectionError},
 	{type: typeof localMessages.LOGOUT},
 	{type: typeof localMessages.UPDATES_LOAD; updates: Array<Update>},
 	{
@@ -180,7 +186,7 @@ type Messages = [
 		localGameState: LocalGameState
 		time: number
 	},
-	{type: typeof localMessages.GAME_START},
+	{type: typeof localMessages.GAME_START; spectatorCode?: string},
 	{type: typeof localMessages.GAME_END},
 	{
 		type: typeof localMessages.GAME_CARD_SELECTED_SET
@@ -207,6 +213,7 @@ type Messages = [
 		type: typeof localMessages.GAME_END_OVERLAY_SHOW
 		outcome: GameOutcome
 		earnedAchievements: Array<EarnedAchievement>
+		gameEndTime: number
 	},
 	{
 		type: typeof localMessages.GAME_CLOSE
@@ -279,6 +286,8 @@ type Messages = [
 		dropdown: React.ReactNode
 		x: number
 		y: number
+		direction: 'up' | 'down'
+		align: 'left' | 'right'
 	},
 	{type: typeof localMessages.HIDE_DROPDOWN},
 	{
@@ -287,7 +296,6 @@ type Messages = [
 	},
 	{type: typeof localMessages.COSMETIC_UPDATE; cosmetic: Cosmetic},
 	{type: typeof localMessages.RECIEVE_REMATCH; rematch: RematchData | null},
-	{type: typeof localMessages.RECIEVE_OPPONENT_REMATCH},
 	{type: typeof localMessages.CANCEL_REMATCH},
 	{type: typeof localMessages.MATCHMAKING_REMATCH},
 ]

@@ -100,7 +100,8 @@ function* sendJoinPrivateQueueMessage(
 function* sendRematchQueueMessage(
 	activeDeckResult: activeDeckSagaT,
 	opponentId: string,
-	score: number,
+	playerScore: number,
+	opponentScore: number,
 	spectatorCode: string | null,
 ) {
 	if (!activeDeckResult) return
@@ -110,7 +111,8 @@ function* sendRematchQueueMessage(
 			databaseConnected: true,
 			activeDeckCode: activeDeckResult.activeDeckCode,
 			opponentId,
-			score,
+			playerScore,
+			opponentScore,
 			spectatorCode,
 		})
 	} else {
@@ -119,7 +121,8 @@ function* sendRematchQueueMessage(
 			databaseConnected: false,
 			activeDeck: activeDeckResult.activeDeck,
 			opponentId,
-			score,
+			playerScore,
+			opponentScore,
 			spectatorCode,
 		})
 	}
@@ -176,7 +179,7 @@ function* joinPublicQueueSaga() {
 			})
 
 			yield call(receiveMsg(socket, serverMessages.GAME_START))
-			yield call(gameSaga)
+			yield call(gameSaga, {})
 		} catch (err) {
 			console.error('Game crashed: ', err)
 		} finally {
@@ -251,7 +254,9 @@ function* joinPrivateQueueSaga({
 			})
 
 			if (queueResponse.gameStart) {
-				yield* call(gameSaga)
+				yield* call(gameSaga, {
+					spectatorCode: queueResponse.gameStart?.spectatorCode,
+				})
 				return
 			}
 
@@ -347,7 +352,9 @@ function* spectatePrivateGameSaga({
 
 			if (result.spectateSuccess) {
 				// Succesfully joined a game as spectator, start the game saga
-				yield* call(gameSaga, result.spectateSuccess.localGameState)
+				yield* call(gameSaga, {
+					initialGameState: result.spectateSuccess.localGameState,
+				})
 			} else if (result.spectateWaiting) {
 				// Succesfully joined as spectator, waiting for game to start
 				let result = yield* race({
@@ -362,7 +369,9 @@ function* spectatePrivateGameSaga({
 					),
 				})
 				if (result.spectatePrivateGame) {
-					yield* call(gameSaga, result.spectatePrivateGame.localGameState)
+					yield* call(gameSaga, {
+						initialGameState: result.spectatePrivateGame.localGameState,
+					})
 					return
 				}
 				if (result.cancelled) {
@@ -462,7 +471,9 @@ function* createPrivateGameSaga() {
 				})
 
 				if (queueResponse.gameStart) {
-					yield* call(gameSaga)
+					yield* call(gameSaga, {
+						spectatorCode: queueResponse.gameStart.spectatorCode,
+					})
 					return
 				}
 
@@ -534,7 +545,7 @@ function* createBossGameSaga() {
 			type: localMessages.QUEUE_VOICE,
 			lines: ['/voice/EXSTART.ogg'],
 		})
-		yield* call(gameSaga)
+		yield* call(gameSaga, {})
 	} catch (err) {
 		console.error('Game crashed: ', err)
 	} finally {
@@ -547,51 +558,78 @@ function* createBossGameSaga() {
 
 // Rematches
 function* createRematchSaga() {
-	const socket = yield* select(getSocket)
-	const rematch = yield* select(getRematchData)
-	const activeDeckResult = yield* getActiveDeckSaga()
+	function* matchmaking() {
+		const socket = yield* select(getSocket)
+		const rematch = yield* select(getRematchData)
+		const activeDeckResult = yield* getActiveDeckSaga()
 
-	if (!rematch) return
+		if (!rematch) return
 
-	try {
-		// Send message to server to create the game
-		yield* sendRematchQueueMessage(
-			activeDeckResult,
-			rematch.opponentId,
-			rematch.playerScore,
-			rematch.spectatorCode,
-		)
-		const createRematchResponse = yield* race({
-			success: call(receiveMsg(socket, serverMessages.CREATE_REMATCH_SUCCESS)),
-			failure: call(receiveMsg(socket, serverMessages.CREATE_REMATCH_FAILURE)),
-		})
-
-		if (createRematchResponse.failure) {
-			// Something went wrong, notify and cancel
-			yield* put<LocalMessage>({
-				type: localMessages.TOAST_OPEN,
-				open: true,
-				title: 'Failed to start game!',
-				description: 'Your opponent already declined a rematch.',
+		try {
+			// Send message to server to create the game
+			yield* sendRematchQueueMessage(
+				activeDeckResult,
+				rematch.opponentId,
+				rematch.playerScore,
+				rematch.opponentScore,
+				rematch.spectatorCode,
+			)
+			const createRematchResponse = yield* race({
+				success: call(
+					receiveMsg(socket, serverMessages.CREATE_REMATCH_SUCCESS),
+				),
+				failure: call(
+					receiveMsg(socket, serverMessages.CREATE_REMATCH_FAILURE),
+				),
 			})
-			yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
-			return
-		}
 
-		yield* put<LocalMessage>({
-			type: localMessages.MATCHMAKING_JOIN_QUEUE_SUCCESS,
-		})
+			if (createRematchResponse.failure) {
+				// Something went wrong, notify and cancel
+				yield* put<LocalMessage>({
+					type: localMessages.TOAST_OPEN,
+					open: true,
+					title: 'Failed to start game!',
+					description: 'Your opponent already declined a rematch.',
+				})
+				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
+				return
+			}
 
-		yield call(receiveMsg(socket, serverMessages.GAME_START))
-		yield call(gameSaga)
-	} catch (err) {
-		console.error('Game crashed: ', err)
-	} finally {
-		if (yield* cancelled()) {
-			// Clear state and back to menu
-			yield* put<LocalMessage>({type: localMessages.GAME_END})
+			yield* put<LocalMessage>({
+				type: localMessages.MATCHMAKING_JOIN_QUEUE_SUCCESS,
+			})
+
+			const gameStart = yield* call(
+				receiveMsg(socket, serverMessages.GAME_START),
+			)
+			console.log(gameStart)
+			yield call(gameSaga, {spectatorCode: gameStart.spectatorCode})
+		} catch (err) {
+			console.error('Game crashed: ', err)
+		} finally {
+			if (yield* cancelled()) {
+				// Clear state and back to menu
+				yield* put<LocalMessage>({type: localMessages.GAME_END})
+			}
 		}
 	}
+
+	const result = yield* race({
+		leave: take(localMessages.MATCHMAKING_LEAVE), // We pressed the leave button
+		matchmaking: call(matchmaking),
+	})
+
+	if (result.leave) {
+		// Tell the server we left the queue
+		yield* sendMsg({type: clientMessages.LEAVE_REMATCH_GAME})
+	}
+}
+
+// Rematches
+function* cancelRematchSaga() {
+	const rematch = yield* select(getRematchData)
+	if (!rematch) return
+	yield* sendMsg({type: clientMessages.CANCEL_REMATCH, rematch})
 }
 
 // @TODO
@@ -626,7 +664,7 @@ function* createReplayGameSaga(
 			return
 		} else if (result.success) {
 			// Start replay game
-			yield* call(gameSaga, result.success.localGameState)
+			yield* call(gameSaga, {initialGameState: result.success.localGameState})
 		}
 	} catch (err) {
 		console.error('Game crashed: ', err)
@@ -674,6 +712,7 @@ function* matchmakingSaga() {
 	})
 	// Rematch
 	yield* takeEvery(localMessages.MATCHMAKING_REMATCH, createRematchSaga)
+	yield* takeEvery(localMessages.CANCEL_REMATCH, cancelRematchSaga)
 }
 
 export default matchmakingSaga

@@ -1,5 +1,4 @@
 import cn from 'classnames'
-import {LocalGameState} from 'common/types/game-state'
 import {SlotInfo} from 'common/types/server-requests'
 import Button from 'components/button'
 import CoinFlip from 'components/coin-flip'
@@ -7,6 +6,7 @@ import {
 	getAvailableActions,
 	getCurrentCoinFlip,
 	getCurrentPickMessage,
+	getCurrentPlayerEntity,
 	getGameState,
 	getIsSpectator,
 	getPlayerEntity,
@@ -20,23 +20,15 @@ import css from './actions.module.scss'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
-	localGameState: LocalGameState
 	gameOver: boolean
 	gameEndButton: () => void
 	mobile?: boolean
 	id?: string
 }
 
-const Actions = ({
-	onClick,
-	localGameState,
-	id,
-	gameOver,
-	gameEndButton,
-}: Props) => {
-	const currentPlayer = useSelector(
-		getPlayerStateByEntity(localGameState.turn.currentPlayerEntity),
-	)
+const Actions = ({onClick, id, gameOver, gameEndButton}: Props) => {
+	const currentPlayerEntity = useSelector(getCurrentPlayerEntity)!
+	const currentPlayer = useSelector(getPlayerStateByEntity(currentPlayerEntity))
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
 	const playerEntity = useSelector(getPlayerEntity)
@@ -48,7 +40,7 @@ const Actions = ({
 	const pickMessage = useSelector(getCurrentPickMessage)
 	const dispatch = useMessageDispatch()
 
-	const turn = localGameState.turn.currentPlayerEntity === playerEntity
+	const turn = currentPlayer?.entity === playerEntity
 
 	if (!gameState || !playerState) return <main>Loading</main>
 
@@ -58,7 +50,7 @@ const Actions = ({
 			availableActions.length === 1
 		let turnMsg
 		if (isSpectator) {
-			turnMsg = `${currentPlayer.censoredPlayerName}'s Turn`
+			turnMsg = `${currentPlayer?.censoredPlayerName}'s Turn`
 		} else {
 			turnMsg = turn ? 'Your Turn' : "Opponent's Turn"
 		}

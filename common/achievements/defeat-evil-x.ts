@@ -12,10 +12,10 @@ const DefeatEvilX: Achievement = {
 			steps: 1,
 		},
 	],
-	onGameEnd(game, playerEntity, component, outcome) {
+	onGameEnd(game, player, component, outcome) {
 		if (!game.state.isEvilXBossGame) return
 		if (outcome.type !== 'player-won') return
-		if (outcome.winner !== playerEntity) return
+		if (outcome.winner !== player.entity) return
 		component.incrementGoalProgress({goal: 0})
 	},
 }

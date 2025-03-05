@@ -70,6 +70,7 @@ export class CardComponent<CardType extends Card = Card> {
 		}
 
 		this.slotEntity = slot
+		game.components.getOrError(slot).cardEntity = entity
 
 		if (this.slot.onBoard()) {
 			let observer = this.game.components.new(ObserverComponent, this.entity)
@@ -187,7 +188,9 @@ export class CardComponent<CardType extends Card = Card> {
 			this.player.hooks.onDetach.call(this)
 		}
 
+		this.slot.cardEntity = null
 		this.slotEntity = component.entity
+		component.cardEntity = this.entity
 
 		if (component.onBoard() && changingBoards) {
 			let observer = this.game.components.new(ObserverComponent, this.entity)

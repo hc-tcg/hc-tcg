@@ -11,11 +11,11 @@
 
 	h2,
 	h3 {
-		filter: drop-shadow(2px 2px 0 var(--text-dark));
+		filter: drop-shadow(3px 3px 0 var(--text-dark));
 	}
 
 	h2 {
-		font-size: 3vh;
+		font-size: 3.5vh;
 	}
 
 	h3 {
@@ -45,10 +45,6 @@
 	grid-auto-flow: column;
 	justify-content: center;
 	grid-gap: 3vh;
-
-	.fourButtons {
-		grid-gap: 2vh;
-	}
 }
 
 .top {
@@ -92,8 +88,11 @@
 }
 
 .appearance {
+	width: min(65vh, 90vw);
+}
+
+.appearanceClickable {
 	cursor: pointer;
-	width: min(500px, 90vw);
 
 	&:hover {
 		scale: 1.05;
@@ -110,7 +109,7 @@
 	}
 }
 
-@media screen and (max-width: 720px) {
+@media (orientation: portrait) {
 	.gameTypesButtons {
 		grid-auto-flow: row;
 		grid-gap: 1.5vh;
@@ -129,4 +128,9 @@
 		background-color: var(--gray-900);
 		border: 2px black solid;
 	}
+}
+
+.rematchWindow {
+	position: absolute;
+	left: 0;
 }

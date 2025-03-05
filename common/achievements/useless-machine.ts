@@ -16,10 +16,7 @@ const UselessMachine: Achievement = {
 			steps: 2,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		const player = game.components.get(playerEntity)
-		if (!player) return
-
+	onGameStart(game, player, component, observer) {
 		let playerHand: Array<string> = []
 
 		observer.subscribe(player.hooks.beforeApply, () => {
@@ -30,9 +27,7 @@ const UselessMachine: Achievement = {
 			player.hooks.afterApply,
 			afterApply.CHECK_BOARD_STATE,
 			() => {
-				let su = game.components
-					.find(SlotComponent, query.slot.singleUse)
-					?.getCard()
+				let su = game.components.find(SlotComponent, query.slot.singleUse)?.card
 				if (!su) return
 				if (su.props.id !== Composter.id) return
 

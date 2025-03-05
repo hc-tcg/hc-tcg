@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import {ACHIEVEMENTS, ACHIEVEMENTS_LIST} from 'common/achievements'
+import {Achievement} from 'common/achievements/types'
 import debugConfig from 'common/config/debug-config'
 import {ALL_COSMETICS} from 'common/cosmetics'
 import {COINS} from 'common/cosmetics/coins'
@@ -13,6 +14,7 @@ import {
 } from 'common/cosmetics/types'
 import AchievementComponent from 'components/achievement'
 import Button from 'components/button'
+import Checkbox from 'components/checkbox'
 import MenuLayout from 'components/menu-layout'
 import Tabs from 'components/tabs/tabs'
 import Tooltip from 'components/tooltip'
@@ -85,7 +87,10 @@ export function CosmeticPreview() {
 	)
 }
 
-const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
+const CosmeticItem = ({
+	cosmetic,
+	achievement,
+}: {cosmetic: Cosmetic; achievement: Achievement | null}) => {
 	const dispatch = useDispatch()
 	const achievementProgress = useSelector(getAchievements)
 	const appearance = useSelector(getAppearance)
@@ -103,10 +108,6 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 
 	let isSelected = cosmetics.find((c) => c.id === cosmetic.id)
 
-	const achievement = cosmetic.requires
-		? ACHIEVEMENTS[cosmetic.requires.achievement]
-		: null
-
 	if (cosmetic.requires && achievement && !debugConfig.unlockAllCosmetics) {
 		isUnlocked =
 			achievementProgress[achievement.numericId] &&
@@ -119,7 +120,7 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 
 	const item = (
 		<div
-			className={classNames(css.cosmeticItem, {
+			className={classNames(css.cosmeticItem, css[cosmetic.type], {
 				[css.unlocked]: isUnlocked,
 				[css.selected]: isSelected,
 			})}
@@ -143,7 +144,10 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 			}}
 		>
 			{cosmetic.type === 'title' && (
-				<div className={css.cosmeticTitle}>{cosmetic.name || 'No Title'}</div>
+				<div className={css.cosmeticTitle}>
+					{!isUnlocked && <img src="/images/lock.png" />}
+					{cosmetic.name || 'No Title'}
+				</div>
 			)}
 			{cosmetic.type === 'background' && (
 				<img
@@ -178,13 +182,32 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 					}}
 				></div>
 			)}
-			{!isUnlocked && (
+			{!isUnlocked && cosmetic.type !== 'title' && (
 				<div className={css.lockOverlay}>
 					<img src="/images/lock.png" />
 				</div>
 			)}
 		</div>
 	)
+
+	return (
+		<div className={css.cosmeticBox}>
+			{item}
+			{cosmetic.type !== 'title' && (
+				<div
+					className={classNames(css.cosmeticName, isUnlocked && css.unlocked)}
+				>
+					{cosmetic.name}
+				</div>
+			)}
+		</div>
+	)
+}
+
+const CosmeticTooltipItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
+	const achievement = cosmetic.requires
+		? ACHIEVEMENTS[cosmetic.requires.achievement]
+		: null
 
 	const tooltip = achievement ? (
 		<div className={css.tooltip}>
@@ -198,20 +221,9 @@ const CosmeticItem = ({cosmetic}: {cosmetic: Cosmetic}) => {
 	)
 
 	return (
-		<div className={css.cosmeticBox}>
-			{achievement || cosmetic.name.length > 0 ? (
-				<Tooltip tooltip={tooltip}>{item}</Tooltip>
-			) : (
-				item
-			)}
-			{cosmetic.type !== 'title' && (
-				<div
-					className={classNames(css.cosmeticName, isUnlocked && css.unlocked)}
-				>
-					{cosmetic.name}
-				</div>
-			)}
-		</div>
+		<Tooltip tooltip={tooltip}>
+			<CosmeticItem cosmetic={cosmetic} achievement={achievement} />
+		</Tooltip>
 	)
 }
 
@@ -219,7 +231,12 @@ function Cosmetics({setMenuSection, page}: Props) {
 	const dispatch = useDispatch()
 
 	const cosmetics = useSelector(getAppearance)
+
 	const [tab, selectTab] = useState<Pages>(page)
+	const [hideUnobtained, setHideUnobtained] = useState<boolean>(false)
+	const [hideObtained, setHideObtained] = useState<boolean>(false)
+	const [achievementsSearch, setAchievementsSearch] = useState<string>('')
+
 	const progressData = useSelector(getAchievements)
 
 	const usernameRef = useRef<HTMLInputElement>(null)
@@ -253,7 +270,9 @@ function Cosmetics({setMenuSection, page}: Props) {
 			returnText="Main Menu"
 			className={css.cosmeticsLayout}
 		>
-			<div className={css.body}>
+			<div
+				className={classNames(css.body, tab === 'rewards' && css.rewardsBody)}
+			>
 				<div className={css.body2}>
 					<Tabs
 						selected={tab}
@@ -262,17 +281,47 @@ function Cosmetics({setMenuSection, page}: Props) {
 					/>
 					<div className={css.itemSelector}>
 						{tab === 'achievements' && (
-							<div className={css.achievements}>
-								{ACHIEVEMENTS_LIST.map((achievement, i) => {
-									return (
-										<AchievementComponent
-											key={i}
-											achievement={achievement}
-											progressData={progressData}
-										/>
-									)
-								})}
-							</div>
+							<>
+								<div className={css.achievementsHeader}>
+									<div className={css.sectionHeader}>Your Achievements</div>
+									<input
+										placeholder={'Search Achievements...'}
+										className={css.achievementsInput}
+										defaultValue={achievementsSearch}
+										onChange={(e) => {
+											setAchievementsSearch(e.target.value)
+										}}
+									></input>
+									<div className={css.checkboxes}>
+										<div>Hide Obtained Achievements</div>
+										<Checkbox
+											onCheck={() => setHideObtained(!hideObtained)}
+											defaultChecked={hideObtained}
+										></Checkbox>
+									</div>
+									<div className={css.checkboxes}>
+										<div>Hide Unobtained Achievements</div>
+										<Checkbox
+											onCheck={() => setHideUnobtained(!hideUnobtained)}
+											defaultChecked={hideUnobtained}
+										></Checkbox>
+									</div>
+								</div>
+								<div className={css.achievements}>
+									{ACHIEVEMENTS_LIST.map((achievement, i) => {
+										return (
+											<AchievementComponent
+												key={i}
+												achievement={achievement}
+												progressData={progressData}
+												hideUnobtained={hideUnobtained}
+												hideObtained={hideObtained}
+												filter={achievementsSearch}
+											/>
+										)
+									})}
+								</div>
+							</>
 						)}
 						{tab === 'rewards' && (
 							<div className={css.cosmeticsContainerContainer}>
@@ -280,31 +329,41 @@ function Cosmetics({setMenuSection, page}: Props) {
 									<div className={css.sectionHeader}>Backgrounds</div>
 									<div className={css.cosmetics}>
 										{sortedCosmetics.background.map((cosmetic) => (
-											<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+											<CosmeticTooltipItem
+												cosmetic={cosmetic}
+											></CosmeticTooltipItem>
 										))}
 									</div>
 									<div className={css.sectionHeader}>Borders</div>
 									<div className={css.cosmetics}>
 										{sortedCosmetics.border.map((cosmetic) => (
-											<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+											<CosmeticTooltipItem
+												cosmetic={cosmetic}
+											></CosmeticTooltipItem>
 										))}
 									</div>
 									<div className={css.sectionHeader}>Coins</div>
 									<div className={css.cosmetics}>
 										{sortedCosmetics.coin.map((cosmetic) => (
-											<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+											<CosmeticTooltipItem
+												cosmetic={cosmetic}
+											></CosmeticTooltipItem>
 										))}
 									</div>
 									<div className={css.sectionHeader}>Hearts</div>
 									<div className={css.cosmetics}>
 										{sortedCosmetics.heart.map((cosmetic) => (
-											<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+											<CosmeticTooltipItem
+												cosmetic={cosmetic}
+											></CosmeticTooltipItem>
 										))}
 									</div>
 									<div className={css.sectionHeader}>Titles</div>
-									<div className={css.cosmetics}>
+									<div className={css.cosmeticsTitles}>
 										{sortedCosmetics.title.map((cosmetic) => (
-											<CosmeticItem cosmetic={cosmetic}></CosmeticItem>
+											<CosmeticTooltipItem
+												cosmetic={cosmetic}
+											></CosmeticTooltipItem>
 										))}
 									</div>
 								</div>

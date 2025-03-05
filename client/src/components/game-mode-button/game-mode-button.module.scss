@@ -1,11 +1,11 @@
 $width: 34vh;
-$expandedWidth: 75vh;
+$expandedWidth: 85vh;
 $height: 52vh;
 $time: 0.25s;
 
 $mobileWidth: 90vw;
 $mobileHeight: 20vh;
-$expandedHeight: 67vh;
+$expandedHeight: $mobileHeight * 3 + 1.5 * 3;
 
 .buttonContainer {
 	width: $width;
@@ -28,6 +28,12 @@ $expandedHeight: 67vh;
 	transform-origin: center;
 	overflow: hidden;
 	z-index: 90;
+	scale: 1;
+	transition: scale 0.05s ease-out;
+
+	.rightOverlay {
+		pointer-events: none;
+	}
 
 	&.grow {
 		animation: grow $time forwards;
@@ -36,6 +42,7 @@ $expandedHeight: 67vh;
 		.rightOverlay,
 		.returnButton {
 			opacity: 100%;
+			pointer-events: all;
 		}
 	}
 
@@ -69,9 +76,7 @@ $expandedHeight: 67vh;
 		}
 	}
 
-	&.disabled {
-		filter: grayscale(100%);
-
+	&:has(> .leftOverlay > .button > .rematch:hover) {
 		&:hover {
 			scale: 1;
 		}
@@ -172,6 +177,48 @@ $expandedHeight: 67vh;
 		font-size: 2vh;
 		padding-bottom: 0.5vh;
 	}
+
+	&.rematch {
+		width: calc($width - 4vh);
+		background-color: var(--gray-900);
+		box-shadow: inset 0 -4px 0 0 var(--gray-500),
+			inset 1px 1px 0 0 var(--gray-100),
+			inset -1px -5px 0 0 var(--gray-100);
+		margin-left: 2vh;
+		margin-top: 0.5vh;
+		scale: 1;
+		transform: scale(1);
+		transform-origin: center;
+		opacity: 100%;
+		height: min-content;
+		transition: scale 0.05s ease-out, opacity 0.1s ease-in,
+			transform 0.2s ease-in, height 0.2s ease-in, margin-top 0.2s ease-in;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 0.25rem;
+
+		> div {
+			transform: translateY(-0.75rem);
+		}
+
+		&.hide {
+			transform: scale(0);
+			opacity: 0%;
+			height: 0px;
+			margin-top: -2vh;
+		}
+
+		&:hover {
+			background-color: var(--gray-700);
+			scale: 1.05;
+		}
+
+		.title {
+			padding-bottom: 0;
+			font-size: 1rem;
+		}
+	}
 }
 
 .leftOverlay {
@@ -199,6 +246,8 @@ $expandedHeight: 67vh;
 
 .filter {
 	width: 100%;
+	margin: 1vh;
+	margin-bottom: 0;
 }
 
 /* ANIMATIONS */
@@ -393,6 +442,13 @@ $expandedHeight: 67vh;
 						filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
 					}
 				}
+			}
+
+			.noResults {
+				padding: 0.5rem 0;
+				color: var(--text-light);
+				width: 100%;
+				text-align: center;
 			}
 		}
 
@@ -590,17 +646,15 @@ $expandedHeight: 67vh;
 .rematchTimeRemaining {
 	background-color: rgb(217, 119, 147);
 	color: black;
-	transform: translateY(-0.125rem);
 	width: max-content;
-	padding: 5px;
-	margin-top: 0.5rem;
 	margin-left: -3px;
-	margin-bottom: 0.5rem;
 	align-items: baseline;
 	text-align: center;
 	justify-content: center;
 	border-radius: 5px;
 	font-size: 1rem;
+	line-height: 1rem;
+	padding: 5px;
 }
 
 @keyframes timedShow {
@@ -613,15 +667,10 @@ $expandedHeight: 67vh;
 	}
 }
 
-@media screen and (max-width: 720px) {
+@media (orientation: portrait) {
 	.buttonContainer {
 		width: $mobileWidth;
 		height: $mobileHeight;
-
-		&.fourButtons {
-			width: $mobileWidth;
-			height: calc($mobileHeight - 4vh);
-		}
 	}
 
 	.backgroundContainer {
@@ -629,11 +678,6 @@ $expandedHeight: 67vh;
 		height: $mobileHeight;
 		top: 0;
 		left: auto;
-
-		&.fourButtons {
-			width: $mobileWidth;
-			height: calc($mobileHeight - 4vh);
-		}
 	}
 
 	@keyframes grow {
@@ -675,13 +719,18 @@ $expandedHeight: 67vh;
 	}
 
 	.spacer {
-		display: none;
+		max-height: 2vh;
 	}
 
 	.text {
 		position: absolute;
 		left: 0px;
 		top: 5vh;
+		transition: top 0.2s ease-in-out;
+
+		&.makeHigherOnMobile {
+			top: 2vh;
+		}
 	}
 
 	.vingette {
@@ -718,10 +767,38 @@ $expandedHeight: 67vh;
 		border: 2px black solid;
 	}
 
+	.text {
+		&.rematch {
+			top: 65%;
+			height: min-content;
+			height: 2.5rem;
+			line-height: 1rem;
+			margin-top: 0;
+			display: flex;
+			flex-direction: row;
+			gap: 0.5rem;
+			width: min-content;
+			text-wrap: nowrap;
+			align-items: center;
+			justify-content: center;
+			padding: 0.5rem;
+
+			> div {
+				transform: translateY(-0.125rem);
+			}
+		}
+
+		&.cancel {
+			left: 42%;
+		}
+	}
+
 	.rematchTimeRemaining {
-		position: absolute;
-		top: 0px;
-		right: 5.5rem;
-		scale: 0.8;
+		margin-left: 0px;
+	}
+
+	.backgroundImage {
+		object-position: top;
+		object-fit: none;
 	}
 }

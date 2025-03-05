@@ -17,9 +17,7 @@ const SUStainable: Achievement = {
 			steps: 100,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		let player = game.components.get(playerEntity)!
-
+	onGameStart(game, player, component, observer) {
 		observer.subscribeWithPriority(
 			player.hooks.afterApply,
 			afterApply.CHECK_BOARD_STATE,

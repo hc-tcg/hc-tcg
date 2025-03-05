@@ -35,6 +35,7 @@ import {getSocket} from 'logic/socket/socket-selectors'
 import {eventChannel} from 'redux-saga'
 import {call, delay, put, race, select, take, takeEvery} from 'typed-redux-saga'
 import {BASE_URL} from '../../constants'
+import {ConnectionError} from './session-reducer'
 export const NO_SOCKET_ASSERT =
 	'The socket should be be defined as soon as the page is opened.'
 
@@ -115,13 +116,14 @@ function getNonDatabaseUser(): User {
 			topCards: [],
 		},
 		gameHistory: [],
+		banned: false,
 	}
 }
 
 function* authenticateUser(
 	playerUuid: string,
 	secret: string,
-): Generator<any, User> {
+): Generator<any, User | null> {
 	const headers = {
 		userId: playerUuid,
 		secret: secret,
@@ -140,6 +142,11 @@ function* authenticateUser(
 			},
 		})
 		return getNonDatabaseUser()
+	}
+
+	// Authentication failed
+	if (auth.status === 401) {
+		return null
 	}
 
 	const userResponse = (yield* call([auth, auth.json])) as User
@@ -266,7 +273,16 @@ export function* setupData(user: User) {
 	})
 }
 
-export function* loginSaga() {
+type LoginResult =
+	| {
+			success: true
+	  }
+	| {
+			success: false
+			reason: ConnectionError
+	  }
+
+function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 	const socket = yield* select(getSocket)
 	const session = loadSession()
 
@@ -275,55 +291,73 @@ export function* loginSaga() {
 	console.log('session saga: ', session)
 
 	if (!session) {
-		const secret = localStorage.getItem('databaseInfo:secret')
-		const userId = localStorage.getItem('databaseInfo:userId')
+		let secret = localStorage.getItem('databaseInfo:secret')
+		let userId = localStorage.getItem('databaseInfo:userId')
 
 		if (!secret || !userId) {
 			// Create a new user here
 			yield* put<LocalMessage>({type: localMessages.NOT_CONNECTING})
 
-			const {name} = yield* take<LocalMessageTable[typeof localMessages.LOGIN]>(
-				localMessages.LOGIN,
-			)
+			const loginMessage = yield* take<
+				LocalMessageTable[typeof localMessages.LOGIN]
+			>(localMessages.LOGIN)
 
-			localStorage.setItem('playerName', name)
+			if (loginMessage.login_type === 'new-account') {
+				const {name} = loginMessage
 
-			const userResponse = yield* createUser(name)
+				localStorage.setItem('playerName', name)
 
-			yield* put<LocalMessage>({
-				type: localMessages.SET_ID_AND_SECRET,
-				userId: userResponse.uuid,
-				secret: userResponse.secret,
-			})
+				const userResponse = yield* createUser(name)
 
-			yield* put<LocalMessage>({
-				type: localMessages.SELECT_DECK,
-				deck: userResponse.decks[0],
-			})
-			localStorage.setItem('activeDeck', userResponse.decks[0].code)
+				yield* put<LocalMessage>({
+					type: localMessages.SET_ID_AND_SECRET,
+					userId: userResponse.uuid,
+					secret: userResponse.secret,
+				})
 
-			socket.auth = {
-				...socket.auth,
-				playerUuid: userResponse.uuid,
-				playerName: userResponse.username,
-				version: getClientVersion(),
+				yield* put<LocalMessage>({
+					type: localMessages.SELECT_DECK,
+					deck: userResponse.decks[0],
+				})
+				localStorage.setItem('activeDeck', userResponse.decks[0].code)
+
+				socket.auth = {
+					...socket.auth,
+					playerUuid: userResponse.uuid,
+					playerName: userResponse.username,
+					minecraftName: userResponse.minecraftName || userResponse.username,
+					version: getClientVersion(),
+				}
+				yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
+				socket.connect()
+
+				yield* setupData(userResponse)
+			} else {
+				userId = loginMessage.uuid
+				secret = loginMessage.secret
 			}
-			yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
-			socket.connect()
+		}
 
-			yield* setupData(userResponse)
-		} else {
+		if (userId && secret) {
 			const userResponse = yield* authenticateUser(userId, secret)
 
 			yield* put<LocalMessage>({
 				type: localMessages.CONNECTING_MESSAGE,
-				message: 'Singing in',
+				message: 'Authenticating',
 			})
+
+			if (!userResponse) {
+				return {
+					success: false,
+					reason: 'bad_auth',
+				}
+			}
 
 			socket.auth = {
 				...socket.auth,
 				playerUuid: userResponse.uuid,
 				playerName: userResponse.username,
+				minecraftName: userResponse.minecraftName || userResponse.username,
 				version: getClientVersion(),
 			}
 			yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
@@ -362,24 +396,27 @@ export function* loginSaga() {
 
 		clearSession()
 		socket.disconnect()
-		location.reload()
-		return
+
+		return {
+			success: false,
+			reason: 'timeout',
+		}
 	}
 
 	if (result.timeout) {
 		clearSession()
 		socket.disconnect()
-		yield put<LocalMessage>({
-			type: localMessages.DISCONNECT,
-			errorMessage: 'timeout',
-		})
-		return
+		return {
+			success: false,
+			reason: 'timeout',
+		}
 	}
 
 	window.history.replaceState({}, '', window.location.pathname)
 
 	if (result.playerReconnected) {
-		if (!session) return
+		if (!session)
+			throw new Error('The session should ALWAYS exist if the user logged in.')
 
 		const secret = localStorage.getItem('databaseInfo:secret')
 		const userId = localStorage.getItem('databaseInfo:userId')
@@ -396,6 +433,12 @@ export function* loginSaga() {
 		}
 
 		const userResponse = yield* authenticateUser(userId, secret)
+		if (!userResponse) {
+			return {
+				success: false,
+				reason: 'bad_auth',
+			}
+		}
 		yield* setupData(userResponse)
 
 		console.log('User reconnected')
@@ -412,7 +455,10 @@ export function* loginSaga() {
 
 			// Only start a new game saga if the player is not in a game.
 			if (matchmakingStatus !== 'in_game') {
-				yield* call(gameSaga, result.playerReconnected.game)
+				yield* call(gameSaga, {
+					initialGameState: result.playerReconnected.game,
+					spectatorCode: result.playerReconnected.spectatorCode,
+				})
 				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
 			}
 		}
@@ -430,12 +476,32 @@ export function* loginSaga() {
 			...socket.auth,
 			playerUuid: localStorage.getItem('database:userId') as string,
 			playerName: result.playerInfo.player.playerName,
+			minecraftName:
+				result.playerInfo.player.minecraftName ||
+				result.playerInfo.player.playerName,
 			playerId: result.playerInfo.player.playerId,
 			playerSecret: result.playerInfo.player.playerSecret,
 		}
 
 		yield put<LocalMessage>({
 			type: localMessages.CONNECTED,
+		})
+	}
+
+	return {success: true}
+}
+
+export function* loginSaga() {
+	while (true) {
+		let result = yield* trySingleLoginAttempt()
+		if (result.success === true) {
+			break
+		}
+
+		// Otherwise the login failed, so lets send a toast and try again
+		yield put<LocalMessage>({
+			type: localMessages.DISCONNECT,
+			errorMessage: result.reason,
 		})
 	}
 }

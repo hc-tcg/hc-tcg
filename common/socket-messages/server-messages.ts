@@ -64,6 +64,7 @@ export type ServerMessages = [
 	{
 		type: typeof serverMessages.PLAYER_RECONNECTED
 		game?: LocalGameState
+		spectatorCode?: string
 		messages?: Array<ChatMessage>
 	},
 	{type: typeof serverMessages.INVALID_PLAYER},
@@ -79,12 +80,13 @@ export type ServerMessages = [
 		updates: Array<Update>
 	},
 	{type: typeof serverMessages.OPPONENT_CONNECTION; isConnected: boolean},
-	{type: typeof serverMessages.GAME_START},
+	{type: typeof serverMessages.GAME_START; spectatorCode?: string},
 	{
 		type: typeof serverMessages.GAME_END
 		gameState: LocalGameState | null
 		outcome: GameOutcome
 		earnedAchievements: Array<EarnedAchievement>
+		gameEndTime: number
 	},
 	{type: typeof serverMessages.PRIVATE_GAME_TIMEOUT},
 	{type: typeof serverMessages.LEAVE_QUEUE_SUCCESS},

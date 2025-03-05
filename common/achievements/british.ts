@@ -15,10 +15,7 @@ const British: Achievement = {
 			steps: 1,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		const player = game.components.get(playerEntity)
-		if (!player) return
-
+	onGameStart(game, player, component, observer) {
 		const attackedHermits: Record<
 			CardEntity,
 			'xisumavoid_rare' | 'spookystress_rare' | 'both'
@@ -31,7 +28,7 @@ const British: Achievement = {
 				const targetHermit = attack.target?.getHermit()
 				if (!targetHermit) return
 				if (attack.type !== 'secondary') return
-				if (attack.player.entity !== playerEntity) return
+				if (attack.player.entity !== player.entity) return
 				const attackerId = attack.attacker?.props.id
 				if (
 					attackerId !== 'xisumavoid_rare' &&

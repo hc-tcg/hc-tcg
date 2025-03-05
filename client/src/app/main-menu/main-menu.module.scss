@@ -43,7 +43,7 @@
 
 .mainMenuButton {
 	height: 5vh;
-	font-size: 1.8vh;
+	font-size: 2vh;
 	padding: 3vh;
 }
 
@@ -93,11 +93,11 @@ nav {
 	display: grid;
 	gap: 0.75vh;
 	grid-template-areas:
-		"public"
-		"deck"
-		"achievements"
-		"settings"
-		"more";
+        "public"
+        "deck"
+        "achievements"
+        "settings"
+        "more";
 	animation: fadeIn 250ms ease-in-out forwards;
 }
 
@@ -409,5 +409,5 @@ nav {
 	border-radius: 0.5vh;
 	padding: 1vh 2vh;
 	gap: 1vh;
-	overflow-y: scroll;
+	overflow-y: auto;
 }

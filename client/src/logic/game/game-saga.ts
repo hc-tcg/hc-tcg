@@ -213,7 +213,12 @@ function* handleForfeitAction() {
 	yield* sendTurnAction(playerEntity, action.action)
 }
 
-function* gameSaga(initialGameState?: LocalGameState) {
+type GameSagaProps = {
+	spectatorCode?: string
+	initialGameState?: LocalGameState
+}
+
+function* gameSaga({initialGameState, spectatorCode}: GameSagaProps) {
 	const socket = yield* select(getSocket)
 	const backgroundTasks = yield* fork(() =>
 		all([
@@ -228,6 +233,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 	try {
 		yield* put<LocalMessage>({
 			type: localMessages.GAME_START,
+			spectatorCode,
 		})
 
 		const result = yield* race({
@@ -243,6 +249,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 				gameState: newGameState,
 				outcome,
 				earnedAchievements,
+				gameEndTime,
 			} = result.gameEnd
 			if (newGameState) {
 				yield call(coinFlipSaga, newGameState)
@@ -256,6 +263,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 				type: localMessages.GAME_END_OVERLAY_SHOW,
 				outcome,
 				earnedAchievements,
+				gameEndTime,
 			})
 		}
 	} catch (err) {
@@ -264,6 +272,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 			type: localMessages.GAME_END_OVERLAY_SHOW,
 			outcome: {type: 'game-crash', error: `${(err as Error).stack}`},
 			earnedAchievements: [],
+			gameEndTime: Date.now(),
 		})
 	} finally {
 		const hasOverlay = yield* select(getEndGameOverlay)

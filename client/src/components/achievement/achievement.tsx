@@ -7,21 +7,39 @@ import css from './achievement.module.scss'
 type Props = {
 	achievement: Achievement
 	progressData: AchievementProgress
+	hideUnobtained: boolean
+	hideObtained: boolean
+	filter: string
 }
 export default function AchievementComponent({
 	achievement,
 	progressData,
+	hideUnobtained,
+	hideObtained,
+	filter,
 }: Props) {
-	const progress = progressData[achievement.numericId]
-		? Object.values(progressData[achievement.numericId].goals).reduce(
-				(r, x) => r + x,
-				0,
-			)
-		: 0
+	const progress =
+		progressData[achievement.numericId] !== undefined
+			? achievement.getProgress(progressData[achievement.numericId].goals)
+			: 0
 
 	let out = []
 
 	for (const [i, level] of achievement.levels.entries()) {
+		if (hideUnobtained && progress < level.steps) return
+		if (hideObtained && progress >= level.steps) return
+		if (
+			!level.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase()) &&
+			!level.description
+				.toLocaleLowerCase()
+				.includes(filter.toLocaleLowerCase())
+		) {
+			return
+		}
+
+		const completionTime =
+			progressData[achievement.numericId] &&
+			progressData[achievement.numericId].levels[i].completionTime
 		const iconCosmetic = ALL_COSMETICS.find(
 			(x) =>
 				x.requires?.achievement === achievement.id &&
@@ -54,61 +72,53 @@ export default function AchievementComponent({
 					style={faceStyle}
 				/>
 			)
+		} else if (iconCosmetic?.type === 'title') {
+			icon = <img src={icon_url} className={classNames(css.icon, css.title)} />
 		} else {
 			icon = <img src={icon_url} className={classNames(css.icon)} />
 		}
 
-		const completionTime = 0
-
 		out.push(
-			<div className={css.achievementContainer}>
+			<div
+				className={classNames(
+					css.achievementContainer,
+					progress >= level.steps && css.completed,
+				)}
+			>
 				{icon}
-				<div className={css.meat}>
-					<div>
+				<div className={css.mainArea}>
+					<div className={css.rightSide}>
 						<div>
+							{progress >= level.steps && (
+								<img src={'images/icons/trophy.png'} className={css.trophy} />
+							)}
 							{level.name}
 							<div className={css.achievementDescription}>
 								{level.description}
 							</div>
 						</div>
-						<div className={css.achievementPlayers}>
-							3.5% of players have this achievement
-						</div>
-						<div className={css.progressContainer}>
-							<progress
-								value={progress}
-								max={level.steps}
-								className={css.progressBar}
-							></progress>
-							<span>
-								{progress}/{level.steps}
-							</span>
-						</div>
-						{completionTime ? (
-							<span>
-								Completed: {new Date(completionTime).toLocaleDateString()}
-							</span>
-						) : (
-							''
-						)}
 					</div>
-					<div>
+					<div className={css.leftSide}>
 						<div className={css.progressContainer}>
 							<div>
 								{progress}/{level.steps}
 							</div>
-							<progress
-								value={progress}
-								max={level.steps}
-								className={css.progressBar}
-							></progress>
+							<div className={css.progressBar}>
+								<div
+									className={classNames(
+										css.full,
+										progress >= level.steps && css.completed,
+									)}
+									style={{
+										width: `${Math.min(progress / level.steps, 1) * 100}%`,
+									}}
+								></div>
+							</div>
 						</div>
-						{completionTime ? (
-							<span>
+						{completionTime && (
+							<div className={css.completionTime}>
 								Completed: {new Date(completionTime).toLocaleDateString()}
-							</span>
-						) : (
-							''
+							</div>
 						)}
 					</div>
 				</div>

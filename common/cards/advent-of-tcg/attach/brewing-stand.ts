@@ -49,7 +49,7 @@ const BrewingStand: Attach = {
 					if (!pickedSlot.inRow()) return
 
 					pickedSlot.row.heal(50)
-					pickedSlot.getCard()?.discard()
+					pickedSlot.card?.discard()
 				},
 			})
 		})

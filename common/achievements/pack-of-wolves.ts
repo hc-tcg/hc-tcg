@@ -15,15 +15,12 @@ const PackOfWolves: Achievement = {
 			steps: 3,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		const player = game.components.get(playerEntity)
-		if (!player) return
-
+	onGameStart(game, player, component, observer) {
 		observer.subscribe(player.hooks.onAttach, (card) => {
 			if (card.props !== Wolf) return
 			const boardCards = game.components.filter(
 				SlotComponent,
-				query.slot.player(playerEntity),
+				query.slot.player(player.entity),
 				query.slot.attach,
 				query.slot.has(Wolf),
 			)

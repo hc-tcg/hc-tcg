@@ -43,9 +43,9 @@ const TeamStar: Achievement = {
 			steps: 5,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
+	onGameStart(game, player, component, observer) {
 		const playerDeck = game.components
-			.filter(CardComponent, query.card.player(playerEntity))
+			.filter(CardComponent, query.card.player(player.entity))
 			.map((card) => card.props.id)
 		const containsAllMembers = members.every((member) =>
 			member.some((id) => playerDeck.includes(id)),
@@ -54,7 +54,7 @@ const TeamStar: Achievement = {
 
 		observer.subscribe(game.hooks.onGameEnd, (outcome) => {
 			if (outcome.type !== 'player-won') return
-			if (outcome.winner !== playerEntity) return
+			if (outcome.winner !== player.entity) return
 			component.incrementGoalProgress({goal: 0})
 		})
 	},

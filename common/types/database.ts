@@ -16,6 +16,7 @@ export type User = {
 	achievements: AchievementData
 	stats: PlayerStats
 	gameHistory: Array<GameHistory>
+	banned: boolean
 }
 
 export type UserWithoutSecret = {

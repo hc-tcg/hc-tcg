@@ -45,20 +45,20 @@ const NakedAndScared: Achievement = {
 			steps: 15,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		const player = game.components.get(playerEntity)
-		if (!player) return
+	onGameStart(game, player, component, observer) {
+		let deckHasBannedCards = false
 
-		let usedBannedCard = false
+		for (const card of player.getDeck()) {
+			if (bannedCards.includes(card.props.id)) {
+				deckHasBannedCards = true
+			}
+		}
 
-		observer.subscribe(player.hooks.onAttach, (card) => {
-			if (!bannedCards.includes(card.props.id)) return
-			usedBannedCard = true
-		})
-
-		observer.subscribe(game.hooks.onGameEnd, () => {
-			if (usedBannedCard) return
-			component.incrementGoalProgress({goal: 0})
+		observer.subscribe(game.hooks.onGameEnd, (outcome) => {
+			if (deckHasBannedCards) return
+			if (outcome.type === 'player-won' && outcome.winner === player.entity) {
+				component.incrementGoalProgress({goal: 0})
+			}
 		})
 	},
 }

@@ -1,6 +1,5 @@
 import cn from 'classnames'
 import classNames from 'classnames'
-import {LocalGameState} from 'common/types/game-state'
 import {SlotInfo} from 'common/types/server-requests'
 import Button from 'components/button'
 import CoinFlip from 'components/coin-flip'
@@ -8,6 +7,7 @@ import {
 	getAvailableActions,
 	getCurrentCoinFlip,
 	getCurrentPickMessage,
+	getCurrentPlayerEntity,
 	getGameState,
 	getIsSpectator,
 	getPlayerState,
@@ -20,15 +20,13 @@ import css from './actions.module.scss'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
-	localGameState: LocalGameState
 	gameOver: boolean
 	id?: string
 }
 
-const MobileActions = ({onClick, localGameState, gameOver, id}: Props) => {
-	const currentPlayer = useSelector(
-		getPlayerStateByEntity(localGameState.turn.currentPlayerEntity),
-	)
+const MobileActions = ({onClick, gameOver, id}: Props) => {
+	const currnetPlayerEntity = useSelector(getCurrentPlayerEntity)!
+	const currentPlayer = useSelector(getPlayerStateByEntity(currnetPlayerEntity))
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
 	const isSpectator = useSelector(getIsSpectator)
@@ -166,7 +164,7 @@ const MobileActions = ({onClick, localGameState, gameOver, id}: Props) => {
 
 			{isSpectator && !currentCoinFlip && (
 				<div className={classNames(css.actionSection, css.status)}>
-					{currentPlayer.censoredPlayerName}'s Turn
+					{currentPlayer?.censoredPlayerName}'s Turn
 				</div>
 			)}
 

@@ -33,7 +33,7 @@ import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {setActiveDeck} from 'logic/saved-decks/saved-decks'
-import {ReactNode, useEffect, useRef, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
@@ -101,7 +101,7 @@ export function FilterComponent({
 						<img src="../images/icons/tag.png" alt="tag-icon" />
 					</button>
 				}
-				label="Saved Tags"
+				label="Tag Filter"
 				options={tagsDropdownOptions}
 				showNames={true}
 				direction={dropdownDirection}
@@ -240,17 +240,9 @@ function SelectDeck({
 		description: `Removed ${loadedDeck.name}`,
 		image: getIconPath(loadedDeck),
 	}
-	const selectedDeckToast: ToastT = {
-		open: true,
-		title: 'Deck Selected!',
-		description: `${loadedDeck.name} is now your active deck`,
-		image: getIconPath(loadedDeck),
-	}
 
 	// MENU LOGIC
 	const backToMenu = () => {
-		dispatchToast(selectedDeckToast)
-
 		dispatch({
 			type: localMessages.UPDATE_DECKS,
 			newActiveDeck: loadedDeck,
@@ -322,7 +314,7 @@ function SelectDeck({
 			return [...tags, ...decks.tags]
 		}, []).length > 0
 
-	const deckList: ReactNode = filteredDecks.map((deck: Deck, i: number) => {
+	const deckList = filteredDecks.map((deck: Deck, i: number) => {
 		return (
 			<li
 				className={classNames(
@@ -488,7 +480,7 @@ function SelectDeck({
 				onConfirm={() => saveDeck(importedDeck)}
 			/>
 			<DeckLayout
-				title="Deck Selection"
+				title="Deck Editor"
 				back={backToMenu}
 				returnText="Back To Menu"
 			>
@@ -596,7 +588,13 @@ function SelectDeck({
 									/>
 								</div>
 								<div className={css.deckListContainer}>
-									<div className={css.deckList}>{deckList}</div>
+									<div className={css.deckList}>
+										{deckList.length ? (
+											deckList
+										) : (
+											<p className={css.noResults}>No decks found.</p>
+										)}
+									</div>
 								</div>
 							</div>
 							<div className={css.mobileTags}>
@@ -836,7 +834,11 @@ function SelectDeck({
 						</>
 					}
 				>
-					{deckList}
+					{deckList.length ? (
+						deckList
+					) : (
+						<p className={css.noResults}>No decks found.</p>
+					)}
 				</DeckLayout.Sidebar>
 			</DeckLayout>
 		</>

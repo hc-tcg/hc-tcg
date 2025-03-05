@@ -11,7 +11,7 @@ const STARTER_DECK_IDS = STARTER_DECKS.map((deck) =>
 
 const HermitsAndCrafting: Achievement = {
 	...achievement,
-	numericId: 24,
+	numericId: 25,
 	id: 'designer',
 	levels: [
 		{
@@ -20,11 +20,11 @@ const HermitsAndCrafting: Achievement = {
 			steps: 1,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
+	onGameStart(game, player, component, observer) {
 		const equippedDeckIds = game.components
 			.filter(
 				CardComponent,
-				query.card.player(playerEntity),
+				query.card.player(player.entity),
 				query.not(query.card.is(Feather)),
 			)
 			.map((card) => card.props.id)
@@ -41,7 +41,7 @@ const HermitsAndCrafting: Achievement = {
 
 		observer.subscribe(game.hooks.onGameEnd, (outcome) => {
 			if (outcome.type !== 'player-won') return
-			if (outcome.winner !== playerEntity) return
+			if (outcome.winner !== player.entity) return
 			component.incrementGoalProgress({goal: 0})
 		})
 	},

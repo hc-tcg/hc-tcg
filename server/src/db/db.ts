@@ -86,7 +86,8 @@ export class Database {
 					coin varchar(255),
 					heart varchar(255),
 					background varchar(255),
-					border varchar(255)
+					border varchar(255),
+					banned boolean DEFAULT false NOT NULL
 				);
 				CREATE TABLE IF NOT EXISTS decks(
 					user_id uuid REFERENCES users(user_id),
@@ -300,6 +301,7 @@ export class Database {
 					achievements: achievements.body,
 					stats: stats.body,
 					gameHistory: gameHistory.body,
+					banned: user.rows[0]['banned'],
 				},
 			}
 		} catch (e) {
@@ -1029,7 +1031,8 @@ export class Database {
 			const seed: string = game['seed']
 
 			const replay: Buffer = game['replay']
-			const decompressedReplay: Buffer | null = huffmanDecompress(replay)
+			// const decompressedReplay: Buffer | null = huffmanDecompress(replay)
+			const decompressedReplay = replay
 
 			if (
 				!decompressedReplay ||
@@ -1831,7 +1834,7 @@ export class Database {
 				FROM user_goals
 				LEFT JOIN achievement_completion_time
 				ON user_goals.user_id = achievement_completion_time.user_id AND user_goals.achievement_id = achievement_completion_time.achievement_id
-				WHERE user_goals.user_id = $1 AND achievement_completion_time.level IS NOT NULL;
+				WHERE user_goals.user_id = $1;
 				`,
 				[playerId],
 			)
@@ -1840,18 +1843,23 @@ export class Database {
 			result.rows.forEach((row) => {
 				let achievement = ACHIEVEMENTS[row['achievement_id']]
 
-				if (!progress[row['achievement_id']]) {
+				if (progress[row['achievement_id']] === undefined) {
 					progress[row['achievement_id']] = {
 						goals: {},
 						levels: Array(achievement.levels.length)
 							.fill(0)
-							.flatMap(() => [{}]),
+							.map(() => {
+								return {}
+							}),
 					}
 				}
 
 				progress[row['achievement_id']].goals[row['goal_id']] = row['progress']
-				progress[row['achievement_id']].levels[row['level']] = {
-					completionTime: row['completion_time'],
+
+				if (row['level'] !== null) {
+					progress[row['achievement_id']].levels[row['level']] = {
+						completionTime: row['completion_time'],
+					}
 				}
 
 				// If we add a new level of an achievement the user may have the goal complete but will not have the achievement.

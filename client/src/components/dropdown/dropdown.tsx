@@ -1,7 +1,8 @@
 import classNames from 'classnames'
 import {localMessages} from 'logic/messages'
+import {getDropdown} from 'logic/session/session-selectors'
 import {ReactNode, useEffect, useRef, useState} from 'react'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import css from './dropdown.module.scss'
 
 type DropdownOptions = {
@@ -42,40 +43,44 @@ const Dropdown = ({
 }: Props & {buttonRef: React.RefObject<HTMLButtonElement>}) => {
 	const dispatch = useDispatch()
 	const filterMenuRef = useRef<HTMLDivElement>(null)
+	const [newMenu, setNewMenu] = useState<boolean>(true)
 	const [newChecked, setChecked] = useState<Array<string>>(checked || [])
 
-	const onMouseUp = (e: MouseEvent) => {
+	const calculateShow = (x: number, y: number) => {
 		const boundingBox = buttonRef.current?.getBoundingClientRect()
 		const menuBoundingBox = filterMenuRef.current?.getBoundingClientRect()
 
-		if (
-			!checkboxes &&
-			boundingBox &&
-			(e.x > boundingBox.right ||
-				e.x < boundingBox.left ||
-				e.y > boundingBox.bottom ||
-				e.y < boundingBox.top)
-		)
+		if (newMenu) {
+			setNewMenu(false)
+			return
+		}
+
+		if (!checkboxes) {
 			dispatch({
 				type: localMessages.HIDE_DROPDOWN,
 			})
+		}
 
 		if (
 			checkboxes &&
 			menuBoundingBox &&
 			boundingBox &&
-			(e.x > boundingBox.right ||
-				e.x < boundingBox.left ||
-				e.y > boundingBox.bottom ||
-				e.y < boundingBox.top) &&
-			(e.x > menuBoundingBox.right ||
-				e.x < menuBoundingBox.left ||
-				e.y > menuBoundingBox.bottom ||
-				e.y < menuBoundingBox.top)
+			(x > boundingBox.right ||
+				x < boundingBox.left ||
+				y > boundingBox.bottom ||
+				y < boundingBox.top) &&
+			(x > menuBoundingBox.right ||
+				x < menuBoundingBox.left ||
+				y > menuBoundingBox.bottom ||
+				y < menuBoundingBox.top)
 		)
 			dispatch({
 				type: localMessages.HIDE_DROPDOWN,
 			})
+	}
+
+	const onMouseUp = (e: MouseEvent) => {
+		calculateShow(e.x, e.y)
 	}
 
 	useEffect(() => {
@@ -85,6 +90,23 @@ const Dropdown = ({
 			window.removeEventListener('mouseup', onMouseUp, false)
 		}
 	})
+
+	const mouseDownAction = (option: {key?: string; name: string}) => {
+		if (!checkboxes && action) {
+			action(option.key || option.name)
+		}
+		if (!checkboxes || !option.key) return
+		const ch = [...newChecked]
+		const updatedChecked =
+			option.key === 'any'
+				? []
+				: ch.includes(option.key)
+					? ch.filter((a) => a !== option.key)
+					: [option.key, ...ch]
+
+		setChecked(updatedChecked)
+		if (checkboxAction) checkboxAction(updatedChecked)
+	}
 
 	return (
 		<div className={css.dropdownContainer}>
@@ -127,22 +149,7 @@ const Dropdown = ({
 							{options.map((option, i) => (
 								<div
 									key={option.key || option.name}
-									onMouseUp={() => {
-										if (!checkboxes && action) {
-											action(option.key || option.name)
-										}
-										if (!checkboxes || !option.key) return
-										const ch = [...newChecked]
-										const updatedChecked =
-											option.key === 'any'
-												? []
-												: ch.includes(option.key)
-													? ch.filter((a) => a !== option.key)
-													: [option.key, ...ch]
-
-										setChecked(updatedChecked)
-										if (checkboxAction) checkboxAction(updatedChecked)
-									}}
+									onMouseDown={() => mouseDownAction(option)}
 									className={css.DropdownMenuItem}
 								>
 									{checkboxes && (
@@ -217,10 +224,19 @@ const DropdownButton = ({
 }: Props) => {
 	const dispatch = useDispatch()
 	const buttonRef = useRef<HTMLButtonElement>(null)
+	const dropdown = useSelector(getDropdown)
 
 	const dispatchDropdown = () => {
 		if (!buttonRef.current) return
 		const boundingBox = buttonRef.current.getBoundingClientRect()
+
+		if (dropdown) {
+			dispatch({
+				type: localMessages.HIDE_DROPDOWN,
+			})
+			return
+		}
+
 		dispatch({
 			type: localMessages.SHOW_DROPDOWN,
 			dropdown: (
@@ -242,6 +258,8 @@ const DropdownButton = ({
 			),
 			x: boundingBox.x,
 			y: boundingBox.y,
+			direction: direction || 'down',
+			align: align || 'left',
 		})
 	}
 
@@ -262,11 +280,29 @@ export const CurrentDropdown = ({
 	dropdown,
 	x,
 	y,
-}: {dropdown: ReactNode; x: number; y: number}) => {
+	direction,
+	align,
+}: {
+	dropdown: ReactNode
+	x: number
+	y: number
+	direction: 'up' | 'down'
+	align: 'left' | 'right'
+}) => {
 	return (
 		<div
 			className={css.currentDropdown}
-			style={{top: `calc(${y}px + 2rem)`, left: x}}
+			style={{
+				top: direction === 'down' ? `calc(${y}px + 2rem)` : 0,
+				left: align === 'left' ? x : 0,
+				overflow: 'hidden',
+				height:
+					direction === 'down'
+						? `calc(${window.screen.height - y}px - 2rem)`
+						: y,
+				width:
+					align === 'left' ? window.screen.width - x : `calc(${x}px + 2rem)`,
+			}}
 		>
 			{dropdown}
 		</div>

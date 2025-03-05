@@ -141,6 +141,15 @@ function padDecimal(n: number, paddingAmount: number) {
 	return `${beforeDecimal}.${afterDecimal.padEnd(paddingAmount, '0')}%`
 }
 
+function formatDivision(
+	numerator: number,
+	denominator: number,
+	paddingAmount: number,
+) {
+	if (denominator === 0) return 'N/A'
+	return padDecimal(numerator / denominator, paddingAmount)
+}
+
 function title(s: string) {
 	return s.charAt(0).toLocaleUpperCase() + s.slice(1).toLocaleLowerCase()
 }
@@ -826,6 +835,131 @@ function Statistics({setMenuSection}: Props) {
 		)
 	}
 
+	const filteredGamesHtml = filteredGames.map((game) => {
+		const startTime = new Date(game.startTime)
+		return (
+			<div className={css.gameHistoryBox}>
+				<div
+					className={classNames(
+						css.gameAreaMiddle,
+						settings.gameSide === 'Right' && css.reverseSide,
+					)}
+				>
+					<div id={css.playerHead}>
+						<div className={css.playerHead}>
+							<img
+								src={`https://mc-heads.net/head/${game.firstPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/right`}
+								alt="player head"
+							/>
+						</div>
+					</div>
+					<div id={css.opponentHead}>
+						<div className={css.playerHead}>
+							<img
+								src={`https://mc-heads.net/head/${game.secondPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/left`}
+								alt="player head"
+							/>
+						</div>
+					</div>
+					<div
+						className={classNames(
+							css.playerName,
+							settings.gameSide === 'Right' && css.reverseSide,
+							game.firstPlayer.uuid === databaseInfo.userId && css.me,
+						)}
+					>
+						{game.firstPlayer.uuid === game.winner && (
+							<img src={'images/icons/trophy.png'} className={css.trophy} />
+						)}
+						{game.firstPlayer.name}
+					</div>
+					<div
+						className={classNames(
+							css.winAndLoss,
+							settings.gameSide === 'Right' && css.reverseSide,
+						)}
+					>
+						<div
+							className={classNames(
+								game.winner === databaseInfo.userId && css.win,
+								game.winner !== databaseInfo.userId && css.loss,
+								css.me,
+							)}
+						>
+							{game.winner === databaseInfo.userId ? 'W' : 'L'}
+						</div>{' '}
+						<div className={css.dash}>-</div>{' '}
+						<div>{game.winner === databaseInfo.userId ? 'L' : 'W'}</div>
+					</div>
+					<div
+						className={classNames(
+							css.playerName,
+							settings.gameSide === 'Right' && css.reverseSide,
+							game.secondPlayer.uuid === databaseInfo.userId && css.me,
+						)}
+					>
+						{game.secondPlayer.uuid === game.winner && (
+							<img src={'images/icons/trophy.png'} className={css.trophy} />
+						)}
+						{game.secondPlayer.name}
+					</div>
+					<Button
+						id={css.deck}
+						onClick={() => {
+							setScreenshotDeckModalContents(
+								sortCards(
+									parseDeckCards(
+										game.usedDeck.cards.map((card) => card.props.id),
+									),
+								),
+							)
+						}}
+					>
+						View Deck
+					</Button>
+					{game.hasReplay && (
+						<Button id={css.replay} onClick={() => handleReplayGame(game)}>
+							Watch Replay
+						</Button>
+					)}
+					{game.hasReplay && (
+						<Button id={css.overview} onClick={() => handleOverview(game)}>
+							Overview
+						</Button>
+					)}
+					<div id={css.time} className={css.timeAndturns}>
+						{startTime.getMonth() + 1}/{startTime.getDate()}
+						<span className={css.hideOnMobile}>
+							/{startTime.getFullYear() - 2000},{' '}
+						</span>
+						<span>
+							{startTime.getHours() % 12}:
+							{startTime.getMinutes().toString().padStart(2, '0')}{' '}
+							{startTime.getHours() >= 12 ? 'PM' : 'AM'}
+						</span>
+					</div>
+					<div id={css.turns} className={css.hideOnMobile}>
+						{game.length.minutes}m{game.length.seconds}.
+						{Math.floor(game.length.milliseconds / 10)}s | {game.turns} Turn
+						{game.turns !== 1 && 's'}
+					</div>
+					<div
+						id={css.turns}
+						className={classNames(css.showOnMobile, css.timeAndturns)}
+					>
+						<div>
+							{game.length.minutes}m{game.length.seconds}.
+							{Math.floor(game.length.milliseconds / 10)}s
+						</div>
+						<div>
+							{game.turns} Turn{game.turns !== 1 && 's'}
+						</div>
+					</div>
+				</div>
+			</div>
+		)
+	})
+
 	const tabs = ['Statistics', 'My Games', 'Hall of Fame']
 
 	return (
@@ -849,46 +983,65 @@ function Statistics({setMenuSection}: Props) {
 											<p>Rate</p>
 										</div>
 										<div className={css.stat}>
-											<p className={css.statName}>Wins</p>
-											<p>{stats.wins}</p>
-											<p>{padDecimal(stats.wins / stats.gamesPlayed, 2)}</p>
-										</div>
-										<div className={css.stat}>
-											<p className={css.statName}>Forfeit Wins</p>
-											<p>{stats.forfeitWins}</p>
-											<p>
-												{padDecimal(stats.forfeitWins / stats.gamesPlayed, 2)}
-											</p>
-										</div>
-										<div className={css.stat}>
 											<p className={css.statName}>Total Wins</p>
 											<p>{stats.wins + stats.forfeitWins}</p>
 											<p>
-												{padDecimal(
-													(stats.wins + stats.forfeitWins) / stats.gamesPlayed,
+												{formatDivision(
+													stats.wins + stats.forfeitWins,
+													stats.gamesPlayed,
 													2,
 												)}
 											</p>
 										</div>
 										<div className={css.stat}>
-											<p className={css.statName}>Losses</p>
-											<p>{stats.losses}</p>
-											<p>{padDecimal(stats.losses / stats.gamesPlayed, 2)}</p>
+											<p className={css.statName}>
+												<span className={css.textTab}></span>Wins
+											</p>
+											<p>{stats.wins}</p>
+											<p>{formatDivision(stats.wins, stats.gamesPlayed, 2)}</p>
 										</div>
 										<div className={css.stat}>
-											<p className={css.statName}>Forfeit Losses</p>
-											<p>{stats.forfeitLosses}</p>
+											<p className={css.statName}>
+												<span className={css.textTab}></span>Forfeit Wins
+											</p>
+											<p>{stats.forfeitWins}</p>
 											<p>
-												{padDecimal(stats.forfeitLosses / stats.gamesPlayed, 2)}
+												{formatDivision(
+													stats.forfeitWins,
+													stats.gamesPlayed,
+													2,
+												)}
 											</p>
 										</div>
 										<div className={css.stat}>
 											<p className={css.statName}>Total Losses</p>
 											<p>{stats.losses + stats.forfeitLosses}</p>
 											<p>
-												{padDecimal(
-													(stats.losses + stats.forfeitLosses) /
-														stats.gamesPlayed,
+												{formatDivision(
+													stats.losses + stats.forfeitLosses,
+													stats.gamesPlayed,
+													2,
+												)}
+											</p>
+										</div>
+										<div className={css.stat}>
+											<p className={css.statName}>
+												<span className={css.textTab}></span>Losses
+											</p>
+											<p>{stats.losses}</p>
+											<p>
+												{formatDivision(stats.losses, stats.gamesPlayed, 2)}
+											</p>
+										</div>
+										<div className={css.stat}>
+											<p className={css.statName}>
+												<span className={css.textTab}></span>Forfeit Losses
+											</p>
+											<p>{stats.forfeitLosses}</p>
+											<p>
+												{formatDivision(
+													stats.forfeitLosses,
+													stats.gamesPlayed,
 													2,
 												)}
 											</p>
@@ -896,61 +1049,59 @@ function Statistics({setMenuSection}: Props) {
 										<div className={css.stat}>
 											<p className={css.statName}>Ties</p>
 											<p>{stats.ties}</p>
-											<p>{padDecimal(stats.ties / stats.gamesPlayed, 2)}</p>
-										</div>
-										<div className={css.stat}>
-											<p className={css.statName}>Unique Players Encountered</p>
-											<p>{stats.uniquePlayersEncountered}</p>
-											<p></p>
+											<p>{formatDivision(stats.ties, stats.gamesPlayed, 2)}</p>
 										</div>
 										<div className={css.stat}>
 											<p className={css.statName}>Games Played</p>
 											<p>{stats.gamesPlayed}</p>
 											<p></p>
 										</div>
-									</div>
-									<div className={css.stats}>
 										<div className={css.stat}>
-											<b className={css.statName}>Overall Winrate</b>
-										</div>
-										<div className={css.wtlBar}>
-											<div
-												className={css.win}
-												style={{
-													width: `${((stats.wins + stats.forfeitWins) / stats.gamesPlayed) * 100}%`,
-												}}
-											>
-												{padDecimal(
-													(stats.wins + stats.forfeitWins) / stats.gamesPlayed,
-													2,
-												)}
-											</div>
-											<div
-												className={css.tie}
-												style={{
-													width: `${(stats.ties / stats.gamesPlayed) * 100}%`,
-												}}
-											></div>
-											<div
-												className={css.loss}
-												style={{
-													width: `${((stats.losses + stats.forfeitLosses) / stats.gamesPlayed) * 100}%`,
-												}}
-											>
-												{padDecimal(
-													(stats.losses + stats.forfeitLosses) /
-														stats.gamesPlayed,
-													2,
-												)}
-											</div>
+											<p className={css.statName}>Unique Players Encountered</p>
+											<p>{stats.uniquePlayersEncountered}</p>
+											<p></p>
 										</div>
 									</div>
-									<div className={css.filters}>
-										<div>
-											<b className={css.filterHeader}>Filters</b>
+									{/* Can't show when games are 0 bc a winrate makes no sense */}
+									{stats.gamesPlayed > 0 && (
+										<div className={css.stats}>
+											<div className={css.stat}>
+												<b className={css.statName}>Overall Winrate</b>
+											</div>
+											<div className={css.wtlBar}>
+												<div
+													className={css.win}
+													style={{
+														width: `${((stats.wins + stats.forfeitWins) / stats.gamesPlayed) * 100}%`,
+													}}
+												>
+													{padDecimal(
+														(stats.wins + stats.forfeitWins) /
+															stats.gamesPlayed,
+														2,
+													)}
+												</div>
+												<div
+													className={css.tie}
+													style={{
+														width: `${(stats.ties / stats.gamesPlayed) * 100}%`,
+													}}
+												></div>
+												<div
+													className={css.loss}
+													style={{
+														width: `${((stats.losses + stats.forfeitLosses) / stats.gamesPlayed) * 100}%`,
+													}}
+												>
+													{padDecimal(
+														(stats.losses + stats.forfeitLosses) /
+															stats.gamesPlayed,
+														2,
+													)}
+												</div>
+											</div>
 										</div>
-										<p>There's nothing here yet but there will be</p>
-									</div>
+									)}
 								</div>
 							</div>
 						)}
@@ -1011,7 +1162,7 @@ function Statistics({setMenuSection}: Props) {
 											Filter by Opponent Name
 										</div>
 										<input
-											placeholder={'Search...'}
+											placeholder={'Opponent name...'}
 											onChange={(e) => {
 												opponentNameFilterAction(e.target.value)
 											}}
@@ -1066,7 +1217,8 @@ function Statistics({setMenuSection}: Props) {
 													Filter by Opponent Name
 												</div>
 												<input
-													placeholder={'Search...'}
+													className={css.opponentInput}
+													placeholder={'Opponent name...'}
 													onChange={(e) => {
 														opponentNameFilterAction(e.target.value)
 													}}
@@ -1074,164 +1226,11 @@ function Statistics({setMenuSection}: Props) {
 											</div>
 										</div>
 										<div className={css.gameHistoryGames}>
-											{filteredGames.map((game) => {
-												const startTime = new Date(game.startTime)
-												return (
-													<div className={css.gameHistoryBox}>
-														<div
-															className={classNames(
-																css.gameAreaMiddle,
-																settings.gameSide === 'Right' &&
-																	css.reverseSide,
-															)}
-														>
-															<div id={css.playerHead}>
-																<div className={css.playerHead}>
-																	<img
-																		src={`https://mc-heads.net/head/${game.firstPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/right`}
-																		alt="player head"
-																	/>
-																</div>
-															</div>
-															<div id={css.opponentHead}>
-																<div className={css.playerHead}>
-																	<img
-																		src={`https://mc-heads.net/head/${game.secondPlayer.player === 'opponent' ? game.secondPlayer.minecraftName : game.firstPlayer.minecraftName}/left`}
-																		alt="player head"
-																	/>
-																</div>
-															</div>
-															<div
-																className={classNames(
-																	css.playerName,
-																	settings.gameSide === 'Right' &&
-																		css.reverseSide,
-																	game.firstPlayer.uuid ===
-																		databaseInfo.userId && css.me,
-																)}
-															>
-																{game.firstPlayer.uuid === game.winner && (
-																	<img
-																		src={'images/icons/trophy.png'}
-																		className={css.trophy}
-																	/>
-																)}
-																{game.firstPlayer.name}
-															</div>
-															<div
-																className={classNames(
-																	css.winAndLoss,
-																	settings.gameSide === 'Right' &&
-																		css.reverseSide,
-																)}
-															>
-																<div
-																	className={classNames(
-																		game.winner === databaseInfo.userId &&
-																			css.win,
-																		game.winner !== databaseInfo.userId &&
-																			css.loss,
-																		css.me,
-																	)}
-																>
-																	{game.winner === databaseInfo.userId
-																		? 'W'
-																		: 'L'}
-																</div>{' '}
-																<div className={css.dash}>-</div>{' '}
-																<div>
-																	{game.winner === databaseInfo.userId
-																		? 'L'
-																		: 'W'}
-																</div>
-															</div>
-															<div
-																className={classNames(
-																	css.playerName,
-																	settings.gameSide === 'Right' &&
-																		css.reverseSide,
-																	game.secondPlayer.uuid ===
-																		databaseInfo.userId && css.me,
-																)}
-															>
-																{game.secondPlayer.uuid === game.winner && (
-																	<img
-																		src={'images/icons/trophy.png'}
-																		className={css.trophy}
-																	/>
-																)}
-																{game.secondPlayer.name}
-															</div>
-															<Button
-																id={css.deck}
-																onClick={() => {
-																	setScreenshotDeckModalContents(
-																		sortCards(
-																			parseDeckCards(
-																				game.usedDeck.cards.map(
-																					(card) => card.props.id,
-																				),
-																			),
-																		),
-																	)
-																}}
-															>
-																View Deck
-															</Button>
-															{game.hasReplay && (
-																<Button
-																	id={css.replay}
-																	onClick={() => handleReplayGame(game)}
-																>
-																	Watch Replay
-																</Button>
-															)}
-															{game.hasReplay && (
-																<Button
-																	id={css.overview}
-																	onClick={() => handleOverview(game)}
-																>
-																	Overview
-																</Button>
-															)}
-															<div id={css.time} className={css.timeAndturns}>
-																{startTime.getMonth() + 1}/{startTime.getDate()}
-																<span className={css.hideOnMobile}>
-																	/{startTime.getFullYear() - 2000},{' '}
-																</span>
-																<span>
-																	{startTime.getHours() % 12}:
-																	{startTime
-																		.getMinutes()
-																		.toString()
-																		.padStart(2, '0')}{' '}
-																	{startTime.getHours() >= 12 ? 'PM' : 'AM'}
-																</span>
-															</div>
-															<div id={css.turns} className={css.hideOnMobile}>
-																{game.length.minutes}m{game.length.seconds}.
-																{Math.floor(game.length.milliseconds / 10)}s |{' '}
-																{game.turns} Turn{game.turns !== 1 && 's'}
-															</div>
-															<div
-																id={css.turns}
-																className={classNames(
-																	css.showOnMobile,
-																	css.timeAndturns,
-																)}
-															>
-																<div>
-																	{game.length.minutes}m{game.length.seconds}.
-																	{Math.floor(game.length.milliseconds / 10)}s
-																</div>
-																<div>
-																	{game.turns} Turn{game.turns !== 1 && 's'}
-																</div>
-															</div>
-														</div>
-													</div>
-												)
-											})}
+											{filteredGamesHtml.length ? (
+												filteredGamesHtml
+											) : (
+												<p className={css.noResults}>No games found.</p>
+											)}
 										</div>
 									</div>
 								</div>
@@ -1474,7 +1473,7 @@ function Statistics({setMenuSection}: Props) {
 			{showInvalidReplayModal && (
 				<Modal
 					setOpen
-					title={'Invalid Replay Requeted'}
+					title={'Invalid Replay Requested'}
 					onClose={() => {
 						setShowInvalidReplayModal(false)
 						dispatch({

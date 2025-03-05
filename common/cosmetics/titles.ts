@@ -24,7 +24,7 @@ import {Title} from './types'
 const TitleDefinitions: Omit<Title, 'type'>[] = [
 	{
 		id: 'no_title',
-		name: '',
+		name: 'No Title',
 	},
 	{
 		id: 'british',

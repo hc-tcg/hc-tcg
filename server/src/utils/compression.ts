@@ -102,13 +102,15 @@ export function createHuffmanTree(bytes: Array<string>) {
 export function huffmanCompress(buffer: Buffer) {
 	const bytes: Array<string> = []
 	for (let i = 0; i < buffer.length; i++) {
-		const byte = buffer.readUint8(i).toString(16)
+		const byte = buffer.readUint8(i).toString(16).padStart(2, '0')
 		bytes.push(byte)
 	}
 	let dataString = ''
 	for (let i = 0; i < bytes.length; i++) {
 		const byte = bytes[i]
-		dataString += huffmanTree.find((e) => e.symbol === byte)?.code
+		const w = huffmanTree.find((e) => e.symbol === byte)
+		assert(w, 'The symbol should not be undefined.')
+		dataString += w.code
 	}
 	dataString += huffmanTree.find((e) => e.symbol === 'EOF')?.code
 	const dataNumbers: Array<number> = []
@@ -149,7 +151,7 @@ export function huffmanDecompress(bytes: Buffer): Buffer | null {
 			const entry = getNextEntry(byteString, byte)
 			assert(
 				entry,
-				'An invalid byte sequence was encountered while decoding replay.',
+				`An invalid byte sequence was encountered while decoding replay at position 0x${byte.toString(16)} out of 0x${byteString.length.toString(16)}: 0b${byteString.substring(byte, byte + 9)}\nPrevious byte: 0x${output[output.length - 1]}`,
 			)
 			if (entry.symbol === 'EOF') {
 				break

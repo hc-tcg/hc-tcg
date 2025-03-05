@@ -1,18 +1,22 @@
 .cosmeticsLayout {
 	width: 100vw;
-	height: 100vh;
+	margin-top: 5vh;
 	display: flex;
 	justify-content: center;
+	position: absolute;
+	top: 0;
+	left: 0;
 }
 
 .body {
-	padding: 1vh;
+	margin: 1vh;
 	display: block;
 	display: flex;
 	flex-direction: row;
 	max-width: 80rem;
 	width: 100%;
-	height: 95vh;
+	max-height: 95vh;
+	overflow: hidden;
 
 	h2 {
 		font-size: 3vh;
@@ -29,23 +33,21 @@
 	align-items: center;
 	justify-content: center;
 }
+
 .body2 {
-	flex-grow: 1;
-	height: 100%;
-	width: 100%;
 	overflow-y: hidden;
 	display: flex;
 	flex-direction: column;
+	width: 100%;
 }
 
 .itemSelector {
-	flex-grow: 1;
 	padding: 1rem;
 	border: 2px black solid;
 	border-top: 0px;
 	background-color: var(--gray-600);
-	height: 100%;
 	overflow-y: hidden;
+	height: 100%;
 }
 
 .nameSelector {
@@ -57,6 +59,18 @@
 	width: 100%;
 }
 
+.achievementsHeader {
+	display: flex;
+	gap: 2rem;
+	flex-direction: row;
+	position: static;
+	color: white;
+	font-size: 1rem;
+	margin-bottom: 1rem;
+	height: 2rem;
+	align-items: center;
+}
+
 .appearanceHeader {
 	color: white;
 	width: 100%;
@@ -64,13 +78,28 @@
 	padding-bottom: 1rem;
 }
 
+.checkboxes {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+	height: 25px;
+	line-height: 25px;
+}
+
+.achievementsInput {
+	height: 2rem;
+	background-color: var(--gray-300);
+	color: black;
+	flex-grow: 1;
+}
+
 .achievements {
 	margin-top: auto;
 	display: flex;
 	flex-direction: column;
 	gap: 0.5vh;
-	overflow-y: scroll;
-	height: 100%;
+	overflow-y: auto;
+	height: calc(100% - 2.7rem);
 }
 
 .cosmeticsContainer {
@@ -82,7 +111,7 @@
 
 .cosmeticsContainerContainer {
 	height: 100%;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 .cosmetics {
@@ -91,6 +120,14 @@
 	gap: 0.5vh;
 	flex-direction: row;
 	flex-wrap: wrap;
+}
+
+.cosmeticsTitles {
+	display: grid;
+	grid-auto-flow: row;
+	width: 100%;
+	grid-template-columns: 1fr 1fr;
+	gap: 1vh;
 }
 
 .cosmeticItem {
@@ -110,6 +147,11 @@
 
 	background-color: var(--gray-700);
 	transform: translateY(0px);
+
+	&.title {
+		height: 2rem;
+		width: 100%;
+	}
 
 	&:not(.unlocked) {
 		background-color: var(--gray-900);
@@ -161,8 +203,16 @@
 	font-size: 0.9rem;
 	color: var(--text-light);
 
-	filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black)
-		drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
+	:not(img) {
+		filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black)
+			drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
+	}
+
+	> img {
+		margin-right: 0.5rem;
+		filter: drop-shadow(1px 0px 0 white) drop-shadow(-1px 0px 0 white)
+			drop-shadow(0px 1px 0 white) drop-shadow(0px -1px 0 white);
+	}
 }
 
 .cosmeticBorder {
@@ -312,7 +362,6 @@
 			filter: drop-shadow(0 2px 0 hsla(0deg, 0%, 0%, 35%));
 			text-overflow: ellipsis;
 			white-space: nowrap;
-			width: 40ch;
 			overflow: hidden;
 		}
 
@@ -347,17 +396,52 @@ h2 {
 }
 
 @media screen and (max-width: 720px) {
-	.body {
-		flex-direction: column;
-	}
-
 	.leftSideCosmetics {
 		width: 95vw;
 		gap: 1rem;
 		margin-left: 0rem;
 	}
 
+	.body {
+		&.rewardsBody {
+			flex-direction: column;
+		}
+	}
+
 	.hideOnMobile {
 		display: none;
+	}
+
+	.tooltip {
+		max-width: 90vw;
+	}
+
+	.cosmeticsTitles {
+		grid-template-columns: 1fr;
+	}
+
+	.achievementsHeader {
+		flex-direction: column;
+		gap: 0.25rem;
+		margin-bottom: 0.5rem;
+		justify-content: left;
+		height: 5.5rem;
+
+		.sectionHeader {
+			display: none;
+		}
+
+		input {
+			height: 1.5rem;
+			width: 100%;
+		}
+	}
+
+	.checkboxes {
+		width: 100%;
+	}
+
+	.achievements {
+		height: calc(100% - 6rem);
 	}
 }

@@ -1,4 +1,3 @@
-import assert from 'assert'
 import query from '../components/query'
 import {CardEntity} from '../entities'
 import PoisonEffect from '../status-effects/poison'
@@ -8,7 +7,7 @@ import {Achievement} from './types'
 
 const EyeOfTheSpider: Achievement = {
 	...achievement,
-	numericId: 5,
+	numericId: 24,
 	id: 'eye-of-the-spider',
 	levels: [
 		{
@@ -17,9 +16,7 @@ const EyeOfTheSpider: Achievement = {
 			steps: 1,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		const player = game.components.get(playerEntity)
-		assert(player)
+	onGameStart(game, player, component, observer) {
 		const opponentPlayer = player.opponentPlayer
 
 		let poisonedHermits: Set<CardEntity> = new Set()

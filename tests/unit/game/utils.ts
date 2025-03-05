@@ -457,7 +457,7 @@ export function testAchivement(
 
 		options.achievement.onGameStart(
 			game,
-			player.entity,
+			player,
 			achievementComponent,
 			achievementObserver,
 		)
@@ -468,7 +468,7 @@ export function testAchivement(
 	let then = function (game: GameModel, gameOutcome: GameOutcome) {
 		options.achievement.onGameEnd(
 			game,
-			player.entity,
+			player,
 			achievementComponent,
 			gameOutcome,
 		)
@@ -512,16 +512,23 @@ export function testReplayGame(options: {
 	afterGame: (con: GameController) => any
 	playerOneDeck: Array<Card>
 	playerTwoDeck: Array<Card>
+	seed?: string
+	shuffleDeck?: boolean
 }) {
 	const controller = new GameController(
 		getTestPlayer('playerOne', options.playerOneDeck),
 		getTestPlayer('playerTwo', options.playerTwoDeck),
 		{
 			randomizeOrder: true,
-			// This seed always ensures player one goes first. Because how replays work, turn order needs to be random here
-			randomSeed: '1234567',
+			// The default seed always ensures player one goes first. Because how replays work, turn order needs to be random here
+			randomSeed: options.seed ? options.seed : '1234567',
 			settings: {
 				...defaultGameSettings,
+				shuffleDeck: options.shuffleDeck || false,
+				verboseLogging: true,
+				forceCoinFlip: false,
+				disableDeckOut: false,
+				disableRewardCards: false,
 			},
 		},
 	)

@@ -40,6 +40,7 @@ import {
 import {afterAttack, beforeAttack} from '../types/priorities'
 import {rowRevive} from '../types/priorities'
 import {PickRequest} from '../types/server-requests'
+import {newIncrementor} from '../utils/game'
 import {newRandomNumberGenerator} from '../utils/random'
 import {
 	PlayerSetupDefs,
@@ -98,6 +99,8 @@ export function gameSettingsFromEnv(): GameSettings {
 
 export class GameModel {
 	public rng: () => number
+	public nextEntity: () => number
+	private entityCount: number
 
 	public readonly id: string
 	public readonly settings: GameSettings
@@ -178,6 +181,8 @@ export class GameModel {
 		assert(rngSeed.length < 16, 'Game RNG seed must be under 16 characters')
 		this.rngSeed = rngSeed
 		this.rng = newRandomNumberGenerator(rngSeed)
+		this.entityCount = 0
+		this.nextEntity = newIncrementor()
 		const swapPlayers = this.rng()
 
 		this.battleLog = new BattleLogModel(this)
@@ -488,21 +493,21 @@ export class GameModel {
 	): void {
 		if (!slotA || !slotB) return
 
-		const slotACards = this.components.filter(
+		const slotACard = this.components.find(
 			CardComponent,
 			query.card.slotEntity(slotA.entity),
 		)
-		const slotBCards = this.components.filter(
+		const slotBCard = this.components.find(
 			CardComponent,
 			query.card.slotEntity(slotB.entity),
 		)
 
-		slotACards.forEach((card) => {
-			card.attach(slotB)
-		})
-		slotBCards.forEach((card) => {
-			card.attach(slotA)
-		})
+		slotACard?.attach(slotB)
+		slotBCard?.attach(slotA)
+
+		/* I don't know why these two lines are required, but don't delete them because the tests fail! */
+		slotA.cardEntity = slotBCard?.entity ?? null
+		slotB.cardEntity = slotACard?.entity ?? null
 	}
 
 	public getPickableSlots(

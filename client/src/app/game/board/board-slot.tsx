@@ -9,8 +9,9 @@ import {
 import Card from 'components/card'
 import {
 	getCardsCanBePlacedIn,
-	getGameState,
+	getCurrentPlayerEntity,
 	getPickRequestPickableSlots,
+	getPlayerEntity,
 	getSelectedCard,
 } from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
@@ -29,21 +30,23 @@ export type SlotProps = {
 	statusEffects?: Array<LocalStatusEffectInstance>
 	gameOver: boolean
 }
+
 const Slot = ({
 	type,
 	entity,
 	onClick,
 	card,
 	active,
-	statusEffects,
 	cssId,
+	statusEffects,
 	gameOver,
 }: SlotProps) => {
 	const settings = useSelector(getSettings)
 	const cardsCanBePlacedIn = useSelector(getCardsCanBePlacedIn)
 	const pickRequestPickableCard = useSelector(getPickRequestPickableSlots)
 	const selectedCard = useSelector(getSelectedCard)
-	const localGameState = useSelector(getGameState)
+	const playerEntity = useSelector(getPlayerEntity)
+	const currentPlayerEntity = useSelector(getCurrentPlayerEntity)
 
 	const frameImg =
 		type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
@@ -79,9 +82,7 @@ const Slot = ({
 	let isClickable = false
 
 	if (
-		(localGameState &&
-			localGameState.playerEntity ===
-				localGameState.turn.currentPlayerEntity) ||
+		playerEntity === currentPlayerEntity ||
 		pickRequestPickableCard !== null
 	) {
 		isPickable = getIsPickable()

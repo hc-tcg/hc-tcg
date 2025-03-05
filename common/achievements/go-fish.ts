@@ -17,10 +17,7 @@ const GoFish: Achievement = {
 			steps: 1,
 		},
 	],
-	onGameStart(game, playerEntity, component, observer) {
-		const player = game.components.get(playerEntity)
-		if (!player) return
-
+	onGameStart(game, player, component, observer) {
 		let numberOfMendingsBeforeUse = 0
 
 		observer.subscribe(player.hooks.beforeApply, () => {
@@ -33,9 +30,7 @@ const GoFish: Achievement = {
 			player.hooks.afterApply,
 			afterApply.CHECK_BOARD_STATE,
 			() => {
-				let su = game.components
-					.find(SlotComponent, query.slot.singleUse)
-					?.getCard()
+				let su = game.components.find(SlotComponent, query.slot.singleUse)?.card
 				if (!su) return
 				if (su.props.id !== FishingRod.id) return
 

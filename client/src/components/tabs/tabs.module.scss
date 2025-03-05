@@ -7,31 +7,18 @@
 	height: 100%;
 	width: 180px;
 	background-color: var(--gray-600);
-	box-shadow: inset 0 -2px 1px black,
-		inset 1px 1px 0 1px var(--gray-500),
-		inset -1px -3px 0 1px var(--gray-500);
+	box-shadow: inset 0 -4px 1px var(--gray-600),
+		inset 1px 1px 0 1px var(--gray-400),
+		inset -1px 0px 0 1px var(--gray-500);
 
 	border: 2px black solid;
-
-	&:not(.left),
-	&:not(.right) {
-		border-bottom: 0px;
-	}
-
-	&.left {
-		border-right: 0px;
-	}
-
-	&.right {
-		border-left: 0px;
-	}
+	border-bottom: 0px;
 
 	&.deselected {
 		cursor: pointer;
 		background-color: var(--gray-800);
-		box-shadow: inset 0 -5px 1px black,
-			inset -1px -1px 0 1px var(--gray-500),
-			inset 1px -6px 0 1px var(--gray-500);
+		box-shadow: inset 0 -4px 1px black, inset 1px 1px 0 1px var(--gray-500),
+			inset -1px -5px 0 1px var(--gray-500);
 	}
 }
 
@@ -39,41 +26,12 @@
 	color: var(--text-light);
 	font-family: Minecrafter;
 	font-size: 0.9rem;
-	height: 60px;
+	height: 45px;
 	min-height: 5%;
 	width: 100%;
 	align-items: center;
 	display: flex;
 	justify-content: center;
-
-	&.vertical {
-		height: 100%;
-		flex-direction: column;
-
-		.afterTabs {
-			width: 100%;
-			height: inherit;
-			border: 0px;
-			border-right: 2px black solid;
-		}
-
-		.tab {
-			flex-direction: column;
-			height: 10vh;
-			font-size: 1.1rem;
-			width: 100%;
-
-			box-shadow: inset -2px 0 1px black,
-				inset 1px -1px 0 1px var(--gray-500),
-				inset -3px 1px 0 1px var(--gray-500);
-
-			&.deselected {
-				box-shadow: inset -5px 0 1px black,
-					inset 1px -1px 0 1px var(--gray-500),
-					inset -6px 1px 0 1px var(--gray-500);
-			}
-		}
-	}
 }
 
 .afterTabs {
@@ -83,7 +41,18 @@
 }
 
 @media (max-width: 720px) {
+	.tab {
+		width: 100%;
+	}
+
 	.tabs {
-		height: 8vh;
+		min-height: 6vh;
+		height: 6vh;
+		width: 100%;
+	}
+
+	.afterTabs {
+		flex-grow: 0;
+		width: 0px;
 	}
 }

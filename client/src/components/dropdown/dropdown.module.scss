@@ -1,8 +1,8 @@
 .dropdownContainer {
 	position: relative;
 	pointer-events: all;
-	width: min-content;
-	height: min-content;
+	width: 100%;
+	height: 100%;
 }
 
 .dropdownMenu {
@@ -16,7 +16,7 @@
 	}
 
 	&.up {
-		bottom: calc(100% + 2rem);
+		bottom: 0;
 	}
 
 	&.left {
@@ -190,10 +190,12 @@
 
 .currentDropdown {
 	position: absolute;
-	top: 0;
-	left: 0;
+	top: 0px;
+	left: 0px;
 	width: 100vw;
 	height: 100vh;
+	max-width: 100vw;
+	max-height: 100vh;
 	pointer-events: none;
-	overflow: visible;
+	overflow: hidden;
 }

@@ -1,4 +1,3 @@
-import {SpeakerIcon} from 'components/svgs'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
@@ -12,11 +11,13 @@ function SoundItem() {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'globalVolume',
-				value: settings.globalVolume === 0 ? settings.globalVolumeStore : 0,
+				key: 'soundMuted',
+				value: !settings.soundMuted,
 			},
 		})
 	}
+
+	const enable = settings.soundMuted ? 'disable' : 'enable'
 
 	return (
 		<button
@@ -24,7 +25,12 @@ function SoundItem() {
 			title="Mute Sounds (M)"
 			onClick={handleSoundChange}
 		>
-			<SpeakerIcon level={settings.globalVolume} />
+			{
+				<img
+					className={css.audioIcon}
+					src={`/images/icons/audio_${enable}.png`}
+				></img>
+			}
 		</button>
 	)
 }
