@@ -18,7 +18,7 @@
 }
 
 .tabContainer {
-    width: 25%;
+	width: 25%;
 	background-color: var(--gray-800);
 	border: 2px black solid;
 	border-right: 0px;
@@ -31,44 +31,35 @@
 	border-left: 0px;
 	background-color: var(--gray-600);
 	overflow: hidden;
-    padding: 1vh;
+	padding: 2vh;
 	overflow-y: auto;
 
 	display: flex;
-    gap: 1vh;
+	gap: 1vh;
 	flex-direction: column;
 
-    .twoSettings {
-        display: flex;
-        gap: 2vh;
-        align-items: center;
-        height: 5.5vh;
-
-        .settingItem {
-            width: 50%;
-        }
-    }
+	hr {
+		margin: 1vh 0;
+	}
 }
 
 .settingItem {
 	height: 5.5vh;
-	width: 100%;
-	flex-shrink: 1;
 }
 
 .categoryHeader {
-    width: 100%;
-    color: var(--text-light);
-    text-align: center;
-    text-decoration: underline;
-    margin-top: 2vh;
+	width: 100%;
+	color: var(--text-light);
+	text-align: center;
+	text-decoration: underline;
+	margin-top: 2vh;
 }
 
 .developerContainer {
 	display: flex;
-    align-items: center;
+	align-items: center;
 	flex-wrap: wrap;
-    gap: 0.5vh;
+	gap: 0.5vh;
 }
 
 .showOnMobile {
@@ -208,10 +199,10 @@
 		width: 60%;
 	}
 
-	.settingsArea  {
+	.settingsArea {
 		border: 2px black solid;
 
-		.twoSettings {
+		.settingsRow {
 			flex-direction: column;
 			gap: 1vh;
 			height: 12vh;

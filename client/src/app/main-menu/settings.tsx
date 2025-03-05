@@ -6,18 +6,14 @@ import DeveloperCredit from 'components/credit/developer-credit'
 import Dropdown from 'components/dropdown'
 import MenuLayout from 'components/menu-layout'
 import {Modal} from 'components/modal'
-import Slider from 'components/slider'
+import {SoundSetting} from 'components/setting/sound-setting'
+import {ToggleSetting} from 'components/setting/toggle-setting'
 import {CopyIcon} from 'components/svgs'
 import Tabs from 'components/tabs/tabs'
 import UpdatesModal from 'components/updates'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
-import {
-	LocalSetting,
-	LocalSettings,
-} from 'logic/local-settings/local-settings-reducer'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import React, {useState} from 'react'
+import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './settings.module.scss'
 
@@ -184,93 +180,6 @@ const developers: CreditProps[] = [
 	},
 ]
 
-const getBoolDescriptor = (value: boolean) => {
-	return value ? 'Enabled' : 'Disabled'
-}
-
-const getPercentDescriptor = (value: number) => {
-	if (value !== 0) return `${value}%`
-	return 'Disabled'
-}
-
-type ToggleProps = {
-	targetSetting: keyof LocalSettings
-	name: string
-	useSetting?: boolean
-	inverter?: (
-		setting: LocalSettings[keyof LocalSettings],
-	) => LocalSettings[keyof LocalSettings]
-}
-
-const ToggleButton = ({
-	targetSetting,
-	name,
-	useSetting,
-	inverter,
-}: ToggleProps) => {
-	const dispatch = useMessageDispatch()
-	const settings = useSelector(getSettings)
-	const toggle = () =>
-		dispatch({
-			type: localMessages.SETTINGS_SET,
-			setting: {
-				key: targetSetting,
-				value: inverter
-					? inverter(settings[targetSetting])
-					: !settings[targetSetting],
-			} as LocalSetting,
-		})
-
-	return (
-		<Button className={css.settingItem} variant="default" onClick={toggle}>
-			{name}:{' '}
-			{useSetting
-				? (settings[targetSetting] as string)
-				: getBoolDescriptor(settings[targetSetting] as boolean)}
-		</Button>
-	)
-}
-
-type VolumeSetting =
-	| 'globalVolume'
-	| 'sfxVolume'
-	| 'musicVolume'
-	| 'voiceVolume'
-type MuteSetting = 'globalMuted' | 'sfxMuted' | 'musicMuted' | 'voiceMuted'
-
-type SoundProps = {
-	id: 'global' | 'sfx' | 'music' | 'voice'
-	name?: string
-}
-
-const MusicSetting = ({id, name}: SoundProps) => {
-	const dispatch = useMessageDispatch()
-	const settings = useSelector(getSettings)
-	const value = settings[(id + 'Volume') as VolumeSetting]
-
-	const handleChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
-		dispatch({
-			type: localMessages.SETTINGS_SET,
-			setting: {
-				key: (id + 'Volume') as VolumeSetting,
-				value: parseInt(ev.currentTarget.value),
-			},
-		})
-	}
-
-	return (
-		<div className={css.twoSettings}>
-			<Slider className={css.settingItem} value={value} onInput={handleChange}>
-				{name} Volume: {getPercentDescriptor(value)}
-			</Slider>
-			<ToggleButton
-				name={name ? name : toTitleCase(id) + ' Sound'}
-				targetSetting={(id + 'Muted') as MuteSetting}
-			/>
-		</div>
-	)
-}
-
 function toTitleCase(s: string) {
 	return s[0].toUpperCase() + s.slice(1)
 }
@@ -284,7 +193,7 @@ function Settings({setMenuSection}: Props) {
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 
 	const [tab, setTab] = useState<string>('general')
-	const tabs = ['general', 'sound', 'game', 'data']
+	const tabs = ['general', 'sound', 'game', 'data', 'credits']
 
 	const changeMenuSection = (section: string) => {
 		dispatch({type: localMessages.SOUND_SECTION_CHANGE, section: section})
@@ -474,10 +383,12 @@ function Settings({setMenuSection}: Props) {
 						</div>
 						{tab === 'general' && (
 							<div className={css.settingsArea}>
-								<hr />
-								<h2 className={css.categoryHeader}>General</h2>
-								<ToggleButton name="Panorama" targetSetting="panoramaEnabled" />
-								<ToggleButton
+								<h2 className={css.categoryHeader}>General Settings</h2>
+								<ToggleSetting
+									name="Panorama"
+									targetSetting="panoramaEnabled"
+								/>
+								<ToggleSetting
 									name="Deck Sorting Method"
 									targetSetting="deckSortingMethod"
 									useSetting={true}
@@ -485,6 +396,7 @@ function Settings({setMenuSection}: Props) {
 										side === 'Alphabetical' ? 'First Tag' : 'Alphabetical'
 									}
 								/>
+								<hr />
 								<Button
 									variant="default"
 									onClick={handleViewUpdates}
@@ -492,94 +404,47 @@ function Settings({setMenuSection}: Props) {
 								>
 									Updates
 								</Button>
-								<hr />
-								<h2 className={css.categoryHeader}>Credits</h2>
-								{designers.map((designer) => (
-									<Credit props={designer} />
-								))}
-								<div className={css.developerContainer}>
-									{developers.map((developer) => (
-										<DeveloperCredit props={developer} />
-									))}
-								</div>
-								<hr />
 							</div>
 						)}
 						{tab === 'sound' && (
 							<div className={css.settingsArea}>
-								<hr />
-								<h2 className={css.categoryHeader}>Global</h2>
-								<MusicSetting id="global" />
-								<hr />
-								<h2 className={css.categoryHeader}>Sound Effects</h2>
-								<MusicSetting id="sfx" name="Sound Effects" />
-								<hr />
-								<h2 className={css.categoryHeader}>Music</h2>
-								<MusicSetting id="music" />
-								<hr />
-								<h2 className={css.categoryHeader}>Voicelines</h2>
-								<MusicSetting id="voice" />
-								<hr />
+								<h2 className={css.categoryHeader}>Sound Settings</h2>
+								<SoundSetting name="Master Volume" id="global" />
+								<SoundSetting name="SFX Volume" id="sfx" />
+								<SoundSetting name="Music Volume" id="music" />
+								<SoundSetting name="Voice Lines Volume" id="voice" />
 							</div>
 						)}
 						{tab === 'game' && (
 							<div className={css.settingsArea}>
-								<hr />
-								<h2 className={css.categoryHeader}>Chat</h2>
-								<ToggleButton name="In-Game Chat" targetSetting="chatEnabled" />
-								<ToggleButton
+								<h2 className={css.categoryHeader}>Game Settings</h2>
+								<ToggleSetting
+									name="In-Game Chat"
+									targetSetting="chatEnabled"
+								/>
+								<ToggleSetting
 									name="Profanity Filter"
 									targetSetting="profanityFilterEnabled"
 								/>
-								<hr />
-								<h2 className={css.categoryHeader}>Apearance</h2>
-								<ToggleButton
+								<ToggleSetting
 									name="Game Side"
 									targetSetting="gameSide"
 									useSetting={true}
 									inverter={(side) => (side === 'Left' ? 'Right' : 'Left')}
 								/>
-								<ToggleButton
+								<ToggleSetting
 									name="Card Slot Highlighting"
 									targetSetting="slotHighlightingEnabled"
 								/>
-								<ToggleButton
+								<ToggleSetting
 									name="Confirmation Dialogs"
 									targetSetting="confirmationDialogsEnabled"
 								/>
-								<hr />
 							</div>
 						)}
 						{tab === 'data' && (
 							<div className={css.settingsArea}>
-								<hr />
-								<h2 className={css.categoryHeader}>Reset</h2>
-								<Button
-									className={css.settingsButton}
-									variant="default"
-									onClick={handleReset(
-										'Reset Settings',
-										'Are you sure you want to reset your settings to the default values?',
-										'Your settings have been reset.',
-										() => dispatch({type: localMessages.ALL_SETTINGS_RESET}),
-									)}
-								>
-									Reset Settings
-								</Button>
-								<Button
-									className={css.settingsButton}
-									variant="default"
-									onClick={handleReset(
-										'Reset Chat Window',
-										'Are you sure you want to reset the chat window position?',
-										'The chat window has been reset.',
-										handleResetChatWindow,
-									)}
-								>
-									Reset Chat Window
-								</Button>
-								<hr />
-								<h2 className={css.categoryHeader}>Authentication</h2>
+								<h2 className={css.categoryHeader}>Data Settings</h2>
 								<div className={classNames(css.dbInfo, css.mobileColumn)}>
 									<div className={css.dbItem}>UUID</div>
 									<div className={classNames(css.dbItem, css.right)}>
@@ -647,6 +512,31 @@ function Settings({setMenuSection}: Props) {
 										View Secret
 									</Button>
 								</div>
+								<hr />
+								<Button
+									className={css.settingsButton}
+									variant="default"
+									onClick={handleReset(
+										'Reset Settings',
+										'Are you sure you want to reset your settings to the default values?',
+										'Your settings have been reset.',
+										() => dispatch({type: localMessages.ALL_SETTINGS_RESET}),
+									)}
+								>
+									Reset Settings
+								</Button>
+								<Button
+									className={css.settingsButton}
+									variant="default"
+									onClick={handleReset(
+										'Reset Chat Window',
+										'Are you sure you want to reset the chat window position?',
+										'The chat window has been reset.',
+										handleResetChatWindow,
+									)}
+								>
+									Reset Chat Window
+								</Button>
 								<Button
 									className={css.settingsButton}
 									variant="default"
@@ -693,7 +583,19 @@ function Settings({setMenuSection}: Props) {
 								>
 									Reset User Information
 								</Button>
-								<hr />
+							</div>
+						)}
+						{tab == 'credits' && (
+							<div className={css.settingsArea}>
+								<h2 className={css.categoryHeader}>Credits</h2>
+								{designers.map((designer) => (
+									<Credit props={designer} />
+								))}
+								<div className={css.developerContainer}>
+									{developers.map((developer) => (
+										<DeveloperCredit props={developer} />
+									))}
+								</div>
 							</div>
 						)}
 					</div>
