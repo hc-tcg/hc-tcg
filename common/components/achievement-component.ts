@@ -66,7 +66,7 @@ export class AchievementComponent {
 				if (
 					!this.sentLevels.includes(i) &&
 					newProgress > originalProgress &&
-					newProgress == level.steps
+					newProgress >= level.steps
 				) {
 					this.sentLevels.push(i)
 					this.hooks.onComplete.call(newProgress, {index: i, ...level})
