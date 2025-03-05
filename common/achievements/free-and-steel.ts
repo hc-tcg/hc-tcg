@@ -27,9 +27,7 @@ const FreeAndSteel: Achievement = {
 			player.hooks.afterApply,
 			afterApply.CHECK_BOARD_STATE,
 			() => {
-				let su = game.components
-					.find(SlotComponent, query.slot.singleUse)
-					?.getCard()
+				let su = game.components.find(SlotComponent, query.slot.singleUse)?.card
 				if (!su) return
 				if (su.props.id !== FlintAndSteel.id) return
 
