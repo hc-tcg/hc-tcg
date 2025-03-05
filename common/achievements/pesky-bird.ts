@@ -19,6 +19,7 @@ const PeskyBird: Achievement = {
 		// Let it be known that I hate this
 		game.components.filter(CardComponent).forEach((cardComponent) => {
 			observer.subscribe(cardComponent.hooks.onChangeSlot, (newSlot) => {
+				if (newSlot.player.entity === player.entity) return
 				if (!newSlot.inDiscardPile()) return
 				if (game.currentPlayerEntity !== player.entity) return
 				forcedDiscards += 1

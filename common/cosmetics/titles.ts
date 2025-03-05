@@ -1,10 +1,15 @@
 import British from '../achievements/british'
 import CertifiedZombie from '../achievements/certified-zombie'
+import RedKing from '../achievements/close-call'
 import DefeatEvilX from '../achievements/defeat-evil-x'
 import Ethogirl from '../achievements/ethogirl'
+import IsGreat from '../achievements/is-great'
+import MasterOfPuppets from '../achievements/master-of-puppets'
 import NakedAndScared from '../achievements/naked-and-scared'
+import NewTeamCanada from '../achievements/new-team-canada'
 import OreSnatcher from '../achievements/ore-snatcher'
 import PeskyBird from '../achievements/pesky-bird'
+import PoePoeEnforcer from '../achievements/poe-poe-enforcer'
 import TeamStar from '../achievements/team-star'
 import {
 	BalancedWins,
@@ -57,6 +62,16 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		requires: {achievement: TeamStar.id},
 	},
 	{
+		id: 'is_great',
+		name: '...is Great',
+		requires: {achievement: IsGreat.id},
+	},
+	{
+		id: 'master_of_puppets',
+		name: 'Master of Puppets',
+		requires: {achievement: MasterOfPuppets.id},
+	},
+	{
 		id: 'naked_and_scared',
 		name: 'Naked and Scared',
 		requires: {achievement: NakedAndScared.id},
@@ -70,6 +85,31 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		id: 'pesky_bird',
 		name: 'Pesky Bird',
 		requires: {achievement: PeskyBird.id},
+	},
+	{
+		id: 'poe_poe_enforcer',
+		name: 'Poe Poe Enforcer',
+		requires: {achievement: PoePoeEnforcer.id},
+	},
+	{
+		id: 'red_king',
+		name: 'Red king',
+		requires: {achievement: RedKing.id},
+	},
+	{
+		id: 'team_canada',
+		name: 'Team Canada',
+		requires: {achievement: NewTeamCanada.id},
+	},
+	{
+		id: 'washed_up',
+		name: 'Washed Up',
+		requires: undefined,
+	},
+	{
+		id: 'world_eater',
+		name: 'World Eater',
+		requires: undefined,
 	},
 	{
 		id: 'builder_title',

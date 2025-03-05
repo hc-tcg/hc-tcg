@@ -35,6 +35,7 @@ import {
 	CopyAttack,
 	DragCards,
 	ModalRequest,
+	ModalResult,
 	SelectCards,
 } from '../types/modal-requests'
 import {afterAttack, beforeAttack} from '../types/priorities'
@@ -143,6 +144,14 @@ export class GameModel {
 		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
 		/** Hook called when the game ends for achievements to check how the game ended */
 		onGameEnd: GameHook<(outcome: GameOutcome) => void>
+		/** Hook called when modal request is responded to by a player */
+		onPickRequestResolve: GameHook<
+			(request: PickRequest, slot: SlotComponent) => void
+		>
+		/** Hook called when pick request is responded to by a player */
+		onModalRequestResolve: GameHook<
+			(request: ModalRequest, result: ModalResult) => void
+		>
 		/** Hook called when the game ends for disposing references */
 		afterGameEnd: Hook<string, () => void>
 		/** Hook for reviving rows after all attacks are executed */
@@ -201,6 +210,8 @@ export class GameModel {
 			afterAttack: new PriorityHook(afterAttack),
 			freezeSlots: new GameHook(),
 			onGameEnd: new GameHook(),
+			onModalRequestResolve: new GameHook(),
+			onPickRequestResolve: new GameHook(),
 			afterGameEnd: new Hook(),
 		}
 

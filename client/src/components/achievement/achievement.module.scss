@@ -43,6 +43,10 @@
 		filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black)
 			drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
 	}
+
+	&.heart {
+		image-rendering: crisp-edges;
+	}
 }
 
 .progressBar {

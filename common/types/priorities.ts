@@ -101,6 +101,8 @@ export const onCoinFlip = createPriorityDictionary({
 	BAD_OMEN: null,
 	/* Priority for Fortune and Spent Fortune status effect */
 	FORTUNE: null,
+	/** All other actions have been done, achievements use the final state of the coin flip */
+	ACHIEVEMENTS: null,
 })
 
 export const afterApply = createPriorityDictionary({

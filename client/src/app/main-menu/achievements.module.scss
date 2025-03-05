@@ -383,10 +383,9 @@
 		margin-left: auto;
 
 		> img {
-			$size: 32px;
-
-			height: $size;
-			width: $size;
+			height: calc(20px * 2);
+			width: calc(20px * 2);
+			image-rendering: crisp-edges;
 		}
 	}
 }
