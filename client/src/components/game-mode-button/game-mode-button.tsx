@@ -83,7 +83,7 @@ function GameModeButton({
 	} | null>(null)
 	const [, reload] = useReducer((x) => x + 1, 0)
 
-	const transform = 'calc((100vw - 75vh) / 2) 0'
+	const transform = 'calc((100vw - 85vh) / 2) 0'
 	const mobileTransform = `0 ${mobileTop}px`
 
 	const handleResize = () => {
@@ -332,6 +332,8 @@ interface ChooseDeckProps extends ButtonMenuProps {
 	onConfirm: (code?: string) => void
 	onSelectDeck: (deck: Deck) => void
 	decks: Deck[]
+	defaultCode?: string
+	disableButton?: boolean
 }
 
 GameModeButton.ChooseDeck = ({
@@ -340,10 +342,12 @@ GameModeButton.ChooseDeck = ({
 	title,
 	subTitle,
 	requestCode = false,
+	disableButton = false,
 	confirmMessage,
 	onConfirm,
 	onSelectDeck,
 	decks,
+	defaultCode,
 }: ChooseDeckProps) => {
 	if (activeButtonMenu !== id) return <></>
 
@@ -433,6 +437,7 @@ GameModeButton.ChooseDeck = ({
 				onConfirm(inputRef.current?.value ?? undefined)
 			}}
 			variant="primary"
+			disabled={disableButton}
 		>
 			{confirmMessage}
 		</Button>
@@ -478,6 +483,8 @@ GameModeButton.ChooseDeck = ({
 							className={classNames(css.largeButton, css.deckSelectorInput)}
 							placeholder="Enter code..."
 							spellCheck={false}
+							value={defaultCode}
+							data-testid="join-code-input"
 						/>
 						{confirmButton}
 					</div>
@@ -494,6 +501,7 @@ interface EnterCodeProps extends ButtonMenuProps {
 	placeholder: string
 	confirmMessage: string
 	onConfirm: (code: string) => void
+	defaultCode?: string
 }
 
 GameModeButton.EnterCode = ({
@@ -504,6 +512,7 @@ GameModeButton.EnterCode = ({
 	placeholder,
 	confirmMessage,
 	onConfirm,
+	defaultCode: content,
 }: EnterCodeProps) => {
 	if (activeButtonMenu !== id) return <></>
 
@@ -521,6 +530,8 @@ GameModeButton.EnterCode = ({
 					className={css.largeButton}
 					placeholder={placeholder}
 					spellCheck={false}
+					value={content}
+					data-testid="spectate-code-input"
 				/>
 				<Button
 					className={css.largeButton}

@@ -2,11 +2,9 @@ import British from '../achievements/british'
 import CertifiedZombie from '../achievements/certified-zombie'
 import DefeatEvilX from '../achievements/defeat-evil-x'
 import Ethogirl from '../achievements/ethogirl'
-import IsGreat from '../achievements/is-great'
 import NakedAndScared from '../achievements/naked-and-scared'
 import OreSnatcher from '../achievements/ore-snatcher'
 import PeskyBird from '../achievements/pesky-bird'
-import PoePoeEnforcer from '../achievements/poe-poe-enforcer'
 import TeamStar from '../achievements/team-star'
 import {
 	BalancedWins,
@@ -26,7 +24,7 @@ import {Title} from './types'
 const TitleDefinitions: Omit<Title, 'type'>[] = [
 	{
 		id: 'no_title',
-		name: '',
+		name: 'No Title',
 	},
 	{
 		id: 'british',
@@ -67,16 +65,6 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		id: 'ore_snatcher',
 		name: 'Ore Snatcher',
 		requires: {achievement: OreSnatcher.id},
-	},
-	{
-		id: 'poe_poe_enforcer',
-		name: 'Poe Poe Enforcer',
-		requires: {achievement: PoePoeEnforcer.id},
-	},
-	{
-		id: 'is_great',
-		name: '...is Great',
-		requires: {achievement: IsGreat.id},
 	},
 	{
 		id: 'pesky_bird',

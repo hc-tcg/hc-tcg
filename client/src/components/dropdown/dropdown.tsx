@@ -1,7 +1,8 @@
 import classNames from 'classnames'
 import {localMessages} from 'logic/messages'
+import {getDropdown} from 'logic/session/session-selectors'
 import {ReactNode, useEffect, useRef, useState} from 'react'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import css from './dropdown.module.scss'
 
 type DropdownOptions = {
@@ -42,20 +43,19 @@ const Dropdown = ({
 }: Props & {buttonRef: React.RefObject<HTMLButtonElement>}) => {
 	const dispatch = useDispatch()
 	const filterMenuRef = useRef<HTMLDivElement>(null)
+	const [newMenu, setNewMenu] = useState<boolean>(true)
 	const [newChecked, setChecked] = useState<Array<string>>(checked || [])
 
 	const calculateShow = (x: number, y: number) => {
 		const boundingBox = buttonRef.current?.getBoundingClientRect()
 		const menuBoundingBox = filterMenuRef.current?.getBoundingClientRect()
 
-		if (
-			!checkboxes &&
-			boundingBox &&
-			(x > boundingBox.right ||
-				x < boundingBox.left ||
-				y > boundingBox.bottom ||
-				y < boundingBox.top)
-		) {
+		if (newMenu) {
+			setNewMenu(false)
+			return
+		}
+
+		if (!checkboxes) {
 			dispatch({
 				type: localMessages.HIDE_DROPDOWN,
 			})
@@ -79,21 +79,15 @@ const Dropdown = ({
 			})
 	}
 
-	const onTouchStart = (e: TouchEvent) => {
-		calculateShow(e.touches[0].clientX, e.touches[0].clientY)
-	}
-
 	const onMouseUp = (e: MouseEvent) => {
 		calculateShow(e.x, e.y)
 	}
 
 	useEffect(() => {
 		window.addEventListener('mouseup', onMouseUp, false)
-		window.addEventListener('touchstart', onTouchStart, false)
 
 		return () => {
-			window.addEventListener('mouseup', onMouseUp, false)
-			window.removeEventListener('touchstart', onTouchStart, false)
+			window.removeEventListener('mouseup', onMouseUp, false)
 		}
 	})
 
@@ -155,8 +149,7 @@ const Dropdown = ({
 							{options.map((option, i) => (
 								<div
 									key={option.key || option.name}
-									onTouchStart={() => mouseDownAction(option)}
-									onMouseUp={() => mouseDownAction(option)}
+									onMouseDown={() => mouseDownAction(option)}
 									className={css.DropdownMenuItem}
 								>
 									{checkboxes && (
@@ -231,10 +224,19 @@ const DropdownButton = ({
 }: Props) => {
 	const dispatch = useDispatch()
 	const buttonRef = useRef<HTMLButtonElement>(null)
+	const dropdown = useSelector(getDropdown)
 
 	const dispatchDropdown = () => {
 		if (!buttonRef.current) return
 		const boundingBox = buttonRef.current.getBoundingClientRect()
+
+		if (dropdown) {
+			dispatch({
+				type: localMessages.HIDE_DROPDOWN,
+			})
+			return
+		}
+
 		dispatch({
 			type: localMessages.SHOW_DROPDOWN,
 			dropdown: (
@@ -256,6 +258,8 @@ const DropdownButton = ({
 			),
 			x: boundingBox.x,
 			y: boundingBox.y,
+			direction: direction || 'down',
+			align: align || 'left',
 		})
 	}
 
@@ -276,11 +280,29 @@ export const CurrentDropdown = ({
 	dropdown,
 	x,
 	y,
-}: {dropdown: ReactNode; x: number; y: number}) => {
+	direction,
+	align,
+}: {
+	dropdown: ReactNode
+	x: number
+	y: number
+	direction: 'up' | 'down'
+	align: 'left' | 'right'
+}) => {
 	return (
 		<div
 			className={css.currentDropdown}
-			style={{top: `calc(${y}px + 2rem)`, left: x}}
+			style={{
+				top: direction === 'down' ? `calc(${y}px + 2rem)` : 0,
+				left: align === 'left' ? x : 0,
+				overflow: 'hidden',
+				height:
+					direction === 'down'
+						? `calc(${window.screen.height - y}px - 2rem)`
+						: y,
+				width:
+					align === 'left' ? window.screen.width - x : `calc(${x}px + 2rem)`,
+			}}
 		>
 			{dropdown}
 		</div>

@@ -73,6 +73,7 @@ export function* playerConnectedSaga(
 				type: serverMessages.PLAYER_RECONNECTED,
 				game: game && getLocalGameStateForPlayer(game, existingPlayer.id),
 				messages: game?.chat,
+				spectatorCode: game?.spectatorCode ?? undefined,
 			})
 		} else {
 			const time = Date.now()

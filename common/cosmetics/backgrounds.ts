@@ -1,7 +1,5 @@
-import FreeAndSteel from '../achievements/free-and-steel'
 import HowDidWeGetHere from '../achievements/how-did-we-get-here'
 import AllCards from '../achievements/jack-of-all-cards'
-import SUStainable from '../achievements/sustainable'
 import {
 	BalancedWins,
 	BuilderWins,
@@ -26,16 +24,6 @@ const BackgroundDefinitions: Omit<Background, 'type'>[] = [
 		name: 'Classic',
 		requires: {achievement: AllCards.id},
 		preview: 'classic_preview',
-	},
-	{
-		id: 'dirt',
-		name: 'Dirt',
-		requires: {achievement: SUStainable.id},
-	},
-	{
-		id: 'gravel',
-		name: 'Gravel',
-		requires: {achievement: FreeAndSteel.id},
 	},
 	{
 		id: 'balanced',

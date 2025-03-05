@@ -38,7 +38,7 @@ const CurseOfVanishing: SingleUse = {
 		observer.subscribe(player.hooks.onApply, () => {
 			game.components
 				.filter(SlotComponent, discardCondition)
-				.map((slot) => slot.getCard()?.discard())
+				.map((slot) => slot.card?.discard())
 		})
 	},
 }

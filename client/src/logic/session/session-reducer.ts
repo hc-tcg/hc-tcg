@@ -4,6 +4,14 @@ import {PlayerInfo, Update} from 'common/types/server-requests'
 import {LocalMessage, localMessages} from 'logic/messages'
 import React from 'react'
 
+export type ConnectionError =
+	| 'invalid_name'
+	| 'invalid_version'
+	| 'session_expired'
+	| 'timeout'
+	| 'xhr poll_error'
+	| 'bad_auth'
+
 type SessionState = {
 	playerName: string
 	minecraftName: string
@@ -13,12 +21,7 @@ type SessionState = {
 	connecting: boolean
 	connectingMessage: string
 	connected: boolean
-	errorType?:
-		| 'invalid_name'
-		| 'invalid_version'
-		| 'session_expired'
-		| 'timeout'
-		| string
+	errorType?: ConnectionError
 	tooltip: {
 		anchor: React.RefObject<HTMLDivElement>
 		tooltip: React.ReactNode
@@ -29,6 +32,8 @@ type SessionState = {
 		x: number
 		y: number
 		dropdown: React.ReactNode
+		direction: 'up' | 'down'
+		align: 'left' | 'right'
 	} | null
 	toast: Array<ToastData>
 	updates: Array<Update>
@@ -154,6 +159,8 @@ const loginReducer = (
 					dropdown: action.dropdown,
 					x: action.x,
 					y: action.y,
+					direction: action.direction,
+					align: action.align,
 				},
 			}
 		case localMessages.HIDE_DROPDOWN:

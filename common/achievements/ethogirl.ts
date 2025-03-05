@@ -35,11 +35,10 @@ const Ethogirl: Achievement = {
 				SlotComponent,
 				query.slot.player(player.entity),
 				query.slot.hermit,
-				(_game, slot) =>
-					ETHO_CARDS.includes(slot.getCard()?.props.id as string),
+				(_game, slot) => ETHO_CARDS.includes(slot.card?.props.id as string),
 			)
 			const boardVariants = ETHO_CARDS.filter((id) =>
-				boardCards.some((slot) => slot.getCard()?.props.id === id),
+				boardCards.some((slot) => slot.card?.props.id === id),
 			)
 			component.bestGoalProgress({goal: 0, progress: boardVariants.length})
 		})

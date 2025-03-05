@@ -14,6 +14,7 @@ import {
 import {getSocketStatus} from 'logic/socket/socket-selectors'
 import {useEffect, useMemo, useState} from 'react'
 import {useSelector} from 'react-redux'
+import queryOptions from '../query-params'
 import {useRouter} from './app-hooks'
 import Deck from './deck'
 import Game from './game'
@@ -43,6 +44,15 @@ function Router() {
 		setMenuSection(section)
 		sessionStorage.setItem('menuSection', section)
 	}
+
+	useEffect(() => {
+		if (queryOptions.spectate) {
+			setMenuSection('play-select-spectate')
+		}
+		if (queryOptions.fight) {
+			setMenuSection('play-select-fight')
+		}
+	})
 
 	useEffect(() => {
 		dispatch({
@@ -78,6 +88,28 @@ function Router() {
 					return <Credits setMenuSection={menuSectionSet} />
 				case 'play-select':
 					return <PlaySelect setMenuSection={menuSectionSet} />
+				case 'play-select-spectate':
+					const spectateCode = queryOptions.spectate
+					queryOptions.spectate = undefined
+					return (
+						<PlaySelect
+							setMenuSection={menuSectionSet}
+							defaultSection={'private'}
+							firstActiveMenu="privateSpectateGame"
+							prefillSpectatorCode={spectateCode}
+						/>
+					)
+				case 'play-select-fight':
+					const joinCode = queryOptions.fight
+					queryOptions.fight = undefined
+					return (
+						<PlaySelect
+							setMenuSection={menuSectionSet}
+							defaultSection={'private'}
+							firstActiveMenu="privateJoinGame"
+							prefillJoinCode={joinCode}
+						/>
+					)
 				case 'play-again':
 					return (
 						<PlaySelect
@@ -111,6 +143,8 @@ function Dropdown() {
 				dropdown={dropdown.dropdown}
 				x={dropdown.x}
 				y={dropdown.y}
+				direction={dropdown.direction}
+				align={dropdown.align}
 			/>
 		)
 	)

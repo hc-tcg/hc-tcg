@@ -51,7 +51,7 @@ const TargetBlock: SingleUse = {
 				applySingleUse(game, pickedSlot)
 				game.components
 					.new(StatusEffectComponent, TargetBlockEffect, component.entity)
-					.apply(pickedSlot.getCard()?.entity)
+					.apply(pickedSlot.card?.entity)
 			},
 		})
 	},

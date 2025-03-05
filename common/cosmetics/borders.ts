@@ -1,4 +1,3 @@
-import CloseCall from '../achievements/close-call'
 import HotTake from '../achievements/hot-take'
 import Innefective from '../achievements/inneffective'
 import LoyaltyIII from '../achievements/loyalty-iii'
@@ -34,11 +33,6 @@ const BorderDefinitions: Omit<Border, 'type'>[] = [
 		id: 'silver_border',
 		name: 'Silver',
 		requires: {achievement: Win.id, level: 1},
-	},
-	{
-		id: 'purple',
-		name: 'Purple',
-		requires: {achievement: CloseCall.id},
 	},
 ]
 

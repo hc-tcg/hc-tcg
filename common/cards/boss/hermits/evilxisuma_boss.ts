@@ -282,7 +282,7 @@ const EvilXisumaBoss: Hermit = {
 						query.slot.item,
 						query.not(query.slot.empty),
 						query.not(query.slot.frozen),
-						(_game, slot) => slot.getCard()?.isItem() === true,
+						(_game, slot) => slot.card?.isItem() === true,
 					)
 					if (
 						opponentPlayer.activeRow?.health &&
@@ -301,7 +301,7 @@ const EvilXisumaBoss: Hermit = {
 								const hermitCard = playerRow.getHermit()
 								if (!hermitCard || !playerRow.health) return
 
-								const card = pickedSlot.getCard()
+								const card = pickedSlot.card
 								if (!card || !card.isItem()) return
 
 								card.discard()

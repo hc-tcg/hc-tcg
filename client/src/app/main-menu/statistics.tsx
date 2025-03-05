@@ -141,6 +141,15 @@ function padDecimal(n: number, paddingAmount: number) {
 	return `${beforeDecimal}.${afterDecimal.padEnd(paddingAmount, '0')}%`
 }
 
+function formatDivision(
+	numerator: number,
+	denominator: number,
+	paddingAmount: number,
+) {
+	if (denominator === 0) return 'N/A'
+	return padDecimal(numerator / denominator, paddingAmount)
+}
+
 function title(s: string) {
 	return s.charAt(0).toLocaleUpperCase() + s.slice(1).toLocaleLowerCase()
 }
@@ -974,46 +983,65 @@ function Statistics({setMenuSection}: Props) {
 											<p>Rate</p>
 										</div>
 										<div className={css.stat}>
-											<p className={css.statName}>Wins</p>
-											<p>{stats.wins}</p>
-											<p>{padDecimal(stats.wins / stats.gamesPlayed, 2)}</p>
-										</div>
-										<div className={css.stat}>
-											<p className={css.statName}>Forfeit Wins</p>
-											<p>{stats.forfeitWins}</p>
-											<p>
-												{padDecimal(stats.forfeitWins / stats.gamesPlayed, 2)}
-											</p>
-										</div>
-										<div className={css.stat}>
 											<p className={css.statName}>Total Wins</p>
 											<p>{stats.wins + stats.forfeitWins}</p>
 											<p>
-												{padDecimal(
-													(stats.wins + stats.forfeitWins) / stats.gamesPlayed,
+												{formatDivision(
+													stats.wins + stats.forfeitWins,
+													stats.gamesPlayed,
 													2,
 												)}
 											</p>
 										</div>
 										<div className={css.stat}>
-											<p className={css.statName}>Losses</p>
-											<p>{stats.losses}</p>
-											<p>{padDecimal(stats.losses / stats.gamesPlayed, 2)}</p>
+											<p className={css.statName}>
+												<span className={css.textTab}></span>Wins
+											</p>
+											<p>{stats.wins}</p>
+											<p>{formatDivision(stats.wins, stats.gamesPlayed, 2)}</p>
 										</div>
 										<div className={css.stat}>
-											<p className={css.statName}>Forfeit Losses</p>
-											<p>{stats.forfeitLosses}</p>
+											<p className={css.statName}>
+												<span className={css.textTab}></span>Forfeit Wins
+											</p>
+											<p>{stats.forfeitWins}</p>
 											<p>
-												{padDecimal(stats.forfeitLosses / stats.gamesPlayed, 2)}
+												{formatDivision(
+													stats.forfeitWins,
+													stats.gamesPlayed,
+													2,
+												)}
 											</p>
 										</div>
 										<div className={css.stat}>
 											<p className={css.statName}>Total Losses</p>
 											<p>{stats.losses + stats.forfeitLosses}</p>
 											<p>
-												{padDecimal(
-													(stats.losses + stats.forfeitLosses) /
-														stats.gamesPlayed,
+												{formatDivision(
+													stats.losses + stats.forfeitLosses,
+													stats.gamesPlayed,
+													2,
+												)}
+											</p>
+										</div>
+										<div className={css.stat}>
+											<p className={css.statName}>
+												<span className={css.textTab}></span>Losses
+											</p>
+											<p>{stats.losses}</p>
+											<p>
+												{formatDivision(stats.losses, stats.gamesPlayed, 2)}
+											</p>
+										</div>
+										<div className={css.stat}>
+											<p className={css.statName}>
+												<span className={css.textTab}></span>Forfeit Losses
+											</p>
+											<p>{stats.forfeitLosses}</p>
+											<p>
+												{formatDivision(
+													stats.forfeitLosses,
+													stats.gamesPlayed,
 													2,
 												)}
 											</p>
@@ -1021,61 +1049,59 @@ function Statistics({setMenuSection}: Props) {
 										<div className={css.stat}>
 											<p className={css.statName}>Ties</p>
 											<p>{stats.ties}</p>
-											<p>{padDecimal(stats.ties / stats.gamesPlayed, 2)}</p>
-										</div>
-										<div className={css.stat}>
-											<p className={css.statName}>Unique Players Encountered</p>
-											<p>{stats.uniquePlayersEncountered}</p>
-											<p></p>
+											<p>{formatDivision(stats.ties, stats.gamesPlayed, 2)}</p>
 										</div>
 										<div className={css.stat}>
 											<p className={css.statName}>Games Played</p>
 											<p>{stats.gamesPlayed}</p>
 											<p></p>
 										</div>
-									</div>
-									<div className={css.stats}>
 										<div className={css.stat}>
-											<b className={css.statName}>Overall Winrate</b>
-										</div>
-										<div className={css.wtlBar}>
-											<div
-												className={css.win}
-												style={{
-													width: `${((stats.wins + stats.forfeitWins) / stats.gamesPlayed) * 100}%`,
-												}}
-											>
-												{padDecimal(
-													(stats.wins + stats.forfeitWins) / stats.gamesPlayed,
-													2,
-												)}
-											</div>
-											<div
-												className={css.tie}
-												style={{
-													width: `${(stats.ties / stats.gamesPlayed) * 100}%`,
-												}}
-											></div>
-											<div
-												className={css.loss}
-												style={{
-													width: `${((stats.losses + stats.forfeitLosses) / stats.gamesPlayed) * 100}%`,
-												}}
-											>
-												{padDecimal(
-													(stats.losses + stats.forfeitLosses) /
-														stats.gamesPlayed,
-													2,
-												)}
-											</div>
+											<p className={css.statName}>Unique Players Encountered</p>
+											<p>{stats.uniquePlayersEncountered}</p>
+											<p></p>
 										</div>
 									</div>
-									<div className={css.filters}>
-										<div>
-											<b className={css.filterHeader}>Filters</b>
+									{/* Can't show when games are 0 bc a winrate makes no sense */}
+									{stats.gamesPlayed > 0 && (
+										<div className={css.stats}>
+											<div className={css.stat}>
+												<b className={css.statName}>Overall Winrate</b>
+											</div>
+											<div className={css.wtlBar}>
+												<div
+													className={css.win}
+													style={{
+														width: `${((stats.wins + stats.forfeitWins) / stats.gamesPlayed) * 100}%`,
+													}}
+												>
+													{padDecimal(
+														(stats.wins + stats.forfeitWins) /
+															stats.gamesPlayed,
+														2,
+													)}
+												</div>
+												<div
+													className={css.tie}
+													style={{
+														width: `${(stats.ties / stats.gamesPlayed) * 100}%`,
+													}}
+												></div>
+												<div
+													className={css.loss}
+													style={{
+														width: `${((stats.losses + stats.forfeitLosses) / stats.gamesPlayed) * 100}%`,
+													}}
+												>
+													{padDecimal(
+														(stats.losses + stats.forfeitLosses) /
+															stats.gamesPlayed,
+														2,
+													)}
+												</div>
+											</div>
 										</div>
-										<p>There's nothing here yet but there will be</p>
-									</div>
+									)}
 								</div>
 							</div>
 						)}
@@ -1447,7 +1473,7 @@ function Statistics({setMenuSection}: Props) {
 			{showInvalidReplayModal && (
 				<Modal
 					setOpen
-					title={'Invalid Replay Requeted'}
+					title={'Invalid Replay Requested'}
 					onClose={() => {
 						setShowInvalidReplayModal(false)
 						dispatch({

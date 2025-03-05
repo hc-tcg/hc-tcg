@@ -45,9 +45,18 @@ import css from './play-select.module.scss'
 type Props = {
 	setMenuSection: (section: string) => void
 	defaultSection?: string
+	firstActiveMenu?: string
+	prefillSpectatorCode?: string
+	prefillJoinCode?: string
 }
 
-function PlaySelect({setMenuSection, defaultSection}: Props) {
+function PlaySelect({
+	setMenuSection,
+	defaultSection,
+	firstActiveMenu,
+	prefillJoinCode,
+	prefillSpectatorCode,
+}: Props) {
 	const dispatch = useMessageDispatch()
 	const matchmaking = useSelector(getStatus)
 	const settings = useSelector(getSettings)
@@ -70,6 +79,7 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 	)
 
 	const getFirstActiveMenu = (section: string) => {
+		if (firstActiveMenu) return firstActiveMenu
 		if (section === 'public') return 'publicChooseDeck'
 		if (section === 'private') return 'privateOptions'
 		if (section === 'boss') return 'bossSelect'
@@ -319,6 +329,7 @@ function PlaySelect({setMenuSection, defaultSection}: Props) {
 								title="Choose your deck"
 								subTitle="When ready, press the Join Queue button to begin."
 								confirmMessage="Join Queue"
+								disableButton={loadedDeck === undefined}
 								onConfirm={() => {
 									const valid = checkForValidation()
 									if (!valid) return
@@ -414,6 +425,8 @@ or create your own game to challenge someone else."
 								subTitle="Choose your deck, enter the code, and then press the Confirm button to begin."
 								confirmMessage="Confirm"
 								requestCode
+								defaultCode={prefillJoinCode}
+								disableButton={loadedDeck === undefined}
 								onConfirm={(code) => {
 									const valid = checkForValidation()
 									if (!valid) return
@@ -445,6 +458,7 @@ or create your own game to challenge someone else."
 								subTitle="Enter the spectator code, then press the Confirm button to join the game."
 								placeholder="Enter spectator code..."
 								confirmMessage="Confirm"
+								defaultCode={prefillSpectatorCode}
 								onConfirm={(code) => {
 									if (!code || code.length !== 6) {
 										dispatch({
@@ -468,8 +482,9 @@ or create your own game to challenge someone else."
 								activeButtonMenu={activeButtonMenu}
 								id="createPrivateGame"
 								title="Create Private Game"
-								subTitle="Choose your deck, then press the Create Game button to begin."
-								confirmMessage="Create Game"
+								subTitle="Choose your deck, then press the Confirm button to begin."
+								confirmMessage="Confirm"
+								disableButton={loadedDeck === undefined}
 								onConfirm={() => {
 									const valid = checkForValidation()
 									if (!valid) return
@@ -660,6 +675,7 @@ during the battle."
 								title="Choose your deck"
 								subTitle="When ready, press the Fight! button to begin."
 								confirmMessage="Fight!"
+								disableButton={loadedDeck === undefined}
 								onConfirm={() => {
 									const valid = checkForValidation()
 									if (!valid) return
@@ -704,6 +720,7 @@ during the battle."
 									title="Choose your deck"
 									subTitle={`Current score: ${rematch?.playerScore} - ${rematch?.opponentScore}`}
 									confirmMessage="Rematch"
+									disableButton={loadedDeck === undefined}
 									onConfirm={() => {
 										const valid = checkForValidation()
 										if (!valid) return
@@ -741,7 +758,10 @@ during the battle."
 					<i>Click to change</i>
 				</p>
 				<div
-					className={css.appearance}
+					className={classNames(
+						css.appearance,
+						!matchmaking && css.appearanceClickable,
+					)}
 					onClick={() => !matchmaking && setMenuSection('cosmetics')}
 				>
 					<CosmeticPreview />

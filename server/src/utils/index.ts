@@ -167,7 +167,7 @@ export function printBoardState(game: GameModel) {
 	buffer.push(game.logHeader + '\n')
 
 	const printSlot = (slot: SlotComponent) => {
-		let card = slot.getCard()
+		let card = slot.card
 
 		if (card) {
 			let name = card.props.name

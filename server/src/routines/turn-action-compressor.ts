@@ -470,7 +470,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 				const cardEntities: Array<CardEntity> = []
 				for (let cursor = 0; cursor < cardsBuffer.length; cursor += 2) {
 					const slot = unpackSlotPosition(game, cardsBuffer.readInt16BE(cursor))
-					const card = slot?.getCard()
+					const card = slot?.card
 					if (!slot || !card) throw Error('Invalid slot position was given')
 					cardEntities.push(card.entity)
 				}

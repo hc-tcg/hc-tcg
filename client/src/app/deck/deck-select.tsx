@@ -240,17 +240,9 @@ function SelectDeck({
 		description: `Removed ${loadedDeck.name}`,
 		image: getIconPath(loadedDeck),
 	}
-	const selectedDeckToast: ToastT = {
-		open: true,
-		title: 'Deck Selected!',
-		description: `${loadedDeck.name} is now your active deck`,
-		image: getIconPath(loadedDeck),
-	}
 
 	// MENU LOGIC
 	const backToMenu = () => {
-		dispatchToast(selectedDeckToast)
-
 		dispatch({
 			type: localMessages.UPDATE_DECKS,
 			newActiveDeck: loadedDeck,

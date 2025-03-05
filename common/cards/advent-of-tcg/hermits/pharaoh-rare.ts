@@ -127,7 +127,7 @@ const PharaohRare: Hermit = {
 					onResult(pickedSlot) {
 						if (!pickedSlot.inRow()) return
 						pickedSlot.row.heal(healAmount)
-						const healedHermit = pickedSlot.getCard()
+						const healedHermit = pickedSlot.card
 						game.battleLog.addEntry(
 							player.entity,
 							`$${healedHermit?.player === component.player ? 'p' : 'o'}${healedHermit?.props.name} (${

@@ -116,7 +116,7 @@ const RendogRare: Hermit = {
 					message: "Pick one of your opponent's Hermits",
 					canPick: pickCondition,
 					onResult: (pickedSlot) => {
-						let pickedCard = pickedSlot.getCard() as CardComponent<Hermit>
+						let pickedCard = pickedSlot.card as CardComponent<Hermit>
 						if (!pickedCard) return
 
 						game.addCopyAttackModalRequest({

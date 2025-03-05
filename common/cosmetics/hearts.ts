@@ -1,6 +1,6 @@
 import CantTouchThis from '../achievements/cant-touch-this'
 import DeckedOut from '../achievements/decked-out'
-import IBuy from '../achievements/ibuy'
+import SUStainable from '../achievements/sustainable'
 import TargetedLightning from '../achievements/targeted-lightning'
 import Win from '../achievements/wins'
 import {Heart} from './types'
@@ -23,7 +23,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'emerald',
 		name: 'Emerald',
-		requires: {achievement: IBuy.id},
+		requires: {achievement: SUStainable.id},
 	},
 	{
 		id: 'silver_heart',
