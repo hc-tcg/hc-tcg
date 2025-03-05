@@ -409,9 +409,9 @@ function Settings({setMenuSection}: Props) {
 						{tab === 'sound' && (
 							<div className={css.settingsArea}>
 								<h2 className={css.categoryHeader}>Sound Settings</h2>
-								<SoundSetting name="Master Volume" id="global" />
+								<SoundSetting name="Master Volume" id="global" store={true}/>
 								<SoundSetting name="SFX Volume" id="sfx" />
-								<SoundSetting name="Music Volume" id="music" />
+								<SoundSetting name="Music Volume" id="music" store={true}/>
 								<SoundSetting name="Voice Lines Volume" id="voice" />
 							</div>
 						)}
@@ -453,8 +453,18 @@ function Settings({setMenuSection}: Props) {
 									<button
 										className={css.copy}
 										onClick={() => {
-											if (databaseInfo.userId)
-												navigator.clipboard.writeText(databaseInfo.userId)
+											if (databaseInfo.userId) {
+												dispatch({
+													type: localMessages.TOAST_OPEN,
+													open: true,
+													title: 'UUID copied!',
+													description: 'Copied UUID to clipboard.',
+													image: 'copy',
+												})
+												navigator.clipboard.writeText(
+													databaseInfo.userId,
+												)
+											}
 										}}
 									>
 										{CopyIcon()}
@@ -487,10 +497,18 @@ function Settings({setMenuSection}: Props) {
 														<button
 															className={css.copy}
 															onClick={() => {
-																if (databaseInfo.secret)
+																if (databaseInfo.secret) {
+																	dispatch({
+																		type: localMessages.TOAST_OPEN,
+																		open: true,
+																		title: 'Secret copied!',
+																		description: 'Copied secret to clipboard.',
+																		image: 'copy',
+																	})
 																	navigator.clipboard.writeText(
 																		databaseInfo.secret,
 																	)
+																}
 															}}
 														>
 															{CopyIcon()}
