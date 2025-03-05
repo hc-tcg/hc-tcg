@@ -23,8 +23,14 @@ import {Database} from 'server/db/db'
 import DefeatEvilX from 'common/achievements/defeat-evil-x'
 import Win from 'common/achievements/wins'
 
-const globalProgress = (percentage: number) => ({type: 'success', body: {'percent': percentage}})
-const playerProgress = (percentage: number) => ({type: 'success', body: {'progress': percentage}})
+const globalProgress = (percentage: number) => ({
+	type: 'success',
+	body: {percent: percentage},
+})
+const playerProgress = (percentage: number) => ({
+	type: 'success',
+	body: {progress: percentage},
+})
 
 describe('Test Database', () => {
 	let database: Database
@@ -679,7 +685,9 @@ describe('Test Database', () => {
 		let player1 = user1.body
 		let player2 = user2.body
 
-		expect(await database.getAchievementPercentageCompletion(DefeatEvilX, 0)).toStrictEqual(globalProgress(0))
+		expect(
+			await database.getAchievementPercentageCompletion(DefeatEvilX, 0),
+		).toStrictEqual(globalProgress(0))
 
 		let completionTime = new Date(Date.now())
 		let completionTimeTwo = new Date(18437418)
@@ -717,22 +725,38 @@ describe('Test Database', () => {
 			{},
 		])
 
-		expect(await database.getPlayerAchievementProgress(DefeatEvilX, player1.uuid)).toStrictEqual(playerProgress(1))
-		expect(await database.getPlayerAchievementProgress(Win, player1.uuid)).toStrictEqual(playerProgress(11))
-		expect(await database.getPlayerAchievementProgress(DefeatEvilX, player2.uuid)).toStrictEqual(playerProgress(0))
-		expect(await database.getPlayerAchievementProgress(Win, player2.uuid)).toStrictEqual(playerProgress(0))
+		expect(
+			await database.getPlayerAchievementProgress(DefeatEvilX, player1.uuid),
+		).toStrictEqual(playerProgress(1))
+		expect(
+			await database.getPlayerAchievementProgress(Win, player1.uuid),
+		).toStrictEqual(playerProgress(11))
+		expect(
+			await database.getPlayerAchievementProgress(DefeatEvilX, player2.uuid),
+		).toStrictEqual(playerProgress(0))
+		expect(
+			await database.getPlayerAchievementProgress(Win, player2.uuid),
+		).toStrictEqual(playerProgress(0))
 
-		expect(await database.getAchievementPercentageCompletion(Win, 0)).toStrictEqual(globalProgress(50))
-		expect(await database.getAchievementPercentageCompletion(Win, 1)).toStrictEqual(globalProgress(50))
-		expect(await database.getAchievementPercentageCompletion(Win, 2)).toStrictEqual(globalProgress(0))
+		expect(
+			await database.getAchievementPercentageCompletion(Win, 0),
+		).toStrictEqual(globalProgress(50))
+		expect(
+			await database.getAchievementPercentageCompletion(Win, 1),
+		).toStrictEqual(globalProgress(50))
+		expect(
+			await database.getAchievementPercentageCompletion(Win, 2),
+		).toStrictEqual(globalProgress(0))
 
-		expect(await database.getAchievementPercentageCompletion(DefeatEvilX, 0)).toStrictEqual(globalProgress(50))
+		expect(
+			await database.getAchievementPercentageCompletion(DefeatEvilX, 0),
+		).toStrictEqual(globalProgress(50))
 		await database.updateAchievements(player2.uuid, {
 			// Default Evil X achievement
 			6: {goals: {0: 1}, levels: [{completionTime: completionTime}]},
 		})
-		expect(await database.getAchievementPercentageCompletion(DefeatEvilX, 0)).toStrictEqual(globalProgress(100))
-
-		
+		expect(
+			await database.getAchievementPercentageCompletion(DefeatEvilX, 0),
+		).toStrictEqual(globalProgress(100))
 	})
 })
