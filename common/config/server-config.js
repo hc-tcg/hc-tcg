@@ -6,7 +6,6 @@ export default {
 		'http://localhost:3002',
 		'https://hc-tcg-beta.fly.dev',
 		'https://hc-tcg-testing.fly.dev',
-		'https://hc-tcg-closed-beta.fly.dev/',
 		'https://hc-tcg.online',
 		'https://testing.hc-tcg.online',
 	],
