@@ -3,15 +3,15 @@ import query from '../components/query'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
-const AcquiredHardware: Achievement = {
+const HallOfAll: Achievement = {
 	...achievement,
 	numericId: 43,
-	id: 'fully-loaded',
+	id: 'hall-of-all',
 	levels: [
 		{
-			name: 'Acquired Hardware',
+			name: 'Hall of All',
 			description:
-				'Have cards attached to every one of your Hermit, effect, and item slots..',
+				'Have cards attached to every one of your Hermit, effect, and item slots.',
 			steps: 1,
 		},
 	],
@@ -30,4 +30,4 @@ const AcquiredHardware: Achievement = {
 	},
 }
 
-export default AcquiredHardware
+export default HallOfAll

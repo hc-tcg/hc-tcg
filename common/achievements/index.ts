@@ -1,4 +1,3 @@
-import AcquireHardware from './acquire-hardware'
 import British from './british'
 import CantTouchThis from './cant-touch-this'
 import CertifiedZombie from './certified-zombie'
@@ -7,6 +6,7 @@ import DefeatEvilX from './defeat-evil-x'
 import Ethogirl from './ethogirl'
 import EyeOfTheSpider from './eye-of-the-spider'
 import GoFish from './go-fish'
+import HallOfAll from './hall-of-all'
 import HermitsAndCrafting from './hermits-and-crafting'
 import HotTake from './hot-take'
 import HowDidWeGetHere from './how-did-we-get-here'
@@ -46,7 +46,6 @@ import Wipeout from './wipeout'
 
 export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	AllCards,
-	AcquireHardware,
 	CantTouchThis,
 	DeckedOut,
 	Ethogirl,
@@ -54,6 +53,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	EyeOfTheSpider,
 	PackOfWolves,
 	GoFish,
+	HallOfAll,
 	HowDidWeGetHere,
 	LuckyStreak,
 	HurtinHermits,
