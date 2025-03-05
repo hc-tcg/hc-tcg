@@ -210,10 +210,12 @@ function* gameManager(con: GameController) {
 			achievements.forEach((achievement) => {
 				achievement.props.onGameEnd(con.game, player, achievement, outcome)
 
-				const originalProgress = achievement.props.getProgress(
-					v.player.achievementProgress[achievement.props.numericId].goals,
-				)
-				const newProgress = achievement.props.getProgress(achievement.goals)
+				const originalProgress =
+					achievement.props.getProgress(
+						v.player.achievementProgress[achievement.props.numericId].goals,
+					) || 0
+				const newProgress =
+					achievement.props.getProgress(achievement.goals) || 0
 
 				if (originalProgress === newProgress) return
 
