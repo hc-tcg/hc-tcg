@@ -1,5 +1,5 @@
-import British from './british'
 import AcquireHardware from './acquire-hardware.ts'
+import British from './british'
 import CantTouchThis from './cant-touch-this'
 import CertifiedZombie from './certified-zombie'
 import DeckedOut from './decked-out'
@@ -14,6 +14,7 @@ import HurtinHermits from './hurtin-hermits'
 import Inneffective from './inneffective'
 import AllCards from './jack-of-all-cards'
 import LoyaltyIII from './loyalty-iii'
+import MasterOfPuppets from './master-of-puppets'
 import NakedAndScared from './naked-and-scared'
 import NoDerpcoins from './no-derpcoins'
 import OreSnatcher from './ore-snatcher'
@@ -40,7 +41,6 @@ import {Achievement} from './types'
 import UselessMachine from './useless-machine'
 import Win from './wins'
 import Wipeout from './wipeout'
-import MasterOfPuppets from './master-of-puppets'
 
 export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	AllCards,

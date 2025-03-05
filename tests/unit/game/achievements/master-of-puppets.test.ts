@@ -1,13 +1,10 @@
 import {describe, expect, test} from '@jest/globals'
-import GoFish from 'common/achievements/go-fish'
-import {IronArmor} from 'common/cards/attach/armor'
+import MasterOfPuppets from 'common/achievements/master-of-puppets'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
-import FishingRod from 'common/cards/single-use/fishing-rod'
-import Mending from 'common/cards/single-use/mending'
+import RendogRare from 'common/cards/hermits/rendog-rare'
+import ZombieCleoRare from 'common/cards/hermits/zombiecleo-rare'
 import query from 'common/components/query'
 import {
-	applyEffect,
 	attack,
 	endTurn,
 	finishModalRequest,
@@ -16,9 +13,6 @@ import {
 	playCardFromHand,
 	testAchivement,
 } from '../utils'
-import MasterOfPuppets from 'common/achievements/master-of-puppets'
-import ZombieCleoRare from 'common/cards/hermits/zombiecleo-rare'
-import RendogRare from 'common/cards/hermits/rendog-rare'
 
 describe('Test Master of Puppets Achievement', () => {
 	test('Test achievement is gained after using both Ren and Cleo to mimic attack', () => {
