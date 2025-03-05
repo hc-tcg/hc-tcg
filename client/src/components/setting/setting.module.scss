@@ -1,0 +1,33 @@
+.setting {
+    display: flex;
+    gap: 2vh;
+    align-items: center;
+    height: 5.5vh;
+
+    .settingItem {
+        flex-grow: 1;
+        height: 5.5vh;
+        max-height: 5.5vh;
+        width: 100%;
+        flex-shrink: 1;
+    }
+
+    .settingTitle {
+        font-size: 2vh;
+        color: var(--text-light);
+        height: auto;
+    }
+}
+
+@media (max-width: 860px) {
+    .setting {
+        flex-direction: column;
+        height: 9vh;
+        gap: 0vh;
+        margin-top: 2vh;
+
+        .settingTitle {
+            text-align: center;
+        }
+    }
+}
