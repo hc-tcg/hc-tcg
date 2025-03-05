@@ -50,7 +50,7 @@ const NewTeamCanada: Achievement = {
 		{
 			name: 'New Team Canada',
 			description:
-				'Win 5 games with a deck that includes Beef, Etho, and Gem and not other hermits.',
+				'Win 5 games with a deck that includes at least one Beef, Etho, and Gem card and no other hermits.',
 			steps: 5,
 		},
 	],
