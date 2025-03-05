@@ -72,10 +72,16 @@ export default function AchievementComponent({
 					style={faceStyle}
 				/>
 			)
-		} else if (iconCosmetic?.type === 'title') {
-			icon = <img src={icon_url} className={classNames(css.icon, css.title)} />
 		} else {
-			icon = <img src={icon_url} className={classNames(css.icon)} />
+			icon = (
+				<img
+					src={icon_url}
+					className={classNames(
+						css.icon,
+						iconCosmetic && css[iconCosmetic.type],
+					)}
+				/>
+			)
 		}
 
 		out.push(

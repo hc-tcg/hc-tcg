@@ -26,6 +26,16 @@ const BackgroundDefinitions: Omit<Background, 'type'>[] = [
 		preview: 'classic_preview',
 	},
 	{
+		id: 'dirt',
+		name: 'Dirt',
+		requires: undefined,
+	},
+	{
+		id: 'gravel',
+		name: 'Gravel',
+		requires: undefined,
+	},
+	{
 		id: 'balanced',
 		name: 'Flowers',
 		requires: {achievement: BalancedWins.id, level: 0},

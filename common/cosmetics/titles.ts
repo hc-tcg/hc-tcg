@@ -2,7 +2,6 @@ import British from '../achievements/british'
 import CertifiedZombie from '../achievements/certified-zombie'
 import DefeatEvilX from '../achievements/defeat-evil-x'
 import Ethogirl from '../achievements/ethogirl'
-import MasterOfPuppets from '../achievements/master-of-puppets'
 import NakedAndScared from '../achievements/naked-and-scared'
 import OreSnatcher from '../achievements/ore-snatcher'
 import PeskyBird from '../achievements/pesky-bird'
@@ -58,9 +57,14 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		requires: {achievement: TeamStar.id},
 	},
 	{
-		id: 'master-of-opponents',
+		id: 'is_great',
+		name: '...is Great',
+		requires: undefined,
+	},
+	{
+		id: 'master_of_puppets',
 		name: 'Master of Puppets',
-		requires: {achievement: MasterOfPuppets.id},
+		requires: undefined,
 	},
 	{
 		id: 'naked_and_scared',
@@ -76,6 +80,26 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		id: 'pesky_bird',
 		name: 'Pesky Bird',
 		requires: {achievement: PeskyBird.id},
+	},
+	{
+		id: 'poe_poe_enforcer',
+		name: 'Poe Poe Enforcer',
+		requires: undefined,
+	},
+	{
+		id: 'red_king',
+		name: 'Red king',
+		requires: undefined,
+	},
+	{
+		id: 'washed_up',
+		name: 'Washed Up',
+		requires: undefined,
+	},
+	{
+		id: 'world_eater',
+		name: 'World Eater',
+		requires: undefined,
 	},
 	{
 		id: 'builder_title',
