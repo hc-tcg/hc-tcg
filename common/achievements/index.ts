@@ -1,4 +1,5 @@
 import British from './british'
+import AcquireHardware from './acquire-hardware.ts'
 import CantTouchThis from './cant-touch-this'
 import CertifiedZombie from './certified-zombie'
 import DeckedOut from './decked-out'
@@ -42,6 +43,7 @@ import Wipeout from './wipeout'
 
 export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	AllCards,
+    AcquireHardware,
 	CantTouchThis,
 	DeckedOut,
 	Ethogirl,

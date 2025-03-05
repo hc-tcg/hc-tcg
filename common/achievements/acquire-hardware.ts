@@ -3,15 +3,15 @@ import query from '../components/query'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
-const FullyLoaded: Achievement = {
+const AcquireHardware: Achievement = {
 	...achievement,
 	numericId: 43,
-	id: 'fully-loaded',
+	id: 'acquire-hardware',
 	levels: [
 		{
-			name: 'Fully Loaded',
+			name: 'Acquire Hardware',
 			description:
-				'Have cards attached to every one of your Hermit, effect, and item slots..',
+				'Have cards attached to every one of your Hermit, effect, and item slots.',
 			steps: 1,
 		},
 	],
@@ -30,4 +30,4 @@ const FullyLoaded: Achievement = {
 	},
 }
 
-export default FullyLoaded
+export default AcquireHardware
