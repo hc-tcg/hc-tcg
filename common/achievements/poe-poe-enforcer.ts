@@ -7,7 +7,7 @@ import {Achievement} from './types'
 
 const PoePoeEnforcer: Achievement = {
 	...achievement,
-	numericId: 44,
+	numericId: 42,
 	id: 'poe-poe-enforcer',
 	levels: [
 		{

@@ -7,7 +7,7 @@ import {Achievement} from './types'
 
 const FreeAndSteel: Achievement = {
 	...achievement,
-	numericId: 45,
+	numericId: 44,
 	id: 'free-and-steel',
 	levels: [
 		{

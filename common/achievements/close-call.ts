@@ -3,13 +3,13 @@ import query from '../components/query'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
-const CloseCall: Achievement = {
+const RedKing: Achievement = {
 	...achievement,
 	numericId: 46,
-	id: 'close-call',
+	id: 'red-king',
 	levels: [
 		{
-			name: 'Close Call',
+			name: 'Red King',
 			description:
 				'Win a game with all 5 Hermits on red HP (90 or lower) while on your last life.',
 			steps: 1,
@@ -39,4 +39,4 @@ const CloseCall: Achievement = {
 	},
 }
 
-export default CloseCall
+export default RedKing

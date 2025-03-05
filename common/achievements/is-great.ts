@@ -3,7 +3,7 @@ import {Achievement} from './types'
 
 const IsGreat: Achievement = {
 	...achievement,
-	numericId: 42,
+	numericId: 45,
 	id: 'is_great',
 	levels: [
 		{
