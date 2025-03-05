@@ -23,12 +23,22 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'emerald',
 		name: 'Emerald',
+		requires: undefined,
+	},
+	{
+		id: 'plant',
+		name: 'Plant',
 		requires: {achievement: SUStainable.id},
 	},
 	{
 		id: 'silver_heart',
 		name: 'Silver',
 		requires: {achievement: CantTouchThis.id},
+	},
+	{
+		id: 'snow',
+		name: 'Snow',
+		requires: undefined,
 	},
 	{
 		id: 'soulflame',

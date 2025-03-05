@@ -131,10 +131,8 @@
 	z-index: 50;
 
 	> img {
-		$size: 16px;
-
-		height: $size;
-		width: $size;
+		height: 20px;
+		width: 20px;
 	}
 
 	&.right {
@@ -155,10 +153,9 @@
 		gap: 4px;
 
 		> img {
-			$size: 32px;
-
-			height: $size;
-			width: $size;
+			height: calc(20px * 2);
+			width: calc(20px * 2);
+			image-rendering: crisp-edges;
 		}
 
 		&.right {

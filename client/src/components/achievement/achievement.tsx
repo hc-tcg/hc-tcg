@@ -19,9 +19,9 @@ export default function AchievementComponent({
 	filter,
 }: Props) {
 	const progress =
-		progressData[achievement.numericId] !== undefined
+		(progressData[achievement.numericId] !== undefined
 			? achievement.getProgress(progressData[achievement.numericId].goals)
-			: 0
+			: 0) || 0
 
 	let out = []
 
@@ -72,10 +72,16 @@ export default function AchievementComponent({
 					style={faceStyle}
 				/>
 			)
-		} else if (iconCosmetic?.type === 'title') {
-			icon = <img src={icon_url} className={classNames(css.icon, css.title)} />
 		} else {
-			icon = <img src={icon_url} className={classNames(css.icon)} />
+			icon = (
+				<img
+					src={icon_url}
+					className={classNames(
+						css.icon,
+						iconCosmetic && css[iconCosmetic.type],
+					)}
+				/>
+			)
 		}
 
 		out.push(
