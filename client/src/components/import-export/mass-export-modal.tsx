@@ -32,12 +32,12 @@ export function MassExportModal({setOpen, onClose}: Props) {
 			<Modal.Description>
 				<div className={css.importControls}>
 					<p className={css.instructions}>
-						Press the export button to export all decks.
+						Press the button below to export all decks to a file.
 					</p>
 				</div>
 			</Modal.Description>
 			<Modal.Options fillSpace>
-				<Button onClick={getExportDecks}>Export decks</Button>
+				<Button onClick={getExportDecks}>Download deck file</Button>
 			</Modal.Options>
 		</Modal>
 	)

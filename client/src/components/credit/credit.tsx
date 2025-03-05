@@ -1,15 +1,18 @@
 import classnames from 'classnames'
 import css from './credit.module.scss'
 
-interface Props {
+type Social = 'discord' | 'github' | 'gitlab' | 'twitter'
+
+export interface CreditProps {
 	name: string
-	social: string
+	social: Social
 	handle: string
 	link?: string
 	avatar: string
 }
 
-const Credit = ({name, social, handle, link, avatar}: Props) => {
+const Credit = ({props}: {props: CreditProps}) => {
+	const {name, social, handle, link, avatar} = props
 	const hasLink = link !== undefined
 	const content = (
 		<>

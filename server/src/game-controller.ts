@@ -1,3 +1,9 @@
+import {ACHIEVEMENTS_LIST} from 'common/achievements'
+import {
+	AchievementComponent,
+	ObserverComponent,
+	PlayerComponent,
+} from 'common/components'
 import {PlayerEntity} from 'common/entities'
 import {
 	GameModel,
@@ -21,10 +27,12 @@ export type GameControllerProps = {
 	randomizeOrder?: boolean
 	randomSeed?: any
 	settings?: GameSettings
+	countAchievements?: boolean
 }
 
 type GameViewerProps = {
 	spectator: boolean
+	replayer: boolean
 	playerOnLeft: PlayerEntity
 	player: PlayerModel
 }
@@ -35,6 +43,7 @@ export class GameViewer {
 	spectator: boolean
 	playerOnLeftEntity: PlayerEntity
 	player: PlayerModel
+	replayer: boolean
 
 	public constructor(game: GameModel, props: GameViewerProps) {
 		this.id = `${Math.random()}`
@@ -42,6 +51,7 @@ export class GameViewer {
 		this.spectator = props.spectator
 		this.playerOnLeftEntity = props.playerOnLeft
 		this.player = props.player
+		this.replayer = props.replayer
 	}
 
 	get playerOnLeft() {
@@ -65,12 +75,17 @@ export class GameController {
 	task: any
 	viewers: Array<GameViewer>
 
+	readonly props: GameControllerProps
+	readonly player1Defs: PlayerSetupDefs
+	readonly player2Defs: PlayerSetupDefs
+
 	constructor(
 		player1: PlayerSetupDefs,
 		player2: PlayerSetupDefs,
 		props: GameControllerProps,
 	) {
 		this.chat = []
+		this.props = props
 
 		this.game = new GameModel(
 			props.randomSeed || GameModel.newGameSeed(),
@@ -91,6 +106,91 @@ export class GameController {
 		this.apiSecret = props.apiSecret || null
 		this.task = null
 		this.viewers = []
+
+		this.player1Defs = player1
+		this.player2Defs = player2
+
+		let playerOne = this.game.arePlayersSwapped
+			? this.game.currentPlayer
+			: this.game.opponentPlayer
+		let playerTwo = this.game.arePlayersSwapped
+			? this.game.opponentPlayer
+			: this.game.currentPlayer
+
+		if (props.countAchievements) {
+			if (this.player1Defs.model instanceof PlayerModel) {
+				console.log(
+					'Adding achievements',
+					playerOne.playerName,
+					this.player1Defs.model.name,
+				)
+				this.addAchievements(this.player1Defs.model, playerOne)
+			}
+			if (this.player2Defs.model instanceof PlayerModel) {
+				console.log(
+					'Adding achievemnts',
+					playerTwo.playerName,
+					this.player2Defs.model.name,
+				)
+				this.addAchievements(this.player2Defs.model, playerTwo)
+			}
+		}
+	}
+
+	public addAchievements(
+		player: PlayerModel,
+		playerComponent: PlayerComponent,
+	) {
+		if (player.achievementProgress) {
+			ACHIEVEMENTS_LIST.forEach((achievement) => {
+				if (!player.achievementProgress[achievement.numericId]) {
+					player.achievementProgress[achievement.numericId] = {
+						goals: {},
+						levels: Array(achievement.levels.length)
+							.fill(0)
+							.flatMap(() => [{}]),
+					}
+				}
+				const achievementComponent = this.game.components.new(
+					AchievementComponent,
+					achievement,
+					JSON.parse(
+						JSON.stringify(
+							player.achievementProgress[achievement.numericId]?.goals,
+						),
+					),
+					playerComponent.entity,
+				)
+				const achievementObserver = this.game.components.new(
+					ObserverComponent,
+					achievementComponent.entity,
+				)
+				achievementComponent.hooks.onComplete.add(
+					achievementObserver.entity,
+					(newProgress, level) => {
+						const originalProgress =
+							achievement.getProgress(
+								player.achievementProgress[achievement.numericId].goals,
+							) ?? 0
+						broadcast([player], {
+							type: serverMessages.ACHIEVEMENT_COMPLETE,
+							achievement: {
+								achievementId: achievement.numericId,
+								level,
+								newProgress,
+								originalProgress,
+							},
+						})
+					},
+				)
+				achievementComponent.props.onGameStart(
+					this.game,
+					playerComponent,
+					achievementComponent,
+					achievementObserver,
+				)
+			})
+		}
 	}
 
 	public addViewer(viewer: GameViewerProps) {
@@ -122,6 +222,7 @@ export class GameController {
 		// the coin flip delay confuses jest. Additionally we don't want to wait longer
 		// than what is needed in tests.
 		if (this.getPlayers().length === 0) {
+			this.chat.push(...logs)
 			return
 		}
 

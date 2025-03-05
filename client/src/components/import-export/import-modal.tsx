@@ -212,7 +212,7 @@ export const ImportModal = ({
 	}))
 
 	return (
-		<Modal title="Import Decks" setOpen={setOpen} onClose={fullOnClose}>
+		<Modal title="Import" setOpen={setOpen} onClose={fullOnClose}>
 			<Modal.Description>
 				<div className={css.importControls}>
 					<p className={css.instructions}>

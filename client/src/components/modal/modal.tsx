@@ -7,7 +7,7 @@ import css from './modal.module.scss'
 type ModalProps = {
 	overlayClassName?: string
 	modalClassName?: string
-	children: ReactNode
+	children: ReactNode | ReactNode[]
 	/** Controls whether the modal is visible or not */
 	setOpen: boolean
 	/** Called when the modal should close */

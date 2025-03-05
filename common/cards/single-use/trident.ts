@@ -1,7 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../components'
 import {GameModel} from '../../models/game-model'
 import {CoinFlipResult} from '../../types/game-state'
-import {beforeAttack} from '../../types/priorities'
+import {afterApply, beforeAttack} from '../../types/priorities'
 import {applySingleUse} from '../../utils/board'
 import {flipCoin} from '../../utils/coinFlips'
 import {singleUse} from '../defaults'
@@ -54,11 +54,15 @@ const Trident: SingleUse = {
 			},
 		)
 
-		observer.subscribe(player.hooks.afterApply, () => {
-			if (coinflipResult === 'heads') {
-				component.draw()
-			}
-		})
+		observer.subscribeWithPriority(
+			player.hooks.afterApply,
+			afterApply.REMOVE_SINGLE_USE,
+			() => {
+				if (coinflipResult === 'heads') {
+					component.draw()
+				}
+			},
+		)
 	},
 }
 

@@ -1,3 +1,4 @@
+import cn from 'classnames'
 import {DEBUG_CONFIG} from 'common/config'
 import {PlayerEntity} from 'common/entities'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
@@ -10,6 +11,7 @@ import {
 	getCurrentPlayerEntity,
 	getEndGameOverlay,
 	getGameState,
+	getIsReplayer,
 	getIsSpectator,
 	getOpenedModal,
 	getPickRequestPickableSlots,
@@ -56,7 +58,17 @@ function ModalContainer() {
 	return renderModal(openedModal, handleOpenModal)
 }
 
-function EndGameOverlayContainer() {
+type EndGameOverlayProps = {
+	modalVisible: boolean
+	setModalVisible: (visible: boolean) => void
+	setMenuSection: (section: string) => void
+}
+
+function EndGameOverlayContainer({
+	modalVisible,
+	setModalVisible,
+	setMenuSection,
+}: EndGameOverlayProps) {
 	const endGameOverlay = useSelector(getEndGameOverlay)
 	const gameState = useSelector(getGameState)
 	const isSpectator = useSelector(getIsSpectator)
@@ -70,7 +82,7 @@ function EndGameOverlayContainer() {
 	const [prevLives, setPrevLives] = useState(lives)
 	useEffect(() => {
 		if (!gameState) return
-		if (!gameState.isBossGame) return
+		if (!gameState.isEvilXBossGame) return
 		if (endGameOverlay) {
 			if (
 				endGameOverlay.outcome.type === 'player-won' &&
@@ -100,7 +112,7 @@ function EndGameOverlayContainer() {
 		}
 	}, [...lives, endGameOverlay])
 
-	if (!gameState || !endGameOverlay?.outcome) return null
+	if (!gameState || !endGameOverlay?.outcome || !modalVisible) return null
 
 	return (
 		<EndGameOverlay
@@ -126,14 +138,16 @@ function EndGameOverlayContainer() {
 					? {type: 'spectator'}
 					: {type: 'player', entity: playerEntity}
 			}
-			onClose={() => {
-				dispatch({type: localMessages.GAME_END_OVERLAY_HIDE})
+			onClose={() => setModalVisible(false)}
+			setMenuSection={setMenuSection}
+			dispatchGameClose={() => {
+				dispatch({type: localMessages.GAME_CLOSE})
 			}}
 		/>
 	)
 }
 
-function Hand() {
+function Hand({gameOver}: {gameOver: boolean}) {
 	const gameState = useSelector(getGameState)
 	if (!gameState) return null
 
@@ -143,6 +157,7 @@ function Hand() {
 	const [filter, setFilter] = useState<string>('')
 	const pickableCards = pickRequestPickableSlots
 	const selectedCard = useSelector(getSelectedCard)
+	const isReplayer = useSelector(getIsReplayer)
 
 	const dispatch = useMessageDispatch()
 
@@ -216,19 +231,23 @@ function Hand() {
 
 	if (pickableCards != undefined) {
 		for (let card of filteredCards) {
-			if (card.slot && !pickableCards.includes(card.slot))
+			if (isReplayer || (card.slot && !pickableCards.includes(card.slot)))
 				unpickableCards.push(card)
 		}
 	}
 
 	return (
-		<div className={css.hand} ref={handRef}>
+		<div className={cn(css.hand, {[css.noHover]: gameOver})} ref={handRef}>
 			{Filter()}
 			<CardList
 				wrap={false}
 				displayTokenCost={false}
 				cards={filteredCards}
-				onClick={(card: LocalCardInstance) => selectCard(card)}
+				onClick={
+					!isReplayer || !gameOver
+						? (card: LocalCardInstance) => selectCard(card)
+						: undefined
+				}
 				selected={[selectedCard]}
 				unpickable={unpickableCards}
 				statusEffects={gameState.statusEffects}
@@ -286,8 +305,8 @@ function RequiresAvaiableActions() {
 				dispatch({
 					type: localMessages.SETTINGS_SET,
 					setting: {
-						key: 'muted',
-						value: !settings.muted,
+						key: 'globalVolume',
+						value: settings.globalVolume === 0 ? settings.globalVolumeStore : 0,
 					},
 				})
 			}
@@ -347,17 +366,22 @@ function TurnStartSound() {
 	return null
 }
 
-function Game() {
+function Game({setMenuSection}: {setMenuSection: (section: string) => void}) {
+	const gameEndState = useSelector(getEndGameOverlay)
 	const hasPlayerState = useSelector(
 		(root: RootState) => getPlayerState(root) !== null,
 	)
 	const dispatch = useMessageDispatch()
 	const isSpectator = useSelector(getIsSpectator)
+	const isReplayer = useSelector(getIsReplayer)
 
 	if (!hasPlayerState) return <p>Loading</p>
 	const [gameScale, setGameScale] = useState<number>(1)
+	const [gameEndModal, setGameEndModal] = useState<boolean>(true)
 	const gameWrapperRef = useRef<HTMLDivElement>(null)
 	const gameRef = useRef<HTMLDivElement>(null)
+
+	const gameOver = !!gameEndState?.outcome
 
 	const handleBoardClick = (
 		slotInfo: SlotInfo,
@@ -404,16 +428,27 @@ function Game() {
 					style={{transform: `scale(${gameScale})`}}
 				>
 					<div className={css.grid} />
-					<Board onClick={handleBoardClick} />
+					<Board
+						onClick={handleBoardClick}
+						gameEndButton={() => setGameEndModal(true)}
+						gameOver={gameOver}
+					/>
 				</div>
 			</div>
 			<div className={css.bottom}>
-				<Toolbar />
-				{!isSpectator && <Hand />}
+				<Toolbar
+					gameOver={gameOver}
+					gameEndButton={() => setGameEndModal(true)}
+				/>
+				{(!isSpectator || isReplayer) && <Hand gameOver={gameOver} />}
 			</div>
 			<ModalContainer />
-			<Chat />
-			<EndGameOverlayContainer />)
+			<Chat gameOver={gameOver} />
+			<EndGameOverlayContainer
+				modalVisible={gameEndModal}
+				setModalVisible={setGameEndModal}
+				setMenuSection={setMenuSection}
+			/>
 			<RequiresAvaiableActions />
 			<PickRequestSound />
 			<TurnStartSound />

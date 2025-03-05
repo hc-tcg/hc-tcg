@@ -84,6 +84,7 @@ const Card = (props: CardReactProps) => {
 						[css.selected]: selected,
 						[css.picked]: picked,
 						[css.unpickable]: unpickable,
+						[css.clickable]: !!props.disabled,
 					},
 				)}
 				onClick={unpickable ? () => {} : onClick}
@@ -100,8 +101,6 @@ const Card = (props: CardReactProps) => {
 						<img
 							className={css.renderedCardImage}
 							src={getRenderedCardImage(props.card, displayTokenCost)}
-							width="100%"
-							height="100%"
 						/>
 					</div>
 				)}

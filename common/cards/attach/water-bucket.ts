@@ -7,7 +7,7 @@ import {
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
 import FireEffect from '../../status-effects/fire'
-import {beforeAttack} from '../../types/priorities'
+import {afterApply, beforeAttack} from '../../types/priorities'
 import {applySingleUse} from '../../utils/board'
 import String from '../attach/string'
 import {attach, singleUse} from '../defaults'
@@ -96,10 +96,14 @@ const WaterBucket: Attach & SingleUse = {
 				},
 			)
 
-			observer.subscribe(opponentPlayer.hooks.afterApply, () => {
-				if (!component.slot.inRow()) return
-				removeFireEffect(game, component.slot.row.getHermit()?.slot)
-			})
+			observer.subscribeWithPriority(
+				opponentPlayer.hooks.afterApply,
+				afterApply.CLEAR_STATUS_EFFECT,
+				() => {
+					if (!component.slot.inRow()) return
+					removeFireEffect(game, component.slot.row.getHermit()?.slot)
+				},
+			)
 		}
 	},
 }

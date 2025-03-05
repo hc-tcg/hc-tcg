@@ -10,3 +10,11 @@ export type ToastData = {
 	toast: ToastT
 	closed: boolean
 }
+
+export type RematchData = {
+	opponentId: string
+	time: number
+	playerScore: number
+	opponentScore: number
+	spectatorCode: string | null
+}

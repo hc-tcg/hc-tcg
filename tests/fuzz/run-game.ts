@@ -1,9 +1,10 @@
 import {Card} from 'common/cards/types'
-import {COINS} from 'common/coins'
 import {AIComponent} from 'common/components/ai-component'
+import {defaultAppearance} from 'common/cosmetics/default'
 import {GameSettings} from 'common/models/game-model'
 import {CurrentCoinFlip} from 'common/types/game-state'
 import {VirtualAI} from 'common/types/virtual-ai'
+import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import {GameController} from 'server/game-controller'
@@ -16,15 +17,17 @@ class FuzzyGameController extends GameController {
 	}
 }
 
-function getTestPlayer(playerName: string, deck: Array<Card>) {
+function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 	return {
 		model: {
 			name: playerName,
 			minecraftName: playerName,
 			censoredName: playerName,
-			selectedCoinHead: 'creeper' as keyof typeof COINS,
+			uuid: '',
+			appearance: {...defaultAppearance},
 		},
 		deck,
+		score: 0,
 	}
 }
 

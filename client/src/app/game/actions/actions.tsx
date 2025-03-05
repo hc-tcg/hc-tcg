@@ -6,11 +6,12 @@ import {
 	getAvailableActions,
 	getCurrentCoinFlip,
 	getCurrentPickMessage,
-	getCurrentPlayerState,
+	getCurrentPlayerEntity,
 	getGameState,
 	getIsSpectator,
 	getPlayerEntity,
 	getPlayerState,
+	getPlayerStateByEntity,
 } from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
@@ -19,12 +20,15 @@ import css from './actions.module.scss'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
+	gameOver: boolean
+	gameEndButton: () => void
 	mobile?: boolean
 	id?: string
 }
 
-const Actions = ({onClick, id}: Props) => {
-	const currentPlayer = useSelector(getCurrentPlayerState)
+const Actions = ({onClick, id, gameOver, gameEndButton}: Props) => {
+	const currentPlayerEntity = useSelector(getCurrentPlayerEntity)!
+	const currentPlayer = useSelector(getPlayerStateByEntity(currentPlayerEntity))
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
 	const playerEntity = useSelector(getPlayerEntity)
@@ -113,6 +117,7 @@ const Actions = ({onClick, id}: Props) => {
 					type={'single_use'}
 					entity={boardState?.singleUse.slot}
 					onClick={handleClick}
+					gameOver={gameOver}
 				/>
 			</div>
 		)
@@ -122,9 +127,15 @@ const Actions = ({onClick, id}: Props) => {
 		function handleAttack() {
 			dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: 'attack'})
 		}
-		function handleEndTurn() {
-			dispatch({type: localMessages.GAME_ACTIONS_END_TURN})
+		function handleEndAction() {
+			if (!gameOver) {
+				dispatch({type: localMessages.GAME_ACTIONS_END_TURN})
+				return
+			}
+			gameEndButton()
 		}
+		const endActionText = gameOver ? 'End Game' : 'End Turn'
+		const endActionEnabled = availableActions.includes('END_TURN') || gameOver
 
 		const attackOptions =
 			availableActions.includes('SINGLE_USE_ATTACK') ||
@@ -138,18 +149,18 @@ const Actions = ({onClick, id}: Props) => {
 					size="small"
 					style={{height: '34px'}}
 					onClick={handleAttack}
-					disabled={!attackOptions}
+					disabled={!attackOptions || gameOver}
 				>
 					Attack
 				</Button>
 				<Button
-					variant={!availableActions.includes('END_TURN') ? 'default' : 'error'}
+					variant={endActionEnabled ? 'error' : 'default'}
 					size="small"
 					style={{height: '34px'}}
-					onClick={handleEndTurn}
-					disabled={!availableActions.includes('END_TURN')}
+					onClick={handleEndAction}
+					disabled={!endActionEnabled}
 				>
-					End Turn
+					{endActionText}
 				</Button>
 			</div>
 		)

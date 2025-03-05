@@ -1,4 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
+import {ACHIEVEMENTS_LIST} from 'common/achievements'
 
 import {CARDS_LIST} from 'common/cards'
 import {STATUS_EFFECTS_LIST} from 'common/status-effects'
@@ -22,6 +23,17 @@ describe('Test unique IDs', () => {
 		for (const effect of STATUS_EFFECTS_LIST) {
 			expect(effects).not.toContain(effect.id)
 			effects.push(effect.id)
+		}
+	})
+	test('Test achievements effects have unique IDs', () => {
+		let achievements: Array<string> = []
+		let numericIds: Array<number> = []
+
+		for (const achievement of ACHIEVEMENTS_LIST) {
+			expect(achievements).not.toContain(achievement.id)
+			achievements.push(achievement.id)
+			expect(numericIds).not.toContain(achievement.numericId)
+			numericIds.push(achievement.numericId)
 		}
 	})
 })

@@ -1,0 +1,42 @@
+.accordion {
+	margin-bottom: 0.5rem;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	min-height: 1.5rem;
+	padding: 4px 8px;
+	border-bottom: 1px solid black;
+	box-shadow: 0px 1.5px 0px #5a5b5c;
+	cursor: pointer;
+	user-select: none;
+}
+
+.caret {
+	justify-self: flex-end;
+	height: 8px;
+	width: 8px;
+	transition: transform 0.15s;
+}
+
+.content {
+	overflow: hidden;
+	height: 100%;
+	transition: height 0.15s, opacity, 0.15s, margin-bottom 0.15s;
+	opacity: 1;
+	animation-duration: 2s;
+}
+
+.padding {
+	padding: 1rem 0.5rem;
+	height: min-content;
+	box-sizing: border-box;
+}
+
+.hide {
+	padding: 0;
+	height: 0;
+	opacity: 0;
+}

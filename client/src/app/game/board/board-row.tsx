@@ -40,6 +40,7 @@ type BoardRowProps = {
 		card: LocalCardInstance | null,
 		index: number,
 	) => void
+	gameOver: boolean
 }
 
 function getRowState(playerEntity: PlayerEntity, rowEntity: RowEntity) {
@@ -64,6 +65,7 @@ const BoardRow = ({
 	boardForPlayerEntity: player,
 	rowEntity,
 	onClick,
+	gameOver,
 }: BoardRowProps) => {
 	const settings = useSelector(getSettings)
 	const selectedCard = useSelector(getSelectedCard)
@@ -76,11 +78,12 @@ const BoardRow = ({
 
 	if (!rowState) throw new Error('Row state should always be defined')
 
-	let shouldDim = !!(
-		settings.slotHighlightingEnabled &&
-		(selectedCard || currentPickableSlots) &&
-		currentPlayerEntity === playerEntity
-	)
+	let shouldDim =
+		!!(
+			settings.slotHighlightingEnabled &&
+			(selectedCard || currentPickableSlots) &&
+			currentPlayerEntity === playerEntity
+		) && !gameOver
 
 	const itemSlots = rowState.items.length
 	const slotTypes: Array<BoardSlotTypeT> = [
@@ -121,6 +124,7 @@ const BoardRow = ({
 						slotType != 'hermit',
 				)}
 				type={slotType}
+				gameOver={gameOver}
 			/>
 		)
 	})

@@ -1,10 +1,12 @@
 import {LocalMessage, localMessages} from 'logic/messages'
 
 export type LocalSettings = {
-	soundVolume: number
+	globalVolume: number
+	globalVolumeStore: number
+	sfxVolume: number
 	musicVolume: number
+	musicVolumeStore: number
 	voiceVolume: number
-	muted: boolean
 	profanityFilterEnabled: boolean
 	showChatWindow: boolean
 	chatEnabled: boolean
@@ -17,7 +19,6 @@ export type LocalSettings = {
 	panoramaEnabled: boolean
 	panorama: string
 	gameSide: string
-	minecraftName: string
 	deckSortingMethod: 'Alphabetical' | 'First Tag'
 	lastSelectedTag: string | null
 }
@@ -27,10 +28,12 @@ export type LocalSetting = {
 }[keyof LocalSettings]
 
 const defaultSettings: LocalSettings = {
-	soundVolume: 100,
+	globalVolume: 100,
+	globalVolumeStore: 100,
+	sfxVolume: 100,
 	musicVolume: 75,
+	musicVolumeStore: 100,
 	voiceVolume: 75,
-	muted: false,
 	profanityFilterEnabled: true,
 	chatEnabled: true,
 	confirmationDialogsEnabled: true,
@@ -43,7 +46,6 @@ const defaultSettings: LocalSettings = {
 	panoramaEnabled: true,
 	panorama: 'hermit-hill',
 	gameSide: 'Left',
-	minecraftName: '',
 	deckSortingMethod: 'Alphabetical',
 	lastSelectedTag: null,
 }
@@ -57,6 +59,7 @@ const getSettings = (): LocalSettings => {
 
 	return settings.reduce((map, entry) => {
 		const key = entry[0].replace(/^settings:/, '')
+		if (!(key in Object.keys(defaultSettings))) return map
 		const value = JSON.parse(entry[1])
 		// @ts-ignore
 		map[key] = value

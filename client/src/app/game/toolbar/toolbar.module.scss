@@ -72,3 +72,24 @@
 .newMessage {
 	animation: newMessageAnim 1000ms infinite alternate ease;
 }
+
+.copy {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 0.5vh;
+	padding: 0.75vh;
+	gap: 0.5vh;
+	font-family: Minecraft;
+
+	&:hover {
+		cursor: pointer;
+		background-color: var(--gray-800);
+	}
+}
+
+.audioIcon {
+	height: 40px;
+	width: 40px;
+	image-rendering: optimizeQuality;
+}

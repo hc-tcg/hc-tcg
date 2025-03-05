@@ -9,14 +9,14 @@ import {select} from 'typed-redux-saga'
 function* spectatorLeaveSaga(
 	action: RecievedClientMessage<typeof clientMessages.SPECTATOR_LEAVE>,
 ) {
-	let game = yield* select(getGame(action.playerId))
-	if (!game) return
+	let con = yield* select(getGame(action.playerId))
+	if (!con) return
 
-	let viewer = game.viewers.find(
+	let viewer = con.viewers.find(
 		(viewer) => viewer.player.id === action.playerId,
 	)
 
-	game.chat.push({
+	con.chat.push({
 		sender: {
 			type: 'viewer',
 			id: action.playerId,
@@ -25,9 +25,13 @@ function* spectatorLeaveSaga(
 		createdAt: Date.now(),
 	})
 
-	game.chatUpdate()
+	con.chatUpdate()
 
-	if (viewer) game.removeViewer(viewer)
+	if (viewer) con.removeViewer(viewer)
+
+	if (con.viewers.length === 0) {
+		con.game.outcome = {type: 'no-viewers'}
+	}
 }
 
 export default spectatorLeaveSaga

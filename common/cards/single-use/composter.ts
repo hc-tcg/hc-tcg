@@ -55,9 +55,9 @@ const Composter: SingleUse = {
 				firstPickedSlot?.card?.discard()
 				pickedSlot.card?.discard()
 
-				applySingleUse(game, component.slot)
-
 				player.draw(2)
+
+				applySingleUse(game, component.slot)
 			},
 		})
 	},

@@ -2,6 +2,13 @@ import {DEBUG} from 'common/config'
 import {NumberOrNull} from 'common/utils/database-codes'
 import {Express} from 'express'
 import root from 'serverRoot'
+import {
+	PlayerAchievementProgressQuery,
+	achievements,
+	overallAchievementProgress,
+	playerProgress,
+} from './achievements'
+import {authenticateUser, createUser} from './auth'
 import {cards, deckCost, getDeckInformation, ranks, types} from './cards'
 import {
 	cancelApiGame,
@@ -26,6 +33,21 @@ import {
 import {requestUrlRoot} from './utils'
 
 export function addApi(app: Express) {
+	app.get('/api/auth/', async (req, res) => {
+		const userId = req.get('userId')
+		const secret = req.get('secret')
+		let ret = await authenticateUser(userId, secret)
+		res.statusCode = ret[0]
+		res.send(ret[1])
+	})
+
+	app.post('/api/createUser/', async (req, res) => {
+		const username = req.get('username')
+		let ret = await createUser(username)
+		res.statusCode = ret[0]
+		res.send(ret[1])
+	})
+
 	app.get('/api/cards', (req, res) => {
 		res.send(cards(requestUrlRoot(req)))
 	})
@@ -52,8 +74,8 @@ export function addApi(app: Express) {
 		res.send(getPublicGameCount())
 	})
 
-	app.get('/api/games/create', (_req, res) => {
-		res.send(createApiGame())
+	app.get('/api/games/create', (req, res) => {
+		res.send(createApiGame(requestUrlRoot(req)))
 	})
 
 	app.get('/api/games/queue/length', (_req, res) => {
@@ -127,6 +149,31 @@ export function addApi(app: Express) {
 		let ret = await getPrivateGame({
 			opponentCode: req.params.code,
 		})
+		res.statusCode = ret[0]
+		res.send(ret[1])
+	})
+
+	app.get('/api/achievements', async (req, res) => {
+		res.send(achievements(requestUrlRoot(req)))
+	})
+
+	app.get('/api/achievements/player-progress', async (req, res) => {
+		const query = PlayerAchievementProgressQuery.parse(req.query)
+		if (!query.achievementId || !query.uuid) {
+			res.statusCode = 400
+			res.send({reason: 'Must pass achievementId and uuid.'})
+			return
+		}
+		const ret = await playerProgress(query.achievementId, query.uuid)
+		res.statusCode = ret[0]
+		res.send(ret[1])
+	})
+
+	app.get('/api/achievements/:achievement/:level', async (req, res) => {
+		const ret = await overallAchievementProgress(
+			req.params.achievement,
+			NumberOrNull(req.params.level) || 0,
+		)
 		res.statusCode = ret[0]
 		res.send(ret[1])
 	})

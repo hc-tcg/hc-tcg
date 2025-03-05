@@ -23,7 +23,7 @@ export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
 		<Modal title="Export Deck" setOpen={setOpen} onClose={onClose}>
 			<Modal.Description>
 				<p className={css.instructions}>
-					Export the "{loadedDeck.name}" deck to share with your friends!
+					Export "{loadedDeck.name}" to share with your friends!
 				</p>
 				<div className={css.exportControls}>
 					<input type="text" readOnly value={loadedDeck.code} />
@@ -31,6 +31,13 @@ export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
 						className={css.copy}
 						onClick={() => {
 							navigator.clipboard.writeText(loadedDeck.code)
+							dispatch({
+								type: localMessages.TOAST_OPEN,
+								open: true,
+								title: 'Hash copied!',
+								description: `Copied ${loadedDeck.code} to clipboard.`,
+								image: 'copy',
+							})
 						}}
 					>
 						{CopyIcon()}

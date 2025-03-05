@@ -1,5 +1,5 @@
 import {expect, test} from '@playwright/experimental-ct-react'
-import {ChatContent, ChatMessageDisplay} from 'client/app/game/chat/chat'
+import {ChatMessageDisplay, ChatMessages} from 'client/app/game/chat/chat'
 import {LineNode, formatText} from 'common/utils/formatting'
 
 test.use({viewport: {width: 800, height: 500}})
@@ -39,7 +39,7 @@ test('Players and spectators view messages correctly.', async ({mount}) => {
 	].reverse() as Array<ChatMessageDisplay>
 
 	const component = await mount(
-		<ChatContent
+		<ChatMessages
 			chatMessages={messages}
 			showLog={true}
 			isSpectating={false}
@@ -51,7 +51,7 @@ test('Players and spectators view messages correctly.', async ({mount}) => {
 	await component.unmount()
 
 	const component2 = await mount(
-		<ChatContent
+		<ChatMessages
 			chatMessages={messages}
 			showLog={true}
 			isSpectating={true}
@@ -84,7 +84,7 @@ test('Batlte log messages are hidden properly.', async ({mount}) => {
 	].reverse() as Array<ChatMessageDisplay>
 
 	const component = await mount(
-		<ChatContent
+		<ChatMessages
 			chatMessages={messages}
 			showLog={false}
 			isSpectating={false}
@@ -106,7 +106,7 @@ test('Messages do not have colors for formatting.', async ({mount}) => {
 	]
 
 	const component = await mount(
-		<ChatContent
+		<ChatMessages
 			chatMessages={messages}
 			showLog={true}
 			isSpectating={false}
@@ -117,7 +117,7 @@ test('Messages do not have colors for formatting.', async ({mount}) => {
 	await expect(component).toHaveScreenshot()
 	await component.unmount()
 	const component2 = await mount(
-		<ChatContent
+		<ChatMessages
 			chatMessages={messages}
 			showLog={true}
 			isSpectating={true}
