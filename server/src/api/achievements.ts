@@ -1,6 +1,6 @@
 import {ACHIEVEMENTS_LIST} from 'common/achievements'
-import {ALL_COSMETICS} from 'common/cosmetics'
 import {Achievement} from 'common/achievements/types'
+import {ALL_COSMETICS} from 'common/cosmetics'
 
 type LevelResponse = {
 	achievementId: string

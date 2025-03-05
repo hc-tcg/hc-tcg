@@ -2,6 +2,7 @@ import {DEBUG} from 'common/config'
 import {NumberOrNull} from 'common/utils/database-codes'
 import {Express} from 'express'
 import root from 'serverRoot'
+import {achievements} from './achievements'
 import {authenticateUser, createUser} from './auth'
 import {cards, deckCost, getDeckInformation, ranks, types} from './cards'
 import {
@@ -24,7 +25,6 @@ import {
 	getStats,
 	getTypeDistributionStats,
 } from './stats'
-import {achievements} from './achievements'
 import {requestUrlRoot} from './utils'
 
 export function addApi(app: Express) {
