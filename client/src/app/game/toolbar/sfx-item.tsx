@@ -12,8 +12,8 @@ function SoundItem() {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'globalMuted',
-				value: !settings.globalMuted,
+				key: 'globalVolume',
+				value: settings.globalVolume === 0 ? settings.globalVolumeStore : 0,
 			},
 		})
 	}
@@ -24,7 +24,7 @@ function SoundItem() {
 			title="Mute Sounds (M)"
 			onClick={handleSoundChange}
 		>
-			<SpeakerIcon level={settings.globalMuted ? 0 : 100} />
+			<SpeakerIcon level={settings.globalVolume} />
 		</button>
 	)
 }

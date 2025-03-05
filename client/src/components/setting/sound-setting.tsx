@@ -12,16 +12,19 @@ const getPercentDescriptor = (value: number) => {
 
 type VolumeSetting =
 	| 'globalVolume'
+	| 'globalVolumeStore'
 	| 'sfxVolume'
 	| 'musicVolume'
+	| 'musicVolumeStore'
 	| 'voiceVolume'
 
 type SoundSettingProps = {
 	name: string
 	id: 'global' | 'sfx' | 'music' | 'voice'
+	store?: boolean
 }
 
-export const SoundSetting = ({name, id}: SoundSettingProps) => {
+export const SoundSetting = ({name, id, store}: SoundSettingProps) => {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 	const value = settings[(id + 'Volume') as VolumeSetting]
@@ -31,6 +34,14 @@ export const SoundSetting = ({name, id}: SoundSettingProps) => {
 			type: localMessages.SETTINGS_SET,
 			setting: {
 				key: (id + 'Volume') as VolumeSetting,
+				value: parseInt(ev.currentTarget.value),
+			},
+		})
+		if (!store) return
+		dispatch({
+			type: localMessages.SETTINGS_SET,
+			setting: {
+				key: (id + 'VolumeStore') as VolumeSetting,
 				value: parseInt(ev.currentTarget.value),
 			},
 		})

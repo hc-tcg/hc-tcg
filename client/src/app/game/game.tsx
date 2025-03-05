@@ -301,8 +301,8 @@ function RequiresAvaiableActions() {
 				dispatch({
 					type: localMessages.SETTINGS_SET,
 					setting: {
-						key: 'globalMuted',
-						value: !settings.globalMuted,
+						key: 'globalVolume',
+						value: settings.globalVolume === 0 ? settings.globalVolumeStore : 0,
 					},
 				})
 			}

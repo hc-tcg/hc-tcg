@@ -57,7 +57,6 @@ function* playSoundSaga(
 		if (audioCtx.state !== 'running') return
 		const settings = yield* select(getSettings)
 		if (settings.globalVolume === 0 || settings.sfxVolume === 0) return
-		if (settings.globalMuted || settings.sfxMuted) return
 
 		const sound = new Audio(action.path)
 		const sourceNode = audioCtx.createMediaElementSource(sound)
@@ -123,18 +122,10 @@ function* stopVoiceChannel(
 function* settingSaga(): SagaIterator {
 	try {
 		const settings = yield* select(getSettings)
-		musicGainNode.gain.value = settings.musicMuted
-			? 0
-			: settings.musicVolume / 100
-		soundGainNode.gain.value = settings.sfxMuted ? 0 : settings.sfxVolume / 100
-		voiceGainNode.gain.value = settings.voiceMuted
-			? 0
-			: settings.voiceVolume / 100
-		if (settings.globalMuted) {
-			musicGainNode.gain.value = 0
-			soundGainNode.gain.value = 0
-			voiceGainNode.gain.value = 0
-		}
+		// 100**2 = 10000
+		musicGainNode.gain.value = settings.musicVolume * settings.globalVolume / 10000 
+		soundGainNode.gain.value = settings.sfxVolume * settings.globalVolume / 10000
+		voiceGainNode.gain.value = settings.voiceVolume * settings.globalVolume / 10000
 	} catch (err) {
 		console.error(err)
 	}

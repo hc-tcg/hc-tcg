@@ -2,13 +2,11 @@ import {LocalMessage, localMessages} from 'logic/messages'
 
 export type LocalSettings = {
 	globalVolume: number
-	globalMuted: boolean
+	globalVolumeStore: number
 	sfxVolume: number
-	sfxMuted: boolean
 	musicVolume: number
-	musicMuted: boolean
+	musicVolumeStore: number
 	voiceVolume: number
-	voiceMuted: boolean
 	profanityFilterEnabled: boolean
 	showChatWindow: boolean
 	chatEnabled: boolean
@@ -31,13 +29,11 @@ export type LocalSetting = {
 
 const defaultSettings: LocalSettings = {
 	globalVolume: 100,
-	globalMuted: false,
+	globalVolumeStore: 100,
 	sfxVolume: 100,
-	sfxMuted: false,
 	musicVolume: 75,
-	musicMuted: false,
+	musicVolumeStore: 100,
 	voiceVolume: 75,
-	voiceMuted: false,
 	profanityFilterEnabled: true,
 	chatEnabled: true,
 	confirmationDialogsEnabled: true,
@@ -63,6 +59,7 @@ const getSettings = (): LocalSettings => {
 
 	return settings.reduce((map, entry) => {
 		const key = entry[0].replace(/^settings:/, '')
+		if (!(key in Object.keys(defaultSettings))) return map
 		const value = JSON.parse(entry[1])
 		// @ts-ignore
 		map[key] = value
