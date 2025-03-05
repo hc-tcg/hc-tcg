@@ -1,4 +1,4 @@
-import AcquireHardware from './acquire-hardware.ts'
+import AcquireHardware from './acquire-hardware'
 import British from './british'
 import CantTouchThis from './cant-touch-this'
 import CertifiedZombie from './certified-zombie'
@@ -14,6 +14,7 @@ import HurtinHermits from './hurtin-hermits'
 import Inneffective from './inneffective'
 import AllCards from './jack-of-all-cards'
 import LoyaltyIII from './loyalty-iii'
+import LuckyStreak from './lucky-streak'
 import MasterOfPuppets from './master-of-puppets'
 import NakedAndScared from './naked-and-scared'
 import NoDerpcoins from './no-derpcoins'
@@ -53,6 +54,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	PackOfWolves,
 	GoFish,
 	HowDidWeGetHere,
+	LuckyStreak,
 	HurtinHermits,
 	Wipeout,
 	DefeatEvilX,
