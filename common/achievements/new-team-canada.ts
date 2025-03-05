@@ -56,7 +56,11 @@ const NewTeamCanada: Achievement = {
 	],
 	onGameStart(game, player, component, observer) {
 		const playerDeck = game.components
-			.filter(CardComponent, query.card.player(player.entity))
+			.filter(
+				CardComponent,
+				query.card.player(player.entity),
+				query.card.isHermit,
+			)
 			.map((card) => card.props.id)
 
 		const hasBeef = playerDeck.find((x) => beef.includes(x))

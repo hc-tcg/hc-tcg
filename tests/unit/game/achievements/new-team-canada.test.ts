@@ -1,5 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 import NewTeamCanada from 'common/achievements/new-team-canada'
+import ArmorStand from 'common/cards/attach/armor-stand'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
 import ShadEECommon from 'common/cards/hermits/shadee-common'
@@ -8,11 +9,16 @@ import VintageBeefCommon from 'common/cards/hermits/vintagebeef-common'
 import {endTurn, forfeit, playCardFromHand, testAchivement} from '../utils'
 
 describe('Test New Team Canada achievement', () => {
-	test('New Team Canada only triggers when containing all members and no others', () => {
+	test('New Team Canada only triggers when containing all members and no other hermits', () => {
 		testAchivement(
 			{
 				achievement: NewTeamCanada,
-				playerOneDeck: [EthosLabCommon, VintageBeefCommon, GeminiTayCommon],
+				playerOneDeck: [
+					EthosLabCommon,
+					VintageBeefCommon,
+					GeminiTayCommon,
+					ArmorStand,
+				],
 				playerTwoDeck: [ShadEECommon],
 				playGame: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)

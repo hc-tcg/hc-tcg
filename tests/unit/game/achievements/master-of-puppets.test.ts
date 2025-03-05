@@ -57,11 +57,11 @@ describe('Test Master of Puppets Achievement', () => {
 		testAchivement(
 			{
 				achievement: MasterOfPuppets,
-				playerOneDeck: [ZombieCleoRare, EthosLabCommon],
+				playerOneDeck: [ZombieCleoRare, ZombieCleoRare],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
 					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 1)
 					yield* endTurn(game)
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
@@ -74,6 +74,13 @@ describe('Test Master of Puppets Achievement', () => {
 						query.slot.currentPlayer,
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* pick(
+						game,
+						query.slot.rowIndex(1),
+						query.slot.hermit,
+						query.slot.currentPlayer,
+					)
+					yield* finishModalRequest(game, {pick: 'primary'})
 
 					yield* forfeit(game.currentPlayer.entity)
 				},

@@ -22,6 +22,7 @@ const HallOfAll: Achievement = {
 					SlotComponent,
 					query.slot.player(player.entity),
 					query.slot.empty,
+					(_game, slot) => slot.inRow(),
 				)
 			)
 				return
