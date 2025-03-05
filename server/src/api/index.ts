@@ -24,6 +24,7 @@ import {
 	getStats,
 	getTypeDistributionStats,
 } from './stats'
+import {achievements} from './achievements'
 import {requestUrlRoot} from './utils'
 
 export function addApi(app: Express) {
@@ -145,6 +146,10 @@ export function addApi(app: Express) {
 		})
 		res.statusCode = ret[0]
 		res.send(ret[1])
+	})
+
+	app.get('/api/achievements', async (req, res) => {
+		res.send(achievements(requestUrlRoot(req)))
 	})
 
 	if (DEBUG) {
