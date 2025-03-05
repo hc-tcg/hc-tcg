@@ -45,7 +45,7 @@ const beef = [
 const NewTeamCanada: Achievement = {
 	...achievement,
 	numericId: 53,
-	id: 'team_star',
+	id: 'new_team_canada',
 	levels: [
 		{
 			name: 'New Team Canada',
