@@ -5,6 +5,12 @@ import FarmerBeefCommon from '../cards/hermits/farmerbeef-common'
 import FarmerBeefRare from '../cards/hermits/farmerbeef-rare'
 import GeminiTayCommon from '../cards/hermits/geminitay-common'
 import GeminiTayRare from '../cards/hermits/geminitay-rare'
+import LlamadadCommmon from '../cards/hermits/llamadad-common'
+import LlamadadRare from '../cards/hermits/llamadad-rare'
+import PrincessGemCommon from '../cards/hermits/princessgem-common'
+import PrincessGemRare from '../cards/hermits/princessgem-rare'
+import ShadEECommon from '../cards/hermits/shadee-common'
+import ShadeEERare from '../cards/hermits/shadeee-rare'
 import VintageBeefCommon from '../cards/hermits/vintagebeef-common'
 import VintageBeefRare from '../cards/hermits/vintagebeef-rare'
 import VintageBeefUltraRare from '../cards/hermits/vintagebeef-ultra-rare'
@@ -13,14 +19,25 @@ import query from '../components/query'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
-const gem = [GeminiTayCommon, GeminiTayRare].map((memberCard) => memberCard.id)
-const etho = [EthosLabCommon, EthosLabRare, EthosLabUltraRare].map(
-	(memberCard) => memberCard.id,
-)
+const gem = [
+	GeminiTayCommon,
+	GeminiTayRare,
+	PrincessGemCommon,
+	PrincessGemRare,
+].map((memberCard) => memberCard.id)
+const etho = [
+	EthosLabCommon,
+	EthosLabRare,
+	EthosLabUltraRare,
+	ShadEECommon,
+	ShadeEERare,
+].map((memberCard) => memberCard.id)
 const beef = [
 	VintageBeefCommon,
 	VintageBeefRare,
 	VintageBeefUltraRare,
+	LlamadadCommmon,
+	LlamadadRare,
 	FarmerBeefCommon,
 	FarmerBeefRare,
 ].map((memberCard) => memberCard.id)
