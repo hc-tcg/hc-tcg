@@ -3,9 +3,9 @@ import {NumberOrNull} from 'common/utils/database-codes'
 import {Express} from 'express'
 import root from 'serverRoot'
 import {
+	PlayerAchievementProgressQuery,
 	achievements,
 	overallAchievementProgress,
-	PlayerAchievementProgressQuery,
 	playerProgress,
 } from './achievements'
 import {authenticateUser, createUser} from './auth'

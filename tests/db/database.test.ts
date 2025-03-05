@@ -9,6 +9,8 @@ import {
 	test,
 } from '@jest/globals'
 import {ACHIEVEMENTS_LIST} from 'common/achievements'
+import DefeatEvilX from 'common/achievements/defeat-evil-x'
+import Win from 'common/achievements/wins'
 import {CARDS, CARDS_LIST} from 'common/cards'
 import BdoubleO100Common from 'common/cards/hermits/bdoubleo100-common'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
@@ -20,8 +22,6 @@ import {PlayerEntity} from 'common/entities'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {config} from 'dotenv'
 import {Database} from 'server/db/db'
-import DefeatEvilX from 'common/achievements/defeat-evil-x'
-import Win from 'common/achievements/wins'
 
 const globalProgress = (percentage: number) => ({
 	type: 'success',
