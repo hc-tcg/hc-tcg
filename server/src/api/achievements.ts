@@ -106,14 +106,14 @@ export async function overallAchievementProgress(
 			404,
 			{
 				reason: 'Achievement not found',
-			}
+			},
 		]
 	if (level >= achievement.levels.length)
 		return [
 			404,
 			{
 				reason: 'Level not found',
-			}
+			},
 		]
 	if (!root.db?.connected)
 		return [
@@ -122,7 +122,10 @@ export async function overallAchievementProgress(
 				reason: 'Endpoint is unavailable because database is disabled',
 			},
 		]
-	let progress = await root.db?.getAchievementPercentageCompletion(achievement, level)
+	let progress = await root.db?.getAchievementPercentageCompletion(
+		achievement,
+		level,
+	)
 
 	if (progress.type === 'failure') {
 		return [

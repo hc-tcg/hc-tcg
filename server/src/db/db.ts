@@ -2058,7 +2058,7 @@ export class Database {
 			return {
 				type: 'success',
 				body: {
-					progress: achievement.getProgress(goals),
+					progress: achievement.getProgress(goals) ?? 0,
 				},
 			}
 		} catch (e) {
@@ -2075,9 +2075,7 @@ export class Database {
 		level: number,
 	): Promise<DatabaseResult<{percent: number}>> {
 		try {
-			const playerCount = await this.pool.query(
-				"SELECT count(*) FROM users;"
-			)
+			const playerCount = await this.pool.query('SELECT count(*) FROM users;')
 			const result = await this.pool.query(
 				`
 				SELECT user_goals.achievement_id, user_goals.user_id, user_goals.goal_id, user_goals.progress
@@ -2087,19 +2085,18 @@ export class Database {
 				[achievement.numericId],
 			)
 			const allGoals = result.rows.reduce((goalRecord, row) => {
-				if (!goalRecord[row['user_id']])
-					goalRecord[row['user_id']] = {}
+				if (!goalRecord[row['user_id']]) goalRecord[row['user_id']] = {}
 				goalRecord[row['user_id']][row['goal_id']] = row['progress']
 				return goalRecord
 			}, {})
 			const completers = Object.values(allGoals).filter(
 				(goals) =>
-					achievement.getProgress(goals as Record<string, number>) >=
+					(achievement.getProgress(goals as Record<string, number>) ?? 0) >=
 					achievement.levels[level].steps,
 			).length
 			return {
 				type: 'success',
-				body: {percent: 100 * completers / playerCount.rows[0]['count']},
+				body: {percent: (100 * completers) / playerCount.rows[0]['count']},
 			}
 		} catch (e) {
 			console.log(e)
