@@ -17,7 +17,7 @@ function SoundItem() {
 		})
 	}
 
-	const enable = settings.soundMuted ? 'disable' : 'enable'
+	const enable = settings.globalVolume === 0 ? 'disable' : 'enable'
 
 	return (
 		<button

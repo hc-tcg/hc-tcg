@@ -17,7 +17,7 @@ function MusicItem() {
 		})
 	}
 
-	const enable = settings.musicMuted ? 'disable' : 'enable'
+	const enable = settings.musicVolume === 0 ? 'disable' : 'enable'
 
 	return (
 		<button className={css.item} title="Mute Music" onClick={handleSoundChange}>
