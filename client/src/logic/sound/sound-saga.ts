@@ -123,9 +123,12 @@ function* settingSaga(): SagaIterator {
 	try {
 		const settings = yield* select(getSettings)
 		// 100**2 = 10000
-		musicGainNode.gain.value = settings.musicVolume * settings.globalVolume / 10000 
-		soundGainNode.gain.value = settings.sfxVolume * settings.globalVolume / 10000
-		voiceGainNode.gain.value = settings.voiceVolume * settings.globalVolume / 10000
+		musicGainNode.gain.value =
+			(settings.musicVolume * settings.globalVolume) / 10000
+		soundGainNode.gain.value =
+			(settings.sfxVolume * settings.globalVolume) / 10000
+		voiceGainNode.gain.value =
+			(settings.voiceVolume * settings.globalVolume) / 10000
 	} catch (err) {
 		console.error(err)
 	}
