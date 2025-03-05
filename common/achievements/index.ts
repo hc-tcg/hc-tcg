@@ -40,13 +40,15 @@ import {Achievement} from './types'
 import UselessMachine from './useless-machine'
 import Win from './wins'
 import Wipeout from './wipeout'
+import MasterOfPuppets from './master-of-puppets'
 
 export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	AllCards,
-    AcquireHardware,
+	AcquireHardware,
 	CantTouchThis,
 	DeckedOut,
 	Ethogirl,
+	MasterOfPuppets,
 	EyeOfTheSpider,
 	PackOfWolves,
 	GoFish,
