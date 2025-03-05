@@ -151,16 +151,23 @@ const SmallAchievement = ({
 	)
 }
 
+<<<<<<< HEAD
 const ReplayTimer = ({
 	displayFakeTime,
 	timerStart,
 }: {displayFakeTime: boolean; timerStart: number}) => {
+=======
+const ReplayTimer = ({displayFakeTime}: {displayFakeTime: boolean}) => {
+>>>>>>> b3dc0c0eb (this is fucked)
 	if (displayFakeTime) {
 		return <div className={css.rematchTimeRemaining}>0</div>
 	}
 
+<<<<<<< HEAD
 	const timerLength = serverConfig.limits.rematchTime
 
+=======
+>>>>>>> b3dc0c0eb (this is fucked)
 	const [replayTimeRemaining, setReplayTimeRemaining] = useState<number>(
 		Math.max(Math.floor((timerStart - Date.now() + timerLength) / 1000), 0),
 	)
@@ -343,10 +350,14 @@ const EndGameOverlay = ({
 						}}
 					>
 						Rematch
+<<<<<<< HEAD
 						<ReplayTimer
 							displayFakeTime={displayFakeTime}
 							timerStart={gameEndTime}
 						></ReplayTimer>
+=======
+						<ReplayTimer displayFakeTime={displayFakeTime}></ReplayTimer>
+>>>>>>> b3dc0c0eb (this is fucked)
 					</Button>
 					<Button id={css.board} onClick={onClose}>
 						View Board

@@ -11,8 +11,8 @@ function MusicItem() {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'musicMuted',
-				value: !settings.musicMuted,
+				key: 'musicVolume',
+				value: settings.musicVolume === 0 ? settings.musicVolumeStore : 0,
 			},
 		})
 	}

@@ -21,9 +21,6 @@ import Game from './game'
 import Login from './login'
 import MainMenu from './main-menu'
 import Cosmetics from './main-menu/achievements'
-import Credits from './main-menu/credits'
-import DataSettings from './main-menu/data-settings'
-import GameSettings from './main-menu/game-settings'
 import PlaySelect from './main-menu/play-select'
 import Settings from './main-menu/settings'
 import Statistics from './main-menu/statistics'
@@ -72,10 +69,6 @@ function Router() {
 					return <Settings setMenuSection={menuSectionSet} />
 				case 'settings':
 					return <Settings setMenuSection={menuSectionSet} />
-				case 'game-settings':
-					return <GameSettings setMenuSection={menuSectionSet} />
-				case 'data-settings':
-					return <DataSettings setMenuSection={menuSectionSet} />
 				case 'statistics':
 					return <Statistics setMenuSection={menuSectionSet} />
 				case 'achievements':
@@ -84,8 +77,6 @@ function Router() {
 					)
 				case 'cosmetics':
 					return <Cosmetics setMenuSection={menuSectionSet} page={'rewards'} />
-				case 'credits':
-					return <Credits setMenuSection={menuSectionSet} />
 				case 'play-select':
 					return <PlaySelect setMenuSection={menuSectionSet} />
 				case 'play-select-spectate':
