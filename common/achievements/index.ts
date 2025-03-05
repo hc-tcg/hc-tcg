@@ -23,7 +23,6 @@ import OreSnatcher from './ore-snatcher'
 import PackOfWolves from './pack-of-wolves'
 import PeskyBird from './pesky-bird'
 import ServerLag from './server-lag'
-import SheepStarer from './sheep-starer'
 import SUStainable from './sustainable'
 import TargetedLightning from './targeted-lightning'
 import TeamStar from './team-star'
@@ -67,7 +66,6 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	TeamStar,
 	UselessMachine,
 	OreSnatcher,
-	SheepStarer,
 	NakedAndScared,
 	HotTake,
 	HermitsAndCrafting,
