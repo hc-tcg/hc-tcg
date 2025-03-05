@@ -606,6 +606,7 @@
 	align-items: center;
 	gap: 0.5rem;
 	max-width: 100%;
+	width: 20rem;
 	opacity: 100%;
 
 	> div {
@@ -641,9 +642,8 @@
 		align-self: center;
 		min-height: 2rem;
 		line-height: 2rem;
-		flex-grow: 1;
+		width: 5rem;
 		text-overflow: ellipsis;
-		max-width: 100%;
 
 		&:focus {
 			width: 100%;
