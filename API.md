@@ -171,3 +171,24 @@ The following information is found within `gameLength`.
 | :------: | :------------: | :-------------------------------------------------------------: |
 | `before` | unix timestamp | Limits search to all games that happened before this timestamp. |
 | `after` | unix timestamp | Limits search to all games that happened after this timestamp. |
+
+### Stats Endpoints
+
+- `GET /api/achievements`
+
+Returns a list of all achievements.
+
+- `GET /api/achievements/player-progress`
+
+Returns a list of all achievements.
+
+**Query Parameters**
+| Query | Type | Description |
+| :------: | :------------: | :-------------------------------------------------------------: |
+| `uuid` | uuid | The uuid of the player to fetch the progress for. |
+| `achievement` | string | The id of the achievement to fetch the progress for. |
+
+- `GET /api/achievements/{achievement}/{level}`
+
+Get global progress for an achievement
+
