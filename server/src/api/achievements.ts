@@ -47,7 +47,7 @@ function achievementToResponseLevels(
 					}
 				: null,
 			index: i,
-			maxIndex: levelCount, 
+			maxIndex: levelCount,
 			...level,
 		})
 	}
