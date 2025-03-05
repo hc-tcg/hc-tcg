@@ -58,9 +58,9 @@ export class AchievementComponent {
 	}
 
 	private checkCompletion(originalGoals: Record<number, number>): () => void {
-		const originalProgress = this.props.getProgress(originalGoals)
+		const originalProgress = this.props.getProgress(originalGoals) ?? 0
 		return () => {
-			const newProgress = this.props.getProgress(this.goals)
+			const newProgress = this.props.getProgress(this.goals) ?? 0
 
 			for (const [i, level] of this.props.levels.entries()) {
 				if (
