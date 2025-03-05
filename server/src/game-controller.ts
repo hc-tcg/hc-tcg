@@ -168,9 +168,10 @@ export class GameController {
 				achievementComponent.hooks.onComplete.add(
 					achievementObserver.entity,
 					(newProgress, level) => {
-						const originalProgress = achievement.getProgress(
-							player.achievementProgress[achievement.numericId].goals,
-						)
+						const originalProgress =
+							achievement.getProgress(
+								player.achievementProgress[achievement.numericId].goals,
+							) ?? 0
 						broadcast([player], {
 							type: serverMessages.ACHIEVEMENT_COMPLETE,
 							achievement: {
