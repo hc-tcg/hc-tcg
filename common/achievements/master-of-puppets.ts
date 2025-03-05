@@ -1,6 +1,5 @@
 import RendogRare from '../cards/hermits/rendog-rare'
 import ZombieCleoRare from '../cards/hermits/zombiecleo-rare'
-import {afterAttack} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -11,39 +10,35 @@ const MasterOfPuppets: Achievement = {
 	levels: [
 		{
 			name: 'Master of Puppets',
-			description:
-				"Use both Rendog and Cleo to mimic a Hermit's attack.",
+			description: "Use both Rendog and Cleo to mimic a Hermit's attack.",
 			steps: 1,
 		},
 	],
 	onGameStart(game, player, component, observer) {
-		let attacksUsedThisTurn = new Set()
+		let attacksUsedThisTurn = 0
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			attacksUsedThisTurn = new Set()
+			attacksUsedThisTurn = 0
 		})
 
-		observer.subscribeWithPriority(
-			game.hooks.afterAttack,
-			afterAttack.ACHIEVEMENTS,
-			(attack) => {
-				if (attack.player.entity !== player.entity) return
-				if (attack.type !== 'primary') return
+		observer.subscribe(game.hooks.onPickRequestResolve, (request, _slot) => {
+			if (request.player !== player.entity) return
 
-				if (
-					attack.attacker &&
-					[RendogRare.id, ZombieCleoRare.id].includes(attack.attacker?.props.id)
-				) {
-					return
-				}
+			let requester = game.components.get(request.id)
+			console.log(requester?.props.id)
 
-				attacksUsedThisTurn.add(attack.attacker?.props.id)
+			if (
+				requester?.props.id !== RendogRare.id &&
+				requester?.props.id !== ZombieCleoRare.id
+			)
+				return
 
-				if (attacksUsedThisTurn.size == 2) {
-					component.incrementGoalProgress({goal: 0})
-				}
-			},
-		)
+			attacksUsedThisTurn += 1
+
+			if (attacksUsedThisTurn === 2) {
+				component.incrementGoalProgress({goal: 0})
+			}
+		})
 	},
 }
 

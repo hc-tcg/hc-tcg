@@ -56,11 +56,38 @@ describe('Test Master of Puppets Achievement', () => {
 					expect(MasterOfPuppets.getProgress(achievement.goals)).toBe(1)
 				},
 			},
+			{noItemRequirements: true, startWithAllCards: false},
+		)
+	})
+	test('Test achievement is not gained after using only Cleo', () => {
+		testAchivement(
 			{
-				noItemRequirements: true,
-				startWithAllCards: false,
-				availableActions: ['SECONDARY_ATTACK'],
+				achievement: MasterOfPuppets,
+				playerOneDeck: [ZombieCleoRare, EthosLabCommon],
+				playerTwoDeck: [EthosLabCommon],
+				playGame: function* (game) {
+					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* endTurn(game)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.rowIndex(1),
+						query.slot.hermit,
+						query.slot.currentPlayer,
+					)
+					yield* finishModalRequest(game, {pick: 'secondary'})
+
+					yield* forfeit(game.currentPlayer.entity)
+				},
+				checkAchivement(_game, achievement, _outcome) {
+					expect(MasterOfPuppets.getProgress(achievement.goals)).toBeFalsy()
+				},
 			},
+			{noItemRequirements: true, startWithAllCards: false},
 		)
 	})
 })
