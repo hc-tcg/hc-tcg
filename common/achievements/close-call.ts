@@ -21,19 +21,15 @@ const RedKing: Achievement = {
 
 		if (player.lives !== 1) return
 
-		let hermits = game.components.filter(
+		const redHermits = game.components.filter(
 			SlotComponent,
 			query.slot.hermit,
 			query.not(query.slot.empty),
 			query.slot.player(player.entity),
+			query.slot.row((_game, row) => (row.health ? row.health < 90 : false)),
 		)
 
-		if (hermits.length !== 5) return
-
-		for (const hermit of hermits) {
-			if (!hermit.inRow() || !hermit.row.health || hermit.row.health < 90)
-				return
-		}
+		if (redHermits.length !== 5) return
 
 		component.incrementGoalProgress({goal: 0})
 	},

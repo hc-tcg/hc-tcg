@@ -14,13 +14,16 @@ const LuckyStreak: Achievement = {
 		},
 	],
 	onGameStart(_game, player, component, observer) {
+		let heads = 0
+
 		observer.subscribeWithPriority(
 			player.hooks.onCoinFlip,
 			onCoinFlip.ACHIEVEMENTS,
 			(_card, coinFlips) => {
-				component.incrementGoalProgress({
+				heads += coinFlips.filter((c) => c.result === 'heads').length
+				component.bestGoalProgress({
 					goal: 0,
-					amount: coinFlips.filter((c) => c.result === 'heads').length,
+					progress: heads,
 				})
 			},
 		)
