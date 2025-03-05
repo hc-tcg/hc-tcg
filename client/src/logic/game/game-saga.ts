@@ -29,6 +29,7 @@ import {
 	localEndTurn,
 	localRemoveEffect,
 } from './local-state'
+import achievementSaga from './tasks/achievements'
 import actionLogicSaga from './tasks/action-logic-saga'
 import actionModalsSaga from './tasks/action-modals-saga'
 import attackSaga from './tasks/attack-saga'
@@ -37,7 +38,6 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
-import achievementSaga from './tasks/achievements'
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
