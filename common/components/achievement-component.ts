@@ -7,20 +7,29 @@ let ACHIEVEMENTS: Record<string | number, Achievement>
 import('../achievements').then((mod) => (ACHIEVEMENTS = mod.ACHIEVEMENTS))
 
 /** A component that represents a card in the game. Cards can be in the player's hand, deck, board or discard pile. */
-export class AchievementComponent<
-	AchievementType extends Achievement = Achievement,
-> {
+export class AchievementComponent {
 	readonly game: GameModel
-	readonly props: AchievementType
+	readonly props: Achievement
 	readonly entity: AchievementEntity
 
 	goals: Record<number, number>
 
+	sentLevels: number[]
 	observerEntity: ObserverEntity | null
 	player: PlayerEntity
 
 	hooks: {
-		onComplete: GameHook<() => void>
+		onComplete: GameHook<
+			(
+				newProgress: number,
+				level: {
+					index: number
+					name: string
+					description: string
+					steps: number
+				},
+			) => void
+		>
 	}
 
 	constructor(
@@ -33,10 +42,11 @@ export class AchievementComponent<
 		this.game = game
 		this.entity = entity
 		this.observerEntity = null
+		this.sentLevels = []
 		if (achievement instanceof Object) {
-			this.props = ACHIEVEMENTS[achievement.numericId] as AchievementType
+			this.props = ACHIEVEMENTS[achievement.numericId] as Achievement
 		} else {
-			this.props = ACHIEVEMENTS[achievement] as AchievementType
+			this.props = ACHIEVEMENTS[achievement] as Achievement
 		}
 
 		this.hooks = {
@@ -47,15 +57,37 @@ export class AchievementComponent<
 		this.player = player
 	}
 
+	private checkCompletion(originalGoals: Record<number, number>): () => void {
+		const originalProgress = this.props.getProgress(originalGoals) ?? 0
+		return () => {
+			const newProgress = this.props.getProgress(this.goals) ?? 0
+
+			for (const [i, level] of this.props.levels.entries()) {
+				if (
+					!this.sentLevels.includes(i) &&
+					newProgress > originalProgress &&
+					newProgress >= level.steps
+				) {
+					this.sentLevels.push(i)
+					this.hooks.onComplete.call(newProgress, {index: i, ...level})
+				}
+			}
+		}
+	}
+
 	public incrementGoalProgress({
 		goal,
 		amount = 1,
 	}: {goal: number; amount?: number}) {
+		const progressChecker = this.checkCompletion(this.goals)
 		this.goals[goal] = (this.goals[goal] || 0) + amount
+		progressChecker()
 	}
 
 	/** Set the goal progress to a number if it is higher than the current goal progress */
 	public bestGoalProgress({goal, progress}: {goal: number; progress: number}) {
+		const progressChecker = this.checkCompletion(this.goals)
 		this.goals[goal] = Math.max(this.goals[goal] || 0, progress)
+		progressChecker()
 	}
 }

@@ -10,6 +10,7 @@ export type ProgressionEntry = {
 export type EarnedAchievement = {
 	achievementId: number
 	level: {
+		index: number
 		name: string
 		description: string
 		steps: number

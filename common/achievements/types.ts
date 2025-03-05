@@ -9,7 +9,7 @@ import {GameOutcome} from '../types/game-state'
 export type Achievement = {
 	id: string
 	numericId: number
-	getProgress: (goals: Record<number, number>) => number
+	getProgress: (goals: Record<number, number>) => number | undefined
 
 	levels: Array<{
 		name: string

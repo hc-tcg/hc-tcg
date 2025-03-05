@@ -29,6 +29,7 @@ import {
 	localEndTurn,
 	localRemoveEffect,
 } from './local-state'
+import achievementSaga from './tasks/achievements'
 import actionLogicSaga from './tasks/action-logic-saga'
 import actionModalsSaga from './tasks/action-modals-saga'
 import attackSaga from './tasks/attack-saga'
@@ -226,6 +227,7 @@ function* gameSaga({initialGameState, spectatorCode}: GameSagaProps) {
 			fork(chatSaga),
 			fork(spectatorSaga),
 			fork(reconnectSaga),
+			fork(achievementSaga),
 			fork(handleForfeitAction),
 		]),
 	)

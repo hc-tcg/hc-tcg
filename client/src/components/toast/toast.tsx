@@ -186,7 +186,7 @@ const ToastContainer = ({children}: ContainerProps) => {
 }
 
 export const Toaster = () => {
-	const toastMessage = useSelector(getToast)
+	const toastMessage = useSelector(getToast, (a, b) => a.length !== b.length)
 	return (
 		<ToastContainer>
 			{toastMessage.map((toast, i) => {

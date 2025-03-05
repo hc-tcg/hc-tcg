@@ -5,6 +5,7 @@ import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
 import Ethogirl from './ethogirl'
 import EyeOfTheSpider from './eye-of-the-spider'
+import FreeAndSteel from './free-and-steel'
 import GoFish from './go-fish'
 import HallOfAll from './hall-of-all'
 import HermitsAndCrafting from './hermits-and-crafting'
@@ -85,6 +86,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	PranksterWins,
 	MinerWins,
 	ExplorerWins,
+	FreeAndSteel,
 ]
 
 export const ACHIEVEMENTS: Record<string | number, Achievement> =

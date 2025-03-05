@@ -210,10 +210,12 @@ function* gameManager(con: GameController) {
 			achievements.forEach((achievement) => {
 				achievement.props.onGameEnd(con.game, player, achievement, outcome)
 
-				const originalProgress = achievement.props.getProgress(
-					v.player.achievementProgress[achievement.props.numericId].goals,
-				)
-				const newProgress = achievement.props.getProgress(achievement.goals)
+				const originalProgress =
+					achievement.props.getProgress(
+						v.player.achievementProgress[achievement.props.numericId].goals,
+					) || 0
+				const newProgress =
+					achievement.props.getProgress(achievement.goals) || 0
 
 				if (originalProgress === newProgress) return
 
@@ -223,7 +225,7 @@ function* gameManager(con: GameController) {
 				)
 
 				for (const [i, level] of achievement.props.levels.entries()) {
-					if (newProgress >= level.steps) {
+					if (newProgress >= level.steps && originalProgress < level.steps) {
 						v.player.achievementProgress[achievement.props.numericId].levels[
 							i
 						] = {completionTime: new Date()}
@@ -236,7 +238,7 @@ function* gameManager(con: GameController) {
 					) {
 						newAchievements[playerEntity].push({
 							achievementId: achievement.props.numericId,
-							level,
+							level: {index: i, ...level},
 							originalProgress: originalProgress || 0,
 							newProgress: newProgress,
 						})

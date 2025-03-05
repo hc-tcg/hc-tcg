@@ -1868,7 +1868,7 @@ export class Database {
 					if (
 						row['progress'] > level.steps &&
 						progress[row['achievement_id']].levels[row['level']]
-							.completionTime === undefined
+							?.completionTime === undefined
 					) {
 						progress[row['achievement_id']].levels[i].completionTime = new Date(
 							Date.now(),
