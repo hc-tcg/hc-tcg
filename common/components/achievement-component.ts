@@ -66,7 +66,7 @@ export class AchievementComponent {
 				if (
 					!this.sentLevels.includes(i) &&
 					newProgress > originalProgress &&
-					newProgress <= level.steps &&
+					newProgress == level.steps &&
 					(i === 0 || this.props.levels[i - 1].steps < newProgress)
 				) {
 					this.sentLevels.push(i)
