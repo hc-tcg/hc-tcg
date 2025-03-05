@@ -12,7 +12,7 @@ const PoePoeEnforcer: Achievement = {
 		{
 			name: 'Poe Poe Enforcer',
 			description:
-				'Knock out a hermit while your opponent has the Curse of Binding status effect.',
+				"Knock out your opponent's active Hermit while your opponent has the Curse of Binding status effect.",
 			steps: 1,
 		},
 	],
@@ -26,13 +26,19 @@ const PoePoeEnforcer: Achievement = {
 				if (!targetHermit) return
 				if (attack.target.health) return
 				if (
+					targetHermit.slot.inRow() &&
+					targetHermit.slot.row?.entity !==
+						player.opponentPlayer.activeRowEntity
+				)
+					return
+				if (
 					!query.player.hasStatusEffect(CurseOfBindingEffect)(
 						game,
 						player.opponentPlayer,
 					)
-				) {
-					component.incrementGoalProgress({goal: 0})
-				}
+				)
+					return
+				component.incrementGoalProgress({goal: 0})
 			},
 		)
 	},
