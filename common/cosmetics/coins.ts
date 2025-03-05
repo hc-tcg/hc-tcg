@@ -1,11 +1,11 @@
 import EyeOfTheSpider from '../achievements/eye-of-the-spider'
 import GoFish from '../achievements/go-fish'
+import HallOfAll from '../achievements/hall-of-all'
 import HermitsAndCrafting from '../achievements/hermits-and-crafting'
 import HurtinHermits from '../achievements/hurtin-hermits'
 import NoDerpcoins from '../achievements/no-derpcoins'
 import PackOfWolves from '../achievements/pack-of-wolves'
 import ServerLag from '../achievements/server-lag'
-import SheepStarer from '../achievements/sheep-starer'
 import UselessMachine from '../achievements/useless-machine'
 import Win from '../achievements/wins'
 import Wipeout from '../achievements/wipeout'
@@ -57,7 +57,7 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		id: 'pink-sheep',
 		name: 'Pink Sheep',
 		borderColor: '#de7f9c',
-		requires: {achievement: SheepStarer.id},
+		requires: {achievement: HallOfAll.id},
 	},
 	{
 		id: 'skeleton',

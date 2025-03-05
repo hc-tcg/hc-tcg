@@ -11,13 +11,13 @@ function SoundItem() {
 		dispatch({
 			type: localMessages.SETTINGS_SET,
 			setting: {
-				key: 'soundMuted',
-				value: !settings.soundMuted,
+				key: 'globalVolume',
+				value: settings.globalVolume === 0 ? settings.globalVolumeStore : 0,
 			},
 		})
 	}
 
-	const enable = settings.soundMuted ? 'disable' : 'enable'
+	const enable = settings.globalVolume === 0 ? 'disable' : 'enable'
 
 	return (
 		<button
