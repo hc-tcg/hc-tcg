@@ -44,7 +44,7 @@ describe('Test Master of Puppets Achievement', () => {
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					yield* pick(
 						game,
-						query.slot.rowIndex(0),
+						query.slot.rowIndex(1),
 						query.slot.hermit,
 						query.slot.currentPlayer,
 					)
