@@ -1,10 +1,15 @@
 import British from '../achievements/british'
 import CertifiedZombie from '../achievements/certified-zombie'
+import RedKing from '../achievements/close-call'
 import DefeatEvilX from '../achievements/defeat-evil-x'
 import Ethogirl from '../achievements/ethogirl'
+import IsGreat from '../achievements/is-great'
+import MasterOfPuppets from '../achievements/master-of-puppets'
 import NakedAndScared from '../achievements/naked-and-scared'
+import NewTeamCanada from '../achievements/new-team-canada'
 import OreSnatcher from '../achievements/ore-snatcher'
 import PeskyBird from '../achievements/pesky-bird'
+import PoePoeEnforcer from '../achievements/poe-poe-enforcer'
 import TeamStar from '../achievements/team-star'
 import {
 	BalancedWins,
@@ -59,12 +64,12 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 	{
 		id: 'is_great',
 		name: '...is Great',
-		requires: undefined,
+		requires: {achievement: IsGreat.id},
 	},
 	{
 		id: 'master_of_puppets',
 		name: 'Master of Puppets',
-		requires: undefined,
+		requires: {achievement: MasterOfPuppets.id},
 	},
 	{
 		id: 'naked_and_scared',
@@ -84,12 +89,17 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 	{
 		id: 'poe_poe_enforcer',
 		name: 'Poe Poe Enforcer',
-		requires: undefined,
+		requires: {achievement: PoePoeEnforcer.id},
 	},
 	{
 		id: 'red_king',
 		name: 'Red king',
-		requires: undefined,
+		requires: {achievement: RedKing.id},
+	},
+	{
+		id: 'team_canada',
+		name: 'Team Canada',
+		requires: {achievement: NewTeamCanada.id},
 	},
 	{
 		id: 'washed_up',
