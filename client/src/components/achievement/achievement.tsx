@@ -19,9 +19,9 @@ export default function AchievementComponent({
 	filter,
 }: Props) {
 	const progress =
-		progressData[achievement.numericId] !== undefined
+		(progressData[achievement.numericId] !== undefined
 			? achievement.getProgress(progressData[achievement.numericId].goals)
-			: 0
+			: 0) || 0
 
 	let out = []
 

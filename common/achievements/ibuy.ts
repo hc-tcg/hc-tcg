@@ -13,9 +13,7 @@ const IBuy: Achievement = {
 			steps: 1,
 		},
 	],
-	onGameStart(game, player, component, observer) {
-
-	},
+	onGameStart(_game, _player, _component, _observer) {},
 }
 
 export default IBuy
