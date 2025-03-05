@@ -25,7 +25,12 @@ const PoePoeEnforcer: Achievement = {
 				let targetHermit = attack.target?.getHermit()
 				if (!targetHermit) return
 				if (attack.target.health) return
-				if (!query.player.hasStatusEffect(CurseOfBindingEffect)(game, player.opponentPlayer)) {
+				if (
+					!query.player.hasStatusEffect(CurseOfBindingEffect)(
+						game,
+						player.opponentPlayer,
+					)
+				) {
 					component.incrementGoalProgress({goal: 0})
 				}
 			},
