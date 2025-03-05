@@ -17,6 +17,7 @@ import LoyaltyIII from './loyalty-iii'
 import LuckyStreak from './lucky-streak'
 import MasterOfPuppets from './master-of-puppets'
 import NakedAndScared from './naked-and-scared'
+import NewTeamCanada from './new-team-canada'
 import NoDerpcoins from './no-derpcoins'
 import OreSnatcher from './ore-snatcher'
 import PackOfWolves from './pack-of-wolves'
@@ -62,6 +63,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	British,
 	ServerLag,
 	PeskyBird,
+	NewTeamCanada,
 	TeamStar,
 	UselessMachine,
 	OreSnatcher,
