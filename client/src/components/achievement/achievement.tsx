@@ -43,7 +43,7 @@ export default function AchievementComponent({
 		const iconCosmetic = ALL_COSMETICS.find(
 			(x) =>
 				x.requires?.achievement === achievement.id &&
-				(x.requires.level === i || !x.requires.level),
+				(x.requires.level === i || x.requires.level === undefined),
 		)
 
 		let icon_url = ''
