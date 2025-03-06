@@ -20,8 +20,8 @@ const HorseCurse: Achievement = {
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			isSleeping = !!player.activeRow
-				.getHermit()
-				.getStatusEffect(SleepingEffect)
+				?.getHermit()
+				?.getStatusEffect(SleepingEffect)
 		})
 
 		game.components
