@@ -1,13 +1,12 @@
 import {describe, expect, test} from '@jest/globals'
-import GoFish from 'common/achievements/go-fish'
-import {IronArmor} from 'common/cards/attach/armor'
+import PeskyBird from 'common/achievements/pesky-bird'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
-import FishingRod from 'common/cards/single-use/fishing-rod'
-import Mending from 'common/cards/single-use/mending'
+import JinglerRare from 'common/cards/hermits/jingler-rare'
+import BalancedItem from 'common/cards/items/balanced-common'
+import Composter from 'common/cards/single-use/composter'
+import {SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {
-	applyEffect,
 	attack,
 	endTurn,
 	forfeit,
@@ -15,11 +14,6 @@ import {
 	playCardFromHand,
 	testAchivement,
 } from '../utils'
-import PeskyBird from 'common/achievements/pesky-bird'
-import JinglerRare from 'common/cards/hermits/jingler-rare'
-import Composter from 'common/cards/single-use/composter'
-import {SlotComponent} from 'common/components'
-import BalancedItem from 'common/cards/items/balanced-common'
 
 describe('Test Pesky Bird Achievement', () => {
 	test('Test achievement progress increases after forcing opponnet to discard card', () => {
