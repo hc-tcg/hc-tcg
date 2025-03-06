@@ -342,8 +342,16 @@ function* gameManager(con: GameController) {
 		const player2Score =
 			getGameScore(con.game.outcome, gamePlayers[1].id) + con.player2Defs.score
 
-		if (!gamePlayers[0].id || !gamePlayers[1].id || con.game.state.isEvilXBossGame) {
-			broadcast(gamePlayers, {type: serverMessages.SEND_REMATCH, rematch: null})
+		broadcast(
+			con.viewers.map((viewer) => viewer.player),
+			{type: serverMessages.SEND_REMATCH, rematch: null},
+		)
+
+		if (
+			!gamePlayers[0].id ||
+			!gamePlayers[1].id ||
+			con.game.state.isEvilXBossGame
+		) {
 			return
 		}
 
