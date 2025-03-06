@@ -174,11 +174,12 @@ export class GameModel {
 		settings: GameSettings,
 		options?: {
 			randomizeOrder?: boolean
+			id?: string
 			publishBattleLog?: (logs: Array<Message>, timeout: number) => void
 		},
 	) {
 		options = options ?? {}
-		this.id = `game_${Math.random()}`
+		this.id = options.id || `game_${Math.random()}`
 
 		if (options?.publishBattleLog) {
 			this.publishBattleLog = options.publishBattleLog

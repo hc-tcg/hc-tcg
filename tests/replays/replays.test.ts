@@ -33,11 +33,15 @@ import {
 	playCardFromHand,
 	testReplayGame,
 } from '../unit/game/utils'
+import {DiamondArmor} from 'common/cards/attach/armor'
+import {DiamondSword} from 'common/cards/single-use/sword'
 
 function* afterGame(con: GameController) {
 	const turnActionCompressor = new TurnActionCompressor()
 
 	const turnActionsBuffer = yield* turnActionCompressor.turnActionsToBuffer(con)
+
+	console.log(turnActionsBuffer)
 
 	const turnActions = yield* turnActionCompressor.bufferToTurnActions(
 		con.player1Defs,
@@ -73,6 +77,36 @@ describe('Test Replays', () => {
 				yield* endTurn(game)
 
 				yield* attack(game, 'primary')
+				yield* forfeit(game.currentPlayer.entity)
+			},
+			afterGame: afterGame,
+		})
+	})
+
+	test('Test play card action for all card types', async () => {
+		testReplayGame({
+			playerOneDeck: [
+				EthosLabCommon,
+				BalancedDoubleItem,
+				DiamondSword,
+				DiamondArmor,
+			],
+			playerTwoDeck: [EthosLabCommon, BalancedDoubleItem],
+			gameSaga: function* (con) {
+				const game = con.game
+				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 0)
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, DiamondSword, 'single_use')
+				yield* playCardFromHand(game, DiamondArmor, 'attach', 0)
+
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
 				yield* forfeit(game.currentPlayer.entity)
 			},
 			afterGame: afterGame,

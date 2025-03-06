@@ -79,6 +79,8 @@ const playCard: ReplayAction = {
 			.getHand()
 			.findIndex((c) => c.entity === turnAction.card.entity)
 
+		console.log(turnAction.card.entity)
+
 		return Buffer.concat([
 			compressor.packupBoardSlot(game, slot),
 			compressor.writeUIntToBuffer(cardIndex, 1),
@@ -520,10 +522,9 @@ export class TurnActionCompressor {
 	}
 
 	public writeUIntToBuffer(x: number, length: 1 | 2 | 4): Buffer {
-		// Check if the byte is in range
 		assert(
-			x >= 0 || x <= (2 ^ (8 * length - 1)),
-			`While trying to decode action ${this.currentAction}, the value "${x}" was not in the range [0,${2 ^ (8 * length - 1)}]`,
+			x >= 0 && x <= Math.pow(2, 8 * length) - 1,
+			`While trying to decode action ${this.currentAction}, the value "${x}" was not in the range [0,${Math.pow(2, 8 * length) - 1}]`,
 		)
 
 		if (length === 1) {
@@ -727,6 +728,7 @@ export class TurnActionCompressor {
 				...controller.props,
 				randomSeed: originalGame.rngSeed,
 				randomizeOrder: true,
+				gameId: originalGame.id,
 			},
 		)
 
