@@ -342,11 +342,6 @@ function* gameManager(con: GameController) {
 		const player2Score =
 			getGameScore(con.game.outcome, gamePlayers[1].id) + con.player2Defs.score
 
-		broadcast(
-			con.viewers.map((viewer) => viewer.player),
-			{type: serverMessages.SEND_REMATCH, rematch: null},
-		)
-
 		if (
 			!gamePlayers[0].id ||
 			!gamePlayers[1].id ||
@@ -1198,8 +1193,6 @@ export function* createReplayGame(
 		earnedAchievements: [],
 		gameEndTime: Date.now(),
 	})
-
-	broadcast([viewer.player], {type: serverMessages.SEND_REMATCH, rematch: null})
 
 	delete root.games[con.id]
 	root.hooks.gameRemoved.call(con)
