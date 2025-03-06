@@ -7,10 +7,10 @@ import {Achievement} from './types'
 const GottaSchreep: Achievement = {
 	...achievement,
 	numericId: 54,
-	id: 'gotta_screep',
+	id: 'gotta_schreep',
 	levels: [
 		{
-			name: 'Gotta Screep',
+			name: 'Gotta Schreep',
 			description: 'KO a Hermit while your active Hermit is sleeping.',
 			steps: 1,
 		},

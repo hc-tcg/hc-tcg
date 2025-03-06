@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import GottaSchreep from 'common/achievements/gotta-screep'
+import GottaSchreep from 'common/achievements/gotta-schreep'
 import BdoubleO100Rare from 'common/cards/hermits/bdoubleo100-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {DiamondSword} from 'common/cards/single-use/sword'
