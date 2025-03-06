@@ -5,14 +5,16 @@
 	top: 0px;
 	position: absolute;
 	display: flex;
+	justify-content: center;
 }
 
 .mainHallOfFameArea {
-	width: 80%;
+	width: 100%;
+	max-width: 80rem;
 	margin-left: 10%;
 	margin-right: 10%;
 	margin-top: 6vh;
-	margin-bottom: 1%;
+	margin-bottom: 1vh;
 	display: flex;
 	flex-direction: row;
 	gap: 1rem;
@@ -484,7 +486,7 @@
 }
 
 .optionsHeader {
-	height: 43px;
+	height: calc(60px - 2px);
 }
 
 .stat {

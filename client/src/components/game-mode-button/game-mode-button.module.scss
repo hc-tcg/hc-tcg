@@ -680,6 +680,18 @@ $expandedHeight: $mobileHeight * 3 + 1.5 * 3;
 		left: auto;
 	}
 
+	.queue {
+		width: $mobileWidth;
+		background-color: var(--gray-900);
+		border: 2px black solid;
+	}
+
+	.enterCode {
+		width: $mobileWidth;
+		background-color: var(--gray-900);
+		border: 2px black solid;
+	}
+
 	@keyframes grow {
 		from {
 			height: $mobileHeight;
