@@ -119,14 +119,21 @@ export class GameController {
 			? this.game.opponentPlayer
 			: this.game.currentPlayer
 
-		if (props.countAchievements === 'all' || props.countAchievements ==='boss') {
+		if (
+			props.countAchievements === 'all' ||
+			props.countAchievements === 'boss'
+		) {
 			if (this.player1Defs.model instanceof PlayerModel) {
 				console.log(
 					'Adding achievements',
 					playerOne.playerName,
 					this.player1Defs.model.name,
 				)
-				this.addAchievements(this.player1Defs.model, playerOne, props.countAchievements)
+				this.addAchievements(
+					this.player1Defs.model,
+					playerOne,
+					props.countAchievements,
+				)
 			}
 			if (this.player2Defs.model instanceof PlayerModel) {
 				console.log(
@@ -134,7 +141,11 @@ export class GameController {
 					playerTwo.playerName,
 					this.player2Defs.model.name,
 				)
-				this.addAchievements(this.player2Defs.model, playerTwo, props.countAchievements)
+				this.addAchievements(
+					this.player2Defs.model,
+					playerTwo,
+					props.countAchievements,
+				)
 			}
 		}
 	}
