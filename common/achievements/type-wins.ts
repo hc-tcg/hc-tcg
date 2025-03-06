@@ -16,13 +16,13 @@ function getTypeWinAchievement(id: number, type: TypeT): Achievement {
 		levels: [
 			{
 				name: `${toTitleCase(type)} Apprentice`,
-				description: `Win 25 games with at least 7 ${type} hermits in your deck.`,
-				steps: 25,
+				description: `Win 20 games with at least 7 ${type} hermits in your deck.`,
+				steps: 20,
 			},
 			{
 				name: `${toTitleCase(type)} Master`,
-				description: `Win 100 games with at least 7 ${type} hermits in your deck.`,
-				steps: 100,
+				description: `Win 75 games with at least 7 ${type} hermits in your deck.`,
+				steps: 75,
 			},
 		],
 		onGameStart(game, player, component, observer) {
