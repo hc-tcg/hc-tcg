@@ -47,7 +47,9 @@ export class CardComponent<CardType extends Card = Card> {
 	prizeCard: boolean
 
 	hooks: {
-		onChangeSlot: GameHook<(slot: SlotComponent) => void>
+		onChangeSlot: GameHook<
+			(newSlot: SlotComponent, oldSlot: SlotComponent) => void
+		>
 		/** Get the cost of the primary attack from this card, if it is a hermit */
 		getPrimaryCost: GameHook<() => Array<TypeT>>
 		/** Get the cost of the secondary attack from this card, if it is a hermit */
@@ -70,7 +72,8 @@ export class CardComponent<CardType extends Card = Card> {
 		}
 
 		this.slotEntity = slot
-		game.components.getOrError(slot).cardEntity = entity
+		let slotComponent = game.components.getOrError(slot)
+		slotComponent.cardEntity = entity
 
 		if (this.slot.onBoard()) {
 			let observer = this.game.components.new(ObserverComponent, this.entity)
@@ -188,6 +191,7 @@ export class CardComponent<CardType extends Card = Card> {
 			this.player.hooks.onDetach.call(this)
 		}
 
+		let oldSlot = this.slot
 		this.slot.cardEntity = null
 		this.slotEntity = component.entity
 		component.cardEntity = this.entity
@@ -197,7 +201,7 @@ export class CardComponent<CardType extends Card = Card> {
 			this.onAttach(observer)
 		}
 
-		this.hooks.onChangeSlot.call(component)
+		this.hooks.onChangeSlot.call(component, oldSlot)
 	}
 
 	/** Move this card to the hand

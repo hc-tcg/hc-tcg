@@ -42,7 +42,6 @@ const Candle: SingleUse = {
 				assert(card.slot.inDeck())
 				card.slot.order = newOrder[i]
 			})
-			deckCards.forEach((card) => card.hooks.onChangeSlot.call(card.slot))
 		}
 
 		observer.subscribe(player.hooks.onApply, () => {
