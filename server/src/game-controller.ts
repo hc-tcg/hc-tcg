@@ -28,6 +28,7 @@ export type GameControllerProps = {
 	randomSeed?: any
 	settings?: GameSettings
 	countAchievements?: boolean
+	gameId?: string
 }
 
 type GameViewerProps = {
@@ -96,6 +97,7 @@ export class GameController {
 				publishBattleLog: (logs, timeout) =>
 					this.publishBattleLog(logs, timeout),
 				randomizeOrder: props.randomizeOrder ?? true,
+				id: props.gameId,
 			},
 		)
 

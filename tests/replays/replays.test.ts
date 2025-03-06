@@ -1,6 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import Brush from 'common/cards/advent-of-tcg/single-use/brush'
 import Feather from 'common/cards/advent-of-tcg/single-use/feather'
+import {DiamondArmor} from 'common/cards/attach/armor'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import EvilXisumaRare from 'common/cards/hermits/evilxisuma_rare'
 import FalseSymmetryRare from 'common/cards/hermits/falsesymmetry-rare'
@@ -14,13 +15,11 @@ import BalancedDoubleItem from 'common/cards/items/balanced-rare'
 import BuilderItem from 'common/cards/items/builder-common'
 import FarmDoubleItem from 'common/cards/items/farm-rare'
 import MinerItem from 'common/cards/items/miner-common'
+import {DiamondSword} from 'common/cards/single-use/sword'
 import query from 'common/components/query'
 import {DragCards} from 'common/types/modal-requests'
 import {GameController} from 'server/game-controller'
-import {
-	bufferToTurnActions,
-	turnActionsToBuffer,
-} from '../../server/src/routines/turn-action-compressor'
+import {TurnActionCompressor} from '../../server/src/routines/turn-action-compressor'
 import {
 	huffmanCompress,
 	huffmanDecompress,
@@ -38,9 +37,13 @@ import {
 } from '../unit/game/utils'
 
 function* afterGame(con: GameController) {
-	const turnActionsBuffer = yield* turnActionsToBuffer(con)
+	const turnActionCompressor = new TurnActionCompressor()
 
-	const turnActions = yield* bufferToTurnActions(
+	const turnActionsBuffer = yield* turnActionCompressor.turnActionsToBuffer(con)
+
+	console.log(turnActionsBuffer)
+
+	const turnActions = yield* turnActionCompressor.bufferToTurnActions(
 		con.player1Defs,
 		con.player2Defs,
 		con.game.rngSeed,
@@ -74,6 +77,36 @@ describe('Test Replays', () => {
 				yield* endTurn(game)
 
 				yield* attack(game, 'primary')
+				yield* forfeit(game.currentPlayer.entity)
+			},
+			afterGame: afterGame,
+		})
+	})
+
+	test('Test play card action for all card types', async () => {
+		testReplayGame({
+			playerOneDeck: [
+				EthosLabCommon,
+				BalancedDoubleItem,
+				DiamondSword,
+				DiamondArmor,
+			],
+			playerTwoDeck: [EthosLabCommon, BalancedDoubleItem],
+			gameSaga: function* (con) {
+				const game = con.game
+				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 0)
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, DiamondSword, 'single_use')
+				yield* playCardFromHand(game, DiamondArmor, 'attach', 0)
+
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
 				yield* forfeit(game.currentPlayer.entity)
 			},
 			afterGame: afterGame,

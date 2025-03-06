@@ -33,7 +33,7 @@ import {call} from 'typed-redux-saga'
 import {huffmanCompress, huffmanDecompress} from '../../src/utils/compression'
 import {
 	ReplayActionData,
-	bufferToTurnActions,
+	TurnActionCompressor,
 } from '../routines/turn-action-compressor'
 
 export type DatabaseResult<T = undefined> =
@@ -1032,7 +1032,9 @@ export class Database {
 
 			const replay: Buffer = game['replay']
 			// const decompressedReplay: Buffer | null = huffmanDecompress(replay)
-			const decompressedReplay = replay
+			const decompressedReplay = huffmanDecompress(replay)
+
+			console.log(decompressedReplay)
 
 			if (
 				!decompressedReplay ||
@@ -1097,7 +1099,9 @@ export class Database {
 				score: 0,
 			}
 
-			const replayActions = yield* bufferToTurnActions(
+			const turnActionCompressor = new TurnActionCompressor()
+
+			const replayActions = yield* turnActionCompressor.bufferToTurnActions(
 				player1Defs,
 				player2Defs,
 				seed,

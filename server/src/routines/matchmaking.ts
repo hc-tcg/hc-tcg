@@ -48,7 +48,7 @@ import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
-import {turnActionsToBuffer} from './turn-action-compressor'
+import {TurnActionCompressor} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
 
 function setupGame(
@@ -301,7 +301,9 @@ function* gameManager(con: GameController) {
 		}
 
 		const winner = winnerPlayerId ? root.players[winnerPlayerId] : null
-		const turnActionsBuffer = yield* turnActionsToBuffer(con)
+		const turnActionCompressor = new TurnActionCompressor()
+		const turnActionsBuffer =
+			yield* turnActionCompressor.turnActionsToBuffer(con)
 
 		if (
 			gamePlayers.length >= 2 &&

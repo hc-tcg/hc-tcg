@@ -46,8 +46,16 @@ type ReplayAction = {
 	value: number
 	bytes: number
 	variableBytes?: boolean
-	compress: (game: GameModel, turnAction: any) => Buffer | null
-	decompress: (game: GameModel, buffer: Buffer) => AnyTurnActionData | null
+	compress: (
+		game: GameModel,
+		compressor: TurnActionCompressor,
+		turnAction: any,
+	) => Buffer | null
+	decompress: (
+		game: GameModel,
+		compressor: TurnActionCompressor,
+		buffer: Buffer,
+	) => AnyTurnActionData | null
 }
 
 export type ReplayActionData = {
@@ -56,149 +64,12 @@ export type ReplayActionData = {
 	millisecondsSinceLastAction: number
 }
 
-function writeUIntToBuffer(x: number, length: 1 | 2 | 4): Buffer {
-	if (length === 1) {
-		const bytes = Buffer.alloc(1)
-		bytes.writeUInt8(x)
-		return bytes
-	}
-	if (length === 2) {
-		const bytes = Buffer.alloc(2)
-		bytes.writeUInt16BE(x)
-		return bytes
-	} else {
-		const bytes = Buffer.alloc(4)
-		bytes.writeUInt32BE(x)
-		return bytes
-	}
-}
-
-function writeBoolToBuffer(x: boolean): Buffer {
-	const bytes = Buffer.alloc(1)
-	bytes.writeInt8(Number(x))
-	return bytes
-}
-
-/**Returns a byte representing a slot's place on the board. */
-function packupBoardSlot(
-	game: GameModel,
-	slot: BoardSlotComponent | null,
-): Buffer {
-	if (!slot) return writeUIntToBuffer(0, 1)
-	const slotIndex = slot.index && slot.index <= 3 ? slot.index : 0
-	const opponentSlot = slot.player.entity !== game.currentPlayer.entity
-
-	const slotTypeDict: Record<SlotTypeT, number> = {
-		hermit: 0b00,
-		attach: 0b01,
-		single_use: 0b10,
-		item: 0b11,
-		// These three shouldnt appear when this is used
-		hand: 0,
-		deck: 0,
-		discardPile: 0,
-	}
-
-	const slotType = slotTypeDict[slot.type]
-
-	const slotRowIndex = slot.row ? slot.row.index << 3 : 0
-
-	return writeUIntToBuffer(
-		(slotType << 6) | slotRowIndex | (slotIndex << 1) | (opponentSlot ? 1 : 0),
-		1,
-	)
-}
-
-function unpackBoardSlot(game: GameModel, byte: number): SlotComponent | null {
-	const selectedSlotType = (byte & 0b11000000) >> 6
-	const selectedSlotRow = (byte & 0b00111000) >> 3
-	const selectedSlotIndex = (byte & 0b00000110) >> 1
-	const opponentSlot = Boolean(byte & 0b00000001)
-
-	if (selectedSlotType === 0b10) {
-		const selectedSlot = game.components.find(
-			BoardSlotComponent,
-			query.slot.singleUse,
-		)
-		return selectedSlot
-	}
-
-	const selectedSlot = game.components.find(
-		BoardSlotComponent,
-		query.slot.rowIndex(selectedSlotRow),
-		selectedSlotType === 0b00 ? query.slot.hermit : () => true,
-		selectedSlotType === 0b01 ? query.slot.attach : () => true,
-		selectedSlotType === 0b11 ? query.slot.item : () => true,
-		selectedSlotType === 0b11
-			? query.slot.index(selectedSlotIndex)
-			: () => true,
-		opponentSlot ? query.slot.opponent : query.slot.currentPlayer,
-	)
-
-	return selectedSlot
-}
-
-/**Returns two bytes representing a card's position anywhere. */
-function packupSlotPosition(game: GameModel, slot: SlotComponent): Buffer {
-	if (!slot) return writeUIntToBuffer(0, 1)
-	function getSlotType(slot: SlotComponent) {
-		if (slot.onBoard()) return 0b0001
-		if (slot.inHand() && slot.player) return 0b0000
-		if (slot.inHand() && slot.opponentPlayer) return 0b1000
-		if (slot.inDeck() && slot.player) return 0b0010
-		if (slot.inDeck() && slot.opponentPlayer) return 0b1010
-		return 0
-	}
-
-	const boardSlotPosition = slot.onBoard()
-		? packupBoardSlot(game, slot).readUInt8()
-		: 0
-
-	const targetPlayer =
-		getSlotType(slot) >> 3 === 1 ? game.opponentPlayer : game.currentPlayer
-
-	const handPosition = slot.inHand()
-		? targetPlayer.getHand().findIndex((c) => c.slotEntity === slot.entity)
-		: 0
-	const deckPosition = slot.inDeck()
-		? targetPlayer.getDeck().findIndex((c) => c.slotEntity === slot.entity)
-		: 0
-
-	const finalBuffer = Buffer.concat([
-		writeUIntToBuffer(getSlotType(slot), 1),
-		writeUIntToBuffer(boardSlotPosition | handPosition | deckPosition, 1),
-	])
-	return finalBuffer
-}
-
-function unpackSlotPosition(
-	game: GameModel,
-	bytes: number,
-): SlotComponent | null {
-	const slotType = (bytes & 0xff00) >> 8
-	const position = bytes & 0x00ff
-
-	const onBoard = (slotType & 0x01) === 1
-	const inDeck = (slotType & 0x02) >> 1 === 1
-	const opponentCard = (slotType & 0x08) >> 3 === 1
-
-	if (onBoard) return unpackBoardSlot(game, position)
-
-	const targetPlayer = opponentCard ? game.opponentPlayer : game.currentPlayer
-
-	const selectedCard = inDeck
-		? targetPlayer.getDeck()[position]
-		: targetPlayer.getHand()[position]
-
-	return selectedCard.slot
-}
-
 const playCard: ReplayAction = {
 	value: 0x0,
 	// Byte 1: `00` Type `000` Row `00` Index `0` Player
 	// Byte 2: Hand position
 	bytes: 2,
-	compress(game, turnAction: PlayCardActionData) {
+	compress(game, compressor, turnAction: PlayCardActionData) {
 		const slot = game.components.find(
 			BoardSlotComponent,
 			query.slot.entity(turnAction.slot),
@@ -208,13 +79,18 @@ const playCard: ReplayAction = {
 			.getHand()
 			.findIndex((c) => c.entity === turnAction.card.entity)
 
+		console.log(turnAction.card.entity)
+
 		return Buffer.concat([
-			packupBoardSlot(game, slot),
-			writeUIntToBuffer(cardIndex, 1),
+			compressor.packupBoardSlot(game, slot),
+			compressor.writeUIntToBuffer(cardIndex, 1),
 		])
 	},
-	decompress(game, buffer): PlayCardActionData | null {
-		const selectedSlot = unpackBoardSlot(game, buffer.readUint8(0))?.entity
+	decompress(game, compressor, buffer): PlayCardActionData | null {
+		const selectedSlot = compressor.unpackBoardSlot(
+			game,
+			buffer.readUint8(0),
+		)?.entity
 		if (!selectedSlot) return null
 		const selectedCardIndex = buffer.readUInt8(1)
 		const selectedCard = game.currentPlayer.getHand()[selectedCardIndex]
@@ -325,16 +201,16 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	CHANGE_ACTIVE_HERMIT: {
 		value: 0x0a,
 		bytes: 1,
-		compress(game, turnAction: ChangeActiveHermitActionData) {
+		compress(game, compressor, turnAction: ChangeActiveHermitActionData) {
 			const slot = game.components.find(
 				SlotComponent,
 				query.slot.currentPlayer,
 				query.slot.entity(turnAction.entity),
 			)
 			if (!slot?.inRow()) return null
-			return writeUIntToBuffer(slot.row.index, 1)
+			return compressor.writeUIntToBuffer(slot.row.index, 1)
 		},
-		decompress(game, buffer) {
+		decompress(game, _compressor, buffer) {
 			const rowIndex = buffer.readUInt8(0)
 			const slotComponent = game.components.find(
 				SlotComponent,
@@ -353,16 +229,16 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	PICK_REQUEST: {
 		value: 0x0b,
 		bytes: 2,
-		compress(game, turnAction: PickSlotActionData) {
+		compress(game, compressor, turnAction: PickSlotActionData) {
 			const slot = game.components.find(
 				SlotComponent,
 				query.slot.entity(turnAction.entity),
 			)
 			assert(slot, 'An invalid slot entity was given')
-			return packupSlotPosition(game, slot)
+			return compressor.packupSlotPosition(game, slot)
 		},
-		decompress(game, buffer) {
-			const slot = unpackSlotPosition(game, buffer.readInt16BE())
+		decompress(game, compressor, buffer) {
+			const slot = compressor.unpackSlotPosition(game, buffer.readInt16BE())
 			if (!slot) return null
 			return {
 				type: 'PICK_REQUEST',
@@ -374,13 +250,13 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		value: 0x0c,
 		bytes: 0,
 		variableBytes: true,
-		compress(game, turnAction: ModalResult) {
+		compress(game, compressor, turnAction: ModalResult) {
 			function compressSelectCards(result: LocalSelectCards.Result) {
 				const buffer = Buffer.concat([
 					// Type
-					writeUIntToBuffer(SELECT_CARDS_TYPE, 1),
+					compressor.writeUIntToBuffer(SELECT_CARDS_TYPE, 1),
 					// Result
-					writeBoolToBuffer(result.result),
+					compressor.writeBoolToBuffer(result.result),
 				])
 
 				if (result.cards) {
@@ -393,7 +269,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 								query.card.entity(card),
 							)
 							assert(component, 'An invalid card entity was given')
-							return packupSlotPosition(game, component.slot)
+							return compressor.packupSlotPosition(game, component.slot)
 						}),
 					])
 				}
@@ -402,9 +278,9 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 			function compressCopyAttack(result: LocalCopyAttack.Result) {
 				return Buffer.concat([
 					// Type
-					writeUIntToBuffer(COPY_ATTACK_TYPE, 1),
+					compressor.writeUIntToBuffer(COPY_ATTACK_TYPE, 1),
 					// Result
-					writeUIntToBuffer(
+					compressor.writeUIntToBuffer(
 						result.cancel === true ? 0 : result.pick === 'primary' ? 1 : 2,
 						1,
 					),
@@ -413,11 +289,11 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 			function compressDragCards(result: LocalDragCards.Result) {
 				let buffer = Buffer.concat([
 					// Type
-					writeUIntToBuffer(DRAG_CARDS_TYPE, 1),
+					compressor.writeUIntToBuffer(DRAG_CARDS_TYPE, 1),
 					// Result
 					// First bit - result
 					// Last 7 bits - length of leftCards (Can never possibly go above 84/0x54)
-					writeUIntToBuffer(
+					compressor.writeUIntToBuffer(
 						(result.result === true ? 0x80 : 0) +
 							(result.leftCards ? result.leftCards.length : 0),
 						1,
@@ -434,7 +310,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 								query.card.entity(card),
 							)
 							assert(component, 'An invalid card entity was given')
-							return packupSlotPosition(game, component.slot)
+							return compressor.packupSlotPosition(game, component.slot)
 						}),
 					])
 				}
@@ -449,7 +325,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 								query.card.entity(card),
 							)
 							assert(component, 'An invalid card entity was given')
-							return packupSlotPosition(game, component.slot)
+							return compressor.packupSlotPosition(game, component.slot)
 						}),
 					])
 				}
@@ -465,11 +341,14 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 				return compressDragCards(turnAction.modalResult)
 			else throw Error('Invalid modal type was given')
 		},
-		decompress(game, buffer): ModalResult {
+		decompress(game, compressor, buffer): ModalResult {
 			function bufferToCards(cardsBuffer: Buffer) {
 				const cardEntities: Array<CardEntity> = []
 				for (let cursor = 0; cursor < cardsBuffer.length; cursor += 2) {
-					const slot = unpackSlotPosition(game, cardsBuffer.readInt16BE(cursor))
+					const slot = compressor.unpackSlotPosition(
+						game,
+						cardsBuffer.readInt16BE(cursor),
+					)
 					const card = slot?.card
 					if (!slot || !card) throw Error('Invalid slot position was given')
 					cardEntities.push(card.entity)
@@ -594,10 +473,10 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	DELAY: {
 		value: 0x0f,
 		bytes: 4,
-		compress(_game, turnAction: WaitActionData) {
-			return writeUIntToBuffer(turnAction.delay, 4)
+		compress(_game, compressor, turnAction: WaitActionData) {
+			return compressor.writeUIntToBuffer(turnAction.delay, 4)
 		},
-		decompress(_game, buffer) {
+		decompress(_game, _compressor, buffer) {
 			return {
 				type: 'DELAY',
 				delay: buffer.readUInt32BE(0),
@@ -607,12 +486,12 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 	FORFEIT: {
 		value: 0x10,
 		bytes: 2,
-		compress(game, turnAction: ForfeitAction) {
+		compress(game, compressor, turnAction: ForfeitAction) {
 			if (game.currentPlayer.entity === turnAction.player)
-				return writeUIntToBuffer(0, 1)
-			return writeUIntToBuffer(1, 1)
+				return compressor.writeUIntToBuffer(0, 1)
+			return compressor.writeUIntToBuffer(1, 1)
 		},
-		decompress(game, buffer) {
+		decompress(game, _compressor, buffer) {
 			return {
 				type: 'FORFEIT',
 				player:
@@ -635,192 +514,365 @@ const replayActionsFromValues = Object.entries(replayActions).reduce(
 	{},
 )
 
-function turnActionToBuffer(
-	game: GameModel,
-	action: AnyTurnActionData,
-	player: PlayerEntity,
-	millisecondsSinceLastAction: number,
-) {
-	const argumentsBuffer = replayActions[action.type].compress(game, action)
+export class TurnActionCompressor {
+	private currentAction: TurnAction | null
 
-	const tenthsSinceLastAction = Math.floor(millisecondsSinceLastAction / 100)
-	const timeLength = tenthsSinceLastAction > 255 ? 2 : 1
-
-	const timeBuffer = writeUIntToBuffer(tenthsSinceLastAction, timeLength)
-
-	const actionByOtherPlayer = player === game.currentPlayerEntity ? 0 : 1
-	const headerBuffer = writeUIntToBuffer(
-		0b10000000 * (timeLength - 1) +
-			0b01000000 * actionByOtherPlayer +
-			replayActions[action.type].value,
-		1,
-	)
-
-	if (argumentsBuffer) {
-		if (replayActions[action.type].variableBytes) {
-			const lengthBuffer = writeUIntToBuffer(
-				argumentsBuffer.length,
-				VARIABLE_BYTE_MAX,
-			)
-			return Buffer.concat([
-				headerBuffer,
-				timeBuffer,
-				lengthBuffer,
-				argumentsBuffer,
-			])
-		}
-		return Buffer.concat([headerBuffer, timeBuffer, argumentsBuffer])
+	constructor() {
+		this.currentAction = null
 	}
-	return Buffer.concat([headerBuffer, timeBuffer])
-}
 
-export function* turnActionsToBuffer(
-	controller: GameController,
-): Generator<any, Buffer> {
-	const originalGame = controller.game as GameModel
+	public writeUIntToBuffer(x: number, length: 1 | 2 | 4): Buffer {
+		assert(
+			x >= 0 && x <= Math.pow(2, 8 * length) - 1,
+			`While trying to decode action ${this.currentAction}, the value "${x}" was not in the range [0,${Math.pow(2, 8 * length) - 1}]`,
+		)
 
-	const firstPlayerSetupDefs: PlayerSetupDefs = controller.player1Defs
+		if (length === 1) {
+			const bytes = Buffer.alloc(1)
+			bytes.writeUInt8(x)
+			return bytes
+		}
+		if (length === 2) {
+			const bytes = Buffer.alloc(2)
+			bytes.writeUInt16BE(x)
+			return bytes
+		} else {
+			const bytes = Buffer.alloc(4)
+			bytes.writeUInt32BE(x)
+			return bytes
+		}
+	}
 
-	const secondPlayerSetupDefs: PlayerSetupDefs = controller.player2Defs
+	public writeBoolToBuffer(x: boolean): Buffer {
+		const bytes = Buffer.alloc(1)
+		bytes.writeInt8(Number(x))
+		return bytes
+	}
 
-	const newGameController = new GameController(
-		firstPlayerSetupDefs,
-		secondPlayerSetupDefs,
-		{
-			...controller.props,
-			randomSeed: originalGame.rngSeed,
-			randomizeOrder: true,
-		},
-	)
+	/**Returns a byte representing a slot's place on the board. */
+	public packupBoardSlot(
+		game: GameModel,
+		slot: BoardSlotComponent | null,
+	): Buffer {
+		if (!slot) return this.writeUIntToBuffer(0, 1)
+		const slotIndex = slot.index && slot.index <= 3 ? slot.index : 0
+		const opponentSlot = slot.player.entity !== game.currentPlayer.entity
 
-	const newGame: GameModel = newGameController.game
+		const slotTypeDict: Record<SlotTypeT, number> = {
+			hermit: 0b00,
+			attach: 0b01,
+			single_use: 0b10,
+			item: 0b11,
+			// These three shouldnt appear when this is used
+			hand: 0,
+			deck: 0,
+			discardPile: 0,
+		}
 
-	const buffers: Array<Buffer> = []
+		const slotType = slotTypeDict[slot.type]
 
-	try {
-		newGameController.task = yield* spawn(gameSaga, newGameController)
+		const slotRowIndex = slot.row ? slot.row.index << 3 : 0
 
-		for (let i = 0; i < originalGame.turnActions.length; i++) {
-			const action = originalGame.turnActions[i]
-			buffers.push(
-				turnActionToBuffer(
-					newGame,
-					action.action,
-					action.player,
-					action.millisecondsSinceLastAction,
-				),
+		return this.writeUIntToBuffer(
+			(slotType << 6) |
+				slotRowIndex |
+				(slotIndex << 1) |
+				(opponentSlot ? 1 : 0),
+			1,
+		)
+	}
+
+	public unpackBoardSlot(game: GameModel, byte: number): SlotComponent | null {
+		const selectedSlotType = (byte & 0b11000000) >> 6
+		const selectedSlotRow = (byte & 0b00111000) >> 3
+		const selectedSlotIndex = (byte & 0b00000110) >> 1
+		const opponentSlot = Boolean(byte & 0b00000001)
+
+		if (selectedSlotType === 0b10) {
+			const selectedSlot = game.components.find(
+				BoardSlotComponent,
+				query.slot.singleUse,
 			)
+			return selectedSlot
+		}
+
+		const selectedSlot = game.components.find(
+			BoardSlotComponent,
+			query.slot.rowIndex(selectedSlotRow),
+			selectedSlotType === 0b00 ? query.slot.hermit : () => true,
+			selectedSlotType === 0b01 ? query.slot.attach : () => true,
+			selectedSlotType === 0b11 ? query.slot.item : () => true,
+			selectedSlotType === 0b11
+				? query.slot.index(selectedSlotIndex)
+				: () => true,
+			opponentSlot ? query.slot.opponent : query.slot.currentPlayer,
+		)
+
+		return selectedSlot
+	}
+
+	/**Returns two bytes representing a card's position anywhere. */
+	public packupSlotPosition(game: GameModel, slot: SlotComponent): Buffer {
+		if (!slot) return this.writeUIntToBuffer(0, 1)
+		function getSlotType(slot: SlotComponent) {
+			if (slot.onBoard()) return 0b0001
+			if (slot.inHand() && slot.player) return 0b0000
+			if (slot.inHand() && slot.opponentPlayer) return 0b1000
+			if (slot.inDeck() && slot.player) return 0b0010
+			if (slot.inDeck() && slot.opponentPlayer) return 0b1010
+			return 0
+		}
+
+		const boardSlotPosition = slot.onBoard()
+			? this.packupBoardSlot(game, slot).readUInt8()
+			: 0
+
+		const targetPlayer =
+			getSlotType(slot) >> 3 === 1 ? game.opponentPlayer : game.currentPlayer
+
+		const handPosition = slot.inHand()
+			? targetPlayer.getHand().findIndex((c) => c.slotEntity === slot.entity)
+			: 0
+		const deckPosition = slot.inDeck()
+			? targetPlayer.getDeck().findIndex((c) => c.slotEntity === slot.entity)
+			: 0
+
+		const finalBuffer = Buffer.concat([
+			this.writeUIntToBuffer(getSlotType(slot), 1),
+			this.writeUIntToBuffer(
+				boardSlotPosition | handPosition | deckPosition,
+				1,
+			),
+		])
+		return finalBuffer
+	}
+
+	public unpackSlotPosition(
+		game: GameModel,
+		bytes: number,
+	): SlotComponent | null {
+		const slotType = (bytes & 0xff00) >> 8
+		const position = bytes & 0x00ff
+
+		const onBoard = (slotType & 0x01) === 1
+		const inDeck = (slotType & 0x02) >> 1 === 1
+		const opponentCard = (slotType & 0x08) >> 3 === 1
+
+		if (onBoard) return this.unpackBoardSlot(game, position)
+
+		const targetPlayer = opponentCard ? game.opponentPlayer : game.currentPlayer
+
+		const selectedCard = inDeck
+			? targetPlayer.getDeck()[position]
+			: targetPlayer.getHand()[position]
+
+		return selectedCard.slot
+	}
+
+	public turnActionToBuffer(
+		game: GameModel,
+		action: AnyTurnActionData,
+		player: PlayerEntity,
+		millisecondsSinceLastAction: number,
+	) {
+		const argumentsBuffer = replayActions[action.type].compress(
+			game,
+			this,
+			action,
+		)
+
+		const tenthsSinceLastAction = Math.floor(millisecondsSinceLastAction / 100)
+		const timeLength = tenthsSinceLastAction > 255 ? 2 : 1
+
+		const timeBuffer = this.writeUIntToBuffer(tenthsSinceLastAction, timeLength)
+
+		const actionByOtherPlayer = player === game.currentPlayerEntity ? 0 : 1
+		const headerBuffer = this.writeUIntToBuffer(
+			0b10000000 * (timeLength - 1) +
+				0b01000000 * actionByOtherPlayer +
+				replayActions[action.type].value,
+			1,
+		)
+
+		if (argumentsBuffer) {
+			if (replayActions[action.type].variableBytes) {
+				const lengthBuffer = this.writeUIntToBuffer(
+					argumentsBuffer.length,
+					VARIABLE_BYTE_MAX,
+				)
+				return Buffer.concat([
+					headerBuffer,
+					timeBuffer,
+					lengthBuffer,
+					argumentsBuffer,
+				])
+			}
+			return Buffer.concat([headerBuffer, timeBuffer, argumentsBuffer])
+		}
+		return Buffer.concat([headerBuffer, timeBuffer])
+	}
+
+	public *turnActionsToBuffer(
+		controller: GameController,
+	): Generator<any, Buffer> {
+		const originalGame = controller.game as GameModel
+
+		const firstPlayerSetupDefs: PlayerSetupDefs = controller.player1Defs
+
+		const secondPlayerSetupDefs: PlayerSetupDefs = controller.player2Defs
+
+		const newGameController = new GameController(
+			firstPlayerSetupDefs,
+			secondPlayerSetupDefs,
+			{
+				...controller.props,
+				randomSeed: originalGame.rngSeed,
+				randomizeOrder: true,
+				gameId: originalGame.id,
+			},
+		)
+
+		const newGame: GameModel = newGameController.game
+
+		const buffers: Array<Buffer> = []
+
+		try {
+			newGameController.task = yield* spawn(gameSaga, newGameController)
+
+			for (let i = 0; i < originalGame.turnActions.length; i++) {
+				const action = originalGame.turnActions[i]
+				this.currentAction = action.action.type
+				buffers.push(
+					this.turnActionToBuffer(
+						newGame,
+						action.action,
+						action.player,
+						action.millisecondsSinceLastAction,
+					),
+				)
+				yield* put<LocalMessage>({
+					type: localMessages.GAME_TURN_ACTION,
+					playerEntity: action.player,
+					action: action.action,
+				})
+			}
+		} catch (e) {
+			console.error(e)
+			Buffer.from([INVALID_REPLAY])
+		}
+
+		yield* cancel(newGameController.task)
+
+		this.currentAction = null
+
+		return Buffer.concat([Buffer.from([REPLAY_VERSION]), ...buffers])
+	}
+
+	public *bufferToTurnActions(
+		firstPlayerSetupDefs: PlayerSetupDefs,
+		secondPlayerSetupDefs: PlayerSetupDefs,
+		seed: string,
+		props: GameControllerProps,
+		actionsBuffer: Buffer,
+	): Generator<
+		any,
+		{
+			replay: Array<ReplayActionData>
+			battleLog: Array<Message>
+		}
+	> {
+		const con = new GameController(
+			firstPlayerSetupDefs,
+			secondPlayerSetupDefs,
+			{
+				...props,
+				randomSeed: seed,
+				randomizeOrder: true,
+			},
+		)
+		con.task = yield* spawn(gameSaga, con)
+
+		let cursor = 0
+
+		const version = actionsBuffer.readUInt8(cursor)
+		cursor++
+
+		if (version === 0x00 || version === 0x30)
+			return {
+				replay: [],
+				battleLog: [],
+			}
+
+		//Other version checks here
+
+		const replayActions: Array<ReplayActionData> = []
+		while (cursor < actionsBuffer.length) {
+			const actionBufferFullInt = actionsBuffer.readUInt8(cursor)
+			const actionNumber = actionBufferFullInt & 0b00111111
+			const timeFormat = (actionBufferFullInt & 0b10000000) >> 7
+			const actionByOtherPlayer = (actionBufferFullInt & 0b01000000) >> 6
+			const action = replayActionsFromValues[actionNumber]
+
+			this.currentAction = action.turnAction
+
+			const actionPlayer = actionByOtherPlayer
+				? con.game.opponentPlayerEntity
+				: con.game.currentPlayerEntity
+			cursor++
+			let tenthsSinceLastAction =
+				timeFormat === 1
+					? actionsBuffer.readUInt16BE(cursor)
+					: actionsBuffer.readUInt8(cursor)
+			cursor += 1 + timeFormat
+			let turnAction: AnyTurnActionData | null = null
+
+			if (!action.variableBytes) {
+				const bytes = actionsBuffer.subarray(cursor, cursor + action.bytes)
+				cursor += action.bytes
+				turnAction = action.decompress(con.game, this, bytes)
+				assert(
+					turnAction,
+					'There was an error and the data given for the turn action was invalid.',
+				)
+				replayActions.push({
+					action: turnAction,
+					player: actionPlayer,
+					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
+				})
+			} else {
+				const byteAmount = actionsBuffer.readUInt8(cursor)
+				cursor += VARIABLE_BYTE_MAX
+				const bytes = actionsBuffer.subarray(cursor, cursor + byteAmount)
+				cursor += byteAmount
+				turnAction = action.decompress(con.game, this, bytes)
+				assert(
+					turnAction,
+					'There was an error and the data given for the turn action was invalid.',
+				)
+				replayActions.push({
+					action: turnAction,
+					player: actionPlayer,
+					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
+				})
+			}
+
 			yield* put<LocalMessage>({
 				type: localMessages.GAME_TURN_ACTION,
-				playerEntity: action.player,
-				action: action.action,
+				playerEntity: con.game.currentPlayer.entity,
+				action: turnAction,
 			})
+
+			// I don't know why this works, but we're going with it
+			if (turnAction.type === 'END_TURN') {
+				yield* delay(1)
+			}
 		}
-	} catch (e) {
-		console.error(e)
-		Buffer.from([INVALID_REPLAY])
-	}
 
-	yield* cancel(newGameController.task)
+		this.currentAction = null
 
-	return Buffer.concat([Buffer.from([REPLAY_VERSION]), ...buffers])
-}
-
-export function* bufferToTurnActions(
-	firstPlayerSetupDefs: PlayerSetupDefs,
-	secondPlayerSetupDefs: PlayerSetupDefs,
-	seed: string,
-	props: GameControllerProps,
-	actionsBuffer: Buffer,
-): Generator<
-	any,
-	{
-		replay: Array<ReplayActionData>
-		battleLog: Array<Message>
-	}
-> {
-	const con = new GameController(firstPlayerSetupDefs, secondPlayerSetupDefs, {
-		...props,
-		randomSeed: seed,
-		randomizeOrder: true,
-	})
-	con.task = yield* spawn(gameSaga, con)
-
-	let cursor = 0
-
-	const version = actionsBuffer.readUInt8(cursor)
-	cursor++
-
-	if (version === 0x00 || version === 0x30)
 		return {
-			replay: [],
-			battleLog: [],
+			replay: replayActions,
+			battleLog: con.chat,
 		}
-
-	//Other version checks here
-
-	const replayActions: Array<ReplayActionData> = []
-	while (cursor < actionsBuffer.length) {
-		const actionBufferFullInt = actionsBuffer.readUInt8(cursor)
-		const actionNumber = actionBufferFullInt & 0b00111111
-		const timeFormat = (actionBufferFullInt & 0b10000000) >> 7
-		const actionByOtherPlayer = (actionBufferFullInt & 0b01000000) >> 6
-		const action = replayActionsFromValues[actionNumber]
-		const actionPlayer = actionByOtherPlayer
-			? con.game.opponentPlayerEntity
-			: con.game.currentPlayerEntity
-		cursor++
-		let tenthsSinceLastAction =
-			timeFormat === 1
-				? actionsBuffer.readUInt16BE(cursor)
-				: actionsBuffer.readUInt8(cursor)
-		cursor += 1 + timeFormat
-		let turnAction: AnyTurnActionData | null = null
-
-		if (!action.variableBytes) {
-			const bytes = actionsBuffer.subarray(cursor, cursor + action.bytes)
-			cursor += action.bytes
-			turnAction = action.decompress(con.game, bytes)
-			assert(
-				turnAction,
-				'There was an error and the data given for the turn action was invalid.',
-			)
-			replayActions.push({
-				action: turnAction,
-				player: actionPlayer,
-				millisecondsSinceLastAction: tenthsSinceLastAction * 100,
-			})
-		} else {
-			const byteAmount = actionsBuffer.readUInt8(cursor)
-			cursor += VARIABLE_BYTE_MAX
-			const bytes = actionsBuffer.subarray(cursor, cursor + byteAmount)
-			cursor += byteAmount
-			turnAction = action.decompress(con.game, bytes)
-			assert(
-				turnAction,
-				'There was an error and the data given for the turn action was invalid.',
-			)
-			replayActions.push({
-				action: turnAction,
-				player: actionPlayer,
-				millisecondsSinceLastAction: tenthsSinceLastAction * 100,
-			})
-		}
-
-		yield* put<LocalMessage>({
-			type: localMessages.GAME_TURN_ACTION,
-			playerEntity: con.game.currentPlayer.entity,
-			action: turnAction,
-		})
-
-		// I don't know why this works, but we're going with it
-		if (turnAction.type === 'END_TURN') {
-			yield* delay(1)
-		}
-	}
-
-	return {
-		replay: replayActions,
-		battleLog: con.chat,
 	}
 }
