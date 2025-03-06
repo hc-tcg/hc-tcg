@@ -110,7 +110,7 @@
 	position: absolute;
 	height: 100%;
 	width: 75%;
-	top: 32%;
+	top: 12.5vh;
 }
 
 .nameAndProgress {
@@ -162,6 +162,10 @@
 	}
 }
 
+.achievementCounter {
+	font-size: 1rem;
+}
+
 @keyframes float {
 	from {
 		transform: translateY(0);
@@ -183,7 +187,7 @@
 	}
 
 	.smallAchievementBox {
-		top: 23.5%;
+		top: 10.75vh;
 	}
 
 	.nameAndProgress {

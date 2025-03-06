@@ -100,7 +100,7 @@ const SmallAchievement = ({
 				'rgb(86, 184, 208)',
 				'rgb(208, 180, 86)',
 				'rgb(208, 180, 86)',
-				'rgb(86, 184, 208)',
+				amount !== 1 ? 'rgb(86, 184, 208)' : 'rgb(208, 180, 86)',
 			]
 		}
 
@@ -264,6 +264,10 @@ const EndGameOverlay = ({
 			animation = '/images/animations/draw.gif'
 	}
 
+	const earnedAchievementsAmount = earnedAchievements.filter(
+		(a) => a.newProgress >= a.level.steps,
+	).length
+
 	return (
 		// 2 Ways to return to the main menu, either press the button, or press ESC
 		<Modal
@@ -308,6 +312,17 @@ const EndGameOverlay = ({
 						<div className={css.noAchievements}>You Earned No Achivements</div>
 					)}
 				</div>
+				{earnedAchievements.length > 0 && (
+					<div className={css.achievementCounter}>
+						You earned{' '}
+						{
+							earnedAchievements.filter((a) => a.newProgress >= a.level.steps)
+								.length
+						}{' '}
+						achievement{earnedAchievementsAmount !== 1 && 's'} this game, and
+						made progress towards {earnedAchievements.length}.
+					</div>
+				)}
 				{outcome.type === 'game-crash' && (
 					<Button
 						onClick={() => {
