@@ -2,6 +2,7 @@ import EyeOfTheSpider from '../achievements/eye-of-the-spider'
 import GoFish from '../achievements/go-fish'
 import HallOfAll from '../achievements/hall-of-all'
 import HermitsAndCrafting from '../achievements/hermits-and-crafting'
+import HorseCurse from '../achievements/horse-curse'
 import HurtinHermits from '../achievements/hurtin-hermits'
 import NoDerpcoins from '../achievements/no-derpcoins'
 import PackOfWolves from '../achievements/pack-of-wolves'
@@ -16,6 +17,12 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		id: 'creeper',
 		name: 'Creeper',
 		borderColor: '#e1b530',
+	},
+	{
+		id: 'bdoubleo100',
+		name: 'Bdubs',
+		borderColor: '#000000',
+		requires: {achievement: HorseCurse.id},
 	},
 	{
 		id: 'server-lag',
