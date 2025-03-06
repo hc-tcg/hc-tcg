@@ -26,15 +26,15 @@ export default function AchievementComponent({
 	let out = []
 
 	for (const [i, level] of achievement.levels.entries()) {
-		if (hideUnobtained && progress < level.steps) return
-		if (hideObtained && progress >= level.steps) return
+		if (hideUnobtained && progress < level.steps) continue
+		if (hideObtained && progress >= level.steps) continue
 		if (
 			!level.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase()) &&
 			!level.description
 				.toLocaleLowerCase()
 				.includes(filter.toLocaleLowerCase())
 		) {
-			return
+			continue
 		}
 
 		const completionTime =
