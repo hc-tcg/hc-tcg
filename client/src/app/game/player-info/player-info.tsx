@@ -55,7 +55,7 @@ function PlayerInfo({playerEntity, direction}: Props) {
 		playerEntity === watchingPlayerEntity ? playerConnected : opponentConnected
 	const thisPlayer = gameState.turn.currentPlayerEntity === playerEntity
 	const headDirection = direction === 'left' ? 'right' : 'left'
-	const playerTag = player.appearance.title.name
+	const playerTag = player.appearance.title.id === 'no_title' ? '' : player.appearance.title.name
 
 	const playerStyle = {
 		borderImageSource:
