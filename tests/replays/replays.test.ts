@@ -1,6 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import Brush from 'common/cards/advent-of-tcg/single-use/brush'
 import Feather from 'common/cards/advent-of-tcg/single-use/feather'
+import {DiamondArmor} from 'common/cards/attach/armor'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import EvilXisumaRare from 'common/cards/hermits/evilxisuma_rare'
 import FalseSymmetryRare from 'common/cards/hermits/falsesymmetry-rare'
@@ -14,6 +15,7 @@ import BalancedDoubleItem from 'common/cards/items/balanced-rare'
 import BuilderItem from 'common/cards/items/builder-common'
 import FarmDoubleItem from 'common/cards/items/farm-rare'
 import MinerItem from 'common/cards/items/miner-common'
+import {DiamondSword} from 'common/cards/single-use/sword'
 import query from 'common/components/query'
 import {DragCards} from 'common/types/modal-requests'
 import {GameController} from 'server/game-controller'
@@ -33,8 +35,6 @@ import {
 	playCardFromHand,
 	testReplayGame,
 } from '../unit/game/utils'
-import {DiamondArmor} from 'common/cards/attach/armor'
-import {DiamondSword} from 'common/cards/single-use/sword'
 
 function* afterGame(con: GameController) {
 	const turnActionCompressor = new TurnActionCompressor()
