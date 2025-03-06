@@ -21,6 +21,7 @@ test('You won by killing all hermits!', async ({mount}) => {
 			earnedAchievements={[]}
 			gameEndTime={Date.now()}
 			displayFakeTime={true}
+			rematchData={null}
 		/>,
 	)
 
@@ -47,6 +48,7 @@ test('You lost because your hermits were killed.', async ({mount}) => {
 			earnedAchievements={[]}
 			gameEndTime={Date.now()}
 			displayFakeTime={true}
+			rematchData={null}
 		/>,
 	)
 
@@ -72,6 +74,7 @@ test('You won because your opponent disconnected!', async ({mount}) => {
 			earnedAchievements={[]}
 			gameEndTime={Date.now()}
 			displayFakeTime={true}
+			rematchData={null}
 		/>,
 	)
 
@@ -98,6 +101,7 @@ test('You lost because you disconnected.', async ({mount}) => {
 			earnedAchievements={[]}
 			gameEndTime={Date.now()}
 			displayFakeTime={true}
+			rematchData={null}
 		/>,
 	)
 
@@ -122,6 +126,7 @@ test('Viewing as spectator shows victory.', async ({mount}) => {
 			earnedAchievements={[]}
 			gameEndTime={Date.now()}
 			displayFakeTime={true}
+			rematchData={null}
 		/>,
 	)
 
@@ -140,6 +145,7 @@ test('Game crash displays correctly.', async ({mount}) => {
 			earnedAchievements={[]}
 			gameEndTime={Date.now()}
 			displayFakeTime={true}
+			rematchData={null}
 		/>,
 	)
 
@@ -158,6 +164,7 @@ test('Game timeout displays correctly.', async ({mount}) => {
 			earnedAchievements={[]}
 			gameEndTime={Date.now()}
 			displayFakeTime={true}
+			rematchData={null}
 		/>,
 	)
 

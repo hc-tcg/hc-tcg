@@ -17,7 +17,7 @@ function* achievementSaga() {
 		const iconCosmetic = ALL_COSMETICS.find(
 			(x) =>
 				x.requires?.achievement === ACHIEVEMENTS[achievementId].id &&
-				(x.requires.level === level.index || !x.requires.level),
+				(x.requires.level === level.index || x.requires.level === undefined),
 		)
 
 		let icon_url = undefined

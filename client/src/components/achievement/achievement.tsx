@@ -26,15 +26,15 @@ export default function AchievementComponent({
 	let out = []
 
 	for (const [i, level] of achievement.levels.entries()) {
-		if (hideUnobtained && progress < level.steps) return
-		if (hideObtained && progress >= level.steps) return
+		if (hideUnobtained && progress < level.steps) continue
+		if (hideObtained && progress >= level.steps) continue
 		if (
 			!level.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase()) &&
 			!level.description
 				.toLocaleLowerCase()
 				.includes(filter.toLocaleLowerCase())
 		) {
-			return
+			continue
 		}
 
 		const completionTime =
@@ -43,7 +43,7 @@ export default function AchievementComponent({
 		const iconCosmetic = ALL_COSMETICS.find(
 			(x) =>
 				x.requires?.achievement === achievement.id &&
-				(x.requires.level === i || !x.requires.level),
+				(x.requires.level === i || x.requires.level === undefined),
 		)
 
 		let icon_url = ''
