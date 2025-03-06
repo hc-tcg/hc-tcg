@@ -40,6 +40,8 @@ const MobileActions = ({onClick, gameOver, id}: Props) => {
 
 	if (!gameState || !playerState) return <main>Loading</main>
 
+	const endActionText = gameOver ? 'End Game' : 'End Turn'
+
 	function handleEndTurn() {
 		dispatch({type: localMessages.GAME_ACTIONS_END_TURN})
 	}
@@ -52,7 +54,7 @@ const MobileActions = ({onClick, gameOver, id}: Props) => {
 			onClick={handleEndTurn}
 			disabled={!availableActions.includes('END_TURN')}
 		>
-			End Turn
+			{endActionText}
 		</Button>
 	)
 

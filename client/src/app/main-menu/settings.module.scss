@@ -5,10 +5,12 @@
 	top: 0px;
 	position: absolute;
 	display: flex;
+	justify-content: center;
 }
 
 .mainHallOfFameArea {
-	width: 80%;
+	width: 100%;
+	max-width: 80rem;
 	margin-left: 10%;
 	margin-right: 10%;
 	margin-top: 6vh;

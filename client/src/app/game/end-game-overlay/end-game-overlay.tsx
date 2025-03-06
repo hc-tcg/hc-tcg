@@ -128,7 +128,7 @@ const SmallAchievement = ({
 	return (
 		<div
 			className={css.smallAchievementBox}
-			style={{left: `${12.5 + index * (75 + gap)}%`}}
+			style={{left: `${12.5 + index * (ma + gap)}%`}}
 			ref={barRef}
 		>
 			<div className={css.nameAndProgress}>
