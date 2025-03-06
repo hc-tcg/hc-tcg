@@ -17,7 +17,12 @@ describe('Test Jingler Rare', () => {
 					yield* playCardFromHand(game, JinglerRare, 'hermit', 0)
 					yield* attack(game, 'secondary')
 
-					yield* pick(game, query.slot.hand, query.slot.opponent)
+					yield* pick(
+						game,
+						query.slot.hand,
+						query.slot.opponent,
+						query.not(query.slot.empty),
+					)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
