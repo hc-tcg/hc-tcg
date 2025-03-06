@@ -312,15 +312,17 @@ const EndGameOverlay = ({
 						<div className={css.noAchievements}>You Earned No Achivements</div>
 					)}
 				</div>
-				<div className={css.achievementCounter}>
-					You earned{' '}
-					{
-						earnedAchievements.filter((a) => a.newProgress >= a.level.steps)
-							.length
-					}{' '}
-					achievement{earnedAchievementsAmount !== 1 && 's'} this game, and made
-					progress towards {earnedAchievements.length}.
-				</div>
+				{earnedAchievements.length > 0 && (
+					<div className={css.achievementCounter}>
+						You earned{' '}
+						{
+							earnedAchievements.filter((a) => a.newProgress >= a.level.steps)
+								.length
+						}{' '}
+						achievement{earnedAchievementsAmount !== 1 && 's'} this game, and
+						made progress towards {earnedAchievements.length}.
+					</div>
+				)}
 				{outcome.type === 'game-crash' && (
 					<Button
 						onClick={() => {
