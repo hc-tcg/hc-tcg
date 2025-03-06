@@ -7,6 +7,8 @@ import Button from 'components/button'
 import {Modal} from 'components/modal'
 import {useEffect, useReducer, useRef, useState} from 'react'
 import css from './end-game-overlay.module.scss'
+import {useSelector} from 'react-redux'
+import {getRematchData} from 'logic/session/session-selectors'
 
 type Props = {
 	outcome: GameOutcome
@@ -156,7 +158,7 @@ const ReplayTimer = ({
 	timerStart,
 }: {displayFakeTime: boolean; timerStart: number}) => {
 	if (displayFakeTime) {
-		return <div className={css.rematchTimeRemaining}>0</div>
+		return <div className={css.rematchTimeRemaining}>0s</div>
 	}
 
 	const timerLength = serverConfig.limits.rematchTime
@@ -193,12 +195,13 @@ const EndGameOverlay = ({
 	dispatchGameClose,
 	displayFakeTime = false,
 }: Props) => {
+	const rematchData = useSelector(getRematchData)
 	const [disableReplay, setDisableReplay] = useState<boolean>(false)
 
 	useEffect(() => {
 		const timeout = setTimeout(() => {
 			setDisableReplay(true)
-		}, serverConfig.limits.rematchTime)
+		}, rematchData?.time || serverConfig.limits.rematchTime)
 		return () => {
 			clearTimeout(timeout)
 		}
@@ -336,7 +339,7 @@ const EndGameOverlay = ({
 					</Button>
 					<Button
 						id={css.rematch}
-						disabled={disableReplay}
+						disabled={disableReplay || !rematchData?.opponentId}
 						onClick={() => {
 							setMenuSection && setMenuSection('rematch')
 							dispatchGameClose && dispatchGameClose()
@@ -344,7 +347,7 @@ const EndGameOverlay = ({
 					>
 						Rematch
 						<ReplayTimer
-							displayFakeTime={displayFakeTime}
+							displayFakeTime={displayFakeTime || !rematchData?.opponentId}
 							timerStart={gameEndTime}
 						></ReplayTimer>
 					</Button>

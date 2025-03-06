@@ -78,7 +78,9 @@ export function CosmeticPreview() {
 				/>
 				<div className={css.playerName}>
 					<h1>{playerName}</h1>
-					<p className={css.title}>{appearance.title.id === 'no_title' ? '' : appearance.title.name}</p>
+					<p className={css.title}>
+						{appearance.title.id === 'no_title' ? '' : appearance.title.name}
+					</p>
 				</div>
 
 				<div className={css.health}>{health(3)}</div>
