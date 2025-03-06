@@ -5,10 +5,10 @@ import {EarnedAchievement} from 'common/types/achievements'
 import {GameOutcome, GameVictoryReason} from 'common/types/game-state'
 import Button from 'components/button'
 import {Modal} from 'components/modal'
-import {useEffect, useReducer, useRef, useState} from 'react'
-import css from './end-game-overlay.module.scss'
-import {useSelector} from 'react-redux'
 import {getRematchData} from 'logic/session/session-selectors'
+import {useEffect, useReducer, useRef, useState} from 'react'
+import {useSelector} from 'react-redux'
+import css from './end-game-overlay.module.scss'
 
 type Props = {
 	outcome: GameOutcome
