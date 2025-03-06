@@ -54,7 +54,11 @@ const JinglerRare: Hermit = {
 					player: opponentPlayer.entity,
 					id: component.entity,
 					message: 'Pick 1 card from your hand to discard',
-					canPick: query.every(query.slot.opponent, query.slot.hand),
+					canPick: query.every(
+						query.slot.opponent,
+						query.slot.hand,
+						query.not(query.slot.empty),
+					),
 					onResult(pickedSlot) {
 						pickedSlot.card?.discard()
 					},

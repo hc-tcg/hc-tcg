@@ -100,7 +100,6 @@ const RedstoneTorch: SingleUse = {
 						assert(card.slot.inDeck())
 						card.slot.order = newOrder[i]
 					})
-					deckCards.forEach((card) => card.hooks.onChangeSlot.call(card.slot))
 
 					return 'SUCCESS'
 				},
