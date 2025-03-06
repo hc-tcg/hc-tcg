@@ -27,7 +27,7 @@ export type GameControllerProps = {
 	randomizeOrder?: boolean
 	randomSeed?: any
 	settings?: GameSettings
-	countAchievements?: boolean
+	countAchievements?: 'none' | 'all' | 'boss'
 	gameId?: string
 }
 
@@ -119,14 +119,14 @@ export class GameController {
 			? this.game.opponentPlayer
 			: this.game.currentPlayer
 
-		if (props.countAchievements) {
+		if (props.countAchievements === 'all' || props.countAchievements ==='boss') {
 			if (this.player1Defs.model instanceof PlayerModel) {
 				console.log(
 					'Adding achievements',
 					playerOne.playerName,
 					this.player1Defs.model.name,
 				)
-				this.addAchievements(this.player1Defs.model, playerOne)
+				this.addAchievements(this.player1Defs.model, playerOne, props.countAchievements)
 			}
 			if (this.player2Defs.model instanceof PlayerModel) {
 				console.log(
@@ -134,7 +134,7 @@ export class GameController {
 					playerTwo.playerName,
 					this.player2Defs.model.name,
 				)
-				this.addAchievements(this.player2Defs.model, playerTwo)
+				this.addAchievements(this.player2Defs.model, playerTwo, props.countAchievements)
 			}
 		}
 	}
@@ -142,9 +142,11 @@ export class GameController {
 	public addAchievements(
 		player: PlayerModel,
 		playerComponent: PlayerComponent,
+		restriction: 'all' | 'boss',
 	) {
 		if (player.achievementProgress) {
 			ACHIEVEMENTS_LIST.forEach((achievement) => {
+				if (restriction === 'boss' && !achievement.progressInBossGame) return
 				if (!player.achievementProgress[achievement.numericId]) {
 					player.achievementProgress[achievement.numericId] = {
 						goals: {},

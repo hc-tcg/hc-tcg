@@ -77,7 +77,7 @@ function setupGame(
 				.sort((a, b) => a - b),
 			score: player2Score,
 		},
-		{gameCode, spectatorCode, apiSecret, countAchievements: true},
+		{gameCode, spectatorCode, apiSecret, countAchievements: 'all'},
 	)
 
 	let playerEntities = con.game.components.filterEntities(PlayerComponent)
@@ -1234,7 +1234,7 @@ function setupSolitareGame(
 			deck: opponent.deck,
 			score: 0,
 		},
-		{randomizeOrder: false},
+		{randomizeOrder: false, countAchievements: 'boss'},
 	)
 
 	const playerEntities = con.game.components.filterEntities(PlayerComponent)
