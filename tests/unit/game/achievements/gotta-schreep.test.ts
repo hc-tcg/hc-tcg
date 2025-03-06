@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import HorseCurse from 'common/achievements/horse-curse'
+import GottaSchreep from 'common/achievements/gotta-screep'
 import BdoubleO100Rare from 'common/cards/hermits/bdoubleo100-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {DiamondSword} from 'common/cards/single-use/sword'
@@ -11,11 +11,11 @@ import {
 	testAchivement,
 } from '../utils'
 
-describe('Test Horse Curse achivement', () => {
+describe('Test Gotta Screep achivement', () => {
 	test('increments when opponent is knocked out', () => {
 		testAchivement(
 			{
-				achievement: HorseCurse,
+				achievement: GottaSchreep,
 				playerOneDeck: [BdoubleO100Rare, DiamondSword],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playGame: function* (game) {
@@ -34,7 +34,7 @@ describe('Test Horse Curse achivement', () => {
 					yield* attack(game, 'single-use')
 				},
 				checkAchivement(_game, achievement, _outcome) {
-					expect(HorseCurse.getProgress(achievement.goals)).toBe(1)
+					expect(GottaSchreep.getProgress(achievement.goals)).toBe(1)
 				},
 			},
 			{oneShotMode: true, noItemRequirements: true},
@@ -43,7 +43,7 @@ describe('Test Horse Curse achivement', () => {
 	test('does not increment when you are awake', () => {
 		testAchivement(
 			{
-				achievement: HorseCurse,
+				achievement: GottaSchreep,
 				playerOneDeck: [BdoubleO100Rare, DiamondSword],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
@@ -54,7 +54,7 @@ describe('Test Horse Curse achivement', () => {
 					yield* attack(game, 'secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
-					expect(HorseCurse.getProgress(achievement.goals)).toBeFalsy()
+					expect(GottaSchreep.getProgress(achievement.goals)).toBeFalsy()
 				},
 			},
 			{oneShotMode: true, noItemRequirements: true},

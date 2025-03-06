@@ -4,13 +4,13 @@ import SleepingEffect from '../status-effects/sleeping'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
-const HorseCurse: Achievement = {
+const GottaSchreep: Achievement = {
 	...achievement,
 	numericId: 54,
-	id: 'horse_curse',
+	id: 'gotta_screep',
 	levels: [
 		{
-			name: 'Horse Curse',
+			name: 'Gotta Screep',
 			description: 'KO a Hermit while your active Hermit is sleeping.',
 			steps: 1,
 		},
@@ -36,4 +36,4 @@ const HorseCurse: Achievement = {
 	},
 }
 
-export default HorseCurse
+export default GottaSchreep
