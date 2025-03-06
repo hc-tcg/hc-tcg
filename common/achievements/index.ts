@@ -9,6 +9,7 @@ import FreeAndSteel from './free-and-steel'
 import GoFish from './go-fish'
 import HallOfAll from './hall-of-all'
 import HermitsAndCrafting from './hermits-and-crafting'
+import HorseCurse from './horse-curse'
 import HotTake from './hot-take'
 import HowDidWeGetHere from './how-did-we-get-here'
 import HurtinHermits from './hurtin-hermits'
@@ -57,6 +58,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	HowDidWeGetHere,
 	LuckyStreak,
 	HurtinHermits,
+	HorseCurse,
 	Wipeout,
 	DefeatEvilX,
 	NoDerpcoins,

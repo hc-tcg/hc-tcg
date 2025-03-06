@@ -1,3 +1,4 @@
+import {RowComponent} from '../components'
 import query from '../components/query'
 import SleepingEffect from '../status-effects/sleeping'
 import {achievement} from './defaults'
@@ -15,11 +16,17 @@ const HorseCurse: Achievement = {
 		},
 	],
 	onGameStart(game, player, component, observer) {
+		let isSleeping = false
+
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			isSleeping = !!player.activeRow.getHermit().getStatusEffect(SleepingEffect)
+		})
+
 		game.components
 			.filter(RowComponent, query.row.player(player.opponentPlayer.entity))
 			.forEach((row) => {
 				observer.subscribe(row.hooks.onKnockOut, () => {
-					if (player.activeRow.getHermit().getStatusEffect(SleepingEffect)) {
+					if (isSleeping) {
 						component.incrementGoalProgress({goal: 0})
 					}
 				})
