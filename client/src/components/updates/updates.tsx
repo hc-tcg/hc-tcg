@@ -34,30 +34,32 @@ export function UpdatesModal({onClose}: UpdatesModalProps) {
 						For more updates, visit the HC-TCG discord.
 					</li>
 					{updates ? (
-						updates.map(({tag, description, link, timestamp}, i) => {
-							return (
-								<>
-									<li
-										className={css.updateItem}
-										key={i + 1}
-										ref={i === 0 ? latestUpdateElement : undefined}
-									>
-										<a href={link} target="_blank">
-											<h1 className={css.updateName}> Update {tag} </h1>
-										</a>
-										<span className={css.shortDate}>
-											{new Date(timestamp * 1000).toLocaleDateString()}
-										</span>
-										<div
-											dangerouslySetInnerHTML={{
-												__html: sanitize(toHTML(description)),
-											}}
-										/>
-									</li>
-									<hr key={-i} className={css.updateSeperator} />
-								</>
-							)
-						})
+						updates
+							.toReversed()
+							.map(({tag, description, link, timestamp}, i) => {
+								return (
+									<>
+										<hr key={-i} className={css.updateSeperator} />
+										<li
+											className={css.updateItem}
+											key={i + 1}
+											ref={i === 0 ? undefined : latestUpdateElement}
+										>
+											<a href={link} target="_blank">
+												<h1 className={css.updateName}> Update {tag} </h1>
+											</a>
+											<span className={css.shortDate}>
+												{new Date(timestamp * 1000).toLocaleDateString()}
+											</span>
+											<div
+												dangerouslySetInnerHTML={{
+													__html: sanitize(toHTML(description)),
+												}}
+											/>
+										</li>
+									</>
+								)
+							})
 					) : (
 						<li className={css.updateItem}>Failed to load updates.</li>
 					)}
