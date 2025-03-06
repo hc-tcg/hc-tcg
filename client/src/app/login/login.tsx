@@ -62,6 +62,40 @@ const Login = () => {
 			})
 	}
 
+	if (errorType) {
+		return (
+			<div className={css.loginBackground}>
+				<div className={css.loginContainer}>
+					<div className={classNames(css.logo, syncing && css.hideOnMobile)}>
+						<TcgLogo />
+					</div>
+					<div className={css.errorBanner}>
+						{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
+					</div>
+					<Button
+						className={css.loginButton}
+						type="submit"
+						onClick={() => {
+							const secret = localStorage.getItem('databaseInfo:secret')
+							const uuid = localStorage.getItem('databaseInfo:userId')
+
+							if (!uuid || !secret) return
+
+							dispatch({
+								type: localMessages.LOGIN,
+								login_type: 'sync',
+								uuid,
+								secret,
+							})
+						}}
+					>
+						Retry
+					</Button>
+				</div>
+			</div>
+		)
+	}
+
 	return (
 		<div className={css.loginBackground}>
 			<div className={css.loginContainer}>
@@ -172,11 +206,6 @@ const Login = () => {
 								</div>
 							</form>
 						</div>
-					</div>
-				)}
-				{!syncing && (
-					<div className={css.errorBanner}>
-						{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
 					</div>
 				)}
 				<VersionLinks />
