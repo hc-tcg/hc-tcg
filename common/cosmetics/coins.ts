@@ -1,6 +1,6 @@
 import EyeOfTheSpider from '../achievements/eye-of-the-spider'
 import GoFish from '../achievements/go-fish'
-import GottaSchreep from '../achievements/gotta-screep'
+import GottaSchreep from '../achievements/gotta-schreep'
 import HallOfAll from '../achievements/hall-of-all'
 import HermitsAndCrafting from '../achievements/hermits-and-crafting'
 import HurtinHermits from '../achievements/hurtin-hermits'
