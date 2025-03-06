@@ -26,6 +26,7 @@ import {
 } from 'logic/game/tasks/action-modals-saga'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
+import {getRematchData} from 'logic/session/session-selectors'
 import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {RootState} from 'store'
@@ -34,7 +35,6 @@ import Chat from './chat'
 import EndGameOverlay from './end-game-overlay'
 import css from './game.module.scss'
 import Toolbar from './toolbar'
-import {getRematchData} from 'logic/session/session-selectors'
 
 const renderModal = (
 	openedModal: {id: ModalVariant; info: any} | null,

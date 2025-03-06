@@ -2,14 +2,12 @@ import cn from 'classnames'
 import serverConfig from 'common/config/server-config'
 import {PlayerEntity} from 'common/entities'
 import {EarnedAchievement} from 'common/types/achievements'
+import {RematchData} from 'common/types/app'
 import {GameOutcome, GameVictoryReason} from 'common/types/game-state'
 import Button from 'components/button'
 import {Modal} from 'components/modal'
-import {getRematchData} from 'logic/session/session-selectors'
 import {useEffect, useReducer, useRef, useState} from 'react'
-import {useSelector} from 'react-redux'
 import css from './end-game-overlay.module.scss'
-import {RematchData} from 'common/types/app'
 
 type Props = {
 	outcome: GameOutcome
