@@ -34,6 +34,7 @@ import Chat from './chat'
 import EndGameOverlay from './end-game-overlay'
 import css from './game.module.scss'
 import Toolbar from './toolbar'
+import {getRematchData} from 'logic/session/session-selectors'
 
 const renderModal = (
 	openedModal: {id: ModalVariant; info: any} | null,
@@ -74,6 +75,7 @@ function EndGameOverlayContainer({
 	const isSpectator = useSelector(getIsSpectator)
 	const playerEntity = useSelector(getPlayerEntity)
 	const dispatch = useMessageDispatch()
+	const rematchData = useSelector(getRematchData)
 
 	// Play EX voice lines on hermit deaths and game end
 	const lives = [gameState?.playerEntity, gameState?.opponentPlayerEntity].map(
@@ -138,6 +140,7 @@ function EndGameOverlayContainer({
 					? {type: 'spectator'}
 					: {type: 'player', entity: playerEntity}
 			}
+			rematchData={rematchData}
 			onClose={() => setModalVisible(false)}
 			setMenuSection={setMenuSection}
 			dispatchGameClose={() => {

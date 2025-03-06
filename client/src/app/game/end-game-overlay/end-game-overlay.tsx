@@ -9,6 +9,7 @@ import {getRematchData} from 'logic/session/session-selectors'
 import {useEffect, useReducer, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './end-game-overlay.module.scss'
+import {RematchData} from 'common/types/app'
 
 type Props = {
 	outcome: GameOutcome
@@ -27,6 +28,7 @@ type Props = {
 	nameOfLoser: string | null
 	setMenuSection?: (section: string) => void
 	dispatchGameClose?: () => void
+	rematchData: RematchData | null
 	// Display fake time to ensure consistency in component tests for visuals
 	displayFakeTime?: boolean
 }
@@ -193,9 +195,9 @@ const EndGameOverlay = ({
 	nameOfLoser,
 	setMenuSection,
 	dispatchGameClose,
+	rematchData,
 	displayFakeTime = false,
 }: Props) => {
-	const rematchData = useSelector(getRematchData)
 	const [disableReplay, setDisableReplay] = useState<boolean>(false)
 
 	useEffect(() => {
