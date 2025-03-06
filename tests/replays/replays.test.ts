@@ -17,10 +17,7 @@ import MinerItem from 'common/cards/items/miner-common'
 import query from 'common/components/query'
 import {DragCards} from 'common/types/modal-requests'
 import {GameController} from 'server/game-controller'
-import {
-	bufferToTurnActions,
-	turnActionsToBuffer,
-} from '../../server/src/routines/turn-action-compressor'
+import {TurnActionCompressor} from '../../server/src/routines/turn-action-compressor'
 import {
 	huffmanCompress,
 	huffmanDecompress,
@@ -38,9 +35,11 @@ import {
 } from '../unit/game/utils'
 
 function* afterGame(con: GameController) {
-	const turnActionsBuffer = yield* turnActionsToBuffer(con)
+	const turnActionCompressor = new TurnActionCompressor()
 
-	const turnActions = yield* bufferToTurnActions(
+	const turnActionsBuffer = yield* turnActionCompressor.turnActionsToBuffer(con)
+
+	const turnActions = yield* turnActionCompressor.bufferToTurnActions(
 		con.player1Defs,
 		con.player2Defs,
 		con.game.rngSeed,
