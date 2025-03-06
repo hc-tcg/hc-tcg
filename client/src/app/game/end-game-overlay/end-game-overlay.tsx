@@ -2,6 +2,7 @@ import cn from 'classnames'
 import serverConfig from 'common/config/server-config'
 import {PlayerEntity} from 'common/entities'
 import {EarnedAchievement} from 'common/types/achievements'
+import {RematchData} from 'common/types/app'
 import {GameOutcome, GameVictoryReason} from 'common/types/game-state'
 import Button from 'components/button'
 import {Modal} from 'components/modal'
@@ -25,6 +26,7 @@ type Props = {
 	nameOfLoser: string | null
 	setMenuSection?: (section: string) => void
 	dispatchGameClose?: () => void
+	rematchData: RematchData | null
 	// Display fake time to ensure consistency in component tests for visuals
 	displayFakeTime?: boolean
 }
@@ -156,7 +158,7 @@ const ReplayTimer = ({
 	timerStart,
 }: {displayFakeTime: boolean; timerStart: number}) => {
 	if (displayFakeTime) {
-		return <div className={css.rematchTimeRemaining}>0</div>
+		return <div className={css.rematchTimeRemaining}>0s</div>
 	}
 
 	const timerLength = serverConfig.limits.rematchTime
@@ -191,6 +193,7 @@ const EndGameOverlay = ({
 	nameOfLoser,
 	setMenuSection,
 	dispatchGameClose,
+	rematchData,
 	displayFakeTime = false,
 }: Props) => {
 	const [disableReplay, setDisableReplay] = useState<boolean>(false)
@@ -198,7 +201,7 @@ const EndGameOverlay = ({
 	useEffect(() => {
 		const timeout = setTimeout(() => {
 			setDisableReplay(true)
-		}, serverConfig.limits.rematchTime)
+		}, rematchData?.time || serverConfig.limits.rematchTime)
 		return () => {
 			clearTimeout(timeout)
 		}
@@ -336,7 +339,7 @@ const EndGameOverlay = ({
 					</Button>
 					<Button
 						id={css.rematch}
-						disabled={disableReplay}
+						disabled={disableReplay || !rematchData?.opponentId}
 						onClick={() => {
 							setMenuSection && setMenuSection('rematch')
 							dispatchGameClose && dispatchGameClose()
@@ -344,7 +347,7 @@ const EndGameOverlay = ({
 					>
 						Rematch
 						<ReplayTimer
-							displayFakeTime={displayFakeTime}
+							displayFakeTime={displayFakeTime || !rematchData?.opponentId}
 							timerStart={gameEndTime}
 						></ReplayTimer>
 					</Button>
