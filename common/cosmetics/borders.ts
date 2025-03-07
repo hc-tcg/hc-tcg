@@ -1,6 +1,7 @@
 import HotTake from '../achievements/hot-take'
 import Innefective from '../achievements/inneffective'
 import LoyaltyIII from '../achievements/loyalty-iii'
+import SignalInversion from '../achievements/signal-inversion.test'
 import Win from '../achievements/wins'
 import {Border} from './types'
 
@@ -28,6 +29,11 @@ const BorderDefinitions: Omit<Border, 'type'>[] = [
 		id: 'red_border',
 		name: 'Red',
 		requires: {achievement: HotTake.id},
+	},
+	{
+		id: 'red_and_black',
+		name: 'Redstone',
+		requires: {achievement: SignalInversion.id},
 	},
 	{
 		id: 'silver_border',
