@@ -26,7 +26,7 @@ const RedKing: Achievement = {
 			query.slot.hermit,
 			query.not(query.slot.empty),
 			query.slot.player(player.entity),
-			query.slot.row((_game, row) => (row.health ? row.health < 90 : false)),
+			query.slot.row((_game, row) => (row.health ? row.health <= 90 : false)),
 		)
 
 		if (redHermits.length !== 5) return
