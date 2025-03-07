@@ -136,12 +136,14 @@ test('Automatic reconnect if session is invalid.', async ({page}) => {
 	})
 
 	// Make sure the session really did get updated
-	expect(await page.evaluate(() => {
-		return [
-			sessionStorage.getItem('playerName'),
-			sessionStorage.getItem('censoredPlayerName'),
-			sessionStorage.getItem('playerId'),
-			sessionStorage.getItem('playerSecret'),
-		]
-	})).not.toStrictEqual(['zunda', 'mochi', 'mochimochi', 'zunda'])
+	expect(
+		await page.evaluate(() => {
+			return [
+				sessionStorage.getItem('playerName'),
+				sessionStorage.getItem('censoredPlayerName'),
+				sessionStorage.getItem('playerId'),
+				sessionStorage.getItem('playerSecret'),
+			]
+		}),
+	).not.toStrictEqual(['zunda', 'mochi', 'mochimochi', 'zunda'])
 })
