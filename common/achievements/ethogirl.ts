@@ -3,8 +3,6 @@ import EthosLabRare from '../cards/hermits/ethoslab-rare'
 import EthosLabUltraRare from '../cards/hermits/ethoslab-ultra-rare'
 import ShadEECommon from '../cards/hermits/shadee-common'
 import ShadeEERare from '../cards/hermits/shadeee-rare'
-import {SlotComponent} from '../components'
-import query from '../components/query'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -23,24 +21,21 @@ const Ethogirl: Achievement = {
 	levels: [
 		{
 			name: 'Ethogirl',
-			description:
-				'Place all 3 Etho cards and both Shade-E-E cards on your board at the same time.',
-			steps: 5,
+			description: 'Win a game after playing four different Etho cards.',
+			steps: 4,
 		},
 	],
 	onGameStart(game, player, component, observer) {
+		const variants = new Set()
 		observer.subscribe(player.hooks.onAttach, (card) => {
 			if (!ETHO_CARDS.includes(card.props.id)) return
-			const boardCards = game.components.filter(
-				SlotComponent,
-				query.slot.player(player.entity),
-				query.slot.hermit,
-				(_game, slot) => ETHO_CARDS.includes(slot.card?.props.id as string),
-			)
-			const boardVariants = ETHO_CARDS.filter((id) =>
-				boardCards.some((slot) => slot.card?.props.id === id),
-			)
-			component.bestGoalProgress({goal: 0, progress: boardVariants.length})
+			variants.add(card.props.id)
+		})
+		observer.subscribe(game.hooks.onGameEnd, (outcome) => {
+			if (variants.size < 4) return
+			if (outcome.type !== 'player-won' || outcome.winner !== player.entity)
+				return
+			component.bestGoalProgress({goal: 0, progress: variants.size})
 		})
 	},
 }
