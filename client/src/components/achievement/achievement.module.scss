@@ -15,11 +15,9 @@
 	border: 2px black solid;
 
 	&.completed {
-		background: linear-gradient(
-			90deg,
-			hsl(49, 24%, 13%),
-			hsl(49, 38%, 20%)
-		);
+		background: linear-gradient(90deg,
+				hsl(49, 24%, 13%),
+				hsl(49, 38%, 20%));
 	}
 }
 
@@ -40,8 +38,7 @@
 		width: 5vh;
 		height: 5vh;
 		margin: 1vh;
-		filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black)
-			drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
+		filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black) drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
 	}
 
 	&.heart {
@@ -134,6 +131,11 @@
 	text-align: right;
 	padding-right: 1rem;
 	color: var(--gray-200);
+}
+
+.progressButton {
+	padding: 1rem;
+	margin-right: 1rem;
 }
 
 @media screen and (max-width: 720px) {

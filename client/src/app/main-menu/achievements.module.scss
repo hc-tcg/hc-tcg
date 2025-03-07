@@ -88,9 +88,13 @@
 
 .achievementsInput {
 	height: 2rem;
-	background-color: var(--gray-300);
-	color: black;
+	background-color: var(--gray-400);
+	color: var(--text-light);
 	flex-grow: 1;
+
+	:placeholder {
+		color: var(--gray-200);
+	}
 }
 
 .achievements {
@@ -204,14 +208,12 @@
 	color: var(--text-light);
 
 	:not(img) {
-		filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black)
-			drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
+		filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black) drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
 	}
 
-	> img {
+	>img {
 		margin-right: 0.5rem;
-		filter: drop-shadow(1px 0px 0 white) drop-shadow(-1px 0px 0 white)
-			drop-shadow(0px 1px 0 white) drop-shadow(0px -1px 0 white);
+		filter: drop-shadow(1px 0px 0 white) drop-shadow(-1px 0px 0 white) drop-shadow(0px 1px 0 white) drop-shadow(0px -1px 0 white);
 	}
 }
 
@@ -262,7 +264,7 @@
 	display: flex;
 	align-items: center;
 
-	> img {
+	>img {
 		width: 33%;
 		height: 33%;
 	}
@@ -281,7 +283,7 @@
 .lockOverlay {
 	position: relative;
 
-	> img {
+	>img {
 		position: absolute;
 		height: 32px;
 		image-rendering: crisp-edges;
@@ -289,8 +291,7 @@
 		top: -9.5vh;
 		left: -5vh;
 
-		filter: drop-shadow(2px 0px 0 white) drop-shadow(-2px 0px 0 white)
-			drop-shadow(0px 2px 0 white) drop-shadow(0px -2px 0 white);
+		filter: drop-shadow(2px 0px 0 white) drop-shadow(-2px 0px 0 white) drop-shadow(0px 2px 0 white) drop-shadow(0px -2px 0 white);
 	}
 }
 
@@ -299,12 +300,12 @@
 	flex-direction: row;
 	width: 100%;
 
-	> input {
+	>input {
 		height: 2.75rem;
 		width: 55%;
 	}
 
-	> button {
+	>button {
 		flex-grow: 1;
 	}
 }
@@ -339,11 +340,9 @@
 	border-image-repeat: stretch stretch;
 	border-image-source: url("/images/cosmetics/border/blue.png");
 	border-style: solid;
-	background: linear-gradient(
-		-90deg,
-		hsla(195deg, 53%, 60%, 35%),
-		hsla(195deg, 100%, 60%, 50%)
-	);
+	background: linear-gradient(-90deg,
+			hsla(195deg, 53%, 60%, 35%),
+			hsla(195deg, 100%, 60%, 50%));
 	background-repeat: repeat-x;
 	background-size: contain;
 	background-position: left;
@@ -357,7 +356,7 @@
 	}
 
 	.playerName {
-		> h1 {
+		>h1 {
 			font-family: MinecraftBold;
 			filter: drop-shadow(0 2px 0 hsla(0deg, 0%, 0%, 35%));
 			text-overflow: ellipsis;
@@ -365,7 +364,7 @@
 			overflow: hidden;
 		}
 
-		> p {
+		>p {
 			letter-spacing: 1px;
 			font-family: Minecrafter, sans-serif;
 			text-transform: uppercase;
@@ -382,7 +381,7 @@
 		gap: 4px;
 		margin-left: auto;
 
-		> img {
+		>img {
 			height: calc(20px * 2);
 			width: calc(20px * 2);
 			image-rendering: crisp-edges;
@@ -392,6 +391,37 @@
 
 h2 {
 	text-align: center;
+}
+
+.progressModal {
+	max-height: 80vh;
+	overflow: auto;
+	padding: 0.5rem;
+
+	>div {
+		:nth-child(even) {
+			background-color: var(--gray-900);
+		}
+
+		:nth-child(odd) {
+			background-color: var(--gray-700);
+		}
+
+		>div {
+			padding: 0.5rem;
+			display: flex;
+			flex-direction: row;
+
+			:first-child {
+				flex-grow: 1;
+				background-color: rgba(0, 0, 0, 0);
+			}
+
+			:last-child {
+				background-color: rgba(0, 0, 0, 0);
+			}
+		}
+	}
 }
 
 @media screen and (max-width: 720px) {

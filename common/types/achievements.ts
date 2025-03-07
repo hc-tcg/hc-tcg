@@ -18,3 +18,8 @@ export type EarnedAchievement = {
 	originalProgress: number
 	newProgress: number
 }
+
+export type Goal = {
+	name: string
+	complete: boolean
+}

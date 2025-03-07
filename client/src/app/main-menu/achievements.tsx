@@ -16,6 +16,7 @@ import AchievementComponent from 'components/achievement'
 import Button from 'components/button'
 import Checkbox from 'components/checkbox'
 import MenuLayout from 'components/menu-layout'
+import {Modal} from 'components/modal'
 import Tabs from 'components/tabs/tabs'
 import Tooltip from 'components/tooltip'
 import {
@@ -24,7 +25,7 @@ import {
 } from 'logic/game/database/database-selectors'
 import {localMessages} from 'logic/messages'
 import {getSession} from 'logic/session/session-selectors'
-import {useRef, useState} from 'react'
+import {ReactNode, useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './achievements.module.scss'
 
@@ -239,6 +240,11 @@ function Cosmetics({setMenuSection, page}: Props) {
 	const [hideObtained, setHideObtained] = useState<boolean>(false)
 	const [achievementsSearch, setAchievementsSearch] = useState<string>('')
 
+	const [progressModalOpen, setProgressModalOpen] = useState<boolean>(false)
+	const [progressModalText, setProgressModalText] = useState<ReactNode | null>(
+		null,
+	)
+
 	const progressData = useSelector(getAchievements)
 
 	const usernameRef = useRef<HTMLInputElement>(null)
@@ -266,179 +272,192 @@ function Cosmetics({setMenuSection, page}: Props) {
 	)
 
 	return (
-		<MenuLayout
-			back={() =>
-				setMenuSection(page === 'achievements' ? 'main-menu' : 'play-select')
-			}
-			title="Achievements"
-			returnText={page === 'achievements' ? 'Main Menu' : 'Play'}
-			className={css.cosmeticsLayout}
-		>
-			<div
-				className={classNames(css.body, tab === 'rewards' && css.rewardsBody)}
+		<>
+			<MenuLayout
+				back={() =>
+					setMenuSection(page === 'achievements' ? 'main-menu' : 'play-select')
+				}
+				title="Achievements"
+				returnText={page === 'achievements' ? 'Main Menu' : 'Play'}
+				className={css.cosmeticsLayout}
 			>
-				<div className={css.body2}>
-					<Tabs
-						selected={tab}
-						setSelected={selectTab}
-						tabs={['achievements', 'rewards']}
-					/>
-					<div className={css.itemSelector}>
-						{tab === 'achievements' && (
-							<>
-								<div className={css.achievementsHeader}>
-									<div className={css.sectionHeader}>Your Achievements</div>
-									<input
-										placeholder={'Search Achievements...'}
-										className={css.achievementsInput}
-										defaultValue={achievementsSearch}
-										onChange={(e) => {
-											setAchievementsSearch(e.target.value)
-										}}
-									></input>
-									<div className={css.checkboxes}>
-										<div>Hide Obtained Achievements</div>
-										<Checkbox
-											onCheck={() => setHideObtained(!hideObtained)}
-											defaultChecked={hideObtained}
-										></Checkbox>
+				<div
+					className={classNames(css.body, tab === 'rewards' && css.rewardsBody)}
+				>
+					<div className={css.body2}>
+						<Tabs
+							selected={tab}
+							setSelected={selectTab}
+							tabs={['achievements', 'rewards']}
+						/>
+						<div className={css.itemSelector}>
+							{tab === 'achievements' && (
+								<>
+									<div className={css.achievementsHeader}>
+										<div className={css.sectionHeader}>Your Achievements</div>
+										<input
+											placeholder={'Search Achievements...'}
+											className={css.achievementsInput}
+											defaultValue={achievementsSearch}
+											onChange={(e) => {
+												setAchievementsSearch(e.target.value)
+											}}
+										></input>
+										<div className={css.checkboxes}>
+											<div>Hide Obtained Achievements</div>
+											<Checkbox
+												onCheck={() => setHideObtained(!hideObtained)}
+												defaultChecked={hideObtained}
+											></Checkbox>
+										</div>
+										<div className={css.checkboxes}>
+											<div>Hide Unobtained Achievements</div>
+											<Checkbox
+												onCheck={() => setHideUnobtained(!hideUnobtained)}
+												defaultChecked={hideUnobtained}
+											></Checkbox>
+										</div>
 									</div>
-									<div className={css.checkboxes}>
-										<div>Hide Unobtained Achievements</div>
-										<Checkbox
-											onCheck={() => setHideUnobtained(!hideUnobtained)}
-											defaultChecked={hideUnobtained}
-										></Checkbox>
+									<div className={css.achievements}>
+										{ACHIEVEMENTS_LIST.map((achievement, i) => {
+											return (
+												<AchievementComponent
+													key={i}
+													achievement={achievement}
+													progressData={progressData}
+													hideUnobtained={hideUnobtained}
+													hideObtained={hideObtained}
+													filter={achievementsSearch}
+													setProgressModalOpen={setProgressModalOpen}
+													setProgressModalText={(e) => {
+														if (progressModalText) return
+														setProgressModalText(e)
+													}}
+												/>
+											)
+										})}
+									</div>
+								</>
+							)}
+							{tab === 'rewards' && (
+								<div className={css.cosmeticsContainerContainer}>
+									<div className={css.cosmeticsContainer}>
+										<div className={css.sectionHeader}>Backgrounds</div>
+										<div className={css.cosmetics}>
+											{sortedCosmetics.background.map((cosmetic) => (
+												<CosmeticTooltipItem
+													cosmetic={cosmetic}
+												></CosmeticTooltipItem>
+											))}
+										</div>
+										<div className={css.sectionHeader}>Borders</div>
+										<div className={css.cosmetics}>
+											{sortedCosmetics.border.map((cosmetic) => (
+												<CosmeticTooltipItem
+													cosmetic={cosmetic}
+												></CosmeticTooltipItem>
+											))}
+										</div>
+										<div className={css.sectionHeader}>Coins</div>
+										<div className={css.cosmetics}>
+											{sortedCosmetics.coin.map((cosmetic) => (
+												<CosmeticTooltipItem
+													cosmetic={cosmetic}
+												></CosmeticTooltipItem>
+											))}
+										</div>
+										<div className={css.sectionHeader}>Hearts</div>
+										<div className={css.cosmetics}>
+											{sortedCosmetics.heart.map((cosmetic) => (
+												<CosmeticTooltipItem
+													cosmetic={cosmetic}
+												></CosmeticTooltipItem>
+											))}
+										</div>
+										<div className={css.sectionHeader}>Titles</div>
+										<div className={css.cosmeticsTitles}>
+											{sortedCosmetics.title.map((cosmetic) => (
+												<CosmeticTooltipItem
+													cosmetic={cosmetic}
+												></CosmeticTooltipItem>
+											))}
+										</div>
 									</div>
 								</div>
-								<div className={css.achievements}>
-									{ACHIEVEMENTS_LIST.map((achievement, i) => {
-										return (
-											<AchievementComponent
-												key={i}
-												achievement={achievement}
-												progressData={progressData}
-												hideUnobtained={hideUnobtained}
-												hideObtained={hideObtained}
-												filter={achievementsSearch}
-											/>
-										)
-									})}
-								</div>
-							</>
-						)}
-						{tab === 'rewards' && (
-							<div className={css.cosmeticsContainerContainer}>
-								<div className={css.cosmeticsContainer}>
-									<div className={css.sectionHeader}>Backgrounds</div>
-									<div className={css.cosmetics}>
-										{sortedCosmetics.background.map((cosmetic) => (
-											<CosmeticTooltipItem
-												cosmetic={cosmetic}
-											></CosmeticTooltipItem>
-										))}
-									</div>
-									<div className={css.sectionHeader}>Borders</div>
-									<div className={css.cosmetics}>
-										{sortedCosmetics.border.map((cosmetic) => (
-											<CosmeticTooltipItem
-												cosmetic={cosmetic}
-											></CosmeticTooltipItem>
-										))}
-									</div>
-									<div className={css.sectionHeader}>Coins</div>
-									<div className={css.cosmetics}>
-										{sortedCosmetics.coin.map((cosmetic) => (
-											<CosmeticTooltipItem
-												cosmetic={cosmetic}
-											></CosmeticTooltipItem>
-										))}
-									</div>
-									<div className={css.sectionHeader}>Hearts</div>
-									<div className={css.cosmetics}>
-										{sortedCosmetics.heart.map((cosmetic) => (
-											<CosmeticTooltipItem
-												cosmetic={cosmetic}
-											></CosmeticTooltipItem>
-										))}
-									</div>
-									<div className={css.sectionHeader}>Titles</div>
-									<div className={css.cosmeticsTitles}>
-										{sortedCosmetics.title.map((cosmetic) => (
-											<CosmeticTooltipItem
-												cosmetic={cosmetic}
-											></CosmeticTooltipItem>
-										))}
-									</div>
-								</div>
-							</div>
-						)}
-					</div>
-				</div>
-				{tab === 'rewards' && (
-					<div className={css.leftSideCosmetics}>
-						<h2 className={css.hideOnMobile}>Your Appearance</h2>
-						<div className={css.appearance}>
-							<CosmeticPreview />
+							)}
 						</div>
-						<img
-							className={classNames(css.appearanceCoin, css.hideOnMobile)}
-							style={{
-								borderColor: `${COINS[cosmetics.coin.id].borderColor}`,
-								boxShadow: `0 0 4px ${COINS[cosmetics.coin.id].borderColor}`,
-							}}
-							src={`/images/cosmetics/coin/${cosmetics.coin.id}.png`}
-							alt={'Coin'}
-						></img>
-						<h2 className={css.hideOnMobile}>Your Info</h2>
-						<div className={css.nameSelector}>
-							<div className={css.updatePlayerInfo}>
-								<input ref={usernameRef} placeholder={'Username'}></input>
-								<Button
-									onClick={() => {
-										if (!usernameRef.current) return
-										if (usernameRef.current.value.length < 3) {
+					</div>
+					{tab === 'rewards' && (
+						<div className={css.leftSideCosmetics}>
+							<h2 className={css.hideOnMobile}>Your Appearance</h2>
+							<div className={css.appearance}>
+								<CosmeticPreview />
+							</div>
+							<img
+								className={classNames(css.appearanceCoin, css.hideOnMobile)}
+								style={{
+									borderColor: `${COINS[cosmetics.coin.id].borderColor}`,
+									boxShadow: `0 0 4px ${COINS[cosmetics.coin.id].borderColor}`,
+								}}
+								src={`/images/cosmetics/coin/${cosmetics.coin.id}.png`}
+								alt={'Coin'}
+							></img>
+							<h2 className={css.hideOnMobile}>Your Info</h2>
+							<div className={css.nameSelector}>
+								<div className={css.updatePlayerInfo}>
+									<input ref={usernameRef} placeholder={'Username'}></input>
+									<Button
+										onClick={() => {
+											if (!usernameRef.current) return
+											if (usernameRef.current.value.length < 3) {
+												dispatch({
+													type: localMessages.TOAST_OPEN,
+													open: true,
+													title: 'Username Invalid',
+													description:
+														'Your username must be at least 3 characters long.',
+												})
+												return
+											}
 											dispatch({
-												type: localMessages.TOAST_OPEN,
-												open: true,
-												title: 'Username Invalid',
-												description:
-													'Your username must be at least 3 characters long.',
+												type: localMessages.USERNAME_SET,
+												name: usernameRef.current.value,
 											})
-											return
-										}
-										dispatch({
-											type: localMessages.USERNAME_SET,
-											name: usernameRef.current.value,
-										})
-									}}
-								>
-									Update Username
-								</Button>
-							</div>
-							<div className={css.updatePlayerInfo}>
-								<input
-									ref={minecraftNameRef}
-									placeholder={'Minecraft Username'}
-									minLength={3}
-								></input>
-								<Button
-									onClick={() => {
-										if (!minecraftNameRef.current) return
-										dispatch({
-											type: localMessages.MINECRAFT_NAME_SET,
-											name: minecraftNameRef.current.value,
-										})
-									}}
-								>
-									Update Player Head
-								</Button>
+										}}
+									>
+										Update Username
+									</Button>
+								</div>
+								<div className={css.updatePlayerInfo}>
+									<input
+										ref={minecraftNameRef}
+										placeholder={'Minecraft Username'}
+										minLength={3}
+									></input>
+									<Button
+										onClick={() => {
+											if (!minecraftNameRef.current) return
+											dispatch({
+												type: localMessages.MINECRAFT_NAME_SET,
+												name: minecraftNameRef.current.value,
+											})
+										}}
+									>
+										Update Player Head
+									</Button>
+								</div>
 							</div>
 						</div>
-					</div>
-				)}
-			</div>
-		</MenuLayout>
+					)}
+				</div>
+			</MenuLayout>
+			<Modal
+				setOpen={progressModalOpen}
+				onClose={() => setProgressModalOpen(false)}
+			>
+				<div className={css.progressModal}>{progressModalText}</div>
+			</Modal>
+		</>
 	)
 }
 

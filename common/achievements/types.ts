@@ -4,12 +4,14 @@ import {
 	PlayerComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
+import {Goal} from '../types/achievements'
 import {GameOutcome} from '../types/game-state'
 
 export type Achievement = {
 	id: string
 	numericId: number
 	getProgress: (goals: Record<number, number>) => number | undefined
+	getGoals?: (goals: Record<number, number>) => Array<Goal>
 	progressInBossGame?: boolean
 
 	levels: Array<{
