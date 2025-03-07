@@ -88,9 +88,13 @@
 
 .achievementsInput {
 	height: 2rem;
-	background-color: var(--gray-300);
-	color: black;
+	background-color: var(--gray-400);
+	color: var(--text-light);
 	flex-grow: 1;
+
+	:placeholder {
+		color: var(--gray-200);
+	}
 }
 
 .achievements {
