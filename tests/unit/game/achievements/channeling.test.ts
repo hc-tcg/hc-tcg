@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import Channeling from 'common/achievements/targeted-lightning'
+import Channeling from 'common/achievements/channeling'
 import LightningRod from 'common/cards/attach/lightning-rod'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GoatfatherRare from 'common/cards/hermits/goatfather-rare'

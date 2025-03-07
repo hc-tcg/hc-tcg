@@ -29,7 +29,7 @@ import PeskyBird from './pesky-bird'
 import PoePoeEnforcer from './poe-poe-enforcer'
 import ServerLag from './server-lag'
 import SUStainable from './sustainable'
-import Channeling from './targeted-lightning'
+import Channeling from './channeling'
 import TeamStar from './team-star'
 import {
 	BalancedWins,
