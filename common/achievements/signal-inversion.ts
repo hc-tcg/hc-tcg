@@ -1,9 +1,6 @@
-import Fortune from '../cards/single-use/fortune'
-import {SlotComponent} from '../components'
-import query from '../components/query'
 import BadOmenEffect from '../status-effects/badomen'
 import FortuneEffect from '../status-effects/fortune'
-import {afterApply, afterAttack, onCoinFlip} from '../types/priorities'
+import {afterAttack, onCoinFlip} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -30,7 +27,7 @@ const SignalInversion: Achievement = {
 			player.hooks.onCoinFlip,
 			onCoinFlip.ACHIEVEMENTS,
 			(flips) => {
-				console.log("flipping")
+				console.log('flipping')
 				hasFlippedThisTurn = true
 				return flips
 			},

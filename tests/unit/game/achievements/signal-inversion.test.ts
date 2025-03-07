@@ -1,6 +1,8 @@
 import {describe, expect, test} from '@jest/globals'
 import SignalInversion from 'common/achievements/signal-inversion'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import EthosLabUltraRare from 'common/cards/hermits/ethoslab-ultra-rare'
+import BadOmen from 'common/cards/single-use/bad-omen'
 import Fortune from 'common/cards/single-use/fortune'
 import {
 	applyEffect,
@@ -10,8 +12,6 @@ import {
 	playCardFromHand,
 	testAchivement,
 } from '../utils'
-import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import BadOmen from 'common/cards/single-use/bad-omen'
 
 describe('Test "Signal Inversion" achievement', () => {
 	test('"Signal Inversion" increments', () => {
