@@ -211,7 +211,7 @@ function Settings({setMenuSection}: Props) {
 		setModal(null)
 	}
 
-	const handleViewUpdates = () => {
+	const openUpdatesModal = () => {
 		setModal(<UpdatesModal onClose={closeModal} />)
 	}
 
@@ -347,7 +347,7 @@ function Settings({setMenuSection}: Props) {
 			{modal}
 			<MenuLayout
 				back={() => changeMenuSection('main-menu')}
-				title="More"
+				title="Settings"
 				returnText="Main Menu"
 				className={css.settingsMenu}
 			>
@@ -396,13 +396,13 @@ function Settings({setMenuSection}: Props) {
 										side === 'Alphabetical' ? 'First Tag' : 'Alphabetical'
 									}
 								/>
-								<hr />
 								<Button
 									variant="default"
-									onClick={handleViewUpdates}
-									className={css.settingItem}
+									id={css.statistics}
+									onClick={openUpdatesModal}
+									className={css.mainMenuButton}
 								>
-									Updates
+									Statistics
 								</Button>
 							</div>
 						)}
