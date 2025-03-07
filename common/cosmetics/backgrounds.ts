@@ -1,3 +1,4 @@
+import FreeAndSteel from '../achievements/free-and-steel'
 import HowDidWeGetHere from '../achievements/how-did-we-get-here'
 import AllCards from '../achievements/jack-of-all-cards'
 import {
@@ -33,7 +34,7 @@ const BackgroundDefinitions: Omit<Background, 'type'>[] = [
 	{
 		id: 'gravel',
 		name: 'Gravel',
-		requires: undefined,
+		requires: {achievement: FreeAndSteel.id},
 	},
 	{
 		id: 'balanced',
