@@ -29,7 +29,7 @@ import PeskyBird from './pesky-bird'
 import PoePoeEnforcer from './poe-poe-enforcer'
 import ServerLag from './server-lag'
 import SUStainable from './sustainable'
-import TargetedLightning from './targeted-lightning'
+import Channeling from './targeted-lightning'
 import TeamStar from './team-star'
 import {
 	BalancedWins,
@@ -74,7 +74,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	UselessMachine,
 	GoFish,
 	CertifiedZombie,
-	TargetedLightning,
+	Channeling,
 
 	// Effect card / status effect - Challenge/Combo
 	GottaSchreep,

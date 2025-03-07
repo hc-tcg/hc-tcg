@@ -1,62 +1,49 @@
 import LightningRod from '../cards/attach/lightning-rod'
-import {CardComponent} from '../components'
-import query from '../components/query'
-import {TargetBlockEffect} from '../status-effects/target-block'
 import {afterAttack} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
-const TargetedLightning: Achievement = {
+const Channeling: Achievement = {
 	...achievement,
 	numericId: 22,
-	id: 'targeted_lightning',
+	id: 'channeling',
 	levels: [
 		{
-			name: 'Targeted Lightning',
+			name: 'Channeling',
 			steps: 1,
 			description:
-				'Knock out an AFK Hermit with target block while the opponent has a lightning rod on the board.',
+				'Redirect KO worthy damage away from your active Hermit with Lightning Rod.',
 		},
 	],
 	onGameStart(game, player, component, observer) {
-		let incrementGoalProgress = false
-
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.ACHIEVEMENTS,
 			(attack) => {
-				if (incrementGoalProgress) return
-				if (attack.player.entity !== player.entity) return
+				if (attack.player.entity !== player.opponentPlayer.entity) return
 				const target = attack.target
+				if (target === player.activeRowEntity) return
 				if (!target || target.health) return
-				const targetEffect = target
-					.getHermit()
-					?.getStatusEffect(TargetBlockEffect)
-				if (!targetEffect) return
 				if (
 					!attack
 						.getHistory('redirect')
-						.find((history) => history.source === targetEffect.entity)
+						.find(
+							(history) =>
+								game.components.get(history.source as any)?.props.id ===
+								LightningRod.id,
+						)
 				)
 					return
 
 				if (
-					game.components.find(
-						CardComponent,
-						query.card.is(LightningRod),
-						query.card.slot(query.slot.opponent, query.slot.attach),
-					)
+					player.activeRow?.health &&
+					attack.getDamage() > player.activeRow.health
 				) {
-					incrementGoalProgress = true
-					observer.subscribe(target.hooks.onKnockOut, () => {
-						component.incrementGoalProgress({goal: 0})
-						observer.unsubscribe(target.hooks.onKnockOut)
-						incrementGoalProgress = false
-					})
+					component.incrementGoalProgress({goal: 0})
 				}
 			},
 		)
 	},
 }
 
-export default TargetedLightning
+export default Channeling
