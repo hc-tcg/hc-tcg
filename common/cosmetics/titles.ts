@@ -3,6 +3,7 @@ import CertifiedZombie from '../achievements/certified-zombie'
 import RedKing from '../achievements/close-call'
 import DefeatEvilX from '../achievements/defeat-evil-x'
 import Ethogirl from '../achievements/ethogirl'
+import GodsFavoritePrincess from '../achievements/gods-favorite-princess'
 import IsGreat from '../achievements/is-great'
 import MasterOfPuppets from '../achievements/master-of-puppets'
 import NakedAndScared from '../achievements/naked-and-scared'
@@ -55,6 +56,11 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		id: 'evil_xterminator',
 		name: 'Evil X-Terminator',
 		requires: {achievement: DefeatEvilX.id},
+	},
+	{
+		id: 'gods_favorite_princess',
+		name: "God's Favorite Princess",
+		requires: {achievement: GodsFavoritePrincess.id},
 	},
 	{
 		id: 'hermit_gang',
