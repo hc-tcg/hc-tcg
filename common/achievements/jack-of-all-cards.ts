@@ -1,5 +1,6 @@
 import {CARDS_LIST} from '../cards'
 import {Card} from '../cards/types'
+import {Goal} from '../types/achievements'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -19,6 +20,27 @@ const AllCards: Achievement = {
 	],
 	getProgress(goals) {
 		return Object.values(goals).filter((goal) => goal > 0).length
+	},
+	getGoals(goals) {
+		const outputGoals: Array<Goal> = []
+		CARDS_LIST.forEach((card) => {
+			if (card.expansion !== 'default') return
+
+			const getRarity = () => {
+				if (card.category !== 'hermit') return ''
+				if (card.rarity === 'common') return '(Common)'
+				if (card.rarity === 'rare') return '(Rare)'
+				if (card.rarity === 'ultra_rare') return '(Ultra Rare)'
+			}
+
+			const rarity = getRarity()
+
+			outputGoals.push({
+				name: `${card.name} ${rarity}`,
+				complete: goals[card.numericId] > 0,
+			})
+		})
+		return outputGoals
 	},
 	onGameStart(game, player, component, observer) {
 		const playedCards: Set<Card['numericId']> = new Set()

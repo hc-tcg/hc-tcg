@@ -3,6 +3,8 @@ import {Achievement} from 'common/achievements/types'
 import {ALL_COSMETICS} from 'common/cosmetics'
 import {AchievementProgress} from 'common/types/achievements'
 import css from './achievement.module.scss'
+import {ReactNode} from 'react'
+import Button from 'components/button'
 
 type Props = {
 	achievement: Achievement
@@ -10,6 +12,8 @@ type Props = {
 	hideUnobtained: boolean
 	hideObtained: boolean
 	filter: string
+	setProgressModalText: (children: ReactNode) => void
+	setProgressModalOpen: (b: boolean) => void
 }
 export default function AchievementComponent({
 	achievement,
@@ -17,6 +21,8 @@ export default function AchievementComponent({
 	hideUnobtained,
 	hideObtained,
 	filter,
+	setProgressModalText,
+	setProgressModalOpen,
 }: Props) {
 	const progress =
 		(progressData[achievement.numericId] !== undefined
@@ -90,6 +96,7 @@ export default function AchievementComponent({
 					css.achievementContainer,
 					progress >= level.steps && css.completed,
 				)}
+				key={level.name}
 			>
 				{icon}
 				<div className={css.mainArea}>
@@ -120,6 +127,33 @@ export default function AchievementComponent({
 									}}
 								></div>
 							</div>
+							{achievement.getGoals && (
+								<Button
+									onClick={() => {
+										if (!achievement.getGoals) return
+										setProgressModalText(
+											<div>
+												{achievement
+													.getGoals(
+														progressData[achievement.numericId]?.goals ?? {},
+													)
+													.map((goal) => {
+														return (
+															<div>
+																<div>{goal.name}</div>
+																{goal.complete === true && <div>Completed</div>}
+															</div>
+														)
+													})}
+											</div>,
+										)
+										setProgressModalOpen(true)
+									}}
+									className={css.progressButton}
+								>
+									?
+								</Button>
+							)}
 						</div>
 						{completionTime && (
 							<div className={css.completionTime}>
