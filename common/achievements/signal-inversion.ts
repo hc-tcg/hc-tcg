@@ -45,6 +45,7 @@ const SignalInversion: Achievement = {
 				if (!player.hasStatusEffect(FortuneEffect)) return
 
 				component.incrementGoalProgress({goal: 0})
+				hasFlippedThisTurn = false
 			},
 		)
 	},
