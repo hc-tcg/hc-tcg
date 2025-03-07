@@ -39,7 +39,6 @@ function MainMenu({setMenuSection}: Props) {
 
 	const updates = useSelector(getUpdates)
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(true)
-	const [riddleModal, showRiddleModal] = useState<boolean>(false)
 	const latestUpdateView = localStorage.getItem('latestUpdateView')
 
 	const welcomeMessage = newPlayer ? 'Welcome' : 'Welcome Back'
@@ -56,44 +55,6 @@ function MainMenu({setMenuSection}: Props) {
 			) : (
 				<></>
 			)}
-			<Modal
-				setOpen={riddleModal}
-				onClose={() => showRiddleModal(false)}
-				title={'The Riddle'}
-			>
-				<Modal.Description>
-					<p>
-						Our next update is going to be big. So we created a riddle that
-						reveals the release date.
-					</p>
-					<p>
-						Begin in the place where this all began, Weave nonsense by join
-						date, you'll find that you can.
-					</p>
-					<p>
-						Create a statement that makes sense as a whole, Take the first of
-						each second - you're halfway to your goal!
-					</p>
-					<p>
-						Select the parts that create a tone, Put them in order, they're no
-						use alone.
-					</p>
-					<p>
-						Then number the hearts to discover the key Triple each part and use
-						- then you'll see!
-					</p>
-					<p>
-						<b>Want to help solve the riddle? Join our discord!</b>
-					</p>
-					<Button
-						onClick={() => {
-							window.open('https://discord.gg/uk4evqT7Ep')
-						}}
-					>
-						Join Discord
-					</Button>
-				</Modal.Description>
-			</Modal>
 			<div className={css.mainmenu}>
 				<div className={css.playerInfo}>
 					<p id={css.infoName}>
@@ -152,6 +113,14 @@ function MainMenu({setMenuSection}: Props) {
 							className={css.mainMenuButton}
 						>
 							Statistics
+						</Button>
+						<Button
+							variant="default"
+							id={css.updates}
+							onClick={() => setUpdatesOpen(true)}
+							className={css.mainMenuButton}
+						>
+							Updates
 						</Button>
 					</nav>
 					<Beef />

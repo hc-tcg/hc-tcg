@@ -97,7 +97,8 @@ nav {
         "deck"
         "achievements"
         "settings"
-        "more";
+		"statistics"
+        "updates";
 	animation: fadeIn 250ms ease-in-out forwards;
 }
 
@@ -111,7 +112,8 @@ nav {
 			"public public"
 			"deck deck"
 			"achievements achievements"
-			"statistics settings";
+			"settings settings"
+			"statistics updates";
 	}
 }
 
@@ -119,41 +121,26 @@ nav {
 	grid-area: public;
 }
 
-#privateCreate {
-	grid-area: private-create;
-}
-
-#soloGame {
-	grid-area: solo-game;
-}
-
 #deck {
 	grid-area: deck;
-}
-
-#settings {
-	grid-area: settings;
-}
-
-#logout {
-	grid-area: logout;
-}
-
-#tutorial {
-	grid-area: tutorial;
 }
 
 #achievements {
 	grid-area: achievements;
 }
 
-#gameHistory {
-	grid-area: game-history;
+#settings {
+	grid-area: settings;
 }
 
-#hof {
-	grid-area: hof;
+#statistics {
+	grid-area: statistics;
 }
+
+#updates {
+	grid-area: updates;
+}
+
 
 .body {
 	display: flex;
