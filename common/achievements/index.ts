@@ -1,6 +1,7 @@
 import British from './british'
 import CantTouchThis from './cant-touch-this'
 import CertifiedZombie from './certified-zombie'
+import Channeling from './channeling'
 import RedKing from './close-call'
 import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
@@ -30,7 +31,6 @@ import PoePoeEnforcer from './poe-poe-enforcer'
 import ServerLag from './server-lag'
 import SignalInversion from './signal-inversion'
 import SUStainable from './sustainable'
-import TargetedLightning from './targeted-lightning'
 import TeamStar from './team-star'
 import {
 	BalancedWins,
@@ -76,7 +76,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	UselessMachine,
 	GoFish,
 	CertifiedZombie,
-	TargetedLightning,
+	Channeling,
 
 	// Effect card / status effect - Challenge/Combo
 	GottaSchreep,
