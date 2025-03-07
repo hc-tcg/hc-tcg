@@ -134,4 +134,14 @@ test('Automatic reconnect if session is invalid.', async ({page}) => {
 		console.log(global.getState().session.connected)
 		return global.getState().session.connected
 	})
+
+	// Make sure the session really did get updated
+	expect(await page.evaluate(() => {
+		return [
+			sessionStorage.getItem('playerName'),
+			sessionStorage.getItem('censoredPlayerName'),
+			sessionStorage.getItem('playerId'),
+			sessionStorage.getItem('playerSecret'),
+		]
+	})).not.toStrictEqual(['zunda', 'mochi', 'mochimochi', 'zunda'])
 })
