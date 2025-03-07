@@ -8,7 +8,7 @@ export type SocketType = {
 		version: string | null
 		playerName: string
 		minecraftName: string
-		playerId: PlayerId
+		playerId?: PlayerId
 		playerUuid: string
 		playerSecret: string
 	}
