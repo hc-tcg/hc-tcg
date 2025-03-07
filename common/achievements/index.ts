@@ -28,6 +28,7 @@ import PackOfWolves from './pack-of-wolves'
 import PeskyBird from './pesky-bird'
 import PoePoeEnforcer from './poe-poe-enforcer'
 import ServerLag from './server-lag'
+import SignalInversion from './signal-inversion'
 import SUStainable from './sustainable'
 import TargetedLightning from './targeted-lightning'
 import TeamStar from './team-star'
@@ -59,7 +60,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	DefeatEvilX,
 	NoDerpcoins,
 
-	// Wincon
+	// Win Condition
 	DeckedOut,
 	HurtinHermits,
 
@@ -70,6 +71,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	PackOfWolves,
 	FreeAndSteel,
 	SUStainable,
+
 	// effect card - challenge/combo
 	UselessMachine,
 	GoFish,
@@ -82,6 +84,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	EyeOfTheSpider,
 	British,
 	MasterOfPuppets,
+	SignalInversion,
 
 	// Misc - Challenge
 	GodsFavoritePrincess,
