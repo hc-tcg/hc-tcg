@@ -357,7 +357,7 @@ function Statistics({setMenuSection}: Props) {
 	}
 
 	async function getData() {
-		if (tab !== 'hof') return
+		if (tab !== 'Hall of Fame') return
 		let url = `${STATS_URL}/${endpoints[selectedEndpoint]()}`
 		try {
 			const response = await fetch(url)
@@ -612,11 +612,13 @@ function Statistics({setMenuSection}: Props) {
 				</tr>
 				<tr>
 					<th>Average game length</th>
-					<td>{formatTime(game.gameLength.averageLength)}</td>
+					<td>
+						{game.gameLength && formatTime(game.gameLength.averageLength)}
+					</td>
 				</tr>
 				<tr>
 					<th>Median game length</th>
-					<td>{formatTime(game.gameLength.medianLength)}</td>
+					<td>{game.gameLength && formatTime(game.gameLength.medianLength)}</td>
 				</tr>
 			</table>
 		)
