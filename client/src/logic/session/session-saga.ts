@@ -395,11 +395,13 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 		})
 
 		clearSession()
+		// Reset the player ID so when we reconnect, it is as a new player
+		socket.auth.playerId = undefined
 		socket.disconnect()
 
 		return {
 			success: false,
-			reason: 'timeout',
+			reason: 'invalid_session',
 		}
 	}
 
