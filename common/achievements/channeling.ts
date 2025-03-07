@@ -1,4 +1,5 @@
 import LightningRod from '../cards/attach/lightning-rod'
+import {CardComponent} from '../components'
 import {afterAttack} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
@@ -25,13 +26,11 @@ const Channeling: Achievement = {
 				if (target === player.activeRowEntity) return
 				if (!target || target.health) return
 				if (
-					!attack
-						.getHistory('redirect')
-						.find(
-							(history) =>
-								game.components.get(history.source as any)?.props.id ===
-								LightningRod.id,
-						)
+					!attack.getHistory('redirect').find((history) => {
+						let creator = game.components.get(history.source as any)
+						if (!(creator instanceof CardComponent)) return
+						return creator.props.id === LightningRod.id
+					})
 				)
 					return
 
