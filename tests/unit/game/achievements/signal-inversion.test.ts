@@ -1,21 +1,126 @@
 import {describe, expect, test} from '@jest/globals'
-import EyeOfTheSpider from 'common/achievements/eye-of-the-spider'
-import SignalInversion from 'common/achievements/signal-inversion.test'
+import SignalInversion from 'common/achievements/signal-inversion'
 import EthosLabUltraRare from 'common/cards/hermits/ethoslab-ultra-rare'
-import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
 import Fortune from 'common/cards/single-use/fortune'
-import {testAchivement} from '../utils'
+import {
+	applyEffect,
+	attack,
+	endTurn,
+	forfeit,
+	playCardFromHand,
+	testAchivement,
+} from '../utils'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import BadOmen from 'common/cards/single-use/bad-omen'
 
 describe('Test "Signal Inversion" achievement', () => {
-	test('"Signal Inversion" counts multiple attacks as one progress', () => {
+	test('"Signal Inversion" increments', () => {
 		testAchivement(
 			{
 				achievement: SignalInversion,
 				playerOneDeck: [EthosLabUltraRare, Fortune],
-				playerTwoDeck: [GeminiTayCommon, GeminiTayCommon],
-				playGame: function* (_game) {},
+				playerTwoDeck: [EthosLabCommon, BadOmen],
+				playGame: function* (game) {
+					yield* playCardFromHand(game, EthosLabUltraRare, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Fortune, 'single_use')
+					yield* applyEffect(game)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* forfeit(game.currentPlayer.entity)
+				},
 				checkAchivement(_game, achievement, _outcome) {
-					expect(EyeOfTheSpider.getProgress(achievement.goals)).toBe(1)
+					expect(SignalInversion.getProgress(achievement.goals)).toBe(1)
+				},
+			},
+			{noItemRequirements: true},
+		)
+	})
+	test('does not increment if there is no coin flip', () => {
+		testAchivement(
+			{
+				achievement: SignalInversion,
+				playerOneDeck: [EthosLabCommon, Fortune],
+				playerTwoDeck: [EthosLabCommon, BadOmen],
+				playGame: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Fortune, 'single_use')
+					yield* applyEffect(game)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* forfeit(game.currentPlayer.entity)
+				},
+				checkAchivement(_game, achievement, _outcome) {
+					expect(SignalInversion.getProgress(achievement.goals)).toBeFalsy()
+				},
+			},
+			{noItemRequirements: true},
+		)
+	})
+	test('does not increment if there is no bad omen', () => {
+		testAchivement(
+			{
+				achievement: SignalInversion,
+				playerOneDeck: [EthosLabCommon, Fortune],
+				playerTwoDeck: [EthosLabCommon],
+				playGame: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Fortune, 'single_use')
+					yield* applyEffect(game)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* forfeit(game.currentPlayer.entity)
+				},
+				checkAchivement(_game, achievement, _outcome) {
+					expect(SignalInversion.getProgress(achievement.goals)).toBeFalsy()
+				},
+			},
+			{noItemRequirements: true},
+		)
+	})
+	test('does not increment if there is no Fortune', () => {
+		testAchivement(
+			{
+				achievement: SignalInversion,
+				playerOneDeck: [EthosLabCommon],
+				playerTwoDeck: [EthosLabCommon, BadOmen],
+				playGame: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, BadOmen, 'single_use')
+					yield* applyEffect(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* forfeit(game.currentPlayer.entity)
+				},
+				checkAchivement(_game, achievement, _outcome) {
+					expect(SignalInversion.getProgress(achievement.goals)).toBeFalsy()
 				},
 			},
 			{noItemRequirements: true},

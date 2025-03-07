@@ -2,7 +2,8 @@ import Fortune from '../cards/single-use/fortune'
 import {SlotComponent} from '../components'
 import query from '../components/query'
 import BadOmenEffect from '../status-effects/badomen'
-import {afterApply, onCoinFlip} from '../types/priorities'
+import FortuneEffect from '../status-effects/fortune'
+import {afterApply, afterAttack, onCoinFlip} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -19,33 +20,33 @@ const SignalInversion: Achievement = {
 		},
 	],
 	onGameStart(game, player, component, observer) {
-		let _hasFlippedThisTurn = false
+		let hasFlippedThisTurn = false
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			_hasFlippedThisTurn = false
+			hasFlippedThisTurn = false
 		})
 
 		observer.subscribeWithPriority(
 			player.hooks.onCoinFlip,
 			onCoinFlip.ACHIEVEMENTS,
 			(flips) => {
-				_hasFlippedThisTurn = true
+				console.log("flipping")
+				hasFlippedThisTurn = true
 				return flips
 			},
 		)
 
 		observer.subscribeWithPriority(
-			player.hooks.afterApply,
-			afterApply.CHECK_BOARD_STATE,
-			() => {
-				let su = game.components.find(SlotComponent, query.slot.singleUse)?.card
-				if (!su) return
-				if (su.props.id !== Fortune.id) return
-
+			game.hooks.afterAttack,
+			afterAttack.ACHIEVEMENTS,
+			(attack) => {
+				if (attack.player.entity !== player.entity) return
+				if (!hasFlippedThisTurn) return
 				let hasBadOmen = player
 					.getActiveHermit()
 					?.getStatusEffect(BadOmenEffect)
 				if (!hasBadOmen) return
+				if (!player.hasStatusEffect(FortuneEffect)) return
 
 				component.incrementGoalProgress({goal: 0})
 			},

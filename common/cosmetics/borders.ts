@@ -1,7 +1,7 @@
 import HotTake from '../achievements/hot-take'
 import Innefective from '../achievements/inneffective'
 import LoyaltyIII from '../achievements/loyalty-iii'
-import SignalInversion from '../achievements/signal-inversion.test'
+import SignalInversion from '../achievements/signal-inversion'
 import Win from '../achievements/wins'
 import {Border} from './types'
 
