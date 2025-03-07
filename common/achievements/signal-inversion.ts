@@ -27,7 +27,6 @@ const SignalInversion: Achievement = {
 			player.hooks.onCoinFlip,
 			onCoinFlip.ACHIEVEMENTS,
 			(flips) => {
-				console.log('flipping')
 				hasFlippedThisTurn = true
 				return flips
 			},
