@@ -5,10 +5,49 @@ import EthosLabRare from 'common/cards/hermits/ethoslab-rare'
 import EthosLabUltraRare from 'common/cards/hermits/ethoslab-ultra-rare'
 import ShadEECommon from 'common/cards/hermits/shadee-common'
 import ShadeEERare from 'common/cards/hermits/shadeee-rare'
-import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
+import {
+	attack,
+	endTurn,
+	forfeit,
+	playCardFromHand,
+	testAchivement,
+} from '../utils'
 
 describe('Test Ethogirl achievement', () => {
 	test('Ethogirl progress only counts unique Etho variants on one side of the board', () => {
+		testAchivement(
+			{
+				achievement: Ethogirl,
+				playerOneDeck: [
+					EthosLabCommon,
+					EthosLabCommon,
+					ShadeEERare,
+					EthosLabUltraRare,
+					EthosLabRare,
+				],
+				playerTwoDeck: [ShadEECommon],
+				playGame: function* (game) {
+					// Identical cards should be counted the same
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, ShadeEERare, 'hermit', 2)
+					yield* playCardFromHand(game, EthosLabUltraRare, 'hermit', 3)
+					yield* playCardFromHand(game, EthosLabRare, 'hermit', 4)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, ShadEECommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+				},
+				checkAchivement(_game, achievement, _outcome) {
+					expect(Ethogirl.getProgress(achievement.goals)).toEqual(4)
+				},
+			},
+			{noItemRequirements: true, oneShotMode: true},
+		)
+	})
+	test('progress does not increase on loss', () => {
 		testAchivement(
 			{
 				achievement: Ethogirl,
@@ -31,10 +70,10 @@ describe('Test Ethogirl achievement', () => {
 					yield* playCardFromHand(game, ShadEECommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					yield* forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
-					expect(Ethogirl.getProgress(achievement.goals)).toEqual(4)
+					expect(Ethogirl.getProgress(achievement.goals)).toBeUndefined()
 				},
 			},
 			{noItemRequirements: true, oneShotMode: true},
