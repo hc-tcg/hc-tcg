@@ -40,7 +40,7 @@ describe('Test Channeling achievement', () => {
 					expect(Channeling.getProgress(achievement.goals)).toEqual(1)
 				},
 			},
-			{oneShotMode: true, noItemRequirements: true, forceCoinFlip: true},
+			{noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 	test('"Channeling" does not increase if the lightning rod didn\'t save any Hermit', () => {
@@ -65,7 +65,7 @@ describe('Test Channeling achievement', () => {
 					expect(Channeling.getProgress(achievement.goals)).toBeFalsy()
 				},
 			},
-			{oneShotMode: true, noItemRequirements: true, forceCoinFlip: true},
+			{noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 	test('"Channeling" does not increase when Lightning Rod on active row', () => {
@@ -98,7 +98,7 @@ describe('Test Channeling achievement', () => {
 					expect(Channeling.getProgress(achievement.goals)).toBeFalsy()
 				},
 			},
-			{oneShotMode: true, noItemRequirements: true},
+			{noItemRequirements: true},
 		)
 	})
 })
