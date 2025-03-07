@@ -267,7 +267,9 @@ function Cosmetics({setMenuSection, page}: Props) {
 
 	return (
 		<MenuLayout
-			back={() => setMenuSection(page ==='achievements' ? 'main-menu' : 'rewards')}
+			back={() =>
+				setMenuSection(page === 'achievements' ? 'main-menu' : 'rewards')
+			}
 			title="Achievements"
 			returnText="Main Menu"
 			className={css.cosmeticsLayout}
