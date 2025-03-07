@@ -10,6 +10,7 @@ export type Achievement = {
 	id: string
 	numericId: number
 	getProgress: (goals: Record<number, number>) => number | undefined
+	progressInBossGame?: boolean
 
 	levels: Array<{
 		name: string
