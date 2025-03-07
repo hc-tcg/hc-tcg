@@ -7,6 +7,7 @@ import Ethogirl from './ethogirl'
 import EyeOfTheSpider from './eye-of-the-spider'
 import FreeAndSteel from './free-and-steel'
 import GoFish from './go-fish'
+import GottaSchreep from './gotta-schreep'
 import HallOfAll from './hall-of-all'
 import HermitsAndCrafting from './hermits-and-crafting'
 import HotTake from './hot-take'
@@ -57,6 +58,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	HowDidWeGetHere,
 	LuckyStreak,
 	HurtinHermits,
+	GottaSchreep,
 	Wipeout,
 	DefeatEvilX,
 	NoDerpcoins,

@@ -1,5 +1,6 @@
 import EyeOfTheSpider from '../achievements/eye-of-the-spider'
 import GoFish from '../achievements/go-fish'
+import GottaSchreep from '../achievements/gotta-schreep'
 import HallOfAll from '../achievements/hall-of-all'
 import HermitsAndCrafting from '../achievements/hermits-and-crafting'
 import HurtinHermits from '../achievements/hurtin-hermits'
@@ -16,6 +17,12 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		id: 'creeper',
 		name: 'Creeper',
 		borderColor: '#e1b530',
+	},
+	{
+		id: 'bdoubleo100',
+		name: 'Bdubs',
+		borderColor: '#000000',
+		requires: {achievement: GottaSchreep.id},
 	},
 	{
 		id: 'server-lag',
