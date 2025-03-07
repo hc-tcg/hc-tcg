@@ -43,6 +43,31 @@ describe('Test Channeling achievement', () => {
 			{oneShotMode: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
+	test('"Channeling" does not increase if the lightning rod didn\'t save any Hermit', () => {
+		testAchivement(
+			{
+				achievement: Channeling,
+				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
+				playerTwoDeck: [GoatfatherRare],
+				playGame: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, LightningRod, 'attach', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, GoatfatherRare, 'hermit', 0)
+
+					yield* attack(game, 'secondary')
+
+					yield* forfeit(game.opponentPlayer.entity)
+				},
+				checkAchivement(_game, achievement, _outcome) {
+					expect(Channeling.getProgress(achievement.goals)).toBeFalsy()
+				},
+			},
+			{oneShotMode: true, noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
 	test('"Channeling" does not increase when Lightning Rod on active row', () => {
 		testAchivement(
 			{
