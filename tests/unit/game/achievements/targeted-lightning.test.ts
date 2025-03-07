@@ -3,15 +3,12 @@ import Channeling from 'common/achievements/targeted-lightning'
 import LightningRod from 'common/cards/attach/lightning-rod'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GoatfatherRare from 'common/cards/hermits/goatfather-rare'
-import TargetBlock from 'common/cards/single-use/target-block'
 import {RowComponent} from 'common/components'
-import query from 'common/components/query'
 import {
 	attack,
 	changeActiveHermit,
 	endTurn,
 	forfeit,
-	pick,
 	playCardFromHand,
 	testAchivement,
 } from '../utils'
