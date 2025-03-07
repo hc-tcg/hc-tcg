@@ -16,6 +16,7 @@ import AchievementComponent from 'components/achievement'
 import Button from 'components/button'
 import Checkbox from 'components/checkbox'
 import MenuLayout from 'components/menu-layout'
+import {Modal} from 'components/modal'
 import Tabs from 'components/tabs/tabs'
 import Tooltip from 'components/tooltip'
 import {
@@ -27,7 +28,6 @@ import {getSession} from 'logic/session/session-selectors'
 import {ReactNode, useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './achievements.module.scss'
-import {Modal} from 'components/modal'
 
 type Pages = 'achievements' | 'rewards'
 

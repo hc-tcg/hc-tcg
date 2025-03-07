@@ -2,9 +2,9 @@ import classNames from 'classnames'
 import {Achievement} from 'common/achievements/types'
 import {ALL_COSMETICS} from 'common/cosmetics'
 import {AchievementProgress} from 'common/types/achievements'
-import css from './achievement.module.scss'
-import {ReactNode} from 'react'
 import Button from 'components/button'
+import {ReactNode} from 'react'
+import css from './achievement.module.scss'
 
 type Props = {
 	achievement: Achievement
