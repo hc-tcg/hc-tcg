@@ -10,6 +10,7 @@ import {SoundSetting} from 'components/setting/sound-setting'
 import {ToggleSetting} from 'components/setting/toggle-setting'
 import {CopyIcon} from 'components/svgs'
 import Tabs from 'components/tabs/tabs'
+import UpdatesModal from 'components/updates'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useState} from 'react'
@@ -210,6 +211,10 @@ function Settings({setMenuSection}: Props) {
 		setModal(null)
 	}
 
+	const openUpdatesModal = () => {
+		setModal(<UpdatesModal onClose={closeModal} />)
+	}
+
 	const handleReset = (
 		title: string,
 		prompt: string,
@@ -391,6 +396,14 @@ function Settings({setMenuSection}: Props) {
 										side === 'Alphabetical' ? 'First Tag' : 'Alphabetical'
 									}
 								/>
+								<Button
+									variant="default"
+									id={css.statistics}
+									onClick={openUpdatesModal}
+									className={css.mainMenuButton}
+								>
+									Statistics
+								</Button>
 							</div>
 						)}
 						{tab === 'sound' && (

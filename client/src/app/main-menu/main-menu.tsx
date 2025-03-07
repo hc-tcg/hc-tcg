@@ -113,14 +113,6 @@ function MainMenu({setMenuSection}: Props) {
 						>
 							Statistics
 						</Button>
-						<Button
-							variant="default"
-							id={css.updates}
-							onClick={() => setUpdatesOpen(true)}
-							className={css.mainMenuButton}
-						>
-							Updates
-						</Button>
 					</nav>
 					<Beef />
 					<VersionLinks />
