@@ -21,15 +21,14 @@ const BackgroundDefinitions: Omit<Background, 'type'>[] = [
 		name: 'Default',
 	},
 	{
+		id: 'dirt',
+		name: 'Dirt',
+	},
+	{
 		id: 'classic',
 		name: 'Classic',
 		requires: {achievement: AllCards.id},
 		preview: 'classic_preview',
-	},
-	{
-		id: 'dirt',
-		name: 'Dirt',
-		requires: undefined,
 	},
 	{
 		id: 'gravel',
