@@ -1,7 +1,7 @@
 import CantTouchThis from '../achievements/cant-touch-this'
+import Channeling from '../achievements/channeling'
 import DeckedOut from '../achievements/decked-out'
 import SUStainable from '../achievements/sustainable'
-import Channeling from '../achievements/channeling'
 import Win from '../achievements/wins'
 import {Heart} from './types'
 

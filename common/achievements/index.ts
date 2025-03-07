@@ -1,6 +1,7 @@
 import British from './british'
 import CantTouchThis from './cant-touch-this'
 import CertifiedZombie from './certified-zombie'
+import Channeling from './channeling'
 import RedKing from './close-call'
 import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
@@ -29,7 +30,6 @@ import PeskyBird from './pesky-bird'
 import PoePoeEnforcer from './poe-poe-enforcer'
 import ServerLag from './server-lag'
 import SUStainable from './sustainable'
-import Channeling from './channeling'
 import TeamStar from './team-star'
 import {
 	BalancedWins,
