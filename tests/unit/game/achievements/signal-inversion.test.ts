@@ -76,10 +76,10 @@ describe('Test "Signal Inversion" achievement', () => {
 		testAchivement(
 			{
 				achievement: SignalInversion,
-				playerOneDeck: [EthosLabCommon, Fortune],
+				playerOneDeck: [EthosLabUltraRare, Fortune],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabUltraRare, 'hermit', 0)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
@@ -103,10 +103,10 @@ describe('Test "Signal Inversion" achievement', () => {
 		testAchivement(
 			{
 				achievement: SignalInversion,
-				playerOneDeck: [EthosLabCommon],
+				playerOneDeck: [EthosLabUltraRare],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabUltraRare, 'hermit', 0)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
