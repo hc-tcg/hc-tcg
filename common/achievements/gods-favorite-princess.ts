@@ -2,13 +2,13 @@ import {onCoinFlip} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
-const LuckyStreak: Achievement = {
+const GodsFavoritePrincess: Achievement = {
 	...achievement,
 	numericId: 51,
 	id: 'lucky-streak',
 	levels: [
 		{
-			name: 'Lucky Streak',
+			name: "God's Favorite Princess",
 			description: 'Flip heads 15 times in one game.',
 			steps: 15,
 		},
@@ -30,4 +30,4 @@ const LuckyStreak: Achievement = {
 	},
 }
 
-export default LuckyStreak
+export default GodsFavoritePrincess

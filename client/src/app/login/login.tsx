@@ -26,13 +26,14 @@ const getLoginError = (errorType: ConnectionError) => {
 	if (errorType === 'xhr poll_error') return "Can't reach the server."
 	if (errorType === 'bad_auth')
 		return 'Authentication failed. Please check your UUID and secret are correct.'
+	if (errorType === 'invalid_session') return 'Reloading...'
 	return (errorType as string).substring(0, 150)
 }
 
 const Login = () => {
 	const dispatch = useMessageDispatch()
-	const connecting = useSelector(getConnecting)
-	const errorType = useSelector(getErrorType)
+	let connecting = useSelector(getConnecting)
+	let errorType = useSelector(getErrorType)
 	const connectingMessage = useSelector(getConnectingMessage)
 
 	const [syncing, setSyncing] = useState<boolean>(false)
@@ -60,6 +61,11 @@ const Login = () => {
 				uuid: uuid,
 				secret: secret,
 			})
+	}
+
+	if (errorType === 'invalid_session') {
+		errorType = undefined
+		connecting = true
 	}
 
 	if (errorType) {

@@ -110,3 +110,40 @@ test('Game state updates if socket is restarted during game.', async ({
 	// The second game state should be newer because it was recieved on the reconnect.
 	expect(firstGameStateTime).toBeLessThan(secondGameStateTime)
 })
+test('Automatic reconnect if session is invalid.', async ({page}) => {
+	await page.goto('/')
+	await page.getByLabel('Player Name').fill('Test Player')
+	await page.getByLabel('Player Name').press('Enter')
+
+	await page.waitForFunction(() => {
+		console.log(global.getState().session.connected)
+		return global.getState().session.connected
+	})
+
+	await page.evaluate(() => {
+		// Set up bogus data
+		sessionStorage.setItem('playerName', 'zunda')
+		sessionStorage.setItem('censoredPlayerName', 'mochi')
+		sessionStorage.setItem('playerId', 'mochimochi')
+		sessionStorage.setItem('playerSecret', 'zunda')
+	})
+
+	await page.reload()
+
+	await page.waitForFunction(() => {
+		console.log(global.getState().session.connected)
+		return global.getState().session.connected
+	})
+
+	// Make sure the session really did get updated
+	expect(
+		await page.evaluate(() => {
+			return [
+				sessionStorage.getItem('playerName'),
+				sessionStorage.getItem('censoredPlayerName'),
+				sessionStorage.getItem('playerId'),
+				sessionStorage.getItem('playerSecret'),
+			]
+		}),
+	).not.toStrictEqual(['zunda', 'mochi', 'mochimochi', 'zunda'])
+})

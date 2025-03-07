@@ -8,6 +8,7 @@ const NoDerpcoins: Achievement = {
 	...achievement,
 	numericId: 7,
 	id: 'no_derpcoins',
+	progressInBossGame: true,
 	levels: [
 		{
 			name: 'No Derpcoins Required',

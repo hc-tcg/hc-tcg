@@ -77,7 +77,7 @@ function setupGame(
 				.sort((a, b) => a - b),
 			score: player2Score,
 		},
-		{gameCode, spectatorCode, apiSecret, countAchievements: true},
+		{gameCode, spectatorCode, apiSecret, countAchievements: 'all'},
 	)
 
 	let playerEntities = con.game.components.filterEntities(PlayerComponent)
@@ -341,6 +341,14 @@ function* gameManager(con: GameController) {
 			getGameScore(con.game.outcome, gamePlayers[0].id) + con.player1Defs.score
 		const player2Score =
 			getGameScore(con.game.outcome, gamePlayers[1].id) + con.player2Defs.score
+
+		if (
+			!gamePlayers[0].id ||
+			!gamePlayers[1].id ||
+			con.game.state.isEvilXBossGame
+		) {
+			return
+		}
 
 		broadcast([gamePlayers[0]], {
 			type: serverMessages.SEND_REMATCH,
@@ -1234,7 +1242,7 @@ function setupSolitareGame(
 			deck: opponent.deck,
 			score: 0,
 		},
-		{randomizeOrder: false},
+		{randomizeOrder: false, countAchievements: 'boss'},
 	)
 
 	const playerEntities = con.game.components.filterEntities(PlayerComponent)
