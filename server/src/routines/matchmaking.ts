@@ -185,7 +185,9 @@ function* gameManager(con: GameController) {
 	} finally {
 		const outcome = con.game.outcome
 
-		assert(outcome, 'All games should have an outcome after they end')
+		if (!outcome) {
+			return
+		}
 
 		if (con.task) yield* cancel(con.task)
 		con.game.hooks.afterGameEnd.call()
