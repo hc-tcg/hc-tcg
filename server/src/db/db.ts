@@ -90,7 +90,7 @@ export class Database {
 					banned boolean DEFAULT false NOT NULL
 				);
 				CREATE TABLE IF NOT EXISTS decks(
-					user_id uuidREFERENCES users(user_id),
+					user_id uuid REFERENCES users(user_id),
 					deck_code varchar(7) PRIMARY KEY,
 					name varchar(255) NOT NULL,
 					icon varchar(255) NOT NULL,
@@ -1831,7 +1831,6 @@ export class Database {
 	public async getAchievements(
 		playerId: string,
 	): Promise<DatabaseResult<AchievementData>> {
-		console.log(`GETTING ACHIVEMENTS FOR ${playerId}`)
 		try {
 			const result = await this.pool.query(
 				`
@@ -1859,8 +1858,8 @@ export class Database {
 							}),
 					}
 				}
+
 				progress[row['achievement_id']].goals[row['goal_id']] = row['progress']
-				console.log(row['achievement_id'], progress[row['achievement_id']])
 
 				if (row['level'] !== null) {
 					progress[row['achievement_id']].levels[row['level']] = {
@@ -1920,12 +1919,6 @@ export class Database {
 					const achievementGoals: GoalRow[] = []
 					Object.keys(progress.goals).forEach((goal_id) => {
 						const goal_id_number = parseInt(goal_id)
-						if (
-							Object.keys(achievementGoals).find(
-								(goal) => goal.goal === goal_id_number,
-							)
-						)
-							return
 						if (Number.isNaN(goal_id_number)) return
 						achievementGoals.push({
 							achievment: achievement.numericId,
