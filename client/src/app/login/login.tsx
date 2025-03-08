@@ -84,20 +84,10 @@ const Login = () => {
 						className={css.loginButton}
 						type="submit"
 						onClick={() => {
-							const secret = localStorage.getItem('databaseInfo:secret')
-							const uuid = localStorage.getItem('databaseInfo:userId')
-
-							if (!uuid || !secret) return
-
-							dispatch({
-								type: localMessages.LOGIN,
-								login_type: 'sync',
-								uuid,
-								secret,
-							})
+							window.location.reload()
 						}}
 					>
-						Retry
+						Reload Page
 					</Button>
 				</div>
 			</div>
