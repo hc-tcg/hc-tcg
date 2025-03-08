@@ -116,7 +116,7 @@ test('Automatic reconnect if session is invalid.', async ({page}) => {
 	await page.getByLabel('Player Name').press('Enter')
 
 	await page.waitForFunction(() => {
-		console.log(global.getState().session.connected)
+		if (!global.getState) return false
 		return global.getState().session.connected
 	})
 
@@ -131,7 +131,7 @@ test('Automatic reconnect if session is invalid.', async ({page}) => {
 	await page.reload()
 
 	await page.waitForFunction(() => {
-		console.log(global.getState().session.connected)
+		if (!global.getState) return false
 		return global.getState().session.connected
 	})
 
