@@ -9,8 +9,7 @@ try {
 	appVersion = __APP_VERSION__
 } catch {
 	// We are running with tsx, so __APP_VERSION__ was not set.
-	const mod = await import('../../version.js')
-	appVersion = mod.getAppVersion()
+	appVersion = undefined
 }
 // __DEBUG_BUILD__ is defined in vite.config.js and esbuild.js
 declare const __DEBUG_BUILD__: boolean

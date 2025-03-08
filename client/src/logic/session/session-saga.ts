@@ -70,7 +70,7 @@ const clearSession = () => {
 }
 
 const getClientVersion = (): string => {
-	return VERSION
+	return VERSION || "dev"
 }
 
 const createConnectErrorChannel = (socket: any) =>
