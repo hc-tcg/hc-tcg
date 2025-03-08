@@ -1,6 +1,6 @@
 import {ACHIEVEMENTS} from 'common/achievements'
 import {getStarterPack} from 'common/cards/starter-decks'
-import {DEBUG_CONFIG} from 'common/config'
+import {DEBUG_CONFIG, VERSION} from 'common/config'
 import {BACKGROUNDS} from 'common/cosmetics/backgrounds'
 import {BORDERS} from 'common/cosmetics/borders'
 import {COINS} from 'common/cosmetics/coins'
@@ -69,13 +69,8 @@ const clearSession = () => {
 	sessionStorage.removeItem('playerSecret')
 }
 
-const getClientVersion = () => {
-	const scriptTag = document.querySelector(
-		'script[src^="/assets/index"][src$=".js"]',
-	) as HTMLScriptElement | null
-	if (!scriptTag) return null
-
-	return scriptTag.src.replace(/^.*index-(\w+)\.js/i, '$1')
+const getClientVersion = (): string => {
+	return VERSION || 'dev'
 }
 
 const createConnectErrorChannel = (socket: any) =>
@@ -296,6 +291,8 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 
 	console.log('session saga: ', session)
 
+	let playerEnteredCredentials = false
+
 	if (!session) {
 		let secret = localStorage.getItem('databaseInfo:secret')
 		let userId = localStorage.getItem('databaseInfo:userId')
@@ -339,6 +336,7 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 
 				yield* setupData(userResponse)
 			} else {
+				playerEnteredCredentials = true
 				userId = loginMessage.uuid
 				secret = loginMessage.secret
 			}
@@ -355,7 +353,9 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 			if (!userResponse) {
 				return {
 					success: false,
-					reason: 'bad_auth',
+					reason: playerEnteredCredentials
+						? 'invalid_auth_entered'
+						: 'bad_auth',
 				}
 			}
 
@@ -395,14 +395,13 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 	})
 
 	if (result.invalidPlayer || result.connectError) {
+		console.log('HERE')
 		yield* put<LocalMessage>({
 			type: localMessages.CONNECTING_MESSAGE,
 			message: 'Connection Error. Reloading',
 		})
 
 		clearSession()
-		// Reset the player ID so when we reconnect, it is as a new player
-		socket.auth.playerId = undefined
 		socket.disconnect()
 
 		return {
@@ -504,6 +503,11 @@ export function* loginSaga() {
 		let result = yield* trySingleLoginAttempt()
 		if (result.success === true) {
 			break
+		}
+
+		// This is a bit janky, but this reloads the client if the version happens to be out of date
+		if (result.reason === 'invalid_session' || result.reason === 'bad_auth') {
+			window.location.reload()
 		}
 
 		// Otherwise the login failed, so lets send a toast and try again

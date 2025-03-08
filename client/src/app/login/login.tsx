@@ -25,6 +25,8 @@ const getLoginError = (errorType: ConnectionError) => {
 		return 'There has been a game update. Please refresh the website.'
 	if (errorType === 'xhr poll_error') return "Can't reach the server."
 	if (errorType === 'bad_auth')
+		return 'Invalid version, secret, UUID saved. Reloading page to attempt to fix issue...'
+	if (errorType === 'invalid_auth_entered')
 		return 'Authentication failed. Please check your UUID and secret are correct.'
 	if (errorType === 'invalid_session') return 'Reloading...'
 	return (errorType as string).substring(0, 150)
