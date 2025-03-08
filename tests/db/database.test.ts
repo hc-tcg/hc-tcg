@@ -25,7 +25,7 @@ import {Database} from 'server/db/db'
 
 const globalProgress = (percentage: number) => ({
 	type: 'success',
-	body: {percent: percentage},
+	body: {percent: percentage, count: percentage / 50},
 })
 const playerProgress = (percentage: number) => ({
 	type: 'success',
