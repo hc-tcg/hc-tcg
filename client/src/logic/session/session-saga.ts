@@ -508,7 +508,11 @@ export function* loginSaga() {
 		}
 
 		// This is a bit janky, but this reloads the client if the version happens to be out of date
-		if (result.reason === 'invalid_session' || result.reason === 'bad_auth') {
+		if (
+			result.reason === 'invalid_session' ||
+			result.reason === 'bad_auth' ||
+			result.reason === 'timeout'
+		) {
 			window.location.reload()
 		}
 
