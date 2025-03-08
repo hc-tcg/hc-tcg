@@ -213,14 +213,20 @@ export function* setupData(user: User) {
 			value: user.decks,
 		},
 	})
+
+	const allTags = user.decks.reduce((r: Array<Tag>, deck) => {
+		r.push(...deck.tags)
+		return r
+	}, [])
+
 	yield* put<LocalMessage>({
 		type: localMessages.DATABASE_SET,
 		data: {
 			key: 'tags',
-			value: user.decks
+			value: allTags
 				.reduce((r: Array<Tag>, d) => {
-					const newTags = d.tags.filter((tag) => !r.includes(tag))
-					r.push(...newTags)
+					if (r.find((a) => a.key === d.key)) return r
+					r.push(d)
 					return r
 				}, [])
 				.sort((a, b) => a.name.localeCompare(b.name)),
