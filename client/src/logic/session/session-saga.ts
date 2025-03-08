@@ -69,7 +69,8 @@ const clearSession = () => {
 	sessionStorage.removeItem('playerSecret')
 }
 
-const getClientVersion = () => {
+const getClientVersion = (): string => {
+	return __APP_VERSION__
 	const scriptTag = document.querySelector(
 		'script[src^="/assets/index"][src$=".js"]',
 	) as HTMLScriptElement | null
@@ -296,6 +297,8 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 
 	console.log('session saga: ', session)
 
+	let playerEnteredCredentials = false
+
 	if (!session) {
 		let secret = localStorage.getItem('databaseInfo:secret')
 		let userId = localStorage.getItem('databaseInfo:userId')
@@ -339,6 +342,7 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 
 				yield* setupData(userResponse)
 			} else {
+				playerEnteredCredentials = true
 				userId = loginMessage.uuid
 				secret = loginMessage.secret
 			}
@@ -355,7 +359,7 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 			if (!userResponse) {
 				return {
 					success: false,
-					reason: 'bad_auth',
+					reason: playerEnteredCredentials ? 'invalid_auth_entered' : 'bad_auth',
 				}
 			}
 
@@ -401,8 +405,10 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 		})
 
 		clearSession()
+		console.log('invalid session')
 		// Reset the player ID so when we reconnect, it is as a new player
 		socket.auth.playerId = undefined
+		socket.auth.version = null
 		socket.disconnect()
 
 		return {
@@ -504,6 +510,10 @@ export function* loginSaga() {
 		let result = yield* trySingleLoginAttempt()
 		if (result.success === true) {
 			break
+		}
+
+		if (result.reason === 'bad_auth') {
+			throw new Error("Bad auth information was saved")
 		}
 
 		// Otherwise the login failed, so lets send a toast and try again

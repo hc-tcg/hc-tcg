@@ -12,9 +12,10 @@ const isValidName = (name: string) => {
 
 const env = process.env.NODE_ENV || 'development'
 const isValidVersion = (clientVersion: string) => {
-	if (env === 'development') {
-		return true
-	}
+	// if (env === 'development') {
+	// 	return true
+	// }
+	console.log(clientVersion, version)
 	return version === clientVersion
 }
 
