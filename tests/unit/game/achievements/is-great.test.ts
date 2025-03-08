@@ -4,7 +4,6 @@ import IsGreat from 'common/achievements/is-great'
 import BdoubleO100Rare from 'common/cards/hermits/bdoubleo100-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import EthosLabRare from 'common/cards/hermits/ethoslab-rare'
-import ShadEECommon from 'common/cards/hermits/shadee-common'
 import {forfeit, testAchivement} from '../utils'
 
 describe('Test "...is Great" achievement', () => {
@@ -27,9 +26,9 @@ describe('Test "...is Great" achievement', () => {
 	test('Check invalid (two costs are in deck)', () => {
 		testAchivement(
 			{
-				achievement: Ethogirl,
+				achievement: IsGreat,
 				playerOneDeck: [BdoubleO100Rare, EthosLabRare],
-				playerTwoDeck: [ShadEECommon],
+				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
 					yield* forfeit(game.currentPlayer.entity)
 				},
