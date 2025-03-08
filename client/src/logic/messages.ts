@@ -41,7 +41,6 @@ export const localMessages = messages('clientLocalMessages', {
 	CONNECTED: null,
 	CONNECTING_MESSAGE: null,
 	DISCONNECT: null,
-	LOGIN_RETRY: null,
 	LOGOUT: null,
 	UPDATES_LOAD: null,
 	TOAST_OPEN: null,
@@ -120,7 +119,6 @@ type Messages = [
 	{type: typeof localMessages.SOCKET_DISCONNECT},
 	{type: typeof localMessages.SOCKET_CONNECT_ERROR},
 	{type: typeof localMessages.LOGIN; login_type: 'new-account'; name: string},
-	{type: typeof localMessages.LOGIN_RETRY},
 	{
 		type: typeof localMessages.LOGIN
 		login_type: 'sync'
