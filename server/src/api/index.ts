@@ -1,6 +1,7 @@
 import {DEBUG} from 'common/config'
 import {NumberOrNull} from 'common/utils/database-codes'
 import {Express} from 'express'
+import rateLimit from 'express-rate-limit'
 import root from 'serverRoot'
 import {
 	PlayerAchievementProgressQuery,
@@ -31,7 +32,6 @@ import {
 	getTypeDistributionStats,
 } from './stats'
 import {requestUrlRoot} from './utils'
-import rateLimit from 'express-rate-limit'
 
 export function addApi(app: Express) {
 	const authLimiter = rateLimit({

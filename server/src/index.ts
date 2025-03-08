@@ -5,11 +5,11 @@ import {fileURLToPath} from 'url'
 import {CONFIG} from 'common/config'
 import cors from 'cors'
 import express from 'express'
+import {rateLimit} from 'express-rate-limit'
 import root from 'serverRoot'
 import {addApi} from './api'
 import {loadUpdates} from './load-updates'
 import startSocketIO from './sockets'
-import {rateLimit} from 'express-rate-limit'
 
 const port = process.env.PORT || CONFIG.port || 9000
 
