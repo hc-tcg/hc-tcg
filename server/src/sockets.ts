@@ -1,8 +1,7 @@
-import {CONFIG} from 'common/config'
+import {CONFIG, VERSION} from 'common/config'
 import {LocalMessage, localMessages} from 'messages'
 import {Server} from 'socket.io'
 import store from './be-store'
-import version from './version'
 
 const isValidName = (name: string) => {
 	if (name.length < 1) return false
@@ -15,7 +14,7 @@ const isValidVersion = (clientVersion: string) => {
 	if (env === 'development') {
 		return true
 	}
-	return version === clientVersion
+	return VERSION === clientVersion
 }
 
 function startSocketIO(server: any) {

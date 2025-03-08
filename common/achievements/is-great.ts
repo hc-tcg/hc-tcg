@@ -1,3 +1,5 @@
+import {CardComponent} from '../components'
+import query from '../components/query'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -15,10 +17,11 @@ const IsGreat: Achievement = {
 	],
 	onGameStart(game, player, component, observer) {
 		const validDeck =
-			player
-				.getDeck()
-				.find((x) => x.isHermit() && x.props.secondary.cost.length === 2) ===
-			null
+			game.components.find(
+				CardComponent,
+				query.card.player(player.entity),
+				(_game, x) => x.isHermit() && x.props.secondary.cost.length === 2,
+			) == undefined
 
 		if (!validDeck) {
 			return

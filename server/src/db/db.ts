@@ -187,6 +187,7 @@ export class Database {
 		try {
 			const secret = (await this.pool.query('SELECT * FROM uuid_generate_v4()'))
 				.rows[0]['uuid_generate_v4']
+
 			const user = await this.pool.query(
 				"INSERT INTO users (username, minecraft_name, secret) values ($1,$1,crypt($2, gen_salt('bf', $3))) RETURNING (user_id)",
 				[username, secret, this.bfDepth],
@@ -254,6 +255,18 @@ export class Database {
 		secret: string,
 	): Promise<DatabaseResult<User>> {
 		try {
+			const uuidExists = await this.pool.query(
+				'SELECT * FROM users WHERE user_id = $1',
+				[uuid],
+			)
+
+			if (uuidExists.rowCount === 0) {
+				return {
+					type: 'failure',
+					reason: 'The UUID given does not exist.',
+				}
+			}
+
 			const user = await this.pool.query(
 				'SELECT * FROM users WHERE user_id = $1 AND secret = crypt($2, secret)',
 				[uuid, secret],
@@ -1217,7 +1230,7 @@ export class Database {
 		winningPlayerUuid: string | null,
 		seed: string,
 		turns: number,
-		replay: Buffer,
+		replay: Buffer | null,
 		opponentCode: string | null,
 	): Promise<DatabaseResult> {
 		try {
@@ -1256,7 +1269,9 @@ export class Database {
 				firstPlayerWon = false
 			}
 
-			const compressedReplay = huffmanCompress(replay)
+			const compressedReplay = replay
+				? huffmanCompress(replay)
+				: Buffer.from([0x00])
 
 			await this.pool.query(
 				"INSERT INTO games (start_time, completion_time, winner, loser, winner_deck_code, loser_deck_code, outcome, seed, turns, first_player_won, replay, opponent_code) VALUES(CURRENT_TIMESTAMP - $1 * '1 millisecond'::interval,CURRENT_TIMESTAMP,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
@@ -1831,6 +1846,7 @@ export class Database {
 	public async getAchievements(
 		playerId: string,
 	): Promise<DatabaseResult<AchievementData>> {
+		console.log(`GETTING ACHIVEMENTS FOR ${playerId}`)
 		try {
 			const result = await this.pool.query(
 				`
@@ -1858,7 +1874,6 @@ export class Database {
 							}),
 					}
 				}
-
 				progress[row['achievement_id']].goals[row['goal_id']] = row['progress']
 
 				if (row['level'] !== null) {
@@ -1919,6 +1934,12 @@ export class Database {
 					const achievementGoals: GoalRow[] = []
 					Object.keys(progress.goals).forEach((goal_id) => {
 						const goal_id_number = parseInt(goal_id)
+						if (
+							Object.values(achievementGoals).find(
+								(goal) => goal.goal === goal_id_number,
+							)
+						)
+							return
 						if (Number.isNaN(goal_id_number)) return
 						achievementGoals.push({
 							achievment: achievement.numericId,

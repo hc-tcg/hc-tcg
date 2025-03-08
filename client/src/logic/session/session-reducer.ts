@@ -12,6 +12,7 @@ export type ConnectionError =
 	| 'xhr poll_error'
 	| 'bad_auth'
 	| 'invalid_session'
+	| 'invalid_auth_entered'
 
 type SessionState = {
 	playerName: string
