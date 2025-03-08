@@ -302,8 +302,9 @@ function* gameManager(con: GameController) {
 
 		const winner = winnerPlayerId ? root.players[winnerPlayerId] : null
 		const turnActionCompressor = new TurnActionCompressor()
-		const turnActionsBuffer =
-			yield* turnActionCompressor.turnActionsToBuffer(con)
+		const turnActionsBuffer = con.game.state.isEvilXBossGame
+			? null
+			: yield* turnActionCompressor.turnActionsToBuffer(con)
 
 		if (
 			gamePlayers.length >= 2 &&

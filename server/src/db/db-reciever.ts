@@ -357,7 +357,7 @@ export function* addGame(
 	winner: string | null,
 	seed: string,
 	turns: number,
-	replay: Buffer,
+	replay: Buffer | null,
 	opponentCode: string | null,
 ) {
 	assert(root.db.connected, CONNECTION_ASSERTION_MSG)

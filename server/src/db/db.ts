@@ -1217,7 +1217,7 @@ export class Database {
 		winningPlayerUuid: string | null,
 		seed: string,
 		turns: number,
-		replay: Buffer,
+		replay: Buffer | null,
 		opponentCode: string | null,
 	): Promise<DatabaseResult> {
 		try {
@@ -1256,7 +1256,9 @@ export class Database {
 				firstPlayerWon = false
 			}
 
-			const compressedReplay = huffmanCompress(replay)
+			const compressedReplay = replay
+				? huffmanCompress(replay)
+				: Buffer.from([0x00])
 
 			await this.pool.query(
 				"INSERT INTO games (start_time, completion_time, winner, loser, winner_deck_code, loser_deck_code, outcome, seed, turns, first_player_won, replay, opponent_code) VALUES(CURRENT_TIMESTAMP - $1 * '1 millisecond'::interval,CURRENT_TIMESTAMP,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
