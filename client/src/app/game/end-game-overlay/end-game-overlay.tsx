@@ -27,6 +27,7 @@ type Props = {
 	setMenuSection?: (section: string) => void
 	dispatchGameClose?: () => void
 	rematchData: RematchData | null
+	gameMode: 'public' | 'private' | 'boss'
 	// Display fake time to ensure consistency in component tests for visuals
 	displayFakeTime?: boolean
 }
@@ -194,6 +195,7 @@ const EndGameOverlay = ({
 	setMenuSection,
 	dispatchGameClose,
 	rematchData,
+	gameMode,
 	displayFakeTime = false,
 }: Props) => {
 	const [disableReplay, setDisableReplay] = useState<boolean>(false)
@@ -267,6 +269,12 @@ const EndGameOverlay = ({
 	const earnedAchievementsAmount = earnedAchievements.filter(
 		(a) => a.newProgress >= a.level.steps,
 	).length
+
+	const playAgainPage = {
+		public: 'play-again-public',
+		private: 'play-select-fight',
+		boss: 'play-again-boss',
+	}
 
 	return (
 		// 2 Ways to return to the main menu, either press the button, or press ESC
@@ -346,7 +354,7 @@ const EndGameOverlay = ({
 					<Button
 						id={css.playAgain}
 						onClick={() => {
-							setMenuSection && setMenuSection('play-again')
+							setMenuSection && setMenuSection(playAgainPage[gameMode])
 							dispatchGameClose && dispatchGameClose()
 						}}
 					>
