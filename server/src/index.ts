@@ -9,8 +9,16 @@ import root from 'serverRoot'
 import {addApi} from './api'
 import {loadUpdates} from './load-updates'
 import startSocketIO from './sockets'
+import {rateLimit} from 'express-rate-limit'
 
 const port = process.env.PORT || CONFIG.port || 9000
+
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+	standardHeaders: 'draft-8',
+	legacyHeaders: false,
+})
 
 const app = express()
 app.use(express.json())
@@ -33,6 +41,9 @@ app.use((req, res, next) => {
 		next()
 	}
 })
+
+// Apply the rate limiting middleware to all requests.
+app.use(limiter)
 
 app.use(
 	express.static(path.join(__dirname, '../..', CONFIG.clientPath), {
