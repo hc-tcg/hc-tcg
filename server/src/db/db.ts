@@ -187,6 +187,18 @@ export class Database {
 		try {
 			const secret = (await this.pool.query('SELECT * FROM uuid_generate_v4()'))
 				.rows[0]['uuid_generate_v4']
+
+			const uuidExists = await this.pool.query(
+				'SELECT * FROM users WHERE userId = $1',
+				[username],
+			)
+
+			if (uuidExists.rowCount === 0)
+				return {
+					type: 'failure',
+					reason: 'The UUID given does not exist.',
+				}
+
 			const user = await this.pool.query(
 				"INSERT INTO users (username, minecraft_name, secret) values ($1,$1,crypt($2, gen_salt('bf', $3))) RETURNING (user_id)",
 				[username, secret, this.bfDepth],
