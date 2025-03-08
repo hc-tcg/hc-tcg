@@ -1,5 +1,4 @@
 import {describe, expect, test} from '@jest/globals'
-import Ethogirl from 'common/achievements/ethogirl'
 import IsGreat from 'common/achievements/is-great'
 import BdoubleO100Rare from 'common/cards/hermits/bdoubleo100-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
@@ -33,7 +32,7 @@ describe('Test "...is Great" achievement', () => {
 					yield* forfeit(game.opponentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
-					expect(Ethogirl.getProgress(achievement.goals)).toBeUndefined()
+					expect(IsGreat.getProgress(achievement.goals)).toBeUndefined()
 				},
 			},
 			{noItemRequirements: true, oneShotMode: true},
