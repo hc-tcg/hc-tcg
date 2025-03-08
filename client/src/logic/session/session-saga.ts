@@ -70,7 +70,7 @@ const clearSession = () => {
 }
 
 const getClientVersion = (): string => {
-	return VERSION || "dev"
+	return VERSION || 'dev'
 }
 
 const createConnectErrorChannel = (socket: any) =>
@@ -353,7 +353,9 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 			if (!userResponse) {
 				return {
 					success: false,
-					reason: playerEnteredCredentials ? 'invalid_auth_entered' : 'bad_auth',
+					reason: playerEnteredCredentials
+						? 'invalid_auth_entered'
+						: 'bad_auth',
 				}
 			}
 
@@ -393,6 +395,7 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 	})
 
 	if (result.invalidPlayer || result.connectError) {
+		console.log('HERE')
 		yield* put<LocalMessage>({
 			type: localMessages.CONNECTING_MESSAGE,
 			message: 'Connection Error. Reloading',
@@ -402,6 +405,7 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 		// Reset the player ID so when we reconnect, it is as a new player
 		socket.auth.playerId = undefined
 		socket.disconnect()
+		window.location.reload()
 
 		return {
 			success: false,
