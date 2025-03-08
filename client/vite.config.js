@@ -1,6 +1,7 @@
 import path from 'path'
 import react from '@vitejs/plugin-react'
 import {defineConfig} from 'vite'
+import {ViteImageOptimizer} from 'vite-plugin-image-optimizer'
 import CONFIG from '../common/config/server-config.js'
 import {getAppVersion} from '../version'
 
