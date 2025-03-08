@@ -1,6 +1,6 @@
 import {ACHIEVEMENTS} from 'common/achievements'
 import {getStarterPack} from 'common/cards/starter-decks'
-import {DEBUG_CONFIG} from 'common/config'
+import {DEBUG_CONFIG, VERSION} from 'common/config'
 import {BACKGROUNDS} from 'common/cosmetics/backgrounds'
 import {BORDERS} from 'common/cosmetics/borders'
 import {COINS} from 'common/cosmetics/coins'
@@ -70,13 +70,7 @@ const clearSession = () => {
 }
 
 const getClientVersion = (): string => {
-	return __APP_VERSION__
-	const scriptTag = document.querySelector(
-		'script[src^="/assets/index"][src$=".js"]',
-	) as HTMLScriptElement | null
-	if (!scriptTag) return null
-
-	return scriptTag.src.replace(/^.*index-(\w+)\.js/i, '$1')
+	return VERSION
 }
 
 const createConnectErrorChannel = (socket: any) =>
@@ -405,10 +399,8 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 		})
 
 		clearSession()
-		console.log('invalid session')
 		// Reset the player ID so when we reconnect, it is as a new player
 		socket.auth.playerId = undefined
-		socket.auth.version = null
 		socket.disconnect()
 
 		return {
@@ -512,8 +504,9 @@ export function* loginSaga() {
 			break
 		}
 
+		// This is a bit janky, but this reloads the client if the version happens to be out of date
 		if (result.reason === 'bad_auth') {
-			throw new Error("Bad auth information was saved")
+			window.location.reload()
 		}
 
 		// Otherwise the login failed, so lets send a toast and try again
