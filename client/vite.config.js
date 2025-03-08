@@ -7,7 +7,7 @@ import {getAppVersion} from '../version'
 let plugins = [react()]
 
 if (process.env.NODE_ENV === 'production') {
-	//plugins.push(ViteImageOptimizer())
+	plugins.push(ViteImageOptimizer())
 }
 
 export default defineConfig({
