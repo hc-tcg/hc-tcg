@@ -340,18 +340,18 @@ function* gameManager(con: GameController) {
 			return 0
 		}
 
+		if (
+			con.game.state.isEvilXBossGame ||
+			!gamePlayers[0].id ||
+			!gamePlayers[1].id
+		) {
+			return
+		}
+
 		const player1Score =
 			getGameScore(con.game.outcome, gamePlayers[0].id) + con.player1Defs.score
 		const player2Score =
 			getGameScore(con.game.outcome, gamePlayers[1].id) + con.player2Defs.score
-
-		if (
-			!gamePlayers[0].id ||
-			!gamePlayers[1].id ||
-			con.game.state.isEvilXBossGame
-		) {
-			return
-		}
 
 		broadcast([gamePlayers[0]], {
 			type: serverMessages.SEND_REMATCH,
@@ -374,7 +374,10 @@ function* gameManager(con: GameController) {
 			},
 		})
 		yield* delay(serverConfig.limits.rematchTime)
-		broadcast(gamePlayers, {type: serverMessages.SEND_REMATCH, rematch: null})
+		broadcast(gamePlayers, {
+			type: serverMessages.SEND_REMATCH,
+			rematch: null,
+		})
 	}
 }
 
@@ -416,12 +419,16 @@ function* randomMatchmakingSaga() {
 				if (player1 && root.awaitingRematch[player1Id]) {
 					const opponent =
 						root.players[root.awaitingRematch[player1Id].opponentId]
-					broadcast([player1, opponent], {type: serverMessages.REMATCH_DENIED})
+					broadcast([player1, opponent], {
+						type: serverMessages.REMATCH_DENIED,
+					})
 				}
 				if (player2 && root.awaitingRematch[player2Id]) {
 					const opponent =
 						root.players[root.awaitingRematch[player2Id].opponentId]
-					broadcast([player2, opponent], {type: serverMessages.REMATCH_DENIED})
+					broadcast([player2, opponent], {
+						type: serverMessages.REMATCH_DENIED,
+					})
 				}
 
 				const newGame = setupGame(
