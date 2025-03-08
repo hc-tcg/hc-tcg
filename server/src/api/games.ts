@@ -59,7 +59,7 @@ export function createApiGame(url: string) {
 		spectatorCode,
 		apiSecret,
 		spectateUrl: `${url}?spectate=${spectatorCode}`,
-		joinUrl: `${url}?fight=${spectatorCode}`,
+		joinUrl: `${url}?fight=${gameCode}`,
 		timeOutAt: Date.now() + API_GAME_TIMEOUT,
 	}
 }
