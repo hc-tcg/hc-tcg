@@ -90,7 +90,7 @@ export class Database {
 					banned boolean DEFAULT false NOT NULL
 				);
 				CREATE TABLE IF NOT EXISTS decks(
-					user_id uuid REFERENCES users(user_id),
+					user_id uuidREFERENCES users(user_id),
 					deck_code varchar(7) PRIMARY KEY,
 					name varchar(255) NOT NULL,
 					icon varchar(255) NOT NULL,

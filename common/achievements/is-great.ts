@@ -17,8 +17,8 @@ const IsGreat: Achievement = {
 		const validDeck =
 			player
 				.getDeck()
-				.find((x) => x.isHermit() && x.props.secondary.cost.length === 2) ===
-			null
+				.find((x) => x.isHermit() && x.props.secondary.cost.length === 2) ==
+			undefined
 
 		if (!validDeck) {
 			return
