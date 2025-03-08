@@ -1833,6 +1833,7 @@ export class Database {
 	public async getAchievements(
 		playerId: string,
 	): Promise<DatabaseResult<AchievementData>> {
+		console.log(`GETTING ACHIVEMENTS FOR ${playerId}`)
 		try {
 			const result = await this.pool.query(
 				`
@@ -1860,7 +1861,6 @@ export class Database {
 							}),
 					}
 				}
-
 				progress[row['achievement_id']].goals[row['goal_id']] = row['progress']
 
 				if (row['level'] !== null) {
@@ -1921,6 +1921,12 @@ export class Database {
 					const achievementGoals: GoalRow[] = []
 					Object.keys(progress.goals).forEach((goal_id) => {
 						const goal_id_number = parseInt(goal_id)
+						if (
+							Object.values(achievementGoals).find(
+								(goal) => goal.goal === goal_id_number,
+							)
+						)
+							return
 						if (Number.isNaN(goal_id_number)) return
 						achievementGoals.push({
 							achievment: achievement.numericId,
