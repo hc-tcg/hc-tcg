@@ -23,9 +23,9 @@ import {generateDatabaseCode} from 'common/utils/database-codes'
 import {config} from 'dotenv'
 import {Database} from 'server/db/db'
 
-const globalProgress = (percentage: number) => ({
+const globalProgress = (count: number, percent: number) => ({
 	type: 'success',
-	body: {percent: percentage, count: percentage / 50},
+	body: {count, percent},
 })
 const playerProgress = (percentage: number) => ({
 	type: 'success',
@@ -687,7 +687,7 @@ describe('Test Database', () => {
 
 		expect(
 			await database.getAchievementPercentageCompletion(DefeatEvilX, 0),
-		).toStrictEqual(globalProgress(0))
+		).toStrictEqual(globalProgress(0, 0))
 
 		let completionTime = new Date(Date.now())
 		let completionTimeTwo = new Date(18437418)
@@ -740,23 +740,23 @@ describe('Test Database', () => {
 
 		expect(
 			await database.getAchievementPercentageCompletion(Win, 0),
-		).toStrictEqual(globalProgress(50))
+		).toStrictEqual(globalProgress(1, 100))
 		expect(
 			await database.getAchievementPercentageCompletion(Win, 1),
-		).toStrictEqual(globalProgress(50))
+		).toStrictEqual(globalProgress(1, 100))
 		expect(
 			await database.getAchievementPercentageCompletion(Win, 2),
-		).toStrictEqual(globalProgress(0))
+		).toStrictEqual(globalProgress(0, 0))
 
 		expect(
 			await database.getAchievementPercentageCompletion(DefeatEvilX, 0),
-		).toStrictEqual(globalProgress(50))
+		).toStrictEqual(globalProgress(1, 100))
 		await database.updateAchievements(player2.uuid, {
 			// Default Evil X achievement
 			6: {goals: {0: 1}, levels: [{completionTime: completionTime}]},
 		})
 		expect(
 			await database.getAchievementPercentageCompletion(DefeatEvilX, 0),
-		).toStrictEqual(globalProgress(100))
+		).toStrictEqual(globalProgress(2, 100))
 	})
 })
