@@ -402,10 +402,7 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 		})
 
 		clearSession()
-		// Reset the player ID so when we reconnect, it is as a new player
-		socket.auth.playerId = undefined
 		socket.disconnect()
-		window.location.reload()
 
 		return {
 			success: false,
@@ -509,7 +506,7 @@ export function* loginSaga() {
 		}
 
 		// This is a bit janky, but this reloads the client if the version happens to be out of date
-		if (result.reason === 'bad_auth') {
+		if (result.reason === 'invalid_session' || result.reason === 'bad_auth') {
 			window.location.reload()
 		}
 
