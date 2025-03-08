@@ -14,7 +14,7 @@ describe('Test "...is Great" achievement', () => {
 				playerOneDeck: [BdoubleO100Rare, BdoubleO100Rare, BdoubleO100Rare],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* forfeit(game.currentPlayer.entity)
+					yield* forfeit(game.opponentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(IsGreat.getProgress(achievement.goals)).toEqual(1)
@@ -30,7 +30,7 @@ describe('Test "...is Great" achievement', () => {
 				playerOneDeck: [BdoubleO100Rare, EthosLabRare],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* forfeit(game.currentPlayer.entity)
+					yield* forfeit(game.opponentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Ethogirl.getProgress(achievement.goals)).toBeUndefined()
