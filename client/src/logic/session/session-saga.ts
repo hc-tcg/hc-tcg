@@ -128,6 +128,8 @@ function* authenticateUser(
 		headers,
 	})
 
+	console.log(auth)
+
 	if (auth.status === 500) {
 		yield* put<LocalMessage>({
 			type: localMessages.DATABASE_SET,
