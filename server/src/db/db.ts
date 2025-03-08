@@ -2098,14 +2098,20 @@ export class Database {
 	public async getAchievementPercentageCompletion(
 		achievement: Achievement,
 		level: number,
-	): Promise<DatabaseResult<{percent: number}>> {
+	): Promise<DatabaseResult<{count: number; percent: number}>> {
 		try {
-			const playerCount = await this.pool.query('SELECT count(*) FROM users;')
+			const playerCount = await this.pool.query(
+				'SELECT count(DISTINCT user_id) FROM achievement_completion_time;',
+			)
 			const result = await this.pool.query(
 				`
-				SELECT user_goals.achievement_id, user_goals.user_id, user_goals.goal_id, user_goals.progress
-				FROM user_goals
-				WHERE user_goals.achievement_id = $1;
+					SELECT (0
+						user_goals.achievement_id,
+						user_goals.user_id,
+						user_goals.goal_id,
+						user_goals.progress
+					) FROM user_goals
+					WHERE user_goals.achievement_id = $1;
 				`,
 				[achievement.numericId],
 			)
@@ -2121,7 +2127,10 @@ export class Database {
 			).length
 			return {
 				type: 'success',
-				body: {percent: (100 * completers) / playerCount.rows[0]['count']},
+				body: {
+					count: completers,
+					percent: (100 * completers) / playerCount.rows[0]['count'],
+				},
 			}
 		} catch (e) {
 			console.log(e)
