@@ -26,16 +26,6 @@ const limiter = rateLimit({
 // Apply the rate limiting middleware to all requests.
 app.use(limiter)
 
-const authLimiter = rateLimit({
-	windowMs: 30 * 1000,
-	limit: 1,
-	standardHeaders: 'draft-8',
-	legacyHeaders: false,
-})
-
-// Apply the rate limiting middleware to all requests.
-app.use('/auth', authLimiter)
-
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 

@@ -31,8 +31,16 @@ import {
 	getTypeDistributionStats,
 } from './stats'
 import {requestUrlRoot} from './utils'
+import rateLimit from 'express-rate-limit'
 
 export function addApi(app: Express) {
+	const authLimiter = rateLimit({
+		windowMs: 30 * 1000,
+		limit: 2,
+		standardHeaders: 'draft-8',
+		legacyHeaders: false,
+	})
+	app.use('/api/auth/', authLimiter)
 	app.get('/api/auth/', async (req, res) => {
 		const userId = req.get('userId')
 		const secret = req.get('secret')
