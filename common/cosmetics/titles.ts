@@ -108,16 +108,6 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		requires: {achievement: NewTeamCanada.id},
 	},
 	{
-		id: 'washed_up',
-		name: 'Washed Up',
-		requires: undefined,
-	},
-	{
-		id: 'world_eater',
-		name: 'World Eater',
-		requires: undefined,
-	},
-	{
 		id: 'builder_title',
 		name: 'Builder Master',
 		requires: {achievement: BuilderWins.id, level: 1},

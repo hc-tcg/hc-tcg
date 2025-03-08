@@ -21,11 +21,6 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		requires: {achievement: Win.id, level: 4},
 	},
 	{
-		id: 'emerald',
-		name: 'Emerald',
-		requires: undefined,
-	},
-	{
 		id: 'plant',
 		name: 'Flower',
 		requires: {achievement: SUStainable.id},
