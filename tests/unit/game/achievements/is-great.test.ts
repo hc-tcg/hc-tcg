@@ -1,19 +1,11 @@
 import {describe, expect, test} from '@jest/globals'
 import Ethogirl from 'common/achievements/ethogirl'
+import IsGreat from 'common/achievements/is-great'
+import BdoubleO100Rare from 'common/cards/hermits/bdoubleo100-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import EthosLabRare from 'common/cards/hermits/ethoslab-rare'
-import EthosLabUltraRare from 'common/cards/hermits/ethoslab-ultra-rare'
 import ShadEECommon from 'common/cards/hermits/shadee-common'
-import ShadeEERare from 'common/cards/hermits/shadeee-rare'
-import {
-	attack,
-	endTurn,
-	forfeit,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
-import BdoubleO100Rare from 'common/cards/hermits/bdoubleo100-rare'
-import IsGreat from 'common/achievements/is-great'
+import {forfeit, testAchivement} from '../utils'
 
 describe('Test "...is Great" achievement', () => {
 	test('Check should be valid', () => {
