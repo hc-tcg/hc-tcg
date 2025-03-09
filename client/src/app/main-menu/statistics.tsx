@@ -1063,6 +1063,15 @@ function Statistics({setMenuSection}: Props) {
 											<p>{stats.uniquePlayersEncountered}</p>
 											<p></p>
 										</div>
+										<div className={css.stat}>
+											<p className={css.statName}>Playtime</p>
+											<p>
+												{stats.playtime.hours > 0
+													? `${stats.playtime.hours}.${Math.round((stats.playtime.minutes + stats.playtime.seconds / 60) / 0.6)} hours`
+													: `${stats.playtime.minutes}.${Math.round(stats.playtime.seconds / 0.6)} minutes`}
+											</p>
+											<p></p>
+										</div>
 									</div>
 									{/* Can't show when games are 0 bc a winrate makes no sense */}
 									{stats.gamesPlayed > 0 && (

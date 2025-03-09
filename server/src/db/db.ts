@@ -238,6 +238,11 @@ export class Database {
 						ties: 0,
 						topCards: [],
 						uniquePlayersEncountered: 0,
+						playtime: {
+							hours: 0,
+							minutes: 0,
+							seconds: 0,
+						},
 					},
 					//@ts-ignore
 					decks: [deckInfo],
@@ -815,7 +820,11 @@ export class Database {
 				SELECT DISTINCT winner as opponent FROM games WHERE loser = $1
 				UNION SELECT DISTINCT loser as opponent FROM games WHERE winner = $1
 				GROUP BY opponent
-			)) as unique_players
+			)) as unique_players,
+			(SELECT sum(games.completion_time - games.start_time) FROM games 
+				WHERE winner = $1
+				OR loser = $1
+			) as playtime
 			`,
 				[uuid],
 			)
@@ -832,6 +841,11 @@ export class Database {
 					forfeitLosses: Number(statRows['forfeit_losses']),
 					ties: Number(statRows['ties']),
 					topCards: [],
+					playtime: {
+						hours: statRows['playtime'].hours || 0,
+						minutes: statRows['playtime'].minutes || 0,
+						seconds: statRows['playtime'].seconds || 0,
+					},
 					uniquePlayersEncountered: Number(statRows['unique_players']),
 				},
 			}
