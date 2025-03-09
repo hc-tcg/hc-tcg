@@ -496,8 +496,13 @@ function EditDeck({
 				title="Remove all cards"
 				description="Are you sure you want to remove all cards from your deck?"
 				confirmButtonText="Clear"
-				onCancel={() => {}}
-				onConfirm={clearDeck}
+				onCancel={() => {
+					setShowClearCardsModal(false)
+				}}
+				onConfirm={() => {
+					clearDeck()
+					setShowClearCardsModal(false)
+				}}
 			/>
 			<DeckLayout title={title} back={handleBack} returnText="Deck Selection">
 				<DeckLayout.Main
