@@ -101,11 +101,18 @@ function Router() {
 							prefillJoinCode={joinCode}
 						/>
 					)
-				case 'play-again':
+				case 'play-again-public':
 					return (
 						<PlaySelect
 							setMenuSection={menuSectionSet}
 							defaultSection={'public'}
+						/>
+					)
+				case 'play-again-boss':
+					return (
+						<PlaySelect
+							setMenuSection={menuSectionSet}
+							defaultSection={'boss'}
 						/>
 					)
 				case 'rematch':

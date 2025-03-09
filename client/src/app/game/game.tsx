@@ -18,6 +18,7 @@ import {
 	getPlayerEntity,
 	getPlayerState,
 	getSelectedCard,
+	getSpectatorCodeInGame,
 	getTurnNumber,
 } from 'logic/game/game-selectors'
 import {
@@ -76,6 +77,7 @@ function EndGameOverlayContainer({
 	const playerEntity = useSelector(getPlayerEntity)
 	const dispatch = useMessageDispatch()
 	const rematchData = useSelector(getRematchData)
+	const spectatorCode = useSelector(getSpectatorCodeInGame)
 
 	// Play EX voice lines on hermit deaths and game end
 	const lives = [gameState?.playerEntity, gameState?.opponentPlayerEntity].map(
@@ -146,6 +148,13 @@ function EndGameOverlayContainer({
 			dispatchGameClose={() => {
 				dispatch({type: localMessages.GAME_CLOSE})
 			}}
+			gameMode={
+				gameState.isEvilXBossGame
+					? 'boss'
+					: spectatorCode
+						? 'private'
+						: 'public'
+			}
 		/>
 	)
 }
