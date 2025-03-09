@@ -2,6 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 import Wipeout from 'common/achievements/wipeout'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import Anvil from 'common/cards/single-use/anvil'
+import LavaBucket from 'common/cards/single-use/lava-bucket'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {
@@ -13,8 +14,6 @@ import {
 	playCardFromHand,
 	testAchivement,
 } from '../utils'
-import LavaBucket from 'common/cards/single-use/lava-bucket'
-import {applySingleUse} from 'common/utils/board'
 
 describe('Test "Wipeout" achievement', () => {
 	test('Works when game ends when all Hermits are knocked out and game ends', () => {
