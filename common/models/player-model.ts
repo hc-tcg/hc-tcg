@@ -24,6 +24,7 @@ export class PlayerModel {
 		playerName: string,
 		minecraftName: string,
 		uuid: string,
+		appearance: Appearance,
 		achievementProgress: AchievementProgress,
 		socket: Socket,
 	) {
@@ -38,7 +39,7 @@ export class PlayerModel {
 		this.socket = socket
 		this.uuid = uuid
 		this.achievementProgress = achievementProgress
-		this.appearance = {...defaultAppearance}
+		this.appearance = {...defaultAppearance, ...appearance}
 	}
 
 	public get id() {

@@ -1,3 +1,4 @@
+import {Appearance} from 'common/cosmetics/types'
 import {PlayerId} from 'common/models/player-model'
 import {ClientMessage} from 'common/socket-messages/client-messages'
 import {LocalMessage, localMessages} from 'logic/messages'
@@ -11,6 +12,7 @@ export type SocketType = {
 		playerId?: PlayerId
 		playerUuid: string
 		playerSecret: string
+		appearance: Appearance
 	}
 	connected: boolean
 	connect: () => void
