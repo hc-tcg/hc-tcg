@@ -1,7 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../components'
 import {GameModel} from '../../models/game-model'
 import {beforeAttack} from '../../types/priorities'
-import {flipCoin} from '../../utils/coinFlips'
+import {flipCoin} from '../../utils/coin-flips'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 

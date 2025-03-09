@@ -6,7 +6,7 @@ import {
 } from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
-import BadOmenEffect from '../../status-effects/badomen'
+import BadOmenEffect from '../../status-effects/bad-omen'
 import PoisonEffect from '../../status-effects/poison'
 import {afterApply, beforeAttack} from '../../types/priorities'
 import {applySingleUse} from '../../utils/board'
