@@ -1,11 +1,22 @@
+import {AchievementProgress} from '../types/achievements'
 import {TypeT} from './cards'
-import {ApiDeck} from './deck'
+import {ApiDeck, Deck} from './deck'
 
 export type User = {
 	uuid: string
 	secret: string
 	username: string
 	minecraftName: string | null
+	title: string | null
+	coin: string | null
+	heart: string | null
+	background: string | null
+	border: string | null
+	decks: Array<Deck>
+	achievements: AchievementData
+	stats: PlayerStats
+	gameHistory: Array<GameHistory>
+	banned: boolean
 }
 
 export type UserWithoutSecret = {
@@ -21,6 +32,11 @@ export type Stats = {
 	ties: number
 	forfeitWins: number
 	forfeitLosses: number
+}
+
+export type PlayerStats = Stats & {
+	uniquePlayersEncountered: number
+	topCards: Array<string>
 }
 
 export type CardStats = {
@@ -71,6 +87,10 @@ export type GamesStats = {
 	errorRate: number
 }
 
+export type AchievementData = {
+	achievementData: AchievementProgress
+}
+
 export type ApiGame = {
 	firstPlayerName: string
 	secondPlayerName: string
@@ -78,10 +98,25 @@ export type ApiGame = {
 	winner: string | null
 }
 
-export type Achievement = {
-	id: string
+export type GameHistoryPlayer = {
+	player: 'you' | 'opponent'
 	name: string
-	description: string
-	icon: string
-	total: string
+	minecraftName: string
+	uuid: string
+}
+
+export type GameHistory = {
+	firstPlayer: GameHistoryPlayer
+	secondPlayer: GameHistoryPlayer
+	hasReplay: boolean
+	startTime: Date
+	length: {
+		minutes: number
+		seconds: number
+		milliseconds: number
+	}
+	turns: number | null
+	winner: string
+	usedDeck: Deck
+	id: number
 }

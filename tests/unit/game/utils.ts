@@ -1,17 +1,20 @@
+import {Achievement} from 'common/achievements/types'
 import EvilXisumaBoss, {
 	BOSS_ATTACK,
 	supplyBossAttack,
 } from 'common/cards/boss/hermits/evilxisuma_boss'
 import {Card} from 'common/cards/types'
-import {COINS} from 'common/coins'
 import {
+	AchievementComponent,
 	BoardSlotComponent,
 	CardComponent,
+	ObserverComponent,
 	PlayerComponent,
 	RowComponent,
 	SlotComponent,
 } from 'common/components'
 import query, {ComponentQuery} from 'common/components/query'
+import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerEntity} from 'common/entities'
 import {GameModel, GameSettings} from 'common/models/game-model'
 import {SlotTypeT} from 'common/types/cards'
@@ -21,23 +24,26 @@ import {
 	attackToAttackAction,
 	slotToPlayCardAction,
 } from 'common/types/turn-action-data'
+import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {applyMiddleware, createStore} from 'redux'
-import createSagaMiddleware from 'redux-saga'
+import createSagaMiddleware, {SagaMiddleware} from 'redux-saga'
 import {GameController} from 'server/game-controller'
 import {LocalMessage, localMessages} from 'server/messages'
 import gameSaga, {figureOutGameResult} from 'server/routines/game'
 import {getLocalCard} from 'server/utils/state-gen'
 import {call, put, race} from 'typed-redux-saga'
 
-function getTestPlayer(playerName: string, deck: Array<Card>) {
+function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 	return {
 		model: {
 			name: playerName,
 			minecraftName: playerName,
 			censoredName: playerName,
-			selectedCoinHead: 'creeper' as keyof typeof COINS,
+			appearance: defaultAppearance,
+			uuid: '',
 		},
 		deck,
+		score: 0,
 	}
 }
 
@@ -224,12 +230,17 @@ export function getWinner(game: GameModel): PlayerComponent | null {
 	)
 }
 
-function testSagas(rootSaga: any, testingSaga: any) {
+function getSagaMiddleware(): SagaMiddleware<object> {
 	const sagaMiddleware = createSagaMiddleware({
 		// Prevent default behavior where redux saga logs errors to stderr. This is not useful to tests.
 		onError: (_err, {sagaStack: _}) => {},
 	})
 	createStore(() => {}, applyMiddleware(sagaMiddleware))
+	return sagaMiddleware
+}
+
+function testSagas(rootSaga: any, testingSaga: any) {
+	const sagaMiddleware = getSagaMiddleware()
 
 	let saga = sagaMiddleware.run(function* () {
 		yield* race([rootSaga, testingSaga])
@@ -307,8 +318,10 @@ export function testGame(
 		throw new Error('Game was ended before the test finished running.')
 	}
 
-	if (options.then)
-		options.then(controller.game, figureOutGameResult(controller.game))
+	if (options.then) {
+		const result = figureOutGameResult(controller.game)
+		options.then(controller.game, result)
+	}
 }
 
 /**
@@ -342,10 +355,12 @@ export function testBossFight(
 				name: 'Evil Xisuma',
 				censoredName: 'Evil Xisuma',
 				minecraftName: 'EvilXisuma',
+				appearance: {...defaultAppearance},
+				uuid: '',
 				disableDeckingOut: true,
-				selectedCoinHead: 'evilx',
 			},
 			deck: [EvilXisumaBoss],
+			score: 0,
 		},
 		{
 			randomizeOrder: false,
@@ -354,7 +369,7 @@ export function testBossFight(
 		},
 	)
 
-	controller.game.state.isBossGame = true
+	controller.game.state.isEvilXBossGame = true
 
 	function destroyRow(row: RowComponent) {
 		controller.game.components
@@ -407,6 +422,70 @@ export function testBossFight(
 	if (options.then) options.then(controller.game)
 }
 
+/** Test an achievement for player one in a game */
+export function testAchivement(
+	options: {
+		achievement: Achievement
+		playGame: (game: GameModel) => any
+		checkAchivement: (
+			game: GameModel,
+			achievement: AchievementComponent,
+			outcome: GameOutcome,
+		) => any
+		playerOneDeck: Array<Card>
+		playerTwoDeck: Array<Card>
+	},
+	settings: Partial<GameSettings> = {},
+) {
+	let achievementComponent: AchievementComponent
+	let player: PlayerComponent
+
+	let saga = function* (game: GameModel) {
+		player = game.currentPlayer
+		let achievementProgress: Record<number, number> = {}
+
+		achievementComponent = game.components.new(
+			AchievementComponent,
+			options.achievement.numericId,
+			achievementProgress,
+			player.entity,
+		)
+		const achievementObserver = game.components.new(
+			ObserverComponent,
+			achievementComponent.entity,
+		)
+
+		options.achievement.onGameStart(
+			game,
+			player,
+			achievementComponent,
+			achievementObserver,
+		)
+
+		yield* options.playGame(game)
+	}
+
+	let then = function (game: GameModel, gameOutcome: GameOutcome) {
+		options.achievement.onGameEnd(
+			game,
+			player,
+			achievementComponent,
+			gameOutcome,
+		)
+		options.checkAchivement(game, achievementComponent, gameOutcome)
+	}
+
+	testGame(
+		{
+			saga,
+			then,
+			playerOneDeck: options.playerOneDeck,
+			playerTwoDeck: options.playerTwoDeck,
+		},
+		settings,
+	)
+}
+
 export function* bossAttack(game: GameModel, ...attack: BOSS_ATTACK) {
 	const bossCard = game.components.find(
 		CardComponent,
@@ -426,4 +505,50 @@ export function* bossAttack(game: GameModel, ...attack: BOSS_ATTACK) {
 			type: attackType,
 		},
 	})
+}
+
+export function testReplayGame(options: {
+	gameSaga: (con: GameController) => any
+	afterGame: (con: GameController) => any
+	playerOneDeck: Array<Card>
+	playerTwoDeck: Array<Card>
+	seed?: string
+	shuffleDeck?: boolean
+}) {
+	const controller = new GameController(
+		getTestPlayer('playerOne', options.playerOneDeck),
+		getTestPlayer('playerTwo', options.playerTwoDeck),
+		{
+			randomizeOrder: true,
+			// The default seed always ensures player one goes first. Because how replays work, turn order needs to be random here
+			randomSeed: options.seed ? options.seed : '1234567',
+			settings: {
+				...defaultGameSettings,
+				shuffleDeck: options.shuffleDeck || false,
+				verboseLogging: true,
+				forceCoinFlip: false,
+				disableDeckOut: false,
+				disableRewardCards: false,
+			},
+		},
+	)
+
+	testSagas(
+		call(function* () {
+			yield* call(gameSaga, controller)
+		}),
+		call(function* () {
+			yield* call(options.gameSaga, controller)
+		}),
+	)
+
+	const sagaMiddleware = getSagaMiddleware()
+
+	const saga = sagaMiddleware.run(function* () {
+		yield* call(options.afterGame, controller)
+	})
+
+	if (saga.error()) {
+		throw saga.error()
+	}
 }

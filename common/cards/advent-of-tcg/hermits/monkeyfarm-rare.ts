@@ -68,7 +68,7 @@ const MonkeyfarmRare: Hermit = {
 					message: "Pick one of your opponent's AFK Hermit's item cards",
 					canPick: pickCondition,
 					onResult(pickedSlot) {
-						pickedSlot.getCard()?.discard()
+						pickedSlot.card?.discard()
 					},
 				})
 			},

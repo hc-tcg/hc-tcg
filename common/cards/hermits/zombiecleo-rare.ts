@@ -94,8 +94,7 @@ const ZombieCleoRare: Hermit = {
 					message: 'Pick one of your AFK Hermits',
 					canPick: pickCondition,
 					onResult: (pickedSlot) => {
-						const pickedCard =
-							pickedSlot.getCard() as CardComponent<Hermit> | null
+						const pickedCard = pickedSlot.card as CardComponent<Hermit> | null
 						if (!pickedCard) return
 
 						game.addCopyAttackModalRequest({

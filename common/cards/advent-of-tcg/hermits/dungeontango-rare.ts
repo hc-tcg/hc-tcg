@@ -58,7 +58,7 @@ const DungeonTangoRare: Hermit = {
 				if (!activeRow) return
 
 				const items = (activeRow.getItemSlots() as SlotComponent[]).filter(
-					(slot) => slot.getCard() && !query.slot.frozen(game, slot),
+					(slot) => slot.card && !query.slot.frozen(game, slot),
 				)
 				const pickCondition = (_game: GameModel, value: SlotComponent) =>
 					items.includes(value)
@@ -74,12 +74,12 @@ const DungeonTangoRare: Hermit = {
 					message: 'Choose an item card to discard',
 					canPick: pickCondition,
 					onResult(pickedSlot) {
-						pickedCard = pickedSlot.getCard()
+						pickedCard = pickedSlot.card
 					},
 					onTimeout() {
 						const firstItem = game.components.find(SlotComponent, pickCondition)
 						if (!firstItem) return
-						pickedCard = firstItem.getCard()
+						pickedCard = firstItem.card
 					},
 				})
 			},
@@ -114,7 +114,6 @@ const DungeonTangoRare: Hermit = {
 					assert(card.slot.inDeck())
 					card.slot.order = newOrder[i]
 				})
-				deckCards.forEach((card) => card.hooks.onChangeSlot.call(card.slot))
 			},
 		)
 

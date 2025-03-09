@@ -29,6 +29,7 @@ import {
 	localEndTurn,
 	localRemoveEffect,
 } from './local-state'
+import achievementSaga from './tasks/achievements'
 import actionLogicSaga from './tasks/action-logic-saga'
 import actionModalsSaga from './tasks/action-modals-saga'
 import attackSaga from './tasks/attack-saga'
@@ -213,7 +214,12 @@ function* handleForfeitAction() {
 	yield* sendTurnAction(playerEntity, action.action)
 }
 
-function* gameSaga(initialGameState?: LocalGameState) {
+type GameSagaProps = {
+	spectatorCode?: string
+	initialGameState?: LocalGameState
+}
+
+function* gameSaga({initialGameState, spectatorCode}: GameSagaProps) {
 	const socket = yield* select(getSocket)
 	const backgroundTasks = yield* fork(() =>
 		all([
@@ -221,6 +227,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 			fork(chatSaga),
 			fork(spectatorSaga),
 			fork(reconnectSaga),
+			fork(achievementSaga),
 			fork(handleForfeitAction),
 		]),
 	)
@@ -228,6 +235,7 @@ function* gameSaga(initialGameState?: LocalGameState) {
 	try {
 		yield* put<LocalMessage>({
 			type: localMessages.GAME_START,
+			spectatorCode,
 		})
 
 		const result = yield* race({
@@ -239,7 +247,12 @@ function* gameSaga(initialGameState?: LocalGameState) {
 		if (result.game) {
 			throw new Error('Unexpected game ending')
 		} else if (result.gameEnd) {
-			const {gameState: newGameState, outcome} = result.gameEnd
+			const {
+				gameState: newGameState,
+				outcome,
+				earnedAchievements,
+				gameEndTime,
+			} = result.gameEnd
 			if (newGameState) {
 				yield call(coinFlipSaga, newGameState)
 				yield putResolve<LocalMessage>({
@@ -251,6 +264,8 @@ function* gameSaga(initialGameState?: LocalGameState) {
 			yield put<LocalMessage>({
 				type: localMessages.GAME_END_OVERLAY_SHOW,
 				outcome,
+				earnedAchievements,
+				gameEndTime,
 			})
 		}
 	} catch (err) {
@@ -258,10 +273,12 @@ function* gameSaga(initialGameState?: LocalGameState) {
 		yield put<LocalMessage>({
 			type: localMessages.GAME_END_OVERLAY_SHOW,
 			outcome: {type: 'game-crash', error: `${(err as Error).stack}`},
+			earnedAchievements: [],
+			gameEndTime: Date.now(),
 		})
 	} finally {
 		const hasOverlay = yield* select(getEndGameOverlay)
-		if (hasOverlay) yield take(localMessages.GAME_END_OVERLAY_HIDE)
+		if (hasOverlay) yield take(localMessages.GAME_CLOSE)
 		console.log('Game ended')
 		yield put<LocalMessage>({type: localMessages.GAME_END})
 		yield cancel(backgroundTasks)

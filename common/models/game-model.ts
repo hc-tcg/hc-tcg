@@ -1,4 +1,5 @@
 import assert from 'assert'
+import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
 import JoeHillsRare from '../cards/hermits/joehills-rare'
 import {
 	CardComponent,
@@ -34,11 +35,13 @@ import {
 	CopyAttack,
 	DragCards,
 	ModalRequest,
+	ModalResult,
 	SelectCards,
 } from '../types/modal-requests'
 import {afterAttack, beforeAttack} from '../types/priorities'
 import {rowRevive} from '../types/priorities'
 import {PickRequest} from '../types/server-requests'
+import {newIncrementor} from '../utils/game'
 import {newRandomNumberGenerator} from '../utils/random'
 import {
 	PlayerSetupDefs,
@@ -97,12 +100,19 @@ export function gameSettingsFromEnv(): GameSettings {
 
 export class GameModel {
 	public rng: () => number
+	public nextEntity: () => number
+	private entityCount: number
 
 	public readonly id: string
 	public readonly settings: GameSettings
 	public publishBattleLog: (logs: Array<Message>, timeout: number) => void
 
 	public battleLog: BattleLogModel
+	/**All past turn actions, saved for replays */
+	public turnActions: Array<ReplayActionData>
+	/**The time the last action has been recieved*/
+	public lastActionTime: number | null
+
 	public state: GameState
 	/** The seed for the random number generation for this game. WARNING: Must be under 15 characters or the database will break. */
 	public readonly rngSeed: string
@@ -113,6 +123,9 @@ export class GameModel {
 
 	/** The objects used in the game. */
 	public components: ComponentTable
+
+	public arePlayersSwapped: boolean
+
 	public hooks: {
 		/** Hook called before the main attack loop, for every attack from any source */
 		beforeAttack: PriorityHook<
@@ -129,6 +142,16 @@ export class GameModel {
 		 * Locked slots cannot be chosen in some combinator expressions.
 		 */
 		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
+		/** Hook called when the game ends for achievements to check how the game ended */
+		onGameEnd: GameHook<(outcome: GameOutcome) => void>
+		/** Hook called when modal request is responded to by a player */
+		onPickRequestResolve: GameHook<
+			(request: PickRequest, slot: SlotComponent) => void
+		>
+		/** Hook called when pick request is responded to by a player */
+		onModalRequestResolve: GameHook<
+			(request: ModalRequest, result: ModalResult) => void
+		>
 		/** Hook called when the game ends for disposing references */
 		afterGameEnd: Hook<string, () => void>
 		/** Hook for reviving rows after all attacks are executed */
@@ -151,11 +174,12 @@ export class GameModel {
 		settings: GameSettings,
 		options?: {
 			randomizeOrder?: boolean
+			id?: string
 			publishBattleLog?: (logs: Array<Message>, timeout: number) => void
 		},
 	) {
 		options = options ?? {}
-		this.id = `game_${Math.random()}`
+		this.id = options.id || `game_${Math.random()}`
 
 		if (options?.publishBattleLog) {
 			this.publishBattleLog = options.publishBattleLog
@@ -167,8 +191,13 @@ export class GameModel {
 		assert(rngSeed.length < 16, 'Game RNG seed must be under 16 characters')
 		this.rngSeed = rngSeed
 		this.rng = newRandomNumberGenerator(rngSeed)
+		this.entityCount = 0
+		this.nextEntity = newIncrementor()
+		const swapPlayers = this.rng()
 
 		this.battleLog = new BattleLogModel(this)
+		this.turnActions = []
+		this.lastActionTime = null
 
 		this.endInfo = {
 			deadPlayerEntities: [],
@@ -181,8 +210,12 @@ export class GameModel {
 			rowRevive: new PriorityHook(rowRevive),
 			afterAttack: new PriorityHook(afterAttack),
 			freezeSlots: new GameHook(),
+			onGameEnd: new GameHook(),
+			onModalRequestResolve: new GameHook(),
+			onPickRequestResolve: new GameHook(),
 			afterGameEnd: new Hook(),
 		}
+
 		setupComponents(this, this.components, player1, player2, {
 			shuffleDeck: settings.shuffleDeck,
 			startWithAllCards: settings.startWithAllCards,
@@ -190,7 +223,9 @@ export class GameModel {
 			extraStartingCards: settings.extraStartingCards,
 		})
 
-		this.state = getGameState(this, options.randomizeOrder)
+		this.arePlayersSwapped = options.randomizeOrder ? swapPlayers >= 0.5 : false
+
+		this.state = getGameState(this, this.arePlayersSwapped)
 		this.voiceLineQueue = []
 	}
 
@@ -470,21 +505,21 @@ export class GameModel {
 	): void {
 		if (!slotA || !slotB) return
 
-		const slotACards = this.components.filter(
+		const slotACard = this.components.find(
 			CardComponent,
 			query.card.slotEntity(slotA.entity),
 		)
-		const slotBCards = this.components.filter(
+		const slotBCard = this.components.find(
 			CardComponent,
 			query.card.slotEntity(slotB.entity),
 		)
 
-		slotACards.forEach((card) => {
-			card.attach(slotB)
-		})
-		slotBCards.forEach((card) => {
-			card.attach(slotA)
-		})
+		slotACard?.attach(slotB)
+		slotBCard?.attach(slotA)
+
+		/* I don't know why these two lines are required, but don't delete them because the tests fail! */
+		slotA.cardEntity = slotBCard?.entity ?? null
+		slotB.cardEntity = slotACard?.entity ?? null
 	}
 
 	public getPickableSlots(

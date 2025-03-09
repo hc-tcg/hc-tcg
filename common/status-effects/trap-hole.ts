@@ -6,7 +6,7 @@ import {
 } from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
-import {onTurnEnd} from '../types/priorities'
+import {afterApply, onTurnEnd} from '../types/priorities'
 import {flipCoin} from '../utils/coin-flips'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
@@ -25,34 +25,38 @@ export const TrapHoleEffect: StatusEffect<PlayerComponent> = {
 		player: PlayerComponent,
 		observer: ObserverComponent,
 	) {
-		observer.subscribeBefore(player.hooks.afterApply, () => {
-			let singleUseCard = game.components.find(
-				CardComponent,
-				query.card.slot(query.slot.singleUse),
-			)
-			if (!singleUseCard) return
-
-			const coinFlip = flipCoin(
-				game,
-				player.opponentPlayer,
-				effect.creator,
-				1,
-				player,
-			)
-
-			if (coinFlip[0] == 'heads') {
-				game.battleLog.addEntry(
-					player.entity,
-					`$o${effect.creator.props.name}$ flipped $pheads$ and took $e${singleUseCard.props.name}$`,
+		observer.subscribeWithPriority(
+			player.hooks.afterApply,
+			afterApply.TRAP_HOLE_STEAL,
+			() => {
+				let singleUseCard = game.components.find(
+					CardComponent,
+					query.card.slot(query.slot.singleUse),
 				)
-				singleUseCard.draw(player.opponentPlayer.entity)
-			} else {
-				game.battleLog.addEntry(
-					player.entity,
-					`$o${effect.creator.props.name}$ flipped $btails$`,
+				if (!singleUseCard) return
+
+				const coinFlip = flipCoin(
+					game,
+					player.opponentPlayer,
+					effect.creator,
+					1,
+					player,
 				)
-			}
-		})
+
+				if (coinFlip[0] == 'heads') {
+					game.battleLog.addEntry(
+						player.entity,
+						`$o${effect.creator.props.name}$ flipped $pheads$ and took $e${singleUseCard.props.name}$`,
+					)
+					singleUseCard.draw(player.opponentPlayer.entity)
+				} else {
+					game.battleLog.addEntry(
+						player.entity,
+						`$o${effect.creator.props.name}$ flipped $btails$`,
+					)
+				}
+			},
+		)
 		observer.subscribeWithPriority(
 			player.hooks.onTurnEnd,
 			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,

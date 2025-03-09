@@ -1,8 +1,18 @@
 import {PlayerId} from 'common/models/player-model'
-import {ToastData} from 'common/types/app'
+import {RematchData, ToastData} from 'common/types/app'
 import {PlayerInfo, Update} from 'common/types/server-requests'
 import {LocalMessage, localMessages} from 'logic/messages'
 import React from 'react'
+
+export type ConnectionError =
+	| 'invalid_name'
+	| 'invalid_version'
+	| 'session_expired'
+	| 'timeout'
+	| 'xhr poll_error'
+	| 'bad_auth'
+	| 'invalid_session'
+	| 'invalid_auth_entered'
 
 type SessionState = {
 	playerName: string
@@ -11,21 +21,25 @@ type SessionState = {
 	playerSecret: string
 	playerDeck: string | null
 	connecting: boolean
+	connectingMessage: string
 	connected: boolean
-	errorType?:
-		| 'invalid_name'
-		| 'invalid_version'
-		| 'session_expired'
-		| 'timeout'
-		| string
+	errorType?: ConnectionError
 	tooltip: {
 		anchor: React.RefObject<HTMLDivElement>
 		tooltip: React.ReactNode
 		tooltipHeight: number
 		tooltipWidth: number
 	} | null
+	dropdown: {
+		x: number
+		y: number
+		dropdown: React.ReactNode
+		direction: 'up' | 'down'
+		align: 'left' | 'right'
+	} | null
 	toast: Array<ToastData>
 	updates: Array<Update>
+	rematch: RematchData | null
 	newPlayer: boolean //If the account was created this session
 }
 
@@ -35,11 +49,14 @@ const defaultState: SessionState = {
 	playerId: '' as PlayerId,
 	playerSecret: '',
 	playerDeck: null,
-	connecting: false,
+	connecting: true,
+	connectingMessage: 'Connecting',
 	connected: false,
 	tooltip: null,
+	dropdown: null,
 	toast: [],
 	updates: [],
+	rematch: null,
 	newPlayer: false,
 }
 
@@ -71,11 +88,21 @@ const loginReducer = (
 				playerDeck:
 					(action.player as PlayerInfo)?.playerDeck?.code || state.playerDeck,
 			}
+		case localMessages.NOT_CONNECTING:
+			return {
+				...state,
+				connecting: false,
+			}
 		case localMessages.CONNECTED:
 			return {
 				...state,
 				connecting: false,
 				connected: true,
+			}
+		case localMessages.CONNECTING_MESSAGE:
+			return {
+				...state,
+				connectingMessage: action.message,
 			}
 		case localMessages.UPDATES_LOAD:
 			return {
@@ -90,14 +117,16 @@ const loginReducer = (
 				playerDeck: action.deck.code,
 			}
 		case localMessages.TOAST_OPEN:
-			state.toast.push({
-				id: state.toast.length + 1,
-				toast: action,
-				closed: false,
-			})
 			return {
 				...state,
-				toast: state.toast,
+				toast: [
+					...state.toast,
+					{
+						id: state.toast.length + 1,
+						toast: action,
+						closed: false,
+					},
+				],
 			}
 		case localMessages.TOAST_CLOSE:
 			const thisToast = state.toast.find((toast) => toast.id === action.id)
@@ -127,7 +156,27 @@ const loginReducer = (
 				...state,
 				tooltip: null,
 			}
-		case localMessages.MINECRAFT_NAME_NEW:
+		case localMessages.SHOW_DROPDOWN:
+			return {
+				...state,
+				dropdown: {
+					dropdown: action.dropdown,
+					x: action.x,
+					y: action.y,
+					direction: action.direction,
+					align: action.align,
+				},
+			}
+		case localMessages.HIDE_DROPDOWN:
+			return {
+				...state,
+				dropdown: null,
+			}
+		case localMessages.USERNAME_SET:
+			return {
+				...state,
+				playerName: action.name,
+			}
 		case localMessages.MINECRAFT_NAME_SET:
 			return {
 				...state,
@@ -137,6 +186,11 @@ const loginReducer = (
 			return {
 				...state,
 				newPlayer: true,
+			}
+		case localMessages.RECIEVE_REMATCH:
+			return {
+				...state,
+				rematch: action.rematch,
 			}
 		default:
 			return state

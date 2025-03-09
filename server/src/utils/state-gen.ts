@@ -194,6 +194,7 @@ function getLocalPlayerState(
 		),
 		lives: playerState.lives,
 		board: board,
+		appearance: playerState.appearance,
 	}
 	return localPlayerState
 }
@@ -207,13 +208,15 @@ export function getLocalGameState(
 		(_game, player) => player.entity == viewer.playerOnLeft.entity,
 	)
 
+	const replay = viewer.replayer
+
 	if (!playerState)
 		throw new Error('Player should be added to ECS before fetching local state')
 
 	const opponentState = playerState.opponentPlayer
 
 	let isCurrentPlayer =
-		!viewer.spectator &&
+		(!viewer.spectator || replay) &&
 		viewer.playerOnLeft.entity === game.currentPlayer.entity
 
 	const turnState = game.state.turn
@@ -236,12 +239,10 @@ export function getLocalGameState(
 	let currentPickMessage = null
 	let currentModalData = null
 
-	const currentPickRequest = viewer.spectator
-		? null
-		: game.state.pickRequests[0]
-	const currentModalRequest = viewer.spectator
-		? null
-		: game.state.modalRequests[0]
+	const currentPickRequest =
+		viewer.spectator && !viewer.replayer ? null : game.state.pickRequests[0]
+	const currentModalRequest =
+		viewer.spectator && !viewer.replayer ? null : game.state.modalRequests[0]
 
 	if (currentModalRequest?.player === viewer.playerOnLeft.entity) {
 		// We must send modal requests first, to stop pick requests from overwriting them.
@@ -282,6 +283,7 @@ export function getLocalGameState(
 
 	const localGameState: LocalGameState = {
 		isSpectator: viewer.spectator,
+		isReplayer: viewer.replayer,
 		turn: {
 			turnNumber: turnState.turnNumber,
 			currentPlayerEntity: game.currentPlayer.entity,
@@ -297,38 +299,41 @@ export function getLocalGameState(
 			.filter((effect) => effect !== null) as Array<LocalStatusEffectInstance>,
 
 		// personal info
-		hand: viewer.spectator
-			? []
-			: game.components
-					.filter(
+		hand:
+			viewer.spectator && !replay
+				? []
+				: game.components
+						.filter(
+							CardComponent,
+							query.card.slot(
+								query.slot.player(playerState.entity),
+								query.slot.hand,
+							),
+						)
+						.sort(CardComponent.compareOrder)
+						.map((card) => getLocalCard(game, card)),
+		pileCount:
+			viewer.spectator && !viewer.replayer
+				? 0
+				: game.components.filter(
 						CardComponent,
 						query.card.slot(
 							query.slot.player(playerState.entity),
-							query.slot.hand,
+							query.slot.deck,
 						),
-					)
-					.sort(CardComponent.compareOrder)
-					.map((card) => getLocalCard(game, card)),
-		pileCount: viewer.spectator
-			? 0
-			: game.components.filter(
-					CardComponent,
-					query.card.slot(
-						query.slot.player(playerState.entity),
-						query.slot.deck,
-					),
-				).length,
-		discarded: viewer.spectator
-			? []
-			: game.components
-					.filter(
-						CardComponent,
-						query.card.slot(
-							query.slot.player(playerState.entity),
-							query.slot.discardPile,
-						),
-					)
-					.map((card) => getLocalCard(game, card)),
+					).length,
+		discarded:
+			viewer.spectator && !viewer.replayer
+				? []
+				: game.components
+						.filter(
+							CardComponent,
+							query.card.slot(
+								query.slot.player(playerState.entity),
+								query.slot.discardPile,
+							),
+						)
+						.map((card) => getLocalCard(game, card)),
 
 		// The entity of the player on the left of the screen
 		playerEntity: players[viewer.playerOnLeft.entity].entity,
@@ -345,7 +350,7 @@ export function getLocalGameState(
 		players,
 		timer,
 
-		isBossGame: game.state.isBossGame,
+		isEvilXBossGame: game.state.isEvilXBossGame,
 		voiceLineQueue: game.voiceLineQueue,
 	}
 

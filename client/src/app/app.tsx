@@ -1,43 +1,55 @@
 import Background from 'components/background'
+import {CurrentDropdown} from 'components/dropdown/dropdown'
 import LostConnection from 'components/lost-connection'
-import Toast from 'components/toast'
-import {ToastContainer} from 'components/toast/toast'
+import {Toaster} from 'components/toast/toast'
 import {CurrentTooltip} from 'components/tooltip/tooltip'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {
+	getDropdown,
 	getPlayerName,
 	getSession,
-	getToast,
 	getTooltip,
 } from 'logic/session/session-selectors'
 import {getSocketStatus} from 'logic/socket/socket-selectors'
 import {useEffect, useMemo, useState} from 'react'
 import {useSelector} from 'react-redux'
+import queryOptions from '../query-params'
 import {useRouter} from './app-hooks'
 import Deck from './deck'
 import Game from './game'
 import Login from './login'
 import MainMenu from './main-menu'
-import BossLanding from './main-menu/boss-landing'
-import Credits from './main-menu/credits'
-import DataSettings from './main-menu/data-settings'
-import GameSettings from './main-menu/game-settings'
-import HallOfFame from './main-menu/hall-of-fame'
+import Cosmetics from './main-menu/achievements'
+import PlaySelect from './main-menu/play-select'
 import Settings from './main-menu/settings'
-import MatchMaking from './match-making'
+import Statistics from './main-menu/statistics'
 
-function App() {
+function Router() {
 	const section = useRouter()
 	const dispatch = useMessageDispatch()
 	const playerName = useSelector(getPlayerName)
-	const socketStatus = useSelector(getSocketStatus)
 	const connected = useSelector(getSession).connected
-	const toastMessage = useSelector(getToast)
-	const tooltip = useSelector(getTooltip)
-	const settings = useSelector(getSettings)
-	const [menuSection, setMenuSection] = useState<string>('mainmenu')
-	let enableToast = false
+
+	const lastMenuSection = sessionStorage.getItem('menuSection')
+
+	const [menuSection, setMenuSection] = useState<string>(
+		lastMenuSection || 'main-menu',
+	)
+
+	const menuSectionSet = (section: string) => {
+		setMenuSection(section)
+		sessionStorage.setItem('menuSection', section)
+	}
+
+	useEffect(() => {
+		if (queryOptions.spectate) {
+			setMenuSection('play-select-spectate')
+		}
+		if (queryOptions.fight) {
+			setMenuSection('play-select-fight')
+		}
+	})
 
 	useEffect(() => {
 		dispatch({
@@ -48,34 +60,110 @@ function App() {
 
 	const router = () => {
 		if (section === 'game') {
-			return <Game />
-		} else if (section === 'matchmaking') {
-			return <MatchMaking />
+			return <Game setMenuSection={setMenuSection} />
 		} else if (connected && playerName) {
-			enableToast = true
 			switch (menuSection) {
 				case 'deck':
-					return <Deck setMenuSection={setMenuSection} />
+					return <Deck setMenuSection={menuSectionSet} />
+				case 'more':
+					return <Settings setMenuSection={menuSectionSet} />
 				case 'settings':
-					return <Settings setMenuSection={setMenuSection} />
-				case 'game-settings':
-					return <GameSettings setMenuSection={setMenuSection} />
-				case 'data-settings':
-					return <DataSettings setMenuSection={setMenuSection} />
-				case 'hall-of-fame':
-					return <HallOfFame setMenuSection={setMenuSection} />
-
-				case 'credits':
-					return <Credits setMenuSection={setMenuSection} />
-				case 'boss-landing':
-					return <BossLanding setMenuSection={setMenuSection} />
-				case 'mainmenu':
+					return <Settings setMenuSection={menuSectionSet} />
+				case 'statistics':
+					return <Statistics setMenuSection={menuSectionSet} />
+				case 'achievements':
+					return (
+						<Cosmetics setMenuSection={menuSectionSet} page={'achievements'} />
+					)
+				case 'cosmetics':
+					return <Cosmetics setMenuSection={menuSectionSet} page={'rewards'} />
+				case 'play-select':
+					return <PlaySelect setMenuSection={menuSectionSet} />
+				case 'play-select-spectate':
+					const spectateCode = queryOptions.spectate
+					queryOptions.spectate = undefined
+					return (
+						<PlaySelect
+							setMenuSection={menuSectionSet}
+							defaultSection={'private'}
+							firstActiveMenu="privateSpectateGame"
+							prefillSpectatorCode={spectateCode}
+						/>
+					)
+				case 'play-select-fight':
+					const joinCode = queryOptions.fight
+					queryOptions.fight = undefined
+					return (
+						<PlaySelect
+							setMenuSection={menuSectionSet}
+							defaultSection={'private'}
+							firstActiveMenu="privateJoinGame"
+							prefillJoinCode={joinCode}
+						/>
+					)
+				case 'play-again-public':
+					return (
+						<PlaySelect
+							setMenuSection={menuSectionSet}
+							defaultSection={'public'}
+						/>
+					)
+				case 'play-again-boss':
+					return (
+						<PlaySelect
+							setMenuSection={menuSectionSet}
+							defaultSection={'boss'}
+						/>
+					)
+				case 'rematch':
+					return (
+						<PlaySelect
+							setMenuSection={menuSectionSet}
+							defaultSection={'rematch'}
+						/>
+					)
+				case 'main-menu':
 				default:
-					return <MainMenu setMenuSection={setMenuSection} />
+					return <MainMenu setMenuSection={menuSectionSet} />
 			}
 		}
 		return <Login />
 	}
+
+	return <main>{router()}</main>
+}
+
+function Dropdown() {
+	const dropdown = useSelector(getDropdown)
+	return (
+		dropdown && (
+			<CurrentDropdown
+				dropdown={dropdown.dropdown}
+				x={dropdown.x}
+				y={dropdown.y}
+				direction={dropdown.direction}
+				align={dropdown.align}
+			/>
+		)
+	)
+}
+
+function Tooltips() {
+	const tooltip = useSelector(getTooltip)
+	return (
+		tooltip && (
+			<CurrentTooltip
+				tooltip={tooltip.tooltip}
+				anchor={tooltip.anchor}
+				tooltipHeight={tooltip.tooltipHeight}
+				tooltipWidth={tooltip.tooltipWidth}
+			/>
+		)
+	)
+}
+
+function SiteBackground() {
+	const settings = useSelector(getSettings)
 
 	const background = useMemo(() => {
 		return (
@@ -86,35 +174,26 @@ function App() {
 		)
 	}, [settings.panoramaEnabled])
 
+	return background
+}
+
+function SocketStatus() {
+	const playerName = useSelector(getPlayerName)
+	const socketStatus = useSelector(getSocketStatus)
+
+	return playerName && !socketStatus && <LostConnection />
+}
+
+function App() {
 	return (
-		<main>
-			{background}
-			{router()}
-			{playerName && !socketStatus && <LostConnection />}
-			{tooltip && (
-				<CurrentTooltip
-					tooltip={tooltip.tooltip}
-					anchor={tooltip.anchor}
-					tooltipHeight={tooltip.tooltipHeight}
-					tooltipWidth={tooltip.tooltipWidth}
-				/>
-			)}
-			{enableToast && (
-				<ToastContainer>
-					{toastMessage.map((toast, i) => {
-						return (
-							<Toast
-								title={toast.toast.title}
-								description={toast.toast.description}
-								image={toast.toast.image}
-								id={toast.id}
-								key={i}
-							/>
-						)
-					})}
-				</ToastContainer>
-			)}
-		</main>
+		<>
+			<Router />
+			<Toaster />
+			<Dropdown />
+			<Tooltips />
+			<SiteBackground />
+			<SocketStatus />
+		</>
 	)
 }
 

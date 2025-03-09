@@ -299,15 +299,13 @@ function* testPuppetryDiscardingItem(game: GameModel) {
 	)
 
 	expect(
-		game.components
-			.find(
-				SlotComponent,
-				query.slot.currentPlayer,
-				query.slot.item,
-				query.slot.rowIndex(0),
-				query.slot.index(0),
-			)
-			?.getCard(),
+		game.components.find(
+			SlotComponent,
+			query.slot.currentPlayer,
+			query.slot.item,
+			query.slot.rowIndex(0),
+			query.slot.index(0),
+		)?.card,
 	).toBe(null)
 }
 

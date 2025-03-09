@@ -122,7 +122,7 @@ const EXPANSION_NAMES = [
 	}),
 ]
 
-const iconDropdownOptions = ITEM_DECK_ICONS.map((option) => ({
+export const iconDropdownOptions = ITEM_DECK_ICONS.map((option) => ({
 	name: option,
 	key: option,
 	icon: `/images/types/type-${option}.png`,
@@ -204,8 +204,9 @@ const addTag = (
 	if (tags.includes(tag)) return
 	if (tags.length >= 3) return
 	if (tag.name.length === 0) return
+	ev.currentTarget.tag.value = ''
 	setTags([...tags, tag])
-	setColor(color)
+	setColor('#F00')
 }
 
 const addCreatedTag = (
@@ -282,6 +283,7 @@ function EditDeck({
 	const [validDeckName, setValidDeckName] = useState<boolean>(true)
 	const [isPublic, setIsPublic] = useState<boolean>(loadedDeck.public)
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
+	const [showClearCardsModal, setShowClearCardsModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
 	const [color, setColor] = useState('#ff0000')
 	const [nextKey, setNextKey] = useState<string>(generateDatabaseCode())
@@ -456,9 +458,12 @@ function EditDeck({
 	}
 	const saveAndReturn = (deck: Deck, type: 'insert' | 'update') => {
 		const newTags = deck.tags.reduce((r: Array<Tag>, tag) => {
-			if (databaseInfo.tags.find((subtag) => subtag.key === tag.key)) return r
+			if ([...databaseInfo.tags, ...r].find((subtag) => subtag.key === tag.key))
+				return r
 			return [...r, tag]
 		}, [])
+
+		console.log(newTags)
 
 		databaseInfo.tags.push(...newTags)
 		if (type === 'insert') saveDeck(deck)
@@ -485,6 +490,19 @@ function EditDeck({
 				confirmButtonText="Discard"
 				onCancel={() => setShowUnsavedModal(!showUnsavedModal)}
 				onConfirm={back}
+			/>
+			<ConfirmModal
+				setOpen={showClearCardsModal}
+				title="Remove all cards"
+				description="Are you sure you want to remove all cards from your deck?"
+				confirmButtonText="Clear"
+				onCancel={() => {
+					setShowClearCardsModal(false)
+				}}
+				onConfirm={() => {
+					clearDeck()
+					setShowClearCardsModal(false)
+				}}
 			/>
 			<DeckLayout title={title} back={handleBack} returnText="Deck Selection">
 				<DeckLayout.Main
@@ -536,15 +554,9 @@ function EditDeck({
 								showNames={true}
 								checkboxes={true}
 								checked={expansionQuery}
-								action={(option) =>
-									setExpansionQuery(
-										option === 'any'
-											? []
-											: expansionQuery.includes(option)
-												? expansionQuery.filter((a) => a !== option)
-												: [option, ...expansionQuery],
-									)
-								}
+								checkboxAction={(option) => {
+									setExpansionQuery(option)
+								}}
 							/>
 							<input
 								placeholder="Search cards..."
@@ -742,7 +754,7 @@ function EditDeck({
 									<Button
 										variant="default"
 										size="small"
-										onClick={clearDeck}
+										onClick={() => setShowClearCardsModal(true)}
 										className={css.removeButton}
 									>
 										Remove All
@@ -830,11 +842,7 @@ function EditDeck({
 												className={css.fullTag}
 												onClick={() =>
 													setTags(
-														tags.filter(
-															(subtag) =>
-																subtag.name !== tag.name &&
-																subtag.color !== tag.color,
-														),
+														tags.filter((subtag) => subtag.key !== tag.key),
 													)
 												}
 											>

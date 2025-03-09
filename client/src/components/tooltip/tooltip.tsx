@@ -49,7 +49,7 @@ const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 
 	useEffect(() => {
 		setTooltipSize(null)
-	}, [showAdvancedTooltips, window.innerWidth])
+	}, [showAdvancedTooltips, window.screen.width])
 
 	useEffect(() => {
 		if (!tooltipSize) forceUpdate()

@@ -1,6 +1,6 @@
 import type {Attach, Card, HasHealth} from '../cards/types'
-import {COINS} from '../coins'
 import type {CardComponent} from '../components'
+import {Appearance, Coin} from '../cosmetics/types'
 import type {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {PlayerId} from '../models/player-model'
 import type {FormattedTextNode} from '../utils/formatting'
@@ -36,7 +36,7 @@ export type CurrentCoinFlip = {
 	tosses: Array<CoinFlip>
 	amount: number
 	delay: number
-	headImage: keyof typeof COINS
+	headImage: Coin['id']
 }
 
 export type LocalCurrentCoinFlip = {
@@ -46,7 +46,7 @@ export type LocalCurrentCoinFlip = {
 	tosses: Array<CoinFlip>
 	amount: number
 	delay: number
-	headImage: keyof typeof COINS
+	headImage: Coin['id']
 }
 
 export type BattleLogT = {
@@ -86,7 +86,7 @@ export type GameState = {
 		opponentActionStartTime: number | null
 	}
 
-	isBossGame: boolean
+	isEvilXBossGame: boolean
 }
 
 export type PlayCardAction =
@@ -123,6 +123,7 @@ export type TurnActions = Array<TurnAction>
 export type GameOutcome =
 	| {type: 'tie'}
 	| {type: 'timeout'}
+	| {type: 'no-viewers'}
 	| {type: 'game-crash'; error: string}
 	| {
 			type: 'player-won'
@@ -132,6 +133,7 @@ export type GameOutcome =
 
 export type GameVictoryReason =
 	| 'forfeit'
+	| 'disconnect'
 	| 'no-hermits-on-board'
 	| 'timeout-without-hermits'
 	| 'decked-out'
@@ -151,10 +153,12 @@ export type LocalPlayerState = {
 		singleUseCardUsed: boolean
 		rows: Array<LocalRowState>
 	}
+	appearance: Appearance
 }
 
 export type LocalGameState = {
 	isSpectator: boolean
+	isReplayer: boolean
 	turn: LocalTurnState
 	order: Array<PlayerEntity>
 
@@ -183,7 +187,7 @@ export type LocalGameState = {
 		turnRemaining: number
 	}
 
-	isBossGame: boolean
+	isEvilXBossGame: boolean
 
 	voiceLineQueue: Array<string>
 }

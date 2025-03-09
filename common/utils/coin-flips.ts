@@ -1,3 +1,4 @@
+import assert from 'assert'
 import {CardComponent, PlayerComponent} from '../components'
 import {GameModel} from '../models/game-model'
 import {CoinFlipResult} from '../types/game-state'
@@ -36,6 +37,12 @@ export function flipCoin(
 	times: number = 1,
 	currentPlayer: PlayerComponent | null = null,
 ): Array<CoinFlipResult> {
+	assert(times >= 0, 'You can not flip a negative amount of coins')
+
+	if (times === 0) {
+		return []
+	}
+
 	const forceHeads = playerTossingCoin.game.settings.forceCoinFlip
 
 	let coinFlips: Array<{
@@ -78,7 +85,7 @@ export function flipCoin(
 		tosses: coinFlips,
 		amount: coinFlipAmount,
 		delay: coinFlipAmount * 350 + 1000,
-		headImage: player.selectedCoinHead,
+		headImage: player.appearance.coin.id,
 	})
 
 	return coinFlips.map((f) => f.result)

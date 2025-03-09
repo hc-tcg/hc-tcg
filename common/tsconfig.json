@@ -11,5 +11,5 @@
 		"esModuleInterop": true,
 		"outDir": "./dist"
 	},
-	"include": ["."]
+	"include": [".", "../server/src/routines/turn-action-compressor.ts"]
 }

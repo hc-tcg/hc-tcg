@@ -1,3 +1,4 @@
+import cn from 'classnames'
 import {DEBUG_CONFIG} from 'common/config'
 import {PlayerEntity} from 'common/entities'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
@@ -5,14 +6,20 @@ import {equalCard} from 'common/utils/cards'
 import CardList from 'components/card-list'
 import {
 	getAvailableActions,
+	getCurrentModalData,
+	getCurrentPickMessage,
+	getCurrentPlayerEntity,
 	getEndGameOverlay,
 	getGameState,
+	getIsReplayer,
 	getIsSpectator,
 	getOpenedModal,
 	getPickRequestPickableSlots,
 	getPlayerEntity,
 	getPlayerState,
 	getSelectedCard,
+	getSpectatorCodeInGame,
+	getTurnNumber,
 } from 'logic/game/game-selectors'
 import {
 	MODAL_COMPONENTS,
@@ -20,6 +27,7 @@ import {
 } from 'logic/game/tasks/action-modals-saga'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
+import {getRematchData} from 'logic/session/session-selectors'
 import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {RootState} from 'store'
@@ -52,12 +60,24 @@ function ModalContainer() {
 	return renderModal(openedModal, handleOpenModal)
 }
 
-function EndGameOverlayContainer() {
+type EndGameOverlayProps = {
+	modalVisible: boolean
+	setModalVisible: (visible: boolean) => void
+	setMenuSection: (section: string) => void
+}
+
+function EndGameOverlayContainer({
+	modalVisible,
+	setModalVisible,
+	setMenuSection,
+}: EndGameOverlayProps) {
 	const endGameOverlay = useSelector(getEndGameOverlay)
 	const gameState = useSelector(getGameState)
 	const isSpectator = useSelector(getIsSpectator)
 	const playerEntity = useSelector(getPlayerEntity)
 	const dispatch = useMessageDispatch()
+	const rematchData = useSelector(getRematchData)
+	const spectatorCode = useSelector(getSpectatorCodeInGame)
 
 	// Play EX voice lines on hermit deaths and game end
 	const lives = [gameState?.playerEntity, gameState?.opponentPlayerEntity].map(
@@ -66,7 +86,7 @@ function EndGameOverlayContainer() {
 	const [prevLives, setPrevLives] = useState(lives)
 	useEffect(() => {
 		if (!gameState) return
-		if (!gameState.isBossGame) return
+		if (!gameState.isEvilXBossGame) return
 		if (endGameOverlay) {
 			if (
 				endGameOverlay.outcome.type === 'player-won' &&
@@ -96,7 +116,7 @@ function EndGameOverlayContainer() {
 		}
 	}, [...lives, endGameOverlay])
 
-	if (!gameState || !endGameOverlay?.outcome) return null
+	if (!gameState || !endGameOverlay?.outcome || !modalVisible) return null
 
 	return (
 		<EndGameOverlay
@@ -122,14 +142,24 @@ function EndGameOverlayContainer() {
 					? {type: 'spectator'}
 					: {type: 'player', entity: playerEntity}
 			}
-			onClose={() => {
-				dispatch({type: localMessages.GAME_END_OVERLAY_HIDE})
+			rematchData={rematchData}
+			onClose={() => setModalVisible(false)}
+			setMenuSection={setMenuSection}
+			dispatchGameClose={() => {
+				dispatch({type: localMessages.GAME_CLOSE})
 			}}
+			gameMode={
+				gameState.isEvilXBossGame
+					? 'boss'
+					: spectatorCode
+						? 'private'
+						: 'public'
+			}
 		/>
 	)
 }
 
-function Hand() {
+function Hand({gameOver}: {gameOver: boolean}) {
 	const gameState = useSelector(getGameState)
 	if (!gameState) return null
 
@@ -139,6 +169,7 @@ function Hand() {
 	const [filter, setFilter] = useState<string>('')
 	const pickableCards = pickRequestPickableSlots
 	const selectedCard = useSelector(getSelectedCard)
+	const isReplayer = useSelector(getIsReplayer)
 
 	const dispatch = useMessageDispatch()
 
@@ -212,19 +243,23 @@ function Hand() {
 
 	if (pickableCards != undefined) {
 		for (let card of filteredCards) {
-			if (card.slot && !pickableCards.includes(card.slot))
+			if (isReplayer || (card.slot && !pickableCards.includes(card.slot)))
 				unpickableCards.push(card)
 		}
 	}
 
 	return (
-		<div className={css.hand} ref={handRef}>
+		<div className={cn(css.hand, {[css.noHover]: gameOver})} ref={handRef}>
 			{Filter()}
 			<CardList
 				wrap={false}
 				displayTokenCost={false}
 				cards={filteredCards}
-				onClick={(card: LocalCardInstance) => selectCard(card)}
+				onClick={
+					!isReplayer || !gameOver
+						? (card: LocalCardInstance) => selectCard(card)
+						: undefined
+				}
 				selected={[selectedCard]}
 				unpickable={unpickableCards}
 				statusEffects={gameState.statusEffects}
@@ -282,8 +317,8 @@ function RequiresAvaiableActions() {
 				dispatch({
 					type: localMessages.SETTINGS_SET,
 					setting: {
-						key: 'muted',
-						value: !settings.muted,
+						key: 'globalVolume',
+						value: settings.globalVolume === 0 ? settings.globalVolumeStore : 0,
 					},
 				})
 			}
@@ -309,18 +344,56 @@ function RequiresAvaiableActions() {
 	return null
 }
 
-function Game() {
-	const gameState = useSelector(getGameState)
+function PickRequestSound() {
+	const currentPlayerEntity = useSelector(getCurrentPlayerEntity)
+	const playerEntity = useSelector(getPlayerEntity)
+	const currentPickMessage = useSelector(getCurrentPickMessage)
+	const currentModalData = useSelector(getCurrentModalData)
+	const dispatch = useMessageDispatch()
+
+	// Play sound on custom modal or pick request activation
+	useEffect(() => {
+		const someCustom = currentPickMessage || currentModalData
+		if (someCustom && currentPlayerEntity !== playerEntity) {
+			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
+		}
+	}, [currentPickMessage, currentModalData])
+
+	return null
+}
+
+function TurnStartSound() {
+	const turnNumber = useSelector(getTurnNumber)
+	const playerEntity = useSelector(getPlayerEntity)
+	const currentPlayerEntity = useSelector(getCurrentPlayerEntity)
+	const dispatch = useMessageDispatch()
+
+	// Play SFX on turn start or when the player enters a game
+	useEffect(() => {
+		if (turnNumber === 1 || currentPlayerEntity === playerEntity) {
+			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
+		}
+	}, [currentPlayerEntity])
+
+	return null
+}
+
+function Game({setMenuSection}: {setMenuSection: (section: string) => void}) {
+	const gameEndState = useSelector(getEndGameOverlay)
 	const hasPlayerState = useSelector(
 		(root: RootState) => getPlayerState(root) !== null,
 	)
 	const dispatch = useMessageDispatch()
 	const isSpectator = useSelector(getIsSpectator)
+	const isReplayer = useSelector(getIsReplayer)
 
-	if (!gameState || !hasPlayerState) return <p>Loading</p>
+	if (!hasPlayerState) return <p>Loading</p>
 	const [gameScale, setGameScale] = useState<number>(1)
+	const [gameEndModal, setGameEndModal] = useState<boolean>(true)
 	const gameWrapperRef = useRef<HTMLDivElement>(null)
 	const gameRef = useRef<HTMLDivElement>(null)
+
+	const gameOver = !!gameEndState?.outcome
 
 	const handleBoardClick = (
 		slotInfo: SlotInfo,
@@ -347,28 +420,6 @@ function Game() {
 		setGameScale(scale)
 	}
 
-	// Play SFX on turn start or when the player enters a game
-	useEffect(() => {
-		if (
-			gameState.turn.turnNumber === 1 ||
-			gameState.turn.currentPlayerEntity === gameState.playerEntity
-		) {
-			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
-		}
-	}, [gameState.turn.currentPlayerEntity])
-
-	// Play sound on custom modal or pick request activation
-	useEffect(() => {
-		const someCustom =
-			gameState.currentPickMessage || gameState.currentModalData
-		if (
-			someCustom &&
-			gameState.turn.currentPlayerEntity !== gameState.playerEntity
-		) {
-			dispatch({type: localMessages.SOUND_PLAY, path: '/sfx/Click.ogg'})
-		}
-	}, [gameState.currentPickMessage, gameState.currentModalData])
-
 	// Initialize Game Screen Resizing and Event Listeners
 	useEffect(() => {
 		handleResize()
@@ -389,17 +440,30 @@ function Game() {
 					style={{transform: `scale(${gameScale})`}}
 				>
 					<div className={css.grid} />
-					<Board onClick={handleBoardClick} localGameState={gameState} />
+					<Board
+						onClick={handleBoardClick}
+						gameEndButton={() => setGameEndModal(true)}
+						gameOver={gameOver}
+					/>
 				</div>
 			</div>
 			<div className={css.bottom}>
-				<Toolbar />
-				{!isSpectator && <Hand />}
+				<Toolbar
+					gameOver={gameOver}
+					gameEndButton={() => setGameEndModal(true)}
+				/>
+				{(!isSpectator || isReplayer) && <Hand gameOver={gameOver} />}
 			</div>
 			<ModalContainer />
-			<Chat />
-			<EndGameOverlayContainer />)
+			<Chat gameOver={gameOver} />
+			<EndGameOverlayContainer
+				modalVisible={gameEndModal}
+				setModalVisible={setGameEndModal}
+				setMenuSection={setMenuSection}
+			/>
 			<RequiresAvaiableActions />
+			<PickRequestSound />
+			<TurnStartSound />
 		</div>
 	)
 }

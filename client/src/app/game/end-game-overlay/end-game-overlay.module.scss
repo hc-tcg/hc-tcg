@@ -14,32 +14,156 @@
 }
 
 .description {
-	display: grid;
+	display: flex;
 	place-content: center;
-	padding: 4rem 2rem 2rem;
+	padding: 4rem 4rem 2rem;
 	gap: 1rem;
 	text-align: center;
 	font-size: 1.1rem;
 	color: var(--text-light);
 	font-weight: bold;
-	background: linear-gradient(90deg,
-			hsla(357deg, 58%, 40%, 50%) 10%,
-			hsl(357deg, 58%, 40%, 100%) 50%,
-			hsla(357deg, 58%, 40%, 50%) 90%);
-	border-image: url('/images/game/border_frame_red.png') 30 / 20px;
+	background: linear-gradient(
+		90deg,
+		hsla(357deg, 58%, 40%, 50%) 10%,
+		hsl(357deg, 58%, 40%, 100%) 50%,
+		hsla(357deg, 58%, 40%, 50%) 90%
+	);
+	border-image: url("/images/cosmetics/border/red_border.png") 30 / 20px;
 
 	&.win {
-		background: linear-gradient(90deg,
-				hsla(192deg, 56%, 58%, 50%) 10%,
-				hsl(192deg, 56%, 58%, 100%) 50%,
-				hsla(192deg, 56%, 58%, 50%) 90%);
-		border-image-source: url('/images/game/border_frame.png');
+		background: linear-gradient(
+			90deg,
+			hsla(192deg, 56%, 58%, 50%) 10%,
+			hsl(192deg, 56%, 58%, 100%) 50%,
+			hsla(192deg, 56%, 58%, 50%) 90%
+		);
+		border-image-source: url("/images/cosmetics/border/blue.png");
 	}
 
 	button {
 		padding: 0 2rem;
 		flex-grow: 1;
 	}
+}
+
+.endOptions {
+	display: grid;
+	width: 100%;
+	gap: 0.75vh;
+	grid-template-areas:
+		"playAgain rematch"
+		"board board"
+		"mainMenu mainMenu";
+
+	#mainMenu {
+		grid-area: mainMenu;
+	}
+
+	#rematch {
+		grid-area: rematch;
+	}
+
+	#playAgain {
+		grid-area: playAgain;
+	}
+
+	#board {
+		grid-area: board;
+	}
+}
+
+.achievementsOverview {
+	width: 100%;
+	height: 5rem;
+	background-color: var(--gray-900);
+	border: 2px black solid;
+	border-radius: 5px;
+	pointer-events: none;
+	clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+
+	.noAchievements {
+		width: 100%;
+		height: 100%;
+		text-align: center;
+		align-content: center;
+		color: var(--gray-400);
+		font-family: Minecrafter;
+		font-size: 0.9rem;
+	}
+}
+
+.rematchTimeRemaining {
+	background-color: var(--gray-500);
+	color: var(--text-light);
+	width: 3rem;
+	height: 2rem;
+	line-height: 2rem;
+	transform: translateY(-0.125rem);
+	border: 2px black solid;
+	align-items: center;
+	text-align: center;
+	justify-content: center;
+	border-radius: 5px;
+}
+
+.smallAchievementBox {
+	position: absolute;
+	height: 100%;
+	width: 75%;
+	top: 12.5vh;
+}
+
+.nameAndProgress {
+	display: flex;
+	flex-direction: row;
+	font-size: 1rem;
+
+	:first-child {
+		flex-grow: 1;
+		text-align: left;
+		font-family: Minecrafter;
+		font-weight: normal;
+		padding-left: 2px;
+	}
+
+	:not(:first-child) {
+		text-align: right;
+		color: var(--gray-200);
+		padding-right: 2px;
+	}
+}
+
+.achievementDescription {
+	font-size: 0.8rem;
+	font-weight: normal;
+	text-align: left;
+	padding-left: 2px;
+	overflow: hidden;
+	text-wrap: nowrap;
+	text-overflow: ellipsis;
+	color: var(--gray-200);
+}
+
+.progressBar {
+	width: 100%;
+	height: 15px;
+	background-color: var(--gray-600);
+	border-radius: 5px;
+	border: 2px black solid;
+
+	.full {
+		width: 100%;
+		height: 100%;
+		border-radius: 5px;
+		background-color: #56b8d0;
+		box-shadow: inset 2px -2px #18444e;
+		border-right: 1px #d3f2fa solid;
+		animation-fill-mode: forwards;
+	}
+}
+
+.achievementCounter {
+	font-size: 1rem;
 }
 
 @keyframes float {
@@ -49,5 +173,34 @@
 
 	to {
 		transform: translateY(-5px);
+	}
+}
+
+@media screen and (max-width: 720px) {
+	.description {
+		padding: 0.5rem;
+		padding-top: 2rem;
+	}
+
+	.animation {
+		top: -2.7rem;
+	}
+
+	.smallAchievementBox {
+		top: 10.75vh;
+	}
+
+	.nameAndProgress {
+		font-size: 0.9rem;
+		text-wrap: nowrap;
+		text-overflow: ellipsis;
+	}
+
+	.endOptions {
+		grid-template-areas:
+			"playAgain"
+			"rematch"
+			"board"
+			"mainMenu";
 	}
 }

@@ -6,21 +6,62 @@
 	font-weight: bold;
 	color: var(--text-light);
 	padding: 4px 16px;
-	border: 4px solid var(--gray-900);
-	background: hsla(210deg, 2%, 20%, 50%);
+	border: 3px solid var(--gray-900);
+	background: hsla(214, 3%, 44%, 0.5);
 	flex-grow: 1;
+	background-repeat: repeat-x;
+	background-size: contain;
+	background-position: left;
+	max-width: 600px;
+	width: 600px;
+
+	&.active {
+		border-image-slice: 30;
+		border-image-width: 20px;
+		border-image-repeat: stretch stretch;
+		border-image-source: url("/images/cosmetics/border/blue.png");
+		border-style: solid;
+		background: linear-gradient(
+			-90deg,
+			hsla(195deg, 53%, 60%, 35%),
+			hsla(195deg, 100%, 60%, 50%)
+		);
+
+		background-repeat: repeat-x;
+		background-size: contain;
+		background-position: left;
+
+		&.right {
+			background: linear-gradient(
+				90deg,
+				hsla(195deg, 53%, 60%, 35%),
+				hsla(195deg, 100%, 60%, 50%)
+			);
+
+			background-repeat: repeat-x;
+			background-size: contain;
+			background-position: left;
+		}
+	}
 }
 
-.active {
-	border-image-slice: 30;
-	border-image-width: 20px;
-	border-image-repeat: stretch stretch;
-	border-image-source: url('/images/game/border_frame.png');
-	border-style: solid;
-	background: linear-gradient(-90deg, hsla(195deg, 53%, 60%, 35%), hsla(195deg, 100%, 60%, 50%));
+.background {
+	position: absolute;
+	height: 66px;
+	width: 600px;
+	margin-top: 0px;
+	margin-left: -19px;
+	backdrop-filter: grayscale(80%) brightness(60%);
+	border: 3px solid var(--gray-900);
+	pointer-events: none;
+
+	&.active {
+		display: none;
+	}
 
 	&.right {
-		background: linear-gradient(90deg, hsla(195deg, 53%, 60%, 35%), hsla(195deg, 100%, 60%, 50%));
+		margin-left: 0px;
+		margin-right: -19px;
 	}
 }
 
@@ -30,13 +71,13 @@
 	height: 52px;
 	aspect-ratio: 20/21;
 	padding: 5px;
+	z-index: 50;
 }
 
 .playerName {
+	z-index: 50;
+
 	> h1 {
-		// font-size: 32px;
-		// letter-spacing: 1px;
-		// font-family: Minecrafter, sans-serif;
 		font-family: MinecraftBold;
 		filter: drop-shadow(0 2px 0 hsla(0deg, 0%, 0%, 35%));
 		text-overflow: ellipsis;
@@ -56,6 +97,7 @@
 		font-size: 10px;
 		font-weight: normal;
 		color: var(--gray-200);
+		filter: drop-shadow(0 1px 0 black);
 	}
 }
 
@@ -86,12 +128,11 @@
 	display: flex;
 	flex-direction: column-reverse;
 	margin-left: auto;
+	z-index: 50;
 
 	> img {
-		$size: 16px;
-
-		height: $size;
-		width: $size;
+		height: 20px;
+		width: 20px;
 	}
 
 	&.right {
@@ -112,14 +153,26 @@
 		gap: 4px;
 
 		> img {
-			$size: 32px;
-
-			height: $size;
-			width: $size;
+			height: calc(20px * 2);
+			width: calc(20px * 2);
+			image-rendering: crisp-edges;
 		}
 
 		&.right {
 			flex-direction: row;
 		}
+	}
+}
+
+@media (orientation: portrait) {
+	.playerInfo {
+		max-width: 330px;
+		width: 330px;
+		height: 70px;
+	}
+
+	.background {
+		width: 330px;
+		height: 70px;
 	}
 }

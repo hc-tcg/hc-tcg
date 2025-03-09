@@ -1,0 +1,140 @@
+.playSelect {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	color: var(--text-light);
+
+	p {
+		font-size: 1.5vh;
+	}
+
+	h2,
+	h3 {
+		filter: drop-shadow(3px 3px 0 var(--text-dark));
+	}
+
+	h2 {
+		font-size: 3.5vh;
+	}
+
+	h3 {
+		font-size: 2.25vh;
+	}
+}
+
+.header {
+	margin-top: 2vh;
+	margin-bottom: 2vh;
+}
+
+.appearanceHeader {
+	margin-top: 4vh;
+	text-align: center;
+}
+
+.gameTypes {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.gameTypesButtons {
+	display: grid;
+	grid-auto-flow: column;
+	justify-content: center;
+	grid-gap: 3vh;
+}
+
+.top {
+	display: flex;
+	flex-direction: row;
+}
+
+.bossRules {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 1.5vh;
+	padding: 2vh;
+	animation: timedShow 0.25s forwards;
+	overflow-y: auto;
+
+	ol li {
+		list-style-type: decimal;
+		list-style-position: inside;
+	}
+
+	.rulesBack {
+		height: 5vh;
+	}
+}
+
+.bottomArea {
+	display: flex;
+	flex-direction: column;
+}
+
+.clickToChange {
+	margin-top: 0.5vh;
+	margin-bottom: 1.5vh;
+	filter: drop-shadow(2px 2px 0 var(--text-dark));
+	transition: opacity linear 250ms;
+
+	&.disableBack {
+		opacity: 0%;
+	}
+}
+
+.appearance {
+	width: min(65vh, 90vw);
+}
+
+.appearanceClickable {
+	cursor: pointer;
+
+	&:hover {
+		scale: 1.05;
+	}
+}
+
+@keyframes timedShow {
+	from {
+		opacity: 0%;
+	}
+
+	to {
+		opacity: 100%;
+	}
+}
+
+@media (orientation: portrait) {
+	.gameTypesButtons {
+		grid-auto-flow: row;
+		grid-gap: 1.5vh;
+
+		.fourButtons {
+			grid-gap: 1.5vh;
+		}
+	}
+
+	.header {
+		display: none;
+	}
+
+	.bossRules {
+		width: 100%;
+		background-color: var(--gray-900);
+		border: 2px black solid;
+	}
+}
+
+.rematchWindow {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}

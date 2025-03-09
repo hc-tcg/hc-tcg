@@ -22,17 +22,18 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 // @ts-ignore
 global.getState = () => store.getState()
 
-let preloadCards = CARDS_LIST.flatMap((card) => {
-	return [
-		<link rel="preload" href={getRenderedCardImage(card, true)} as="image" />,
-		<link rel="preload" href={getRenderedCardImage(card, false)} as="image" />,
-	]
-})
+function preloadCardImages() {
+	for (const card of CARDS_LIST) {
+		new Image().src = getRenderedCardImage(card, false, 'webp')
+		new Image().src = getRenderedCardImage(card, true, 'webp')
+	}
+}
+
+preloadCardImages()
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
 	<React.StrictMode>
-		{preloadCards}
 		<Provider store={store}>
 			<App />
 		</Provider>

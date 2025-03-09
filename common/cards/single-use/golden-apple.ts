@@ -18,7 +18,7 @@ const GoldenApple: SingleUse = {
 	name: 'Golden Apple',
 	expansion: 'default',
 	rarity: 'ultra_rare',
-	tokens: 3,
+	tokens: 2,
 	description: 'Heal one of your AFK Hermits 100hp.',
 	log: (values) =>
 		`${values.defaultLog} on $p${values.pick.name}$ and healed $g100hp$`,

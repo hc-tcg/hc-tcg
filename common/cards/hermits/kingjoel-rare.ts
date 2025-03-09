@@ -75,7 +75,7 @@ const KingJoelRare: Hermit = {
 					message: "Pick an item card from your opponent's AFK Hermits",
 					canPick: firstPickCondition,
 					onResult(pickedSlot) {
-						firstPickedCard = pickedSlot.getCard()
+						firstPickedCard = pickedSlot.card
 					},
 				})
 

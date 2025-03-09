@@ -72,7 +72,7 @@ const Smajor1995Rare: Hermit = {
 					message: 'Choose an AFK Hermit to dye.',
 					canPick: pickCondition,
 					onResult(pickedSlot) {
-						const pickedCard = pickedSlot.getCard()
+						const pickedCard = pickedSlot.card
 						if (!pickedCard) return
 
 						game.components

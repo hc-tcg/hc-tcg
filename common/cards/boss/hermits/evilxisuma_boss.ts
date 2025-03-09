@@ -18,7 +18,7 @@ import SculkCatalystTriggeredEffect from '../../../status-effects/skulk-catalyst
 import SlownessEffect from '../../../status-effects/slowness'
 import TFCDiscardedFromEffect from '../../../status-effects/tfc-discarded-from'
 import {AttackLog, HermitAttackType} from '../../../types/attack'
-import {afterAttack, beforeAttack} from '../../../types/priorities'
+import {afterApply, afterAttack, beforeAttack} from '../../../types/priorities'
 import {InstancedValue} from '../../card'
 import EvilXisumaRare from '../../hermits/evilxisuma-rare'
 import {Hermit} from '../../types'
@@ -282,7 +282,7 @@ const EvilXisumaBoss: Hermit = {
 						query.slot.item,
 						query.not(query.slot.empty),
 						query.not(query.slot.frozen),
-						(_game, slot) => slot.getCard()?.isItem() === true,
+						(_game, slot) => slot.card?.isItem() === true,
 					)
 					if (
 						opponentPlayer.activeRow?.health &&
@@ -301,7 +301,7 @@ const EvilXisumaBoss: Hermit = {
 								const hermitCard = playerRow.getHermit()
 								if (!hermitCard || !playerRow.health) return
 
-								const card = pickedSlot.getCard()
+								const card = pickedSlot.card
 								if (!card || !card.isItem()) return
 
 								card.discard()
@@ -321,17 +321,21 @@ const EvilXisumaBoss: Hermit = {
 			},
 		)
 
-		observer.subscribe(opponentPlayer.hooks.afterApply, () => {
-			// If opponent plays Dropper, remove the Fletching Tables added to the draw pile
-			game.components
-				.filter(
-					CardComponent,
-					query.card.opponentPlayer,
-					query.card.slot(query.slot.deck),
-				)
-				.forEach((card) => destroyCard(game, card))
-			removeImmuneEffects(game, component.slot)
-		})
+		observer.subscribeWithPriority(
+			opponentPlayer.hooks.afterApply,
+			afterApply.CLEAR_STATUS_EFFECT,
+			() => {
+				// If opponent plays Dropper, remove the Fletching Tables added to the draw pile
+				game.components
+					.filter(
+						CardComponent,
+						query.card.opponentPlayer,
+						query.card.slot(query.slot.deck),
+					)
+					.forEach((card) => destroyCard(game, card))
+				removeImmuneEffects(game, component.slot)
+			},
+		)
 		let lastAttackDisabledByAmnesia: number | null = null
 		observer.subscribeWithPriority(
 			game.hooks.beforeAttack,

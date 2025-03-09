@@ -573,6 +573,8 @@
 	width: 1rem;
 	height: 1rem;
 	border-radius: 50%;
+	min-width: 1rem;
+	min-height: 1rem;
 }
 
 .multiColoredCircle {
@@ -603,7 +605,53 @@
 	flex-direction: row;
 	align-items: center;
 	gap: 0.5rem;
-	flex-grow: 1;
+	max-width: 100%;
+	opacity: 100%;
+
+	> div {
+		transition: opacity 0.1s, width 0.25s;
+		width: max-content;
+	}
+
+	&:has(> :focus) {
+		gap: 0rem;
+
+		div {
+			opacity: 0%;
+			width: 0%;
+		}
+
+		.tagBox {
+			min-width: 0px;
+		}
+	}
+
+	.deckTagName {
+		text-wrap: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		text-align: left;
+		flex-grow: 1;
+	}
+
+	.deckSearchInput {
+		background: var(--gray-400);
+		border: 2px solid var(--gray-900);
+		color: white;
+		align-self: center;
+		min-height: 2rem;
+		line-height: 2rem;
+		width: 5rem;
+		text-overflow: ellipsis;
+
+		&:focus {
+			width: 100%;
+		}
+
+		&::placeholder {
+			color: var(--gray-200);
+		}
+	}
 }
 
 .mobileTags {
@@ -616,6 +664,13 @@
 
 .removeButton {
 	flex-grow: 1;
+}
+
+.noResults {
+	padding: 0.5rem 0;
+	color: var(--text-light);
+	width: 100%;
+	text-align: center;
 }
 
 /* MOBILE */
@@ -637,7 +692,7 @@
 		background-color: var(--gray-800);
 		border-left: solid 2px black;
 		height: 100%;
-		overflow: scroll;
+		overflow: auto;
 	}
 
 	.mobileDeckPreview {
@@ -661,6 +716,11 @@
 
 	.editDeckInfo {
 		padding: 0px;
+	}
+
+	.footerTags {
+		width: 100%;
+		max-width: 100%;
 	}
 }
 

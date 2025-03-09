@@ -45,7 +45,7 @@ const PowderSnowBucket: SingleUse = {
 
 				game.components
 					.new(StatusEffectComponent, FrozenEffect, component.entity)
-					.apply(pickedSlot.getCard()?.entity)
+					.apply(pickedSlot.card?.entity)
 			},
 		})
 	},
