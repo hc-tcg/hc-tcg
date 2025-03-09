@@ -42,7 +42,6 @@ const UselessMachine: Achievement = {
 					newPlayerHand.splice(index, 1)
 				}
 
-
 				if (newPlayerHand.length == 1) {
 					component.bestGoalProgress({goal: 0, progress: 1})
 				} else if (newPlayerHand.length == 0) {

@@ -75,7 +75,7 @@ describe('Test Useless Machine Achievement', () => {
 				playGame: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* playCardFromHand(game, Composter, 'single_use')
-					console.log("HERE")
+					console.log('HERE')
 					yield* pick(
 						game,
 						query.slot.hand,
