@@ -66,10 +66,10 @@ const SmallAchievement = ({
 			barRef.current?.animate(
 				{
 					left: [
-						`${12.5 + offset * (ma + gap)}%`,
-						`${12.5 + offset * (ma + gap)}%`,
-						`${12.5 + (offset - 1) * (ma + gap)}%`,
-						`${12.5 + (offset - 1) * (ma + gap)}%`,
+						`${0.5 + offset * (ma + gap)}%`,
+						`${0.5 + offset * (ma + gap)}%`,
+						`${0.5 + (offset - 1) * (ma + gap)}%`,
+						`${0.5 + (offset - 1) * (ma + gap)}%`,
 					],
 					offset: [0.0, 0.8, 0.99, 1.0],
 				},
@@ -300,14 +300,16 @@ const EndGameOverlay = ({
 				)}
 				<div className={css.achievementsOverview}>
 					{earnedAchievements.length > 0 ? (
-						earnedAchievements.map((a, i) => (
-							<SmallAchievement
-								achievement={a}
-								key={i}
-								index={i}
-								amount={earnedAchievements.length}
-							></SmallAchievement>
-						))
+						<div className={css.achievementsArea}>
+							{earnedAchievements.map((a, i) => (
+								<SmallAchievement
+									achievement={a}
+									key={i}
+									index={i}
+									amount={earnedAchievements.length}
+								></SmallAchievement>
+							))}
+						</div>
 					) : (
 						<div className={css.noAchievements}>You Earned No Achivements</div>
 					)}

@@ -106,11 +106,20 @@
 	border-radius: 5px;
 }
 
+.achievementsArea {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+
 .smallAchievementBox {
 	position: absolute;
-	height: 100%;
+	height: 5rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 	width: 75%;
-	top: 12.5vh;
+	top: 0;
 }
 
 .nameAndProgress {
