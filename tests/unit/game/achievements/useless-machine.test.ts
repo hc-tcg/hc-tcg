@@ -37,13 +37,13 @@ describe('Test Useless Machine Achievement', () => {
 						game,
 						query.slot.hand,
 						query.slot.currentPlayer,
-						query.slot.order(1),
+						query.slot.order(2),
 					)
 					yield* pick(
 						game,
 						query.slot.hand,
 						query.slot.currentPlayer,
-						query.slot.order(2),
+						query.slot.order(3),
 					)
 					yield* endTurn(game)
 
@@ -75,17 +75,18 @@ describe('Test Useless Machine Achievement', () => {
 				playGame: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* playCardFromHand(game, Composter, 'single_use')
-					yield* pick(
-						game,
-						query.slot.hand,
-						query.slot.currentPlayer,
-						query.slot.order(1),
-					)
+					console.log('HERE')
 					yield* pick(
 						game,
 						query.slot.hand,
 						query.slot.currentPlayer,
 						query.slot.order(2),
+					)
+					yield* pick(
+						game,
+						query.slot.hand,
+						query.slot.currentPlayer,
+						query.slot.order(3),
 					)
 					yield* endTurn(game)
 
@@ -93,6 +94,48 @@ describe('Test Useless Machine Achievement', () => {
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(UselessMachine.getProgress(achievement.goals)).toBe(1)
+				},
+			},
+			{noItemRequirements: true, startWithAllCards: false},
+		)
+	})
+	test('Test zero duplicate card', () => {
+		testAchivement(
+			{
+				achievement: UselessMachine,
+				playerOneDeck: [
+					EthosLabCommon,
+					Composter,
+					BalancedItem,
+					BalancedItem,
+					BalancedItem,
+					BalancedItem,
+					BalancedItem,
+					FlintAndSteel,
+					FlintAndSteel,
+				],
+				playerTwoDeck: [EthosLabCommon],
+				playGame: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, Composter, 'single_use')
+					yield* pick(
+						game,
+						query.slot.hand,
+						query.slot.currentPlayer,
+						query.slot.order(2),
+					)
+					yield* pick(
+						game,
+						query.slot.hand,
+						query.slot.currentPlayer,
+						query.slot.order(3),
+					)
+					yield* endTurn(game)
+
+					yield* forfeit(game.currentPlayer.entity)
+				},
+				checkAchivement(_game, achievement, _outcome) {
+					expect(UselessMachine.getProgress(achievement.goals)).toBeFalsy()
 				},
 			},
 			{noItemRequirements: true, startWithAllCards: false},

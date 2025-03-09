@@ -19,7 +19,8 @@ const UselessMachine: Achievement = {
 	onGameStart(game, player, component, observer) {
 		let playerHand: Array<string> = []
 
-		observer.subscribe(player.hooks.beforeApply, () => {
+		observer.subscribe(player.hooks.onAttach, (slot) => {
+			if (!slot.isSingleUse()) return
 			playerHand = player.getHand().map((card) => card.props.id)
 		})
 
@@ -33,14 +34,17 @@ const UselessMachine: Achievement = {
 
 				let newPlayerHand = player.getHand().map((card) => card.props.id)
 
-				for (const card of newPlayerHand) {
-					let index = playerHand.indexOf(card)
-					playerHand.splice(index - 1, index + 1)
+				console.log(playerHand)
+				console.log(newPlayerHand)
+				for (const card of playerHand) {
+					let index = newPlayerHand.indexOf(card)
+					if (index === -1) continue
+					newPlayerHand.splice(index, 1)
 				}
 
-				if (playerHand.length == 1) {
+				if (newPlayerHand.length == 1) {
 					component.bestGoalProgress({goal: 0, progress: 1})
-				} else if (playerHand.length == 0) {
+				} else if (newPlayerHand.length == 0) {
 					component.bestGoalProgress({goal: 0, progress: 2})
 				}
 			},

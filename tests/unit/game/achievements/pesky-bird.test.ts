@@ -74,6 +74,7 @@ describe('Test Pesky Bird Achievement', () => {
 						SlotComponent,
 						query.slot.currentPlayer,
 						query.slot.hand,
+						query.not(query.slot.empty),
 					)
 					yield* pick(game, query.slot.entity(cards[0]))
 					yield* pick(game, query.slot.entity(cards[1]))
