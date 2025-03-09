@@ -16,7 +16,6 @@ const NoDerpcoins: Achievement = {
 	],
 	onGameStart(game, player, component, observer) {
 		const cost = getDeckCost(player.getDeck().map((card) => card.props))
-		console.log(cost)
 		if (cost > 0) return
 		observer.subscribe(game.hooks.onGameEnd, (outcome) => {
 			if (outcome.type !== 'player-won') return
