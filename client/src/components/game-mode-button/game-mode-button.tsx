@@ -311,7 +311,13 @@ function GameModeButton({
 						)}
 					</div>
 				</div>
-				<div ref={rightOverlayRef} className={css.rightOverlay}>
+				<div
+					ref={rightOverlayRef}
+					className={classNames(
+						css.rightOverlay,
+						activeMode !== mode && css.disallowClicks,
+					)}
+				>
 					{activeMode === mode && children}
 				</div>
 			</div>
