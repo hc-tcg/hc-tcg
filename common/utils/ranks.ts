@@ -42,8 +42,11 @@ export function getDeckCost(deckCards: Array<Card>) {
 
 	return (
 		deckCards.reduce(
-			(cost, card) => (cost += typeof card.tokens !== 'number' ? 0 : card.tokens),
+			(cost, card) =>
+				(cost += typeof card.tokens !== 'number' ? 0 : card.tokens),
 			0,
-		) + wildCost + ethoURCost
+		) +
+		wildCost +
+		ethoURCost
 	)
 }
