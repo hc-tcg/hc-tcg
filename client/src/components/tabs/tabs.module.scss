@@ -4,7 +4,7 @@
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
-	height: 100%;
+	min-height: 100%;
 	width: 180px;
 	background-color: var(--gray-600);
 	box-shadow: inset 1px 1px 0 1px var(--gray-500);
@@ -50,7 +50,7 @@
 	font-family: Minecrafter;
 	font-size: 0.9rem;
 	height: 60px;
-	min-height: 5%;
+	min-height: 60px;
 	width: 100%;
 	align-items: center;
 	display: flex;
