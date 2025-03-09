@@ -55,7 +55,8 @@ function getLocalGameStateForPlayer(
 export function* playerConnectedSaga(
 	action: LocalMessageTable[typeof localMessages.CLIENT_CONNECTED],
 ) {
-	const {playerName, minecraftName, playerUuid, deck, socket} = action
+	const {playerName, minecraftName, playerUuid, deck, appearance, socket} =
+		action
 
 	if (action.playerId) {
 		const existingPlayer = root.players[action.playerId]
@@ -94,6 +95,7 @@ export function* playerConnectedSaga(
 		playerName,
 		minecraftName,
 		playerUuid,
+		appearance,
 		achievementProgress,
 		socket,
 	)

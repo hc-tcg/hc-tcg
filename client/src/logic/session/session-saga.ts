@@ -331,6 +331,7 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 					playerUuid: userResponse.uuid,
 					playerName: userResponse.username,
 					minecraftName: userResponse.minecraftName || userResponse.username,
+					appearance: defaultAppearance,
 					version: getClientVersion(),
 				}
 				yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
@@ -366,6 +367,16 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 				playerUuid: userResponse.uuid,
 				playerName: userResponse.username,
 				minecraftName: userResponse.minecraftName || userResponse.username,
+				appearance: {
+					title: TITLES[userResponse.title || ''] ?? defaultAppearance.title,
+					coin: COINS[userResponse.coin || ''] ?? defaultAppearance.coin,
+					heart: HEARTS[userResponse.heart || ''] ?? defaultAppearance.heart,
+					background:
+						BACKGROUNDS[userResponse.background || ''] ??
+						defaultAppearance.background,
+					border:
+						BORDERS[userResponse.border || ''] ?? defaultAppearance.border,
+				},
 				version: getClientVersion(),
 			}
 			yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
