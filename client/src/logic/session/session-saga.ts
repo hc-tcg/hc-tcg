@@ -109,6 +109,11 @@ function getNonDatabaseUser(): User {
 			forfeitLosses: 0,
 			uniquePlayersEncountered: 0,
 			topCards: [],
+			playtime: {
+				hours: 0,
+				minutes: 0,
+				seconds: 0,
+			},
 		},
 		gameHistory: [],
 		banned: false,
