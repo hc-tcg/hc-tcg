@@ -841,11 +841,13 @@ export class Database {
 					forfeitLosses: Number(statRows['forfeit_losses']),
 					ties: Number(statRows['ties']),
 					topCards: [],
-					playtime: {
-						hours: statRows['playtime'].hours || 0,
-						minutes: statRows['playtime'].minutes || 0,
-						seconds: statRows['playtime'].seconds || 0,
-					},
+					playtime: statRows['playtime']
+						? {
+								hours: statRows['playtime'].hours || 0,
+								minutes: statRows['playtime'].minutes || 0,
+								seconds: statRows['playtime'].seconds || 0,
+							}
+						: {hours: 0, minutes: 0, seconds: 0},
 					uniquePlayersEncountered: Number(statRows['unique_players']),
 				},
 			}
