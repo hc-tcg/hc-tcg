@@ -117,14 +117,16 @@ const loginReducer = (
 				playerDeck: action.deck.code,
 			}
 		case localMessages.TOAST_OPEN:
-			state.toast.push({
-				id: state.toast.length + 1,
-				toast: action,
-				closed: false,
-			})
 			return {
 				...state,
-				toast: state.toast,
+				toast: [
+					...state.toast,
+					{
+						id: state.toast.length + 1,
+						toast: action,
+						closed: false,
+					},
+				],
 			}
 		case localMessages.TOAST_CLOSE:
 			const thisToast = state.toast.find((toast) => toast.id === action.id)
