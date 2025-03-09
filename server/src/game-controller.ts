@@ -157,7 +157,9 @@ export class GameController {
 	) {
 		if (player.achievementProgress) {
 			ACHIEVEMENTS_LIST.forEach((achievement) => {
-				if (restriction === 'boss' && !achievement.progressInBossGame) return
+				if (restriction === 'boss' && !achievement.evilXAchievement) return
+				if (restriction == 'all' && achievement.evilXAchievement) return
+
 				if (!player.achievementProgress[achievement.numericId]) {
 					player.achievementProgress[achievement.numericId] = {
 						goals: {},
