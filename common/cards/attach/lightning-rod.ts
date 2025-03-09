@@ -54,7 +54,12 @@ const LightningRod: Attach = {
 			game.hooks.beforeAttack,
 			beforeAttack.RESOLVE_AFTER_MODIFIERS,
 			(attack) => {
-				if (!attack.getHistory('redirect').find(entry => entry.source === component.entity)) return
+				if (
+					!attack
+						.getHistory('redirect')
+						.find((entry) => entry.source === component.entity)
+				)
+					return
 				if (attack.calculateDamage() <= 0) return
 
 				used = true
