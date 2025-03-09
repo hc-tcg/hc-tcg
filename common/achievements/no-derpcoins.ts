@@ -1,5 +1,3 @@
-import {CardComponent} from '../components'
-import query from '../components/query'
 import {getDeckCost} from '../utils/ranks'
 import {achievement} from './defaults'
 import {Achievement} from './types'
@@ -17,10 +15,7 @@ const NoDerpcoins: Achievement = {
 		},
 	],
 	onGameStart(game, player, component, observer) {
-		const cost = getDeckCost(
-			player.getDeck()
-				.map((card) => card.props),
-		)
+		const cost = getDeckCost(player.getDeck().map((card) => card.props))
 		console.log(cost)
 		if (cost > 0) return
 		observer.subscribe(game.hooks.onGameEnd, (outcome) => {
