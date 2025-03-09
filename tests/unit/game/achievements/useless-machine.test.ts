@@ -80,13 +80,13 @@ describe('Test Useless Machine Achievement', () => {
 						game,
 						query.slot.hand,
 						query.slot.currentPlayer,
-						query.slot.order(1),
+						query.slot.order(2),
 					)
 					yield* pick(
 						game,
 						query.slot.hand,
 						query.slot.currentPlayer,
-						query.slot.order(2),
+						query.slot.order(3),
 					)
 					yield* endTurn(game)
 
@@ -122,13 +122,13 @@ describe('Test Useless Machine Achievement', () => {
 						game,
 						query.slot.hand,
 						query.slot.currentPlayer,
-						query.slot.order(1),
+						query.slot.order(2),
 					)
 					yield* pick(
 						game,
 						query.slot.hand,
 						query.slot.currentPlayer,
-						query.slot.order(2),
+						query.slot.order(3),
 					)
 					yield* endTurn(game)
 
