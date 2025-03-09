@@ -34,6 +34,8 @@ const UselessMachine: Achievement = {
 
 				let newPlayerHand = player.getHand().map((card) => card.props.id)
 
+				console.log(playerHand)
+				console.log(newPlayerHand)
 				for (const card of playerHand) {
 					let index = newPlayerHand.indexOf(card)
 					if (index === -1) continue

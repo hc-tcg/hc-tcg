@@ -33,7 +33,11 @@ const Composter: SingleUse = {
 			player: player.entity,
 			id: component.entity,
 			message: 'Pick 2 cards from your hand',
-			canPick: query.every(query.slot.currentPlayer, query.slot.hand),
+			canPick: query.every(
+				query.slot.currentPlayer,
+				query.slot.hand,
+				query.not(query.slot.empty),
+			),
 			onResult(pickedSlot) {
 				firstPickedSlot = pickedSlot
 			},
@@ -49,6 +53,7 @@ const Composter: SingleUse = {
 					query.slot.currentPlayer,
 					query.slot.hand,
 					query.not(query.slot.entity(firstPickedSlot.entity)),
+					query.not(query.slot.empty),
 				)(game, pos)
 			},
 			onResult(pickedSlot) {
