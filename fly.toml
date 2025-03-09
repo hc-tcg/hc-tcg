@@ -40,4 +40,4 @@ kill_timeout = '15s'
     grace_period = '4s'
 
 [[vm]]
-  size = 'shared-cpu-2x'
+  size = 'shared-cpu-4x'
