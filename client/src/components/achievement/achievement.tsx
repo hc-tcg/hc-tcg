@@ -52,6 +52,12 @@ export default function AchievementComponent({
 				(x.requires.level === i || x.requires.level === undefined),
 		)
 
+		const sortedGoals = achievement.getGoals
+			? achievement
+					.getGoals(progressData[achievement.numericId]?.goals ?? {})
+					.sort((a, _b) => (a.complete ? 1 : 0))
+			: null
+
 		let icon_url = ''
 
 		if (iconCosmetic && iconCosmetic.type === 'title') {
@@ -130,21 +136,17 @@ export default function AchievementComponent({
 							{achievement.getGoals && (
 								<Button
 									onClick={() => {
-										if (!achievement.getGoals) return
+										if (!sortedGoals) return
 										setProgressModalText(
 											<div>
-												{achievement
-													.getGoals(
-														progressData[achievement.numericId]?.goals ?? {},
+												{sortedGoals.map((goal) => {
+													return (
+														<div>
+															<div>{goal.name}</div>
+															{goal.complete === true && <div>Completed</div>}
+														</div>
 													)
-													.map((goal) => {
-														return (
-															<div>
-																<div>{goal.name}</div>
-																{goal.complete === true && <div>Completed</div>}
-															</div>
-														)
-													})}
+												})}
 											</div>,
 										)
 										setProgressModalOpen(true)
