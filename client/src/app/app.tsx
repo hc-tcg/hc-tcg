@@ -78,7 +78,12 @@ function Router() {
 				case 'cosmetics':
 					return <Cosmetics setMenuSection={menuSectionSet} page={'rewards'} />
 				case 'play-select':
-					return <PlaySelect setMenuSection={menuSectionSet} />
+					return (
+						<PlaySelect
+							setMenuSection={menuSectionSet}
+							defaultSection={'rematch'}
+						/>
+					)
 				case 'play-select-spectate':
 					const spectateCode = queryOptions.spectate
 					queryOptions.spectate = undefined

@@ -37,7 +37,7 @@ import {
 } from 'logic/matchmaking/matchmaking-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getRematchData, getSession} from 'logic/session/session-selectors'
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useReducer, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CosmeticPreview} from './achievements'
 import css from './play-select.module.scss'
@@ -69,6 +69,9 @@ function PlaySelect({
 	const gameTypeButtonsRef = useRef<HTMLDivElement>(null)
 
 	const decks = databaseInfo?.decks
+
+	const [, refresh] = useReducer((x) => x + 1, 0)
+
 	const [loadedDeck, setLoadedDeck] = useState<Deck | undefined>(
 		databaseInfo?.decks.find((deck) => deck.code === playerDeck),
 	)
@@ -131,7 +134,11 @@ function PlaySelect({
 		}
 	}
 
-	const mobileTop = gameTypeButtonsRef.current?.getBoundingClientRect().top || 0
+	// I am sorry but I couldn't get the refs to work when you go to a game mode button immediately on mobile
+	// This code is not great, but it basically works. Can't really see a difference on all display sizes I checked
+	const mobileTop =
+		gameTypeButtonsRef.current?.getBoundingClientRect().top ||
+		window.screen.height * 0.11
 
 	const checkForValidation = (): boolean => {
 		if (!playerDeck || !loadedDeck) {
