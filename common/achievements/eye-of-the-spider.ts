@@ -35,6 +35,7 @@ const EyeOfTheSpider: Achievement = {
 			game.hooks.afterAttack,
 			afterAttack.ACHIEVEMENTS,
 			(attack) => {
+				if (attack.player !== player.entity) return
 				if (!attack.target) return
 				let targetHermit = attack.target?.getHermit()
 				if (!targetHermit) return
