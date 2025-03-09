@@ -1,5 +1,6 @@
 import {RowComponent} from '../components'
 import query from '../components/query'
+import {onTurnEnd} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -25,9 +26,21 @@ const Wipeout: Achievement = {
 				})
 			})
 
-		observer.subscribe(player.hooks.onTurnStart, () => {
+		const checkProgress = () => {
+			console.log(knockouts)
 			component.bestGoalProgress({goal: 0, progress: knockouts})
 			knockouts = 0
+		}
+
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ACHIEVEMENTS,
+			() => {
+				checkProgress()
+			},
+		)
+		observer.subscribeWithPriority(game.hooks.onGameEnd, () => {
+			checkProgress()
 		})
 	},
 }

@@ -94,6 +94,8 @@ export const onTurnEnd = createPriorityDictionary({
 	BEFORE_STATUS_EFFECT_TIMEOUT: null,
 	/** End of the turn, when status effects are supposed to timeout. */
 	ON_STATUS_EFFECT_TIMEOUT: null,
+	/** Check after all other hooks have been run */
+	ACHIEVEMENTS: null,
 })
 
 export const onCoinFlip = createPriorityDictionary({
