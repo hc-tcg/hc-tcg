@@ -39,7 +39,7 @@ const Wipeout: Achievement = {
 				checkProgress()
 			},
 		)
-		observer.subscribeWithPriority(game.hooks.onGameEnd, () => {
+		observer.subscribe(game.hooks.onGameEnd, () => {
 			checkProgress()
 		})
 	},
