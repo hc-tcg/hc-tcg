@@ -1,6 +1,5 @@
 import {RowComponent} from '../components'
 import query from '../components/query'
-import {onTurnEnd} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -23,24 +22,12 @@ const Wipeout: Achievement = {
 			.forEach((row) => {
 				observer.subscribe(row.hooks.onKnockOut, () => {
 					knockouts += 1
+					component.bestGoalProgress({goal: 0, progress: knockouts})
 				})
 			})
 
-		const checkProgress = () => {
-			console.log(knockouts)
-			component.bestGoalProgress({goal: 0, progress: knockouts})
+		observer.subscribe(player.hooks.onTurnStart, () => {
 			knockouts = 0
-		}
-
-		observer.subscribeWithPriority(
-			player.hooks.onTurnEnd,
-			onTurnEnd.ACHIEVEMENTS,
-			() => {
-				checkProgress()
-			},
-		)
-		observer.subscribe(game.hooks.onGameEnd, () => {
-			checkProgress()
 		})
 	},
 }

@@ -1,5 +1,4 @@
-import {describe} from 'node:test'
-import {expect, test} from '@jest/globals'
+import {describe, expect, test} from '@jest/globals'
 import Wipeout from 'common/achievements/wipeout'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import Anvil from 'common/cards/single-use/anvil'
@@ -61,9 +60,9 @@ describe('Test "Wipeout" achievement', () => {
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, Anvil, 'single_use')
+					yield* attack(game, 'secondary')
 
 					yield* endTurn(game)
-					yield* attack(game, 'secondary')
 
 					yield* forfeit(game.currentPlayer.entity)
 				},
