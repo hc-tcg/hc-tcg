@@ -49,10 +49,8 @@ const SmallAchievement = ({
 	const [init, setInit] = useState<boolean>(false)
 	const [offset, setOffset] = useState<number>(index)
 
-	const onMobile = window.screen.width <= 720
-
-	const ma = onMobile ? 85 : 75
-
+	const achievementSize = 100
+	const leftMargin = 2.5
 	const gap = 1
 
 	const setPosition = () => {
@@ -66,10 +64,10 @@ const SmallAchievement = ({
 			barRef.current?.animate(
 				{
 					left: [
-						`${0.5 + offset * (ma + gap)}%`,
-						`${0.5 + offset * (ma + gap)}%`,
-						`${0.5 + (offset - 1) * (ma + gap)}%`,
-						`${0.5 + (offset - 1) * (ma + gap)}%`,
+						`${leftMargin + offset * (achievementSize + gap)}%`,
+						`${leftMargin + offset * (achievementSize + gap)}%`,
+						`${leftMargin + (offset - 1) * (achievementSize + gap)}%`,
+						`${leftMargin + (offset - 1) * (achievementSize + gap)}%`,
 					],
 					offset: [0.0, 0.8, 0.99, 1.0],
 				},
@@ -130,7 +128,7 @@ const SmallAchievement = ({
 	return (
 		<div
 			className={css.smallAchievementBox}
-			style={{left: `${12.5 + index * (ma + gap)}%`}}
+			style={{left: `${12.5 + index * (achievementSize + gap)}%`}}
 			ref={barRef}
 		>
 			<div className={css.nameAndProgress}>
