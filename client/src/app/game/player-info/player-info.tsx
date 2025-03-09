@@ -1,6 +1,7 @@
 import cn from 'classnames'
 import {PlayerEntity} from 'common/entities'
 import {LocalPlayerState} from 'common/types/game-state'
+import Spinner from 'components/spinner'
 import {
 	getGameState,
 	getOpponentConnection,
@@ -11,7 +12,6 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getSocketStatus} from 'logic/socket/socket-selectors'
 import {useSelector} from 'react-redux'
 import css from './player-info.module.scss'
-import Spinner from 'components/spinner'
 
 type Props = {
 	playerEntity: PlayerEntity
