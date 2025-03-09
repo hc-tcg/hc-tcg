@@ -106,11 +106,20 @@
 	border-radius: 5px;
 }
 
+.achievementsArea {
+	width: calc(100% - 8rem - 1px);
+	height: 5rem;
+	position: absolute;
+}
+
 .smallAchievementBox {
 	position: absolute;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 95%;
 	height: 100%;
-	width: 75%;
-	top: 12.5vh;
+	top: 0;
 }
 
 .nameAndProgress {
@@ -186,10 +195,6 @@
 		top: -2.7rem;
 	}
 
-	.smallAchievementBox {
-		top: 10.75vh;
-	}
-
 	.nameAndProgress {
 		font-size: 0.9rem;
 		text-wrap: nowrap;
@@ -202,5 +207,9 @@
 			"rematch"
 			"board"
 			"mainMenu";
+	}
+
+	.achievementsArea {
+		width: calc(100% - 1rem);
 	}
 }
