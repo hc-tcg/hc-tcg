@@ -402,7 +402,7 @@ function Settings({setMenuSection}: Props) {
 									onClick={openUpdatesModal}
 									className={css.mainMenuButton}
 								>
-									Statistics
+									Updates
 								</Button>
 							</div>
 						)}
