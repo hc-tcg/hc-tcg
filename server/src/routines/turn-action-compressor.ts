@@ -219,7 +219,10 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 				query.slot.rowIndex(rowIndex),
 			)
 
-			if (!slotComponent) return null
+			assert(
+				slotComponent,
+				'If there is no slot component, something has gone extremely wrong.',
+			)
 			return {
 				type: 'CHANGE_ACTIVE_HERMIT',
 				entity: slotComponent.entity,
@@ -239,7 +242,10 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		},
 		decompress(game, compressor, buffer) {
 			const slot = compressor.unpackSlotPosition(game, buffer.readInt16BE())
-			if (!slot) return null
+			assert(
+				slot,
+				'If there is no slot component, something has gone extremely wrong.',
+			)
 			return {
 				type: 'PICK_REQUEST',
 				entity: slot.entity,
@@ -620,6 +626,8 @@ export class TurnActionCompressor {
 			if (slot.inHand() && slot.opponentPlayer) return 0b1000
 			if (slot.inDeck() && slot.player) return 0b0010
 			if (slot.inDeck() && slot.opponentPlayer) return 0b1010
+			if (slot.inDiscardPile() && slot.player) return 0b0100
+			if (slot.inDiscardPile() && slot.opponentPlayer) return 0b1100
 			return 0
 		}
 
@@ -636,11 +644,16 @@ export class TurnActionCompressor {
 		const deckPosition = slot.inDeck()
 			? targetPlayer.getDeck().findIndex((c) => c.slotEntity === slot.entity)
 			: 0
+		const discardPilePosition = slot.inDeck()
+			? targetPlayer
+					.getDiscarded()
+					.findIndex((c) => c.slotEntity === slot.entity)
+			: 0
 
 		const finalBuffer = Buffer.concat([
 			this.writeUIntToBuffer(getSlotType(slot), 1),
 			this.writeUIntToBuffer(
-				boardSlotPosition | handPosition | deckPosition,
+				boardSlotPosition | handPosition | deckPosition | discardPilePosition,
 				1,
 			),
 		])
@@ -829,11 +842,13 @@ export class TurnActionCompressor {
 			if (!action.variableBytes) {
 				const bytes = actionsBuffer.subarray(cursor, cursor + action.bytes)
 				cursor += action.bytes
+
 				turnAction = action.decompress(con.game, this, bytes)
 				assert(
 					turnAction,
 					'There was an error and the data given for the turn action was invalid.',
 				)
+
 				replayActions.push({
 					action: turnAction,
 					player: actionPlayer,
@@ -843,6 +858,7 @@ export class TurnActionCompressor {
 				const byteAmount = actionsBuffer.readUInt8(cursor)
 				cursor += VARIABLE_BYTE_MAX
 				const bytes = actionsBuffer.subarray(cursor, cursor + byteAmount)
+				console.log(byteAmount, bytes)
 				cursor += byteAmount
 				turnAction = action.decompress(con.game, this, bytes)
 				assert(

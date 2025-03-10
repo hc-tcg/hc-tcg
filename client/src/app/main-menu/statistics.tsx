@@ -197,8 +197,8 @@ function Statistics({setMenuSection}: Props) {
 		return games.filter((game) => {
 			const otherPlayer =
 				game.firstPlayer.uuid === databaseInfo.userId
-					? game.firstPlayer
-					: game.secondPlayer
+					? game.secondPlayer
+					: game.firstPlayer
 			return (
 				(!compareTag ||
 					game.usedDeck.tags?.find((tag) => tag.key === compareTag)) &&
@@ -214,7 +214,9 @@ function Statistics({setMenuSection}: Props) {
 						.includes(compareName.toLocaleLowerCase())) &&
 				(!compareOpponentName ||
 					compareOpponentName === '' ||
-					otherPlayer.name.includes(compareOpponentName))
+					otherPlayer.name
+						.toLocaleLowerCase()
+						.includes(compareOpponentName.toLocaleLowerCase()))
 			)
 		})
 	}
@@ -1521,8 +1523,9 @@ function Statistics({setMenuSection}: Props) {
 						<div className={css.overview}>
 							{overview.map((line) => {
 								const isOpponent =
-									(currentGame?.firstPlayer.player === 'you') !==
-									(line.sender.id === overviewFirstId)
+									currentGame?.firstPlayer.player === 'you'
+										? line.sender.id !== overviewFirstId
+										: line.sender.id === overviewFirstId
 
 								return FormattedText(line.message, {
 									isOpponent,

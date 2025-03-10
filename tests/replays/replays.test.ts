@@ -35,6 +35,13 @@ import {
 	playCardFromHand,
 	testReplayGame,
 } from '../unit/game/utils'
+import TinFoilChefRare from 'common/cards/hermits/tinfoilchef-rare'
+import HelsknightRare from 'common/cards/hermits/helsknight-rare'
+import SpeedrunnerItem from 'common/cards/items/speedrunner-common'
+import FishingRod from 'common/cards/single-use/fishing-rod'
+import JinglerRare from 'common/cards/hermits/jingler-rare'
+import SpeedrunnerDoubleItem from 'common/cards/items/speedrunner-rare'
+import IJevinRare from 'common/cards/hermits/ijevin-rare'
 
 function* afterGame(con: GameController) {
 	const turnActionCompressor = new TurnActionCompressor()
@@ -195,6 +202,58 @@ describe('Test Replays', () => {
 				)
 
 				yield* forfeit(con.game.currentPlayer.entity)
+			},
+			afterGame: afterGame,
+		})
+	})
+
+	test('Test Speedrunner Jevin', () => {
+		testReplayGame({
+			playerOneDeck: [
+				TinFoilChefRare,
+				MinerItem,
+				HelsknightRare,
+				...Array(40).fill(MinerItem),
+			],
+			playerTwoDeck: [
+				IJevinRare,
+				SpeedrunnerItem,
+				SpeedrunnerDoubleItem,
+				FishingRod,
+				JinglerRare,
+				...Array(40).fill(SpeedrunnerItem),
+			],
+			gameSaga: function* (con) {
+				const game = con.game
+				yield* playCardFromHand(game, TinFoilChefRare, 'hermit', 2)
+				yield* playCardFromHand(game, MinerItem, 'item', 2, 0)
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, IJevinRare, 'hermit', 4)
+				yield* playCardFromHand(game, SpeedrunnerItem, 'item', 4, 0)
+				yield* attack(game, 'primary')
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, MinerItem, 'item', 2, 1)
+				yield* playCardFromHand(game, HelsknightRare, 'hermit', 1)
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, SpeedrunnerDoubleItem, 'item', 4, 1)
+				yield* playCardFromHand(game, FishingRod, 'single_use')
+				yield* applyEffect(game)
+				yield* playCardFromHand(game, JinglerRare, 'hermit', 3)
+
+				yield* attack(game, 'secondary')
+				yield* pick(
+					game,
+					query.slot.opponent,
+					query.slot.hermit,
+					query.slot.rowIndex(1),
+				)
+				yield* endTurn(game)
+
+				yield* forfeit(game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})

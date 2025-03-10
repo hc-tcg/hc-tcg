@@ -964,7 +964,7 @@ export class Database {
 
 				const rng = newRandomNumberGenerator(game.seed)
 				const youAreFirst =
-					rng() >= 0.5 !== (game.winner === game.you) && game.first_player_won
+					rng() < 0.5 !== ((game.winner === game.you) !== game.first_player_won)
 
 				const yourInfo: GameHistoryPlayer = {
 					player: 'you',
@@ -1039,14 +1039,14 @@ export class Database {
 				)
 				SELECT 
 					winner as user_id, winner_deck_code as selected_deck_code, username, minecraft_name,
-					card_id, copies, replay, seed, first_player_won = TRUE as first
+					card_id, copies, replay, seed, first_player_won = TRUE as first, first_player_won
 					FROM game 
 					JOIN users ON users.user_id = winner
 					LEFT JOIN deck_cards ON deck_cards.deck_code = winner_deck_code
 				UNION (
 					SELECT 
 					loser as user_id, loser_deck_code as selected_deck_code, username, minecraft_name,
-					card_id, copies, replay, seed, first_player_won = FALSE as first
+					card_id, copies, replay, seed, first_player_won = FALSE as first, first_player_won
 					FROM game 
 					JOIN users ON users.user_id = loser
 					LEFT JOIN deck_cards ON deck_cards.deck_code = loser_deck_code
@@ -1058,6 +1058,7 @@ export class Database {
 			const rows: Array<Record<string, any>> = gamesResult.rows
 			const game: Record<string, any> = rows[0]
 			const seed: string = game['seed']
+			const firstPlayerWon: boolean = game['first_player_won']
 
 			const replay: Buffer = game['replay']
 			// const decompressedReplay: Buffer | null = huffmanDecompress(replay)
@@ -1141,8 +1142,8 @@ export class Database {
 			return {
 				type: 'success',
 				body: {
-					player1Defs,
-					player2Defs,
+					player1Defs: player1Defs,
+					player2Defs: player2Defs,
 					replay: replayActions.replay,
 					seed,
 					battleLog: replayActions.battleLog,
