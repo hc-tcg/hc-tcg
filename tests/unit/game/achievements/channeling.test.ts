@@ -1,10 +1,9 @@
 import {describe, expect, test} from '@jest/globals'
 import Channeling from 'common/achievements/channeling'
-import {IronArmor, NetheriteArmor} from 'common/cards/attach/armor'
 import LightningRod from 'common/cards/attach/lightning-rod'
+import BdoubleO100Rare from 'common/cards/hermits/bdoubleo100-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GoatfatherRare from 'common/cards/hermits/goatfather-rare'
-import TinFoilChefUltraRare from 'common/cards/hermits/tinfoilchef-ultra-rare'
 import Anvil from 'common/cards/single-use/anvil'
 import {
 	attack,
@@ -29,7 +28,7 @@ describe('Test Channeling achievement', () => {
 
 					yield* playCardFromHand(game, GoatfatherRare, 'hermit', 0)
 					yield* playCardFromHand(game, Anvil, 'single_use')
-					game.opponentPlayer.activeRow!.health = 140
+					game.opponentPlayer.activeRow!.health = 90
 					yield* attack(game, 'secondary')
 
 					yield* forfeit(game.opponentPlayer.entity)
@@ -41,7 +40,33 @@ describe('Test Channeling achievement', () => {
 			{noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('"Channeling" does not increase if the lightning rod didn\'t save any Hermit', () => {
+	test('"Channeling" does not increase if the lightning rod didn\'t redirect damage from active Hermit', () => {
+		testAchivement(
+			{
+				achievement: Channeling,
+				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
+				playerTwoDeck: [BdoubleO100Rare, Anvil],
+				playGame: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, LightningRod, 'attach', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, BdoubleO100Rare, 'hermit', 1)
+					yield* playCardFromHand(game, Anvil, 'single_use')
+					game.opponentPlayer.activeRow!.health = 90
+					yield* attack(game, 'secondary')
+
+					yield* forfeit(game.opponentPlayer.entity)
+				},
+				checkAchivement(_game, achievement, _outcome) {
+					expect(Channeling.getProgress(achievement.goals)).toBeFalsy()
+				},
+			},
+			{noItemRequirements: true},
+		)
+	})
+	test('"Channeling" does not increase if the active Hermit has at least 100hp', () => {
 		testAchivement(
 			{
 				achievement: Channeling,
@@ -55,39 +80,7 @@ describe('Test Channeling achievement', () => {
 
 					yield* playCardFromHand(game, GoatfatherRare, 'hermit', 1)
 					yield* playCardFromHand(game, Anvil, 'single_use')
-					game.opponentPlayer.activeRow!.health = 120
-					yield* attack(game, 'secondary')
-
-					yield* forfeit(game.opponentPlayer.entity)
-				},
-				checkAchivement(_game, achievement, _outcome) {
-					expect(Channeling.getProgress(achievement.goals)).toBeFalsy()
-				},
-			},
-			{noItemRequirements: true, forceCoinFlip: true},
-		)
-	})
-	test('"Channeling" does not increase if the lightning rod didn\'t save any Hermit because they had armor', () => {
-		testAchivement(
-			{
-				achievement: Channeling,
-				playerOneDeck: [
-					EthosLabCommon,
-					EthosLabCommon,
-					LightningRod,
-					NetheriteArmor,
-				],
-				playerTwoDeck: [GoatfatherRare, Anvil],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, NetheriteArmor, 'attach', 0)
-					yield* playCardFromHand(game, LightningRod, 'attach', 1)
-					yield* endTurn(game)
-
-					yield* playCardFromHand(game, GoatfatherRare, 'hermit', 0)
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					game.opponentPlayer.activeRow!.health = 120
+					game.opponentPlayer.activeRow!.health = 100
 					yield* attack(game, 'secondary')
 
 					yield* forfeit(game.opponentPlayer.entity)
@@ -122,37 +115,6 @@ describe('Test Channeling achievement', () => {
 				},
 			},
 			{noItemRequirements: true},
-		)
-	})
-	test('"Channeling" increases when type-advantage + TFC "Take It Easy" heads would have caused a KO', () => {
-		testAchivement(
-			{
-				achievement: Channeling,
-				playerOneDeck: [
-					GoatfatherRare,
-					EthosLabCommon,
-					IronArmor,
-					LightningRod,
-				],
-				playerTwoDeck: [TinFoilChefUltraRare, Anvil],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, GoatfatherRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, IronArmor, 'attach', 0)
-					yield* playCardFromHand(game, LightningRod, 'attach', 1)
-					yield* endTurn(game)
-
-					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 0)
-					game.opponentPlayer.activeRow!.health = 120
-					yield* attack(game, 'secondary')
-
-					yield* forfeit(game.opponentPlayer.entity)
-				},
-				checkAchivement(_game, achievement, _outcome) {
-					expect(Channeling.getProgress(achievement.goals)).toEqual(1)
-				},
-			},
-			{noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 })
