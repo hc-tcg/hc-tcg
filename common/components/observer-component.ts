@@ -12,6 +12,8 @@ import type {StatusEffectComponent} from './status-effect-component'
  * time out.
  */
 export class ObserverComponent {
+	public static table = 'observers'
+
 	readonly game: GameModel
 	readonly entity: ObserverEntity
 	readonly wrappingEntity: Entity<

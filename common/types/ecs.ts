@@ -1,3 +1,4 @@
+import assert from 'node:assert'
 import {ComponentQuery} from '../components/query'
 import {Entity, newEntity} from '../entities'
 import {GameModel} from '../models/game-model'
@@ -6,12 +7,10 @@ export type Component = {
 	entity: Entity<any>
 }
 
+export type ComponentClass<T> = new (...args: Array<any>) => T
+
 /** A map of entities to component objects. Components in the component
  * table can be queried. See the filter and find methods for more information.
- *
- * Fruther Work - We can likely optimize queries by giving each component their
- * own table. Additionally we can reduce queries by finding a faster way to do
- * relations for slots and the card that is in them.
  */
 export default class ComponentTable {
 	game: GameModel
@@ -28,16 +27,19 @@ export default class ComponentTable {
 	public get<T>(id: Entity<T> | null): T | null {
 		if (!id) return null
 		let table = this.tableMap[id]
+		assert(table, 'there should be a table')
 		// @ts-ignore
 		return this.tables[table][id] || null
 	}
 
 	/** Get a specific entity by the ID. If the entity does not exist, raise an error */
 	public getOrError<T>(id: Entity<T>): T {
-		if (!id || !(id in this.tables))
+		const component = this.get(id)
+		if (!component) {
 			throw new Error(`Could not find component with ID \`${id}\ in ECS`)
+		}
 		// @ts-ignore
-		return this.tables[id]
+		return component
 	}
 
 	/** Remove an entity from the ECS. Before removing a component from the ECS, first consider if you can
@@ -52,16 +54,20 @@ export default class ComponentTable {
 		newValue: new (game: GameModel, id: T['entity'], ...args: Args) => T,
 		...args: Args
 	): T {
+		assert(
+			newValue.table,
+			`Found component type \`${newValue.name}\` has undefined table`,
+		)
 		const value = new newValue(
 			this.game,
-			newEntity<T['entity']>(newValue.name, this.game),
+			newEntity<T['entity']>(newValue.table, this.game),
 			...args,
 		)
-		if (!this.tables[newValue.name]) {
-			this.tables[newValue.name] = {}
+		if (!this.tables[newValue.table]) {
+			this.tables[newValue.table] = {}
 		}
-		this.tableMap[value.entity] = newValue.name
-		this.tables[newValue.name][value.entity] = value
+		this.tableMap[value.entity] = newValue.table
+		this.tables[newValue.table][value.entity] = value
 		return value
 	}
 
@@ -73,10 +79,14 @@ export default class ComponentTable {
 	 * ```
 	 */
 	public filter<T extends Component>(
-		type: new (...args: Array<any>) => T,
+		type: ComponentClass<T>,
 		...predicates: Array<ComponentQuery<T>>
 	): Array<T> {
-		return Object.values(this.tables[type.name])
+		assert(
+			type.table,
+			`Found component type \`${type.name}\` has undefined table`,
+		)
+		return Object.values(this.tables[type.table] || {})
 			.filter((x) => x instanceof type)
 			.filter((value) =>
 				predicates.every((predicate) => predicate(this.game, value as T)),
@@ -84,7 +94,7 @@ export default class ComponentTable {
 	}
 
 	public filterEntities<T extends Component>(
-		type: new (...args: Array<any>) => T,
+		type: ComponentClass<T>,
 		...predicates: Array<ComponentQuery<T>>
 	): Array<T['entity']> {
 		return this.filter(type, ...predicates)?.map((x) => x.entity)
@@ -95,14 +105,14 @@ export default class ComponentTable {
 	 * For drawing cards please use `player.draw()` instead as this will grab the items in the correct order.
 	 */
 	public find<T extends Component>(
-		type: new (...args: Array<any>) => T,
+		type: ComponentClass<T>,
 		...predicates: Array<ComponentQuery<T>>
 	): T | null {
 		return this.filter(type, ...predicates)[0] || null
 	}
 
 	public findEntity<T extends Component>(
-		type: new (...args: Array<any>) => T,
+		type: ComponentClass<T>,
 		...predicates: Array<ComponentQuery<T>>
 	): T['entity'] | null {
 		return this.find(type, ...predicates)?.entity || null
@@ -110,7 +120,7 @@ export default class ComponentTable {
 
 	/** Check if a component exists and return true if that is the case. */
 	public exists<T extends Component>(
-		type: new (...args: Array<any>) => T,
+		type: ComponentClass<T>,
 		...predicates: Array<ComponentQuery<T>>
 	): boolean {
 		return this.find(type, ...predicates) !== null
