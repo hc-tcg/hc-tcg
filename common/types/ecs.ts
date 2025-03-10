@@ -15,33 +15,36 @@ export type Component = {
  */
 export default class ComponentTable {
 	game: GameModel
-	data: Record<Entity<any>, Component>
+	tables: Record<string, Record<Entity<any>, Component>>
+	tableMap: Record<Entity<any>, string>
 
 	constructor(game: GameModel) {
 		this.game = game
-		this.data = {} as Record<Entity<any>, Component>
+		this.tables = {} as Record<any, Record<Entity<any>, Component>>
+		this.tableMap = {}
 	}
 
 	/** Get a specific entity by the ID */
 	public get<T>(id: Entity<T> | null): T | null {
 		if (!id) return null
+		let table = this.tableMap[id]
 		// @ts-ignore
-		return this.data[id] || null
+		return this.tables[table][id] || null
 	}
 
 	/** Get a specific entity by the ID. If the entity does not exist, raise an error */
 	public getOrError<T>(id: Entity<T>): T {
-		if (!id || !(id in this.data))
+		if (!id || !(id in this.tables))
 			throw new Error(`Could not find component with ID \`${id}\ in ECS`)
 		// @ts-ignore
-		return this.data[id]
+		return this.tables[id]
 	}
 
 	/** Remove an entity from the ECS. Before removing a component from the ECS, first consider if you can
 	 * mark the element as invalid instead.
 	 */
 	public delete(id: Entity<any>) {
-		delete this.data[id]
+		delete this.tables[id]
 	}
 
 	/** Add a entity linked to a component and return the ID of the value */
@@ -54,7 +57,11 @@ export default class ComponentTable {
 			newEntity<T['entity']>(newValue.name, this.game),
 			...args,
 		)
-		this.data[value.entity] = value
+		if (!this.tables[newValue.name]) {
+			this.tables[newValue.name] = {}
+		}
+		this.tableMap[value.entity] = newValue.name
+		this.tables[newValue.name][value.entity] = value
 		return value
 	}
 
@@ -69,7 +76,7 @@ export default class ComponentTable {
 		type: new (...args: Array<any>) => T,
 		...predicates: Array<ComponentQuery<T>>
 	): Array<T> {
-		return Object.values(this.data)
+		return Object.values(this.tables[type.name])
 			.filter((x) => x instanceof type)
 			.filter((value) =>
 				predicates.every((predicate) => predicate(this.game, value as T)),
