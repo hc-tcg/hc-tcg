@@ -44,7 +44,7 @@ export function CosmeticPreview() {
 			const heartImg =
 				lives > index
 					? `/images/cosmetics/heart/${appearance.heart.id}.png`
-					: '/images/game/heart_empty.png'
+					: `/images/cosmetics/heart/${appearance.heart.offVariantName}.png`
 			return (
 				<img
 					key={index}
@@ -84,7 +84,9 @@ export function CosmeticPreview() {
 					</p>
 				</div>
 
-				<div className={css.health}>{health(3)}</div>
+				<div className={css.health}>
+					{health(appearance.heart.offVariantName ? 2 : 3)}
+				</div>
 			</div>
 		</div>
 	)
