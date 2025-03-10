@@ -217,8 +217,8 @@ export class AttackModel {
 
 	/** Redirect the attack to another hermit. Unlike setTarget, this will trigger Chainmail Armor. */
 	public redirect(sourceId: AttackerEntity, target: RowEntity | null) {
+		this.addHistory(sourceId, 'redirect', {from: this.targetEntity, to: target})
 		this.targetEntity = target
-		this.addHistory(sourceId, 'redirect', target)
 		return this
 	}
 

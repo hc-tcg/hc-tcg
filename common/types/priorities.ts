@@ -41,10 +41,10 @@ export const beforeAttack = createPriorityDictionary({
 	ADD_ATTACK: null,
 	/** Effects, Hermits, and Status Effects that modify damage of additional attacks along with the main attack.  */
 	MODIFY_DAMAGE: null,
-	/** Listeners that call after damage modifiers are applied.  */
-	RESOLVE_AFTER_MODIFIERS: null,
 	/** Hermit attack abilities that modify state before any damage is dealt */
 	HERMIT_APPLY_ATTACK: null,
+	/** Listeners that call after damage modifiers are applied.  */
+	RESOLVE_AFTER_MODIFIERS: null,
 	/** Any attacking single-use cards must call `applySingleUse` at this stage */
 	APPLY_SINGLE_USE_ATTACK: null,
 	/** Hermits blocking all damage done by certain attacks */
