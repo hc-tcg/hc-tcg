@@ -144,11 +144,11 @@ function getLocalPlayerState(
 			.filter(RowComponent, query.row.player(playerState.entity))
 			.map((row) => {
 				const hermitCard = row.getHermit()
-				const hermitSlot = row.getHermitSlot()
+				const hermitSlot = row.hermitSlot
 				const attachCard = row.getAttach()
-				const attachSlot = row.getAttachSlot()
+				const attachSlot = row.attachSlot
 
-				const items = row.getItemSlots().map((itemSlot) => {
+				const items = row.itemSlots.map((itemSlot) => {
 					let itemCard = game.components.find(
 						CardComponent,
 						query.card.slotEntity(itemSlot.entity),
