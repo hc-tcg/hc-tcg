@@ -2,6 +2,7 @@ import CantTouchThis from '../achievements/cant-touch-this'
 import Channeling from '../achievements/channeling'
 import DeckedOut from '../achievements/decked-out'
 import SUStainable from '../achievements/sustainable'
+import UseLikeAHermit from '../achievements/use-like-a-hermit'
 import Win from '../achievements/wins'
 import {Heart} from './types'
 
@@ -34,6 +35,11 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		id: 'soulflame',
 		name: 'Soulflame',
 		requires: {achievement: DeckedOut.id},
+	},
+	{
+		id: 'wooden',
+		name: 'Wooden',
+		requires: {achievement: UseLikeAHermit.id},
 	},
 ]
 
