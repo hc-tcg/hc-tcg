@@ -1,5 +1,5 @@
-import query, {ComponentQuery} from '.'
-import {CardComponent, RowComponent} from '..'
+import {ComponentQuery} from '.'
+import {RowComponent} from '..'
 import {CardEntity, PlayerEntity, RowEntity} from '../../entities'
 
 export const active: ComponentQuery<RowComponent> = (game, row) =>
@@ -27,13 +27,6 @@ export const opponentPlayer: ComponentQuery<RowComponent> = (game, pos) =>
 export const hasHermit: ComponentQuery<RowComponent> = (_game, row) => {
 	return row.getHermitSlot().card !== null
 }
-
-/** Check if a row has a card attached to its hermit slot */
-export const hermitSlotOccupied: ComponentQuery<RowComponent> = (game, row) =>
-	game.components.exists(
-		CardComponent,
-		query.card.slot(query.slot.rowIs(row.entity)),
-	)
 
 export function hasCard(cardEntity: CardEntity): ComponentQuery<RowComponent> {
 	return (game, row) => {

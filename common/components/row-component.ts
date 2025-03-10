@@ -88,8 +88,8 @@ export class RowComponent {
 		)
 	}
 
-	public getItems(excludeAdjacent: boolean = false) {
-		const itemSlots = this.getItemSlots(excludeAdjacent) as Array<SlotComponent>
+	public getItems() {
+		const itemSlots = this.getItemSlots() as Array<SlotComponent>
 		return this.game.components.filter(CardComponent, (_game, value) =>
 			itemSlots.includes(value.slot),
 		)
