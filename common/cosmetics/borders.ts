@@ -11,6 +11,10 @@ const BorderDefinitions: Omit<Border, 'type'>[] = [
 		name: 'Blue',
 	},
 	{
+		id: 'cherry',
+		name: 'Cherry',
+	},
+	{
 		id: 'copper_border',
 		name: 'Copper',
 		requires: {achievement: LoyaltyIII.id},
