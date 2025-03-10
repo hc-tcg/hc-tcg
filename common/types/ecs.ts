@@ -88,8 +88,9 @@ export default class ComponentTable {
 			(type as any).table,
 			`Found component type \`${type.name}\` has undefined table`,
 		)
-		return Object.values(this.tables[(type as any).table] || {}).filter((value) =>
-			predicates.every((predicate) => predicate(this.game, value as T)),
+		return Object.values(this.tables[(type as any).table] || {}).filter(
+			(value) =>
+				predicates.every((predicate) => predicate(this.game, value as T)),
 		) as any
 	}
 
