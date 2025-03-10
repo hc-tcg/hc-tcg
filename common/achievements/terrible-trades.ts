@@ -1,23 +1,23 @@
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
-const Inneffective: Achievement = {
+const TerribleTrades: Achievement = {
 	...achievement,
-	numericId: 16,
-	id: 'inneffective',
+	numericId: 49,
+	id: 'terrible-trades',
 	levels: [
 		{
-			name: 'Ineffective',
+			name: 'Terrible Trades',
 			description:
-				'Win 10 games without having single use effect cards in your deck.',
-			steps: 10,
+				'Win 5 games without using a deck that includes cards worth 3 tokens or more.',
+			steps: 5,
 		},
 	],
 	onGameStart(game, player, component, observer) {
 		let deckHasBannedCards = false
 
 		for (const card of player.getDeck()) {
-			if (card.props.category.includes('single_use')) {
+			if (typeof card.props.tokens === 'number' && card.props.tokens >= 3) {
 				deckHasBannedCards = true
 			}
 		}
@@ -31,4 +31,4 @@ const Inneffective: Achievement = {
 	},
 }
 
-export default Inneffective
+export default TerribleTrades

@@ -38,7 +38,9 @@ function PlayerInfo({playerEntity, direction}: Props) {
 			const heartImg =
 				lives > index
 					? `/images/cosmetics/heart/${player.appearance.heart.id}.png`
-					: '/images/game/heart_empty.png'
+					: player.appearance.heart.offVariantName
+						? `/images/cosmetics/heart/${player.appearance.heart.offVariantName}.png`
+						: '/images/game/heart_empty.png'
 			return (
 				<img
 					key={index}

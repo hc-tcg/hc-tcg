@@ -16,6 +16,7 @@ import HermitsAndCrafting from './hermits-and-crafting'
 import HotTake from './hot-take'
 import HowDidWeGetHere from './how-did-we-get-here'
 import HurtinHermits from './hurtin-hermits'
+import iBuy from './ibuy'
 import Inneffective from './inneffective'
 import IsGreat from './is-great'
 import AllCards from './jack-of-all-cards'
@@ -32,6 +33,7 @@ import ServerLag from './server-lag'
 import SignalInversion from './signal-inversion'
 import SUStainable from './sustainable'
 import TeamStar from './team-star'
+import TerribleTrades from './terrible-trades'
 import {
 	BalancedWins,
 	BuilderWins,
@@ -45,6 +47,7 @@ import {
 	TerraformWins,
 } from './type-wins'
 import {Achievement} from './types'
+import UseLikeAHermit from './use-like-a-hermit'
 import UselessMachine from './useless-machine'
 import Win from './wins'
 import Wipeout from './wipeout'
@@ -71,11 +74,13 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	PackOfWolves,
 	FreeAndSteel,
 	SUStainable,
+	iBuy,
 
 	// effect card - challenge/combo
 	UselessMachine,
 	GoFish,
 	CertifiedZombie,
+	UseLikeAHermit,
 	Channeling,
 
 	// Effect card / status effect - Challenge/Combo
@@ -98,6 +103,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 
 	// Deck - challenge
 	Inneffective,
+	TerribleTrades,
 	NakedAndScared,
 	IsGreat,
 	Ethogirl,
