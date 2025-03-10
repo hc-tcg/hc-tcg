@@ -39,7 +39,9 @@ describe('Test Use Like a Hermit achievement', () => {
 					yield* forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
-					expect(UseLikeAHermit.getProgress(achievement.goals)).toEqual(0)
+					expect(UseLikeAHermit.getProgress(achievement.goals)).toEqual(
+						undefined,
+					)
 				},
 			},
 			{oneShotMode: true, noItemRequirements: true},
