@@ -47,21 +47,21 @@ export class RowComponent {
 		return this.game.components.getOrError(this.playerId)
 	}
 
-	public getHermitSlot(): BoardSlotComponent {
+	public get hermitSlot(): BoardSlotComponent {
 		assert(this.hermitSlotEntity)
 		return this.game.components.getOrError(
 			this.hermitSlotEntity,
 		) as BoardSlotComponent
 	}
 
-	public getAttachSlot(): BoardSlotComponent {
+	public get attachSlot(): BoardSlotComponent {
 		assert(this.attachSlotEntity)
 		return this.game.components.getOrError(
 			this.attachSlotEntity,
 		) as BoardSlotComponent
 	}
 
-	public getItemSlots(): [
+	public get itemSlots(): [
 		BoardSlotComponent,
 		BoardSlotComponent,
 		BoardSlotComponent,
@@ -73,23 +73,15 @@ export class RowComponent {
 	}
 
 	public getHermit() {
-		return this.game.components.find(
-			CardComponent,
-			query.card.slot(query.slot.hermit),
-			query.card.rowEntity(this.entity),
-		)
+		return this.hermitSlot.card
 	}
 
 	public getAttach() {
-		return this.game.components.find(
-			CardComponent,
-			query.card.slot(query.slot.attach),
-			query.card.rowEntity(this.entity),
-		)
+		return this.attachSlot.card
 	}
 
 	public getItems() {
-		const itemSlots = this.getItemSlots() as Array<SlotComponent>
+		const itemSlots = this.itemSlots as Array<SlotComponent>
 		return this.game.components.filter(CardComponent, (_game, value) =>
 			itemSlots.includes(value.slot),
 		)
