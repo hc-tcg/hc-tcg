@@ -128,13 +128,6 @@ describe('Test Rare Hypnotizd', () => {
 
 					expect(
 						game.components.find(
-							StatusEffectComponent,
-							query.effect.is(EfficiencyEffect),
-							query.effect.targetIsPlayerAnd(query.player.currentPlayer),
-						),
-					).toBe(null)
-					expect(
-						game.components.find(
 							RowComponent,
 							query.row.opponentPlayer,
 							query.row.index(0),
