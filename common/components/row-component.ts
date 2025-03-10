@@ -8,7 +8,7 @@ import query from './query'
 import {BoardSlotComponent, SlotComponent} from './slot-component'
 
 export class RowComponent {
-	public static table = "rows"
+	public static table = 'rows'
 
 	readonly game: GameModel
 	readonly entity: RowEntity

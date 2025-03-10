@@ -19,7 +19,7 @@ type BoardSlotDefs =
  * Note that slots are NOT ordered in the ECS.
  */
 export class SlotComponent {
-	public static table = "slots"
+	public static table = 'slots'
 
 	readonly game: GameModel
 	readonly entity: SlotEntity

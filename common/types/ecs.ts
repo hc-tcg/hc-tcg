@@ -13,9 +13,9 @@ export type ComponentClass<T> = new (...args: Array<any>) => T
  * table can be queried. See the filter and find methods for more information.
  */
 export default class ComponentTable {
-	game: GameModel
-	tables: Record<string, Record<Entity<any>, Component>>
-	tableMap: Record<Entity<any>, string>
+	private game: GameModel
+	private tables: Record<string, Record<Entity<any>, Component>>
+	private tableMap: Record<Entity<any>, string>
 
 	constructor(game: GameModel) {
 		this.game = game
@@ -46,7 +46,9 @@ export default class ComponentTable {
 	 * mark the element as invalid instead.
 	 */
 	public delete(id: Entity<any>) {
-		delete this.tables[id]
+		let table = this.tableMap[id]
+		if (!table) return
+		delete this.tables[table][id]
 	}
 
 	/** Add a entity linked to a component and return the ID of the value */
@@ -63,7 +65,7 @@ export default class ComponentTable {
 			newEntity<T['entity']>(newValue.table, this.game),
 			...args,
 		)
-		if (!this.tables[newValue.table]) {
+		if (this.tables[newValue.table] === undefined) {
 			this.tables[newValue.table] = {}
 		}
 		this.tableMap[value.entity] = newValue.table
@@ -86,11 +88,9 @@ export default class ComponentTable {
 			type.table,
 			`Found component type \`${type.name}\` has undefined table`,
 		)
-		return Object.values(this.tables[type.table] || {})
-			.filter((x) => x instanceof type)
-			.filter((value) =>
-				predicates.every((predicate) => predicate(this.game, value as T)),
-			) as any
+		return Object.values(this.tables[type.table] || {}).filter((value) =>
+			predicates.every((predicate) => predicate(this.game, value as T)),
+		) as any
 	}
 
 	public filterEntities<T extends Component>(

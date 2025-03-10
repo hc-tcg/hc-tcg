@@ -31,7 +31,7 @@ export type PlayerDefs = {
 }
 
 export class PlayerComponent {
-	public static table = "players"
+	public static table = 'players'
 
 	readonly game: GameModel
 	readonly entity: PlayerEntity
