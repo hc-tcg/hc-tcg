@@ -1,7 +1,9 @@
 import CantTouchThis from '../achievements/cant-touch-this'
 import Channeling from '../achievements/channeling'
 import DeckedOut from '../achievements/decked-out'
+import iBuy from '../achievements/ibuy'
 import SUStainable from '../achievements/sustainable'
+import TerribleTrades from '../achievements/terrible-trades'
 import UseLikeAHermit from '../achievements/use-like-a-hermit'
 import Win from '../achievements/wins'
 import {Heart} from './types'
@@ -17,14 +19,30 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		requires: {achievement: Channeling.id},
 	},
 	{
-		id: 'gold',
-		name: 'Gold',
-		requires: {achievement: Win.id, level: 4},
+		id: 'emerald',
+		name: 'Emerald',
+		requires: {achievement: TerribleTrades.id},
 	},
 	{
 		id: 'plant',
 		name: 'Flower',
 		requires: {achievement: SUStainable.id},
+	},
+	{
+		id: 'gold',
+		name: 'Gold',
+		requires: {achievement: Win.id, level: 4},
+	},
+	{
+		id: 'wooden',
+		name: 'Heart Stand',
+		requires: {achievement: UseLikeAHermit.id},
+	},
+	{
+		id: 'lamp',
+		name: 'Lamp',
+		offVariantName: 'lamp_off',
+		requires: {achievement: iBuy.id},
 	},
 	{
 		id: 'silver_heart',
@@ -35,11 +53,6 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		id: 'soulflame',
 		name: 'Soulflame',
 		requires: {achievement: DeckedOut.id},
-	},
-	{
-		id: 'wooden',
-		name: 'Wooden',
-		requires: {achievement: UseLikeAHermit.id},
 	},
 ]
 

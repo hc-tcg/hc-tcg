@@ -10,7 +10,7 @@ const Inneffective: Achievement = {
 	progressionMethod: 'sum',
 	levels: [
 		{
-			name: 'Inneffective',
+			name: 'Ineffective',
 			description:
 				'Win 10 games without having single use effect cards in your deck.',
 			steps: 10,

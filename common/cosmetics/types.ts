@@ -14,7 +14,7 @@ export type Coin = Cosmetic & {
 	borderColor: string
 }
 
-export type Heart = Cosmetic & {type: 'heart'}
+export type Heart = Cosmetic & {type: 'heart'; offVariantName?: string}
 
 export type Background = Cosmetic & {type: 'background'; preview?: string}
 
