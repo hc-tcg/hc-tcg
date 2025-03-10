@@ -21,7 +21,7 @@ const UseLikeAHermit: Achievement = {
 		if (
 			game.components.find(
 				CardComponent,
-				query.card.currentPlayer,
+				query.card.player(player.entity),
 				query.card.is(ArmorStand),
 				query.card.active,
 			)
