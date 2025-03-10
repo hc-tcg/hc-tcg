@@ -36,6 +36,8 @@ import('../cards').then((mod) => (CARDS = mod.CARDS))
 
 /** A component that represents a card in the game. Cards can be in the player's hand, deck, board or discard pile. */
 export class CardComponent<CardType extends Card = Card> {
+	public static table = 'cards'
+
 	readonly game: GameModel
 	readonly props: CardType
 	readonly entity: CardEntity
