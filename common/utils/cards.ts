@@ -63,7 +63,10 @@ function orderCardProps(a: Card, b: Card) {
 			isHermit(a) &&
 				isHermit(b) &&
 				RARITY_ORDER[a.rarity] - RARITY_ORDER[b.rarity],
-			a.tokens !== 'wild' && b.tokens !== 'wild' && a.tokens - b.tokens,
+			a.tokens !== 'wild' &&
+				b.tokens !== 'wild' &&
+				(a.tokens !== 'etho-ur' ? a.tokens : 3) -
+					(b.tokens !== 'etho-ur' ? b.tokens : 3),
 			isHermit(a) &&
 				isHermit(b) &&
 				a.secondary.cost.length - b.secondary.cost.length,

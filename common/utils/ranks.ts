@@ -1,10 +1,11 @@
-import {Card} from '../cards/types'
+import {Card, isItem} from '../cards/types'
 import {RankT, TokenCostT} from '../types/cards'
 
 export function getCardVisualTokenCost(
 	tokens: TokenCostT,
 ): 0 | 1 | 2 | 3 | 4 | 5 {
 	if (tokens === 'wild') return 1
+	if (tokens === 'etho-ur') return 3
 	if (tokens === -1) return 0
 	return tokens
 }
@@ -31,10 +32,21 @@ export function getDeckCost(deckCards: Array<Card>) {
 	).length
 	let wildCost = Math.max(wildCards - 3, 0)
 
+	let ethoURCards = deckCards.filter(
+		(card) => card.id === 'ethoslab_ultra_rare',
+	).length
+	let nonPvPItems = deckCards.filter(
+		(card) => isItem(card) && card.type !== 'pvp' && card.type !== 'any',
+	).length
+	let ethoURCost = (nonPvPItems > 0 ? 3 : 2) * ethoURCards
+
 	return (
 		deckCards.reduce(
-			(cost, card) => (cost += card.tokens !== 'wild' ? card.tokens : 0),
+			(cost, card) =>
+				(cost += typeof card.tokens !== 'number' ? 0 : card.tokens),
 			0,
-		) + wildCost
+		) +
+		wildCost +
+		ethoURCost
 	)
 }
