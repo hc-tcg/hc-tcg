@@ -157,7 +157,7 @@
 			width: 0rem;
 		}
 
-		:not(.progressBar) & :not(.progressButton) {
+		:not(.progressBar, .progressButton) {
 			text-align: center;
 			width: min-content;
 			direction: ltr;
