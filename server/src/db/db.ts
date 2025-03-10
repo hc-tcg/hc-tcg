@@ -1886,13 +1886,12 @@ export class Database {
 	public async getAchievements(
 		playerId: string,
 	): Promise<DatabaseResult<AchievementData>> {
-		console.log(`GETTING ACHIVEMENTS FOR ${playerId}`)
 		try {
 			const result = await this.pool.query(
 				`
 				SELECT user_goals.achievement_id, user_goals.goal_id, user_goals.progress, achievement_completion_time.level, achievement_completion_time.completion_time
 				FROM user_goals
-				LEFT JOIN achievement_completion_time
+				JOIN achievement_completion_time
 				ON user_goals.user_id = achievement_completion_time.user_id AND user_goals.achievement_id = achievement_completion_time.achievement_id
 				WHERE user_goals.user_id = $1;
 				`,
