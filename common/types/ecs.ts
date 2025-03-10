@@ -90,6 +90,7 @@ export default class ComponentTable {
 		)
 		return Object.values(this.tables[(type as any).table] || {}).filter(
 			(value) =>
+				value instanceof type &&
 				predicates.every((predicate) => predicate(this.game, value as T)),
 		) as any
 	}
