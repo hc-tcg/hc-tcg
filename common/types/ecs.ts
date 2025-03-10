@@ -57,19 +57,19 @@ export default class ComponentTable {
 		...args: Args
 	): T {
 		assert(
-			newValue.table,
+			(newValue as any).table,
 			`Found component type \`${newValue.name}\` has undefined table`,
 		)
 		const value = new newValue(
 			this.game,
-			newEntity<T['entity']>(newValue.table, this.game),
+			newEntity<T['entity']>((newValue as any).table, this.game),
 			...args,
 		)
-		if (this.tables[newValue.table] === undefined) {
-			this.tables[newValue.table] = {}
+		if (this.tables[(newValue as any).table] === undefined) {
+			this.tables[(newValue as any).table] = {}
 		}
-		this.tableMap[value.entity] = newValue.table
-		this.tables[newValue.table][value.entity] = value
+		this.tableMap[value.entity] = (newValue as any).table
+		this.tables[(newValue as any).table][value.entity] = value
 		return value
 	}
 
@@ -85,10 +85,10 @@ export default class ComponentTable {
 		...predicates: Array<ComponentQuery<T>>
 	): Array<T> {
 		assert(
-			type.table,
+			(type as any).table,
 			`Found component type \`${type.name}\` has undefined table`,
 		)
-		return Object.values(this.tables[type.table] || {}).filter((value) =>
+		return Object.values(this.tables[(type as any).table] || {}).filter((value) =>
 			predicates.every((predicate) => predicate(this.game, value as T)),
 		) as any
 	}
