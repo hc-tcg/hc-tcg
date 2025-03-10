@@ -15,7 +15,7 @@ function getTargetHermits(game: GameModel) {
 		.filter(
 			RowComponent,
 			query.row.opponentPlayer,
-			query.row.hermitSlotOccupied,
+			query.row.hasHermit,
 		)
 		.sort(
 			(a, b) =>
