@@ -45,6 +45,7 @@ import {
 	TerraformWins,
 } from './type-wins'
 import {Achievement} from './types'
+import UseLikeAHermit from './use-like-a-hermit'
 import UselessMachine from './useless-machine'
 import Win from './wins'
 import Wipeout from './wipeout'
@@ -76,6 +77,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	UselessMachine,
 	GoFish,
 	CertifiedZombie,
+	UseLikeAHermit,
 	Channeling,
 
 	// Effect card / status effect - Challenge/Combo

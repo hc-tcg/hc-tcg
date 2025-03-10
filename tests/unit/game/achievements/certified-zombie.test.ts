@@ -4,7 +4,7 @@ import ArmorStand from 'common/cards/attach/armor-stand'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {testAchivement} from '../utils'
 
-test('Test Use Like a Hermit achievement', async () => {
+test('Test Certified Zombie achievement', async () => {
 	await testAchivement(
 		{
 			achievement: CertifiedZombie,
