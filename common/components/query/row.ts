@@ -24,9 +24,8 @@ export const opponentPlayer: ComponentQuery<RowComponent> = (game, pos) =>
 	player(game.opponentPlayer.entity)(game, pos)
 
 /** Check if a row has a Hermit card attached (effect cards do not count) */
-export const hasHermit: ComponentQuery<RowComponent> = (game, row) => {
-	row.getHermitSlot()
-
+export const hasHermit: ComponentQuery<RowComponent> = (_game, row) => {
+	return row.getHermitSlot().card !== null
 }
 
 /** Check if a row has a card attached to its hermit slot */

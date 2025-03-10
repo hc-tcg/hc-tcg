@@ -148,7 +148,7 @@ function getLocalPlayerState(
 				const attachCard = row.getAttach()
 				const attachSlot = row.getAttachSlot()
 
-				const items = row.getItemSlots(true).map((itemSlot) => {
+				const items = row.getItemSlots().map((itemSlot) => {
 					let itemCard = game.components.find(
 						CardComponent,
 						query.card.slotEntity(itemSlot.entity),
