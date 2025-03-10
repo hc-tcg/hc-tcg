@@ -50,7 +50,7 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 			const energy =
 				(activeHermit.slot.inRow() &&
 					player.hooks.availableEnergy.call(
-						activeHermit.slot.row.getItems(true).flatMap((item) => {
+						activeHermit.slot.row.getItems().flatMap((item) => {
 							if (item.isItem()) return item.props.energy
 							return []
 						}),

@@ -63,7 +63,7 @@ const SpookyStressRare: Hermit = {
 						RowComponent,
 						query.row.opponentPlayer,
 						query.not(query.row.active),
-						query.row.hermitSlotOccupied,
+						query.row.hasHermit,
 					)
 					.sort((a, b) => a.index - b.index)
 					.forEach((row) => {

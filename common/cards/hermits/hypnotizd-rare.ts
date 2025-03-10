@@ -66,7 +66,7 @@ const HypnotizdRare: Hermit = {
 				const activeRow = component.slot.inRow() ? component.slot.row : null
 				if (!activeRow) return
 
-				const items = (activeRow.getItemSlots() as SlotComponent[]).filter(
+				const items = (activeRow.itemSlots as SlotComponent[]).filter(
 					(slot) => slot.card && !query.slot.frozen(game, slot),
 				)
 				const pickCondition = (_game: GameModel, value: SlotComponent) =>

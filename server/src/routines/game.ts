@@ -346,7 +346,7 @@ function checkHermitHealth(game: GameModel) {
 			let row = card.slot.row
 			row.health = null
 			row.getAttach()?.discard()
-			row.getItems(true).map((item) => item.discard())
+			row.getItems().map((item) => item.discard())
 			card.discard()
 
 			if (card.isHealth()) {
