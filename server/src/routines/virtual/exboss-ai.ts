@@ -79,7 +79,6 @@ function getNextTurnAction(
 		}
 	}
 
-	console.log(game.state.turn.turnNumber)
 	if (game.state.turn.turnNumber === 2) {
 		const bossCard = game.components.find(
 			CardComponent,
