@@ -1,6 +1,6 @@
 import query from '../components/query'
 import CurseOfBindingEffect from '../status-effects/curse-of-binding'
-import {afterAttack} from '../types/priorities'
+import {afterApply, afterAttack} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -12,11 +12,17 @@ const PoePoeEnforcer: Achievement = {
 		{
 			name: 'Poe Poe Enforcer',
 			description:
-				"Knock out your opponent's active Hermit while your opponent has the Curse of Binding status effect.",
+				"Knock out your opponent's active Hermit the turn after they have had the Curse of Binding status effect.",
 			steps: 1,
 		},
 	],
 	onGameStart(game, player, component, observer) {
+		let turnsSinceCurseOfBindings = 100
+
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			turnsSinceCurseOfBindings += 1
+		})
+
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.ACHIEVEMENTS,
@@ -24,21 +30,31 @@ const PoePoeEnforcer: Achievement = {
 				if (!attack.target) return
 				let targetHermit = attack.target?.getHermit()
 				if (!targetHermit) return
-				if (attack.target.health) return
+
 				if (
+					!attack.target.health &&
+					turnsSinceCurseOfBindings == 1 &&
 					targetHermit.slot.inRow() &&
-					targetHermit.slot.row?.entity !==
+					targetHermit.slot.row?.entity ===
 						player.opponentPlayer.activeRowEntity
-				)
-					return
+				) {
+					component.incrementGoalProgress({goal: 0})
+				}
+			},
+		)
+
+		observer.subscribeWithPriority(
+			player.hooks.afterApply,
+			afterApply.CHECK_BOARD_STATE,
+			() => {
 				if (
-					!query.player.hasStatusEffect(CurseOfBindingEffect)(
+					query.player.hasStatusEffect(CurseOfBindingEffect)(
 						game,
 						player.opponentPlayer,
 					)
-				)
-					return
-				component.incrementGoalProgress({goal: 0})
+				) {
+					turnsSinceCurseOfBindings = 0
+				}
 			},
 		)
 	},
