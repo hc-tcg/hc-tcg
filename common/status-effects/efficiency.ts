@@ -9,7 +9,10 @@ const EfficiencyEffect: StatusEffect<PlayerComponent> = {
 	icon: 'efficiency',
 	description:
 		'You may use attacks on this turn without having the necessary item cards attached.',
-	onApply(game, effect, player, observer) {
+	applyCondition: (_game, value) =>
+		value instanceof PlayerComponent &&
+		!value.hasStatusEffect(EfficiencyEffect),
+	onApply(_game, effect, player, observer) {
 		observer.subscribe(player.hooks.availableEnergy, (_availableEnergy) => {
 			// Unliimited powwa
 			return ['any', 'any', 'any', 'any']
