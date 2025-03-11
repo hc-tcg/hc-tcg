@@ -37,7 +37,7 @@ import {
 } from 'logic/matchmaking/matchmaking-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getRematchData, getSession} from 'logic/session/session-selectors'
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useReducer, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CosmeticPreview} from './achievements'
 import css from './play-select.module.scss'

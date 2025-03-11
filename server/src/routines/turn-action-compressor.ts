@@ -1,4 +1,5 @@
 import assert from 'assert'
+import serverConfig from 'common/config/server-config'
 import {cancel, delay, put, spawn} from 'typed-redux-saga'
 import {
 	BoardSlotComponent,
@@ -33,7 +34,6 @@ import {PlayerSetupDefs} from '../../../common/utils/state-gen'
 import {GameController, GameControllerProps} from '../game-controller'
 import {LocalMessage, localMessages} from '../messages'
 import gameSaga from './game'
-import serverConfig from 'common/config/server-config'
 
 const VARIABLE_BYTE_MAX = 1 // 0xFF
 const INVALID_REPLAY = 0x00
