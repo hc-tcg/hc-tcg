@@ -23,10 +23,7 @@ const BrewingStand: Attach = {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			if (
-				!component.slot.inRow() ||
-				component.slot.row.getItems(true).length === 0
-			)
+			if (!component.slot.inRow() || component.slot.row.getItems().length === 0)
 				return
 
 			if (component.slot.row.entity !== player.activeRowEntity) return

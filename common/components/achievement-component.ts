@@ -8,6 +8,8 @@ import('../achievements').then((mod) => (ACHIEVEMENTS = mod.ACHIEVEMENTS))
 
 /** A component that represents a card in the game. Cards can be in the player's hand, deck, board or discard pile. */
 export class AchievementComponent {
+	public static table = 'achievements'
+
 	readonly game: GameModel
 	readonly props: Achievement
 	readonly entity: AchievementEntity

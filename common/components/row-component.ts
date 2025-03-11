@@ -1,5 +1,6 @@
+import assert from 'node:assert'
 import {HasHealth} from '../cards/types'
-import {PlayerEntity, RowEntity} from '../entities'
+import {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
 import {GameHook} from '../types/hooks'
 import {CardComponent} from './card-component'
@@ -8,12 +9,20 @@ import query from './query'
 import {BoardSlotComponent, SlotComponent} from './slot-component'
 
 export class RowComponent {
+	public static table = 'rows'
+
 	readonly game: GameModel
 	readonly entity: RowEntity
 	playerId: PlayerEntity
 	index: number
 	/* The health of the hermit. Health is null then there is no hermit residing in this row */
 	health: number | null
+
+	/* These MUST be set after the component is created or the game will not function */
+	public hermitSlotEntity?: SlotEntity
+	public attachSlotEntity?: SlotEntity
+	public effectSlotEntity?: SlotEntity
+	public itemsSlotEntities?: Array<SlotEntity>
 
 	hooks: {
 		/** Hook called when card in the health slot in this row is knocked out */
@@ -40,63 +49,37 @@ export class RowComponent {
 		return this.game.components.getOrError(this.playerId)
 	}
 
-	public getHermitSlot() {
-		return this.game.components.find(
-			SlotComponent,
-			query.slot.hermit,
-			query.slot.rowIs(this.entity),
+	public get hermitSlot(): BoardSlotComponent {
+		assert(this.hermitSlotEntity)
+		return this.game.components.getOrError(
+			this.hermitSlotEntity,
 		) as BoardSlotComponent
 	}
 
-	public getAttachSlot() {
-		return this.game.components.find(
-			SlotComponent,
-			query.slot.attach,
-			query.slot.rowIs(this.entity),
+	public get attachSlot(): BoardSlotComponent {
+		assert(this.attachSlotEntity)
+		return this.game.components.getOrError(
+			this.attachSlotEntity,
 		) as BoardSlotComponent
 	}
 
-	public getItemSlots(excludeAdjacent: boolean = false) {
-		return this.game.components.filter(
-			SlotComponent,
-			query.slot.item,
-			query.some(
-				query.slot.rowIs(this.entity),
-				query.every(
-					query.slot.adjacent(query.slot.rowIs(this.entity)),
-					query.slot.row(
-						(_game, value) =>
-							'cyberpunkimpulse_rare' === value.getHermit()?.props.id,
-					),
-					(_game, value) => {
-						const card = value.card
-						if (!card?.isItem()) return false
-						return card.props.energy.includes('farm')
-					},
-					(_game, _value) => !excludeAdjacent,
-				),
-			),
-		) as Array<BoardSlotComponent>
+	public get itemSlots(): Array<BoardSlotComponent> {
+		assert(this.itemsSlotEntities)
+		return this.itemsSlotEntities.map((x) =>
+			this.game.components.getOrError(x),
+		) as any
 	}
 
 	public getHermit() {
-		return this.game.components.find(
-			CardComponent,
-			query.card.slot(query.slot.hermit),
-			query.card.rowEntity(this.entity),
-		)
+		return this.hermitSlot.card
 	}
 
 	public getAttach() {
-		return this.game.components.find(
-			CardComponent,
-			query.card.slot(query.slot.attach),
-			query.card.rowEntity(this.entity),
-		)
+		return this.attachSlot.card
 	}
 
-	public getItems(excludeAdjacent: boolean = false) {
-		const itemSlots = this.getItemSlots(excludeAdjacent) as Array<SlotComponent>
+	public getItems() {
+		const itemSlots = this.itemSlots as Array<SlotComponent>
 		return this.game.components.filter(CardComponent, (_game, value) =>
 			itemSlots.includes(value.slot),
 		)
