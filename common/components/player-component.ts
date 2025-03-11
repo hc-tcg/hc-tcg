@@ -185,8 +185,8 @@ export class PlayerComponent {
 		return this.activeRow?.getHermit() || null
 	}
 
-	/** Get a player's deck */
-	public getDeck(): Array<CardComponent> {
+	/** Get a player's draw pile */
+	public getDrawPile(): Array<CardComponent> {
 		return this.game.components.filter(
 			CardComponent,
 			query.card.player(this.entity),
@@ -214,7 +214,9 @@ export class PlayerComponent {
 
 	/** Draw cards from the top of a player's deck. Returns an array of the drawn cards. */
 	public draw(amount: number): Array<CardComponent> {
-		let cards = this.getDeck().sort(CardComponent.compareOrder).slice(0, amount)
+		let cards = this.getDrawPile()
+			.sort(CardComponent.compareOrder)
+			.slice(0, amount)
 		if (cards.length < amount) {
 			if (!this.disableDeckingOut) this.deckedOut = true
 		}

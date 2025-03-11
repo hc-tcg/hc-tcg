@@ -42,7 +42,7 @@ function postMasterTest(pearls: number, results: boolean[]) {
 					).toStrictEqual([drawnCard])
 					if (results[i])
 						drawnCard = game.opponentPlayer
-							.getDeck()
+							.getDrawPile()
 							.sort(CardComponent.compareOrder)
 							.at(0)?.props
 					yield* finishModalRequest(game, {result: results[i], cards: null})

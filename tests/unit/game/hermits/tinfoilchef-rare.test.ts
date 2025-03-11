@@ -26,13 +26,13 @@ describe('Test TFC Rare', () => {
 					// Draw two cards (Deck size goes to 7).
 					yield* endTurn(game)
 
-					expect(game.opponentPlayer.getDeck()?.length).toBe(7)
+					expect(game.opponentPlayer.getDrawPile()?.length).toBe(7)
 
 					yield* endTurn(game)
 					// Draw one card(Deck size goes to 6).
 					yield* endTurn(game)
 
-					expect(game.opponentPlayer.getDeck()?.length).toBe(6)
+					expect(game.opponentPlayer.getDrawPile()?.length).toBe(6)
 				},
 			},
 			{noItemRequirements: true, forceCoinFlip: true},
@@ -58,17 +58,17 @@ describe('Test TFC Rare', () => {
 					yield* endTurn(game)
 
 					yield* attack(game, 'secondary')
-					expect(game.currentPlayer.getDeck()?.length).toBe(9)
+					expect(game.currentPlayer.getDrawPile()?.length).toBe(9)
 					// Draw three cards (Deck size goes to 6).
 					yield* endTurn(game)
 
-					expect(game.opponentPlayer.getDeck()?.length).toBe(6)
+					expect(game.opponentPlayer.getDrawPile()?.length).toBe(6)
 
 					yield* endTurn(game)
 					// Draw one card(Deck size goes to 5).
 					yield* endTurn(game)
 
-					expect(game.opponentPlayer.getDeck()?.length).toBe(5)
+					expect(game.opponentPlayer.getDrawPile()?.length).toBe(5)
 				},
 			},
 			{noItemRequirements: true, forceCoinFlip: true},

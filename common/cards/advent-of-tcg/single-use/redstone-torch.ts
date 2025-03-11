@@ -23,7 +23,7 @@ const RedstoneTorch: SingleUse = {
 	attachCondition: query.every(
 		singleUse.attachCondition,
 		query.slot.opponentHasActiveHermit,
-		(_game, pos) => pos.player.getDeck().length > 0,
+		(_game, pos) => pos.player.getDrawPile().length > 0,
 	),
 	log: (values) => values.defaultLog,
 	onAttach(
@@ -39,7 +39,7 @@ const RedstoneTorch: SingleUse = {
 				query.card.is(TNT, MinecartWithTNT),
 			)
 
-			const playerDeck = player.getDeck().sort(CardComponent.compareOrder)
+			const playerDeck = player.getDrawPile().sort(CardComponent.compareOrder)
 
 			const tntAdjacentCards = playerDeck.reduce(
 				(reducer: Array<CardComponent>, card, i) => {
@@ -88,7 +88,7 @@ const RedstoneTorch: SingleUse = {
 
 					executeExtraAttacks(game, [tntAttack])
 
-					const deckCards = player.getDeck()
+					const deckCards = player.getDrawPile()
 					const newOrder = fisherYatesShuffle(
 						deckCards.map((card) => {
 							assert(card.slot.inDeck())

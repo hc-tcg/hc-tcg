@@ -53,7 +53,7 @@ describe('Test Brush Single Use', () => {
 					})
 					expect(
 						game.currentPlayer
-							.getDeck()
+							.getDrawPile()
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
 					).toStrictEqual([BalancedItem, BuilderItem, MinerItem, Feather])
@@ -101,7 +101,7 @@ describe('Test Brush Single Use', () => {
 					})
 					expect(
 						game.currentPlayer
-							.getDeck()
+							.getDrawPile()
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
 					).toStrictEqual([MinerItem, Feather, BalancedItem, BuilderItem])
@@ -149,7 +149,7 @@ describe('Test Brush Single Use', () => {
 					})
 					expect(
 						game.currentPlayer
-							.getDeck()
+							.getDrawPile()
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
 					).toStrictEqual([BuilderItem, MinerItem, Feather, BalancedItem])

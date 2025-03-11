@@ -636,7 +636,9 @@ export class TurnActionCompressor {
 			? targetPlayer.getHand().findIndex((c) => c.slotEntity === slot.entity)
 			: 0
 		const deckPosition = slot.inDeck()
-			? targetPlayer.getDeck().findIndex((c) => c.slotEntity === slot.entity)
+			? targetPlayer
+					.getDrawPile()
+					.findIndex((c) => c.slotEntity === slot.entity)
 			: 0
 		const discardPilePosition = slot.inDiscardPile()
 			? targetPlayer
@@ -671,7 +673,7 @@ export class TurnActionCompressor {
 		const targetPlayer = opponentCard ? game.opponentPlayer : game.currentPlayer
 
 		const selectedCard =
-			(inDeck && targetPlayer.getDeck()[position]) ||
+			(inDeck && targetPlayer.getDrawPile()[position]) ||
 			(inDiscardPile && targetPlayer.getDiscarded()[position]) ||
 			(!inDeck && !inDiscardPile && targetPlayer.getHand()[position])
 

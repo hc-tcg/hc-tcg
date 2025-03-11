@@ -35,7 +35,7 @@ function getPlayers(con: GameController) {
 				censoredPlayerName: player.censoredPlayerName,
 				minecraftName: player.minecraftName,
 				lives: player.lives,
-				deck: player.getDeck().map((card) => card.props.id),
+				deck: player.getDrawPile().map((card) => card.props.id),
 			},
 		]
 	})

@@ -41,8 +41,10 @@ describe('Test Shelby Parallel World', () => {
 				).toStrictEqual(IronSword)
 				yield* finishModalRequest(game, {result: true, cards: null})
 				expect(
-					game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(-1)
-						?.props,
+					game.currentPlayer
+						.getDrawPile()
+						.sort(CardComponent.compareOrder)
+						.at(-1)?.props,
 				).toStrictEqual(IronSword)
 				yield* endTurn(game)
 				expect(
@@ -88,8 +90,10 @@ describe('Test Shelby Parallel World', () => {
 				).toStrictEqual(IronSword)
 				yield* finishModalRequest(game, {result: true, cards: null})
 				expect(
-					game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(-1)
-						?.props,
+					game.currentPlayer
+						.getDrawPile()
+						.sort(CardComponent.compareOrder)
+						.at(-1)?.props,
 				).toStrictEqual(IronSword)
 			},
 		})
@@ -120,7 +124,7 @@ describe('Test Shelby Parallel World', () => {
 				yield* playCardFromHand(game, ShubbleYTRare, 'hermit', 1)
 				yield* playCardFromHand(game, TerraformDoubleItem, 'item', 0, 0)
 				expect(
-					game.currentPlayer.getDeck().map((card) => card.props),
+					game.currentPlayer.getDrawPile().map((card) => card.props),
 				).toStrictEqual([IronSword])
 				yield* attack(game, 'secondary')
 				expect(game.state.modalRequests).toHaveLength(0)
@@ -153,8 +157,10 @@ describe('Test Shelby Parallel World', () => {
 				).toStrictEqual(IronSword)
 				yield* finishModalRequest(game, {result: true, cards: null})
 				expect(
-					game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(-1)
-						?.props,
+					game.currentPlayer
+						.getDrawPile()
+						.sort(CardComponent.compareOrder)
+						.at(-1)?.props,
 				).toStrictEqual(IronSword)
 				expect(
 					game.components.get(
@@ -163,8 +169,10 @@ describe('Test Shelby Parallel World', () => {
 				).toStrictEqual(TerraformItem)
 				yield* finishModalRequest(game, {result: true, cards: null})
 				expect(
-					game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(0)
-						?.props,
+					game.currentPlayer
+						.getDrawPile()
+						.sort(CardComponent.compareOrder)
+						.at(0)?.props,
 				).toStrictEqual(IronSword)
 				yield* endTurn(game)
 				expect(
