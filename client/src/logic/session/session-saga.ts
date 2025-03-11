@@ -816,6 +816,20 @@ export function* updatesSaga() {
 	})
 }
 
+export function* serverToastSaga() {
+	const socket = yield* select(getSocket)
+	while (true) {
+		const result = yield* call(receiveMsg(socket, serverMessages.TOAST_SEND))
+		yield put<LocalMessage>({
+			type: localMessages.TOAST_OPEN,
+			open: true,
+			title: result.title,
+			description: result.description,
+			image: result.image,
+		})
+	}
+}
+
 export function* cosmeticSaga() {
 	yield* takeEvery<LocalMessageTable[typeof localMessages.COSMETIC_UPDATE]>(
 		localMessages.COSMETIC_UPDATE,

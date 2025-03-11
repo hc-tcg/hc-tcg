@@ -13,6 +13,7 @@ import {
 	overviewSaga,
 	recieveAfterGameInfo,
 	recieveCurrentImportSaga,
+	serverToastSaga,
 	updatesSaga,
 } from 'logic/session/session-saga'
 import socketSaga from 'logic/socket/socket-saga'
@@ -41,6 +42,7 @@ function* rootSaga(): SagaIterator {
 		fork(localSettingsSaga),
 		fork(databaseSaga),
 		fork(soundSaga),
+		fork(serverToastSaga),
 	])
 	while (true) {
 		console.log('Starting game loop')

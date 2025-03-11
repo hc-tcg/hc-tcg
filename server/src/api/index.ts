@@ -8,7 +8,12 @@ import {
 	overallAchievementProgress,
 	playerProgress,
 } from './achievements'
-import {authenticateUser, createUser} from './auth'
+import {
+	ApiKeyHeader,
+	authenticateApiKey,
+	authenticateUser,
+	createUser,
+} from './auth'
 import {cards, deckCost, getDeckInformation, ranks, types} from './cards'
 import {
 	cancelApiGame,
@@ -31,6 +36,9 @@ import {
 	getTypeDistributionStats,
 } from './stats'
 import {requestUrlRoot} from './utils'
+import {broadcast} from 'utils/comm'
+import {UpdateMessage, updateWarning} from './update-warning'
+import {serverMessages} from 'common/socket-messages/server-messages'
 
 export function addApi(app: Express) {
 	app.get('/api/auth/', async (req, res) => {
@@ -167,6 +175,14 @@ export function addApi(app: Express) {
 		const ret = await playerProgress(query.achievementId, query.uuid)
 		res.statusCode = ret[0]
 		res.send(ret[1])
+	})
+
+	app.post('/api/update', (req, res) => {
+		let auth = ApiKeyHeader.parse(req.header)
+		authenticateApiKey(auth.auth)
+		updateWarning(UpdateMessage.parse(req.body).version)
+		res.statusCode = 200
+		res.send('success')
 	})
 
 	app.get('/api/achievements/:achievement/:level', async (req, res) => {

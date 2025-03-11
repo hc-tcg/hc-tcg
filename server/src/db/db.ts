@@ -78,6 +78,10 @@ export class Database {
 				CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 				CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 				SET bytea_output = 'hex';
+				CREATE TABLE IF NOT EXISTS api_keys(
+					key varchar(255) NOT NULL,
+					name varchar(255) NOT NULL
+				);
 				CREATE TABLE IF NOT EXISTS users(
 					user_id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
 					secret varchar(255) NOT NULL,
@@ -181,6 +185,16 @@ export class Database {
 	}
 	public async close() {
 		await this.pool.end()
+	}
+
+	public async authenticateApiKey(
+		key: string,
+	): Promise<DatabaseResult<boolean>> {
+		const found = await this.pool.query(
+			'SELECT * FROM api_keys WHERE secret = crypt($1, secret)',
+			[key],
+		)
+		return {type: 'success', body: !!found.rowCount}
 	}
 
 	/*** Insert a user into the Database. Returns `user`. */
