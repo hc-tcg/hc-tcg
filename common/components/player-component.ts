@@ -185,7 +185,7 @@ export class PlayerComponent {
 		return this.activeRow?.getHermit() || null
 	}
 
-	/** Get a player's deck */
+	/** Get a player's draw pile */
 	public getDeck(): Array<CardComponent> {
 		return this.game.components.filter(
 			CardComponent,
