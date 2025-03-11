@@ -1,4 +1,4 @@
-import {AchievementComponent, CardComponent} from '../../../components'
+import {CardComponent} from '../../../components'
 import query from '../../../components/query'
 import {hermit} from '../../defaults'
 import {Hermit} from '../../types'
@@ -39,11 +39,13 @@ const CyberpunkImpulseRare: Hermit = {
 		observer.subscribe(player.hooks.availableEnergy, (availableEnergy) => {
 			if (!component.slot.inRow()) return availableEnergy
 
-			let activeRow = player.activeRow
-			if (!activeRow) return
+			const activeRow = player.activeRow
+			if (
+				!activeRow ||
+				Math.abs(activeRow.index - component.slot.row.index) !== 1
+			)
+				return availableEnergy
 
-			if (Math.abs(activeRow.index - component.slot.row.index) !== 1) return
-			
 			game.components
 				.filter(
 					CardComponent,
