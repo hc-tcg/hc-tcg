@@ -47,8 +47,10 @@ describe('Test Cat Effect Card', () => {
 				).toStrictEqual(BalancedItem)
 				yield* finishModalRequest(game, {result: true, cards: null})
 				expect(
-					game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(0)
-						?.props,
+					game.currentPlayer
+						.getDrawPile()
+						.sort(CardComponent.compareOrder)
+						.at(0)?.props,
 				).toStrictEqual(IronSword)
 				yield* endTurn(game)
 
@@ -96,8 +98,10 @@ describe('Test Cat Effect Card', () => {
 				).toStrictEqual(IronSword)
 				yield* finishModalRequest(game, {result: true, cards: null})
 				expect(
-					game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(0)
-						?.props,
+					game.currentPlayer
+						.getDrawPile()
+						.sort(CardComponent.compareOrder)
+						.at(0)?.props,
 				).toStrictEqual(BalancedDoubleItem)
 				yield* changeActiveHermit(game, 1)
 				yield* endTurn(game)
@@ -137,7 +141,7 @@ describe('Test Cat Effect Card', () => {
 				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
 				yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
 				expect(
-					game.currentPlayer.getDeck().map((card) => card.props),
+					game.currentPlayer.getDrawPile().map((card) => card.props),
 				).toStrictEqual([IronSword])
 				yield* attack(game, 'primary')
 				expect(game.state.modalRequests).toHaveLength(0)

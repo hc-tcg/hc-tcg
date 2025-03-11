@@ -25,7 +25,7 @@ export function printHooksState(game: GameModel) {
 
 	// First loop to populate cardsInfo
 	for (const player of [currentPlayer, opponentPlayer]) {
-		for (const card of player.getDeck()) {
+		for (const card of player.getDrawPile()) {
 			cardsInfo[card.entity] = {
 				card,
 				player: player,

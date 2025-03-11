@@ -104,13 +104,17 @@ describe('Test Zookeeper Scar', () => {
 					yield* attack(game, 'secondary')
 					expect(game.state.modalRequests).toHaveLength(2)
 					expect(
-						game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(0)
-							?.props,
+						game.currentPlayer
+							.getDrawPile()
+							.sort(CardComponent.compareOrder)
+							.at(0)?.props,
 					).toStrictEqual(BalancedItem)
 					yield* finishModalRequest(game, {result: true, cards: null})
 					expect(
-						game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(0)
-							?.props,
+						game.currentPlayer
+							.getDrawPile()
+							.sort(CardComponent.compareOrder)
+							.at(0)?.props,
 					).toStrictEqual(EthosLabCommon)
 					yield* finishModalRequest(game, {result: false, cards: null})
 					yield* endTurn(game)
@@ -176,13 +180,17 @@ describe('Test Zookeeper Scar', () => {
 					yield* attack(game, 'secondary')
 					expect(game.state.modalRequests).toHaveLength(1)
 					expect(
-						game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(0)
-							?.props,
+						game.currentPlayer
+							.getDrawPile()
+							.sort(CardComponent.compareOrder)
+							.at(0)?.props,
 					).toStrictEqual(BalancedItem)
 					yield* finishModalRequest(game, {result: true, cards: null})
 					expect(
-						game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(0)
-							?.props,
+						game.currentPlayer
+							.getDrawPile()
+							.sort(CardComponent.compareOrder)
+							.at(0)?.props,
 					).toStrictEqual(Cat)
 					yield* endTurn(game)
 				},
@@ -220,13 +228,17 @@ describe('Test Zookeeper Scar', () => {
 					yield* attack(game, 'secondary')
 					expect(game.state.modalRequests).toHaveLength(1)
 					expect(
-						game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(0)
-							?.props,
+						game.currentPlayer
+							.getDrawPile()
+							.sort(CardComponent.compareOrder)
+							.at(0)?.props,
 					).toStrictEqual(BalancedItem)
 					yield* finishModalRequest(game, {result: true, cards: null})
 					expect(
-						game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(0)
-							?.props,
+						game.currentPlayer
+							.getDrawPile()
+							.sort(CardComponent.compareOrder)
+							.at(0)?.props,
 					).toStrictEqual(Cat)
 					yield* endTurn(game)
 				},

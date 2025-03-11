@@ -97,7 +97,7 @@ const DungeonTangoRare: Hermit = {
 				if (pickedCard === null) return
 
 				const hermitCard = player
-					.getDeck()
+					.getDrawPile()
 					.sort(CardComponent.compareOrder)
 					.find((card) => card.isHermit())
 				if (hermitCard) {
@@ -105,7 +105,7 @@ const DungeonTangoRare: Hermit = {
 					pickedCard.discard()
 				}
 
-				const deckCards = player.getDeck()
+				const deckCards = player.getDrawPile()
 				const newOrder = fisherYatesShuffle(
 					deckCards.map((card) => {
 						assert(card.slot.inDeck())

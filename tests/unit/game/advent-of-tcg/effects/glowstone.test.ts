@@ -46,7 +46,7 @@ describe('Test Glowstone Single Use', () => {
 					})
 					expect(
 						game.opponentPlayer
-							.getDeck()
+							.getDrawPile()
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
 					).toStrictEqual([Feather, BalancedItem, MinerItem])

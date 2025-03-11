@@ -45,7 +45,7 @@ describe('Test Redstone Torch', () => {
 						cancelable: false,
 					})
 					const deckEntities = game.currentPlayer
-						.getDeck()
+						.getDrawPile()
 						.sort(CardComponent.compareOrder)
 						.map((card) => card.entity)
 					expect(
@@ -116,20 +116,20 @@ describe('Test Redstone Torch', () => {
 				playerTwoDeck: [EthosLabCommon, RedstoneTorch],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					expect(game.currentPlayer.getDeck().length).toBe(2)
+					expect(game.currentPlayer.getDrawPile().length).toBe(2)
 					expect(
 						game.getPickableSlots(RedstoneTorch.attachCondition),
 					).toStrictEqual([])
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					expect(game.currentPlayer.getDeck().length).toBe(0)
+					expect(game.currentPlayer.getDrawPile().length).toBe(0)
 					expect(
 						game.getPickableSlots(RedstoneTorch.attachCondition),
 					).toStrictEqual([])
 					yield* endTurn(game)
 
-					expect(game.currentPlayer.getDeck().length).toBe(1)
+					expect(game.currentPlayer.getDrawPile().length).toBe(1)
 					yield* playCardFromHand(game, RedstoneTorch, 'single_use')
 					yield* applyEffect(game)
 					expect(

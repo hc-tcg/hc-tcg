@@ -17,7 +17,7 @@ const Lantern: SingleUse = {
 	showConfirmationModal: true,
 	attachCondition: query.every(
 		singleUse.attachCondition,
-		(_game, pos) => pos.player.getDeck().length >= 4,
+		(_game, pos) => pos.player.getDrawPile().length >= 4,
 	),
 	log: (values) => values.defaultLog,
 	onAttach(
@@ -29,7 +29,7 @@ const Lantern: SingleUse = {
 
 		observer.subscribe(player.hooks.onApply, () => {
 			const topCards = player
-				.getDeck()
+				.getDrawPile()
 				.sort(CardComponent.compareOrder)
 				.slice(0, 4)
 

@@ -204,9 +204,9 @@ describe('Test Server Lag achievement', () => {
 
 					yield* endTurn(game)
 
-					expect(game.opponentPlayer.getDeck().length).not.toBe(0)
+					expect(game.opponentPlayer.getDrawPile().length).not.toBe(0)
 					yield* attack(game, 'secondary')
-					expect(game.currentPlayer.getDeck().length).toBe(0)
+					expect(game.currentPlayer.getDrawPile().length).toBe(0)
 					yield* endTurn(game)
 				},
 				checkAchivement(_game, achievement, outcome) {
