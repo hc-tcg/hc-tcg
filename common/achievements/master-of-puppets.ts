@@ -44,6 +44,7 @@ const MasterOfPuppets: Achievement = {
 				component.incrementGoalProgress({goal: 0})
 
 			mimicryHermitsUsed = null
+			return null
 		})
 	},
 }

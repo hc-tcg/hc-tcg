@@ -80,9 +80,10 @@ const WormManRare: Hermit = {
 					() => newObserver.unsubscribeFromEverything(),
 				)
 
-				newObserver.subscribe(player.hooks.getAttack, () =>
-					newObserver.unsubscribeFromEverything(),
-				)
+				newObserver.subscribe(player.hooks.getAttack, () => {
+					newObserver.unsubscribeFromEverything()
+					return null
+				})
 			},
 		)
 	},
