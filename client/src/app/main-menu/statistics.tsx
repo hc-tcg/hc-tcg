@@ -164,7 +164,7 @@ function Statistics({setMenuSection}: Props) {
 	// Stats stuff
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 	const stats = databaseInfo.stats
-	const gameHistory = databaseInfo.gameHistory.filter((game) => game.hasReplay)
+	const gameHistory = databaseInfo.gameHistory
 	const settings = useSelector(getSettings)
 	const [tab, setTab] = useState<string>('Statistics')
 	const [showInvalidReplayModal, setShowInvalidReplayModal] =

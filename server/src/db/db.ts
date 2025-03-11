@@ -35,6 +35,7 @@ import {
 	ReplayActionData,
 	TurnActionCompressor,
 } from '../routines/turn-action-compressor'
+import serverConfig from 'common/config/server-config'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -955,12 +956,13 @@ export class Database {
 				const replay: Buffer = game.replay
 				let hasReplay = false
 
+				if (game.start_time.getTime() < 1731129372000) continue
+
 				if (replay.length >= 4) {
 					const decompressedReplay = huffmanDecompress(replay)
 					if (
 						decompressedReplay &&
-						decompressedReplay.readUInt8(0) !== 0x00 &&
-						decompressedReplay.readUInt8(0) !== 0x30
+						decompressedReplay.readUInt8(0) === serverConfig.replayVersion
 					) {
 						hasReplay = true
 					}
