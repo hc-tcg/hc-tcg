@@ -7,7 +7,7 @@ const DeckedOut: Achievement = {
 	id: 'decked_out',
 	levels: [
 		{
-			name: 'Decked out',
+			name: 'Decked Out',
 			steps: 1,
 			description: 'Win a game by your opponent running out of cards.',
 		},
