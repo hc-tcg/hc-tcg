@@ -8,6 +8,7 @@ import assert from 'assert'
 import {ACHIEVEMENTS} from 'common/achievements'
 import {CARDS} from 'common/cards'
 import {getStarterPack} from 'common/cards/starter-decks'
+import serverConfig from 'common/config/server-config'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {AchievementProgress} from 'common/types/achievements'
 import {TypeT} from 'common/types/cards'
@@ -35,7 +36,6 @@ import {
 	ReplayActionData,
 	TurnActionCompressor,
 } from '../routines/turn-action-compressor'
-import serverConfig from 'common/config/server-config'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -956,7 +956,7 @@ export class Database {
 				const replay: Buffer = game.replay
 				let hasReplay = false
 
-				if (game.start_time.getTime() < 1731129372000) continue
+				if (game.start_time.getTime() < 1741384800000) continue
 
 				if (replay.length >= 4) {
 					const decompressedReplay = huffmanDecompress(replay)
