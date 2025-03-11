@@ -13,7 +13,7 @@ const AllCards: Achievement = {
 	numericId: 0,
 	levels: [
 		{
-			name: 'Jack of all cards',
+			name: 'Jack of All Cards',
 			description: 'Win a game using every card from the base set.',
 			steps: defaultCards.length,
 		},
