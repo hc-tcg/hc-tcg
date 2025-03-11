@@ -957,7 +957,11 @@ export class Database {
 
 				if (replay.length >= 4) {
 					const decompressedReplay = huffmanDecompress(replay)
-					if (decompressedReplay && decompressedReplay.readUInt8(0) === 0x01) {
+					if (
+						decompressedReplay &&
+						decompressedReplay.readUInt8(0) !== 0x00 &&
+						decompressedReplay.readUInt8(0) !== 0x30
+					) {
 						hasReplay = true
 					}
 				}

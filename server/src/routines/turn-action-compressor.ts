@@ -35,7 +35,7 @@ import {LocalMessage, localMessages} from '../messages'
 import gameSaga from './game'
 
 const VARIABLE_BYTE_MAX = 1 // 0xFF
-const REPLAY_VERSION = 0x01
+const REPLAY_VERSION = 0x02
 const INVALID_REPLAY = 0x00
 
 const SELECT_CARDS_TYPE = 1
