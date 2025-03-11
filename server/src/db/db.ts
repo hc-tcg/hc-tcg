@@ -1060,8 +1060,7 @@ export class Database {
 			const seed: string = game['seed']
 
 			const replay: Buffer = game['replay']
-			// const decompressedReplay: Buffer | null = huffmanDecompress(replay)
-			const decompressedReplay = huffmanDecompress(replay)
+			const decompressedReplay: Buffer | null = huffmanDecompress(replay)
 
 			console.log(decompressedReplay)
 
@@ -1138,6 +1137,13 @@ export class Database {
 				decompressedReplay,
 				gameId.toString(),
 			)
+
+			if ('invalid' in replayActions) {
+				return {
+					type: 'failure',
+					reason: `There was a problem decoding the replay of game ${gameId}.'`,
+				}
+			}
 
 			return {
 				type: 'success',

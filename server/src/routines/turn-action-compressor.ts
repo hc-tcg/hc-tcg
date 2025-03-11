@@ -788,10 +788,11 @@ export class TurnActionCompressor {
 		gameId: string,
 	): Generator<
 		any,
-		{
-			replay: Array<ReplayActionData>
-			battleLog: Array<Message>
-		}
+		| {invalid: true}
+		| {
+				replay: Array<ReplayActionData>
+				battleLog: Array<Message>
+		  }
 	> {
 		const con = new GameController(
 			firstPlayerSetupDefs,
@@ -810,11 +811,7 @@ export class TurnActionCompressor {
 		const version = actionsBuffer.readUInt8(cursor)
 		cursor++
 
-		if (version === 0x00 || version === 0x30)
-			return {
-				replay: [],
-				battleLog: [],
-			}
+		if (version === 0x00 || version === 0x30) return {invalid: true}
 
 		//Other version checks here
 
@@ -884,6 +881,11 @@ export class TurnActionCompressor {
 		}
 
 		this.currentAction = null
+
+		if (!con.game.outcome) {
+			if (con.task) yield* cancel(con.task)
+			return {invalid: true}
+		}
 
 		return {
 			replay: replayActions,
