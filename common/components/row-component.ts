@@ -61,11 +61,7 @@ export class RowComponent {
 		) as BoardSlotComponent
 	}
 
-	public get itemSlots(): [
-		BoardSlotComponent,
-		BoardSlotComponent,
-		BoardSlotComponent,
-	] {
+	public get itemSlots(): Array<BoardSlotComponent> {
 		assert(this.itemsSlotEntities)
 		return this.itemsSlotEntities.map((x) =>
 			this.game.components.getOrError(x),
