@@ -396,12 +396,13 @@ export function testBossFight(
 		.forEach(destroyRow)
 	// Remove boss' item slots
 	controller.game.components
-		.filterEntities(
-			BoardSlotComponent,
-			query.slot.currentPlayer,
-			query.slot.item,
-		)
-		.forEach((slotEntity) => controller.game.components.delete(slotEntity))
+		.filter(RowComponent, query.row.currentPlayer)
+		.forEach((row) => {
+			row.itemsSlotEntities?.forEach((slotEntity) =>
+				controller.game.components.delete(slotEntity),
+			)
+			row.itemsSlotEntities = []
+		})
 
 	let testEnded = false
 

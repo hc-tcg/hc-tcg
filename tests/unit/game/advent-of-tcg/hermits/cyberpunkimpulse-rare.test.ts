@@ -205,7 +205,7 @@ describe('Test Cyberpunk Impulse', () => {
 							EthosLabCommon.secondary.damage +
 							50 /** Brewing Stand */,
 					)
-					expect(game.currentPlayer.activeRow?.getItems(true)).toHaveLength(0)
+					expect(game.currentPlayer.activeRow?.getItems()).toHaveLength(0)
 				},
 			},
 			{noItemRequirements: true, forceCoinFlip: true},

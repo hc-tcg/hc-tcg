@@ -84,36 +84,42 @@ function setupEcsForPlayer(
 	for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
 		let row = components.new(RowComponent, playerEntity, rowIndex)
 
-		components.new(
-			BoardSlotComponent,
-			{player: playerEntity, type: 'item'},
-			0,
-			row.entity,
-		)
-		components.new(
-			BoardSlotComponent,
-			{player: playerEntity, type: 'item'},
-			1,
-			row.entity,
-		)
-		components.new(
-			BoardSlotComponent,
-			{player: playerEntity, type: 'item'},
-			2,
-			row.entity,
-		)
-		components.new(
+		let itemSlots = [
+			components.new(
+				BoardSlotComponent,
+				{player: playerEntity, type: 'item'},
+				0,
+				row.entity,
+			),
+			components.new(
+				BoardSlotComponent,
+				{player: playerEntity, type: 'item'},
+				1,
+				row.entity,
+			),
+			components.new(
+				BoardSlotComponent,
+				{player: playerEntity, type: 'item'},
+				2,
+				row.entity,
+			),
+		]
+		let attachSlot = components.new(
 			BoardSlotComponent,
 			{player: playerEntity, type: 'attach'},
 			3,
 			row.entity,
 		)
-		components.new(
+		let hermitSlot = components.new(
 			BoardSlotComponent,
 			{player: playerEntity, type: 'hermit'},
 			4,
 			row.entity,
 		)
+
+		row.itemsSlotEntities = itemSlots.map((x) => x.entity)
+		row.hermitSlotEntity = hermitSlot.entity
+		row.attachSlotEntity = attachSlot.entity
 	}
 
 	// Ensure there is a hermit in the first 5 cards

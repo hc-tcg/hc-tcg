@@ -70,7 +70,7 @@ function PlaySelect({
 
 	const decks = databaseInfo?.decks
 
-	const [, refresh] = useReducer((x) => x + 1, 0)
+	const [, _refresh] = useReducer((x) => x + 1, 0)
 
 	const [loadedDeck, setLoadedDeck] = useState<Deck | undefined>(
 		databaseInfo?.decks.find((deck) => deck.code === playerDeck),

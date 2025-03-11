@@ -4,6 +4,7 @@ import {GameModel} from '../../models/game-model'
 import BetrayedEffect from '../../status-effects/betrayed'
 import {beforeAttack} from '../../types/priorities'
 import {PickRequest} from '../../types/server-requests'
+import {getSupportingItems} from '../../utils/board'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 
@@ -63,14 +64,16 @@ const HypnotizdRare: Hermit = {
 				)
 					return
 
-				const activeRow = component.slot.inRow() ? component.slot.row : null
-				if (!activeRow) return
+				if (!component.slot.inRow()) return
 
-				const items = (activeRow.getItemSlots() as SlotComponent[]).filter(
-					(slot) => slot.card && !query.slot.frozen(game, slot),
+				const pickableSlots = getSupportingItems(
+					game,
+					component.slot.row,
+				).flatMap((card) =>
+					query.slot.frozen(game, card.slot) ? [] : [card.slot],
 				)
 				const pickCondition = (_game: GameModel, value: SlotComponent) =>
-					items.includes(value)
+					pickableSlots.includes(value)
 
 				// Betrayed ignores the slot that you pick in this pick request, so we skip this pick request
 				// to make the game easier to follow.

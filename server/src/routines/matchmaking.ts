@@ -958,14 +958,13 @@ export function* createBossGame(
 		.forEach(destroyRow)
 	// Remove boss' item slots
 	newBossGameController.game.components
-		.filterEntities(
-			BoardSlotComponent,
-			query.slot.currentPlayer,
-			query.slot.item,
-		)
-		.forEach((slotEntity) =>
-			newBossGameController.game.components.delete(slotEntity),
-		)
+		.filter(RowComponent, query.row.currentPlayer)
+		.forEach((row) => {
+			row.itemsSlotEntities?.forEach((slotEntity) =>
+				newBossGameController.game.components.delete(slotEntity),
+			)
+			row.itemsSlotEntities = []
+		})
 
 	newBossGameController.game.settings.disableRewardCards = true
 
