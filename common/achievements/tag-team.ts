@@ -3,7 +3,7 @@ import {Achievement} from './types'
 
 const TagTeam: Achievement = {
 	...achievement,
-	numericId: 50,
+	numericId: 55,
 	id: 'tag_team',
 	levels: [
 		{
