@@ -44,14 +44,21 @@ const XBCraftedRare: Hermit = {
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
+
 				game.components
-					.new(StatusEffectComponent, IgnoreAttachSlotEffect, component.entity)
-					.apply(
-						game.components.findEntity(
-							CardComponent,
-							query.card.opponentPlayer,
-							query.card.slot(query.slot.hermit),
-						),
+					.filter(
+						CardComponent,
+						query.card.opponentPlayer,
+						query.card.slot(query.slot.hermit),
+					)
+					.filter((x) =>
+						game.components
+							.new(
+								StatusEffectComponent,
+								IgnoreAttachSlotEffect,
+								component.entity,
+							)
+							.apply(x.entity),
 					)
 			},
 		)
