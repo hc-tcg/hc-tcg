@@ -8,6 +8,7 @@ import assert from 'assert'
 import {ACHIEVEMENTS} from 'common/achievements'
 import {CARDS} from 'common/cards'
 import {getStarterPack} from 'common/cards/starter-decks'
+import serverConfig from 'common/config/server-config'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {AchievementProgress} from 'common/types/achievements'
 import {TypeT} from 'common/types/cards'
@@ -955,16 +956,21 @@ export class Database {
 				const replay: Buffer = game.replay
 				let hasReplay = false
 
+				if (game.start_time.getTime() < 1741384800000) continue
+
 				if (replay.length >= 4) {
 					const decompressedReplay = huffmanDecompress(replay)
-					if (decompressedReplay && decompressedReplay.readUInt8(0) === 0x01) {
+					if (
+						decompressedReplay &&
+						decompressedReplay.readUInt8(0) === serverConfig.replayVersion
+					) {
 						hasReplay = true
 					}
 				}
 
 				const rng = newRandomNumberGenerator(game.seed)
 				const youAreFirst =
-					rng() >= 0.5 !== (game.winner === game.you) && game.first_player_won
+					rng() < 0.5 !== ((game.winner === game.you) !== game.first_player_won)
 
 				const yourInfo: GameHistoryPlayer = {
 					player: 'you',
@@ -1039,14 +1045,14 @@ export class Database {
 				)
 				SELECT 
 					winner as user_id, winner_deck_code as selected_deck_code, username, minecraft_name,
-					card_id, copies, replay, seed, first_player_won = TRUE as first
+					card_id, copies, replay, seed, first_player_won = TRUE as first, first_player_won
 					FROM game 
 					JOIN users ON users.user_id = winner
 					LEFT JOIN deck_cards ON deck_cards.deck_code = winner_deck_code
 				UNION (
 					SELECT 
 					loser as user_id, loser_deck_code as selected_deck_code, username, minecraft_name,
-					card_id, copies, replay, seed, first_player_won = FALSE as first
+					card_id, copies, replay, seed, first_player_won = FALSE as first, first_player_won
 					FROM game 
 					JOIN users ON users.user_id = loser
 					LEFT JOIN deck_cards ON deck_cards.deck_code = loser_deck_code
@@ -1060,8 +1066,7 @@ export class Database {
 			const seed: string = game['seed']
 
 			const replay: Buffer = game['replay']
-			// const decompressedReplay: Buffer | null = huffmanDecompress(replay)
-			const decompressedReplay = huffmanDecompress(replay)
+			const decompressedReplay: Buffer | null = huffmanDecompress(replay)
 
 			console.log(decompressedReplay)
 
@@ -1136,13 +1141,21 @@ export class Database {
 				seed,
 				{},
 				decompressedReplay,
+				gameId.toString(),
 			)
+
+			if ('invalid' in replayActions) {
+				return {
+					type: 'failure',
+					reason: `There was a problem decoding the replay of game ${gameId}.'`,
+				}
+			}
 
 			return {
 				type: 'success',
 				body: {
-					player1Defs,
-					player2Defs,
+					player1Defs: player1Defs,
+					player2Defs: player2Defs,
 					replay: replayActions.replay,
 					seed,
 					battleLog: replayActions.battleLog,

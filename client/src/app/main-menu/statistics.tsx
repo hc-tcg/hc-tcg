@@ -164,12 +164,13 @@ function Statistics({setMenuSection}: Props) {
 	// Stats stuff
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 	const stats = databaseInfo.stats
-	const gameHistory = databaseInfo.gameHistory.filter((game) => game.hasReplay)
+	const gameHistory = databaseInfo.gameHistory
 	const settings = useSelector(getSettings)
 	const [tab, setTab] = useState<string>('Statistics')
 	const [showInvalidReplayModal, setShowInvalidReplayModal] =
 		useState<boolean>(false)
 	const [showOverviewModal, setShowOverviewModal] = useState<boolean>(false)
+	const [showReplayModal, setShowReplayModal] = useState<boolean>(false)
 	const [currentGame, setCurrentGame] = useState<GameHistory | null>(null)
 
 	const [filteredGames, setFilteredGames] =
@@ -197,8 +198,8 @@ function Statistics({setMenuSection}: Props) {
 		return games.filter((game) => {
 			const otherPlayer =
 				game.firstPlayer.uuid === databaseInfo.userId
-					? game.firstPlayer
-					: game.secondPlayer
+					? game.secondPlayer
+					: game.firstPlayer
 			return (
 				(!compareTag ||
 					game.usedDeck.tags?.find((tag) => tag.key === compareTag)) &&
@@ -214,7 +215,9 @@ function Statistics({setMenuSection}: Props) {
 						.includes(compareName.toLocaleLowerCase())) &&
 				(!compareOpponentName ||
 					compareOpponentName === '' ||
-					otherPlayer.name.includes(compareOpponentName))
+					otherPlayer.name
+						.toLocaleLowerCase()
+						.includes(compareOpponentName.toLocaleLowerCase()))
 			)
 		})
 	}
@@ -230,6 +233,7 @@ function Statistics({setMenuSection}: Props) {
 	}
 
 	const handleReplayGame = (game: GameHistory) => {
+		setShowReplayModal(true)
 		setCurrentGame(game)
 		dispatch({
 			type: localMessages.MATCHMAKING_REPLAY_GAME,
@@ -237,6 +241,7 @@ function Statistics({setMenuSection}: Props) {
 		})
 	}
 	const handleOverview = (game: GameHistory) => {
+		setShowOverviewModal(true)
 		setCurrentGame(game)
 		dispatch({
 			type: localMessages.OVERVIEW,
@@ -249,11 +254,9 @@ function Statistics({setMenuSection}: Props) {
 	const overviewFirstId = overview.length >= 1 ? overview[0].sender.id : ''
 
 	if (invalidReplay && !showInvalidReplayModal) {
+		setShowOverviewModal(false)
+		setShowReplayModal(false)
 		setShowInvalidReplayModal(true)
-	}
-
-	if (overview.length !== 0 && !showOverviewModal) {
-		setShowOverviewModal(true)
 	}
 
 	// Hall of fame stuff
@@ -1518,20 +1521,37 @@ function Statistics({setMenuSection}: Props) {
 					}}
 				>
 					<Modal.Description>
-						<div className={css.overview}>
-							{overview.map((line) => {
-								const isOpponent =
-									(currentGame?.firstPlayer.player === 'you') !==
-									(line.sender.id === overviewFirstId)
+						{overview.length === 0 ? (
+							<div>Loading Overview...</div>
+						) : (
+							<div className={css.overview}>
+								{overview.map((line) => {
+									const isOpponent =
+										currentGame?.firstPlayer.player === 'you'
+											? line.sender.id !== overviewFirstId
+											: line.sender.id === overviewFirstId
 
-								return FormattedText(line.message, {
-									isOpponent,
-									color: isOpponent ? 'orange' : 'blue',
-									isSelectable: true,
-									censorProfanity: false,
-								})
-							})}
-						</div>
+									return FormattedText(line.message, {
+										isOpponent,
+										color: isOpponent ? 'orange' : 'blue',
+										isSelectable: true,
+										censorProfanity: false,
+									})
+								})}
+							</div>
+						)}
+					</Modal.Description>
+				</Modal>
+			)}
+			{showReplayModal && (
+				<Modal
+					setOpen
+					title={'Loading Replay'}
+					onClose={() => null}
+					disableCloseButton={true}
+				>
+					<Modal.Description>
+						<div>Loading Replay...</div>
 					</Modal.Description>
 				</Modal>
 			)}

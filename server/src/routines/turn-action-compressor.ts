@@ -1,4 +1,5 @@
 import assert from 'assert'
+import serverConfig from 'common/config/server-config'
 import {cancel, delay, put, spawn} from 'typed-redux-saga'
 import {
 	BoardSlotComponent,
@@ -35,7 +36,6 @@ import {LocalMessage, localMessages} from '../messages'
 import gameSaga from './game'
 
 const VARIABLE_BYTE_MAX = 1 // 0xFF
-const REPLAY_VERSION = 0x01
 const INVALID_REPLAY = 0x00
 
 const SELECT_CARDS_TYPE = 1
@@ -78,8 +78,6 @@ const playCard: ReplayAction = {
 		const cardIndex = game.currentPlayer
 			.getHand()
 			.findIndex((c) => c.entity === turnAction.card.entity)
-
-		console.log(turnAction.card.entity)
 
 		return Buffer.concat([
 			compressor.packupBoardSlot(game, slot),
@@ -219,7 +217,10 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 				query.slot.rowIndex(rowIndex),
 			)
 
-			if (!slotComponent) return null
+			assert(
+				slotComponent,
+				'If there is no slot component, something has gone extremely wrong.',
+			)
 			return {
 				type: 'CHANGE_ACTIVE_HERMIT',
 				entity: slotComponent.entity,
@@ -239,7 +240,11 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		},
 		decompress(game, compressor, buffer) {
 			const slot = compressor.unpackSlotPosition(game, buffer.readInt16BE())
-			if (!slot) return null
+			game.state.turn.availableActions.push('PICK_REQUEST')
+			assert(
+				slot,
+				'If there is no slot component, something has gone extremely wrong.',
+			)
 			return {
 				type: 'PICK_REQUEST',
 				entity: slot.entity,
@@ -300,35 +305,30 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 					),
 				])
 
-				if (result.leftCards) {
-					// Selected cards
-					buffer = Buffer.concat([
-						buffer,
-						...result.leftCards.map((card) => {
-							const component = game.components.find(
-								CardComponent,
-								query.card.entity(card),
-							)
-							assert(component, 'An invalid card entity was given')
-							return compressor.packupSlotPosition(game, component.slot)
-						}),
-					])
-				}
+				if (!result.result) return buffer
 
-				if (result.rightCards) {
-					// Selected cards
-					buffer = Buffer.concat([
-						buffer,
-						...result.rightCards.map((card) => {
-							const component = game.components.find(
-								CardComponent,
-								query.card.entity(card),
-							)
-							assert(component, 'An invalid card entity was given')
-							return compressor.packupSlotPosition(game, component.slot)
-						}),
-					])
-				}
+				// Selected cards
+				buffer = Buffer.concat([
+					buffer,
+					...result.leftCards.map((card) => {
+						const component = game.components.find(
+							CardComponent,
+							query.card.entity(card),
+						)
+						assert(component, 'An invalid card entity was given')
+						return compressor.packupSlotPosition(game, component.slot)
+					}),
+					...result.rightCards.map((card) => {
+						const component = game.components.find(
+							CardComponent,
+							query.card.entity(card),
+						)
+						assert(component, 'An invalid card entity was given')
+						return compressor.packupSlotPosition(game, component.slot)
+					}),
+				])
+
+				console.log(buffer)
 
 				return buffer
 			}
@@ -620,6 +620,8 @@ export class TurnActionCompressor {
 			if (slot.inHand() && slot.opponentPlayer) return 0b1000
 			if (slot.inDeck() && slot.player) return 0b0010
 			if (slot.inDeck() && slot.opponentPlayer) return 0b1010
+			if (slot.inDiscardPile() && slot.player) return 0b0100
+			if (slot.inDiscardPile() && slot.opponentPlayer) return 0b1100
 			return 0
 		}
 
@@ -638,11 +640,16 @@ export class TurnActionCompressor {
 					.getDrawPile()
 					.findIndex((c) => c.slotEntity === slot.entity)
 			: 0
+		const discardPilePosition = slot.inDiscardPile()
+			? targetPlayer
+					.getDiscarded()
+					.findIndex((c) => c.slotEntity === slot.entity)
+			: 0
 
 		const finalBuffer = Buffer.concat([
 			this.writeUIntToBuffer(getSlotType(slot), 1),
 			this.writeUIntToBuffer(
-				boardSlotPosition | handPosition | deckPosition,
+				boardSlotPosition | handPosition | deckPosition | discardPilePosition,
 				1,
 			),
 		])
@@ -658,15 +665,19 @@ export class TurnActionCompressor {
 
 		const onBoard = (slotType & 0x01) === 1
 		const inDeck = (slotType & 0x02) >> 1 === 1
+		const inDiscardPile = (slotType & 0x04) >> 2 === 1
 		const opponentCard = (slotType & 0x08) >> 3 === 1
 
 		if (onBoard) return this.unpackBoardSlot(game, position)
 
 		const targetPlayer = opponentCard ? game.opponentPlayer : game.currentPlayer
 
-		const selectedCard = inDeck
-			? targetPlayer.getDrawPile()[position]
-			: targetPlayer.getHand()[position]
+		const selectedCard =
+			(inDeck && targetPlayer.getDrawPile()[position]) ||
+			(inDiscardPile && targetPlayer.getDiscarded()[position]) ||
+			(!inDeck && !inDiscardPile && targetPlayer.getHand()[position])
+
+		assert(selectedCard, 'There should be a card in the slot')
 
 		return selectedCard.slot
 	}
@@ -767,7 +778,10 @@ export class TurnActionCompressor {
 
 		this.currentAction = null
 
-		return Buffer.concat([Buffer.from([REPLAY_VERSION]), ...buffers])
+		return Buffer.concat([
+			Buffer.from([serverConfig.replayVersion]),
+			...buffers,
+		])
 	}
 
 	public *bufferToTurnActions(
@@ -776,12 +790,14 @@ export class TurnActionCompressor {
 		seed: string,
 		props: GameControllerProps,
 		actionsBuffer: Buffer,
+		gameId: string,
 	): Generator<
 		any,
-		{
-			replay: Array<ReplayActionData>
-			battleLog: Array<Message>
-		}
+		| {invalid: true}
+		| {
+				replay: Array<ReplayActionData>
+				battleLog: Array<Message>
+		  }
 	> {
 		const con = new GameController(
 			firstPlayerSetupDefs,
@@ -790,6 +806,7 @@ export class TurnActionCompressor {
 				...props,
 				randomSeed: seed,
 				randomizeOrder: true,
+				gameId: gameId,
 			},
 		)
 		con.task = yield* spawn(gameSaga, con)
@@ -799,11 +816,7 @@ export class TurnActionCompressor {
 		const version = actionsBuffer.readUInt8(cursor)
 		cursor++
 
-		if (version === 0x00 || version === 0x30)
-			return {
-				replay: [],
-				battleLog: [],
-			}
+		if (version === 0x00 || version === 0x30) return {invalid: true}
 
 		//Other version checks here
 
@@ -831,11 +844,13 @@ export class TurnActionCompressor {
 			if (!action.variableBytes) {
 				const bytes = actionsBuffer.subarray(cursor, cursor + action.bytes)
 				cursor += action.bytes
+
 				turnAction = action.decompress(con.game, this, bytes)
 				assert(
 					turnAction,
 					'There was an error and the data given for the turn action was invalid.',
 				)
+
 				replayActions.push({
 					action: turnAction,
 					player: actionPlayer,
@@ -871,6 +886,11 @@ export class TurnActionCompressor {
 		}
 
 		this.currentAction = null
+
+		if (!con.game.outcome) {
+			if (con.task) yield* cancel(con.task)
+			return {invalid: true}
+		}
 
 		return {
 			replay: replayActions,

@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals'
-import {DiamondArmor} from 'common/cards/attach/armor'
+import {DiamondArmor, IronArmor} from 'common/cards/attach/armor'
 import LightningRod from 'common/cards/attach/lightning-rod'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
@@ -57,7 +57,7 @@ describe('Test xB', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test "Noice!" does not ignore Lightning Rod.', () => {
+	test('Test "Noice!" ignores Lightning Rod.', () => {
 		testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
@@ -78,20 +78,20 @@ describe('Test xB', () => {
 							query.row.currentPlayer,
 							query.row.index(0),
 						)?.health,
-					).toBe(EthosLabCommon.health)
+					).toBe(EthosLabCommon.health - XBCraftedRare.secondary.damage)
 					expect(
 						game.components.find(
 							RowComponent,
 							query.row.currentPlayer,
 							query.row.index(1),
 						)?.health,
-					).toBe(EthosLabCommon.health - XBCraftedRare.secondary.damage)
+					).toBe(EthosLabCommon.health)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test "Noice!" does not ignore Lightning Rod when using single use.', () => {
+	test('Test "Noice!" ignores Lightning Rod when using single use.', () => {
 		testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
@@ -113,31 +113,32 @@ describe('Test xB', () => {
 							query.row.currentPlayer,
 							query.row.index(0),
 						)?.health,
-					).toBe(EthosLabCommon.health)
+					).toBe(
+						EthosLabCommon.health -
+							XBCraftedRare.secondary.damage -
+							20 /* Iron Sword */,
+					)
 					expect(
 						game.components.find(
 							RowComponent,
 							query.row.currentPlayer,
 							query.row.index(1),
 						)?.health,
-					).toBe(
-						EthosLabCommon.health -
-							XBCraftedRare.secondary.damage -
-							20 /* Iron Sword */,
-					)
+					).toBe(EthosLabCommon.health)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test "Noice!" does not ignore Target Block.', () => {
+	test('Test "Noice!" ignores attachables with Target Block.', () => {
 		testGame(
 			{
-				playerOneDeck: [EthosLabCommon, EthosLabCommon],
+				playerOneDeck: [EthosLabCommon, EthosLabCommon, IronArmor],
 				playerTwoDeck: [XBCraftedRare, TargetBlock],
 				saga: function* (game) {
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, IronArmor, 'attach', 1)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, XBCraftedRare, 'hermit', 0)
