@@ -56,7 +56,7 @@ describe('Test Useless Machine Achievement', () => {
 			{noItemRequirements: true, startWithAllCards: false},
 		)
 	})
-	test('Test one duplicate cards', () => {
+	test('Test one duplicate card', () => {
 		testAchivement(
 			{
 				achievement: UselessMachine,
@@ -98,7 +98,7 @@ describe('Test Useless Machine Achievement', () => {
 			{noItemRequirements: true, startWithAllCards: false},
 		)
 	})
-	test('Test zero duplicate card', () => {
+	test('Test zero duplicate cards', () => {
 		testAchivement(
 			{
 				achievement: UselessMachine,
