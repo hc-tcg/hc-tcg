@@ -63,4 +63,35 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 			{noItemRequirements: true, startWithAllCards: false, oneShotMode: true},
 		)
 	})
+	test('Test achievement is not gained after two rounds', () => {
+		testAchivement(
+			{
+				achievement: PoePoeEnforcer,
+				playerOneDeck: [EthosLabCommon, CurseOfBinding],
+				playerTwoDeck: [EthosLabCommon, EthosLabCommon],
+				playGame: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, CurseOfBinding, 'single_use')
+					yield* applyEffect(game)
+
+					yield* endTurn(game)
+					yield* endTurn(game)
+
+					yield* endTurn(game)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+				},
+				checkAchivement(_game, achievement, _outcome) {
+					expect(PoePoeEnforcer.getProgress(achievement.goals)).toBeFalsy()
+				},
+			},
+			{noItemRequirements: true, startWithAllCards: false, oneShotMode: true},
+		)
+	})
 })

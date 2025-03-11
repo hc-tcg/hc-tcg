@@ -1,6 +1,6 @@
 import query from '../components/query'
 import CurseOfBindingEffect from '../status-effects/curse-of-binding'
-import {afterAttack} from '../types/priorities'
+import {afterApply, afterAttack} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -17,7 +17,11 @@ const PoePoeEnforcer: Achievement = {
 		},
 	],
 	onGameStart(game, player, component, observer) {
-		let hadBindingLastTurn = false
+		let turnsSinceCurseOfBindings = 100
+
+		observer.subscribe(player.hooks.onTurnStart, () => {
+			turnsSinceCurseOfBindings += 1
+		})
 
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
@@ -29,21 +33,27 @@ const PoePoeEnforcer: Achievement = {
 
 				if (
 					!attack.target.health &&
-					hadBindingLastTurn &&
+					turnsSinceCurseOfBindings == 1 &&
 					targetHermit.slot.inRow() &&
 					targetHermit.slot.row?.entity ===
 						player.opponentPlayer.activeRowEntity
 				) {
 					component.incrementGoalProgress({goal: 0})
 				}
+			},
+		)
 
+		observer.subscribeWithPriority(
+			player.hooks.afterApply,
+			afterApply.CHECK_BOARD_STATE,
+			() => {
 				if (
 					query.player.hasStatusEffect(CurseOfBindingEffect)(
 						game,
 						player.opponentPlayer,
 					)
 				) {
-					hadBindingLastTurn = true
+					turnsSinceCurseOfBindings = 0
 				}
 			},
 		)
