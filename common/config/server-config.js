@@ -21,5 +21,6 @@ export default {
 		disabledCards: ['iskallman_common', 'iskallman_rare'],
 		rematchTime: 90 * 1000,
 	},
+	replayVersion: 0x02,
 	logoSubText: '10k games since 1.0!',
 }

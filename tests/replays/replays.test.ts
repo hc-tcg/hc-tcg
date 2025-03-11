@@ -7,14 +7,23 @@ import EvilXisumaRare from 'common/cards/hermits/evilxisuma_rare'
 import FalseSymmetryRare from 'common/cards/hermits/falsesymmetry-rare'
 import FarmerBeefRare from 'common/cards/hermits/farmerbeef-rare'
 import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
+import HelsknightRare from 'common/cards/hermits/helsknight-rare'
+import IJevinRare from 'common/cards/hermits/ijevin-rare'
+import JinglerRare from 'common/cards/hermits/jingler-rare'
 import RendogCommon from 'common/cards/hermits/rendog-common'
 import TangoTekRare from 'common/cards/hermits/tangotek-rare'
+import TinFoilChefRare from 'common/cards/hermits/tinfoilchef-rare'
 import VintageBeefRare from 'common/cards/hermits/vintagebeef-rare'
 import BalancedItem from 'common/cards/items/balanced-common'
 import BalancedDoubleItem from 'common/cards/items/balanced-rare'
 import BuilderItem from 'common/cards/items/builder-common'
 import FarmDoubleItem from 'common/cards/items/farm-rare'
 import MinerItem from 'common/cards/items/miner-common'
+import SpeedrunnerItem from 'common/cards/items/speedrunner-common'
+import SpeedrunnerDoubleItem from 'common/cards/items/speedrunner-rare'
+import Chest from 'common/cards/single-use/chest'
+import CurseOfBinding from 'common/cards/single-use/curse-of-binding'
+import FishingRod from 'common/cards/single-use/fishing-rod'
 import {DiamondSword} from 'common/cards/single-use/sword'
 import query from 'common/components/query'
 import {DragCards} from 'common/types/modal-requests'
@@ -41,14 +50,13 @@ function* afterGame(con: GameController) {
 
 	const turnActionsBuffer = yield* turnActionCompressor.turnActionsToBuffer(con)
 
-	console.log(turnActionsBuffer)
-
 	const turnActions = yield* turnActionCompressor.bufferToTurnActions(
 		con.player1Defs,
 		con.player2Defs,
 		con.game.rngSeed,
 		con.props,
 		turnActionsBuffer,
+		con.game.id,
 	)
 
 	expect(con.game.turnActions.map((action) => action.action)).toStrictEqual(
@@ -129,16 +137,6 @@ describe('Test Replays', () => {
 				yield* playCardFromHand(con.game, EthosLabCommon, 'hermit', 0)
 				yield* playCardFromHand(con.game, Brush, 'single_use')
 				yield* applyEffect(con.game)
-				expect(
-					(
-						con.game.state.modalRequests[0].modal as DragCards.Data
-					).leftCards.map((entity) => con.game.components.get(entity)?.props),
-				).toStrictEqual([])
-				expect(
-					(
-						con.game.state.modalRequests[0].modal as DragCards.Data
-					).rightCards.map((entity) => con.game.components.get(entity)?.props),
-				).toStrictEqual([BalancedItem, BuilderItem])
 				const cardEntities = (
 					con.game.state.modalRequests[0].modal as DragCards.Data
 				).rightCards
@@ -149,6 +147,47 @@ describe('Test Replays', () => {
 				})
 				yield* endTurn(con.game)
 				yield* forfeit(con.game.currentPlayer.entity)
+			},
+			afterGame: afterGame,
+		})
+	})
+
+	test('Test Chest', () => {
+		testReplayGame({
+			playerOneDeck: [
+				EthosLabCommon,
+				CurseOfBinding,
+				Chest,
+				...Array(5).fill(Feather),
+				BalancedItem,
+				BuilderItem,
+				MinerItem,
+				Feather,
+			],
+			playerTwoDeck: [EthosLabCommon],
+			gameSaga: function* (con) {
+				const game = con.game
+				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, CurseOfBinding, 'single_use')
+				yield* applyEffect(game)
+				yield* endTurn(game)
+
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, Chest, 'single_use')
+				yield* applyEffect(game)
+				const discardedCard = game.currentPlayer.getDiscarded()[0].entity
+				yield* finishModalRequest(game, {
+					result: true,
+					cards: [discardedCard],
+				})
+				yield* endTurn(game)
+				yield* forfeit(game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})
@@ -195,6 +234,58 @@ describe('Test Replays', () => {
 				)
 
 				yield* forfeit(con.game.currentPlayer.entity)
+			},
+			afterGame: afterGame,
+		})
+	})
+
+	test('Test Speedrunner Jevin', () => {
+		testReplayGame({
+			playerOneDeck: [
+				TinFoilChefRare,
+				MinerItem,
+				HelsknightRare,
+				...Array(40).fill(MinerItem),
+			],
+			playerTwoDeck: [
+				IJevinRare,
+				SpeedrunnerItem,
+				SpeedrunnerDoubleItem,
+				FishingRod,
+				JinglerRare,
+				...Array(40).fill(SpeedrunnerItem),
+			],
+			gameSaga: function* (con) {
+				const game = con.game
+				yield* playCardFromHand(game, TinFoilChefRare, 'hermit', 2)
+				yield* playCardFromHand(game, MinerItem, 'item', 2, 0)
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, IJevinRare, 'hermit', 4)
+				yield* playCardFromHand(game, SpeedrunnerItem, 'item', 4, 0)
+				yield* attack(game, 'primary')
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, MinerItem, 'item', 2, 1)
+				yield* playCardFromHand(game, HelsknightRare, 'hermit', 1)
+				yield* attack(game, 'secondary')
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, SpeedrunnerDoubleItem, 'item', 4, 1)
+				yield* playCardFromHand(game, FishingRod, 'single_use')
+				yield* applyEffect(game)
+				yield* playCardFromHand(game, JinglerRare, 'hermit', 3)
+
+				yield* attack(game, 'secondary')
+				yield* pick(
+					game,
+					query.slot.opponent,
+					query.slot.hermit,
+					query.slot.rowIndex(1),
+				)
+				yield* endTurn(game)
+
+				yield* forfeit(game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})

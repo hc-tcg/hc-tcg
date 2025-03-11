@@ -843,6 +843,35 @@ function* gameSaga(con: GameController) {
 	}
 	con.game.outcome = figureOutGameResult(con.game)
 	con.game.hooks.onGameEnd.call(con.game.outcome)
+
+	if (con.game.outcome && con.game.outcome.type === 'player-won') {
+		const winningPlayer = con.game.components.find(
+			PlayerComponent,
+			query.player.entity(con.game.outcome.winner),
+		)
+		const winningPlayerName = winningPlayer?.playerName
+		con.game.battleLog.addEntry(
+			con.game.outcome.winner,
+			`$p{You|${winningPlayerName}}$ won the game`,
+		)
+	} else if (con.game.outcome && con.game.outcome.type === 'tie') {
+		con.game.battleLog.addEntry(
+			con.game.currentPlayer.entity,
+			'{$pYou$|$oYou$} tied your opponent',
+		)
+	} else if (con.game.outcome) {
+		con.game.battleLog.addEntry(
+			con.game.currentPlayer.entity,
+			'There was an error',
+		)
+	} else {
+		con.game.battleLog.addEntry(
+			con.game.currentPlayer.entity,
+			'The game ended before an outcome was decided',
+		)
+	}
+
+	con.game.battleLog.sendLogs()
 }
 
 export default gameSaga
