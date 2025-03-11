@@ -852,9 +852,25 @@ function* gameSaga(con: GameController) {
 		const winningPlayerName = winningPlayer?.playerName
 		con.game.battleLog.addEntry(
 			con.game.outcome.winner,
-			`$p{You|${winningPlayerName}}$ won the game.`,
+			`$p{You|${winningPlayerName}}$ won the game`,
+		)
+	} else if (con.game.outcome && con.game.outcome.type === 'tie') {
+		con.game.battleLog.addEntry(
+			con.game.currentPlayer.entity,
+			'{$pYou$|$oYou$} tied your opponent',
+		)
+	} else if (con.game.outcome) {
+		con.game.battleLog.addEntry(
+			con.game.currentPlayer.entity,
+			'There was an error',
+		)
+	} else {
+		con.game.battleLog.addEntry(
+			con.game.currentPlayer.entity,
+			'The game ended before an outcome was decided',
 		)
 	}
+
 	con.game.battleLog.sendLogs()
 }
 

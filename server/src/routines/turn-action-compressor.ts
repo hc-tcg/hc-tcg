@@ -79,8 +79,6 @@ const playCard: ReplayAction = {
 			.getHand()
 			.findIndex((c) => c.entity === turnAction.card.entity)
 
-		console.log(turnAction.card.entity)
-
 		return Buffer.concat([
 			compressor.packupBoardSlot(game, slot),
 			compressor.writeUIntToBuffer(cardIndex, 1),
@@ -242,6 +240,7 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 		},
 		decompress(game, compressor, buffer) {
 			const slot = compressor.unpackSlotPosition(game, buffer.readInt16BE())
+			game.state.turn.availableActions.push('PICK_REQUEST')
 			assert(
 				slot,
 				'If there is no slot component, something has gone extremely wrong.',
@@ -306,35 +305,30 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 					),
 				])
 
-				if (result.leftCards) {
-					// Selected cards
-					buffer = Buffer.concat([
-						buffer,
-						...result.leftCards.map((card) => {
-							const component = game.components.find(
-								CardComponent,
-								query.card.entity(card),
-							)
-							assert(component, 'An invalid card entity was given')
-							return compressor.packupSlotPosition(game, component.slot)
-						}),
-					])
-				}
+				if (!result.result) return buffer
 
-				if (result.rightCards) {
-					// Selected cards
-					buffer = Buffer.concat([
-						buffer,
-						...result.rightCards.map((card) => {
-							const component = game.components.find(
-								CardComponent,
-								query.card.entity(card),
-							)
-							assert(component, 'An invalid card entity was given')
-							return compressor.packupSlotPosition(game, component.slot)
-						}),
-					])
-				}
+				// Selected cards
+				buffer = Buffer.concat([
+					buffer,
+					...result.leftCards.map((card) => {
+						const component = game.components.find(
+							CardComponent,
+							query.card.entity(card),
+						)
+						assert(component, 'An invalid card entity was given')
+						return compressor.packupSlotPosition(game, component.slot)
+					}),
+					...result.rightCards.map((card) => {
+						const component = game.components.find(
+							CardComponent,
+							query.card.entity(card),
+						)
+						assert(component, 'An invalid card entity was given')
+						return compressor.packupSlotPosition(game, component.slot)
+					}),
+				])
+
+				console.log(buffer)
 
 				return buffer
 			}
@@ -644,7 +638,7 @@ export class TurnActionCompressor {
 		const deckPosition = slot.inDeck()
 			? targetPlayer.getDeck().findIndex((c) => c.slotEntity === slot.entity)
 			: 0
-		const discardPilePosition = slot.inDeck()
+		const discardPilePosition = slot.inDiscardPile()
 			? targetPlayer
 					.getDiscarded()
 					.findIndex((c) => c.slotEntity === slot.entity)
@@ -669,15 +663,19 @@ export class TurnActionCompressor {
 
 		const onBoard = (slotType & 0x01) === 1
 		const inDeck = (slotType & 0x02) >> 1 === 1
+		const inDiscardPile = (slotType & 0x04) >> 2 === 1
 		const opponentCard = (slotType & 0x08) >> 3 === 1
 
 		if (onBoard) return this.unpackBoardSlot(game, position)
 
 		const targetPlayer = opponentCard ? game.opponentPlayer : game.currentPlayer
 
-		const selectedCard = inDeck
-			? targetPlayer.getDeck()[position]
-			: targetPlayer.getHand()[position]
+		const selectedCard =
+			(inDeck && targetPlayer.getDeck()[position]) ||
+			(inDiscardPile && targetPlayer.getDiscarded()[position]) ||
+			(!inDeck && !inDiscardPile && targetPlayer.getHand()[position])
+
+		assert(selectedCard, 'There should be a card in the slot')
 
 		return selectedCard.slot
 	}
@@ -787,6 +785,7 @@ export class TurnActionCompressor {
 		seed: string,
 		props: GameControllerProps,
 		actionsBuffer: Buffer,
+		gameId: string,
 	): Generator<
 		any,
 		{
@@ -801,6 +800,7 @@ export class TurnActionCompressor {
 				...props,
 				randomSeed: seed,
 				randomizeOrder: true,
+				gameId: gameId,
 			},
 		)
 		con.task = yield* spawn(gameSaga, con)
@@ -858,7 +858,6 @@ export class TurnActionCompressor {
 				const byteAmount = actionsBuffer.readUInt8(cursor)
 				cursor += VARIABLE_BYTE_MAX
 				const bytes = actionsBuffer.subarray(cursor, cursor + byteAmount)
-				console.log(byteAmount, bytes)
 				cursor += byteAmount
 				turnAction = action.decompress(con.game, this, bytes)
 				assert(

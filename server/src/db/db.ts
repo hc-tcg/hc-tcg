@@ -1058,7 +1058,6 @@ export class Database {
 			const rows: Array<Record<string, any>> = gamesResult.rows
 			const game: Record<string, any> = rows[0]
 			const seed: string = game['seed']
-			const firstPlayerWon: boolean = game['first_player_won']
 
 			const replay: Buffer = game['replay']
 			// const decompressedReplay: Buffer | null = huffmanDecompress(replay)
@@ -1137,6 +1136,7 @@ export class Database {
 				seed,
 				{},
 				decompressedReplay,
+				gameId.toString(),
 			)
 
 			return {

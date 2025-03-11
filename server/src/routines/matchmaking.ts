@@ -1129,6 +1129,7 @@ export function* createReplayGame(
 	const con = new GameController(replay.player1Defs, replay.player2Defs, {
 		randomSeed: replay.seed,
 		randomizeOrder: true,
+		gameId: msg.payload.id.toString(),
 	})
 	root.addGame(con)
 	root.hooks.newGame.call(con)
@@ -1170,15 +1171,13 @@ export function* createReplayGame(
 
 		const action = replayActions[i]
 
+		console.log(action.player)
+
 		yield* delay(action.millisecondsSinceLastAction)
 		yield* put({
-			type: clientMessages.TURN_ACTION,
-			payload: {
-				action: action.action,
-				playerEntity: action.player,
-			},
-			playerEntity: action.player,
+			type: localMessages.GAME_TURN_ACTION,
 			action: action.action,
+			playerEntity: action.player,
 		})
 	}
 

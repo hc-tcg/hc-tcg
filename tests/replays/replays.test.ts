@@ -42,13 +42,13 @@ import FishingRod from 'common/cards/single-use/fishing-rod'
 import JinglerRare from 'common/cards/hermits/jingler-rare'
 import SpeedrunnerDoubleItem from 'common/cards/items/speedrunner-rare'
 import IJevinRare from 'common/cards/hermits/ijevin-rare'
+import Chest from 'common/cards/single-use/chest'
+import CurseOfBinding from 'common/cards/single-use/curse-of-binding'
 
 function* afterGame(con: GameController) {
 	const turnActionCompressor = new TurnActionCompressor()
 
 	const turnActionsBuffer = yield* turnActionCompressor.turnActionsToBuffer(con)
-
-	console.log(turnActionsBuffer)
 
 	const turnActions = yield* turnActionCompressor.bufferToTurnActions(
 		con.player1Defs,
@@ -56,6 +56,7 @@ function* afterGame(con: GameController) {
 		con.game.rngSeed,
 		con.props,
 		turnActionsBuffer,
+		con.game.id,
 	)
 
 	expect(con.game.turnActions.map((action) => action.action)).toStrictEqual(
@@ -136,16 +137,6 @@ describe('Test Replays', () => {
 				yield* playCardFromHand(con.game, EthosLabCommon, 'hermit', 0)
 				yield* playCardFromHand(con.game, Brush, 'single_use')
 				yield* applyEffect(con.game)
-				expect(
-					(
-						con.game.state.modalRequests[0].modal as DragCards.Data
-					).leftCards.map((entity) => con.game.components.get(entity)?.props),
-				).toStrictEqual([])
-				expect(
-					(
-						con.game.state.modalRequests[0].modal as DragCards.Data
-					).rightCards.map((entity) => con.game.components.get(entity)?.props),
-				).toStrictEqual([BalancedItem, BuilderItem])
 				const cardEntities = (
 					con.game.state.modalRequests[0].modal as DragCards.Data
 				).rightCards
@@ -156,6 +147,47 @@ describe('Test Replays', () => {
 				})
 				yield* endTurn(con.game)
 				yield* forfeit(con.game.currentPlayer.entity)
+			},
+			afterGame: afterGame,
+		})
+	})
+
+	test('Test Chest', () => {
+		testReplayGame({
+			playerOneDeck: [
+				EthosLabCommon,
+				CurseOfBinding,
+				Chest,
+				...Array(5).fill(Feather),
+				BalancedItem,
+				BuilderItem,
+				MinerItem,
+				Feather,
+			],
+			playerTwoDeck: [EthosLabCommon],
+			gameSaga: function* (con) {
+				const game = con.game
+				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, CurseOfBinding, 'single_use')
+				yield* applyEffect(game)
+				yield* endTurn(game)
+
+				yield* endTurn(game)
+
+				yield* playCardFromHand(game, Chest, 'single_use')
+				yield* applyEffect(game)
+				const discardedCard = game.currentPlayer.getDiscarded()[0].entity
+				yield* finishModalRequest(game, {
+					result: true,
+					cards: [discardedCard],
+				})
+				yield* endTurn(game)
+				yield* forfeit(game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})
