@@ -165,11 +165,7 @@ describe('Test xB', () => {
 							query.row.currentPlayer,
 							query.row.index(1),
 						)?.health,
-					).toBe(
-						EthosLabCommon.health -
-							XBCraftedRare.secondary.damage +
-							20 /* Iron Armor*/,
-					)
+					).toBe(EthosLabCommon.health - XBCraftedRare.secondary.damage)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
