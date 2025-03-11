@@ -178,7 +178,7 @@ export function addApi(app: Express) {
 	})
 
 	app.post('/api/update', (req, res) => {
-		let auth = ApiKeyHeader.parse(req.header)
+		let auth = ApiKeyHeader.parse(req.headers)
 		authenticateApiKey(auth.auth)
 		updateWarning(UpdateMessage.parse(req.body).version)
 		res.statusCode = 200
