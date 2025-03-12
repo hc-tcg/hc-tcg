@@ -5,6 +5,7 @@ const Win: Achievement = {
 	...achievement,
 	numericId: 26,
 	id: 'wins',
+	progressionMethod: 'sum',
 	levels: [
 		{name: 'Card Slinger', description: 'Win 1 game.', steps: 1},
 		{name: 'TCG Novice', description: 'Win 10 games.', steps: 10},

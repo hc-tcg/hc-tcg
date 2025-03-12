@@ -19,6 +19,7 @@ const OreSnatcher: Achievement = {
 	...achievement,
 	numericId: 13,
 	id: 'ore_snatcher',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Ore Snatcher',

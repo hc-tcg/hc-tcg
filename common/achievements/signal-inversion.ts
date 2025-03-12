@@ -8,6 +8,7 @@ const SignalInversion: Achievement = {
 	...achievement,
 	numericId: 52,
 	id: 'signal-inversion',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Signal Inversion',

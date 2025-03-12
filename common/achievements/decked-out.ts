@@ -5,6 +5,7 @@ const DeckedOut: Achievement = {
 	...achievement,
 	numericId: 1,
 	id: 'decked_out',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Decked Out',

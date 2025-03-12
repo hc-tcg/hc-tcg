@@ -10,6 +10,7 @@ const GoFish: Achievement = {
 	...achievement,
 	numericId: 20,
 	id: 'go-fish',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Go Fish',

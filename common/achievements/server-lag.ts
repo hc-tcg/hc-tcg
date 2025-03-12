@@ -5,6 +5,7 @@ const ServerLag: Achievement = {
 	...achievement,
 	numericId: 9,
 	id: 'server_lag',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Server Lag',

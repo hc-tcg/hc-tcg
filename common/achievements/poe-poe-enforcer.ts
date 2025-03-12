@@ -8,6 +8,7 @@ const PoePoeEnforcer: Achievement = {
 	...achievement,
 	numericId: 42,
 	id: 'poe-poe-enforcer',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Poe Poe Enforcer',

@@ -5,6 +5,7 @@ const HurtinHermits: Achievement = {
 	...achievement,
 	numericId: 41,
 	id: 'hurtin_hermits',
+	progressionMethod: 'sum',
 	levels: [
 		{name: "Hurtin' Hermits", description: 'Lose your first game.', steps: 1},
 	],

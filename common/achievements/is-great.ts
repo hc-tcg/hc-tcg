@@ -7,6 +7,7 @@ const IsGreat: Achievement = {
 	...achievement,
 	numericId: 45,
 	id: 'is_great',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: '...is Great!',

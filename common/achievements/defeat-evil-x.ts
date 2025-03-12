@@ -6,6 +6,7 @@ const DefeatEvilX: Achievement = {
 	numericId: 6,
 	id: 'defeat_evil_x',
 	evilXAchievement: true,
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Evil X-Terminator',

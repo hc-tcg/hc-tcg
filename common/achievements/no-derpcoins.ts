@@ -9,6 +9,7 @@ const NoDerpcoins: Achievement = {
 	numericId: 7,
 	id: 'no_derpcoins',
 	evilXAchievement: true,
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'No Derpcoins Required',

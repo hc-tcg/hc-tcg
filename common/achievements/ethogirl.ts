@@ -18,6 +18,7 @@ const Ethogirl: Achievement = {
 	...achievement,
 	numericId: 2,
 	id: 'ethogirl',
+	progressionMethod: 'best',
 	levels: [
 		{
 			name: 'Ethogirl',
@@ -35,7 +36,7 @@ const Ethogirl: Achievement = {
 			if (variants.size < 4) return
 			if (outcome.type !== 'player-won' || outcome.winner !== player.entity)
 				return
-			component.bestGoalProgress({goal: 0, progress: variants.size})
+			component.incrementGoalProgress({goal: 0, progress: variants.size})
 		})
 	},
 }

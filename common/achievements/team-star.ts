@@ -35,6 +35,7 @@ const TeamStar: Achievement = {
 	...achievement,
 	numericId: 12,
 	id: 'team_star',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Hermit Gang',

@@ -7,6 +7,7 @@ const HallOfAll: Achievement = {
 	...achievement,
 	numericId: 43,
 	id: 'hall-of-all',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Hall of All',

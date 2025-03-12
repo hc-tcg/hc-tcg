@@ -7,6 +7,7 @@ const Inneffective: Achievement = {
 	...achievement,
 	numericId: 16,
 	id: 'inneffective',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Inneffective',

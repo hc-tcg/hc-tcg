@@ -7,6 +7,7 @@ const RedKing: Achievement = {
 	...achievement,
 	numericId: 46,
 	id: 'red-king',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Red King',

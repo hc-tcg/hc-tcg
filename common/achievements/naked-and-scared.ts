@@ -39,6 +39,7 @@ const bannedCards: string[] = [
 const NakedAndScared: Achievement = {
 	...achievement,
 	numericId: 15,
+	progressionMethod: 'sum',
 	id: 'naked_and_scared',
 	levels: [
 		{

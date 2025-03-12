@@ -8,6 +8,7 @@ const Channeling: Achievement = {
 	...achievement,
 	numericId: 22,
 	id: 'channeling',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Channeling',

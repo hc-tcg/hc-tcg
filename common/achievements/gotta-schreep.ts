@@ -8,6 +8,7 @@ const GottaSchreep: Achievement = {
 	...achievement,
 	numericId: 54,
 	id: 'gotta_schreep',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Gotta Schreep',

@@ -13,6 +13,7 @@ const HermitsAndCrafting: Achievement = {
 	...achievement,
 	numericId: 25,
 	id: 'designer',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Hermits and Crafting',

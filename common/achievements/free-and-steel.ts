@@ -9,6 +9,7 @@ const FreeAndSteel: Achievement = {
 	...achievement,
 	numericId: 44,
 	id: 'free-and-steel',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Free & Steel',

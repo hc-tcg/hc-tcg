@@ -7,6 +7,7 @@ const British: Achievement = {
 	...achievement,
 	numericId: 8,
 	id: 'british',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: "Bri'ish",

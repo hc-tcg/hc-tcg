@@ -38,7 +38,6 @@ export class AchievementComponent {
 		game: GameModel,
 		entity: AchievementEntity,
 		achievement: number | Achievement,
-		goals: Record<number, number>,
 		player: PlayerEntity,
 	) {
 		this.game = game
@@ -55,7 +54,7 @@ export class AchievementComponent {
 			onComplete: new GameHook(),
 		}
 
-		this.goals = goals
+		this.goals = {}
 		this.player = player
 	}
 
@@ -80,17 +79,10 @@ export class AchievementComponent {
 
 	public incrementGoalProgress({
 		goal,
-		amount = 1,
-	}: {goal: number; amount?: number}) {
+		progress = 1,
+	}: {goal: number; progress?: number}) {
 		const progressChecker = this.checkCompletion(this.goals)
-		this.goals[goal] = (this.goals[goal] || 0) + amount
-		progressChecker()
-	}
-
-	/** Set the goal progress to a number if it is higher than the current goal progress */
-	public bestGoalProgress({goal, progress}: {goal: number; progress: number}) {
-		const progressChecker = this.checkCompletion(this.goals)
-		this.goals[goal] = Math.max(this.goals[goal] || 0, progress)
+		this.goals[goal] = (this.goals[goal] || 0) + progress
 		progressChecker()
 	}
 }

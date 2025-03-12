@@ -46,6 +46,7 @@ const NewTeamCanada: Achievement = {
 	...achievement,
 	numericId: 53,
 	id: 'new_team_canada',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'New Team Canada',

@@ -5,6 +5,7 @@ const MasterOfPuppets: Achievement = {
 	...achievement,
 	numericId: 47,
 	id: 'master-of-puppets',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Master of Puppets',

@@ -13,6 +13,7 @@ function getTypeWinAchievement(id: number, type: TypeT): Achievement {
 		...achievement,
 		numericId: id,
 		id: `${type.toLowerCase()}-wins`,
+		progressionMethod: 'sum',
 		levels: [
 			{
 				name: `${toTitleCase(type)} Apprentice`,
