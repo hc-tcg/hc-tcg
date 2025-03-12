@@ -65,6 +65,9 @@ jobs:
             TAG_NAME: ${{ github.event.release.tag_name }}
             BODY: ${{ github.event.release.body }}
 
+        - name: Update Message
+          run: curl https://hc-tcg.online/api/update -H "auth:${{ secrets.HC_TCG_TOKEN }}" --json "{\"version\": \"$TAG_NAME\"}"
+
         - name: Wait
           run: sleep 14m 30s
 
