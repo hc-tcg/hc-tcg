@@ -9,6 +9,7 @@ const FreeAndSteel: Achievement = {
 	...achievement,
 	numericId: 44,
 	id: 'free-and-steel',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Free & Steel',
@@ -32,7 +33,7 @@ const FreeAndSteel: Achievement = {
 				if (su.props.id !== FlintAndSteel.id) return
 
 				if (playerHandSize == 0) {
-					component.incrementGoalProgress({goal: 0})
+					component.updateGoalProgress({goal: 0})
 				}
 			},
 		)

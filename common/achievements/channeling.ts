@@ -8,6 +8,7 @@ const Channeling: Achievement = {
 	...achievement,
 	numericId: 22,
 	id: 'channeling',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Channeling',
@@ -53,7 +54,7 @@ const Channeling: Achievement = {
 					return
 
 				if (!damageRedirected) return
-				component.incrementGoalProgress({goal: 0})
+				component.updateGoalProgress({goal: 0})
 				damageRedirected = false
 			},
 		)

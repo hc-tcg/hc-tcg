@@ -8,6 +8,7 @@ const PoePoeEnforcer: Achievement = {
 	...achievement,
 	numericId: 42,
 	id: 'poe-poe-enforcer',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Poe Poe Enforcer',
@@ -38,7 +39,7 @@ const PoePoeEnforcer: Achievement = {
 					targetHermit.slot.row?.entity ===
 						player.opponentPlayer.activeRowEntity
 				) {
-					component.incrementGoalProgress({goal: 0})
+					component.updateGoalProgress({goal: 0})
 				}
 			},
 		)
