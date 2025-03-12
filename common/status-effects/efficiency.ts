@@ -1,5 +1,5 @@
 import {PlayerComponent} from '../components'
-import {afterAttack, onTurnEnd} from '../types/priorities'
+import {onTurnEnd} from '../types/priorities'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 const EfficiencyEffect: StatusEffect<PlayerComponent> = {
