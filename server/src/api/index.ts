@@ -35,10 +35,8 @@ import {
 	getStats,
 	getTypeDistributionStats,
 } from './stats'
-import {requestUrlRoot} from './utils'
-import {broadcast} from 'utils/comm'
 import {UpdateMessage, updateWarning} from './update-warning'
-import {serverMessages} from 'common/socket-messages/server-messages'
+import {requestUrlRoot} from './utils'
 
 export function addApi(app: Express) {
 	app.get('/api/auth/', async (req, res) => {
