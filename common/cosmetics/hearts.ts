@@ -14,6 +14,11 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		name: 'Default',
 	},
 	{
+		id: 'amethyst',
+		name: 'Amethyst',
+		requires: undefined,
+	},
+	{
 		id: 'copper',
 		name: 'Copper',
 		requires: {achievement: Channeling.id},
@@ -34,6 +39,27 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		requires: {achievement: Win.id, level: 4},
 	},
 	{
+		id: 'hardcore',
+		name: 'Hardcore',
+		requires: undefined,
+	},
+	{
+		id: 'honeycomb',
+		name: 'Honeycomb',
+		requires: undefined,
+	},
+	{
+		id: 'hunger',
+		name: 'Haunch',
+		offVariantName: 'hunger_empty',
+		requires: undefined,
+	},
+	{
+		id: 'ice',
+		name: 'Ice',
+		requires: undefined,
+	},
+	{
 		id: 'wooden',
 		name: 'Heart Stand',
 		requires: {achievement: UseLikeAHermit.id},
@@ -45,6 +71,11 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		requires: {achievement: iBuy.id},
 	},
 	{
+		id: 'potion',
+		name: 'Potion',
+		requires: undefined,
+	},
+	{
 		id: 'silver_heart',
 		name: 'Silver',
 		requires: {achievement: CantTouchThis.id},
@@ -53,6 +84,16 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		id: 'soulflame',
 		name: 'Soulflame',
 		requires: {achievement: DeckedOut.id},
+	},
+	{
+		id: 'slime_hearts',
+		name: 'Slime',
+		requires: undefined,
+	},
+	{
+		id: 'web',
+		name: 'Web',
+		requires: undefined,
 	},
 ]
 
