@@ -24,7 +24,7 @@ const Wipeout: Achievement = {
 			.forEach((row) => {
 				observer.subscribe(row.hooks.onKnockOut, () => {
 					knockouts += 1
-					component.incrementGoalProgress({goal: 0, progress: knockouts})
+					component.updateGoalProgress({goal: 0, progress: knockouts})
 				})
 			})
 

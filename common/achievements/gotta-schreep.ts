@@ -30,7 +30,7 @@ const GottaSchreep: Achievement = {
 			.forEach((row) => {
 				observer.subscribe(row.hooks.onKnockOut, () => {
 					if (isSleeping) {
-						component.incrementGoalProgress({goal: 0})
+						component.updateGoalProgress({goal: 0})
 					}
 				})
 			})

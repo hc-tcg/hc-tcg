@@ -36,7 +36,7 @@ const Ethogirl: Achievement = {
 			if (variants.size < 4) return
 			if (outcome.type !== 'player-won' || outcome.winner !== player.entity)
 				return
-			component.incrementGoalProgress({goal: 0, progress: variants.size})
+			component.updateGoalProgress({goal: 0, progress: variants.size})
 		})
 	},
 }

@@ -46,7 +46,7 @@ const LoyaltyIII: Achievement = {
 					steps = 1
 				}
 
-				component.incrementGoalProgress({goal: 0, progress: steps})
+				component.updateGoalProgress({goal: 0, progress: steps})
 			},
 		)
 	},

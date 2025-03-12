@@ -55,7 +55,7 @@ const AllCards: Achievement = {
 			if (outcome.type !== 'player-won' || outcome.winner !== player.entity)
 				return
 			for (const card of playedCards.values()) {
-				component.incrementGoalProgress({goal: card, progress: 1})
+				component.updateGoalProgress({goal: card, progress: 1})
 			}
 		})
 	},

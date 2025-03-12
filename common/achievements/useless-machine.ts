@@ -42,9 +42,9 @@ const UselessMachine: Achievement = {
 				}
 
 				if (newPlayerHand.length == 1) {
-					component.incrementGoalProgress({goal: 0, progress: 1})
+					component.updateGoalProgress({goal: 0, progress: 1})
 				} else if (newPlayerHand.length == 0) {
-					component.incrementGoalProgress({goal: 0, progress: 2})
+					component.updateGoalProgress({goal: 0, progress: 2})
 				}
 			},
 		)

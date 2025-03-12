@@ -39,7 +39,7 @@ const PoePoeEnforcer: Achievement = {
 					targetHermit.slot.row?.entity ===
 						player.opponentPlayer.activeRowEntity
 				) {
-					component.incrementGoalProgress({goal: 0})
+					component.updateGoalProgress({goal: 0})
 				}
 			},
 		)

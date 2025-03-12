@@ -35,7 +35,7 @@ const SUStainable: Achievement = {
 
 				if (su.props.id !== Composter.id) return
 
-				component.incrementGoalProgress({goal: 0, progress: 2})
+				component.updateGoalProgress({goal: 0, progress: 2})
 			},
 		)
 	},

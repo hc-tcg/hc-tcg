@@ -42,7 +42,7 @@ const MasterOfPuppets: Achievement = {
 
 		observer.subscribe(player.hooks.getAttack, () => {
 			if (mimicryHermitsUsed === 'both')
-				component.incrementGoalProgress({goal: 0})
+				component.updateGoalProgress({goal: 0})
 
 			mimicryHermitsUsed = null
 			return null

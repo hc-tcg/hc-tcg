@@ -32,7 +32,7 @@ const CertifiedZombie: Achievement = {
 		)
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			component.incrementGoalProgress({goal: 0, progress: rounds})
+			component.updateGoalProgress({goal: 0, progress: rounds})
 		})
 	},
 }

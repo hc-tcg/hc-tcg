@@ -27,7 +27,7 @@ const HallOfAll: Achievement = {
 				)
 			)
 				return
-			component.incrementGoalProgress({goal: 0})
+			component.updateGoalProgress({goal: 0})
 		})
 	},
 }

@@ -77,12 +77,12 @@ export class AchievementComponent {
 		}
 	}
 
-	public incrementGoalProgress({
+	public updateGoalProgress({
 		goal,
 		progress = 1,
 	}: {goal: number; progress?: number}) {
 		const progressChecker = this.checkCompletion(this.goals)
-		this.goals[goal] = (this.goals[goal] || 0) + progress
+		this.goals[goal] = progress
 		progressChecker()
 	}
 }

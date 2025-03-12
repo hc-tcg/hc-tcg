@@ -25,7 +25,7 @@ const PackOfWolves: Achievement = {
 				query.slot.attach,
 				query.slot.has(Wolf),
 			)
-			component.incrementGoalProgress({goal: 0, progress: boardCards.length})
+			component.updateGoalProgress({goal: 0, progress: boardCards.length})
 		})
 	},
 }

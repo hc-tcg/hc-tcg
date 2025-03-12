@@ -29,7 +29,7 @@ const ServerLag: Achievement = {
 			!playerLatestAttack.attacker.prizeCard
 		)
 			return
-		component.incrementGoalProgress({goal: 0})
+		component.updateGoalProgress({goal: 0})
 	},
 }
 

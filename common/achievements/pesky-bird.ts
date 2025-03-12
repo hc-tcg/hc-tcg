@@ -27,7 +27,7 @@ const PeskyBird: Achievement = {
 					if (!newSlot.inDiscardPile()) return
 					if (game.currentPlayerEntity !== player.entity) return
 					forcedDiscards += 1
-					component.incrementGoalProgress({goal: 0, progress: forcedDiscards})
+					component.updateGoalProgress({goal: 0, progress: forcedDiscards})
 				},
 			)
 		})

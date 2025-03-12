@@ -22,7 +22,7 @@ const GodsFavoritePrincess: Achievement = {
 			onCoinFlip.ACHIEVEMENTS,
 			(_card, coinFlips) => {
 				heads += coinFlips.filter((c) => c.result === 'heads').length
-				component.incrementGoalProgress({
+				component.updateGoalProgress({
 					goal: 0,
 					progress: heads,
 				})

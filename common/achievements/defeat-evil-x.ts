@@ -17,7 +17,7 @@ const DefeatEvilX: Achievement = {
 	onGameEnd(_game, player, component, outcome) {
 		if (outcome.type !== 'player-won') return
 		if (outcome.winner !== player.entity) return
-		component.incrementGoalProgress({goal: 0})
+		component.updateGoalProgress({goal: 0})
 	},
 }
 

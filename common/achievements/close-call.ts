@@ -32,7 +32,7 @@ const RedKing: Achievement = {
 
 		if (redHermits.length !== 5) return
 
-		component.incrementGoalProgress({goal: 0})
+		component.updateGoalProgress({goal: 0})
 	},
 }
 

@@ -48,7 +48,7 @@ const CantTouchThis: Achievement = {
 				return
 			}
 			missedAttacks += 1
-			component.incrementGoalProgress({goal: 0, progress: missedAttacks})
+			component.updateGoalProgress({goal: 0, progress: missedAttacks})
 		})
 	},
 }

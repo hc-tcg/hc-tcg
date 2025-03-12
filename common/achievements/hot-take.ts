@@ -25,7 +25,7 @@ const HotTake: Achievement = {
 				query.card.onBoard,
 				query.card.hasStatusEffect(FireEffect),
 			)
-			component.incrementGoalProgress({goal: 0, progress: burningHermits.length})
+			component.updateGoalProgress({goal: 0, progress: burningHermits.length})
 		}
 
 		observer.subscribeWithPriority(

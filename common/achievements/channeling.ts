@@ -54,7 +54,7 @@ const Channeling: Achievement = {
 					return
 
 				if (!damageRedirected) return
-				component.incrementGoalProgress({goal: 0})
+				component.updateGoalProgress({goal: 0})
 				damageRedirected = false
 			},
 		)
