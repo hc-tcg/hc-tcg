@@ -10,7 +10,7 @@ export function updateWarning(version: string) {
 		type: serverMessages.TOAST_SEND,
 		title: 'Server Restart Warning',
 		description: `The server is going to be updated in 15 minutes to version ${version}. Please finish your games.`,
-		image: 'waring_icon',
+		image: 'images/icons/warning_icon.png',
 	})
 	setTimeout(
 		() => {
@@ -18,7 +18,7 @@ export function updateWarning(version: string) {
 				type: serverMessages.TOAST_SEND,
 				title: 'Server Restart Warning',
 				description: `The server is going to be updated in 5 minutes to version ${version}. Please finish your games.`,
-				image: 'waring_icon',
+				image: 'images/icons/warning_icon.png',
 			})
 		},
 		60 * 10 * 1000,
@@ -29,7 +29,7 @@ export function updateWarning(version: string) {
 				type: serverMessages.TOAST_SEND,
 				title: 'Server Restart Warning',
 				description: `The server is going to be updated in under one minute to version ${version}. Please finish your games.`,
-				image: 'waring_icon',
+				image: 'images/icons/warning_icon.png',
 			})
 		},
 		60 * 14 * 1000,
