@@ -4,8 +4,9 @@ This project is built around the `express`, `pg`, `redux`, `react`, and `redux-s
 - `react` is used for rendering the visuals for the client.
 - `redux` is used on the client to maintain state. `redux-saga` is used to run background tasks on the client, such as listening for the opponent to make a move and updating the game state as neccesary.
 - `express` is used on the server for HTTP endpoints.
+- `pg` is the library we use to connect to our postgres database.
 
-### Files
+### Some important files and directories in the projects.
 
 - `client` - The code for the client.
 	- `app` - The pages for the game.
