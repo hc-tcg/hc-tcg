@@ -110,7 +110,17 @@ export default class ComponentTable {
 		type: ComponentClass<T>,
 		...predicates: Array<ComponentQuery<T>>
 	): T | null {
-		return this.filter(type, ...predicates)[0] || null
+		assert(
+			(type as any).table,
+			`Found component type \`${type.name}\` has undefined table`,
+		)
+		return (
+			(Object.values(this.tables[(type as any).table] || {}).find(
+				(value) =>
+					value instanceof type &&
+					predicates.every((predicate) => predicate(this.game, value as T)),
+			) as any) || null
+		)
 	}
 
 	public findEntity<T extends Component>(
