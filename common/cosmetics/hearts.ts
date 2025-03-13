@@ -62,6 +62,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'wooden',
 		name: 'Heart Stand',
+		offVariantName: 'wooden_empty',
 		requires: {achievement: UseLikeAHermit.id},
 	},
 	{
@@ -73,6 +74,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'potion',
 		name: 'Potion',
+		offVariantName: 'potion_empty',
 		requires: undefined,
 	},
 	{
