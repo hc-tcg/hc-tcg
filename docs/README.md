@@ -24,11 +24,7 @@ This project is built around the `express`, `pg`, `redux`, `react`, and `redux-s
 		- `matchmaking.ts` - All the code to manage creating games.
 		- `game.ts` - The code to run the game!
 
-## How to use Game APIs
+## Game Documentation
 
-Sections:
-- [Cards](./cards.md)
-- [Status Effects](./status-effects.md)
-- [Components](./components.md)
-- [Hooks](./hooks.md)
+See [/GAME.md](./GAME.md).
 
