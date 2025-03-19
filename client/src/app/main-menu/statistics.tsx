@@ -51,7 +51,20 @@ const TYPE_COLORS: Record<TypeT, Array<number>> = {
 	speedrunner: [223, 226, 36],
 	terraform: [217, 119, 147],
 	miner: [110, 105, 108],
-	any: [255, 255, 255],
+	anarchist: [180, 167, 214],
+	athlete: [0, 0, 255],
+	bard: [255, 217, 102],
+	challenger: [67, 67, 67],
+	collector: [204, 65, 37],
+	diplomat: [28, 69, 135],
+	historian: [152, 0, 0],
+	inventor: [217, 217, 217],
+	looper: [60, 210, 216],
+	pacifist: [255, 255, 255],
+	scavenger: [120, 63, 4],
+	any: [25, 25, 25],
+	everything: [25, 25, 25],
+	mob: [25, 25, 25],
 }
 
 // Code modified from: https://stackoverflow.com/questions/28569667/fill-chart-js-bar-chart-with-diagonal-stripes-or-other-patterns

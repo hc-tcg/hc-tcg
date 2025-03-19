@@ -4,7 +4,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import {onTurnEnd} from '../types/priorities'
+import {afterAttack, onTurnEnd} from '../types/priorities'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
 const DoubleItemPlayedEffect: StatusEffect<PlayerComponent> = {
