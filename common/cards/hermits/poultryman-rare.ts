@@ -1,7 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
-import {beforeAttack} from '../../types/priorities'
+import {afterApply, beforeAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
 import Egg from '../single-use/egg'
 import {Hermit} from '../types'
@@ -30,7 +30,7 @@ const PoultryManRare: Hermit = {
 		cost: ['farm', 'farm', 'any'],
 		damage: 90,
 		power:
-			'When played with egg, egg is returned to your hand instead of being discarded.',
+			'When used with an Egg effect card, Egg is returned to your hand instead of being discarded.',
 	},
 	onAttach(
 		game: GameModel,
@@ -56,16 +56,20 @@ const PoultryManRare: Hermit = {
 				)
 					return
 
-				observer.subscribe(player.hooks.afterApply, () => {
-					game.components
-						.find(
-							CardComponent,
-							query.card.slot(query.slot.singleUse),
-							query.card.is(Egg),
-						)
-						?.draw()
-					observer.unsubscribe(player.hooks.afterApply)
-				})
+				observer.subscribeWithPriority(
+					player.hooks.afterApply,
+					afterApply.REMOVE_SINGLE_USE,
+					() => {
+						game.components
+							.find(
+								CardComponent,
+								query.card.slot(query.slot.singleUse),
+								query.card.is(Egg),
+							)
+							?.draw()
+						observer.unsubscribe(player.hooks.afterApply)
+					},
+				)
 			},
 		)
 	},

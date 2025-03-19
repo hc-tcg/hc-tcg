@@ -70,7 +70,7 @@ const OrionSoundRare: Hermit = {
 					message: 'Choose an Active or AFK Hermit to heal.',
 					canPick: pickCondition,
 					onResult(pickedSlot) {
-						const pickedCard = pickedSlot.getCard()
+						const pickedCard = pickedSlot.card
 						if (!pickedCard) return
 
 						game.components

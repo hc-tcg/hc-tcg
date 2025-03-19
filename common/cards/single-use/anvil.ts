@@ -23,7 +23,7 @@ function getTargetHermits(game: GameModel, player: PlayerComponent) {
 		.filter(
 			RowComponent,
 			query.row.opponentPlayer,
-			query.row.hermitSlotOccupied,
+			query.row.hasHermit,
 			(_game, row) =>
 				player.activeRow !== null && row.index >= player.activeRow?.index,
 		)

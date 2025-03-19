@@ -1,3 +1,4 @@
+import {Appearance} from 'common/cosmetics/types'
 import {PlayerEntity} from 'common/entities'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
@@ -18,10 +19,12 @@ type Messages = [
 	{
 		type: typeof localMessages.CLIENT_CONNECTED
 		playerId: PlayerId
+		playerUuid: string
 		playerName: string
 		playerSecret: string
 		minecraftName: string
 		deck: Deck
+		appearance: Appearance
 		socket: any
 	},
 	{type: typeof localMessages.CLIENT_DISCONNECTED; socket: any},

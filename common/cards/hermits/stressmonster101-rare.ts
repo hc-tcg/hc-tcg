@@ -54,7 +54,6 @@ const StressMonster101Rare: Hermit = {
 					log: (values) => ` and took ${values.damage} backlash damage`,
 				})
 				const attackDamage = component.slot.row.health
-				console.log(attackDamage)
 				if (attackDamage === null) return
 				attack.addDamage(component.entity, attackDamage)
 				backlashAttack.addDamage(component.entity, attackDamage)

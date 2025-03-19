@@ -5,7 +5,12 @@ import {SlotEntity} from 'common/entities'
 import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
 import {HermitAttackType} from 'common/types/attack'
-import {CopyAttack, DragCards, SelectCards} from 'common/types/modal-requests'
+import {
+	CopyAttack,
+	DragCards,
+	ModalResult,
+	SelectCards,
+} from 'common/types/modal-requests'
 import {
 	LocalCopyAttack,
 	LocalDragCards,
@@ -20,7 +25,6 @@ import {
 } from 'common/types/turn-action-data'
 import {executeAttacks} from 'common/utils/attacks'
 import {applySingleUse} from 'common/utils/board'
-import {getLocalModalData} from '../utils/state-gen'
 
 function getAttack(
 	game: GameModel,
@@ -154,7 +158,7 @@ export function playCardAction(
 	)
 
 	assert(
-		!pickedSlot.getCard(),
+		!pickedSlot.card,
 		'You can not play a card in a slot with a card in it',
 	)
 
@@ -292,7 +296,7 @@ export function changeActiveHermitAction(
 
 export function modalRequestAction(
 	game: GameModel,
-	modalResult:
+	localModalResult:
 		| LocalSelectCards.Result
 		| LocalCopyAttack.Result
 		| LocalDragCards.Result,
@@ -301,23 +305,26 @@ export function modalRequestAction(
 
 	assert(
 		modalRequest,
-		`Client sent modal result without request! Result: ${modalResult}`,
+		`Client sent modal result without request! Result: ${localModalResult}`,
 	)
+
+	let modalResult: ModalResult
 
 	// Call the bound function with the pick result
 	if (modalRequest.modal.type === 'selectCards') {
 		let modalRequest_ = modalRequest as SelectCards.Request
-		let modal = modalResult as LocalSelectCards.Result
-		modalRequest_.onResult({
+		let modal = localModalResult as LocalSelectCards.Result
+		modalResult = {
 			...modal,
 			cards: modal.cards
 				? modal.cards.map((entity) => game.components.get(entity)!)
 				: null,
-		} as SelectCards.Result)
+		} as SelectCards.Result
+		modalRequest_.onResult(modalResult)
 	} else if (modalRequest.modal.type === 'dragCards') {
 		let modalRequest_ = modalRequest as DragCards.Request
-		let modal = modalResult as LocalDragCards.Result
-		modalRequest_.onResult({
+		let modal = localModalResult as LocalDragCards.Result
+		modalResult = {
 			...modal,
 			leftCards: modal.leftCards
 				? modal.leftCards.map((entity) => game.components.get(entity)!)
@@ -325,19 +332,20 @@ export function modalRequestAction(
 			rightCards: modal.rightCards
 				? modal.rightCards.map((entity) => game.components.get(entity)!)
 				: null,
-		} as DragCards.Result)
+		} as DragCards.Result
+		modalRequest_.onResult(modalResult as DragCards.Result)
 	} else if (modalRequest.modal.type === 'copyAttack') {
 		let modalRequest_ = modalRequest as CopyAttack.Request
-		let modal = modalResult as CopyAttack.Result
+		modalResult = localModalResult as CopyAttack.Result
+		let modal = localModalResult as CopyAttack.Result
 		assert(
-			!modal.pick ||
-				!(
-					getLocalModalData(game, modalRequest.modal) as LocalCopyAttack.Data
-				).blockedActions.includes(attackToAttackAction[modal.pick]),
-			`Client picked a blocked attack to copy: ${modal.pick}`,
+			!modal.pick || modalRequest.modal.availableAttacks.includes(modal.pick),
+			`Client picked an action that was not available to copy: ${modal.pick}`,
 		)
 		modalRequest_.onResult(modal)
 	} else throw Error('Unknown modal type')
+
+	game.hooks.onModalRequestResolve.call(modalRequest, modalResult)
 
 	// We completed the modal request, remove it
 	game.state.modalRequests.shift()
@@ -379,7 +387,7 @@ export function pickRequestAction(
 
 	assert(canPick, 'Invalid slots can not be picked.')
 
-	const card = slotInfo.getCard()
+	const card = slotInfo.card
 
 	// Because Worm Man, all cards need to be flipped over to normal once they're picked
 	if (card) card.turnedOver = false
@@ -387,6 +395,8 @@ export function pickRequestAction(
 	pickRequest.onResult(slotInfo)
 	let player = game.components.get(pickRequest.player)
 	if (player) player.pickableSlots = null
+
+	game.hooks.onPickRequestResolve.call(pickRequest, slotInfo)
 
 	// We completed this pick request, remove it
 	game.state.pickRequests.shift()

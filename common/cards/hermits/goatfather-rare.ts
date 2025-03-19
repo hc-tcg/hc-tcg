@@ -57,7 +57,7 @@ const GoatfatherRare: Hermit = {
 					.filter(
 						RowComponent,
 						query.row.opponentPlayer,
-						query.row.hermitSlotOccupied,
+						query.row.hasHermit,
 						(_game, row) =>
 							opponentActiveHermit !== null &&
 							opponentActiveHermit.slot.inRow() &&

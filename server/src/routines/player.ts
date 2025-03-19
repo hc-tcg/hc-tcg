@@ -1,3 +1,7 @@
+import {ACHIEVEMENTS} from 'common/achievements'
+import {DEBUG_CONFIG} from 'common/config'
+import {COSMETICS} from 'common/cosmetics'
+import {Background, Border, Coin, Heart, Title} from 'common/cosmetics/types'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
@@ -5,6 +9,13 @@ import {
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalGameState} from 'common/types/game-state'
+import {censorString} from 'common/utils/formatting'
+import {
+	getAchievementProgress,
+	setAppearance,
+	setMinecraftName,
+	setUsername,
+} from 'db/db-reciever'
 import {GameController} from 'game-controller'
 import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
 import {getGame} from 'selectors'
@@ -44,7 +55,8 @@ function getLocalGameStateForPlayer(
 export function* playerConnectedSaga(
 	action: LocalMessageTable[typeof localMessages.CLIENT_CONNECTED],
 ) {
-	const {playerName, minecraftName, deck, socket} = action
+	const {playerName, minecraftName, playerUuid, deck, appearance, socket} =
+		action
 
 	if (action.playerId) {
 		const existingPlayer = root.players[action.playerId]
@@ -62,15 +74,31 @@ export function* playerConnectedSaga(
 				type: serverMessages.PLAYER_RECONNECTED,
 				game: game && getLocalGameStateForPlayer(game, existingPlayer.id),
 				messages: game?.chat,
+				spectatorCode: game?.spectatorCode ?? undefined,
 			})
 		} else {
-			console.log('invalid player connected')
+			const time = Date.now()
+			const date = new Date(time)
+			console.info(
+				`${date.toLocaleTimeString('it-IT')}: Invalid player connected.`,
+			)
 			broadcast([{socket}], {type: serverMessages.INVALID_PLAYER})
 		}
 		return
 	}
 
-	const newPlayer = new PlayerModel(playerName, minecraftName, socket)
+	const achievementProgress = root.db.connected
+		? yield* getAchievementProgress(playerUuid)
+		: {}
+
+	const newPlayer = new PlayerModel(
+		playerName,
+		minecraftName,
+		playerUuid,
+		appearance,
+		achievementProgress,
+		socket,
+	)
 	if (deck) newPlayer.setPlayerDeck(deck)
 	root.addPlayer(newPlayer)
 
@@ -115,16 +143,17 @@ export function* playerDisconnectedSaga(
 	}
 }
 
-export function* updateDeckSaga(
-	action: RecievedClientMessage<typeof clientMessages.SELECT_DECK>,
+export function* updateUsernameSaga(
+	action: RecievedClientMessage<typeof clientMessages.UPDATE_USERNAME>,
 ) {
 	const {playerId} = action
-	let playerDeck = action.payload.deck
+	let username = action.payload.name
 	const player = root.players[playerId]
 	if (!player) return
-	player.setPlayerDeck(playerDeck)
-	if (!player.deck) return
-	broadcast([player], {type: serverMessages.NEW_DECK, deck: player.deck})
+	player.name = username
+	player.censoredName = censorString(username)
+
+	yield* setUsername(player.uuid, username)
 }
 
 export function* updateMinecraftNameSaga(
@@ -134,12 +163,9 @@ export function* updateMinecraftNameSaga(
 	let minecraftName = action.payload.name
 	const player = root.players[playerId]
 	if (!player) return
-	player.setMinecraftName(minecraftName)
+	player.minecraftName = minecraftName
 
-	broadcast([player], {
-		type: serverMessages.NEW_MINECRAFT_NAME,
-		name: player.minecraftName,
-	})
+	yield* setMinecraftName(player.uuid, minecraftName)
 }
 
 export function* loadUpdatesSaga(action: any) {
@@ -154,5 +180,47 @@ export function* loadUpdatesSaga(action: any) {
 	broadcast([player], {
 		type: serverMessages.LOAD_UPDATES,
 		updates: root.updates,
+	})
+}
+
+export function* updateCosmeticSaga(
+	action: RecievedClientMessage<typeof clientMessages.SET_COSMETIC>,
+) {
+	const player = root.players[action.playerId]
+	const cosmetic = COSMETICS[action.payload.cosmetic]
+	if (!player) return
+	let isUnlocked = true
+	if (cosmetic?.requires && ACHIEVEMENTS[cosmetic?.requires.achievement]) {
+		const achievement = ACHIEVEMENTS[cosmetic?.requires.achievement]
+		isUnlocked =
+			!!player.achievementProgress[achievement?.numericId]?.levels[
+				cosmetic.requires.level || 0
+			]
+	}
+	if (DEBUG_CONFIG.unlockAllCosmetics) isUnlocked = true
+	if (!cosmetic || !isUnlocked) {
+		broadcast([player], {type: serverMessages.COSMETICS_INVALID})
+	}
+	switch (cosmetic.type) {
+		case 'title':
+			player.appearance.title = cosmetic as Title
+			break
+		case 'coin':
+			player.appearance.coin = cosmetic as Coin
+			break
+		case 'heart':
+			player.appearance.heart = cosmetic as Heart
+			break
+		case 'background':
+			player.appearance.background = cosmetic as Background
+			break
+		case 'border':
+			player.appearance.border = cosmetic as Border
+			break
+	}
+	yield* setAppearance(player)
+	broadcast([player], {
+		type: serverMessages.COSMETICS_UPDATE,
+		appearance: player.appearance,
 	})
 }

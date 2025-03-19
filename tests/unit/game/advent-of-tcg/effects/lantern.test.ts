@@ -61,7 +61,7 @@ describe('Test Lantern Single Use', () => {
 					).toStrictEqual([BalancedItem, TerraformItem])
 					expect(
 						game.currentPlayer
-							.getDeck()
+							.getDrawPile()
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
 					).toStrictEqual([BuilderItem, MinerItem, Feather])

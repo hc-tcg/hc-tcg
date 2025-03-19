@@ -47,6 +47,21 @@ const LightningRod: Attach = {
 				if (attack.target?.player.entity !== player.entity) return
 
 				attack.redirect(component.entity, component.slot.row?.entity)
+			},
+		)
+
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.RESOLVE_AFTER_MODIFIERS,
+			(attack) => {
+				if (
+					!attack
+						.getHistory('redirect')
+						.find((entry) => entry.source === component.entity)
+				)
+					return
+				if (attack.calculateDamage() <= 0) return
+
 				used = true
 			},
 		)

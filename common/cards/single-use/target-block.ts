@@ -25,7 +25,7 @@ const TargetBlock: SingleUse = {
 	name: 'Target Block',
 	expansion: 'alter_egos',
 	rarity: 'rare',
-	tokens: 3,
+	tokens: 4,
 	description:
 		"Choose one of your opponent's AFK Hermits to take all damage done during this turn.",
 	attachCondition: query.every(
@@ -51,7 +51,7 @@ const TargetBlock: SingleUse = {
 				applySingleUse(game, pickedSlot)
 				game.components
 					.new(StatusEffectComponent, TargetBlockEffect, component.entity)
-					.apply(pickedSlot.getCard()?.entity)
+					.apply(pickedSlot.card?.entity)
 			},
 		})
 	},

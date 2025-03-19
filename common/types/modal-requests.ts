@@ -9,7 +9,7 @@ export type ModalData = SelectCards.Data | CopyAttack.Data | DragCards.Data
 export type ModalResult =
 	| SelectCards.Result
 	| CopyAttack.Result
-	| DragCards.Request
+	| DragCards.Result
 
 export namespace SelectCards {
 	export type Request = {
@@ -118,6 +118,8 @@ export namespace CopyAttack {
 		hermitCard: CardEntity
 		/** Show a close button on this modal. */
 		cancelable: boolean
+		/** The actions that can not be used in this modal */
+		availableAttacks: Array<'primary' | 'secondary'>
 	}
 
 	export type Result =

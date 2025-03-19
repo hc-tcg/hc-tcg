@@ -1,0 +1,106 @@
+# This workflow automatically runs up to 500 fuzz tests every hour, and creates a github issue for the first failure found.
+
+name: Fuzz Tests
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: 0 * * * *
+
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  fuzz:
+    name: Fuzz Tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      failed_test: ${{ steps.fuzz.outputs.test }}
+      traceback: ${{ steps.fuzz.outputs.traceback }}
+    if: (github.event_name == 'schedule' && github.repository == 'hc-tcg/hc-tcg') || (github.event_name != 'schedule')
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 2
+
+      - name: Setup Node
+        run: |
+          npm install
+
+      - name: Create debug config
+        run: cp ./common/config/debug-config.example.js ./common/config/debug-config.js
+
+      - name: Run Fuzz Tests
+        id: fuzz
+        run: |
+            echo "Starting fuzz tests...";
+            FUZZ_RESULT=$(npm run --silent test:fuzz -- fuzz 500 --fail-fast --json);
+            echo $FUZZ_RESULT;
+            LAST_ITEM=$(echo $FUZZ_RESULT | jq 'map(select(.type=="failure")) | last');
+            echo $LAST_ITEM;
+            if [ "$LAST_ITEM" != null ]; then
+              SEED=$(echo $LAST_ITEM | jq -r ".seed");
+              echo "test=$SEED" >> $GITHUB_OUTPUT
+              TRACEBACK=$(echo $LAST_ITEM | jq -r ".traceback")
+              echo "traceback<<EOF" >> $GITHUB_OUTPUT
+              echo "$TRACEBACK" >> $GITHUB_OUTPUT
+              echo "EOF" >> $GITHUB_OUTPUT
+            else
+              echo "No tests failed... doing nothing";
+              echo "test=NOTHING" >> "$GITHUB_OUTPUT";
+            fi;
+
+  make_issue:
+    name: Make Issue If Neccesary
+    permissions:
+      issues: write
+    runs-on: ubuntu-latest
+    needs: fuzz
+    if: "${{ needs.fuzz.outputs.failed_test != 'NOTHING' }}"
+    steps:
+      - run: echo "$SEED"
+      - name: Create issue
+        run: |
+          if [[ $CLOSE_PREVIOUS == true ]]; then
+            previous_issue_number=$(gh issue list \
+              --label "$LABELS" \
+              --json number \
+              --jq '.[0].number')
+            if [[ -n $previous_issue_number ]]; then
+              gh issue close "$previous_issue_number"
+              gh issue unpin "$previous_issue_number"
+            fi
+          fi
+          new_issue_url=$(gh issue create \
+            --title "$TITLE" \
+            --assignee "$ASSIGNEES" \
+            --label "$LABELS" \
+            --body "$BODY")
+          if [[ $PINNED == true ]]; then
+            gh issue pin "$new_issue_url"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          TITLE: Fuzz Testing Failure Detected (`${{ needs.fuzz.outputs.failed_test }}`)
+          LABELS: fuzz testing
+          BODY: |
+            Fuzz Testing Failure Detected. Check with the folliwng command:
+            ```sh
+            npm run test:fuzz -- debug ${{ needs.fuzz.outputs.failed_test }}
+            ```
+
+            **Traceback:**
+            ```
+            ${{ needs.fuzz.outputs.traceback }}
+            ```
+          PINNED: false
+          CLOSE_PREVIOUS: false
+

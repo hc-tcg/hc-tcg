@@ -1,0 +1,820 @@
+$width: 34vh;
+$expandedWidth: 85vh;
+$height: 52vh;
+$time: 0.25s;
+
+$mobileWidth: 90vw;
+$mobileHeight: 20vh;
+$expandedHeight: $mobileHeight * 3 + 1.5 * 3;
+
+.buttonContainer {
+	width: $width;
+	height: $height;
+
+	&.disablePointer {
+		animation: disablePointer $time forwards;
+	}
+
+	&.enablePointer {
+		animation: enablePointer $time forwards;
+	}
+}
+
+.backgroundContainer {
+	position: absolute;
+	width: $width;
+	height: $height;
+	left: 0;
+	transform-origin: center;
+	overflow: hidden;
+	z-index: 90;
+	scale: 1;
+	transition: scale 0.05s ease-out;
+
+	.rightOverlay {
+		pointer-events: none;
+	}
+
+	&.grow {
+		animation: grow $time forwards;
+		transition: translate $time ease-out;
+
+		.rightOverlay,
+		.returnButton {
+			opacity: 100%;
+			pointer-events: all;
+		}
+	}
+
+	&.shrink {
+		// Note this animation is not "forwards" as we want to be able to scale after
+		animation: shrink $time;
+		transition: translate $time ease-out;
+
+		.rightOverlay,
+		.returnButton {
+			opacity: 0%;
+		}
+
+		&:hover {
+			scale: 1.05;
+		}
+	}
+
+	&.hide {
+		z-index: 80;
+		pointer-events: none;
+		animation: hideAnim $time forwards;
+	}
+
+	&.show {
+		// Note this animation is not "forwards" as we want to be able to scale after
+		animation: showAnim $time;
+
+		&:hover {
+			scale: 1.05;
+		}
+	}
+
+	&:has(> .leftOverlay > .button > .rematch:hover) {
+		&:hover {
+			scale: 1;
+		}
+	}
+}
+
+.backgroundImage {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	border: 2px black solid;
+	object-fit: cover;
+	object-position: left;
+	z-index: -2;
+}
+
+.vingette {
+	width: 100%;
+	height: 100%;
+	box-shadow: inset 0 0 30px black;
+	background: linear-gradient(0deg, black 20%, rgba(0, 0, 0, 0) 40%);
+}
+
+.hermitImage {
+	filter: drop-shadow(0px 0px 15px black);
+	width: $width;
+	height: calc($height * 0.7);
+	object-fit: contain;
+	position: absolute;
+	top: 4vh;
+	pointer-events: none;
+	z-index: -1;
+}
+
+.button {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	text-align: left;
+	font-family: Minecraft;
+	width: 100%;
+	height: 100%;
+}
+
+.returnButton {
+	position: absolute;
+	display: flex;
+	flex-direction: row;
+	top: 1vh;
+	left: 1vh;
+	font-size: 1vh;
+	align-items: center;
+	background-color: rgba(0, 0, 0, 0.637);
+	border-radius: 0.5vh;
+	padding: 0.5vh;
+	border: 1px rgba(0, 0, 0, 0) solid;
+	color: white;
+	transition: opacity $time linear;
+	opacity: 0%;
+	cursor: pointer;
+
+	> img {
+		padding-top: 0.85vh;
+		padding-bottom: 0.85vh;
+		height: 3.2vh;
+		width: 3.2vh;
+		filter: invert(1);
+	}
+
+	> p {
+		font-size: 1.5vh;
+		transform: translateY(1px);
+		padding-right: 0.5vh;
+	}
+
+	&.disableBack {
+		pointer-events: none;
+		cursor: default;
+		opacity: 0% !important;
+	}
+
+	&:hover {
+		border: 1px var(--text-light) solid;
+	}
+
+	&:active {
+		transform: translateY(1px);
+	}
+}
+
+.text {
+	color: var(--text-light);
+	font-size: 1.3vh;
+	width: $width;
+	padding: 2vh 2vh 0;
+
+	h1 {
+		font-size: 2vh;
+		padding-bottom: 0.5vh;
+	}
+
+	&.rematch {
+		width: calc($width - 4vh);
+		background-color: var(--gray-900);
+		box-shadow: inset 0 -4px 0 0 var(--gray-500),
+			inset 1px 1px 0 0 var(--gray-100),
+			inset -1px -5px 0 0 var(--gray-100);
+		margin-left: 2vh;
+		margin-top: 0.5vh;
+		scale: 1;
+		transform: scale(1);
+		transform-origin: center;
+		opacity: 100%;
+		height: min-content;
+		transition: scale 0.05s ease-out, opacity 0.1s ease-in,
+			transform 0.2s ease-in, height 0.2s ease-in, margin-top 0.2s ease-in;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 0.25rem;
+
+		> div {
+			transform: translateY(-0.75rem);
+		}
+
+		&.hide {
+			transform: scale(0);
+			opacity: 0%;
+			height: 0px;
+			margin-top: -2vh;
+		}
+
+		&:hover {
+			background-color: var(--gray-700);
+			scale: 1.05;
+		}
+
+		.title {
+			padding-bottom: 0;
+			font-size: 1rem;
+		}
+	}
+}
+
+.leftOverlay {
+	position: absolute;
+	top: 0%;
+	display: flex;
+	flex-direction: row;
+	height: 100%;
+	padding-bottom: 2vh;
+}
+
+.rightOverlay {
+	transition: opacity $time linear;
+	position: absolute;
+	top: 0%;
+	right: 0%;
+	opacity: 0%;
+	height: 100%;
+	width: calc(100% - $width);
+
+	&.disallowClicks {
+		pointer-events: none;
+	}
+}
+
+.spacer {
+	flex-grow: 1;
+}
+
+.filter {
+	width: 100%;
+	margin: 1vh;
+	margin-bottom: 0;
+}
+
+/* ANIMATIONS */
+@keyframes grow {
+	from {
+		width: $width;
+		pointer-events: none;
+	}
+
+	99% {
+		pointer-events: none;
+	}
+
+	to {
+		width: $expandedWidth;
+		pointer-events: all;
+	}
+}
+
+@keyframes shrink {
+	from {
+		scale: 1;
+		pointer-events: none;
+		width: $expandedWidth;
+	}
+
+	99% {
+		pointer-events: none;
+	}
+
+	to {
+		scale: 1;
+		pointer-events: all;
+		width: $width;
+	}
+}
+
+@keyframes hideAnim {
+	from {
+		scale: 100%;
+		opacity: 100%;
+	}
+
+	to {
+		scale: 80%;
+		opacity: 0%;
+	}
+}
+
+@keyframes showAnim {
+	from {
+		z-index: 80;
+		scale: 80%;
+		opacity: 0%;
+	}
+
+	to {
+		z-index: 90;
+		scale: 100%;
+		opacity: 100%;
+	}
+}
+
+@keyframes disablePointer {
+	from {
+		pointer-events: all;
+		cursor: pointer;
+	}
+
+	1% {
+		pointer-events: none;
+		cursor: default;
+	}
+
+	to {
+		pointer-events: none;
+	}
+}
+
+@keyframes enablePointer {
+	from {
+		pointer-events: none;
+	}
+
+	99% {
+		pointer-events: none;
+		cursor: default;
+	}
+
+	to {
+		pointer-events: all;
+		cursor: pointer;
+	}
+}
+
+////////////
+/* GAME MODE BUTTON COMPONENTS */
+////////////
+
+.buttonMenu {
+	height: 100%;
+	width: 100%;
+	color: white;
+	overflow: hidden;
+	text-align: center;
+	transition: opacity;
+	background-color: rgba(0, 0, 0, 0.7);
+
+	.largeButton {
+		height: 5vh;
+		width: 100%;
+	}
+
+	> * {
+		width: calc($expandedWidth - $width);
+		height: 100%;
+		animation: timedShow 0.25s forwards;
+	}
+
+	.chooseDeck {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 0.5vh;
+		padding: 2vh;
+
+		.deckSelector {
+			margin: 1vh;
+			overflow-y: auto;
+			width: 100%;
+			flex-grow: 1;
+			overflow-x: hidden;
+
+			.deck {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				gap: 0.5vh;
+				margin-right: 0.5vh;
+				padding: 0.5vh;
+				user-select: none;
+				cursor: pointer;
+				height: 4vh;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				width: 100%;
+				font-size: 1.5vh;
+
+				&:not(.selectedDeck):hover {
+					filter: brightness(1.2);
+					background-color: rgba(5, 5, 5, 0.5);
+				}
+
+				&.selectedDeck {
+					color: gold;
+					text-indent: 0.2vh;
+					transition: all 0.25s ease-in-out;
+					background-color: var(--gray-700);
+				}
+
+				.deckName {
+					text-overflow: ellipsis;
+					overflow: hidden;
+				}
+
+				// @TODO needs changing to vh, can't do bc no db
+				.multiColoredCircle {
+					width: 0.5rem;
+					height: 2rem;
+					display: flex;
+					flex-direction: column;
+					gap: 4px;
+				}
+
+				.singleTag {
+					flex-grow: 1;
+					border-radius: 6px;
+				}
+
+				.deckImage {
+					display: grid;
+					place-content: center;
+					border-radius: 0.5vh;
+					width: 2.75vh;
+					height: 2.75vh;
+					flex-shrink: 0;
+
+					> img {
+						height: 2vh;
+						filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
+					}
+				}
+			}
+
+			.noResults {
+				padding: 0.5rem 0;
+				color: var(--text-light);
+				width: 100%;
+				text-align: center;
+			}
+		}
+
+		.deckSelectorInput {
+			box-shadow: inset 0 -4px 1px, inset 1px 1px 0 1px;
+			font-size: 1.8vh;
+
+			&::placeholder {
+				font-size: 1.5vh;
+				padding-left: 0.3vh;
+			}
+		}
+
+		.row {
+			width: 100%;
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+			grid-gap: 0.5vh;
+		}
+	}
+
+	.enterCode {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 0.5vh;
+		padding: 2vh;
+
+		input {
+			box-shadow: inset 0 -1px 1px, inset 1px 1px 0 1px;
+			font-size: 1.8vh;
+			text-align: center;
+
+			&::placeholder {
+				font-size: 1.5vh;
+				line-height: 100%;
+			}
+		}
+	}
+
+	.queue {
+		color: white;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 2.5vh;
+		padding: 2vh;
+
+		.deck,
+		.codes {
+			margin: 0 1vh;
+			max-width: 100%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			user-select: none;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+
+		.deck {
+			gap: 0.5vh;
+			padding: 0.75vh 1.5vh;
+			background-color: var(--gray-600);
+			border-radius: 0.5vh;
+
+			.deckName {
+				text-overflow: ellipsis;
+				overflow: hidden;
+			}
+
+			.deckImage {
+				display: grid;
+				place-content: center;
+				padding: 0.5vh;
+				gap: 0.5vh;
+				height: 2.75vh;
+				width: 2.75vh;
+				flex-shrink: 0;
+				border-radius: 0.5vh;
+
+				> img {
+					height: 2vh;
+					filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
+				}
+			}
+		}
+
+		.codes {
+			gap: 1.5vh;
+
+			.code {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 0.5vh;
+				padding: 0.75vh 1.5vh;
+				background-color: var(--gray-600);
+				border-radius: 0.5vh;
+
+				.copy {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					background-color: var(--gray-700);
+					border-radius: 0.5vh;
+					padding: 0.75vh;
+					gap: 0.5vh;
+
+					&:hover {
+						cursor: pointer;
+						background-color: var(--gray-800);
+					}
+				}
+			}
+		}
+
+		.timedMessage {
+			opacity: 0%;
+			animation: timedShow 2s 8s forwards;
+
+			a {
+				color: white !important;
+			}
+		}
+	}
+
+	.optionsSelect {
+		gap: 0.5vh;
+		padding: 2vh;
+
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+
+		.option {
+			height: 50%;
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+	}
+}
+
+.usesIcon {
+	background-color: var(--gray-500);
+
+	&.farm {
+		background-color: rgb(124, 204, 12);
+	}
+
+	&.redstone {
+		background-color: rgb(185, 33, 42);
+	}
+
+	&.prankster {
+		background-color: rgb(116, 55, 168);
+	}
+
+	&.explorer {
+		background-color: rgb(103, 138, 190);
+	}
+
+	&.balanced {
+		background-color: rgb(101, 124, 50);
+	}
+
+	&.builder {
+		background-color: rgb(184, 162, 154);
+	}
+
+	&.pvp {
+		background-color: rgb(85, 202, 194);
+	}
+
+	&.speedrunner {
+		background-color: rgb(223, 226, 36);
+	}
+
+	&.terraform {
+		background-color: rgb(217, 119, 147);
+	}
+
+	&.miner {
+		background-color: rgb(110, 105, 108);
+	}
+}
+
+.rematchTimeRemaining {
+	background-color: rgb(217, 119, 147);
+	color: black;
+	width: max-content;
+	margin-left: -3px;
+	align-items: baseline;
+	text-align: center;
+	justify-content: center;
+	border-radius: 5px;
+	font-size: 1rem;
+	line-height: 1rem;
+	padding: 5px;
+}
+
+@keyframes timedShow {
+	from {
+		opacity: 0%;
+	}
+
+	to {
+		opacity: 100%;
+	}
+}
+
+@media (orientation: portrait) {
+	.buttonContainer {
+		width: $mobileWidth;
+		height: $mobileHeight;
+	}
+
+	.backgroundContainer {
+		width: $mobileWidth;
+		height: $mobileHeight;
+		top: 0;
+		left: auto;
+	}
+
+	.queue {
+		width: $mobileWidth;
+		background-color: var(--gray-900);
+		border: 2px black solid;
+	}
+
+	.enterCode {
+		width: $mobileWidth;
+		background-color: var(--gray-900);
+		border: 2px black solid;
+	}
+
+	@keyframes grow {
+		from {
+			height: $mobileHeight;
+			pointer-events: none;
+		}
+
+		99% {
+			pointer-events: none;
+		}
+
+		to {
+			height: $expandedHeight;
+			pointer-events: all;
+		}
+	}
+
+	@keyframes shrink {
+		from {
+			scale: 1;
+			pointer-events: none;
+			height: $expandedHeight;
+		}
+
+		99% {
+			pointer-events: none;
+		}
+
+		to {
+			scale: 1;
+			pointer-events: all;
+			height: $mobileHeight;
+		}
+	}
+
+	.leftOverlay {
+		width: 100%;
+	}
+
+	.spacer {
+		max-height: 2vh;
+	}
+
+	.text {
+		position: absolute;
+		left: 0px;
+		top: 5vh;
+		transition: top 0.2s ease-in-out;
+
+		&.makeHigherOnMobile {
+			top: 2vh;
+		}
+	}
+
+	.vingette {
+		width: 100%;
+		height: 100%;
+		box-shadow: inset 0 0 30px black;
+		background: linear-gradient(270deg, rgba(0, 0, 0, 0) 20%, black 80%);
+	}
+
+	.hermitImage {
+		top: 5px;
+		right: -20px;
+	}
+
+	.rightOverlay {
+		transition: opacity $time linear;
+		position: absolute;
+		top: 30%;
+		right: 0%;
+		opacity: 0%;
+		height: 70%;
+		width: 100%;
+	}
+
+	.chooseDeck {
+		width: 100%;
+		background-color: var(--gray-900);
+		border: 2px black solid;
+	}
+
+	.optionsSelect {
+		width: 100%;
+		background-color: var(--gray-900);
+		border: 2px black solid;
+	}
+
+	.text {
+		&.rematch {
+			top: 65%;
+			height: min-content;
+			height: 2.5rem;
+			line-height: 1rem;
+			margin-top: 0;
+			display: flex;
+			flex-direction: row;
+			gap: 0.5rem;
+			width: min-content;
+			text-wrap: nowrap;
+			align-items: center;
+			justify-content: center;
+			padding: 0.5rem;
+
+			> div {
+				transform: translateY(-0.125rem);
+			}
+		}
+
+		&.cancel {
+			left: 42%;
+		}
+	}
+
+	.rematchTimeRemaining {
+		margin-left: 0px;
+	}
+
+	.backgroundImage {
+		object-position: top;
+		object-fit: none;
+	}
+}

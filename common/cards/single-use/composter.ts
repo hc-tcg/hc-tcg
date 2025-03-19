@@ -14,11 +14,11 @@ const Composter: SingleUse = {
 	rarity: 'common',
 	tokens: 0,
 	description:
-		'Discard 2 cards in your hand. Draw 2.\nCan not be used if you do not have 2 cards to discard.',
+		'Discard 2 cards in your hand and draw 2 cards.\nCan not be used if you do not have 2 cards to discard.',
 	log: (values) => `${values.defaultLog} to discard 2 cards and draw 2 cards`,
 	attachCondition: query.every(
 		singleUse.attachCondition,
-		(_game, pos) => pos.player.getHand().length >= 2,
+		(_game, pos) => pos.player.getHand().length > 2,
 	),
 	onAttach(
 		game: GameModel,
@@ -33,7 +33,11 @@ const Composter: SingleUse = {
 			player: player.entity,
 			id: component.entity,
 			message: 'Pick 2 cards from your hand',
-			canPick: query.slot.hand,
+			canPick: query.every(
+				query.slot.currentPlayer,
+				query.slot.hand,
+				query.not(query.slot.empty),
+			),
 			onResult(pickedSlot) {
 				firstPickedSlot = pickedSlot
 			},
@@ -46,17 +50,19 @@ const Composter: SingleUse = {
 			canPick: (game, pos) => {
 				if (firstPickedSlot === null) return false
 				return query.every(
+					query.slot.currentPlayer,
 					query.slot.hand,
 					query.not(query.slot.entity(firstPickedSlot.entity)),
+					query.not(query.slot.empty),
 				)(game, pos)
 			},
 			onResult(pickedSlot) {
-				firstPickedSlot?.getCard()?.discard()
-				pickedSlot.getCard()?.discard()
-
-				applySingleUse(game, component.slot)
+				firstPickedSlot?.card?.discard()
+				pickedSlot.card?.discard()
 
 				player.draw(2)
+
+				applySingleUse(game, component.slot)
 			},
 		})
 	},

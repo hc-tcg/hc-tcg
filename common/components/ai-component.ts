@@ -6,6 +6,8 @@ import type {AnyTurnActionData} from '../types/turn-action-data'
 import type {VirtualAI} from '../types/virtual-ai'
 
 export class AIComponent {
+	public static table = 'ais'
+
 	readonly game: GameModel
 	readonly entity: AIEntity
 

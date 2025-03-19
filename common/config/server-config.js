@@ -19,6 +19,8 @@ export default {
 		maxDeckCost: 42,
 		bannedCards: ['evilxisuma_boss', 'feather', 'item_any_rare'],
 		disabledCards: ['iskallman_common', 'iskallman_rare'],
+		rematchTime: 90 * 1000,
 	},
+	replayVersion: 0x02,
 	logoSubText: 'Scuffed!',
 }

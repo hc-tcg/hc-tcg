@@ -3,8 +3,8 @@ import {expect, test} from '@playwright/test'
 test('is still connected after reload', async ({page}) => {
 	await page.goto('/?showUpdatesModal=false')
 
-	await page.getByPlaceholder(' ').fill('Test Player')
-	await page.getByPlaceholder(' ').press('Enter')
+	await page.getByLabel('Player Name').fill('Test Player')
+	await page.getByLabel('Player Name').press('Enter')
 
 	await page.waitForFunction(() => global.getState().session.connected)
 	expect(await page.evaluate(() => global.getState().session.playerName)).toBe(
@@ -25,8 +25,8 @@ test('player does not stay in queue after reloading the page', async ({
 }) => {
 	await page.goto('/?showUpdatesModal=false')
 
-	await page.getByPlaceholder(' ').fill('Test Player')
-	await page.getByPlaceholder(' ').press('Enter')
+	await page.getByLabel('Player Name').fill('Test Player')
+	await page.getByLabel('Player Name').press('Enter')
 
 	await page.waitForFunction(() => {
 		console.log(global.getState().session.connected)
@@ -34,7 +34,10 @@ test('player does not stay in queue after reloading the page', async ({
 	})
 
 	let playerId = await page.evaluate(() => global.getState().session.playerId)
-	await page.getByText('Public Game').click()
+
+	await page.getByRole('button', {name: 'Play'}).click()
+	await page.getByRole('heading', {name: 'Public Game'}).click()
+	await page.getByRole('button', {name: 'Join Queue'}).click()
 
 	let queue = await (
 		await fetch('http://localhost:9000/debug/root-state/queue')
@@ -65,13 +68,17 @@ test('Game state updates if socket is restarted during game.', async ({
 	await playerOne.goto('/?showUpdatesModal=false')
 	await playerTwo.goto('/?showUpdatesModal=false')
 
-	await playerOne.getByPlaceholder(' ').fill('Test Player')
-	await playerOne.getByPlaceholder(' ').press('Enter')
-	await playerTwo.getByPlaceholder(' ').fill('Test Player')
-	await playerTwo.getByPlaceholder(' ').press('Enter')
+	await playerOne.getByLabel('Player Name').fill('Test Player')
+	await playerOne.getByLabel('Player Name').press('Enter')
+	await playerTwo.getByLabel('Player Name').fill('Test Player')
+	await playerTwo.getByLabel('Player Name').press('Enter')
 
-	await playerOne.getByText('Public Game').click()
-	await playerTwo.getByText('Public Game').click()
+	await playerOne.getByRole('button', {name: 'Play'}).click()
+	await playerOne.getByRole('heading', {name: 'Public Game'}).click()
+	await playerOne.getByRole('button', {name: 'Join Queue'}).click()
+	await playerTwo.getByRole('button', {name: 'Play'}).click()
+	await playerTwo.getByRole('heading', {name: 'Public Game'}).click()
+	await playerTwo.getByRole('button', {name: 'Join Queue'}).click()
 
 	// Mathcmaking can take up to 3 seconds
 	await playerOne.waitForTimeout(4000)
@@ -102,4 +109,41 @@ test('Game state updates if socket is restarted during game.', async ({
 
 	// The second game state should be newer because it was recieved on the reconnect.
 	expect(firstGameStateTime).toBeLessThan(secondGameStateTime)
+})
+test('Automatic reconnect if session is invalid.', async ({page}) => {
+	await page.goto('/')
+	await page.getByLabel('Player Name').fill('Test Player')
+	await page.getByLabel('Player Name').press('Enter')
+
+	await page.waitForFunction(() => {
+		if (!global.getState) return false
+		return global.getState().session.connected
+	})
+
+	await page.evaluate(() => {
+		// Set up bogus data
+		sessionStorage.setItem('playerName', 'zunda')
+		sessionStorage.setItem('censoredPlayerName', 'mochi')
+		sessionStorage.setItem('playerId', 'mochimochi')
+		sessionStorage.setItem('playerSecret', 'zunda')
+	})
+
+	await page.reload()
+
+	await page.waitForFunction(() => {
+		if (!global.getState) return false
+		return global.getState().session.connected
+	})
+
+	// Make sure the session really did get updated
+	expect(
+		await page.evaluate(() => {
+			return [
+				sessionStorage.getItem('playerName'),
+				sessionStorage.getItem('censoredPlayerName'),
+				sessionStorage.getItem('playerId'),
+				sessionStorage.getItem('playerSecret'),
+			]
+		}),
+	).not.toStrictEqual(['zunda', 'mochi', 'mochimochi', 'zunda'])
 })

@@ -29,7 +29,7 @@ const HotguyRare: Hermit = {
 		cost: ['explorer', 'explorer'],
 		damage: 80,
 		power:
-			'When used with a Bow or Crossbow effect card, effect card damage is doubled.',
+			"When used with a Bow or Crossbow effect card, that effect card's damage doubles.",
 	},
 	onAttach(
 		game: GameModel,

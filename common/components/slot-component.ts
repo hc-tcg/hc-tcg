@@ -1,4 +1,5 @@
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
+import {CardEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
 import type {SlotTypeT} from '../types/cards'
 import {CardComponent} from './card-component'
@@ -18,14 +19,19 @@ type BoardSlotDefs =
  * Note that slots are NOT ordered in the ECS.
  */
 export class SlotComponent {
+	public static table = 'slots'
+
 	readonly game: GameModel
 	readonly entity: SlotEntity
 	private readonly defs: BoardSlotDefs
+
+	cardEntity: CardEntity | null
 
 	constructor(game: GameModel, entity: SlotEntity, defs: BoardSlotDefs) {
 		this.entity = entity
 		this.game = game
 		this.defs = defs
+		this.cardEntity = null
 	}
 
 	// The implementation of these type guards are in the subclasses. The regular slot component
@@ -75,11 +81,8 @@ export class SlotComponent {
 		)
 	}
 
-	public getCard() {
-		return this.game.components.find(
-			CardComponent,
-			query.card.slotEntity(this.entity),
-		)
+	get card() {
+		return this.game.components.get(this.cardEntity)
 	}
 }
 

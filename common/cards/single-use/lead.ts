@@ -67,7 +67,7 @@ const Lead: SingleUse = {
 				game.battleLog.addEntry(
 					player.entity,
 					`$p{You|${player.playerName}}$ used $eLead$ to move $m${
-						itemSlot.getCard()?.props.name
+						itemSlot.card?.props.name
 					}$ to $o${pickedSlot.row.getHermit()?.props.name} (${pickedSlot.row.index})$`,
 				)
 

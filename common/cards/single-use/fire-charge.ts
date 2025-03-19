@@ -44,7 +44,7 @@ const FireCharge: SingleUse = {
 			canPick: pickCondition,
 			onResult(pickedSlot) {
 				applySingleUse(game, pickedSlot)
-				pickedSlot.getCard()?.discard()
+				pickedSlot.card?.discard()
 
 				if (component.slot.onBoard()) component.discard()
 				// Remove playing a single use from completed actions so it can be done again

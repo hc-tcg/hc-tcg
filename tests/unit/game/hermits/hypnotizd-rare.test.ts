@@ -88,15 +88,13 @@ describe('Test Rare Hypnotizd', () => {
 					).toBe(EthosLabCommon.health - 40 /*Bow damage*/)
 
 					expect(
-						game.components
-							.find(
-								SlotComponent,
-								query.slot.currentPlayer,
-								query.slot.item,
-								query.slot.rowIndex(0),
-								query.slot.index(0),
-							)
-							?.getCard(),
+						game.components.find(
+							SlotComponent,
+							query.slot.currentPlayer,
+							query.slot.item,
+							query.slot.rowIndex(0),
+							query.slot.index(0),
+						)?.card,
 					).toBe(null)
 				},
 			},
@@ -128,13 +126,6 @@ describe('Test Rare Hypnotizd', () => {
 
 					yield* attack(game, 'secondary')
 
-					expect(
-						game.components.find(
-							StatusEffectComponent,
-							query.effect.is(EfficiencyEffect),
-							query.effect.targetIsPlayerAnd(query.player.currentPlayer),
-						),
-					).toBe(null)
 					expect(
 						game.components.find(
 							RowComponent,
@@ -221,15 +212,13 @@ describe('Test Rare Hypnotizd', () => {
 					).toBe(EthosLabCommon.health)
 
 					expect(
-						game.components
-							.find(
-								SlotComponent,
-								query.slot.currentPlayer,
-								query.slot.item,
-								query.slot.rowIndex(0),
-								query.slot.index(0),
-							)
-							?.getCard(),
+						game.components.find(
+							SlotComponent,
+							query.slot.currentPlayer,
+							query.slot.item,
+							query.slot.rowIndex(0),
+							query.slot.index(0),
+						)?.card,
 					).not.toBe(null)
 				},
 			},

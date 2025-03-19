@@ -1,10 +1,14 @@
-import {PlayerEntity, SlotEntity} from 'common/entities'
+import {PlayerEntity, RowEntity, SlotEntity} from 'common/entities'
 import {SlotTypeT} from 'common/types/cards'
-import {LocalGameState, LocalPlayerState} from 'common/types/game-state'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
-import {getOpponentState, getPlayerState} from 'logic/game/game-selectors'
+import {
+	getOpponentEntity,
+	getPlayerEntity,
+	getPlayerStateByEntity,
+} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {useSelector} from 'react-redux'
+import {RootState} from 'store'
 import Actions from '../actions/actions'
 import MobileActions from '../actions/mobile-actions'
 import PlayerInfo from '../player-info'
@@ -19,17 +23,34 @@ type Props = {
 		row?: number,
 		index?: number,
 	) => void
-	localGameState: LocalGameState
+	gameOver: boolean
+	gameEndButton: () => void
+}
+
+function getPlayerRowEntities(playerEntity: PlayerEntity) {
+	return (state: RootState) => {
+		return getPlayerStateByEntity(playerEntity)(state).board.rows.map(
+			(row) => row.entity,
+		)
+	}
 }
 
 // TODO - Use selectors instead of passing gameState
-function Board({onClick, localGameState}: Props) {
+function Board({onClick, gameOver, gameEndButton}: Props) {
 	const settings = useSelector(getSettings)
-	const player = useSelector(getPlayerState)
-	const opponent = useSelector(getOpponentState)
+	const playerEntity = useSelector(getPlayerEntity)
+	const opponentEntity = useSelector(getOpponentEntity)
+	const playerRows = useSelector(getPlayerRowEntities(playerEntity))
+	const opponentRows = useSelector(getPlayerRowEntities(opponentEntity!))
 	const side = settings.gameSide
-	const leftPlayer = side === 'Left' ? player : opponent
-	const rightPlayer = side === 'Right' ? player : opponent
+	const leftPlayerEntity = side === 'Left' ? playerEntity : opponentEntity
+	const rightPlayerEntity = side === 'Right' ? playerEntity : opponentEntity
+	const leftPlayerRows = side === 'Left' ? playerRows : opponentRows
+	const rightPlayerRows = side === 'Right' ? playerRows : opponentRows
+
+	if (!leftPlayerEntity) throw new Error('There should be a left player entity')
+	if (!rightPlayerEntity)
+		throw new Error('There should be a right player entity')
 
 	const handleRowClick = (
 		rowIndex: number,
@@ -48,25 +69,25 @@ function Board({onClick, localGameState}: Props) {
 	}
 
 	const PlayerBoard = (
-		player: LocalPlayerState,
+		playerEntity: PlayerEntity,
+		rows: RowEntity[],
 		direction: 'left' | 'right',
 	) => {
 		return (
 			<div className={css.playerBoard} id={css[direction]}>
-				{player.board.rows.map((row, rowIndex) => {
+				{rows.map((row, rowIndex) => {
 					return (
 						<BoardRow
-							key={row.entity}
-							player={
-								direction === 'left' ? leftPlayer?.entity : rightPlayer.entity
+							key={row}
+							boardForPlayerEntity={
+								direction === 'left' ? leftPlayerEntity : rightPlayerEntity
 							}
-							rowState={row}
-							active={row.entity === player.board.activeRow}
+							rowEntity={row}
 							onClick={(...args) =>
-								handleRowClick(rowIndex, player.entity, ...args)
+								handleRowClick(rowIndex, playerEntity, ...args)
 							}
 							type={direction}
-							statusEffects={localGameState.statusEffects}
+							gameOver={gameOver}
 						/>
 					)
 				})}
@@ -77,25 +98,26 @@ function Board({onClick, localGameState}: Props) {
 	return (
 		<div className={css.gameBoard}>
 			<div className={css.playerInfoSection}>
-				<PlayerInfo player={leftPlayer} direction="left" />
-				<Timer />
-				<PlayerInfo player={rightPlayer} direction="right" />
+				<PlayerInfo playerEntity={leftPlayerEntity} direction="left" />
+				<Timer gameOver={gameOver} />
+				<PlayerInfo playerEntity={rightPlayerEntity} direction="right" />
 			</div>
 
 			<div className={css.actualBoard}>
-				{PlayerBoard(leftPlayer, 'left')}
+				{PlayerBoard(leftPlayerEntity, leftPlayerRows, 'left')}
 				<Actions
-					localGameState={localGameState}
-					onClick={(value) => onClick(value, player.entity)}
+					onClick={(value) => onClick(value, playerEntity)}
 					id={css.actions}
+					gameEndButton={gameEndButton}
+					gameOver={gameOver}
 				/>
-				{PlayerBoard(rightPlayer, 'right')}
+				{PlayerBoard(rightPlayerEntity, rightPlayerRows, 'right')}
 			</div>
 
 			<MobileActions
-				localGameState={localGameState}
-				onClick={(value) => onClick(value, player.entity)}
+				onClick={(value) => onClick(value, playerEntity)}
 				id={css.actions}
+				gameOver={gameOver}
 			/>
 		</div>
 	)

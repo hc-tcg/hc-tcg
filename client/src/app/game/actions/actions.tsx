@@ -1,5 +1,4 @@
 import cn from 'classnames'
-import {LocalGameState} from 'common/types/game-state'
 import {SlotInfo} from 'common/types/server-requests'
 import Button from 'components/button'
 import CoinFlip from 'components/coin-flip'
@@ -7,6 +6,7 @@ import {
 	getAvailableActions,
 	getCurrentCoinFlip,
 	getCurrentPickMessage,
+	getCurrentPlayerEntity,
 	getGameState,
 	getIsSpectator,
 	getPlayerEntity,
@@ -20,15 +20,15 @@ import css from './actions.module.scss'
 
 type Props = {
 	onClick: (pickInfo: SlotInfo) => void
-	localGameState: LocalGameState
+	gameOver: boolean
+	gameEndButton: () => void
 	mobile?: boolean
 	id?: string
 }
 
-const Actions = ({onClick, localGameState, id}: Props) => {
-	const currentPlayer = useSelector(
-		getPlayerStateByEntity(localGameState.turn.currentPlayerEntity),
-	)
+const Actions = ({onClick, id, gameOver, gameEndButton}: Props) => {
+	const currentPlayerEntity = useSelector(getCurrentPlayerEntity)!
+	const currentPlayer = useSelector(getPlayerStateByEntity(currentPlayerEntity))
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
 	const playerEntity = useSelector(getPlayerEntity)
@@ -40,7 +40,7 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 	const pickMessage = useSelector(getCurrentPickMessage)
 	const dispatch = useMessageDispatch()
 
-	const turn = localGameState.turn.currentPlayerEntity === playerEntity
+	const turn = currentPlayer?.entity === playerEntity
 
 	if (!gameState || !playerState) return <main>Loading</main>
 
@@ -50,7 +50,7 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 			availableActions.length === 1
 		let turnMsg
 		if (isSpectator) {
-			turnMsg = `${currentPlayer.censoredPlayerName}'s Turn`
+			turnMsg = `${currentPlayer?.censoredPlayerName}'s Turn`
 		} else {
 			turnMsg = turn ? 'Your Turn' : "Opponent's Turn"
 		}
@@ -117,6 +117,7 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 					type={'single_use'}
 					entity={boardState?.singleUse.slot}
 					onClick={handleClick}
+					gameOver={gameOver}
 				/>
 			</div>
 		)
@@ -126,9 +127,15 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 		function handleAttack() {
 			dispatch({type: localMessages.GAME_MODAL_OPENED_SET, id: 'attack'})
 		}
-		function handleEndTurn() {
-			dispatch({type: localMessages.GAME_ACTIONS_END_TURN})
+		function handleEndAction() {
+			if (!gameOver) {
+				dispatch({type: localMessages.GAME_ACTIONS_END_TURN})
+				return
+			}
+			gameEndButton()
 		}
+		const endActionText = gameOver ? 'End Game' : 'End Turn'
+		const endActionEnabled = availableActions.includes('END_TURN') || gameOver
 
 		const attackOptions =
 			availableActions.includes('SINGLE_USE_ATTACK') ||
@@ -142,18 +149,18 @@ const Actions = ({onClick, localGameState, id}: Props) => {
 					size="small"
 					style={{height: '34px'}}
 					onClick={handleAttack}
-					disabled={!attackOptions}
+					disabled={!attackOptions || gameOver}
 				>
 					Attack
 				</Button>
 				<Button
-					variant={!availableActions.includes('END_TURN') ? 'default' : 'error'}
+					variant={endActionEnabled ? 'error' : 'default'}
 					size="small"
 					style={{height: '34px'}}
-					onClick={handleEndTurn}
-					disabled={!availableActions.includes('END_TURN')}
+					onClick={handleEndAction}
+					disabled={!endActionEnabled}
 				>
-					End Turn
+					{endActionText}
 				</Button>
 			</div>
 		)

@@ -13,8 +13,7 @@ import Mending from 'common/cards/single-use/mending'
 import {CardComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {SingleTurnMiningFatigueEffect} from 'common/status-effects/mining-fatigue'
-import {LocalCopyAttack} from 'common/types/server-requests'
-import {getLocalModalData} from 'server/utils/state-gen'
+import {CopyAttack} from 'common/types/modal-requests'
 import {
 	applyEffect,
 	attack,
@@ -105,13 +104,17 @@ describe('Test Zookeeper Scar', () => {
 					yield* attack(game, 'secondary')
 					expect(game.state.modalRequests).toHaveLength(2)
 					expect(
-						game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(0)
-							?.props,
+						game.currentPlayer
+							.getDrawPile()
+							.sort(CardComponent.compareOrder)
+							.at(0)?.props,
 					).toStrictEqual(BalancedItem)
 					yield* finishModalRequest(game, {result: true, cards: null})
 					expect(
-						game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(0)
-							?.props,
+						game.currentPlayer
+							.getDrawPile()
+							.sort(CardComponent.compareOrder)
+							.at(0)?.props,
 					).toStrictEqual(EthosLabCommon)
 					yield* finishModalRequest(game, {result: false, cards: null})
 					yield* endTurn(game)
@@ -177,13 +180,17 @@ describe('Test Zookeeper Scar', () => {
 					yield* attack(game, 'secondary')
 					expect(game.state.modalRequests).toHaveLength(1)
 					expect(
-						game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(0)
-							?.props,
+						game.currentPlayer
+							.getDrawPile()
+							.sort(CardComponent.compareOrder)
+							.at(0)?.props,
 					).toStrictEqual(BalancedItem)
 					yield* finishModalRequest(game, {result: true, cards: null})
 					expect(
-						game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(0)
-							?.props,
+						game.currentPlayer
+							.getDrawPile()
+							.sort(CardComponent.compareOrder)
+							.at(0)?.props,
 					).toStrictEqual(Cat)
 					yield* endTurn(game)
 				},
@@ -221,13 +228,17 @@ describe('Test Zookeeper Scar', () => {
 					yield* attack(game, 'secondary')
 					expect(game.state.modalRequests).toHaveLength(1)
 					expect(
-						game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(0)
-							?.props,
+						game.currentPlayer
+							.getDrawPile()
+							.sort(CardComponent.compareOrder)
+							.at(0)?.props,
 					).toStrictEqual(BalancedItem)
 					yield* finishModalRequest(game, {result: true, cards: null})
 					expect(
-						game.currentPlayer.getDeck().sort(CardComponent.compareOrder).at(0)
-							?.props,
+						game.currentPlayer
+							.getDrawPile()
+							.sort(CardComponent.compareOrder)
+							.at(0)?.props,
 					).toStrictEqual(Cat)
 					yield* endTurn(game)
 				},
@@ -261,13 +272,9 @@ describe('Test Zookeeper Scar', () => {
 						query.slot.rowIndex(0),
 					)
 					expect(
-						(
-							getLocalModalData(
-								game,
-								game.state.modalRequests[0].modal,
-							) as LocalCopyAttack.Data
-						).blockedActions,
-					).toContain('PRIMARY_ATTACK')
+						(game.state.modalRequests[0].modal as CopyAttack.Data)
+							.availableAttacks,
+					).not.toContain('primary')
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					expect(game.state.modalRequests).toStrictEqual([])
 					yield* endTurn(game)

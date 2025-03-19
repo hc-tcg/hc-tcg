@@ -18,7 +18,7 @@ const FrenchralisRare: Hermit = {
 	type: ['prankster'],
 	health: 250,
 	primary: {
-		name: 'French.',
+		name: "Je M'appelle",
 		cost: ['prankster'],
 		damage: 60,
 		power: null,
@@ -28,7 +28,7 @@ const FrenchralisRare: Hermit = {
 		cost: ['prankster', 'prankster'],
 		damage: 80,
 		power:
-			"Flip a coin for each life you've lost. Do an additional 40hp damage for every heads.",
+			'Flip a coin for each life you have lost. Do an additional 40hp damage for every heads.',
 	},
 	onAttach(
 		game: GameModel,

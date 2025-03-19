@@ -8,6 +8,9 @@ import {
 	expect,
 	test,
 } from '@jest/globals'
+import {ACHIEVEMENTS_LIST} from 'common/achievements'
+import DefeatEvilX from 'common/achievements/defeat-evil-x'
+import Win from 'common/achievements/wins'
 import {CARDS, CARDS_LIST} from 'common/cards'
 import BdoubleO100Common from 'common/cards/hermits/bdoubleo100-common'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
@@ -19,6 +22,15 @@ import {PlayerEntity} from 'common/entities'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {config} from 'dotenv'
 import {Database} from 'server/db/db'
+
+const globalProgress = (count: number, percent: number) => ({
+	type: 'success',
+	body: {count, percent},
+})
+const playerProgress = (percentage: number) => ({
+	type: 'success',
+	body: {progress: percentage},
+})
 
 describe('Test Database', () => {
 	let database: Database
@@ -46,6 +58,7 @@ describe('Test Database', () => {
 				...env,
 			},
 			CARDS_LIST,
+			ACHIEVEMENTS_LIST,
 			BF_DEPTH,
 		)
 	})
@@ -66,11 +79,10 @@ describe('Test Database', () => {
 	})
 
 	test('Add User', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 		expect(user.body).not.toBeNull()
 		expect(user.body.username).toBe('Test User')
-		expect(user.body.minecraftName).toBe('ethoslab')
 		expect(user.body.uuid).toBeTruthy()
 		expect(user.body.secret).toBeTruthy()
 		expect(typeof user.body.uuid === 'string').toBeTruthy()
@@ -78,7 +90,7 @@ describe('Test Database', () => {
 	})
 
 	test('Authenticate', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const authenticatedUser = await database.authenticateUser(
@@ -96,13 +108,12 @@ describe('Test Database', () => {
 		)
 
 		expect(authenticatedUser.body.username).toBe(user.body.username)
-		expect(authenticatedUser.body.minecraftName).toBe(user.body.minecraftName)
 		expect(authenticatedUser.body.uuid).toBe(user.body.uuid)
 		expect(incorrectUser.type).toBe('failure')
 	})
 
 	test('Add and Retrieve Deck', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const tag = await database.insertTag(
@@ -148,8 +159,8 @@ describe('Test Database', () => {
 	})
 
 	test('Add Game and Check Stat Retrieval Works', async () => {
-		const winner = await database.insertUser('Winner', 'ethoslab')
-		const loser = await database.insertUser('Winner', 'geminitay')
+		const winner = await database.insertUser('Winner')
+		const loser = await database.insertUser('Loser')
 
 		assert(
 			winner.type === 'success',
@@ -348,7 +359,7 @@ describe('Test Database', () => {
 	})
 
 	test('Update Username and Minecraft Name', async () => {
-		const user = await database.insertUser('Ethoslab', 'ethoslab')
+		const user = await database.insertUser('Ethoslab')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		await database.setUsername(user.body.uuid, 'GeminiTay')
@@ -361,11 +372,10 @@ describe('Test Database', () => {
 		)
 
 		expect(updatedUser.body.username).toBe('GeminiTay')
-		expect(updatedUser.body.minecraftName).toBe('geminitay')
 	})
 
 	test('Add and Retrieve Tags', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const tag1 = await database.insertTag(
@@ -401,7 +411,7 @@ describe('Test Database', () => {
 	})
 
 	test('Add and Retrieve Deck', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const tag = await database.insertTag(
@@ -452,7 +462,7 @@ describe('Test Database', () => {
 			returnedDeckWithData.body.cards.map((c) => CARDS[c].numericId),
 		).toStrictEqual(playerDeck.cards)
 
-		const allDecks = await database.getDecks(user.body.uuid)
+		const allDecks = await database.getDecksFromUuid(user.body.uuid)
 		assert(
 			allDecks.type === 'success',
 			'The deck should be retrieved successfully',
@@ -463,7 +473,7 @@ describe('Test Database', () => {
 	})
 
 	test('Returning decks with no tags or cards', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const code = generateDatabaseCode()
@@ -480,7 +490,7 @@ describe('Test Database', () => {
 
 		assert(deck1.type === 'success', 'Deck 1 was created successfully')
 
-		const allDecks = await database.getDecks(user.body.uuid)
+		const allDecks = await database.getDecksFromUuid(user.body.uuid)
 		const returnedDeckFromId = await database.getDeckFromID(code)
 
 		assert(
@@ -492,7 +502,9 @@ describe('Test Database', () => {
 			'The deck should be retrieved successfully',
 		)
 
-		const returnedDeckFromGroup = allDecks.body[0]
+		const decks = allDecks.body.filter((deck) => deck.name !== 'Starter Deck')
+
+		const returnedDeckFromGroup = decks[0]
 		expect(returnedDeckFromGroup).toBeTruthy()
 		expect(returnedDeckFromGroup?.tags).toStrictEqual([])
 		expect(returnedDeckFromGroup?.cards).toStrictEqual([])
@@ -503,7 +515,7 @@ describe('Test Database', () => {
 	})
 
 	test('Confirm decks are disassociated from a user properly', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const tag = await database.insertTag(
@@ -564,7 +576,7 @@ describe('Test Database', () => {
 		await database.deleteDeck(withExportedCode.body, user.body.uuid)
 
 		const withExportedDeck = await database.getDeckFromID(withExportedCode.body)
-		const userDecks = await database.getDecks(user.body.uuid)
+		const userDecks = await database.getDecksFromUuid(user.body.uuid)
 
 		assert(
 			withExportedDeck.type === 'success',
@@ -577,11 +589,13 @@ describe('Test Database', () => {
 			"The user's decks should be retrieved properly",
 		)
 
-		expect(userDecks.body).toStrictEqual([])
+		const decks = userDecks.body.filter((deck) => deck.name !== 'Starter Deck')
+
+		expect(decks).toStrictEqual([])
 	})
 
 	test('Confirm tags are deleted properly', async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const tag = await database.insertTag(
@@ -616,7 +630,7 @@ describe('Test Database', () => {
 	})
 
 	test("Confirm deck deletion doesn't impact other decks", async () => {
-		const user = await database.insertUser('Test User', 'ethoslab')
+		const user = await database.insertUser('Test User')
 		assert(user.type === 'success', 'The user should be created successfully')
 
 		const deck1 = await database.insertDeck(
@@ -661,5 +675,88 @@ describe('Test Database', () => {
 
 		expect(returnedDeck2.type).toBe('success')
 		expect(returnedDeck3.type).toBe('success')
+	})
+
+	test('Test achievement progress is saved', async () => {
+		const user1 = await database.insertUser('Test User')
+		const user2 = await database.insertUser('Test User 2')
+		assert(user1.type === 'success', 'The user should be created successfully')
+		assert(user2.type === 'success', 'The user should be created successfully')
+		let player1 = user1.body
+		let player2 = user2.body
+
+		expect(
+			await database.getAchievementPercentageCompletion(DefeatEvilX, 0),
+		).toStrictEqual(globalProgress(0, 0))
+
+		let completionTime = new Date(Date.now())
+		let completionTimeTwo = new Date(18437418)
+
+		await database.updateAchievements(player1.uuid, {
+			// Default Evil X achievement
+			6: {goals: {0: 1}, levels: [{completionTime: completionTime}]},
+			// Win Achievement
+			26: {
+				goals: {0: 11},
+				levels: [
+					{completionTime: completionTime},
+					{completionTime: completionTimeTwo},
+				],
+			},
+		})
+
+		let results = await database.getAchievements(player1.uuid)
+		assert(
+			results.type === 'success',
+			'The achievements should be retrieved successfully',
+		)
+		let achievements = results.body.achievementData
+
+		expect(achievements[6].goals).toStrictEqual({0: 1})
+		expect(achievements[6].levels).toStrictEqual([
+			{completionTime: completionTime},
+		])
+		expect(achievements[26].goals).toStrictEqual({0: 11})
+		expect(achievements[26].levels).toStrictEqual([
+			{completionTime: completionTime},
+			{completionTime: completionTimeTwo},
+			{},
+			{},
+			{},
+		])
+
+		expect(
+			await database.getPlayerAchievementProgress(DefeatEvilX, player1.uuid),
+		).toStrictEqual(playerProgress(1))
+		expect(
+			await database.getPlayerAchievementProgress(Win, player1.uuid),
+		).toStrictEqual(playerProgress(11))
+		expect(
+			await database.getPlayerAchievementProgress(DefeatEvilX, player2.uuid),
+		).toStrictEqual(playerProgress(0))
+		expect(
+			await database.getPlayerAchievementProgress(Win, player2.uuid),
+		).toStrictEqual(playerProgress(0))
+
+		expect(
+			await database.getAchievementPercentageCompletion(Win, 0),
+		).toStrictEqual(globalProgress(1, 100))
+		expect(
+			await database.getAchievementPercentageCompletion(Win, 1),
+		).toStrictEqual(globalProgress(1, 100))
+		expect(
+			await database.getAchievementPercentageCompletion(Win, 2),
+		).toStrictEqual(globalProgress(0, 0))
+
+		expect(
+			await database.getAchievementPercentageCompletion(DefeatEvilX, 0),
+		).toStrictEqual(globalProgress(1, 100))
+		await database.updateAchievements(player2.uuid, {
+			// Default Evil X achievement
+			6: {goals: {0: 1}, levels: [{completionTime: completionTime}]},
+		})
+		expect(
+			await database.getAchievementPercentageCompletion(DefeatEvilX, 0),
+		).toStrictEqual(globalProgress(2, 100))
 	})
 })

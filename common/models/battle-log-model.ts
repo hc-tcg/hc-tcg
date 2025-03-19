@@ -74,7 +74,7 @@ export class BattleLogModel {
 		return entry
 	}
 
-	public async sendLogs() {
+	public sendLogs() {
 		let logs: Array<Message> = []
 
 		while (this.logMessageQueue.length > 0) {
@@ -95,6 +95,12 @@ export class BattleLogModel {
 
 			if (this.game.settings.verboseLogging) {
 				console.info(`${this.game.logHeader} ${firstEntry.description}`)
+			}
+
+			if (!this.game.settings.logErrorsToStderr) {
+				if (firstEntry.description.includes('INVALID VALUE')) {
+					throw new Error(`Invalid battle log found: ${firstEntry.description}`)
+				}
 			}
 		}
 
@@ -135,7 +141,7 @@ export class BattleLogModel {
 
 		const cardRow = card.slot.inRow() ? card.slot.row : null
 		const pickedRow = pickedSlot?.inRow() ? pickedSlot.row : null
-		const pickedCard = pickedSlot?.getCard()
+		const pickedCard = pickedSlot?.card
 
 		const thisFlip = coinFlips.find((flip) => flip.card == card.entity)
 		const invalid = '$bINVALID VALUE$'
@@ -325,7 +331,10 @@ export class BattleLogModel {
 		const cardName = hermitCard.props.name
 		let player = this.game.components.get(playerEntity)
 
-		const livesRemaining = player?.lives === 3 ? 'two lives' : 'one life'
+		const livesRemaining =
+			(player?.lives === 3 && 'two lives') ||
+			(player?.lives === 2 && 'one life') ||
+			(player?.lives === 1 && 'no lives')
 
 		this.logMessageQueue.push({
 			player: playerEntity,

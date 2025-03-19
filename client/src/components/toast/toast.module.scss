@@ -42,6 +42,16 @@
 	color: var(--text-light);
 }
 
+.svgImage {
+	height: 28px;
+	width: 36px;
+
+	svg {
+		width: 100%;
+		height: 100%;
+	}
+}
+
 // Keyframes
 @keyframes slideIn {
 	from {

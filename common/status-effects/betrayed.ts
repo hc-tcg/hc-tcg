@@ -6,7 +6,7 @@ import {
 } from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
-import {beforeAttack, onTurnEnd} from '../types/priorities'
+import {afterApply, beforeAttack, onTurnEnd} from '../types/priorities'
 import {hasEnoughEnergy} from '../utils/attacks'
 import {StatusEffect, systemStatusEffect} from './status-effect'
 
@@ -50,7 +50,7 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 			const energy =
 				(activeHermit.slot.inRow() &&
 					player.hooks.availableEnergy.call(
-						activeHermit.slot.row.getItems(true).flatMap((item) => {
+						activeHermit.slot.row.getItems().flatMap((item) => {
 							if (item.isItem()) return item.props.energy
 							return []
 						}),
@@ -102,7 +102,11 @@ const BetrayedEffect: StatusEffect<PlayerComponent> = {
 				)
 			}
 		})
-		observer.subscribe(player.hooks.afterApply, blockActions)
+		observer.subscribeWithPriority(
+			player.hooks.afterApply,
+			afterApply.MODIFY_BLOCKED_ACTIONS,
+			blockActions,
+		)
 		observer.subscribe(player.hooks.onAttach, blockActions)
 		observer.subscribe(player.hooks.onDetach, blockActions)
 

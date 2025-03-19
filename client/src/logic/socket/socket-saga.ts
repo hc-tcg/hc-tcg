@@ -1,6 +1,7 @@
 import {ClientMessage} from 'common/socket-messages/client-messages'
 import {ServerMessageTable} from 'common/socket-messages/server-messages'
 import {LocalMessage, localMessages} from 'logic/messages'
+import {NO_SOCKET_ASSERT} from 'logic/session/session-saga'
 import {getSession} from 'logic/session/session-selectors'
 import {SagaIterator} from 'redux-saga'
 import {eventChannel} from 'redux-saga'
@@ -11,6 +12,8 @@ let messagesThatHaveNotBeenSent: Array<ClientMessage> = []
 
 export function* sendMsg(payload: ClientMessage) {
 	const socket = yield* select(getSocket)
+
+	if (!socket) throw new Error(NO_SOCKET_ASSERT)
 
 	if (socket.connected) {
 		console.log('[send]', payload.type, payload)
@@ -75,6 +78,8 @@ export function receiveMsg<T extends keyof ServerMessageTable>(
 function* socketSaga(): SagaIterator {
 	const socket = yield* select(getSocket)
 	const session = yield* select(getSession)
+
+	if (!socket) throw new Error(NO_SOCKET_ASSERT)
 
 	const channel = eventChannel((emitter: any): any => {
 		const connectListener = () => emitter('connect')

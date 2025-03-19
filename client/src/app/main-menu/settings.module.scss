@@ -1,0 +1,229 @@
+.bigHallOfFameArea {
+	width: 100vw;
+	height: 100vh;
+	right: 0px;
+	top: 0px;
+	position: absolute;
+	display: flex;
+	justify-content: center;
+}
+
+.mainHallOfFameArea {
+	width: 100%;
+	max-width: 80rem;
+	margin-left: 10%;
+	margin-right: 10%;
+	margin-top: 6vh;
+	margin-bottom: 1%;
+	display: flex;
+	flex-direction: row;
+}
+
+.tabContainer {
+	width: 25%;
+	background-color: var(--gray-800);
+	border: 2px black solid;
+	border-right: 0px;
+}
+
+.settingsArea {
+	height: 100%;
+	width: 100%;
+	border: 2px black solid;
+	border-left: 0px;
+	background-color: var(--gray-600);
+	overflow: hidden;
+	padding: 2vh;
+	overflow-y: auto;
+
+	display: flex;
+	gap: 1vh;
+	flex-direction: column;
+
+	hr {
+		margin: 1vh 0;
+	}
+}
+
+.settingItem {
+	height: 5.5vh;
+}
+
+.categoryHeader {
+	width: 100%;
+	color: var(--text-light);
+	text-align: center;
+	text-decoration: underline;
+	margin-top: 2vh;
+}
+
+.developerContainer {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.5vh;
+}
+
+.showOnMobile {
+	display: none;
+}
+
+.settingsMenu {
+	max-width: 70vh;
+	margin-inline: auto;
+	padding: 1vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: stretch;
+
+	h2 {
+		font-size: 3vh;
+		color: var(--text-light);
+		margin-bottom: 2vh;
+		margin-top: 2vh;
+		filter: drop-shadow(1px 1px 0 var(--text-dark));
+	}
+}
+
+.settingsButton {
+	height: 5.5vh;
+}
+
+.viewSecretButton {
+	height: 100%;
+	width: 20%;
+}
+
+.resetModal {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 0.5vh;
+	margin: 0.5vh;
+}
+
+.resetModalDescription {
+	padding: 1vh;
+}
+
+.resetModalButton {
+	width: 50%;
+}
+
+.dbInfo {
+	text-shadow: 0.1vh 0.1vh 0.2vh black, -0.1vh -0.1vh 0.2vh black;
+	background: hsla(0deg, 0%, 0%, 55%);
+	border-radius: 0.5vh;
+	padding: 1vh 2vh;
+	display: flex;
+	flex-direction: row;
+}
+
+.dbItem {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1vh 0;
+	color: var(--text-light);
+	font-size: 2vh;
+	user-select: text;
+
+	&.left {
+		flex-grow: 1;
+	}
+
+	&.right {
+		text-align: right;
+		flex-grow: 1;
+		justify-content: end;
+	}
+}
+
+.copy {
+	display: grid;
+	place-content: center;
+	background: var(--gray-900);
+	color: white;
+	padding: 0.4rem;
+	height: 2rem;
+	min-width: 2rem;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.warning {
+	color: rgb(215, 23, 23);
+	text-align: center;
+	padding: 0.5rem;
+}
+
+.input {
+	width: 50vh;
+}
+
+// Mobile
+@media (max-width: 860px) {
+	.bigHallOfFameArea {
+		width: 100%;
+		height: 100%;
+		left: 0px;
+		top: 0px;
+		position: absolute;
+		display: flex;
+		overflow: hidden;
+	}
+
+	.mainHallOfFameArea {
+		margin-top: 6vh;
+		margin-left: 2%;
+		margin-right: 2%;
+		margin-bottom: 2%;
+		height: 93%;
+		width: 96%;
+		display: flex;
+		flex-direction: column;
+
+		.tabContainer {
+			width: 100%;
+		}
+	}
+
+	.showOnMobile {
+		display: flex;
+	}
+
+	.hideOnMobile {
+		display: none;
+	}
+
+	.viewSecretButton {
+		width: 60%;
+	}
+
+	.settingsArea {
+		border: 2px black solid;
+
+		.settingsRow {
+			flex-direction: column;
+			gap: 1vh;
+			height: 12vh;
+		}
+	}
+
+	.mobileColumn {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.categoryDropdown {
+		div {
+			width: 30%;
+
+			* {
+				width: 100%;
+			}
+		}
+	}
+}

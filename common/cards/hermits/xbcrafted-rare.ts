@@ -31,7 +31,7 @@ const XBCraftedRare: Hermit = {
 		cost: ['explorer', 'any'],
 		damage: 70,
 		power:
-			"Any effect card attached to your opponent's active Hermit is ignored during this turn.",
+			"Any effect cards attached to your opponent's Hermits are ignored during this turn.",
 	},
 	onAttach(
 		game: GameModel,
@@ -44,14 +44,21 @@ const XBCraftedRare: Hermit = {
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
+
 				game.components
-					.new(StatusEffectComponent, IgnoreAttachSlotEffect, component.entity)
-					.apply(
-						game.components.findEntity(
-							CardComponent,
-							query.card.opponentPlayer,
-							query.card.slot(query.slot.hermit, query.slot.active),
-						),
+					.filter(
+						CardComponent,
+						query.card.opponentPlayer,
+						query.card.slot(query.slot.hermit),
+					)
+					.filter((x) =>
+						game.components
+							.new(
+								StatusEffectComponent,
+								IgnoreAttachSlotEffect,
+								component.entity,
+							)
+							.apply(x.entity),
 					)
 			},
 		)

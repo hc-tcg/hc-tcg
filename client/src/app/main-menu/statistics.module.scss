@@ -1,0 +1,729 @@
+.bigHallOfFameArea {
+	width: 100vw;
+	height: 100vh;
+	right: 0px;
+	top: 0px;
+	position: absolute;
+	display: flex;
+	justify-content: center;
+}
+
+.mainHallOfFameArea {
+	width: 100%;
+	max-width: 80rem;
+	margin-left: 10%;
+	margin-right: 10%;
+	margin-top: 6vh;
+	margin-bottom: 1vh;
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+}
+
+.hofSidebar {
+	width: 20%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.gameFiltersDropdown {
+	display: none;
+}
+
+.hallOfFameTable {
+	background-color: #000;
+	color: var(--text-light);
+
+	tr {
+		color: black;
+		text-align: center;
+	}
+
+	tr:nth-child(odd) {
+		background-color: var(--gray-200);
+	}
+
+	tr:nth-child(even) {
+		background-color: var(--gray-400);
+	}
+
+	tr:first-child {
+		background-color: black;
+		color: white;
+	}
+
+	tr th {
+		width: 10%;
+	}
+
+	tr td button {
+		margin-top: 0.2vh;
+		margin-bottom: 0.2vh;
+	}
+}
+
+.hallOfFameTableGrid {
+	background-color: #000;
+	color: var(--text-light);
+	margin-bottom: -2px;
+
+	tr {
+		color: black;
+		text-align: center;
+	}
+
+	tr:nth-child(odd) {
+		background-color: var(--gray-200);
+	}
+
+	tr:nth-child(even) {
+		background-color: var(--gray-400);
+	}
+
+	tr > td {
+		width: 10%;
+	}
+
+	tr > th {
+		color: var(--text-light);
+		background-color: black;
+		border-bottom: 1px white dashed;
+	}
+}
+
+.hallOfFameTableNoHeader {
+	background-color: #000;
+	color: var(--text-light);
+	margin-bottom: -2px;
+	width: 100%;
+
+	th {
+		font-weight: normal;
+	}
+
+	tr {
+		color: black;
+		text-align: center;
+	}
+
+	tr:nth-child(odd) {
+		background-color: var(--gray-200);
+	}
+
+	tr:nth-child(even) {
+		background-color: var(--gray-400);
+	}
+
+	td {
+		width: 80%;
+	}
+}
+
+.hallOfFameTable > tr > th {
+	position: sticky;
+	top: 2px;
+	background-color: black;
+}
+
+.hallOfFameTable > tr > th::before {
+	content: "";
+	background-color: black;
+	height: calc(1.5rem + 1px);
+	width: 100%;
+	position: absolute;
+	top: -3px;
+	left: 0px;
+	z-index: -1;
+}
+
+.actionColumn {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 10px;
+}
+
+.fullLeftArea {
+	width: 90%;
+	overflow-x: hidden;
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.tableArea {
+	width: 100%;
+	flex-grow: 1;
+	border: 2px black solid;
+	border-top: 0px;
+	background-color: var(--gray-600);
+	overflow: hidden;
+
+	&.hof {
+		overflow-y: auto;
+	}
+}
+
+.dropdownButton {
+	place-content: center;
+	display: flex;
+	align-items: center;
+	justify-items: center;
+	background-color: var(--gray-400);
+	border-radius: 6px;
+	width: 2rem;
+	height: 2rem;
+	flex-shrink: 0;
+	cursor: pointer;
+
+	> img {
+		height: 1.5rem;
+		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
+	}
+
+	&:hover {
+		background: var(--gray-600);
+		filter: brightness(1.1);
+	}
+}
+
+.hofOptions {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	color: var(--text-light);
+	padding: 5px;
+	background-color: var(--gray-700);
+	border: 2px black solid;
+	flex-grow: 1;
+}
+
+.loadingIndicator {
+	color: var(--text-light);
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	display: flex;
+	padding: 1rem;
+	gap: 1rem;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.2rem;
+}
+
+.hofCheckBox {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
+}
+
+.hofOption {
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	width: 100%;
+}
+
+.barContainer {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 70%;
+}
+
+.typeGraph {
+	background-color: var(--gray-700);
+	color: white;
+	margin: 1vh;
+}
+
+.showOnMobile {
+	display: none;
+}
+
+.gameHistory {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	padding: 1rem;
+}
+
+.gameHistoryBox {
+	width: min(95%, 800px);
+	padding: 1rem;
+	align-self: center;
+	background-color: var(--gray-900);
+	color: var(--text-light);
+	border-radius: 10px;
+}
+
+.gameHistoryGames {
+	height: 100%;
+	width: 100%;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.playerHead {
+	height: 8rem;
+	width: 8rem;
+	padding: 1rem;
+	background-color: rgb(14, 14, 14);
+	clip-path: polygon(50% 0%, 100% 20%, 100% 80%, 50% 100%, 0% 80%, 0% 20%);
+
+	> img {
+		height: 6rem;
+		filter: drop-shadow(2px 0px 0 white) drop-shadow(-2px 0px 0 white)
+			drop-shadow(0px 2px 0 white) drop-shadow(0px -2px 0 white);
+	}
+}
+
+.winAndLoss {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 0.5rem;
+	line-height: 1.5rem;
+	font-size: 1.5rem;
+	font-family: Minecrafter;
+	grid-area: winAndLoss;
+	width: 100%;
+	filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black)
+		drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
+
+	.dash {
+		font-family: Minecraft;
+	}
+
+	> div {
+		width: 1rem;
+		height: 1rem;
+		text-align: center;
+	}
+
+	> .win {
+		&.me {
+			color: #63b45c;
+		}
+	}
+
+	> .loss {
+		&.me {
+			color: #da5558;
+		}
+	}
+
+	&.reverseSide {
+		flex-direction: row-reverse;
+	}
+}
+
+.gameAreaMiddle {
+	width: 100%;
+	display: grid;
+	gap: 0.5rem;
+	grid-template-areas:
+		"playerHead me me winAndLoss winAndLoss opponent opponent opponentHead"
+		"playerHead deck deck replay replay overview overview opponentHead"
+		"playerHead time time time turns turns turns opponentHead";
+
+	&.reverseSide {
+		grid-template-areas:
+			"opponentHead opponent opponent winAndLoss winAndLoss me me playerHead"
+			"opponentHead overview overview replay replay deck deck playerHead"
+			"opponentHead time time time turns turns turns playerHead";
+	}
+}
+
+.gameHistoryHeader {
+	width: min(95%, 800px);
+	align-self: center;
+	display: flex;
+	flex-direction: row;
+	color: var(--text-light);
+	gap: 0.5rem;
+	margin-bottom: 1rem;
+
+	.filter {
+		width: 50%;
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+
+		.filterHeader {
+			font-size: 1.2rem;
+		}
+
+		input {
+			background: var(--gray-400);
+			border: 2px solid var(--gray-900);
+			color: white;
+			align-self: center;
+			min-height: 2rem;
+			line-height: 2rem;
+			flex-grow: 1;
+			text-overflow: ellipsis;
+			max-width: 100%;
+			height: min-content;
+
+			&.opponentInput {
+				width: 100%;
+			}
+
+			&::placeholder {
+				color: var(--gray-200);
+			}
+		}
+	}
+}
+
+.playerName {
+	font-size: 1.25rem;
+	width: 7vw;
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	gap: 0.5rem;
+	filter: drop-shadow(2px 0px 0 black) drop-shadow(-2px 0px 0 black)
+		drop-shadow(0px 2px 0 black) drop-shadow(0px -2px 0 black);
+	width: 100%;
+
+	&.me {
+		grid-area: me;
+		font-family: MinecraftBold;
+
+		&.reverseSide {
+			text-align: right;
+			flex-direction: row-reverse;
+		}
+	}
+
+	&:not(.me) {
+		grid-area: opponent;
+		&:not(.reverseSide) {
+			text-align: right;
+			flex-direction: row-reverse;
+		}
+	}
+}
+
+.trophy {
+	height: 16px;
+	image-rendering: crisp-edges;
+}
+
+#deck {
+	grid-area: deck;
+}
+
+#replay {
+	grid-area: replay;
+}
+
+#overview {
+	grid-area: overview;
+}
+
+#time {
+	grid-area: time;
+	font-size: 1rem;
+}
+
+#turns {
+	grid-area: turns;
+	font-size: 1rem;
+	text-align: right;
+}
+
+#playerHead {
+	grid-area: playerHead;
+}
+
+#opponentHead {
+	grid-area: opponentHead;
+	display: flex;
+	width: 100%;
+	justify-content: right;
+}
+
+.stats {
+	display: flex;
+	flex-direction: column;
+	margin-left: 12.5%;
+	margin-right: 12.5%;
+	width: 75%;
+	padding-top: 2rem;
+	padding-bottom: 0rem;
+	color: white;
+	font-size: 1.1rem;
+
+	div:nth-child(odd) {
+		background-color: var(--gray-600);
+	}
+
+	div:nth-child(even) {
+		background-color: var(--gray-700);
+	}
+}
+
+.filters {
+	margin-left: 12.5%;
+	margin-right: 12.5%;
+	width: 75%;
+	display: flex;
+	flex-direction: column;
+	color: white;
+	font-size: 1.1rem;
+	padding: 0.5rem;
+	padding-top: 2rem;
+}
+
+.optionsHeader {
+	height: calc(60px - 2px);
+}
+
+.stat {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	padding: 0.5rem;
+	gap: 1rem;
+
+	> p:not(.statName) {
+		min-width: 10%;
+		text-align: center;
+	}
+}
+
+.statName {
+	flex-grow: 1;
+}
+
+.wtlBar {
+	height: 50px;
+	line-height: 50px;
+	background-color: blue;
+	display: flex;
+	flex-direction: row;
+	border: 2px black solid;
+	width: 100%;
+	font-weight: bold;
+
+	.win {
+		height: 100%;
+		padding-left: 1rem;
+		color: #325a2f;
+		background: linear-gradient(
+			0deg,
+			#325a2f 15%,
+			#63b45c 15% 93%,
+			rgb(196, 235, 193) 93%
+		);
+	}
+
+	.loss {
+		height: 100%;
+		padding-right: 1rem;
+		text-align: right;
+		color: #72282a;
+		background: linear-gradient(
+			0deg,
+			#72282a 15%,
+			#da5558 15% 93%,
+			#ecb1b2 93%
+		);
+	}
+
+	.tie {
+		height: 100%;
+		background: linear-gradient(
+			0deg,
+			#396079 15%,
+			#6fabd0 15% 90%,
+			#97d6fd 90%
+		);
+	}
+}
+
+.overview {
+	display: flex;
+	flex-direction: column;
+	height: 80vh;
+	overflow-y: auto;
+	padding: 0.5rem;
+	background-color: var(--gray-900);
+}
+
+.optionsButtonArea {
+	width: 100%;
+	height: 7vh;
+	display: none;
+	background-color: var(--gray-700);
+	border: 2px black solid;
+	border-top: 0px;
+	padding: 0.5rem;
+	gap: 0.5rem;
+}
+
+.showOptionsButton {
+	background-color: var(--gray-600);
+	border-radius: 5px;
+	padding: 0.5rem;
+	color: white;
+	font-family: Minecraft;
+	font-size: 1rem;
+	height: 2rem;
+}
+
+.noResults {
+	padding: 0.5rem 0;
+	color: var(--text-light);
+	width: 100%;
+	text-align: center;
+}
+
+.textTab {
+	display: inline-block;
+	width: 2rem;
+}
+
+// Mobile
+@media (max-width: 720px) {
+	.bigHallOfFameArea {
+		width: 100%;
+		height: 100%;
+		left: 0px;
+		top: 0px;
+		position: absolute;
+		display: flex;
+		overflow: hidden;
+	}
+
+	.mainHallOfFameArea {
+		margin-top: 6vh;
+		margin-left: 2%;
+		margin-right: 2%;
+		margin-bottom: 2%;
+		gap: 0px;
+		height: auto;
+		width: auto;
+		border: 0px;
+		height: 93%;
+		width: 96%;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.hofSidebar {
+		width: 96vw;
+		height: 81vh;
+		position: absolute;
+		top: 18vh;
+
+		&.hideOnMobile {
+			height: 0px;
+			width: 0px;
+			pointer-events: none;
+		}
+	}
+
+	.gameFiltersDropdown {
+		width: 96vw;
+		height: 81vh;
+		position: absolute;
+		top: 18vh;
+		display: flex;
+		flex-direction: column;
+		padding: 1rem;
+		gap: 1rem;
+		color: var(--text-light);
+		background-color: var(--gray-900);
+		z-index: 100;
+
+		&.hideOnMobile {
+			height: 0px;
+			width: 0px;
+			pointer-events: none;
+		}
+	}
+
+	.showOnMobile {
+		display: flex;
+	}
+
+	.hideOnMobile {
+		display: none;
+	}
+
+	.optionsHeader {
+		display: none;
+	}
+
+	.hofOptions {
+		background-color: var(--gray-900);
+	}
+
+	.optionsButtonArea {
+		display: flex;
+	}
+
+	.tableArea {
+		height: 100%;
+		width: 100%;
+	}
+
+	.actionColumn {
+		flex-direction: column;
+	}
+
+	.fullLeftArea {
+		width: 100%;
+	}
+
+	.timeAndturns {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.hallOfFameTableGrid {
+		tr > td {
+			width: 20%;
+		}
+	}
+
+	.barContainer {
+		height: 100%;
+	}
+
+	.gameAreaMiddle {
+		scale: 0.9;
+		grid-template-areas:
+			"me me me opponent opponent opponent"
+			"deck deck replay replay overview overview"
+			"time time time turns turns turns";
+
+		&.reverseSide {
+			grid-template-areas:
+				"opponentHead winAndLoss winAndLoss playerHead"
+				"opponentHead winAndLoss winAndLoss playerHead"
+				"opponentHead deck deck playerHead"
+				"opponent replay replay me"
+				"time overview overview turns";
+		}
+	}
+
+	.playerHead {
+		display: none;
+	}
+
+	.winAndLoss {
+		display: none;
+	}
+}

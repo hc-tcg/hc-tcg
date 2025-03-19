@@ -1,3 +1,4 @@
+import {TypeT} from '../types/cards'
 import {
 	ChainmailArmor,
 	DiamondArmor,
@@ -37,7 +38,6 @@ import MumboJumboRare from './hermits/mumbojumbo-rare'
 import PearlescentMoonRare from './hermits/pearlescentmoon-rare'
 import PoePoeSkizzRare from './hermits/poepoeskizz-rare'
 import PotatoBoyCommon from './hermits/potatoboy-common'
-import PoultrymanCommon from './hermits/poultryman-common'
 import SmallishbeansCommon from './hermits/smallishbeans-common'
 import SpookyStressCommon from './hermits/spookystress-common'
 import SteampunkTangoCommon from './hermits/steampunktango-common'
@@ -76,7 +76,6 @@ import Crossbow from './single-use/crossbow'
 import CurseOfBinding from './single-use/curse-of-binding'
 import CurseOfVanishing from './single-use/curse-of-vanishing'
 import Efficiency from './single-use/efficiency'
-import Egg from './single-use/egg'
 import Emerald from './single-use/emerald'
 import FishingRod from './single-use/fishing-rod'
 import FlintAndSteel from './single-use/flint-and-steel'
@@ -95,16 +94,18 @@ import SplashPotionOfPoison from './single-use/splash-potion-of-poison'
 import {DiamondSword} from './single-use/sword'
 import TargetBlock from './single-use/target-block'
 import TNT from './single-use/tnt'
-import {Attach, Card, Hermit, Item, SingleUse} from './types'
+import {Attach, Hermit, Item, SingleUse} from './types'
 
 export type StarterDeck = {
 	name: string
+	icon: TypeT
 	cards: Array<Hermit | Attach | SingleUse | Item>
 }
 
 export const STARTER_DECKS: Array<StarterDeck> = [
 	{
 		name: 'Farm Deck #1',
+		icon: 'farm',
 		cards: [
 			PotatoBoyCommon,
 			PotatoBoyCommon,
@@ -120,19 +121,19 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			ChainmailArmor,
 			DiamondArmor,
 			Composter,
+			Composter,
 			BadOmen,
 			Bow,
 			CurseOfVanishing,
+			CurseOfVanishing,
 			Chest,
 			Emerald,
-			FishingRod,
 			FishingRod,
 			FishingRod,
 			GoldenAxe,
 			InstantHealthII,
 			TargetBlock,
 			Clock,
-			TerraformItem,
 			TerraformItem,
 			TerraformItem,
 			TerraformItem,
@@ -152,6 +153,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'PvP Deck #1',
+		icon: 'pvp',
 		cards: [
 			SmallishbeansCommon,
 			SmallishbeansCommon,
@@ -164,7 +166,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			ZombieCleoRare,
 			ZombieCleoRare,
 			Loyalty,
-			Loyalty,
+			Efficiency,
 			ChainmailArmor,
 			ChainmailArmor,
 			LightningRod,
@@ -199,6 +201,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'Balanced Deck #1',
+		icon: 'balanced',
 		cards: [
 			VintageBeefCommon,
 			VintageBeefCommon,
@@ -218,10 +221,10 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			Knockback,
 			Knockback,
 			DiamondSword,
+			DiamondSword,
 			Fortune,
 			Fortune,
 			Fortune,
-			TNT,
 			TNT,
 			TNT,
 			TargetBlock,
@@ -246,6 +249,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'Spedrunner Deck #1',
+		icon: 'speedrunner',
 		cards: [
 			SteampunkTangoCommon,
 			SteampunkTangoCommon,
@@ -262,7 +266,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			SpeedrunnerDoubleItem,
 			SpeedrunnerDoubleItem,
 			SpeedrunnerDoubleItem,
-			SpeedrunnerItem,
+			SpeedrunnerDoubleItem,
 			SpeedrunnerItem,
 			SpeedrunnerItem,
 			SpeedrunnerItem,
@@ -277,33 +281,34 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			SpeedrunnerItem,
 			SpeedrunnerItem,
 			GoldenApple,
-			ChorusFruit,
-			ChorusFruit,
-			NetheriteArmor,
-			NetheriteArmor,
-			FishingRod,
-			FishingRod,
-			FishingRod,
-			CurseOfVanishing,
-			InstantHealthII,
-			InstantHealthII,
 			GoldenApple,
+			ChorusFruit,
+			ChorusFruit,
+			NetheriteArmor,
+			NetheriteArmor,
+			FishingRod,
+			FishingRod,
+			FishingRod,
 			CurseOfVanishing,
+			CurseOfVanishing,
+			InstantHealthII,
+			InstantHealthII,
 		],
 	},
 	{
 		name: 'Redstone Deck #1',
+		icon: 'redstone',
 		cards: [
 			EthosLabRare,
-			XisumavoidRare,
-			MumboJumboCommon,
-			MumboJumboCommon,
-			ImpulseSVRare,
-			TangoTekCommon,
-			TangoTekCommon,
 			EthosLabRare,
-			ImpulseSVRare,
 			XisumavoidRare,
+			XisumavoidRare,
+			MumboJumboCommon,
+			MumboJumboCommon,
+			TangoTekCommon,
+			TangoTekCommon,
+			ImpulseSVRare,
+			ImpulseSVRare,
 			FishingRod,
 			FishingRod,
 			LavaBucket,
@@ -332,7 +337,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			Chest,
 			Composter,
 			Composter,
-			DiamondArmor,
+			IronArmor,
 			DiamondArmor,
 			Clock,
 			TargetBlock,
@@ -340,6 +345,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'PvP Deck #2',
+		icon: 'pvp',
 		cards: [
 			WelsknightRare,
 			WelsknightRare,
@@ -387,10 +393,11 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'Prankster Deck #1',
+		icon: 'prankster',
 		cards: [
 			MumboJumboRare,
 			MumboJumboRare,
-			PoultrymanCommon,
+			MumboJumboRare,
 			StressMonster101Rare,
 			StressMonster101Rare,
 			BoomerBdubsCommon,
@@ -403,12 +410,13 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			GoldArmor,
 			FishingRod,
 			FishingRod,
-			FishingRod,
 			Composter,
 			Composter,
+			Composter,
 			WildItem,
 			WildItem,
 			WildItem,
+			PranksterItem,
 			PranksterItem,
 			PranksterItem,
 			PranksterItem,
@@ -427,13 +435,13 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			PotionOfWeakness,
 			PotionOfWeakness,
 			PotionOfWeakness,
-			Egg,
-			PranksterItem,
-			TargetBlock,
+			Knockback,
+			Knockback,
 		],
 	},
 	{
 		name: 'Builder Deck #1',
+		icon: 'builder',
 		cards: [
 			EthosLabCommon,
 			EthosLabCommon,
@@ -481,6 +489,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'Redstone/Builder #1',
+		icon: 'redstone',
 		cards: [
 			TurtleShell,
 			BdoubleO100Common,
@@ -528,6 +537,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'Prankster Deck #2',
+		icon: 'prankster',
 		cards: [
 			GoldenAxe,
 			GoldenAxe,
@@ -575,6 +585,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 	{
 		name: 'PvP Deck #3',
+		icon: 'pvp',
 		cards: [
 			ZombieCleoRare,
 			ZombieCleoRare,
@@ -598,9 +609,9 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			TargetBlock,
 			FishingRod,
 			FishingRod,
+			Composter,
 			InvisibilityPotion,
 			InvisibilityPotion,
-			FishingRod,
 			InvisibilityPotion,
 			TNT,
 			TNT,
@@ -622,6 +633,6 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 	},
 ]
 
-export function getStarterPack(): Array<Card> {
-	return STARTER_DECKS[Math.floor(Math.random() * STARTER_DECKS.length)].cards
+export function getStarterPack(): StarterDeck {
+	return STARTER_DECKS[Math.floor(Math.random() * STARTER_DECKS.length)]
 }

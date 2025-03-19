@@ -1,23 +1,35 @@
 import assert from 'assert'
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
 import {
+	AchievementComponent,
 	BoardSlotComponent,
 	PlayerComponent,
 	RowComponent,
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
+import serverConfig from 'common/config/server-config'
+import {COINS} from 'common/cosmetics/coins'
+import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {EarnedAchievement} from 'common/types/achievements'
 import {Deck} from 'common/types/deck'
+import {GameOutcome} from 'common/types/game-state'
 import {formatText} from 'common/utils/formatting'
 import {OpponentDefs} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
-import {addGame, getDeck} from 'db/db-reciever'
+import {
+	addGame,
+	getDeck,
+	getGameReplay,
+	sendAfterGameInfo,
+	updateAchievements,
+} from 'db/db-reciever'
 import {GameController} from 'game-controller'
 import {LocalMessageTable, localMessages} from 'messages'
 import {
@@ -26,6 +38,7 @@ import {
 	delay,
 	fork,
 	join,
+	put,
 	race,
 	spawn,
 	take,
@@ -35,6 +48,7 @@ import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
+import {TurnActionCompressor} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
 
 function setupGame(
@@ -42,6 +56,8 @@ function setupGame(
 	player2: PlayerModel,
 	player1Deck: Deck,
 	player2Deck: Deck,
+	player1Score: number,
+	player2Score: number,
 	gameCode?: string,
 	spectatorCode?: string,
 	apiSecret?: string,
@@ -49,13 +65,19 @@ function setupGame(
 	let con = new GameController(
 		{
 			model: player1,
-			deck: player1Deck.cards.map((card) => card.props.numericId),
+			deck: player1Deck.cards
+				.map((card) => card.props.numericId)
+				.sort((a, b) => a - b),
+			score: player1Score,
 		},
 		{
 			model: player2,
-			deck: player2Deck.cards.map((card) => card.props.numericId),
+			deck: player2Deck.cards
+				.map((card) => card.props.numericId)
+				.sort((a, b) => a - b),
+			score: player2Score,
 		},
-		{gameCode, spectatorCode, apiSecret},
+		{gameCode, spectatorCode, apiSecret, countAchievements: 'all'},
 	)
 
 	let playerEntities = con.game.components.filterEntities(PlayerComponent)
@@ -65,12 +87,14 @@ function setupGame(
 		player: player1,
 		playerOnLeft: playerEntities[0],
 		spectator: false,
+		replayer: false,
 	})
 
 	con.addViewer({
 		player: player2,
 		playerOnLeft: playerEntities[1],
 		spectator: false,
+		replayer: false,
 	})
 
 	return con
@@ -93,7 +117,10 @@ function* gameManager(con: GameController) {
 			root.getGameIds().length,
 		)
 
-		con.broadcastToViewers({type: serverMessages.GAME_START})
+		con.broadcastToViewers({
+			type: serverMessages.GAME_START,
+			spectatorCode: con.spectatorCode ?? undefined,
+		})
 		root.hooks.newGame.call(con)
 		con.task = yield* spawn(gameSaga, con)
 
@@ -131,7 +158,7 @@ function* gameManager(con: GameController) {
 			assert(remainingPlayer, 'There is no way there is no remaining player.')
 			con.game.outcome = {
 				type: 'player-won',
-				victoryReason: 'forfeit',
+				victoryReason: 'disconnect',
 				winner: remainingPlayer,
 			}
 		}
@@ -153,12 +180,76 @@ function* gameManager(con: GameController) {
 			}
 		}
 	} catch (err) {
-		console.log('Error: ', err)
+		console.info('Error: ', err)
 		con.game.outcome = {type: 'game-crash', error: `${(err as Error).stack}`}
 	} finally {
 		const outcome = con.game.outcome
 
-		assert(outcome, 'All games should have an outcome after they end')
+		if (!outcome) {
+			return
+		}
+
+		if (con.task) yield* cancel(con.task)
+		con.game.hooks.afterGameEnd.call()
+
+		const newAchievements: Record<string, Array<EarnedAchievement>> = {}
+		for (let k = 0; k < con.viewers.length; k++) {
+			const v = con.viewers[k]
+			if (v.spectator) continue
+			const playerEntity = v.playerOnLeftEntity
+			newAchievements[playerEntity] = []
+			const achievements = con.game.components.filter(
+				AchievementComponent,
+				(_game, achievement) => achievement.player === playerEntity,
+			)
+
+			let player = con.game.components.get(playerEntity)
+			assert(
+				player,
+				"There should definitely be a player on the left if there is an entity, if there isn't, something went really wrong",
+			)
+
+			achievements.forEach((achievement) => {
+				achievement.props.onGameEnd(con.game, player, achievement, outcome)
+
+				const originalProgress =
+					achievement.props.getProgress(
+						v.player.achievementProgress[achievement.props.numericId].goals,
+					) || 0
+				const newProgress =
+					achievement.props.getProgress(achievement.goals) || 0
+
+				if (originalProgress === newProgress) return
+
+				v.player.updateAchievementProgress(
+					achievement.props.numericId,
+					achievement.goals,
+				)
+
+				for (const [i, level] of achievement.props.levels.entries()) {
+					if (newProgress >= level.steps && originalProgress < level.steps) {
+						v.player.achievementProgress[achievement.props.numericId].levels[
+							i
+						] = {completionTime: new Date()}
+					}
+
+					if (
+						newProgress > originalProgress &&
+						newProgress <= level.steps &&
+						(i === 0 || achievement.props.levels[i - 1].steps < newProgress)
+					) {
+						newAchievements[playerEntity].push({
+							achievementId: achievement.props.numericId,
+							level: {index: i, ...level},
+							originalProgress: originalProgress || 0,
+							newProgress: newProgress,
+						})
+					}
+				}
+			})
+
+			yield* updateAchievements(v.player)
+		}
 
 		for (const viewer of con.viewers) {
 			const gameState = getLocalGameState(con.game, viewer)
@@ -179,14 +270,15 @@ function* gameManager(con: GameController) {
 				type: serverMessages.GAME_END,
 				gameState,
 				outcome,
+				earnedAchievements: !viewer.spectator
+					? newAchievements[viewer.playerOnLeftEntity]
+					: [],
+				gameEndTime: Date.now(),
 			})
 		}
 
-		if (con.task) yield* cancel(con.task)
-		con.game.hooks.afterGameEnd.call()
-
 		const gameType = con.gameCode ? 'Private' : 'Public'
-		console.log(
+		console.info(
 			`${gameType} game ended. Total games:`,
 			root.getGameIds().length - 1,
 		)
@@ -211,6 +303,10 @@ function* gameManager(con: GameController) {
 		}
 
 		const winner = winnerPlayerId ? root.players[winnerPlayerId] : null
+		const turnActionCompressor = new TurnActionCompressor()
+		const turnActionsBuffer = con.game.state.isEvilXBossGame
+			? null
+			: yield* turnActionCompressor.turnActionsToBuffer(con)
 
 		if (
 			gamePlayers.length >= 2 &&
@@ -227,10 +323,61 @@ function* gameManager(con: GameController) {
 				winner ? winner.uuid : null,
 				con.game.rngSeed,
 				con.game.state.turn.turnNumber,
-				Buffer.from([0x00]),
+				turnActionsBuffer,
 				con.gameCode,
 			)
 		}
+		yield* sendAfterGameInfo(gamePlayers)
+		const rematchTime = Date.now()
+
+		const getGameScore = (
+			outcome: GameOutcome | undefined,
+			player: PlayerId,
+		) => {
+			assert(outcome, "A game can't end without an outcome.")
+			if (outcome.type === 'tie') return 0.5
+			if (outcome.type === 'player-won' && winnerPlayerId === player) return 1
+			return 0
+		}
+
+		if (
+			con.game.state.isEvilXBossGame ||
+			!gamePlayers[0].id ||
+			!gamePlayers[1].id
+		) {
+			return
+		}
+
+		const player1Score =
+			getGameScore(con.game.outcome, gamePlayers[0].id) + con.player1Defs.score
+		const player2Score =
+			getGameScore(con.game.outcome, gamePlayers[1].id) + con.player2Defs.score
+
+		broadcast([gamePlayers[0]], {
+			type: serverMessages.SEND_REMATCH,
+			rematch: {
+				opponentId: gamePlayers[1].id,
+				time: rematchTime,
+				spectatorCode: con.spectatorCode,
+				playerScore: player1Score,
+				opponentScore: player2Score,
+			},
+		})
+		broadcast([gamePlayers[1]], {
+			type: serverMessages.SEND_REMATCH,
+			rematch: {
+				opponentId: gamePlayers[0].id,
+				time: rematchTime,
+				spectatorCode: con.spectatorCode,
+				playerScore: player2Score,
+				opponentScore: player1Score,
+			},
+		})
+		yield* delay(serverConfig.limits.rematchTime)
+		broadcast(gamePlayers, {
+			type: serverMessages.SEND_REMATCH,
+			rematch: null,
+		})
 	}
 }
 
@@ -266,10 +413,32 @@ function* randomMatchmakingSaga() {
 			const player2Id = root.queue[index + 1]
 			const player1 = root.players[player1Id]
 			const player2 = root.players[player2Id]
-
 			if (player1 && player2 && player1.deck && player2.deck) {
 				playersToRemove.push(player1.id, player2.id)
-				const newGame = setupGame(player1, player2, player1.deck, player2.deck)
+
+				if (player1 && root.awaitingRematch[player1Id]) {
+					const opponent =
+						root.players[root.awaitingRematch[player1Id].opponentId]
+					broadcast([player1, opponent], {
+						type: serverMessages.REMATCH_DENIED,
+					})
+				}
+				if (player2 && root.awaitingRematch[player2Id]) {
+					const opponent =
+						root.players[root.awaitingRematch[player2Id].opponentId]
+					broadcast([player2, opponent], {
+						type: serverMessages.REMATCH_DENIED,
+					})
+				}
+
+				const newGame = setupGame(
+					player1,
+					player2,
+					player1.deck,
+					player2.deck,
+					0,
+					0,
+				)
 				root.addGame(newGame)
 				yield* safeCall(fork, gameManager, newGame)
 			} else {
@@ -319,7 +488,6 @@ function* updateDeckSaga(
 ) {
 	if (payload.databaseConnected) {
 		const newDeck = yield* getDeck(payload.activeDeckCode)
-		if (!newDeck) return
 		player.setPlayerDeck(newDeck)
 		return
 	}
@@ -327,18 +495,20 @@ function* updateDeckSaga(
 	player.setPlayerDeck(payload.activeDeck)
 }
 
-export function* joinQueue(
-	msg: RecievedClientMessage<typeof clientMessages.JOIN_QUEUE>,
+////////////////////////
+// CLIENT CONNECTION
+////////////////////////
+
+export function* joinPublicQueue(
+	msg: RecievedClientMessage<typeof clientMessages.JOIN_PUBLIC_QUEUE>,
 ) {
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	updateDeckSaga(player, msg.payload)
-
-	console.log(player.deck)
+	yield* updateDeckSaga(player, msg.payload)
 
 	if (!player) {
-		console.log('[Join queue] Player not found: ', playerId)
+		console.info('[Join queue] Player not found: ', playerId)
 		return
 	}
 
@@ -346,33 +516,36 @@ export function* joinQueue(
 		!player.deck ||
 		!validateDeck(player.deck.cards.map((card) => card.props)).valid
 	) {
-		console.log(
+		console.info(
 			'[Join queue] Player tried to join queue with an invalid deck:',
 			player.name,
 		)
-		broadcast([player], {type: serverMessages.JOIN_QUEUE_FAILURE})
+		broadcast([player], {type: serverMessages.JOIN_PUBLIC_QUEUE_FAILURE})
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log('[Join queue] Player is already in game or queue:', player.name)
-		broadcast([player], {type: serverMessages.JOIN_QUEUE_FAILURE})
+		console.info(
+			'[Join queue] Player is already in game or queue:',
+			player.name,
+		)
+		broadcast([player], {type: serverMessages.JOIN_PUBLIC_QUEUE_FAILURE})
 		return
 	}
 
 	// Add them to the queue
 	root.queue.push(playerId)
-	broadcast([player], {type: serverMessages.JOIN_QUEUE_SUCCESS})
-	console.log(`Joining queue: ${player.name}`)
+	broadcast([player], {type: serverMessages.JOIN_PUBLIC_QUEUE_SUCCESS})
+	console.info(`Joining queue: ${player.name}`)
 }
 
-export function* leaveQueue(
-	msg: RecievedClientMessage<typeof clientMessages.LEAVE_QUEUE>,
+export function* leavePublicQueue(
+	msg: RecievedClientMessage<typeof clientMessages.LEAVE_PUBLIC_QUEUE>,
 ) {
 	const {playerId} = msg
 	const player = root.players[playerId]
 
 	if (!player) {
-		console.log('[Leave queue] Player not found: ', playerId)
+		console.info('[Leave queue] Player not found: ', playerId)
 		return
 	}
 
@@ -381,43 +554,333 @@ export function* leaveQueue(
 	if (queueIndex >= 0) {
 		root.queue.splice(queueIndex, 1)
 		broadcast([player], {type: serverMessages.LEAVE_QUEUE_SUCCESS})
-		console.log(`Left queue: ${player.name}`)
+		console.info(`Left queue: ${player.name}`)
 	} else {
 		broadcast([player], {type: serverMessages.LEAVE_QUEUE_FAILURE})
-		console.log(
+		console.info(
 			'[Leave queue]: Player tried to leave queue when not there:',
 			player.name,
 		)
 	}
 }
 
-function setupSolitareGame(
-	player: PlayerModel,
-	playerDeck: Deck,
-	opponent: OpponentDefs,
-): GameController {
-	const con = new GameController(
-		{
-			model: player,
-			deck: playerDeck.cards.map((card) => card.props.numericId),
-		},
-		{
-			model: opponent,
-			deck: opponent.deck,
-		},
-		{randomizeOrder: false},
+export function* joinPrivateGame(
+	msg: RecievedClientMessage<typeof clientMessages.JOIN_PRIVATE_QUEUE>,
+) {
+	const {
+		playerId,
+		payload: {code},
+	} = msg
+	const player = root.players[playerId]
+
+	yield* updateDeckSaga(player, msg.payload)
+
+	if (!player) {
+		console.info('[Join private game] Player not found: ', playerId)
+		return
+	}
+
+	if (
+		!player.deck ||
+		!validateDeck(player.deck.cards.map((card) => card.props)).valid
+	) {
+		console.info(
+			'[Join private game] Player tried to join private game with an invalid deck: ',
+			playerId,
+		)
+		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_FAILURE})
+		return
+	}
+
+	if (inGame(playerId) || inQueue(playerId)) {
+		console.info(
+			'[Join private game] Player is already in game or queue:',
+			player.name,
+		)
+		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_FAILURE})
+		return
+	}
+
+	// Find the code in the private queue
+	const info = root.privateQueue[code]
+	if (!info) {
+		broadcast([player], {type: serverMessages.INVALID_CODE})
+		return
+	}
+
+	// If there is another player, start game, otherwise, add us to queue
+	if (info.playerId) {
+		// If we want to join our own game, that is an error
+		if (info.playerId === player.id) {
+			broadcast([player], {type: serverMessages.INVALID_CODE})
+			return
+		}
+
+		// Create new game for these 2 players
+		const existingPlayer = root.players[info.playerId]
+		if (!existingPlayer) {
+			console.info(
+				'[Join private game]: Player waiting in queue no longer exists! Code: ' +
+					code,
+			)
+			delete root.privateQueue[code]
+
+			broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_FAILURE})
+			return
+		}
+
+		if (!existingPlayer.deck) {
+			console.info(
+				'[Join private game]: Player waiting in queue has no deck! Code: ' +
+					code,
+			)
+			delete root.privateQueue[code]
+
+			broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_FAILURE})
+			return
+		}
+
+		const newGame = setupGame(
+			player,
+			existingPlayer,
+			player.deck,
+			existingPlayer.deck,
+			0,
+			0,
+			root.privateQueue[code].gameCode,
+			root.privateQueue[code].spectatorCode,
+			root.privateQueue[code].apiSecret,
+		)
+		root.addGame(newGame)
+
+		for (const playerId of root.privateQueue[code].spectatorsWaiting) {
+			const player = root.players[playerId]
+			newGame.chat.push({
+				sender: {
+					type: 'viewer',
+					id: player.id,
+				},
+				message: formatText(`$s${player.name}$ $ystarted spectating$`),
+				createdAt: Date.now(),
+			})
+		}
+
+		for (const playerId of root.privateQueue[code].spectatorsWaiting) {
+			const viewer = newGame.addViewer({
+				player: root.players[playerId],
+				spectator: true,
+				playerOnLeft: newGame.game.state.order[0],
+				replayer: false,
+			})
+			let gameState = getLocalGameState(newGame.game, viewer)
+
+			broadcast([root.players[playerId]], {
+				type: serverMessages.SPECTATE_PRIVATE_GAME_START,
+				localGameState: gameState,
+			})
+		}
+
+		console.info(`Joining private game: ${player.name}.`, `Code: ${code}`)
+
+		// Remove this game from the queue, it's started
+		let tmpQueue = root.privateQueue[code]
+		delete root.privateQueue[code]
+
+		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_SUCCESS})
+		if (tmpQueue.playerId) {
+			broadcast([root.players[tmpQueue.playerId]], {
+				type: serverMessages.JOIN_PRIVATE_GAME_SUCCESS,
+			})
+		}
+
+		yield* safeCall(fork, gameManager, newGame)
+	} else {
+		// Assign this player to the game
+		root.privateQueue[code].playerId = playerId
+		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_SUCCESS})
+
+		console.info(`Joining empty private game: ${player.name}.`, `Code: ${code}`)
+	}
+}
+
+export function* spectatePrivateGame(
+	msg: RecievedClientMessage<typeof clientMessages.SPECTATE_PRIVATE_GAME>,
+) {
+	const {
+		playerId,
+		payload: {code},
+	} = msg
+	const player = root.players[playerId]
+
+	if (!player) {
+		console.info('[Spectate private game] Player not found: ', playerId)
+		return
+	}
+
+	if (inGame(playerId) || inQueue(playerId)) {
+		console.info(
+			'[Spectate private game] Player is already in game or queue:',
+			player.name,
+		)
+		broadcast([player], {type: serverMessages.SPECTATE_PRIVATE_GAME_FAILURE})
+		return
+	}
+
+	// Check if our code matches an already running game
+	const spectatorGame = Object.values(root.games).find(
+		(game) => game.spectatorCode === code,
 	)
 
-	const playerEntities = con.game.components.filterEntities(PlayerComponent)
-	con.addViewer({
-		player,
-		playerOnLeft: playerEntities[0],
-		spectator: false,
+	if (spectatorGame) {
+		const viewer = spectatorGame.addViewer({
+			player: player,
+			playerOnLeft: spectatorGame.game.state.order[0],
+			spectator: true,
+			replayer: false,
+		})
+
+		console.info(
+			`Spectator ${player.name} Joined private game. Code: ${spectatorGame.gameCode}`,
+		)
+
+		spectatorGame.chat.push({
+			sender: {
+				type: 'viewer',
+				id: player.id,
+			},
+			message: formatText(`$s${player.name}$ $ystarted spectating$`),
+			createdAt: Date.now(),
+		})
+
+		spectatorGame.chatUpdate()
+
+		broadcast([player], {
+			type: serverMessages.SPECTATE_PRIVATE_GAME_START,
+			localGameState: getLocalGameState(spectatorGame.game, viewer),
+		})
+
+		return
+	}
+
+	// No existing game yet, check for a game that hasn't started
+	const gameQueue = [
+		...Object.values(root.privateQueue),
+		...Object.values(root.awaitingRematch),
+	].find((q) => q.spectatorCode === code)
+
+	if (!gameQueue) {
+		broadcast([player], {type: serverMessages.INVALID_CODE})
+		return
+	}
+
+	// Players can not spectate games they started.
+	if (gameQueue.playerId === player.id) {
+		broadcast([player], {type: serverMessages.INVALID_CODE})
+		return
+	}
+
+	gameQueue.spectatorsWaiting.push(player.id)
+	broadcast([player], {
+		type: serverMessages.SPECTATE_PRIVATE_GAME_WAITING,
+	})
+}
+
+export function* createPrivateGame(
+	msg: RecievedClientMessage<typeof clientMessages.CREATE_PRIVATE_GAME>,
+) {
+	const {playerId} = msg
+	const player = root.players[playerId]
+
+	yield* updateDeckSaga(player, msg.payload)
+
+	if (!player) {
+		console.info('[Create private game] Player not found: ', playerId)
+		return
+	}
+
+	if (inGame(playerId) || inQueue(playerId)) {
+		console.info(
+			'[Create private game] Player is already in game or queue:',
+			player.name,
+		)
+		broadcast([player], {type: serverMessages.CREATE_PRIVATE_GAME_FAILURE})
+		return
+	}
+
+	// Add to private queue with code
+	let {gameCode, spectatorCode} = root.createPrivateGame(playerId)
+
+	// Send code to player
+	broadcast([player], {
+		type: serverMessages.CREATE_PRIVATE_GAME_SUCCESS,
+		gameCode: gameCode,
+		spectatorCode: spectatorCode,
 	})
 
-	con.game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
+	console.info(
+		`Private game created by ${player.name}.`,
+		`Code: ${gameCode}`,
+		`Spectator Code: ${spectatorCode}`,
+	)
+}
 
-	return con
+export function* cancelPrivateGame(
+	msg: RecievedClientMessage<typeof clientMessages.CANCEL_PRIVATE_GAME>,
+) {
+	const {playerId} = msg
+
+	for (let code in root.privateQueue) {
+		const info = root.privateQueue[code]
+		if (info.playerId && info.playerId === playerId) {
+			const player = root.players[info.playerId]
+			if (player) {
+				broadcast([player], {type: serverMessages.PRIVATE_GAME_CANCELLED})
+			}
+
+			root.hooks.privateCancelled.call(code)
+			delete root.privateQueue[code]
+			console.info(`Private game cancelled. Code: ${code}`)
+		}
+	}
+}
+
+// Functions for both private and private spectate
+export function* leavePrivateQueue(
+	msg: RecievedClientMessage<typeof clientMessages.LEAVE_PRIVATE_QUEUE>,
+) {
+	const {playerId} = msg
+	const player = root.players[playerId]
+
+	for (let code in root.privateQueue) {
+		const info = root.privateQueue[code]
+		if (info.playerId && info.playerId === playerId) {
+			info.playerId = null
+		}
+		if (info.spectatorsWaiting.includes(player.id)) {
+			info.spectatorsWaiting = info.spectatorsWaiting.filter(
+				(x) => x !== player.id,
+			)
+		}
+	}
+}
+
+export function* leaveRematchGame(
+	msg: RecievedClientMessage<typeof clientMessages.LEAVE_REMATCH_GAME>,
+) {
+	const player = root.players[msg.playerId]
+	console.info(`[Rematch] ${player.name} left the rematch game they started.`)
+	const {playerId} = msg
+	delete root.awaitingRematch[playerId]
+}
+
+export function* cancelRematch(
+	msg: RecievedClientMessage<typeof clientMessages.CANCEL_REMATCH>,
+) {
+	const player = root.players[msg.playerId]
+	const opponentPlayer = root.players[msg.payload.rematch.opponentId]
+	delete root.awaitingRematch[opponentPlayer.id]
+	delete root.awaitingRematch[player.id]
+	broadcast([player, opponentPlayer], {type: serverMessages.REMATCH_DENIED})
 }
 
 export function* createBossGame(
@@ -426,10 +889,10 @@ export function* createBossGame(
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	updateDeckSaga(player, msg.payload)
+	yield* updateDeckSaga(player, msg.payload)
 
 	if (!player) {
-		console.log('[Create Boss game] Player not found: ', playerId)
+		console.info('[Create Boss game] Player not found: ', playerId)
 		return
 	}
 
@@ -437,7 +900,7 @@ export function* createBossGame(
 		!player.deck ||
 		!validateDeck(player.deck.cards.map((card) => card.props)).valid
 	) {
-		console.log(
+		console.info(
 			'[Join private game] Player tried to join private game with an invalid deck: ',
 			playerId,
 		)
@@ -446,7 +909,7 @@ export function* createBossGame(
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log(
+		console.info(
 			'[Create Boss game] Player is already in game or queue:',
 			player.name,
 		)
@@ -457,15 +920,16 @@ export function* createBossGame(
 	broadcast([player], {type: serverMessages.CREATE_BOSS_GAME_SUCCESS})
 
 	const newBossGameController = setupSolitareGame(player, player.deck, {
+		uuid: '',
 		name: 'Evil Xisuma',
 		minecraftName: 'EvilXisuma',
 		censoredName: 'Evil Xisuma',
 		deck: [EvilXisumaBoss],
 		virtualAI: ExBossAI,
 		disableDeckingOut: true,
-		selectedCoinHead: 'evilx',
+		appearance: {...defaultAppearance, coin: COINS['evilx']},
 	})
-	newBossGameController.game.state.isBossGame = true
+	newBossGameController.game.state.isEvilXBossGame = true
 
 	function destroyRow(row: RowComponent) {
 		newBossGameController.game.components
@@ -494,14 +958,13 @@ export function* createBossGame(
 		.forEach(destroyRow)
 	// Remove boss' item slots
 	newBossGameController.game.components
-		.filterEntities(
-			BoardSlotComponent,
-			query.slot.currentPlayer,
-			query.slot.item,
-		)
-		.forEach((slotEntity) =>
-			newBossGameController.game.components.delete(slotEntity),
-		)
+		.filter(RowComponent, query.row.currentPlayer)
+		.forEach((row) => {
+			row.itemsSlotEntities?.forEach((slotEntity) =>
+				newBossGameController.game.components.delete(slotEntity),
+			)
+			row.itemsSlotEntities = []
+		})
 
 	newBossGameController.game.settings.disableRewardCards = true
 
@@ -510,58 +973,18 @@ export function* createBossGame(
 	yield* safeCall(fork, gameManager, newBossGameController)
 }
 
-export function* createPrivateGame(
-	msg: RecievedClientMessage<typeof clientMessages.CREATE_PRIVATE_GAME>,
+export function* createRematchGame(
+	msg: RecievedClientMessage<typeof clientMessages.CREATE_REMATCH_GAME>,
 ) {
-	const {playerId} = msg
+	const playerId = msg.playerId
+	const {opponentId, spectatorCode, playerScore, opponentScore} = msg.payload
 	const player = root.players[playerId]
+	const opponent = root.players[opponentId]
 
-	updateDeckSaga(player, msg.payload)
+	yield* updateDeckSaga(player, msg.payload)
 
 	if (!player) {
-		console.log('[Create private game] Player not found: ', playerId)
-		return
-	}
-
-	if (inGame(playerId) || inQueue(playerId)) {
-		console.log(
-			'[Create private game] Player is already in game or queue:',
-			player.name,
-		)
-		broadcast([player], {type: serverMessages.CREATE_PRIVATE_GAME_FAILURE})
-		return
-	}
-
-	// Add to private queue with code
-	let {gameCode, spectatorCode} = root.createPrivateGame(playerId)
-
-	// Send code to player
-	broadcast([player], {
-		type: serverMessages.CREATE_PRIVATE_GAME_SUCCESS,
-		gameCode: gameCode,
-		spectatorCode: spectatorCode,
-	})
-
-	console.log(
-		`Private game created by ${player.name}.`,
-		`Code: ${gameCode}`,
-		`Spectator Code: ${spectatorCode}`,
-	)
-}
-
-export function* joinPrivateGame(
-	msg: RecievedClientMessage<typeof clientMessages.JOIN_PRIVATE_GAME>,
-) {
-	const {
-		playerId,
-		payload: {code},
-	} = msg
-	const player = root.players[playerId]
-
-	updateDeckSaga(player, msg.payload)
-
-	if (!player) {
-		console.log('[Join private game] Player not found: ', playerId)
+		console.info('[Join rematch game] Player not found: ', playerId)
 		return
 	}
 
@@ -569,40 +992,89 @@ export function* joinPrivateGame(
 		!player.deck ||
 		!validateDeck(player.deck.cards.map((card) => card.props)).valid
 	) {
-		console.log(
-			'[Join private game] Player tried to join private game with an invalid deck: ',
+		console.info(
+			'[Join rematch game] Player tried to join private game with an invalid deck: ',
 			playerId,
 		)
-		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_FAILURE})
+		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
 		return
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log(
+		console.info(
 			'[Join private game] Player is already in game or queue:',
 			player.name,
 		)
-		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_FAILURE})
+		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
 		return
 	}
 
-	// Check if spectator game is running first
-	const spectatorGame = Object.values(root.games).find(
-		(game) => game.spectatorCode === code,
-	)
-
-	if (spectatorGame) {
-		const viewer = spectatorGame.addViewer({
-			player: player,
-			playerOnLeft: spectatorGame.game.state.order[0],
-			spectator: true,
-		})
-
-		console.log(
-			`Spectator ${player.name} Joined private game. Code: ${spectatorGame.gameCode}`,
+	// Find the code in the rematch queue
+	const waitingInfo = root.awaitingRematch[opponentId]
+	if (!waitingInfo) {
+		// Assign this player to the game
+		root.awaitingRematch[playerId] = {
+			playerId: playerId,
+			opponentId: opponentId,
+			playerScore: playerScore,
+			opponentScore: opponentScore,
+			spectatorCode: spectatorCode || undefined,
+			spectatorsWaiting: [],
+		}
+		broadcast([player], {type: serverMessages.CREATE_REMATCH_SUCCESS})
+		console.info(
+			`[Rematch] ${player.name} requested a rematch from their last opponent`,
 		)
+		broadcast([opponent], {
+			type: serverMessages.REMATCH_REQUESTED,
+			opponentName: opponent.name,
+		})
+		return
+	}
 
-		spectatorGame.chat.push({
+	// Remove rematch player from waiting queue
+	delete root.awaitingRematch[opponentId]
+
+	// If we want to join our own game, that is an error
+	if (waitingInfo.playerId === player.id) {
+		console.info('[Rematch]: Player attempted to join their own rematch!')
+		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
+		return
+	}
+
+	// Create new game for these 2 players
+	const existingPlayer = root.players[opponentId]
+	if (!existingPlayer) {
+		console.info('[Rematch]: Player waiting in queue no longer exists!')
+		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
+		return
+	}
+
+	if (!existingPlayer.deck) {
+		console.info('[Rematch]: Player waiting in queue has no deck!')
+		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
+		return
+	}
+
+	const newGame = setupGame(
+		player,
+		existingPlayer,
+		player.deck,
+		existingPlayer.deck,
+		waitingInfo.opponentScore,
+		waitingInfo.playerScore,
+		undefined,
+		spectatorCode ?? undefined,
+	)
+	root.addGame(newGame)
+
+	console.info(`[Rematch] Joining rematch game: ${player.name}.`)
+
+	broadcast([player], {type: serverMessages.CREATE_REMATCH_SUCCESS})
+
+	for (const playerId of waitingInfo.spectatorsWaiting) {
+		const player = root.players[playerId]
+		newGame.chat.push({
 			sender: {
 				type: 'viewer',
 				id: player.id,
@@ -610,169 +1082,129 @@ export function* joinPrivateGame(
 			message: formatText(`$s${player.name}$ $ystarted spectating$`),
 			createdAt: Date.now(),
 		})
+	}
 
-		spectatorGame.chatUpdate()
+	for (const playerId of waitingInfo.spectatorsWaiting) {
+		const viewer = newGame.addViewer({
+			player: root.players[playerId],
+			spectator: true,
+			playerOnLeft: newGame.game.state.order[0],
+			replayer: false,
+		})
+		let gameState = getLocalGameState(newGame.game, viewer)
 
-		broadcast([player], {
+		broadcast([root.players[playerId]], {
 			type: serverMessages.SPECTATE_PRIVATE_GAME_START,
-			localGameState: getLocalGameState(spectatorGame.game, viewer),
+			localGameState: gameState,
 		})
-
-		return
 	}
 
-	let gameQueue = Object.values(root.privateQueue).find(
-		(q) => q.spectatorCode === code,
-	)
-	if (gameQueue) {
-		// Players can not spectate games they started.
-		if (gameQueue.playerId === player.id) {
-			broadcast([player], {type: serverMessages.INVALID_CODE})
-			return
-		}
-		gameQueue.spectatorsWaiting.push(player.id)
-		broadcast([player], {
-			type: serverMessages.SPECTATE_PRIVATE_GAME_WAITING,
-		})
-		return
-	}
-
-	// Find the code in the private queue
-	const info = root.privateQueue[code]
-	if (!info) {
-		broadcast([player], {type: serverMessages.INVALID_CODE})
-		return
-	}
-
-	// If there is another player, start game, otherwise, add us to queue
-	if (info.playerId) {
-		// If we want to join our own game, that is an error
-		if (info.playerId === player.id) {
-			broadcast([player], {type: serverMessages.INVALID_CODE})
-			return
-		}
-
-		// Create new game for these 2 players
-		const existingPlayer = root.players[info.playerId]
-		if (!existingPlayer) {
-			console.log(
-				'[Join private game]: Player waiting in queue no longer exists! Code: ' +
-					code,
-			)
-			delete root.privateQueue[code]
-
-			broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_FAILURE})
-			return
-		}
-
-		if (!existingPlayer.deck) {
-			console.log(
-				'[Join private game]: Player waiting in queue has no deck! Code: ' +
-					code,
-			)
-			delete root.privateQueue[code]
-
-			broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_FAILURE})
-			return
-		}
-
-		const newGame = setupGame(
-			player,
-			existingPlayer,
-			player.deck,
-			existingPlayer.deck,
-			root.privateQueue[code].gameCode,
-			root.privateQueue[code].spectatorCode,
-			root.privateQueue[code].apiSecret,
-		)
-		root.addGame(newGame)
-
-		for (const playerId of root.privateQueue[code].spectatorsWaiting) {
-			const player = root.players[playerId]
-			newGame.chat.push({
-				sender: {
-					type: 'viewer',
-					id: player.id,
-				},
-				message: formatText(`$s${player.name}$ $ystarted spectating$`),
-				createdAt: Date.now(),
-			})
-		}
-
-		for (const playerId of root.privateQueue[code].spectatorsWaiting) {
-			const viewer = newGame.addViewer({
-				player: root.players[playerId],
-				spectator: true,
-				playerOnLeft: newGame.game.state.order[0],
-			})
-			let gameState = getLocalGameState(newGame.game, viewer)
-
-			broadcast([root.players[playerId]], {
-				type: serverMessages.SPECTATE_PRIVATE_GAME_START,
-				localGameState: gameState,
-			})
-		}
-
-		console.log(`Joining private game: ${player.name}.`, `Code: ${code}`)
-
-		// Remove this game from the queue, it's started
-		let tmpQueue = root.privateQueue[code]
-		delete root.privateQueue[code]
-
-		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_SUCCESS})
-		if (tmpQueue.playerId) {
-			broadcast([root.players[tmpQueue.playerId]], {
-				type: serverMessages.JOIN_PRIVATE_GAME_SUCCESS,
-			})
-		}
-
-		yield* safeCall(fork, gameManager, newGame)
-	} else {
-		// Assign this player to the game
-		root.privateQueue[code].playerId = playerId
-		broadcast([player], {type: serverMessages.WAITING_FOR_PLAYER})
-
-		console.log(`Joining empty private game: ${player.name}.`, `Code: ${code}`)
-	}
+	yield* safeCall(fork, gameManager, newGame)
 }
 
-export function* cancelPrivateGame(
-	msg: RecievedClientMessage<typeof clientMessages.CANCEL_PRIVATE_GAME>,
-) {
-	const {playerId} = msg
-
-	for (let code in root.privateQueue) {
-		const info = root.privateQueue[code]
-		if (info.playerId && info.playerId === playerId) {
-			const player = root.players[info.playerId]
-			if (player) {
-				broadcast([player], {type: serverMessages.PRIVATE_GAME_TIMEOUT})
-			}
-
-			root.hooks.privateCancelled.call(code)
-			delete root.privateQueue[code]
-			console.log(`Private game cancelled. Code: ${code}`)
-		}
-	}
-}
-
-export function* leavePrivateQueue(
-	msg: RecievedClientMessage<typeof clientMessages.LEAVE_PRIVATE_QUEUE>,
+//@Todo fix games from just timing out when player leaves
+export function* createReplayGame(
+	msg: RecievedClientMessage<typeof clientMessages.CREATE_REPLAY_GAME>,
 ) {
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	for (let code in root.privateQueue) {
-		const info = root.privateQueue[code]
-		if (info.playerId && info.playerId === playerId) {
-			info.playerId = null
-		}
-		if (info.spectatorsWaiting.includes(player.id)) {
-			info.spectatorsWaiting = info.spectatorsWaiting.filter(
-				(x) => x !== player.id,
-			)
-		}
+	if (inGame(playerId) || inQueue(playerId)) {
+		console.info(
+			'[Create private game] Player is already in game or queue:',
+			player.name,
+		)
+		broadcast([player], {type: serverMessages.CREATE_PRIVATE_GAME_FAILURE})
+		return
 	}
+	const replay = yield* getGameReplay(msg.payload.id)
+	if (!replay) {
+		broadcast([root.players[playerId]], {
+			type: serverMessages.INVALID_REPLAY,
+		})
+		return
+	}
+
+	const con = new GameController(replay.player1Defs, replay.player2Defs, {
+		randomSeed: replay.seed,
+		randomizeOrder: true,
+		gameId: msg.payload.id.toString(),
+	})
+	root.addGame(con)
+	root.hooks.newGame.call(con)
+
+	const viewerEntity = con.game.components.findEntity(
+		PlayerComponent,
+		query.player.uuid(msg.payload.uuid),
+	)
+
+	const viewer = con.addViewer({
+		player: root.players[playerId],
+		spectator: true,
+		playerOnLeft: viewerEntity ? viewerEntity : con.game.state.order[0],
+		replayer: true,
+	})
+	let gameState = getLocalGameState(con.game, viewer)
+
+	broadcast([root.players[playerId]], {
+		type: serverMessages.SPECTATE_PRIVATE_GAME_START,
+		localGameState: gameState,
+	})
+
+	con.task = yield* spawn(gameSaga, con)
+
+	console.info(
+		`${con.game.logHeader}`,
+		`Replay game started: ${con.id}`,
+		`Viewer: ${msg.playerId}.`,
+		'Total games:',
+		root.getGameIds().length,
+	)
+
+	yield* delay(1000)
+
+	const replayActions = replay.replay
+
+	for (let i = 0; i < replayActions.length; i++) {
+		if (con.game.outcome) break
+
+		const action = replayActions[i]
+
+		console.log(action.player)
+
+		yield* delay(action.millisecondsSinceLastAction)
+		yield* put({
+			type: localMessages.GAME_TURN_ACTION,
+			action: action.action,
+			playerEntity: action.player,
+		})
+	}
+
+	gameState.timer.turnRemaining = 0
+	gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
+	if (!con.game.endInfo.victoryReason) {
+		// Remove coin flips from state if game was terminated before game end to prevent
+		// clients replaying animations after a forfeit, disconnect, or excessive game duration
+		con.game.components
+			.filter(PlayerComponent)
+			.forEach((player) => (gameState.players[player.entity].coinFlips = []))
+	}
+
+	yield* delay(10)
+
+	broadcast([viewer.player], {
+		type: serverMessages.GAME_END,
+		gameState,
+		outcome: con.game.outcome
+			? con.game.outcome
+			: {type: 'game-crash', error: 'The replay game did not save properly.'},
+		earnedAchievements: [],
+		gameEndTime: Date.now(),
+	})
+
+	delete root.games[con.id]
+	root.hooks.gameRemoved.call(con)
+	console.info(`Replay game ended: ${con.id}`)
 }
 
 function onPlayerLeft(player: PlayerModel) {
@@ -783,7 +1215,7 @@ function onPlayerLeft(player: PlayerModel) {
 		const queueIndex = root.queue.indexOf(player.id)
 		if (queueIndex >= 0) {
 			root.queue.splice(queueIndex, 1)
-			console.log(`Left queue: ${player.name}`)
+			console.info(`Left queue: ${player.name}`)
 		}
 	}
 
@@ -792,7 +1224,7 @@ function onPlayerLeft(player: PlayerModel) {
 		const info = root.privateQueue[code]
 		if (info.playerId && info.playerId === player.id) {
 			delete root.privateQueue[code]
-			console.log(`Private game cancelled. Code: ${code}`)
+			console.info(`Private game cancelled. Code: ${code}`)
 		}
 		if (info.spectatorsWaiting.includes(player.id)) {
 			info.spectatorsWaiting = info.spectatorsWaiting.filter(
@@ -800,6 +1232,38 @@ function onPlayerLeft(player: PlayerModel) {
 			)
 		}
 	}
+}
+
+function setupSolitareGame(
+	player: PlayerModel,
+	playerDeck: Deck,
+	opponent: OpponentDefs,
+): GameController {
+	const con = new GameController(
+		{
+			model: player,
+			deck: playerDeck.cards.map((card) => card.props.numericId),
+			score: 0,
+		},
+		{
+			model: opponent,
+			deck: opponent.deck,
+			score: 0,
+		},
+		{randomizeOrder: false, countAchievements: 'boss'},
+	)
+
+	const playerEntities = con.game.components.filterEntities(PlayerComponent)
+	con.addViewer({
+		player,
+		playerOnLeft: playerEntities[0],
+		spectator: false,
+		replayer: false,
+	})
+
+	con.game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
+
+	return con
 }
 
 function* matchmakingSaga() {

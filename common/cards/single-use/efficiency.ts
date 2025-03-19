@@ -17,7 +17,7 @@ const Efficiency: SingleUse = {
 	rarity: 'rare',
 	tokens: 1,
 	description:
-		'Use an attack from your active Hermit without having the necessary item cards attached.',
+		'You may use attacks this turn without having the necessary item cards attached.',
 	showConfirmationModal: true,
 	log: (values) => values.defaultLog,
 	onAttach(

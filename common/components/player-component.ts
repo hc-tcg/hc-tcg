@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {COINS} from '../coins'
+import {Appearance} from '../cosmetics/types'
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
 import type {GameModel} from '../models/game-model'
@@ -13,7 +13,7 @@ import type {
 	UsedHermitAttackInfo,
 } from '../types/game-state'
 import {GameHook, PriorityHook, WaterfallHook} from '../types/hooks'
-import {onCoinFlip, onTurnEnd} from '../types/priorities'
+import {afterApply, onCoinFlip, onTurnEnd} from '../types/priorities'
 import {CardComponent} from './card-component'
 import query from './query'
 import {RowComponent} from './row-component'
@@ -22,21 +22,25 @@ import {StatusEffectComponent} from './status-effect-component'
 
 /** The minimal information that must be known about a player to start a game */
 export type PlayerDefs = {
+	uuid: string
 	name: string
 	minecraftName: string
 	censoredName: string
+	appearance: Appearance
 	disableDeckingOut?: true
-	selectedCoinHead: keyof typeof COINS
 }
 
 export class PlayerComponent {
+	public static table = 'players'
+
 	readonly game: GameModel
 	readonly entity: PlayerEntity
 
+	readonly uuid: string
 	readonly playerName: string
 	readonly minecraftName: string
 	readonly censoredPlayerName: string
-	readonly selectedCoinHead: keyof typeof COINS
+	readonly appearance: Appearance
 
 	coinFlips: Array<CurrentCoinFlip>
 	lives: number
@@ -69,7 +73,7 @@ export class PlayerComponent {
 		/** Hook called when a single use card is applied */
 		onApply: GameHook<() => void>
 		/** Hook called after a single use card is applied */
-		afterApply: GameHook<() => void>
+		afterApply: PriorityHook<() => void, typeof afterApply>
 
 		/**
 		 * Hook called once before each attack loop.
@@ -127,10 +131,11 @@ export class PlayerComponent {
 	constructor(game: GameModel, entity: PlayerEntity, player: PlayerDefs) {
 		this.game = game
 		this.entity = entity
+		this.uuid = player.uuid
 		this.playerName = player.name
 		this.minecraftName = player.minecraftName
 		this.censoredPlayerName = player.censoredName
-		this.selectedCoinHead = player.selectedCoinHead
+		this.appearance = player.appearance
 		this.coinFlips = []
 		this.lives = 3
 		this.hasPlacedHermit = false
@@ -147,7 +152,7 @@ export class PlayerComponent {
 			onDetach: new GameHook(),
 			beforeApply: new GameHook(),
 			onApply: new GameHook(),
-			afterApply: new GameHook(),
+			afterApply: new PriorityHook(afterApply),
 			getAttackRequests: new GameHook(),
 			getAttack: new GameHook(),
 			onTurnStart: new GameHook(),
@@ -177,16 +182,11 @@ export class PlayerComponent {
 
 	/** Get a player's active hermit. */
 	public getActiveHermit(): CardComponent | null {
-		return this.game.components.find(
-			CardComponent,
-			query.card.slot(query.slot.hermit),
-			query.card.active,
-			query.card.player(this.entity),
-		)
+		return this.activeRow?.getHermit() || null
 	}
 
-	/** Get a player's deck */
-	public getDeck(): Array<CardComponent> {
+	/** Get a player's draw pile */
+	public getDrawPile(): Array<CardComponent> {
 		return this.game.components.filter(
 			CardComponent,
 			query.card.player(this.entity),
@@ -214,7 +214,9 @@ export class PlayerComponent {
 
 	/** Draw cards from the top of a player's deck. Returns an array of the drawn cards. */
 	public draw(amount: number): Array<CardComponent> {
-		let cards = this.getDeck().sort(CardComponent.compareOrder).slice(0, amount)
+		let cards = this.getDrawPile()
+			.sort(CardComponent.compareOrder)
+			.slice(0, amount)
 		if (cards.length < amount) {
 			if (!this.disableDeckingOut) this.deckedOut = true
 		}

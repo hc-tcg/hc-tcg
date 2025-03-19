@@ -26,13 +26,13 @@ describe('Test Original Xb Rare', () => {
 					// Draw two cards (Deck size goes to 7).
 					yield* endTurn(game)
 
-					expect(game.opponentPlayer.getDeck()?.length).toBe(7)
+					expect(game.opponentPlayer.getDrawPile()?.length).toBe(7)
 
 					yield* endTurn(game)
 					// Draw one card(Deck size goes to 6).
 					yield* endTurn(game)
 
-					expect(game.opponentPlayer.getDeck()?.length).toBe(6)
+					expect(game.opponentPlayer.getDrawPile()?.length).toBe(6)
 				},
 			},
 			{noItemRequirements: true},

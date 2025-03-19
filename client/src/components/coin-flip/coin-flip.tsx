@@ -1,24 +1,25 @@
 import classnames from 'classnames'
-import {COINS} from 'common/coins'
+import {COSMETICS} from 'common/cosmetics'
+import {COINS} from 'common/cosmetics/coins'
+import {Coin} from 'common/cosmetics/types'
 import {CoinFlip} from 'common/types/game-state'
 import css from './coin-flip.module.scss'
 
 export type Props = {
 	name: string
-	headImage: keyof typeof COINS
+	headImage: Coin['id']
 	tosses: Array<CoinFlip>
 	amount: number
 }
 
 const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
 	const longestFlipIndex = Math.floor(Math.random() * tosses.length)
+	const coin = COINS[headImage]
 
 	const coins = tosses.map((face, index) => {
 		const coinPics = [
-			<img src={`/images/coins/${COINS[headImage].file}`} />,
-			<div className={css.tcgFace}>
-				<img src={'/images/tcg1.png'} />
-			</div>,
+			<img src={`/images/cosmetics/coin/${COSMETICS[headImage].id}.png`} />,
+			<img src={'/images/cosmetics/coin/tails.png'} />,
 		]
 
 		const flipOffset =
@@ -33,8 +34,8 @@ const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
 		}
 
 		const faceStyle = {
-			borderColor: `${COINS[headImage].borderColor}`,
-			boxShadow: `0 0 4px ${COINS[headImage].borderColor}`,
+			borderColor: `${coin.borderColor}`,
+			boxShadow: `0 0 4px ${coin.borderColor}`,
 		}
 
 		return (

@@ -2,6 +2,7 @@ import {Entity, ObserverEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
 import type {Hook, PriorityHook, WaterfallHook} from '../types/hooks'
 import {PrioritiesT, Priority, PriorityDict} from '../types/priorities'
+import {AchievementComponent} from './achievement-component'
 import type {CardComponent} from './card-component'
 import {PlayerComponent} from './player-component'
 import type {StatusEffectComponent} from './status-effect-component'
@@ -11,10 +12,15 @@ import type {StatusEffectComponent} from './status-effect-component'
  * time out.
  */
 export class ObserverComponent {
+	public static table = 'observers'
+
 	readonly game: GameModel
 	readonly entity: ObserverEntity
 	readonly wrappingEntity: Entity<
-		CardComponent | StatusEffectComponent | PlayerComponent
+		| CardComponent
+		| StatusEffectComponent
+		| AchievementComponent
+		| PlayerComponent
 	>
 	private hooks: Array<Hook<any, any> | PriorityHook<any, any>>
 
@@ -22,7 +28,10 @@ export class ObserverComponent {
 		game: GameModel,
 		entity: ObserverEntity,
 		wrappingEntity: Entity<
-			CardComponent | StatusEffectComponent | PlayerComponent
+			| CardComponent
+			| StatusEffectComponent
+			| AchievementComponent
+			| PlayerComponent
 		>,
 	) {
 		this.game = game
@@ -39,7 +48,7 @@ export class ObserverComponent {
 	 */
 	public subscribe<Args extends (...any: any) => any>(
 		hook: Hook<ObserverEntity, Args> | WaterfallHook<Args>,
-		fun: Args,
+		fun: NoInfer<Args>,
 	) {
 		hook.add(this.entity, fun)
 		this.hooks.push(hook)
@@ -50,7 +59,7 @@ export class ObserverComponent {
 	 */
 	public subscribeBefore<Args extends (...any: any) => any>(
 		hook: Hook<ObserverEntity, Args> | WaterfallHook<Args>,
-		fun: Args,
+		fun: NoInfer<Args>,
 	) {
 		hook.addBefore(this.entity, fun)
 		this.hooks.push(hook)
@@ -63,7 +72,7 @@ export class ObserverComponent {
 	>(
 		hook: PriorityHook<Args, PriorityDict<Priorities>, Priorities>,
 		priority: Priority<Priorities>,
-		fun: Args,
+		fun: NoInfer<Args>,
 	) {
 		hook.add(this.entity, priority, fun)
 		this.hooks.push(hook)

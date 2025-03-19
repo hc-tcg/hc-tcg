@@ -65,11 +65,11 @@ const SolidaritygamingRare: Hermit = {
 					message: 'Choose an AFK Hermit to protect',
 					canPick: pickCondition,
 					onResult(pickedSlot) {
-						if (!pickedSlot.inRow() || !pickedSlot.getCard()) return
+						if (!pickedSlot.inRow() || !pickedSlot.card) return
 
 						game.components
 							.new(StatusEffectComponent, ProtectedEffect, component.entity)
-							.apply(pickedSlot.getCard()?.entity)
+							.apply(pickedSlot.card?.entity)
 					},
 				})
 			},

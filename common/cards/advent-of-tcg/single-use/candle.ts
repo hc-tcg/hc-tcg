@@ -19,7 +19,7 @@ const Candle: SingleUse = {
 	showConfirmationModal: true,
 	attachCondition: query.every(
 		singleUse.attachCondition,
-		(_game, slot) => slot.player.getDeck().length >= 2,
+		(_game, slot) => slot.player.getDrawPile().length >= 2,
 	),
 	log: (values) => values.defaultLog,
 	onAttach(
@@ -30,7 +30,7 @@ const Candle: SingleUse = {
 		const {player} = component
 
 		const shuffleDeck = () => {
-			const deckCards = player.getDeck()
+			const deckCards = player.getDrawPile()
 			const newOrder = fisherYatesShuffle(
 				deckCards.map((card) => {
 					assert(card.slot.inDeck())
@@ -42,12 +42,11 @@ const Candle: SingleUse = {
 				assert(card.slot.inDeck())
 				card.slot.order = newOrder[i]
 			})
-			deckCards.forEach((card) => card.hooks.onChangeSlot.call(card.slot))
 		}
 
 		observer.subscribe(player.hooks.onApply, () => {
 			const filteredCards = player
-				.getDeck()
+				.getDrawPile()
 				.filter(
 					(card, i, deckPile) =>
 						deckPile.findIndex(

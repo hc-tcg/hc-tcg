@@ -9,7 +9,7 @@ const pickCondition = query.every(
 	query.slot.currentPlayer,
 	query.slot.hand,
 	(_game, slot) => {
-		const card = slot.getCard()
+		const card = slot.card
 		if (!card) return false
 		return card.isAttach() && !card.getStatusEffect(SmithingTableEffect)
 	},
@@ -43,7 +43,7 @@ const SmithingTable: SingleUse = {
 
 				game.components
 					.new(StatusEffectComponent, SmithingTableEffect, component.entity)
-					.apply(pickedSlot.getCard()?.entity)
+					.apply(pickedSlot.card?.entity)
 			},
 		})
 	},

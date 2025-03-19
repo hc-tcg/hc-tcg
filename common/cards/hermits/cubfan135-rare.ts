@@ -25,7 +25,7 @@ const Cubfan135Rare: Hermit = {
 		name: "Let's Go",
 		cost: ['speedrunner', 'speedrunner', 'speedrunner'],
 		damage: 100,
-		power: 'After attack, you can choose to go AFK.',
+		power: 'After your attack, you can choose to go AFK.',
 	},
 	onAttach(
 		game: GameModel,

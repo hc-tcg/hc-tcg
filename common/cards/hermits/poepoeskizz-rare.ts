@@ -33,7 +33,7 @@ const PoePoeSkizzRare: Hermit = {
 		cost: ['pvp', 'pvp', 'any'],
 		damage: 90,
 		power:
-			'You can choose to move your active Hermit and any attached cards to any open row on the game board, and do an additional 20hp damage to the Hermit directly opposite your active Hermit.',
+			'After your attack, you can choose to move your active Hermit and any attached cards to any open row on the game board, and then do an additional 20hp damage to the Hermit directly opposite your active Hermit.',
 	},
 	onAttach(
 		game: GameModel,

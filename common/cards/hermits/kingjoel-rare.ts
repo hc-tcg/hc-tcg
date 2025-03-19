@@ -44,14 +44,13 @@ const KingJoelRare: Hermit = {
 			query.slot.item,
 			query.not(query.slot.empty),
 			query.not(query.slot.frozen),
-			query.slot.row((_game, row) => !!row.health),
 		)
 		const secondPickCondition = query.every(
 			query.slot.currentPlayer,
 			query.not(query.slot.active),
 			query.slot.item,
 			query.slot.empty,
-			query.slot.row(query.row.hasHermit, (_game, row) => !!row.health),
+			query.slot.row(query.row.hasHermit),
 		)
 
 		let firstPickedCard: CardComponent | null = null
@@ -76,7 +75,7 @@ const KingJoelRare: Hermit = {
 					message: "Pick an item card from your opponent's AFK Hermits",
 					canPick: firstPickCondition,
 					onResult(pickedSlot) {
-						firstPickedCard = pickedSlot.getCard()
+						firstPickedCard = pickedSlot.card
 					},
 				})
 

@@ -43,6 +43,8 @@ export const beforeAttack = createPriorityDictionary({
 	MODIFY_DAMAGE: null,
 	/** Hermit attack abilities that modify state before any damage is dealt */
 	HERMIT_APPLY_ATTACK: null,
+	/** Listeners that call after damage modifiers are applied.  */
+	RESOLVE_AFTER_MODIFIERS: null,
 	/** Any attacking single-use cards must call `applySingleUse` at this stage */
 	APPLY_SINGLE_USE_ATTACK: null,
 	/** Hermits blocking all damage done by certain attacks */
@@ -81,6 +83,8 @@ export const afterAttack = createPriorityDictionary({
 	HERMIT_REMOVE_SINGLE_USE: null,
 	/** All hermit attack logic should occur before this, to support mocking with Puppetry/Role Play */
 	DESTROY_MOCK_CARD: null,
+	/** All other actions have been done, achievements use the final state after an attack */
+	ACHIEVEMENTS: null,
 })
 
 export const onTurnEnd = createPriorityDictionary({
@@ -97,4 +101,19 @@ export const onCoinFlip = createPriorityDictionary({
 	BAD_OMEN: null,
 	/* Priority for Fortune and Spent Fortune status effect */
 	FORTUNE: null,
+	/** All other actions have been done, achievements use the final state of the coin flip */
+	ACHIEVEMENTS: null,
+})
+
+export const afterApply = createPriorityDictionary({
+	/** Cards removing status effects that should not remain */
+	CLEAR_STATUS_EFFECT: null,
+	/** Listeners changing what turn actions are blocked */
+	MODIFY_BLOCKED_ACTIONS: null,
+	/** Listeners checking the board state before cards can be moved */
+	CHECK_BOARD_STATE: null,
+	/** Trap Hole taking effects from the single use slot */
+	TRAP_HOLE_STEAL: null,
+	/** Single Use effects returning to owner's hand or being discarded */
+	REMOVE_SINGLE_USE: null,
 })

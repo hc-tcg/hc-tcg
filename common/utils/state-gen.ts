@@ -20,6 +20,7 @@ import {fisherYatesShuffle} from './fisher-yates'
 export type PlayerSetupDefs = {
 	model: PlayerDefs
 	deck: Array<number | string | Card>
+	score: number
 }
 
 type ComponentSetupOptions = {
@@ -83,36 +84,42 @@ function setupEcsForPlayer(
 	for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
 		let row = components.new(RowComponent, playerEntity, rowIndex)
 
-		components.new(
-			BoardSlotComponent,
-			{player: playerEntity, type: 'item'},
-			0,
-			row.entity,
-		)
-		components.new(
-			BoardSlotComponent,
-			{player: playerEntity, type: 'item'},
-			1,
-			row.entity,
-		)
-		components.new(
-			BoardSlotComponent,
-			{player: playerEntity, type: 'item'},
-			2,
-			row.entity,
-		)
-		components.new(
+		let itemSlots = [
+			components.new(
+				BoardSlotComponent,
+				{player: playerEntity, type: 'item'},
+				0,
+				row.entity,
+			),
+			components.new(
+				BoardSlotComponent,
+				{player: playerEntity, type: 'item'},
+				1,
+				row.entity,
+			),
+			components.new(
+				BoardSlotComponent,
+				{player: playerEntity, type: 'item'},
+				2,
+				row.entity,
+			),
+		]
+		let attachSlot = components.new(
 			BoardSlotComponent,
 			{player: playerEntity, type: 'attach'},
 			3,
 			row.entity,
 		)
-		components.new(
+		let hermitSlot = components.new(
 			BoardSlotComponent,
 			{player: playerEntity, type: 'hermit'},
 			4,
 			row.entity,
 		)
+
+		row.itemsSlotEntities = itemSlots.map((x) => x.entity)
+		row.hermitSlotEntity = hermitSlot.entity
+		row.attachSlotEntity = attachSlot.entity
 	}
 
 	// Ensure there is a hermit in the first 5 cards
@@ -152,16 +159,11 @@ function setupEcsForPlayer(
 	})
 }
 
-export function getGameState(
-	game: GameModel,
-	randomizeOrder: boolean = true,
-): GameState {
+export function getGameState(game: GameModel, swapPlayers: boolean): GameState {
 	const playerEntities = game.components.filter(PlayerComponent)
 
-	if (randomizeOrder !== false) {
-		if (game.rng() >= 0.5) {
-			playerEntities.reverse()
-		}
+	if (swapPlayers !== false) {
+		playerEntities.reverse()
 	}
 
 	const gameState: GameState = {
@@ -184,7 +186,7 @@ export function getGameState(
 			opponentActionStartTime: null,
 		},
 
-		isBossGame: false,
+		isEvilXBossGame: false,
 	}
 
 	return gameState

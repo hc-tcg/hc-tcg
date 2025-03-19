@@ -31,14 +31,12 @@ describe('Test Shield', () => {
 					)
 
 					expect(
-						game.components
-							.find(
-								SlotComponent,
-								query.slot.opponent,
-								query.slot.attach,
-								query.slot.rowIndex(0),
-							)
-							?.getCard(),
+						game.components.find(
+							SlotComponent,
+							query.slot.opponent,
+							query.slot.attach,
+							query.slot.rowIndex(0),
+						)?.card,
 					).toBe(null)
 				},
 			},

@@ -1,4 +1,6 @@
+import assert from 'assert'
 import {CARDS} from 'common/cards'
+import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerModel} from 'common/models/player-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {GameOutcome} from 'common/types/game-state'
@@ -11,77 +13,19 @@ import {
 	clientMessages,
 } from '../../../common/socket-messages/client-messages'
 
-function* noDatabaseConnection(playerId: string) {
-	const player = root.players[playerId]
-	broadcast([player], {type: serverMessages.NO_DATABASE_CONNECTION})
-}
-
-export function* addUser(
-	action: RecievedClientMessage<typeof clientMessages.PG_INSERT_USER>,
-) {
-	if (!root.db?.connected) {
-		yield* noDatabaseConnection(action.playerId)
-		return
-	}
-	const result = yield* call(
-		[root.db, root.db.insertUser],
-		action.payload.username ? action.payload.username : '',
-		action.payload.minecraftName,
-	)
-
-	const player = root.players[action.playerId]
-
-	if (result.type === 'success') {
-		player.uuid = result.body.uuid
-		player.authenticated = true
-		broadcast([player], {type: serverMessages.AUTHENTICATED, user: result.body})
-	} else {
-		broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})
-	}
-}
-
-export function* authenticateUser(
-	action: RecievedClientMessage<typeof clientMessages.PG_AUTHENTICATE>,
-) {
-	if (!root.db?.connected) {
-		yield* noDatabaseConnection(action.playerId)
-		return
-	}
-	const result = yield* call(
-		[root.db, root.db.authenticateUser],
-		action.payload.userId,
-		action.payload.secret,
-	)
-
-	const player = root.players[action.playerId]
-
-	if (player && result.type === 'success') {
-		player.uuid = result.body.uuid
-		player.authenticated = true
-		broadcast([player], {type: serverMessages.AUTHENTICATED, user: result.body})
-	} else {
-		broadcast([player], {type: serverMessages.AUTHENTICATION_FAIL})
-	}
-}
+const CONNECTION_ASSERTION_MSG =
+	'The database should always be connected when this function is called.'
 
 export function* getDecks(
 	action: RecievedClientMessage<typeof clientMessages.GET_DECKS>,
 ) {
-	if (!root.db?.connected) {
-		yield* noDatabaseConnection(action.playerId)
-		return
-	}
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		broadcast([player], {
-			type: serverMessages.DECKS_RECIEVED,
-			decks: [],
-			tags: [],
-		})
-		return
-	}
 
-	const decksResult = yield* call([root.db, root.db.getDecks], player.uuid)
+	const decksResult = yield* call(
+		[root.db, root.db.getDecksFromUuid],
+		player.uuid,
+	)
 	const tagsResult = yield* call([root.db, root.db.getTags], player.uuid)
 
 	if (decksResult.type === 'success' && tagsResult.type === 'success') {
@@ -106,14 +50,8 @@ export function* getDecks(
 export function* insertDeck(
 	action: RecievedClientMessage<typeof clientMessages.INSERT_DECK>,
 ) {
-	if (!root.db?.connected) {
-		yield* noDatabaseConnection(action.playerId)
-		return
-	}
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
 
 	const deckTags = action.payload.deck.tags
 
@@ -155,15 +93,8 @@ export function* insertDeck(
 export function* updateDeck(
 	action: RecievedClientMessage<typeof clientMessages.UPDATE_DECK>,
 ) {
-	if (!root.db?.connected) {
-		yield* noDatabaseConnection(action.playerId)
-		return
-	}
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
-
 	const deckTags = action.payload.deck.tags
 
 	for (let i = 0; i < deckTags.length; i++) {
@@ -203,14 +134,8 @@ export function* updateDeck(
 export function* insertDecks(
 	action: RecievedClientMessage<typeof clientMessages.INSERT_DECKS>,
 ) {
-	if (!root.db?.connected) {
-		yield* noDatabaseConnection(action.playerId)
-		return
-	}
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
 
 	// Insert deck
 	for (let d = 0; d < action.payload.decks.length; d++) {
@@ -254,14 +179,8 @@ export function* insertDecks(
 export function* importDeck(
 	action: RecievedClientMessage<typeof clientMessages.IMPORT_DECK>,
 ) {
-	if (!root.db?.connected) {
-		yield* noDatabaseConnection(action.playerId)
-		return
-	}
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
 
 	const code = action.payload.code
 
@@ -318,14 +237,8 @@ export function* importDeck(
 export function* exportDeck(
 	action: RecievedClientMessage<typeof clientMessages.EXPORT_DECK>,
 ) {
-	if (!root.db?.connected) {
-		yield* noDatabaseConnection(action.playerId)
-		return
-	}
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
 
 	const result = yield* call(
 		[root.db, root.db.setAsExported],
@@ -344,14 +257,8 @@ export function* exportDeck(
 export function* grabCurrentImport(
 	action: RecievedClientMessage<typeof clientMessages.GRAB_CURRENT_IMPORT>,
 ) {
-	if (!root.db?.connected) {
-		yield* noDatabaseConnection(action.playerId)
-		return
-	}
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
 
 	if (!action.payload.code) {
 		broadcast([player], {
@@ -384,14 +291,8 @@ export function* grabCurrentImport(
 export function* setShowData(
 	action: RecievedClientMessage<typeof clientMessages.MAKE_INFO_PUBLIC>,
 ) {
-	if (!root.db?.connected) {
-		yield* noDatabaseConnection(action.playerId)
-		return
-	}
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
 
 	const result = yield* call(
 		[root.db, root.db.setShowData],
@@ -411,14 +312,8 @@ export function* setShowData(
 export function* deleteDeck(
 	action: RecievedClientMessage<typeof clientMessages.DELETE_DECK>,
 ) {
-	if (!root.db?.connected) {
-		yield* noDatabaseConnection(action.playerId)
-		return
-	}
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
 
 	const result = yield* call(
 		[root.db, root.db.deleteDeck],
@@ -437,14 +332,8 @@ export function* deleteDeck(
 export function* deleteTag(
 	action: RecievedClientMessage<typeof clientMessages.DELETE_TAG>,
 ) {
-	if (!root.db?.connected) {
-		yield* noDatabaseConnection(action.playerId)
-		return
-	}
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		return
-	}
 
 	const result = yield* call(
 		[root.db, root.db.deleteTag],
@@ -460,45 +349,6 @@ export function* deleteTag(
 	}
 }
 
-export function* getStats(
-	action: RecievedClientMessage<typeof clientMessages.GET_STATS>,
-) {
-	if (!root.db?.connected) return
-	const defaultStats = {
-		gamesPlayed: 0,
-		wins: 0,
-		losses: 0,
-		forfeitWins: 0,
-		forfeitLosses: 0,
-		ties: 0,
-	}
-
-	const player = root.players[action.playerId]
-	if (!player.authenticated || !player.uuid) {
-		broadcast([player], {
-			type: serverMessages.STATS_RECIEVED,
-			stats: defaultStats,
-		})
-		return
-	}
-
-	const result = yield* call([root.db, root.db.getUserStats], player.uuid)
-
-	if (result.type === 'success') {
-		broadcast([player], {
-			type: serverMessages.STATS_RECIEVED,
-			stats: result.body,
-		})
-	} else {
-		if (result.type === 'failure') {
-			broadcast([player], {
-				type: serverMessages.DATABASE_FAILURE,
-				error: result.reason,
-			})
-		}
-	}
-}
-
 export function* addGame(
 	firstPlayerModel: PlayerModel,
 	secondPlayerModel: PlayerModel,
@@ -507,10 +357,10 @@ export function* addGame(
 	winner: string | null,
 	seed: string,
 	turns: number,
-	replay: Buffer,
+	replay: Buffer | null,
 	opponentCode: string | null,
 ) {
-	if (!root.db?.connected) return
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 	if (!firstPlayerModel.uuid || !secondPlayerModel.uuid) return
 	if (!firstPlayerModel.deck || !secondPlayerModel.deck) return
 
@@ -528,33 +378,153 @@ export function* addGame(
 		replay,
 		opponentCode,
 	)
+}
 
-	const players = [firstPlayerModel, secondPlayerModel]
-
+export function* sendAfterGameInfo(players: Array<PlayerModel>) {
 	for (let i = 0; i < players.length; i++) {
 		const player = players[i]
-		if (!player.uuid) continue
 		const stats = yield* call([root.db, root.db.getUserStats], player.uuid)
+		const gameHistory = yield* call(
+			[root.db, root.db.getUserGameHistory],
+			player.uuid,
+		)
+		const achievements = yield* call(
+			[root.db, root.db.getAchievements],
+			player.uuid,
+		)
 
-		if (stats.type !== 'success') {
-			broadcast([player], {
-				type: serverMessages.DATABASE_FAILURE,
-				error: stats.reason,
-			})
-			continue
-		}
+		assert(
+			stats.type === 'success',
+			`Retrieving stats should be successful for user ${player.uuid}.`,
+		)
+		assert(
+			gameHistory.type === 'success',
+			`Retrieving game history should be successful for user ${player.uuid}.`,
+		)
+		assert(
+			achievements.type === 'success',
+			`Retrieving achievements should be successful for user ${player.uuid}.`,
+		)
+
 		broadcast([player], {
-			type: serverMessages.STATS_RECIEVED,
+			type: serverMessages.AFTER_GAME_INFO,
 			stats: stats.body,
+			gameHistory: gameHistory.body,
+			achievements: achievements.body,
 		})
 	}
 }
 
 export function* getDeck(code: string) {
-	if (!root.db?.connected) return
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 
 	const deck = yield* call([root.db, root.db.getPlayerDeckFromID], code)
 
-	if (deck.type === 'failure') return null
+	assert(
+		deck.type === 'success',
+		'The code should always be vaild here, so the deck should be retrieved.',
+	)
 	return deck.body
+}
+
+export function* updateAchievements(player: PlayerModel) {
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
+
+	const {type: success} = yield* call(
+		[root.db, root.db.updateAchievements],
+		player.uuid,
+		player.achievementProgress,
+	)
+	if (success === 'failure') return false
+
+	return true
+}
+
+export function* getGameReplay(gameId: number) {
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
+
+	const replay = yield* root.db.getGameReplay(gameId)
+
+	if (replay.type === 'failure') {
+		console.log(replay.reason)
+		return null
+	}
+	return replay.body
+}
+
+export function* setUsername(playerUuid: string, username: string) {
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
+	yield* call([root.db, root.db.setUsername], playerUuid, username)
+}
+
+export function* setMinecraftName(playerUuid: string, username: string) {
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
+	yield* call([root.db, root.db.setMinecraftName], playerUuid, username)
+}
+
+export function* setAppearance(player: PlayerModel) {
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
+
+	const title =
+		player.appearance.title.id === defaultAppearance.title.id
+			? null
+			: player.appearance.title.id
+	const coin =
+		player.appearance.coin.id === defaultAppearance.coin.id
+			? null
+			: player.appearance.coin.id
+	const heart =
+		player.appearance.heart.id === defaultAppearance.heart.id
+			? null
+			: player.appearance.heart.id
+	const background =
+		player.appearance.background.id === defaultAppearance.background.id
+			? null
+			: player.appearance.background.id
+	const border =
+		player.appearance.border.id === defaultAppearance.border.id
+			? null
+			: player.appearance.border.id
+
+	yield* call([root.db, root.db.setAppearance], player.uuid, {
+		title: title,
+		coin: coin,
+		heart: heart,
+		background: background,
+		border: border,
+	})
+}
+
+export function* getOverview(
+	action: RecievedClientMessage<typeof clientMessages.REPLAY_OVERVIEW>,
+) {
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
+	const player = root.players[action.playerId]
+
+	const replay = yield* root.db.getGameReplay(action.payload.id)
+
+	if (replay.type === 'failure') {
+		broadcast([player], {
+			type: serverMessages.INVALID_REPLAY,
+		})
+		return
+	}
+
+	broadcast([player], {
+		type: serverMessages.REPLAY_OVERVIEW_RECIEVED,
+		battleLog: replay.body.battleLog,
+	})
+}
+
+export function* getAchievementProgress(uuid: string) {
+	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
+
+	const achievements = yield* call([root.db, root.db.getAchievements], uuid)
+
+	assert(
+		achievements.type === 'success',
+		'This should not fail when the database is connected.',
+	)
+
+	return achievements.body.achievementData
 }

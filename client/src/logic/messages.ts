@@ -1,6 +1,9 @@
+import {Appearance, Cosmetic} from 'common/cosmetics/types'
 import {PlayerEntity} from 'common/entities'
 import {PlayerId} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
+import {EarnedAchievement} from 'common/types/achievements'
+import {RematchData} from 'common/types/app'
 import {HermitAttackType} from 'common/types/attack'
 import {Deck, Tag} from 'common/types/deck'
 import {
@@ -13,6 +16,7 @@ import {
 	LocalCardInstance,
 	PlayerInfo,
 	SlotInfo,
+	Update,
 } from 'common/types/server-requests'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {Dispatch} from 'react'
@@ -23,6 +27,7 @@ import {
 	LocalSetting,
 	LocalSettings,
 } from './local-settings/local-settings-reducer'
+import {ConnectionError} from './session/session-reducer'
 
 export const localMessages = messages('clientLocalMessages', {
 	SOCKET_CONNECTING: null,
@@ -32,25 +37,27 @@ export const localMessages = messages('clientLocalMessages', {
 	LOGIN: null,
 	PLAYER_SESSION_SET: null,
 	PLAYER_INFO_SET: null,
+	NOT_CONNECTING: null,
 	CONNECTED: null,
+	CONNECTING_MESSAGE: null,
 	DISCONNECT: null,
 	LOGOUT: null,
 	UPDATES_LOAD: null,
 	TOAST_OPEN: null,
 	TOAST_CLOSE: null,
 	EVERY_TOAST_CLOSE: null,
+	USERNAME_SET: null,
 	MINECRAFT_NAME_SET: null,
-	MINECRAFT_NAME_NEW: null,
-	MATCHMAKING_QUEUE_JOIN: null,
-	MATCHMAKING_QUEUE_JOIN_FAILURE: null,
-	MATCHMAKING_BOSS_GAME_CREATE: null,
-	MATCHMAKING_PRIVATE_GAME_LOBBY: null,
-	MATCHMAKING_CODE_RECIEVED: null,
+	MATCHMAKING_JOIN_PUBLIC_QUEUE: null,
+	MATCHMAKING_JOIN_PRIVATE_QUEUE: null,
+	MATCHMAKING_SPECTATE_PRIVATE_GAME: null,
+	MATCHMAKING_CREATE_PRIVATE_GAME: null,
+	MATCHMAKING_JOIN_QUEUE_SUCCESS: null,
+	MATCHMAKING_CREATE_GAME_SUCCESS: null,
+	MATCHMAKING_CREATE_BOSS_GAME: null,
+	MATCHMAKING_REPLAY_GAME: null,
+	INVALID_REPLAY: null,
 	MATCHMAKING_LEAVE: null,
-	MATCHMAKING_CODE_SET: null,
-	MATCHMAKING_CODE_INVALID: null,
-	MATCHMAKING_WAITING_FOR_PLAYER: null,
-	MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR: null,
 	GAME_LOCAL_STATE_RECIEVED: null,
 	GAME_LOCAL_STATE_SET: null,
 	GAME_START: null,
@@ -61,7 +68,7 @@ export const localMessages = messages('clientLocalMessages', {
 	GAME_ATTACK_START: null,
 	GAME_TURN_ACTION: null,
 	GAME_END_OVERLAY_SHOW: null,
-	GAME_END_OVERLAY_HIDE: null,
+	GAME_CLOSE: null,
 	GAME_COIN_FLIP_SET: null,
 	GAME_OPPONENT_CONNECTION_SET: null,
 	GAME_ACTIONS_HERMIT_CHANGE_CONFIRM: null,
@@ -95,6 +102,15 @@ export const localMessages = messages('clientLocalMessages', {
 	NEW_PLAYER: null,
 	SHOW_TOOLTIP: null,
 	HIDE_TOOLTIP: null,
+	SHOW_DROPDOWN: null,
+	HIDE_DROPDOWN: null,
+	COSMETICS_SET: null,
+	COSMETIC_UPDATE: null,
+	OVERVIEW: null,
+	//Rematches
+	RECIEVE_REMATCH: null,
+	CANCEL_REMATCH: null,
+	MATCHMAKING_REMATCH: null,
 })
 
 type Messages = [
@@ -102,7 +118,13 @@ type Messages = [
 	{type: typeof localMessages.SOCKET_CONNECTING},
 	{type: typeof localMessages.SOCKET_DISCONNECT},
 	{type: typeof localMessages.SOCKET_CONNECT_ERROR},
-	{type: typeof localMessages.LOGIN; name: string},
+	{type: typeof localMessages.LOGIN; login_type: 'new-account'; name: string},
+	{
+		type: typeof localMessages.LOGIN
+		login_type: 'sync'
+		uuid: string
+		secret: string
+	},
 	{
 		type: typeof localMessages.PLAYER_SESSION_SET
 		player: {
@@ -113,10 +135,12 @@ type Messages = [
 		}
 	},
 	{type: typeof localMessages.PLAYER_INFO_SET; player: PlayerInfo},
+	{type: typeof localMessages.NOT_CONNECTING},
 	{type: typeof localMessages.CONNECTED},
-	{type: typeof localMessages.DISCONNECT; errorMessage?: string},
+	{type: typeof localMessages.CONNECTING_MESSAGE; message: string},
+	{type: typeof localMessages.DISCONNECT; errorMessage?: ConnectionError},
 	{type: typeof localMessages.LOGOUT},
-	{type: typeof localMessages.UPDATES_LOAD; updates: Record<string, string[]>},
+	{type: typeof localMessages.UPDATES_LOAD; updates: Array<Update>},
 	{
 		type: typeof localMessages.TOAST_OPEN
 		open: boolean
@@ -126,25 +150,32 @@ type Messages = [
 	},
 	{type: typeof localMessages.TOAST_CLOSE; id: number},
 	{type: typeof localMessages.EVERY_TOAST_CLOSE},
+	{type: typeof localMessages.USERNAME_SET; name: string},
 	{type: typeof localMessages.MINECRAFT_NAME_SET; name: string},
-	{type: typeof localMessages.MINECRAFT_NAME_NEW; name: string},
-	{type: typeof localMessages.MATCHMAKING_QUEUE_JOIN},
-	{type: typeof localMessages.MATCHMAKING_BOSS_GAME_CREATE},
+	{type: typeof localMessages.OVERVIEW; id: number},
+	{type: typeof localMessages.MATCHMAKING_JOIN_PUBLIC_QUEUE},
 	{
-		type: typeof localMessages.MATCHMAKING_CODE_RECIEVED
+		type: typeof localMessages.MATCHMAKING_JOIN_PRIVATE_QUEUE
+		code: string
+	},
+	{
+		type: typeof localMessages.MATCHMAKING_SPECTATE_PRIVATE_GAME
+		code: string
+	},
+	{type: typeof localMessages.MATCHMAKING_JOIN_QUEUE_SUCCESS},
+	{type: typeof localMessages.MATCHMAKING_CREATE_PRIVATE_GAME},
+	{
+		type: typeof localMessages.MATCHMAKING_CREATE_GAME_SUCCESS
 		gameCode: string
 		spectatorCode: string
 	},
 	{type: typeof localMessages.MATCHMAKING_LEAVE},
-	{type: typeof localMessages.MATCHMAKING_LEAVE},
+	{type: typeof localMessages.MATCHMAKING_CREATE_BOSS_GAME},
 	{
-		type: typeof localMessages.MATCHMAKING_CODE_SET
-		code: string
+		type: typeof localMessages.MATCHMAKING_REPLAY_GAME
+		id: number
 	},
-	{type: typeof localMessages.MATCHMAKING_CODE_INVALID},
-	{type: typeof localMessages.MATCHMAKING_WAITING_FOR_PLAYER},
-	{type: typeof localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR},
-	{type: typeof localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY},
+	{type: typeof localMessages.INVALID_REPLAY},
 	{
 		type: typeof localMessages.GAME_LOCAL_STATE_RECIEVED
 		localGameState: LocalGameState
@@ -155,7 +186,7 @@ type Messages = [
 		localGameState: LocalGameState
 		time: number
 	},
-	{type: typeof localMessages.GAME_START},
+	{type: typeof localMessages.GAME_START; spectatorCode?: string},
 	{type: typeof localMessages.GAME_END},
 	{
 		type: typeof localMessages.GAME_CARD_SELECTED_SET
@@ -181,9 +212,11 @@ type Messages = [
 	{
 		type: typeof localMessages.GAME_END_OVERLAY_SHOW
 		outcome: GameOutcome
+		earnedAchievements: Array<EarnedAchievement>
+		gameEndTime: number
 	},
 	{
-		type: typeof localMessages.GAME_END_OVERLAY_HIDE
+		type: typeof localMessages.GAME_CLOSE
 	},
 	{
 		type: typeof localMessages.GAME_COIN_FLIP_SET
@@ -248,6 +281,23 @@ type Messages = [
 		tooltipWidth: number
 	},
 	{type: typeof localMessages.HIDE_TOOLTIP},
+	{
+		type: typeof localMessages.SHOW_DROPDOWN
+		dropdown: React.ReactNode
+		x: number
+		y: number
+		direction: 'up' | 'down'
+		align: 'left' | 'right'
+	},
+	{type: typeof localMessages.HIDE_DROPDOWN},
+	{
+		type: typeof localMessages.COSMETICS_SET
+		appearance: Appearance
+	},
+	{type: typeof localMessages.COSMETIC_UPDATE; cosmetic: Cosmetic},
+	{type: typeof localMessages.RECIEVE_REMATCH; rematch: RematchData | null},
+	{type: typeof localMessages.CANCEL_REMATCH},
+	{type: typeof localMessages.MATCHMAKING_REMATCH},
 ]
 
 /** A message used locally on the client to update global state */

@@ -5,14 +5,12 @@ type MatchmakingState = {
 	status: MatchmakingStatus
 	gameCode: string | null
 	spectatorCode: string | null
-	invalidCode: boolean
 }
 
 const defaultState: MatchmakingState = {
 	status: null,
 	gameCode: null,
 	spectatorCode: null,
-	invalidCode: false,
 }
 
 const matchmakingReducer = (
@@ -20,59 +18,49 @@ const matchmakingReducer = (
 	action: LocalMessage,
 ): MatchmakingState => {
 	switch (action.type) {
-		case localMessages.MATCHMAKING_QUEUE_JOIN:
+		case localMessages.MATCHMAKING_JOIN_PUBLIC_QUEUE:
+		case localMessages.MATCHMAKING_CREATE_PRIVATE_GAME:
 			return {
 				...state,
-				status: 'random_waiting',
+				status: 'joining_queue',
 			}
-		case localMessages.MATCHMAKING_BOSS_GAME_CREATE:
+		case localMessages.MATCHMAKING_JOIN_PRIVATE_QUEUE:
 			return {
 				...state,
-				status: 'loading',
+				status: 'joining_queue',
+				gameCode: action.code,
 			}
-		case localMessages.MATCHMAKING_PRIVATE_GAME_LOBBY:
+		case localMessages.MATCHMAKING_SPECTATE_PRIVATE_GAME:
 			return {
 				...state,
-				status: 'private_lobby',
-				invalidCode: false,
+				status: 'joining_queue',
+				spectatorCode: action.code,
 			}
-		case localMessages.MATCHMAKING_WAITING_FOR_PLAYER:
+		case localMessages.MATCHMAKING_JOIN_QUEUE_SUCCESS:
 			return {
 				...state,
-				status: 'waiting_for_player',
+				status: 'in_queue',
 			}
-		case localMessages.MATCHMAKING_WAITING_FOR_PLAYER_AS_SPECTATOR:
+		case localMessages.MATCHMAKING_CREATE_GAME_SUCCESS:
 			return {
 				...state,
-				status: 'waiting_for_player_as_spectator',
-			}
-		case localMessages.MATCHMAKING_CODE_RECIEVED:
-			return {
-				...state,
+				status: 'in_queue',
 				gameCode: action.gameCode,
 				spectatorCode: action.spectatorCode,
-				status: 'private_lobby',
 			}
-		case localMessages.MATCHMAKING_CODE_INVALID:
+		case localMessages.MATCHMAKING_REMATCH:
 			return {
 				...state,
-				status: 'private_lobby',
-				invalidCode: true,
-			}
-		case localMessages.MATCHMAKING_CODE_SET:
-			return {
-				...state,
-				status: 'loading',
-				invalidCode: false,
+				status: 'joining_queue',
 			}
 		case localMessages.DISCONNECT:
+		case localMessages.GAME_END:
 		case localMessages.MATCHMAKING_LEAVE:
 			return {
 				...state,
+				status: null,
 				gameCode: null,
 				spectatorCode: null,
-				status: null,
-				invalidCode: false,
 			}
 		case localMessages.GAME_START:
 			return {

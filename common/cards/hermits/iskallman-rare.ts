@@ -131,7 +131,7 @@ const IskallmanRare: Hermit = {
 				backlashAttack.shouldIgnoreCards.push(query.anything)
 				attack.addNewAttack(backlashAttack)
 
-				const hermitInfo = pickedAfkHermit.getCard()
+				const hermitInfo = pickedAfkHermit.card
 
 				if (hermitInfo) {
 					pickedAfkHermit.row.heal(50)

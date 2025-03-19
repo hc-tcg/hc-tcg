@@ -8,7 +8,7 @@ import {ObserverEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
 import {isCounter} from 'common/status-effects/status-effect'
 import {Hook, PriorityHook} from 'common/types/hooks'
-import {GameController} from 'game-controller'
+import {GameController} from '../game-controller'
 
 export const getOpponentId = (controller: GameController, playerId: string) => {
 	const players = controller.viewers
@@ -25,7 +25,7 @@ export function printHooksState(game: GameModel) {
 
 	// First loop to populate cardsInfo
 	for (const player of [currentPlayer, opponentPlayer]) {
-		for (const card of player.getDeck()) {
+		for (const card of player.getDrawPile()) {
 			cardsInfo[card.entity] = {
 				card,
 				player: player,
@@ -167,7 +167,7 @@ export function printBoardState(game: GameModel) {
 	buffer.push(game.logHeader + '\n')
 
 	const printSlot = (slot: SlotComponent) => {
-		let card = slot.getCard()
+		let card = slot.card
 
 		if (card) {
 			let name = card.props.name

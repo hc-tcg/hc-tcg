@@ -35,7 +35,7 @@ function getPlayers(con: GameController) {
 				censoredPlayerName: player.censoredPlayerName,
 				minecraftName: player.minecraftName,
 				lives: player.lives,
-				deck: player.getDeck().map((card) => card.props.id),
+				deck: player.getDrawPile().map((card) => card.props.id),
 			},
 		]
 	})
@@ -46,7 +46,7 @@ function getPlayers(con: GameController) {
  */
 const API_GAME_TIMEOUT = 1000 * 60 * 5
 
-export function createApiGame() {
+export function createApiGame(url: string) {
 	let {gameCode, spectatorCode, apiSecret} = root.createPrivateGame(null)
 
 	setTimeout(() => {
@@ -58,6 +58,8 @@ export function createApiGame() {
 		gameCode,
 		spectatorCode,
 		apiSecret,
+		spectateUrl: `${url}?spectate=${spectatorCode}`,
+		joinUrl: `${url}?fight=${gameCode}`,
 		timeOutAt: Date.now() + API_GAME_TIMEOUT,
 	}
 }
