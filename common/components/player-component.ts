@@ -311,7 +311,7 @@ export class PlayerComponent {
 		return this.game.components
 			.filter(
 				CardComponent,
-				query.card.slot(query.slot.hand, query.slot.player(this.entity)),
+				query.card.slot(query.slot.hand, query.slot.player(this.entity), query.not(query.slot.frozen)),
 			)
 			.map(
 				(card) =>

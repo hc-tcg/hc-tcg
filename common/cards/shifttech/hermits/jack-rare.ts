@@ -1,6 +1,7 @@
 import {
 	CardComponent,
 	ObserverComponent,
+	SlotComponent,
 	StatusEffectComponent,
 } from '../../../components'
 import query from '../../../components/query'
@@ -140,7 +141,6 @@ const JackRare: Hermit = {
 							)
 						)
 					})
-					console.log(query.slot.frozen)
 				}
 			},
 		)
