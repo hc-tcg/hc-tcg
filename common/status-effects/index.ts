@@ -7,6 +7,7 @@ import BetrayedEffect from './betrayed'
 import ChromaKeyedEffect from './chroma-keyed'
 import CurseOfBindingEffect from './curse-of-binding'
 import {DeathloopReady, RevivedByDeathloopEffect} from './death-loop'
+import DoubleItemPlayedEffect from './double-item-played'
 import DyedEffect from './dyed'
 import EfficiencyEffect from './efficiency'
 import ExBossNineEffect from './exboss-nine'
@@ -117,6 +118,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	SingleTurnMiningFatigueEffect,
 	SmithingTableEffect,
 	PostInspectorEffect,
+	DoubleItemPlayedEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =
