@@ -97,6 +97,8 @@ const JackRare: Hermit = {
 					return
 				if (!(attack.attacker instanceof CardComponent)) return
 
+				const coinFlip = flipCoin(game, player, attack.attacker)
+
 				if (
 					game.components.exists(
 						StatusEffectComponent,
@@ -105,8 +107,6 @@ const JackRare: Hermit = {
 					)
 				)
 					return
-
-				const coinFlip = flipCoin(game, player, attack.attacker)
 
 				if (coinFlip[0] === 'heads') {
 					game.removeCompletedActions('PLAY_ITEM_CARD')
