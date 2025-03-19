@@ -1,7 +1,7 @@
 import {hermit} from '../../defaults'
 import {Hermit} from '../../types'
 
-const JackCommon: Hermit = {
+const JackUltraRare: Hermit = {
 	...hermit,
 	id: 'jack_ultra_rare',
 	numericId: 133,
@@ -25,4 +25,4 @@ const JackCommon: Hermit = {
 	},
 }
 
-export default JackCommon
+export default JackUltraRare

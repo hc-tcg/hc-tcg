@@ -32,7 +32,7 @@ import SpeedrunnerDoubleItem from '../../items/speedrunner-rare'
 import TerraformDoubleItem from '../../items/terraform-rare'
 import DoubleItemPlayedEffect from '../../../status-effects/double-item-played'
 
-const JackCommon: Hermit = {
+const JackRare: Hermit = {
 	...hermit,
 	id: 'jack_rare',
 	numericId: 132,
@@ -64,7 +64,19 @@ const JackCommon: Hermit = {
 		observer.subscribe(
 			player.hooks.onAttach,
 			(card) => {
-				if (card.isItem() && card.props.energy.length == 2 && card.player == player) {
+				if (card.isItem() &&
+					card.props.energy.length == 2 &&
+					card.player == player &&
+					!game.components.exists(
+						StatusEffectComponent,
+						query.effect.is(DoubleItemPlayedEffect),
+						query.effect.targetIsPlayerAnd(query.player.entity(player.entity)),
+					) &&
+					query.every(query.card.active, query.card.is(JackRare))(
+						game,
+						component,
+					)
+				) {
 					game.components
 						.new(
 							StatusEffectComponent,
@@ -85,10 +97,10 @@ const JackCommon: Hermit = {
 				if (!(attack.attacker instanceof CardComponent)) return
 
 				if (
-					game.components.find(
+					game.components.exists(
 						StatusEffectComponent,
 						query.effect.is(DoubleItemPlayedEffect),
-						query.effect.targetIsCardAnd(),
+						query.effect.targetIsPlayerAnd(query.player.entity(player.entity)),
 					)
 				)
 					return
@@ -128,10 +140,11 @@ const JackCommon: Hermit = {
 							)
 						)
 					})
+					console.log(query.slot.frozen)
 				}
 			},
 		)
 	},
 }
 
-export default JackCommon
+export default JackRare
