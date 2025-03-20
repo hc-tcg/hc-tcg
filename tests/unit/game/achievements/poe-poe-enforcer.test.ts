@@ -1,6 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import PoePoeEnforcer from 'common/achievements/poe-poe-enforcer'
-import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import ImpulseSVCommon from 'common/cards/hermits/impulsesv-common'
+import JoeHillsCommon from 'common/cards/hermits/joehills-common'
 import CurseOfBinding from 'common/cards/single-use/curse-of-binding'
 import {
 	applyEffect,
@@ -15,13 +16,13 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 		testAchivement(
 			{
 				achievement: PoePoeEnforcer,
-				playerOneDeck: [EthosLabCommon, CurseOfBinding],
-				playerTwoDeck: [EthosLabCommon, EthosLabCommon],
+				playerOneDeck: [ImpulseSVCommon, CurseOfBinding],
+				playerTwoDeck: [ImpulseSVCommon, ImpulseSVCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, CurseOfBinding, 'single_use')
@@ -32,20 +33,20 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 					expect(PoePoeEnforcer.getProgress(achievement.goals)).toBeFalsy()
 				},
 			},
-			{noItemRequirements: true, startWithAllCards: false, oneShotMode: true},
+			{ noItemRequirements: true, startWithAllCards: false, oneShotMode: true },
 		)
 	})
 	test('Test achievement is gained when knocking out active hermit the round after opponent has curse of binding', () => {
 		testAchivement(
 			{
 				achievement: PoePoeEnforcer,
-				playerOneDeck: [EthosLabCommon, CurseOfBinding],
-				playerTwoDeck: [EthosLabCommon, EthosLabCommon],
+				playerOneDeck: [ImpulseSVCommon, CurseOfBinding],
+				playerTwoDeck: [JoeHillsCommon, ImpulseSVCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, JoeHillsCommon, 'hermit', 0)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, CurseOfBinding, 'single_use')
@@ -60,20 +61,20 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 					expect(PoePoeEnforcer.getProgress(achievement.goals)).toBe(1)
 				},
 			},
-			{noItemRequirements: true, startWithAllCards: false, oneShotMode: true},
+			{ noItemRequirements: true, startWithAllCards: false, oneShotMode: true },
 		)
 	})
 	test('Test achievement is not gained after two rounds', () => {
 		testAchivement(
 			{
 				achievement: PoePoeEnforcer,
-				playerOneDeck: [EthosLabCommon, CurseOfBinding],
-				playerTwoDeck: [EthosLabCommon, EthosLabCommon],
+				playerOneDeck: [ImpulseSVCommon, CurseOfBinding],
+				playerTwoDeck: [ImpulseSVCommon, ImpulseSVCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, CurseOfBinding, 'single_use')
@@ -91,7 +92,7 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 					expect(PoePoeEnforcer.getProgress(achievement.goals)).toBeFalsy()
 				},
 			},
-			{noItemRequirements: true, startWithAllCards: false, oneShotMode: true},
+			{ noItemRequirements: true, startWithAllCards: false, oneShotMode: true },
 		)
 	})
 })
