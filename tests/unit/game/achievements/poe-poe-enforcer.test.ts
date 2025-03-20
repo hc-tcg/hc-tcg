@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 import PoePoeEnforcer from 'common/achievements/poe-poe-enforcer'
-import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import ImpulseSVCommon from 'common/cards/hermits/impulsesv-common'
 import CurseOfBinding from 'common/cards/single-use/curse-of-binding'
 import {
 	applyEffect,
@@ -15,13 +15,13 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 		testAchivement(
 			{
 				achievement: PoePoeEnforcer,
-				playerOneDeck: [EthosLabCommon, CurseOfBinding],
-				playerTwoDeck: [EthosLabCommon, EthosLabCommon],
+				playerOneDeck: [ImpulseSVCommon, CurseOfBinding],
+				playerTwoDeck: [ImpulseSVCommon, ImpulseSVCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, CurseOfBinding, 'single_use')
@@ -39,13 +39,13 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 		testAchivement(
 			{
 				achievement: PoePoeEnforcer,
-				playerOneDeck: [EthosLabCommon, CurseOfBinding],
-				playerTwoDeck: [EthosLabCommon, EthosLabCommon],
+				playerOneDeck: [ImpulseSVCommon, CurseOfBinding],
+				playerTwoDeck: [ImpulseSVCommon, ImpulseSVCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, CurseOfBinding, 'single_use')
@@ -67,13 +67,13 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 		testAchivement(
 			{
 				achievement: PoePoeEnforcer,
-				playerOneDeck: [EthosLabCommon, CurseOfBinding],
-				playerTwoDeck: [EthosLabCommon, EthosLabCommon],
+				playerOneDeck: [ImpulseSVCommon, CurseOfBinding],
+				playerTwoDeck: [ImpulseSVCommon, ImpulseSVCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, CurseOfBinding, 'single_use')
