@@ -4,15 +4,15 @@ import {Hermit} from '../types'
 const SpookyStressCommon: Hermit = {
 	...hermit,
 	id: 'spookystress_common',
-	numericId: 811,
+	numericId: 238,
 	name: 'Spooky Stress',
 	shortName: 'S. Stress',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_ii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: ['pvp'],
+	type: 'pvp',
 	health: 260,
 	primary: {
 		name: 'Giggle',

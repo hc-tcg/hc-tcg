@@ -7,7 +7,7 @@ import {SingleUse} from '../types'
 const Emerald: SingleUse = {
 	...singleUse,
 	id: 'emerald',
-	numericId: 68,
+	numericId: 18,
 	name: 'Emerald',
 	expansion: 'default',
 	rarity: 'rare',

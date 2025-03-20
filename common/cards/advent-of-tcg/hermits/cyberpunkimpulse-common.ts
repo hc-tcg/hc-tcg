@@ -4,15 +4,15 @@ import {Hermit} from '../../types'
 const CyberpunkImpulseCommon: Hermit = {
 	...hermit,
 	id: 'cyberpunkimpulse_common',
-	numericId: 1406,
+	numericId: 257,
 	name: 'Cyberpunk Impulse',
 	shortName: 'C. Impulse',
-	expansion: 'hc_plus',
+	expansion: 'advent_of_tcg_ii',
 	palette: 'advent_of_tcg_ii',
 	background: 'advent_of_tcg_ii',
 	rarity: 'common',
 	tokens: 0,
-	type: ['speedrunner'],
+	type: 'speedrunner',
 	health: 280,
 	primary: {
 		name: 'Station',

@@ -11,9 +11,9 @@ import Feather from './feather'
 const Dropper: SingleUse = {
 	...singleUse,
 	id: 'dropper',
-	numericId: 506,
+	numericId: 222,
 	name: 'Dropper',
-	expansion: 'minecraft',
+	expansion: 'advent_of_tcg',
 	rarity: 'common',
 	tokens: 0,
 	description: "Place a feather on the top of your opponent's deck",

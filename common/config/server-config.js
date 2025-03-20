@@ -1,9 +1,9 @@
 export default {
 	port: 9000,
-	clientDevPort: 4002,
+	clientDevPort: 3002,
 	clientPath: 'client/dist',
 	cors: [
-		'http://localhost:4002',
+		'http://localhost:3002',
 		'https://hc-tcg-beta.fly.dev',
 		'https://hc-tcg-testing.fly.dev',
 		'https://hc-tcg.online',
@@ -22,5 +22,5 @@ export default {
 		rematchTime: 90 * 1000,
 	},
 	replayVersion: 0x02,
-	logoSubText: 'Scuffed!',
+	logoSubText: '10k games since 1.0!',
 }

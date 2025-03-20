@@ -24,7 +24,7 @@ const secondPickCondition = query.every(
 const Lead: SingleUse = {
 	...singleUse,
 	id: 'lead',
-	numericId: 82,
+	numericId: 75,
 	name: 'Lead',
 	expansion: 'default',
 	rarity: 'common',

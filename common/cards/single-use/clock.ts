@@ -14,7 +14,7 @@ import {SingleUse} from '../types'
 const Clock: SingleUse = {
 	...singleUse,
 	id: 'clock',
-	numericId: 60,
+	numericId: 6,
 	name: 'Clock',
 	expansion: 'default',
 	rarity: 'ultra_rare',

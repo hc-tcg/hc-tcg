@@ -34,7 +34,7 @@ export function getCardImage(card: Card) {
 		return `/images/hermits-nobg/${card.id.split('_')[0]}.png`
 	}
 	if (isItem(card)) {
-		return getCardTypeIcon(card.type[0])
+		return getCardTypeIcon(card.type)
 	}
 	return `/images/effects/${card.id}.png`
 }

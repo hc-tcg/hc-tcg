@@ -4,12 +4,12 @@ import {Hermit} from '../types'
 const GeminiTayCommon: Hermit = {
 	...hermit,
 	id: 'geminitay_common',
-	numericId: 17,
+	numericId: 27,
 	name: 'Gem',
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 1,
-	type: ['builder'],
+	type: 'builder',
 	health: 300,
 	primary: {
 		name: 'Cottagecore',

@@ -11,7 +11,7 @@ import {SingleUse} from '../types'
 const PotionOfSlowness: SingleUse = {
 	...singleUse,
 	id: 'potion_of_slowness',
-	numericId: 122,
+	numericId: 145,
 	name: 'Potion of Slowness',
 	expansion: 'alter_egos',
 	rarity: 'common',

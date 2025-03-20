@@ -10,6 +10,7 @@ import Bow from 'common/cards/single-use/bow'
 import TargetBlock from 'common/cards/single-use/target-block'
 import {CardComponent, RowComponent} from 'common/components'
 import query from 'common/components/query'
+import {WEAKNESS_DAMAGE} from 'common/const/damage'
 import {TurnAction} from 'common/types/game-state'
 import {
 	attack,
@@ -234,7 +235,9 @@ describe('Test Rare Worm Man', () => {
 
 					yield* attack(game, 'secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
-						HumanCleoRare.health - WormManRare.secondary.damage,
+						HumanCleoRare.health -
+							WormManRare.secondary.damage -
+							WEAKNESS_DAMAGE /** Prankster -> PvP */,
 					)
 					expect(game.state.turn.availableActions).toContain('END_TURN')
 					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
@@ -266,7 +269,9 @@ describe('Test Rare Worm Man', () => {
 						)?.turnedOver,
 					).toBe(false)
 					expect(game.opponentPlayer.activeRow?.health).toBe(
-						HumanCleoRare.health - WormManRare.secondary.damage,
+						HumanCleoRare.health -
+							WormManRare.secondary.damage -
+							WEAKNESS_DAMAGE /** Prankster -> PvP */,
 					)
 					expect(
 						game.components.find(

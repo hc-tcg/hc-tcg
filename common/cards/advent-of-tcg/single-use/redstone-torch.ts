@@ -12,9 +12,9 @@ import MinecartWithTNT from './tnt-minecart'
 const RedstoneTorch: SingleUse = {
 	...singleUse,
 	id: 'redstone_torch',
-	numericId: 1399,
+	numericId: 252,
 	name: 'Redstone Torch',
-	expansion: 'minecraft',
+	expansion: 'advent_of_tcg_ii',
 	rarity: 'rare',
 	tokens: 3,
 	description:

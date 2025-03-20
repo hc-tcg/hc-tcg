@@ -8,15 +8,15 @@ import {Hermit} from '../types'
 const SteampunkTangoRare: Hermit = {
 	...hermit,
 	id: 'steampunktango_rare',
-	numericId: 1246,
+	numericId: 174,
 	name: 'Steampunk Tango',
 	shortName: 'S. Tango',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_iii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 3,
-	type: ['terraform'],
+	type: 'terraform',
 	health: 270,
 	primary: {
 		name: 'Porkchop Power',

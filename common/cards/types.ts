@@ -23,7 +23,6 @@ export type Card = {
 	id: string
 	category: CardCategoryT
 	expansion: ExpansionT
-	set?: string //Scuffed Category
 	numericId: number
 	name: string
 	shortName?: string
@@ -50,7 +49,7 @@ export type Card = {
 
 export type Item = Card & {
 	item: null
-	type: Array<TypeT>
+	type: TypeT
 	description?: string
 	energy: Array<TypeT>
 }
@@ -95,7 +94,7 @@ export function hasDescription(
 
 export type Hermit = HasHealth & {
 	hermit: null
-	type: Array<TypeT> | null
+	type: TypeT
 	primary: HermitAttackInfo
 	secondary: HermitAttackInfo
 	getAttack(

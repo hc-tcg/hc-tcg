@@ -9,14 +9,14 @@ import {Hermit} from '../types'
 const FiveAMPearlRare: Hermit = {
 	...hermit,
 	id: 'fiveampearl_rare',
-	numericId: 796,
+	numericId: 230,
 	name: '5AM Pearl',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_ii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: ['balanced'],
+	type: 'balanced',
 	health: 270,
 	primary: {
 		name: 'Wicked',

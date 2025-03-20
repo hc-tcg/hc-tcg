@@ -17,7 +17,7 @@ const pickCondition = query.every(
 const Mending: SingleUse = {
 	...singleUse,
 	id: 'mending',
-	numericId: 85,
+	numericId: 78,
 	name: 'Mending',
 	expansion: 'default',
 	rarity: 'ultra_rare',

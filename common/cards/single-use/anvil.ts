@@ -32,7 +32,7 @@ function getTargetHermits(game: GameModel, player: PlayerComponent) {
 const Anvil: SingleUse = {
 	...singleUse,
 	id: 'anvil',
-	numericId: 110,
+	numericId: 138,
 	name: 'Anvil',
 	expansion: 'alter_egos',
 	rarity: 'rare',

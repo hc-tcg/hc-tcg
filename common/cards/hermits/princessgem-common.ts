@@ -4,14 +4,14 @@ import {Hermit} from '../types'
 const PrincessGemCommon: Hermit = {
 	...hermit,
 	id: 'princessgem_common',
-	numericId: 408,
+	numericId: 236,
 	name: 'Princess Gem',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_ii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 1,
-	type: ['terraform'],
+	type: 'terraform',
 	health: 280,
 	primary: {
 		name: 'Monarch',

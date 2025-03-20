@@ -4,12 +4,12 @@ import {Hermit} from '../types'
 const KeralisCommon: Hermit = {
 	...hermit,
 	id: 'keralis_common',
-	numericId: 31,
+	numericId: 71,
 	name: 'Keralis',
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: ['builder'],
+	type: 'builder',
 	health: 270,
 	primary: {
 		name: 'Looky Looky',

@@ -24,14 +24,14 @@ function findChromaKeyed(
 const BeetlejhostRare: Hermit = {
 	...hermit,
 	id: 'beetlejhost_rare',
-	numericId: 1167,
+	numericId: 151,
 	name: 'Beetlejhost',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_iii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: ['balanced'],
+	type: 'balanced',
 	health: 300,
 	primary: {
 		name: 'Abacus',

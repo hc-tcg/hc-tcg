@@ -15,7 +15,7 @@ const discardCondition = query.every(
 const CurseOfVanishing: SingleUse = {
 	...singleUse,
 	id: 'curse_of_vanishing',
-	numericId: 64,
+	numericId: 12,
 	name: 'Curse Of Vanishing',
 	expansion: 'default',
 	rarity: 'common',

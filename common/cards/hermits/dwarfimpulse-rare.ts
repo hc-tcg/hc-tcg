@@ -15,15 +15,15 @@ import {Hermit} from '../types'
 const DwarfImpulseRare: Hermit = {
 	...hermit,
 	id: 'dwarfimpulse_rare',
-	numericId: 1233,
+	numericId: 152,
 	name: 'Dwarf Impulse',
 	shortName: 'D. Impulse',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_iii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: ['miner'],
+	type: 'miner',
 	health: 260,
 	primary: {
 		name: 'Barrel Roll',

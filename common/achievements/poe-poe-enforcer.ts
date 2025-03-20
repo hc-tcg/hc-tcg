@@ -1,6 +1,6 @@
 import query from '../components/query'
 import CurseOfBindingEffect from '../status-effects/curse-of-binding'
-import {afterApply, afterAttack, onTurnEnd} from '../types/priorities'
+import {afterApply, afterAttack} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -38,21 +38,13 @@ const PoePoeEnforcer: Achievement = {
 					turnsSinceCurseOfBindings == 1 &&
 					targetHermit.slot.inRow() &&
 					targetHermit.slot.row?.entity ===
-					  player.opponentPlayer.activeRowEntity &&
+						player.opponentPlayer.activeRowEntity &&
 					!deadTargets.includes(attack.target)
 				) {
 					component.incrementGoalProgress({goal: 0})
 					deadTargets.push(attack.target)
 				}
 			},
-		)
-
-		observer.subscribeWithPriority(
-			player.hooks.onTurnEnd,
-			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
-			() => {
-				deadTargets = []
-			}
 		)
 
 		observer.subscribeWithPriority(

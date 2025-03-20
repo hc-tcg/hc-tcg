@@ -8,12 +8,12 @@ import {Hermit} from '../types'
 const Docm77Rare: Hermit = {
 	...hermit,
 	id: 'docm77_rare',
-	numericId: 11,
+	numericId: 16,
 	name: 'Docm77',
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 2,
-	type: ['farm'],
+	type: 'farm',
 	health: 280,
 	primary: {
 		name: 'Shadow Tech',

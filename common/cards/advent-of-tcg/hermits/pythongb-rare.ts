@@ -12,14 +12,14 @@ import {Hermit} from '../../types'
 const PythonGBRare: Hermit = {
 	...hermit,
 	id: 'pythongb_rare',
-	numericId: 452,
+	numericId: 216,
 	name: 'Python',
-	expansion: 'hc_plus',
+	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 3,
-	type: ['redstone'],
+	type: 'redstone',
 	health: 250,
 	primary: {
 		name: 'Say Whaatt',

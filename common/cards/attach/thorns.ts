@@ -92,7 +92,7 @@ function getThorns(
 export const Thorns = getThorns(
 	{
 		id: 'thorns',
-		numericId: 93,
+		numericId: 96,
 		name: 'Thorns',
 		expansion: 'default',
 		rarity: 'common',
@@ -104,7 +104,7 @@ export const Thorns = getThorns(
 export const ThornsII = getThorns(
 	{
 		id: 'thorns_ii',
-		numericId: 127,
+		numericId: 123,
 		name: 'Thorns II',
 		expansion: 'alter_egos',
 		rarity: 'rare',
@@ -116,7 +116,7 @@ export const ThornsII = getThorns(
 export const ThornsIII = getThorns(
 	{
 		id: 'thorns_iii',
-		numericId: 128,
+		numericId: 124,
 		name: 'Thorns III',
 		expansion: 'alter_egos',
 		rarity: 'ultra_rare',

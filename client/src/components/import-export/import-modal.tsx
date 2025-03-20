@@ -193,29 +193,16 @@ export const ImportModal = ({
 
 	const DECK_ICONS = [
 		'any',
-		'anarchist',
-		'athlete',
 		'balanced',
-		'bard',
 		'builder',
-		'challenger',
-		'collector',
-		'diplomat',
 		'explorer',
 		'farm',
-		'historian',
-		'inventor',
-		'looper',
 		'miner',
-		'pacifist',
 		'prankster',
 		'pvp',
 		'redstone',
-		'scavenger',
 		'speedrunner',
 		'terraform',
-		'mob',
-		'everything',
 	]
 
 	const iconDropdownOptions = DECK_ICONS.map((option) => ({

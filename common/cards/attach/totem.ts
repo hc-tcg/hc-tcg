@@ -12,7 +12,7 @@ import {Attach} from '../types'
 const Totem: Attach = {
 	...attach,
 	id: 'totem',
-	numericId: 95,
+	numericId: 101,
 	name: 'Totem',
 	expansion: 'default',
 	rarity: 'ultra_rare',

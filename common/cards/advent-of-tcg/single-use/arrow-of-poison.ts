@@ -9,8 +9,8 @@ const ArrowOfPoison: SingleUse = {
 	...singleUse,
 	id: 'arrow_of_poison',
 	name: 'Tipped Arrows of Poison',
-	expansion: 'minecraft',
-	numericId: 1398,
+	expansion: 'advent_of_tcg_ii',
+	numericId: 243,
 	rarity: 'rare',
 	tokens: 3,
 	description:

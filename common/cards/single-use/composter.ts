@@ -8,7 +8,7 @@ import {SingleUse} from '../types'
 const Composter: SingleUse = {
 	...singleUse,
 	id: 'composter',
-	numericId: 61,
+	numericId: 7,
 	name: 'Composter',
 	expansion: 'default',
 	rarity: 'common',

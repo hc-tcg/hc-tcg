@@ -1,21 +1,17 @@
 import {item} from '../defaults'
 import {Item} from '../types'
 
-const convenience = 'anarchist'
-function capitalize(s: string) {
-	return s[0].toUpperCase() + s.slice(1)
-}
 const PranksterDoubleItem: Item = {
 	...item,
 	id: 'item_prankster_rare',
-	numericId: 0.031,
+	numericId: 60,
 	name: 'Prankster Item x2',
 	shortName: 'Prankster',
 	description: 'Counts as 2 Prankster Item cards.',
-	expansion: 'item',
+	expansion: 'default',
 	rarity: 'rare',
 	tokens: 2,
-	type: ['prankster'],
+	type: 'prankster',
 	energy: ['prankster', 'prankster'],
 }
 

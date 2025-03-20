@@ -8,14 +8,14 @@ import {Hermit} from '../types'
 const FrenchralisRare: Hermit = {
 	...hermit,
 	id: 'frenchkeralis_rare',
-	numericId: 1234,
+	numericId: 155,
 	name: 'Frenchralis',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_iii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 3,
-	type: ['prankster'],
+	type: 'prankster',
 	health: 250,
 	primary: {
 		name: "Je M'appelle",

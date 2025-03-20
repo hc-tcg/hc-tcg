@@ -12,14 +12,14 @@ import {Hermit} from '../../types'
 const ShubbleYTRare: Hermit = {
 	...hermit,
 	id: 'shubbleyt_rare',
-	numericId: 465,
+	numericId: 217,
 	name: 'Shelby',
-	expansion: 'mcyt',
+	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 1,
-	type: ['terraform'],
+	type: 'terraform',
 	health: 300,
 	primary: {
 		name: 'Good Witch',

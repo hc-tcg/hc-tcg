@@ -1,21 +1,16 @@
 import {item} from '../defaults'
 import {Item} from '../types'
 
-const convenience = 'anarchist'
-function capitalize(s: string) {
-	return s[0].toUpperCase() + s.slice(1)
-}
-
 const BuilderItem: Item = {
 	...item,
 	id: 'item_builder_common',
-	numericId: 0.008,
+	numericId: 51,
 	name: 'Builder Item',
 	shortName: 'Builder',
-	expansion: 'item',
+	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: ['builder'],
+	type: 'builder',
 	energy: ['builder'],
 }
 

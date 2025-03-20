@@ -11,7 +11,7 @@ import {SingleUse} from '../types'
 const CurseOfBinding: SingleUse = {
 	...singleUse,
 	id: 'curse_of_binding',
-	numericId: 63,
+	numericId: 11,
 	name: 'Curse Of Binding',
 	expansion: 'default',
 	rarity: 'common',

@@ -31,7 +31,7 @@ const MilkBucket: Attach & SingleUse = {
 	...attach,
 	...singleUse,
 	id: 'milk_bucket',
-	numericId: 86,
+	numericId: 79,
 	name: 'Milk Bucket',
 	category: 'attach',
 	expansion: 'default',

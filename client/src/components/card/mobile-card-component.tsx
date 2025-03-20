@@ -63,7 +63,7 @@ const MobileCardComponent = (props: CardReactProps) => {
 						<div>
 							<img
 								className={css.headInList}
-								src={getCardTypeIcon(cards[0].props.type[0])}
+								src={getCardTypeIcon(cards[0].props.type)}
 							/>
 							{small && (
 								<div

@@ -4,12 +4,12 @@ import {Hermit} from '../types'
 const TinFoilChefCommon: Hermit = {
 	...hermit,
 	id: 'tinfoilchef_common',
-	numericId: 45,
+	numericId: 97,
 	name: 'TFC',
 	rarity: 'common',
 	tokens: 0,
 	expansion: 'default',
-	type: ['miner'],
+	type: 'miner',
 	health: 290,
 	primary: {
 		name: '=π',

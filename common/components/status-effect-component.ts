@@ -26,7 +26,6 @@ export class StatusEffectComponent<
 	public targetEntity: Entity<CardComponent | PlayerComponent> | null
 	public counter: number | null
 	public description: string
-	public extraInfo: any
 	public observerEntity: ObserverEntity | null
 
 	constructor(
@@ -45,7 +44,6 @@ export class StatusEffectComponent<
 		this.observerEntity = null
 		this.counter = statusEffect.counter || null
 		this.description = statusEffect.description
-		this.extraInfo = null
 	}
 
 	public get creator(): CardComponent {

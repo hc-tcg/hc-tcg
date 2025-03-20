@@ -4,15 +4,15 @@ import {Hermit} from '../../types'
 const PostmasterPearlCommon: Hermit = {
 	...hermit,
 	id: 'postmasterpearl_common',
-	numericId: 1404,
+	numericId: 258,
 	name: 'Postmaster Pearl',
 	shortName: 'Postmaster',
-	expansion: 'hc_plus',
+	expansion: 'advent_of_tcg_ii',
 	palette: 'advent_of_tcg_ii',
 	background: 'advent_of_tcg_ii',
 	rarity: 'common',
 	tokens: 0,
-	type: ['builder'],
+	type: 'builder',
 	health: 290,
 	primary: {
 		name: 'Delivery',

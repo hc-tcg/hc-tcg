@@ -4,14 +4,14 @@ import {Hermit} from '../types'
 const FrenchKeralisCommon: Hermit = {
 	...hermit,
 	id: 'frenchkeralis_common',
-	numericId: 803,
+	numericId: 231,
 	name: 'Frenchralis',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_ii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: ['explorer'],
+	type: 'explorer',
 	health: 290,
 	primary: {
 		name: 'Bonjour',

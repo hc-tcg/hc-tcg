@@ -17,15 +17,15 @@ import {Hermit} from '../types'
 const BoomerBdubsRare: Hermit = {
 	...hermit,
 	id: 'boomerbdubs_rare',
-	numericId: 798,
+	numericId: 228,
 	name: 'Boomer Bdubs',
 	shortName: 'Boomer B.',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_ii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: ['redstone'],
+	type: 'redstone',
 	health: 290,
 	primary: {
 		name: 'Boom',

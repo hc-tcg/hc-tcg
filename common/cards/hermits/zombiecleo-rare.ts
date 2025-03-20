@@ -22,12 +22,12 @@ const mockedAttacks = new InstancedValue<MockedAttack | null>(() => null)
 const ZombieCleoRare: Hermit = {
 	...hermit,
 	id: 'zombiecleo_rare',
-	numericId: 7,
+	numericId: 116,
 	name: 'Cleo',
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 2,
-	type: ['pvp'],
+	type: 'pvp',
 	health: 290,
 	primary: {
 		name: 'Dismissed',

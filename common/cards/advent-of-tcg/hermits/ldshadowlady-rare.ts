@@ -14,14 +14,14 @@ import {Hermit} from '../../types'
 const LDShadowLadyRare: Hermit = {
 	...hermit,
 	id: 'ldshadowlady_rare',
-	numericId: 324,
+	numericId: 211,
 	name: 'Lizzie',
-	expansion: 'mcyt',
+	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 2,
-	type: ['terraform'],
+	type: 'terraform',
 	health: 290,
 	primary: {
 		name: 'Fairy Fort',

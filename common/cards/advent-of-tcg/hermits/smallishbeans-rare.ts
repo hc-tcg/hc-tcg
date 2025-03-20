@@ -5,17 +5,17 @@ import {getSupportingItems} from '../../../utils/board'
 import {hermit} from '../../defaults'
 import {Hermit} from '../../types'
 
-const SmallishbeansUltraRare: Hermit = {
+const SmallishbeansAdventRare: Hermit = {
 	...hermit,
-	id: 'smallishbeansadvent_ultra_rare',
-	numericId: 454,
+	id: 'smallishbeansadvent_rare',
+	numericId: 219,
 	name: 'Stratos Joel',
-	expansion: 'hc_plus',
+	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 2,
-	type: ['pvp'],
+	type: 'pvp',
 	health: 280,
 	primary: {
 		name: '11ft',
@@ -57,4 +57,4 @@ const SmallishbeansUltraRare: Hermit = {
 	},
 }
 
-export default SmallishbeansUltraRare
+export default SmallishbeansAdventRare

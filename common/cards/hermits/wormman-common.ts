@@ -4,14 +4,14 @@ import {Hermit} from '../types'
 const WormManCommon: Hermit = {
 	...hermit,
 	id: 'wormman_common',
-	numericId: 409,
+	numericId: 240,
 	name: 'Worm Man',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_ii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: ['terraform'],
+	type: 'terraform',
 	health: 290,
 	primary: {
 		name: 'Justice!',

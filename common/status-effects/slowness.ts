@@ -5,10 +5,10 @@ import {
 } from '../components'
 import {GameModel} from '../models/game-model'
 import {afterAttack, onTurnEnd} from '../types/priorities'
-import {Counter, statusEffect} from './status-effect'
+import {Counter, systemStatusEffect} from './status-effect'
 
 const SlownessEffect: Counter<CardComponent> = {
-	...statusEffect,
+	...systemStatusEffect,
 	id: 'slowness',
 	icon: 'slowness',
 	name: 'Slowness',

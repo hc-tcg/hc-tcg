@@ -7,14 +7,14 @@ import {Hermit} from '../types'
 const WormManRare: Hermit = {
 	...hermit,
 	id: 'wormman_rare',
-	numericId: 1223,
+	numericId: 175,
 	name: 'Worm Man',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_iii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: ['prankster'],
+	type: 'prankster',
 	health: 260,
 	primary: {
 		name: 'Side Kick',

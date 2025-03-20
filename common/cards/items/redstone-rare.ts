@@ -1,22 +1,17 @@
 import {item} from '../defaults'
 import {Item} from '../types'
 
-const convenience = 'anarchist'
-function capitalize(s: string) {
-	return s[0].toUpperCase() + s.slice(1)
-}
-
 const RedstoneDoubleItem: Item = {
 	...item,
 	id: 'item_redstone_rare',
-	numericId: 0.035,
+	numericId: 64,
 	name: 'Redstone Item x2',
 	shortName: 'Redstone',
 	description: 'Counts as 2 Redstone Item cards.',
-	expansion: 'item',
+	expansion: 'default',
 	rarity: 'rare',
 	tokens: 2,
-	type: ['redstone'],
+	type: 'redstone',
 	energy: ['redstone', 'redstone'],
 }
 

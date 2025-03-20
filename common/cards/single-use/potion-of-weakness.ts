@@ -12,13 +12,13 @@ import {SingleUse} from '../types'
 const PotionOfWeakness: SingleUse = {
 	...singleUse,
 	id: 'potion_of_weakness',
-	numericId: 123,
+	numericId: 146,
 	name: 'Potion of Weakness',
 	expansion: 'alter_egos',
 	rarity: 'common',
 	tokens: 2,
 	description:
-		"Your opponent's active Hermit's type(s) becomes weak to your active Hermit's type(s) for 3 turns.",
+		"Your opponent's active Hermit's type becomes weak to your active Hermit's type for 3 turns.",
 	sidebarDescriptions: [
 		{
 			type: 'glossary',
@@ -30,11 +30,9 @@ const PotionOfWeakness: SingleUse = {
 		singleUse.attachCondition,
 		query.slot.opponentHasActiveHermit,
 		(game, _pos) => {
-			const opponentActive = game.opponentPlayer.getActiveHermit()
-			if (!opponentActive) return false
-			if (!opponentActive.isHermit()) return false
-			if (!opponentActive.props.type) return false
-			return true
+			const a = game.opponentPlayer.getActiveHermit()?.isHermit()
+			if (!a) return false
+			return a
 		},
 	),
 	log: (values) => values.defaultLog,

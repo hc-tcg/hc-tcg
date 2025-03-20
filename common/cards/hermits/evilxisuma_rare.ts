@@ -24,14 +24,14 @@ const opponentActiveHermitQuery = query.every(
 const EvilXisumaRare: Hermit = {
 	...hermit,
 	id: 'evilxisuma_rare',
-	numericId: 100,
+	numericId: 128,
 	name: 'Evil X',
 	rarity: 'rare',
 	expansion: 'alter_egos',
 	palette: 'alter_egos',
 	background: 'alter_egos',
 	tokens: 3,
-	type: ['balanced'],
+	type: 'balanced',
 	health: 280,
 	primary: {
 		name: 'Evil Inside',

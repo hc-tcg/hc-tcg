@@ -43,7 +43,6 @@ const TYPE_ORDER = {
 	hermit: 0,
 	attach: 1,
 	single_use: 2,
-	useless: 2,
 	item: 3,
 	health: 4,
 }
@@ -53,19 +52,13 @@ const RARITY_ORDER = {
 	common: 0,
 	rare: 1,
 	ultra_rare: 1,
-	mythic: 1,
-	NA: 2,
 }
 
 function orderCardProps(a: Card, b: Card) {
 	return (
 		[
 			TYPE_ORDER[a.category] - TYPE_ORDER[b.category],
-			isHermit(a) &&
-				isHermit(b) &&
-				(a.type
-					? a.type[0].localeCompare(b.type ? b.type[0] : 'NA')
-					: 'NA'.localeCompare(b.type ? b.type[0] : 'NA')),
+			isHermit(a) && isHermit(b) && a.type.localeCompare(b.type),
 			isItem(a) && isItem(b) && a.name.localeCompare(b.name),
 			isHermit(a) &&
 				isHermit(b) &&

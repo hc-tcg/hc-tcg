@@ -6,7 +6,7 @@ import {SingleUse} from '../types'
 const FlintAndSteel: SingleUse = {
 	...singleUse,
 	id: 'flint_and_steel',
-	numericId: 70,
+	numericId: 25,
 	name: 'Flint & Steel',
 	expansion: 'default',
 	rarity: 'common',

@@ -13,11 +13,11 @@ import {Hermit} from '../types'
 const ZedaphPlaysRare: Hermit = {
 	...hermit,
 	id: 'zedaphplays_rare',
-	numericId: 55,
+	numericId: 114,
 	name: 'Zedaph',
 	expansion: 'default',
 	rarity: 'rare',
-	type: ['explorer'],
+	type: 'explorer',
 	tokens: 2,
 	health: 290,
 	primary: {

@@ -10,7 +10,7 @@ import {SingleUse} from '../types'
 const ChorusFruit: SingleUse = {
 	...singleUse,
 	id: 'chorus_fruit',
-	numericId: 59,
+	numericId: 5,
 	name: 'Chorus Fruit',
 	expansion: 'default',
 	rarity: 'common',

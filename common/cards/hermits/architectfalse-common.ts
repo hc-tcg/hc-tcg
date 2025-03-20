@@ -4,15 +4,15 @@ import {Hermit} from '../types'
 const ArchitectFalseCommon: Hermit = {
 	...hermit,
 	id: 'architectfalse_common',
-	numericId: 804,
+	numericId: 227,
 	name: 'Grand Architect',
 	shortName: 'G. Architect',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_ii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: ['speedrunner'],
+	type: 'speedrunner',
 	health: 270,
 	primary: {
 		name: 'Oxidize',

@@ -9,14 +9,14 @@ import {Hermit} from '../types'
 const PoultryManRare: Hermit = {
 	...hermit,
 	id: 'poultryman_rare',
-	numericId: 1242,
+	numericId: 178,
 	name: 'Poultry Man',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_iii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 3,
-	type: ['farm'],
+	type: 'farm',
 	health: 280,
 	primary: {
 		name: "It wasn't me",

@@ -9,14 +9,14 @@ import {Hermit} from '../types'
 const KingJoelRare: Hermit = {
 	...hermit,
 	id: 'kingjoel_rare',
-	numericId: 1238,
+	numericId: 163,
 	name: 'King Joel',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_iii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: ['builder'],
+	type: 'builder',
 	health: 280,
 	primary: {
 		name: 'Diss Track',

@@ -8,14 +8,14 @@ import {Hermit} from '../types'
 const ShadeEERare: Hermit = {
 	...hermit,
 	id: 'shadee_rare',
-	numericId: 1226,
+	numericId: 170,
 	name: 'Shade-E-E',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_iii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 2,
-	type: ['redstone'],
+	type: 'redstone',
 	health: 270,
 	primary: {
 		name: 'Corrupt Contr.',

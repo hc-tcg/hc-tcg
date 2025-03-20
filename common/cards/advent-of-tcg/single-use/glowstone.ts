@@ -11,9 +11,9 @@ import {SingleUse} from '../../types'
 const Glowstone: SingleUse = {
 	...singleUse,
 	id: 'glowstone',
-	numericId: 509,
+	numericId: 224,
 	name: 'Glowstone',
-	expansion: 'minecraft',
+	expansion: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 2,
 	description:

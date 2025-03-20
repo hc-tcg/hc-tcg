@@ -11,7 +11,7 @@ const Candle: SingleUse = {
 	id: 'candle',
 	numericId: 250,
 	name: 'Candle',
-	expansion: 'minecraft',
+	expansion: 'advent_of_tcg_ii',
 	rarity: 'rare',
 	tokens: 2,
 	description:

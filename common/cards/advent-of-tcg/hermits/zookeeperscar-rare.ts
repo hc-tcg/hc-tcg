@@ -23,15 +23,15 @@ const attachedCards = new InstancedValue<Record<CardEntity, AttachedMobInfo>>(
 const ZookeeperScarRare: Hermit = {
 	...hermit,
 	id: 'zookeeperscar_rare',
-	numericId: 1402,
+	numericId: 256,
 	name: 'Zookeeper Scar',
 	shortName: 'Zookeeper',
-	expansion: 'hc_plus',
+	expansion: 'advent_of_tcg_ii',
 	palette: 'advent_of_tcg_ii',
 	background: 'advent_of_tcg_ii',
 	rarity: 'rare',
 	tokens: 3,
-	type: ['balanced'],
+	type: 'balanced',
 	health: 280,
 	primary: {
 		name: 'Lasso',

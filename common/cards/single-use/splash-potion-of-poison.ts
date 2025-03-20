@@ -12,7 +12,7 @@ import {SingleUse} from '../types'
 const SplashPotionOfPoison: SingleUse = {
 	...singleUse,
 	id: 'splash_potion_of_poison',
-	numericId: 91,
+	numericId: 90,
 	name: 'Splash Potion of Poison',
 	expansion: 'default',
 	rarity: 'rare',

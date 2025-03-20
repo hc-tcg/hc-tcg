@@ -4,12 +4,12 @@ import {Hermit} from '../types'
 const ZombieCleoCommon: Hermit = {
 	...hermit,
 	id: 'zombiecleo_common',
-	numericId: 6,
+	numericId: 115,
 	name: 'Cleo',
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: ['builder'],
+	type: 'builder',
 	health: 260,
 	primary: {
 		name: "It's Fine",

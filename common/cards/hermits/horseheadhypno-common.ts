@@ -4,15 +4,15 @@ import {Hermit} from '../types'
 const HorseHeadHypnoCommon: Hermit = {
 	...hermit,
 	id: 'horseheadhypno_common',
-	numericId: 805,
+	numericId: 232,
 	name: 'Horse Head Hypno',
 	shortName: 'H. H. Hypno',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_ii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 1,
-	type: ['farm'],
+	type: 'farm',
 	health: 260,
 	primary: {
 		name: 'I.O.U.',

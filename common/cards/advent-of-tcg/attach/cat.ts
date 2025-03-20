@@ -13,9 +13,9 @@ import {Attach} from '../../types'
 const Cat: Attach = {
 	...attach,
 	id: 'cat',
-	numericId: 505,
+	numericId: 202,
 	name: 'Cat',
-	expansion: 'minecraft',
+	expansion: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 1,
 	description:

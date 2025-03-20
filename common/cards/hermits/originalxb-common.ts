@@ -4,14 +4,14 @@ import {Hermit} from '../types'
 const OriginalXbCommon: Hermit = {
 	...hermit,
 	id: 'originalxb_common',
-	numericId: 806,
+	numericId: 234,
 	name: 'Original xB',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_ii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 1,
-	type: ['miner'],
+	type: 'miner',
 	health: 280,
 	primary: {
 		name: 'Hellooo?',

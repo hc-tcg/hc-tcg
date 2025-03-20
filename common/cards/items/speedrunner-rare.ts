@@ -1,22 +1,17 @@
 import {item} from '../defaults'
 import {Item} from '../types'
 
-const convenience = 'anarchist'
-function capitalize(s: string) {
-	return s[0].toUpperCase() + s.slice(1)
-}
-
 const SpeedrunnerDoubleItem: Item = {
 	...item,
 	id: 'item_speedrunner_rare',
-	numericId: 0.039,
+	numericId: 66,
 	name: 'Speedrunner Item x2',
 	shortName: 'Speedrunner',
 	description: 'Counts as 2 Speedrunner Item cards.',
-	expansion: 'item',
+	expansion: 'default',
 	rarity: 'rare',
 	tokens: 2,
-	type: ['speedrunner'],
+	type: 'speedrunner',
 	energy: ['speedrunner', 'speedrunner'],
 }
 

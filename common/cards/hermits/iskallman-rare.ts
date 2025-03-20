@@ -8,14 +8,14 @@ import {Hermit} from '../types'
 const IskallmanRare: Hermit = {
 	...hermit,
 	id: 'iskallman_rare',
-	numericId: 580,
+	numericId: 233,
 	name: 'IskallMAN',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_ii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 0,
-	type: ['explorer'],
+	type: 'explorer',
 	health: 260,
 	primary: {
 		name: 'Iskall...MAAAN',

@@ -14,14 +14,14 @@ import {Hermit} from '../types'
 const PrincessGemRare: Hermit = {
 	...hermit,
 	id: 'princessgem_rare',
-	numericId: 1243,
+	numericId: 168,
 	name: 'Princess Gem',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_iii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: ['speedrunner'],
+	type: 'speedrunner',
 	health: 270,
 	primary: {
 		name: 'Sunny Days',

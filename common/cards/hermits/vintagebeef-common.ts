@@ -4,12 +4,12 @@ import {Hermit} from '../types'
 const VintageBeefCommon: Hermit = {
 	...hermit,
 	id: 'vintagebeef_common',
-	numericId: 3,
+	numericId: 102,
 	name: 'Beef',
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: ['balanced'],
+	type: 'balanced',
 	health: 250,
 	primary: {
 		name: 'Hey Guys!',

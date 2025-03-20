@@ -9,12 +9,12 @@ import {Hermit} from '../types'
 const GrianRare: Hermit = {
 	...hermit,
 	id: 'grian_rare',
-	numericId: 20,
+	numericId: 35,
 	name: 'Grian',
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 2,
-	type: ['prankster'],
+	type: 'prankster',
 	health: 300,
 	primary: {
 		name: 'Borrow',

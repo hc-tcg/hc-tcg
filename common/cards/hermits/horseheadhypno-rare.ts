@@ -8,15 +8,15 @@ import {Hermit} from '../types'
 const HorseHeadHypnoRare: Hermit = {
 	...hermit,
 	id: 'horseheadhypno_rare',
-	numericId: 1235,
+	numericId: 158,
 	name: 'Horse Head Hypno',
 	shortName: 'H. H. Hypno',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_iii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: ['builder'],
+	type: 'builder',
 	health: 260,
 	primary: {
 		name: 'Nice Guy',

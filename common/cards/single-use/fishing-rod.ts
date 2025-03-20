@@ -6,7 +6,7 @@ import {SingleUse} from '../types'
 const FishingRod: SingleUse = {
 	...singleUse,
 	id: 'fishing_rod',
-	numericId: 69,
+	numericId: 24,
 	name: 'Fishing Rod',
 	expansion: 'default',
 	rarity: 'ultra_rare',

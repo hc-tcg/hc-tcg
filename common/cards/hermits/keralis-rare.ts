@@ -14,12 +14,12 @@ const pickCondition = query.every(
 const KeralisRare: Hermit = {
 	...hermit,
 	id: 'keralis_rare',
-	numericId: 32,
+	numericId: 72,
 	name: 'Keralis',
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 1,
-	type: ['terraform'],
+	type: 'terraform',
 	health: 250,
 	primary: {
 		name: 'Booshes',

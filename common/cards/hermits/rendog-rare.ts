@@ -27,12 +27,12 @@ const mockedAttacks = new InstancedValue<MockedAttack | null>(() => null)
 const RendogRare: Hermit = {
 	...hermit,
 	id: 'rendog_rare',
-	numericId: 38,
+	numericId: 87,
 	name: 'Rendog',
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 2,
-	type: ['builder'],
+	type: 'builder',
 	health: 250,
 	primary: {
 		name: "Comin' At Ya",

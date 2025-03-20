@@ -8,7 +8,7 @@ import {SingleUse} from '../types'
 const TNT: SingleUse = {
 	...singleUse,
 	id: 'tnt',
-	numericId: 94,
+	numericId: 100,
 	name: 'TNT',
 	expansion: 'default',
 	rarity: 'common',

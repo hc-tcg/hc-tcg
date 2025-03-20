@@ -12,7 +12,7 @@ import {SingleUse} from '../types'
 const BadOmen: SingleUse = {
 	...singleUse,
 	id: 'bad_omen',
-	numericId: 112,
+	numericId: 139,
 	name: 'Bad Omen',
 	expansion: 'alter_egos',
 	rarity: 'rare',

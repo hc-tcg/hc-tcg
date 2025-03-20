@@ -20,7 +20,7 @@ const EfficiencyEffect: StatusEffect<PlayerComponent> = {
 
 		observer.subscribeWithPriority(
 			player.hooks.onTurnEnd,
-			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
 			() => {
 				effect.remove()
 			},

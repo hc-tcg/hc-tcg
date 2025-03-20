@@ -15,12 +15,12 @@ export const MiningFatigueEffect: Counter<CardComponent> = {
 		const {opponentPlayer} = target
 
 		if (target.isHermit()) {
-			effect.description = `This Hermit's attacks cost an additional ${target.props.type ? target.props.type[0] : ''} item to use.`
+			effect.description = `This Hermit's attacks cost an additional ${target.props.type} item to use.`
 			observer.subscribe(target.hooks.getPrimaryCost, () => {
-				return target.props.type ? [target.props.type[0]] : ['any']
+				return [target.props.type]
 			})
 			observer.subscribe(target.hooks.getSecondaryCost, () => {
-				return target.props.type ? [target.props.type[0]] : ['any']
+				return [target.props.type]
 			})
 		}
 
@@ -51,12 +51,12 @@ export const SingleTurnMiningFatigueEffect: StatusEffect<CardComponent> = {
 		const {player} = target
 
 		if (target.isHermit()) {
-			effect.description = `This Hermit's attacks cost an additional ${target.props.type ? target.props.type[0] : ''} item to use.`
+			effect.description = `This Hermit's attacks cost an additional ${target.props.type} item to use.`
 			observer.subscribe(target.hooks.getPrimaryCost, () => {
-				return target.props.type ? [target.props.type[0]] : ['any']
+				return [target.props.type]
 			})
 			observer.subscribe(target.hooks.getSecondaryCost, () => {
-				return target.props.type ? [target.props.type[0]] : ['any']
+				return [target.props.type]
 			})
 		}
 

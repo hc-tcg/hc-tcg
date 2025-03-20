@@ -14,14 +14,14 @@ import {Hermit} from '../../types'
 const BigBSt4tzRare: Hermit = {
 	...hermit,
 	id: 'bigbst4tz2_rare',
-	numericId: 272,
+	numericId: 207,
 	name: 'BigB',
-	expansion: 'mcyt',
+	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 2,
-	type: ['speedrunner'],
+	type: 'speedrunner',
 	health: 270,
 	primary: {
 		name: 'Terry',

@@ -20,13 +20,13 @@ function getAllSubattacks(
 const PharaohRare: Hermit = {
 	...hermit,
 	id: 'pharaoh_rare',
-	numericId: 309,
+	numericId: 214,
 	name: 'Pharaoh',
-	expansion: 'hc_plus',
+	expansion: 'advent_of_tcg',
 	palette: 'pharaoh',
 	rarity: 'rare',
 	tokens: 2,
-	type: ['balanced'],
+	type: 'balanced',
 	health: 300,
 	primary: {
 		name: 'Targét',

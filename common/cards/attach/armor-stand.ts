@@ -7,7 +7,7 @@ import {Attach, HasHealth} from '../types'
 const ArmorStand: Attach & HasHealth = {
 	...attach,
 	id: 'armor_stand',
-	numericId: 111,
+	numericId: 118,
 	name: 'Armour Stand',
 	expansion: 'alter_egos',
 	rarity: 'ultra_rare',

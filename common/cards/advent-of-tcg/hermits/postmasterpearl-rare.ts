@@ -7,15 +7,15 @@ import {Hermit} from '../../types'
 const PostmasterPearlRare: Hermit = {
 	...hermit,
 	id: 'postmasterpearl_rare',
-	numericId: 1405,
+	numericId: 254,
 	name: 'Postmaster Pearl',
 	shortName: 'Postmaster',
-	expansion: 'hc_plus',
+	expansion: 'advent_of_tcg_ii',
 	palette: 'advent_of_tcg_ii',
 	background: 'advent_of_tcg_ii',
 	rarity: 'rare',
 	tokens: 1,
-	type: ['explorer'],
+	type: 'explorer',
 	health: 300,
 	primary: {
 		name: 'Inspector',

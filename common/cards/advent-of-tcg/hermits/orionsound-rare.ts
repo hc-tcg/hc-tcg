@@ -14,14 +14,14 @@ import {Hermit} from '../../types'
 const OrionSoundRare: Hermit = {
 	...hermit,
 	id: 'orionsound_rare',
-	numericId: 464,
+	numericId: 213,
 	name: 'Oli',
-	expansion: 'mcyt',
+	expansion: 'advent_of_tcg',
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 1,
-	type: ['speedrunner'],
+	type: 'speedrunner',
 	health: 280,
 	primary: {
 		name: 'Melody',

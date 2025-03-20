@@ -21,7 +21,7 @@ const pickCondition = query.every(
 const TargetBlock: SingleUse = {
 	...singleUse,
 	id: 'target_block',
-	numericId: 126,
+	numericId: 149,
 	name: 'Target Block',
 	expansion: 'alter_egos',
 	rarity: 'rare',

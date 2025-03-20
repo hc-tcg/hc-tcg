@@ -4,14 +4,14 @@ import {Hermit} from '../types'
 const HumanCleoCommon: Hermit = {
 	...hermit,
 	id: 'humancleo_common',
-	numericId: 1236,
+	numericId: 180,
 	name: 'Human Cleo',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_iii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 1,
-	type: ['prankster'],
+	type: 'prankster',
 	health: 250,
 	primary: {
 		name: 'Heartbeat',

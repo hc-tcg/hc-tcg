@@ -9,14 +9,14 @@ import {Hermit} from '../types'
 const EvilJevinRare: Hermit = {
 	...hermit,
 	id: 'eviljevin_rare',
-	numericId: 1229,
+	numericId: 153,
 	name: 'Evil Jevin',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_iii',
 	palette: 'alter_egos',
 	background: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: ['speedrunner'],
+	type: 'speedrunner',
 	health: 280,
 	primary: {
 		name: 'Ambush',

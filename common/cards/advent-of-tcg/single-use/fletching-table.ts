@@ -8,9 +8,9 @@ import Feather from './feather'
 const FletchingTable: SingleUse = {
 	...singleUse,
 	id: 'fletching_table',
-	numericId: 507,
+	numericId: 223,
 	name: 'Fletching table',
-	expansion: 'minecraft',
+	expansion: 'advent_of_tcg',
 	rarity: 'common',
 	tokens: -1,
 	description:

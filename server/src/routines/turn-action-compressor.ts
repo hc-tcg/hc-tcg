@@ -563,12 +563,10 @@ export class TurnActionCompressor {
 			attach: 0b01,
 			single_use: 0b10,
 			item: 0b11,
-			// These three shouldnt appear when this is used (and another extra two in digital scuffed)
+			// These three shouldnt appear when this is used
 			hand: 0,
 			deck: 0,
 			discardPile: 0,
-			lostZone: 0,
-			prizePile: 0,
 		}
 
 		const slotType = slotTypeDict[slot.type]

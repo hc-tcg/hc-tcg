@@ -4,15 +4,15 @@ import {Hermit} from '../types'
 const DwarfImpulseCommon: Hermit = {
 	...hermit,
 	id: 'dwarfimpulse_common',
-	numericId: 800,
+	numericId: 229,
 	name: 'Dwarf Impulse',
 	shortName: 'D. Impulse',
-	expansion: 'alter_egos',
+	expansion: 'alter_egos_ii',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: ['farm'],
+	type: 'farm',
 	health: 250,
 	primary: {
 		name: 'Beard Bash',

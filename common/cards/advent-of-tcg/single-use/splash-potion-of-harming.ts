@@ -24,10 +24,10 @@ function getTargetHermits(game: GameModel) {
 const SplashPotionOfHarming: SingleUse = {
 	...singleUse,
 	id: 'splash_potion_of_harming',
-	numericId: 512,
-	name: 'Splash potion of harming',
-	expansion: 'minecraft',
-	rarity: 'common',
+	numericId: 226,
+	name: 'Splash Potion of Harming',
+	expansion: 'advent_of_tcg',
+	rarity: 'rare',
 	tokens: 3,
 	description:
 		"Deal 40hp damage to the opponent's active hermit and 20hp damage to all other opponent Hermits.",
