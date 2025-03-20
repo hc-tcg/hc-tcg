@@ -23,6 +23,8 @@ const PoePoeEnforcer: Achievement = {
 			turnsSinceCurseOfBindings += 1
 		})
 
+		let incrementSource: Array<any> = []
+
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.ACHIEVEMENTS,
@@ -36,9 +38,11 @@ const PoePoeEnforcer: Achievement = {
 					turnsSinceCurseOfBindings == 1 &&
 					targetHermit.slot.inRow() &&
 					targetHermit.slot.row?.entity ===
-						player.opponentPlayer.activeRowEntity
+					player.opponentPlayer.activeRowEntity &&
+						!incrementSource.includes(attack.target)
 				) {
 					component.incrementGoalProgress({goal: 0})
+					incrementSource.push(attack.target)
 				}
 			},
 		)

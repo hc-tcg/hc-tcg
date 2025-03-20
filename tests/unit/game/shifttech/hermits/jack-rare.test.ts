@@ -7,7 +7,7 @@ import query from 'common/components/query'
 import {attack, endTurn, pick, playCardFromHand, testGame} from '../../utils'
 
 describe('Test Jack Rare', () => {
-	test('Test Jack Base Functionality', () => {
+	test('Test Jack Rare Base Functionality', () => {
 		testGame(
 			{
 				playerOneDeck: [JackRare],
@@ -25,7 +25,7 @@ describe('Test Jack Rare', () => {
 			{ startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true },
 		)
 	})
-	test('Test Jack Double Item First Condition', () => {
+	test('Test Jack Rare Double Item First Condition', () => {
 		testGame(
 			{
 				playerOneDeck: [JackRare],
@@ -45,7 +45,7 @@ describe('Test Jack Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('Test Jack Double Item Second Condition', () => {
+	test('Test Jack Rare Double Item Second Condition', () => {
 		testGame(
 			{
 				playerOneDeck: [JackRare],
