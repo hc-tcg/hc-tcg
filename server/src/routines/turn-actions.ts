@@ -164,7 +164,7 @@ export function playCardAction(
 
 	assert(
 		!query.slot.frozen(game, card.slot),
-		'You cannot play cards that are in frozen slots'
+		'You cannot play cards that are in frozen slots',
 	)
 
 	const row = pickedSlot.row
