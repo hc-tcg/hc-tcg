@@ -42,6 +42,7 @@ const HotguyRare: Hermit = {
 			game.hooks.beforeAttack,
 			beforeAttack.HERMIT_APPLY_ATTACK,
 			(attack) => {
+				if (attack.type === 'weakness') return
 				if (!attack.isAttacker(component.entity)) return
 				usingSecondaryAttack = attack.type === 'secondary'
 			},
