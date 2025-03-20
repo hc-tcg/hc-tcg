@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import PoePoeEnforcer from 'common/achievements/poe-poe-enforcer'
 import ImpulseSVCommon from 'common/cards/hermits/impulsesv-common'
-import GrianCommon from 'common/cards/hermits/grian-common'
+import JoeHillsCommon from 'common/cards/hermits/joehills-common'
 import CurseOfBinding from 'common/cards/single-use/curse-of-binding'
 import {
 	applyEffect,
@@ -41,12 +41,12 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 			{
 				achievement: PoePoeEnforcer,
 				playerOneDeck: [ImpulseSVCommon, CurseOfBinding],
-				playerTwoDeck: [GrianCommon, ImpulseSVCommon],
+				playerTwoDeck: [JoeHillsCommon, ImpulseSVCommon],
 				playGame: function* (game) {
 					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GrianCommon, 'hermit', 0)
+					yield* playCardFromHand(game, JoeHillsCommon, 'hermit', 0)
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, CurseOfBinding, 'single_use')
