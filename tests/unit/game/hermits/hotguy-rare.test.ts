@@ -2,12 +2,12 @@ import {describe, expect, test} from '@jest/globals'
 import {ThornsIII} from 'common/cards/attach/thorns'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import HotguyRare from 'common/cards/hermits/hotguy-rare'
+import RendogRare from 'common/cards/hermits/rendog-rare'
 import Bow from 'common/cards/single-use/bow'
 import Crossbow from 'common/cards/single-use/crossbow'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
-import RendogRare from 'common/cards/hermits/rendog-rare'
 
 describe('Test Hotguy Rare', () => {
 	test('Test Hotguy with Bow', () => {
