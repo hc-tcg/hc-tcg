@@ -1,6 +1,6 @@
 import query from '../components/query'
 import CurseOfBindingEffect from '../status-effects/curse-of-binding'
-import {afterApply, afterAttack} from '../types/priorities'
+import {afterApply, afterAttack, beforeAttack} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -23,7 +23,17 @@ const PoePoeEnforcer: Achievement = {
 			turnsSinceCurseOfBindings += 1
 		})
 
-		let incrementSource: Array<any> = []
+		let redundantAttacks: Array<any> = []
+
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.REACT_TO_DAMAGE,
+			(attack) => {
+				if (attack.target.health <= 0) {
+					redundantAttacks.push([attack, attack.target])
+				}
+			}
+		)
 
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
@@ -39,10 +49,9 @@ const PoePoeEnforcer: Achievement = {
 					targetHermit.slot.inRow() &&
 					targetHermit.slot.row?.entity ===
 					player.opponentPlayer.activeRowEntity &&
-						!incrementSource.includes(attack.target)
+						!redundantAttacks.includes([attack, attack.target])
 				) {
 					component.incrementGoalProgress({goal: 0})
-					incrementSource.push(attack.target)
 				}
 			},
 		)
