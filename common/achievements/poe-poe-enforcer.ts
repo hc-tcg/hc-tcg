@@ -67,7 +67,7 @@ const PoePoeEnforcer: Achievement = {
 			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
 			() => {
 				deadTargets = []
-			}
+			},
 		)
 	},
 }
