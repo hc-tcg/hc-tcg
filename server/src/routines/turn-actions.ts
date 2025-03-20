@@ -163,8 +163,8 @@ export function playCardAction(
 	)
 
 	assert(
-		!game.components.filter(SlotComponent, query.slot.frozen).includes(pickedSlot),
-		'You cannot interact with cards in frozen slots'
+		!query.slot.frozen(game, card.slot),
+		'You cannot play cards that are in frozen slots'
 	)
 
 	const row = pickedSlot.row
