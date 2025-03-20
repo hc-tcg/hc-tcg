@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 import JackRare from 'common/cards/shifttech/hermits/jack-rare'
 import BuilderItem from 'common/cards/items/builder-common'
 import BuilderDoubleItem from 'common/cards/items/builder-rare'
-import {RowComponent} from 'common/components'
+import {PlayerComponent, RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {attack, endTurn, pick, playCardFromHand, testGame} from '../../utils'
 
@@ -56,7 +56,7 @@ describe('Test Jack Rare', () => {
 
 					yield* playCardFromHand(game, JackRare, 'hermit', 0)
 					yield* attack(game, 'secondary')
-					expect(game.getPickableSlots(BuilderDoubleItem.attachCondition)).toStrictEqual([])
+					expect(game.currentPlayer.getCardsCanBePlacedIn()).toStrictEqual([BuilderDoubleItem, []])
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
