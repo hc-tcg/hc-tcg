@@ -33,7 +33,7 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 					expect(PoePoeEnforcer.getProgress(achievement.goals)).toBeFalsy()
 				},
 			},
-			{ noItemRequirements: true, startWithAllCards: false, oneShotMode: true },
+			{noItemRequirements: true, startWithAllCards: false, oneShotMode: true},
 		)
 	})
 	test('Test achievement is gained when knocking out active hermit the round after opponent has curse of binding', () => {
@@ -61,7 +61,7 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 					expect(PoePoeEnforcer.getProgress(achievement.goals)).toBe(1)
 				},
 			},
-			{ noItemRequirements: true, startWithAllCards: false, oneShotMode: true },
+			{noItemRequirements: true, startWithAllCards: false, oneShotMode: true},
 		)
 	})
 	test('Test achievement is not gained after two rounds', () => {
@@ -92,7 +92,7 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 					expect(PoePoeEnforcer.getProgress(achievement.goals)).toBeFalsy()
 				},
 			},
-			{ noItemRequirements: true, startWithAllCards: false, oneShotMode: true },
+			{noItemRequirements: true, startWithAllCards: false, oneShotMode: true},
 		)
 	})
 })
