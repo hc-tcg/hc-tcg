@@ -7,14 +7,14 @@ import {Hermit} from '../types'
 const FarmerBeefRare: Hermit = {
 	...hermit,
 	id: 'farmerbeef_rare',
-	numericId: 48,
+	numericId: 26,
 	name: 'Farmer Beef',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 0,
-	type: 'farm',
+	type: ['farm'],
 	health: 290,
 	primary: {
 		name: 'Rustic',
@@ -40,11 +40,13 @@ const FarmerBeefRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				const hermit = attack.target?.getHermit()
-				if (!hermit) return
-				if (!hermit.isHermit() || hermit.props.type !== 'builder') return
-
-				attack.multiplyDamage(component.entity, 2)
+				const targetHermit = attack.target?.getHermit()
+				if (
+					targetHermit?.isHermit() &&
+					targetHermit.props.type &&
+					targetHermit.props.type.includes('builder')
+				)
+					attack.multiplyDamage(component.entity, 2)
 			},
 		)
 	},

@@ -14,15 +14,15 @@ import {Hermit} from '../types'
 const SpookyStressRare: Hermit = {
 	...hermit,
 	id: 'spookystress_rare',
-	numericId: 173,
+	numericId: 1245,
 	name: 'Spooky Stress',
 	shortName: 'S. Stress',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'terraform',
+	type: ['terraform'],
 	health: 260,
 	primary: {
 		name: 'Meh',

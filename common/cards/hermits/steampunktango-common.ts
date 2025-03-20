@@ -4,15 +4,15 @@ import {Hermit} from '../types'
 const SteampunkTangoCommon: Hermit = {
 	...hermit,
 	id: 'steampunktango_common',
-	numericId: 239,
+	numericId: 812,
 	name: 'Steampunk Tango',
 	shortName: 'S. Tango',
-	expansion: 'alter_egos_ii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'speedrunner',
+	type: ['speedrunner'],
 	health: 250,
 	primary: {
 		name: 'Create',

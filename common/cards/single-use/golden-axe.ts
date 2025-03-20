@@ -13,7 +13,7 @@ import {SingleUse} from '../types'
 const GoldenAxe: SingleUse = {
 	...singleUse,
 	id: 'golden_axe',
-	numericId: 31,
+	numericId: 73,
 	name: 'Golden Axe',
 	expansion: 'default',
 	rarity: 'rare',

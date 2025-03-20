@@ -16,7 +16,7 @@ const pickCondition = query.every(
 const FireCharge: SingleUse = {
 	...singleUse,
 	id: 'fire_charge',
-	numericId: 142,
+	numericId: 117,
 	name: 'Fire Charge',
 	expansion: 'alter_egos',
 	rarity: 'common',

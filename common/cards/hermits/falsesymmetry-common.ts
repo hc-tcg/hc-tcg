@@ -4,12 +4,12 @@ import {Hermit} from '../types'
 const FalseSymmetryCommon: Hermit = {
 	...hermit,
 	id: 'falsesymmetry_common',
-	numericId: 22,
+	numericId: 15,
 	name: 'False',
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: 'pvp',
+	type: ['pvp'],
 	health: 250,
 	primary: {
 		name: 'Queen of Hearts',

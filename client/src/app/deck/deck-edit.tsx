@@ -5,7 +5,6 @@ import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
 import {CardEntity, newEntity} from 'common/entities'
 import {Deck, Tag} from 'common/types/deck'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
-import {sortCardInstances} from 'common/utils/cards'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {getCardRank, getDeckCost} from 'common/utils/ranks'
 import {getIconPath} from 'common/utils/state-gen'
@@ -29,19 +28,42 @@ import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
 
-const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
+const RANK_NAMES = [
+	'any',
+	'stone',
+	'iron',
+	'gold',
+	'emerald',
+	'diamond',
+	'netherite',
+	'obsidian',
+]
+
 const ITEM_DECK_ICONS = [
 	'any',
+	'anarchist',
+	'athlete',
 	'balanced',
+	'bard',
 	'builder',
+	'challenger',
+	'collector',
+	'diplomat',
 	'explorer',
 	'farm',
+	'historian',
+	'inventor',
+	'looper',
 	'miner',
+	'pacifist',
 	'prankster',
 	'pvp',
 	'redstone',
+	'scavenger',
 	'speedrunner',
 	'terraform',
+	'mob',
+	'everything',
 ]
 
 const HERMIT_DECK_ICONS = [
@@ -114,10 +136,7 @@ const EXPANSION_NAMES = [
 			(card) =>
 				card.expansion === expansion &&
 				EXPANSIONS[expansion].disabled === false &&
-				!(
-					CONFIG.limits.bannedCards.includes(card.id) ||
-					CONFIG.limits.disabledCards.includes(card.id)
-				),
+				!CONFIG.limits.bannedCards.includes(card.id),
 		)
 	}),
 ]
@@ -229,15 +248,74 @@ type Props = {
 	deck: Deck | null
 }
 
-const ALL_CARDS = sortCardInstances(
+const TYPE_ORDER = {
+	hermit: 0,
+	attach: 1,
+	single_use: 2,
+	useless: 2,
+	item: 3,
+	health: 4,
+}
+
+// We want to fix UR with Rare to place all cards with abilities in the proper order.
+const RARITY_ORDER = {
+	common: 0,
+	rare: 1,
+	ultra_rare: 1,
+	mythic: 1,
+	NA: 2,
+}
+
+export function sortCards(
+	cards: Array<LocalCardInstance>,
+): Array<LocalCardInstance> {
+	return cards.slice().sort((a: LocalCardInstance, b: LocalCardInstance) => {
+		return (
+			[
+				TYPE_ORDER[a.props.category] - TYPE_ORDER[b.props.category],
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					(a.props.type
+						? a.props.type[0].localeCompare(
+								b.props.type ? b.props.type[0] : 'NA',
+							)
+						: 'NA'.localeCompare(b.props.type ? b.props.type[0] : 'NA')),
+				isItem(a.props) &&
+					isItem(b.props) &&
+					a.props.name.localeCompare(b.props.name),
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					RARITY_ORDER[a.props.rarity] - RARITY_ORDER[b.props.rarity],
+				a.props.tokens !== 'wild' &&
+					b.props.tokens !== 'wild' &&
+					a.props.tokens - b.props.tokens,
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					a.props.secondary.cost.length - b.props.secondary.cost.length,
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					a.props.secondary.damage - b.props.secondary.damage,
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					a.props.primary.cost.length - b.props.primary.cost.length,
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					a.props.primary.damage - b.props.primary.damage,
+				isHermit(a.props) &&
+					isHermit(b.props) &&
+					a.props.health - b.props.health,
+				a.props.name.localeCompare(b.props.name),
+			].find(Boolean) || 0
+		)
+	})
+}
+
+const ALL_CARDS = sortCards(
 	CARDS_LIST.filter(
 		(card) =>
 			// Don't show disabled cards
 			EXPANSIONS[card.expansion].disabled === false &&
-			!(
-				CONFIG.limits.bannedCards.includes(card.id) ||
-				CONFIG.limits.disabledCards.includes(card.id)
-			),
+			!CONFIG.limits.bannedCards.includes(card.id),
 	).map(
 		(card): LocalCardInstance => ({
 			props: WithoutFunctions(card),
@@ -323,7 +401,7 @@ function EditDeck({
 	//MISC
 	const initialDeckState = deck
 
-	const filteredCards: LocalCardInstance[] = sortCardInstances(
+	const filteredCards: LocalCardInstance[] = sortCards(
 		ALL_CARDS.filter(
 			(card) =>
 				// Card Name Filter
@@ -336,7 +414,8 @@ function EditDeck({
 				(typeQuery === '' ||
 					!(isHermit(card.props) || isItem(card.props)) ||
 					((isHermit(card.props) || isItem(card.props)) &&
-						card.props.type.includes(typeQuery))) &&
+						card.props.type &&
+						card.props.type[0].includes(typeQuery))) &&
 				// Card Expansion Filter
 				(expansionQuery.length === 0 ||
 					expansionQuery.includes(card.props.expansion)) &&
@@ -864,7 +943,7 @@ function EditDeck({
 									header={cardGroupHeader('Hermits', selectedCards.hermits)}
 								>
 									<CardList
-										cards={sortCardInstances(selectedCards.hermits)}
+										cards={sortCards(selectedCards.hermits)}
 										displayTokenCost={true}
 										wrap={true}
 										onClick={removeCard}
@@ -878,7 +957,7 @@ function EditDeck({
 								)}
 							>
 								<CardList
-									cards={sortCardInstances(selectedCards.attachableEffects)}
+									cards={sortCards(selectedCards.attachableEffects)}
 									displayTokenCost={true}
 									wrap={true}
 									onClick={removeCard}
@@ -891,7 +970,7 @@ function EditDeck({
 								)}
 							>
 								<CardList
-									cards={sortCardInstances(selectedCards.singleUseEffects)}
+									cards={sortCards(selectedCards.singleUseEffects)}
 									displayTokenCost={true}
 									wrap={true}
 									onClick={removeCard}
@@ -899,7 +978,7 @@ function EditDeck({
 							</Accordion>
 							<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
 								<CardList
-									cards={sortCardInstances(selectedCards.items)}
+									cards={sortCards(selectedCards.items)}
 									displayTokenCost={true}
 									wrap={true}
 									onClick={removeCard}
@@ -910,7 +989,7 @@ function EditDeck({
 						<div className={css.showOnMobile}>
 							Cards
 							<MobileCardList
-								cards={sortCardInstances(loadedDeck.cards)}
+								cards={sortCards(loadedDeck.cards)}
 								small={false}
 								onSubtractionClick={removeCard}
 								onAdditionClick={addCard}

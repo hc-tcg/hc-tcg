@@ -66,7 +66,7 @@ function getSword(
 export const IronSword = getSword(
 	{
 		id: 'iron_sword',
-		numericId: 46,
+		numericId: 79,
 		name: 'Iron Sword',
 		expansion: 'default',
 		rarity: 'common',
@@ -78,7 +78,7 @@ export const IronSword = getSword(
 export const DiamondSword = getSword(
 	{
 		id: 'diamond_sword',
-		numericId: 14,
+		numericId: 66,
 		name: 'Diamond Sword',
 		expansion: 'default',
 		rarity: 'rare',
@@ -90,7 +90,7 @@ export const DiamondSword = getSword(
 export const NetheriteSword = getSword(
 	{
 		id: 'netherite_sword',
-		numericId: 83,
+		numericId: 88,
 		name: 'Netherite Sword',
 		expansion: 'default',
 		rarity: 'ultra_rare',

@@ -15,7 +15,7 @@ import PostmasterPearlRare from './postmasterpearl-rare'
 import PythonGBRare from './pythongb-rare'
 import ShubbleYTRare from './shubbleyt-rare'
 import Smajor1995Rare from './smajor1995'
-import SmallishbeansRare from './smallishbeans-rare'
+import SmallishbeansUltraRare from './smallishbeans-ultra-rare'
 import SolidaritygamingRare from './solidaritygaming-rare'
 import ZookeeperScarCommon from './zookeeperscar-common'
 import ZookeeperScarRare from './zookeeperscar-rare'
@@ -32,7 +32,7 @@ const hermitCardClasses: Array<Card> = [
 	PixlriffsRare,
 	ShubbleYTRare,
 	LDShadowLadyRare,
-	SmallishbeansRare,
+	SmallishbeansUltraRare,
 	BigBSt4tzRare,
 	PharaohRare,
 	GrianchRare,

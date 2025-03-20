@@ -70,22 +70,6 @@ test_type_images_exist() {
   test -s "$item_image_output"
 }
 
-test_type_images_exist() {
-  test_item=$(curl $HOST/api/types | jq '.[] | select(.type == "balanced")')
-  image=$(echo $test_item | jq -r .icon)
-  item_image_output=$(mktemp)
-  curl -f $image -o $item_image_output
-  test -s "$item_image_output"
-}
-
-test_rank_images_exist() {
-  test_item=$(curl $HOST/api/ranks | jq '.[] | select(.rank == "stone")')
-  image=$(echo $test_item | jq -r .icon)
-  item_image_output=$(mktemp)
-  curl -f $image -o $item_image_output
-  test -s "$item_image_output"
-}
-
 test_card_token_costs() {
   ids='["helsknight_rare", "welsknight_rare"]'
   hermits=$(curl $HOST/api/cards)

@@ -9,7 +9,7 @@ import {SingleUse} from '../types'
 const Spyglass: SingleUse = {
 	...singleUse,
 	id: 'spyglass',
-	numericId: 91,
+	numericId: 92,
 	name: 'Spyglass',
 	expansion: 'default',
 	rarity: 'rare',

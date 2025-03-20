@@ -4,14 +4,14 @@ import {Hermit} from '../types'
 const FarmerBeefCommon: Hermit = {
 	...hermit,
 	id: 'farmerbeef_common',
-	numericId: 47,
+	numericId: 25,
 	name: 'Farmer Beef',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 1,
-	type: 'balanced',
+	type: ['balanced'],
 	health: 280,
 	primary: {
 		name: 'Crop',

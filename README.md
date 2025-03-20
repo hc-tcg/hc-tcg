@@ -39,7 +39,7 @@ If you need to test code that interacts with the database, you can use our devel
 
 _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
 
-By default, the client is hosted on port 3002.
+By default, the client is hosted on port 4002. This is different from basegame port (3002).
 
 ## How To & Architecture
 

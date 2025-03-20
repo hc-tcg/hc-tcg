@@ -1,24 +1,50 @@
 import {GameModel} from '../models/game-model'
 
-export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
-export type TokenCostT = -1 | 0 | 1 | 2 | 3 | 4 | 5 | 'wild'
+export type CardRarityT = 'common' | 'rare' | 'ultra_rare' | 'mythic' | 'NA'
+export type TokenCostT = number | 'wild'
 
-export type RankT = 'stone' | 'iron' | 'gold' | 'emerald' | 'diamond'
+export type RankT =
+	| 'air'
+	| 'stone'
+	| 'iron'
+	| 'gold'
+	| 'emerald'
+	| 'diamond'
+	| 'netherite'
+	| 'obsidian'
 
 export type TypeT =
-	| 'balanced'
-	| 'builder'
-	| 'speedrunner'
-	| 'redstone'
-	| 'farm'
-	| 'pvp'
-	| 'terraform'
-	| 'prankster'
-	| 'miner'
-	| 'explorer'
 	| 'any'
+	| 'anarchist'
+	| 'athlete'
+	| 'balanced'
+	| 'bard'
+	| 'builder'
+	| 'challenger'
+	| 'collector'
+	| 'diplomat'
+	| 'explorer'
+	| 'farm'
+	| 'historian'
+	| 'inventor'
+	| 'looper'
+	| 'miner'
+	| 'pacifist'
+	| 'prankster'
+	| 'pvp'
+	| 'redstone'
+	| 'scavenger'
+	| 'speedrunner'
+	| 'terraform'
+	| 'everything'
+	| 'mob'
 
-export type CardCategoryT = 'item' | 'single_use' | 'attach' | 'hermit'
+export type CardCategoryT =
+	| 'item'
+	| 'single_use'
+	| 'attach'
+	| 'hermit'
+	| 'useless'
 export type BoardSlotTypeT = 'item' | 'attach' | 'hermit'
 export type SlotTypeT =
 	| BoardSlotTypeT
@@ -26,6 +52,8 @@ export type SlotTypeT =
 	| 'hand'
 	| 'deck'
 	| 'discardPile'
+	| 'lostZone'
+	| 'prizePile'
 
 export type DamageT = {
 	target?: number

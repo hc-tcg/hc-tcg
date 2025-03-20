@@ -14,14 +14,14 @@ import {Hermit} from '../../types'
 const Smajor1995Rare: Hermit = {
 	...hermit,
 	id: 'smajor1995_rare',
-	numericId: 218,
+	numericId: 276,
 	name: 'Scott',
-	expansion: 'advent_of_tcg',
+	expansion: 'mcyt',
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 0,
-	type: 'builder',
+	type: ['builder'],
 	health: 270,
 	primary: {
 		name: 'Color Splash',

@@ -17,14 +17,14 @@ import {Hermit} from '../../types'
 const GrianchRare: Hermit = {
 	...hermit,
 	id: 'grianch_rare',
-	numericId: 209,
+	numericId: 463,
 	name: 'The Grianch',
-	expansion: 'advent_of_tcg',
+	expansion: 'hc_plus',
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 4,
-	type: 'builder',
+	type: ['builder'],
 	health: 250,
 	primary: {
 		name: 'Nice',

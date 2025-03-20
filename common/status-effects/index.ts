@@ -7,6 +7,7 @@ import BetrayedEffect from './betrayed'
 import ChromaKeyedEffect from './chroma-keyed'
 import CurseOfBindingEffect from './curse-of-binding'
 import {DeathloopReady, RevivedByDeathloopEffect} from './death-loop'
+import DoubleItemPlayedEffect from './double-item-played'
 import DyedEffect from './dyed'
 import EfficiencyEffect from './efficiency'
 import ExBossNineEffect from './exboss-nine'
@@ -63,18 +64,20 @@ import UsedClockEffect from './used-clock'
 import WeaknessEffect from './weakness'
 
 export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
-	/* Regular Status Effects */
-	SleepingEffect,
-	BadOmenEffect,
-	RoyalProtectionEffect,
-	FrozenEffect,
-	MiningFatigueEffect,
-	SingleTurnMiningFatigueEffect,
-	/* Damage Effects */
+	/* Regualr status effects */
 	FireEffect,
 	PoisonEffect,
+	SleepingEffect,
+	BadOmenEffect,
+	SlownessEffect,
+	WeaknessEffect,
+	ProtectedEffect,
+	DyedEffect,
+	MuseumCollectionEffect,
+	SmeltingEffect,
+	MelodyEffect,
 
-	/* System Status Effects */
+	/* System Status Effect */
 	ExBossNineEffect,
 	UsedClockEffect,
 	DeathloopReady,
@@ -85,6 +88,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	AussiePingImmuneEffect,
 	InvisibilityPotionHeadsEffect,
 	InvisibilityPotionTailsEffect,
+	TurnSkippedEffect,
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 	TrapHoleEffect,
@@ -94,31 +98,27 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	MultiturnSecondaryAttackDisabledEffect,
 	ChromaKeyedEffect,
 	GoMiningEffect,
+	RoyalProtectionEffect,
 	TargetBlockEffect,
+	GasLightEffect,
 	GasLightTriggeredEffect,
+	GasLightPotentialEffect,
 	IgnoreAttachSlotEffect,
 	EfficiencyEffect,
 	LooseShellEffect,
+	TFCDiscardedFromEffect,
 	TimeSkipDisabledEffect,
 	SoulmateEffect,
 	NaughtyRegiftEffect,
 	SpentFortuneEffect,
 	PoisonQuiverEffect,
+	SculkCatalystTriggeredEffect,
+	FrozenEffect,
+	MiningFatigueEffect,
+	SingleTurnMiningFatigueEffect,
 	SmithingTableEffect,
 	PostInspectorEffect,
-	SlownessEffect,
-	WeaknessEffect,
-	ProtectedEffect,
-	DyedEffect,
-	MuseumCollectionEffect,
-	SmeltingEffect,
-	MelodyEffect,
-	/* Hidden Status Effects */
-	TurnSkippedEffect,
-	GasLightEffect,
-	GasLightPotentialEffect,
-	TFCDiscardedFromEffect,
-	SculkCatalystTriggeredEffect,
+	DoubleItemPlayedEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =

@@ -17,12 +17,12 @@ import {Hermit} from '../types'
 const SkizzlemanRare: Hermit = {
 	...hermit,
 	id: 'skizzleman_rare',
-	numericId: 172,
+	numericId: 1216,
 	name: 'Skizz',
 	expansion: 'season_x',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'builder',
+	type: ['builder'],
 	health: 290,
 	primary: {
 		name: 'Hupper Cut ',

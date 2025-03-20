@@ -15,7 +15,7 @@ const pickCondition = query.every(
 const EnderPearl: SingleUse = {
 	...singleUse,
 	id: 'ender_pearl',
-	numericId: 141,
+	numericId: 116,
 	name: 'Ender Pearl',
 	expansion: 'alter_egos',
 	rarity: 'common',

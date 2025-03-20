@@ -12,14 +12,14 @@ import {Hermit} from '../types'
 const OriginalXBRare: Hermit = {
 	...hermit,
 	id: 'originalxb_rare',
-	numericId: 164,
+	numericId: 1188,
 	name: 'Original xB',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'miner',
+	type: ['miner'],
 	health: 270,
 	primary: {
 		name: "Slabs 'n Stairs",

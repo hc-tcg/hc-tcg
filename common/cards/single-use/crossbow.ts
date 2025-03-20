@@ -25,7 +25,7 @@ function getTotalTargets(game: GameModel) {
 const Crossbow: SingleUse = {
 	...singleUse,
 	id: 'crossbow',
-	numericId: 8,
+	numericId: 62,
 	name: 'Crossbow',
 	expansion: 'default',
 	rarity: 'rare',

@@ -12,7 +12,7 @@ import {SingleUse} from '../types'
 const Fortune: SingleUse = {
 	...singleUse,
 	id: 'fortune',
-	numericId: 26,
+	numericId: 71,
 	name: 'Fortune',
 	expansion: 'default',
 	rarity: 'ultra_rare',

@@ -14,9 +14,9 @@ import {SingleUse} from '../../types'
 const WindBurst: SingleUse = {
 	...singleUse,
 	id: 'wind_burst',
-	numericId: 245,
+	numericId: 1401,
 	name: 'Wind Burst',
-	expansion: 'advent_of_tcg_ii',
+	expansion: 'minecraft',
 	rarity: 'common',
 	tokens: 0,
 	description:

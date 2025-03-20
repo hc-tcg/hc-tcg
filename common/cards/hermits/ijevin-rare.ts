@@ -7,12 +7,12 @@ import {Hermit} from '../types'
 const IJevinRare: Hermit = {
 	...hermit,
 	id: 'ijevin_rare',
-	numericId: 39,
+	numericId: 28,
 	name: 'Jevin',
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'speedrunner',
+	type: ['speedrunner'],
 	health: 300,
 	primary: {
 		name: 'Your Boi',

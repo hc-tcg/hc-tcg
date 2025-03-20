@@ -22,16 +22,30 @@ import {useSelector} from 'react-redux'
 import css from './card-tooltip.module.scss'
 
 const HERMIT_TYPES: Record<string, string> = {
+	ananrchist: 'Anarchist',
+	athlete: 'Athlete',
 	balanced: 'Balanced',
+	bard: 'Bard',
 	builder: 'Builder',
-	speedrunner: 'Speedrunner',
-	redstone: 'Redstone',
-	farm: 'Farm',
-	pvp: 'PvP',
-	terraform: 'Terraform',
-	prankster: 'Prankster',
-	miner: 'Miner',
+	challenger: 'Challenger',
+	collector: 'Collector',
+	diplomat: 'Diplomat',
 	explorer: 'Explorer',
+	farm: 'Farm',
+	historian: 'Historian',
+	inventor: 'Inventor',
+	looper: 'Looper',
+	miner: 'Miner',
+	pacifist: 'Pacifist',
+	prankster: 'Prankster',
+	pvp: 'PvP',
+	redstone: 'Redstone',
+	scavenger: 'Scavenger',
+	speedrunner: 'Speedrunner',
+	terraform: 'Terraform',
+	mob: 'Mob',
+	everything: 'all',
+	null: 'N/A',
 }
 
 type Props = {
@@ -112,10 +126,40 @@ const getStrengthsAndWeaknesses = (
 ): React.ReactNode => {
 	if (!isHermit(card)) return null
 
-	const strengths = STRENGTHS[card.type]
-	const weaknesses = Object.entries(STRENGTHS)
-		.filter(([, value]) => value.includes(card.type))
-		.map(([key]) => key) as Array<TypeT>
+	const strengths: Array<TypeT> = [] // Old = STRENGTHS[card.type]
+	if (card.type) {
+		if (card.type.includes('everything')) {
+			strengths.push('everything')
+			return
+		}
+		let i
+		for (i = 0; i < card.type.length; i++) {
+			let j
+			for (j = 0; j < card.type[i].length; j++) {
+				const type = STRENGTHS[card.type[i]][j]
+				if (!strengths.includes(type)) {
+					strengths.push(type)
+				}
+			}
+		}
+	}
+	const weaknesses: Array<TypeT> = []
+	if (card.type) {
+		if (card.type.includes('everything') || card.type.includes('mob')) {
+			weaknesses.push('everything')
+			return
+		}
+		let i
+		for (i = 0; i < card.type.length; i++) {
+			const type = card.type[i]
+			let litmus: TypeT
+			for (litmus in STRENGTHS) {
+				if (STRENGTHS[litmus].includes(type) && !weaknesses.includes(litmus)) {
+					weaknesses.push(litmus)
+				}
+			}
+		}
+	}
 
 	const result = (
 		<div className={css.strengthsAndWeaknesses}>
@@ -147,7 +191,7 @@ const getStrengthsAndWeaknesses = (
 const getName = (card: WithoutFunctions<Card>): React.ReactNode => {
 	if (isItem(card)) {
 		return (
-			<div className={classNames(css.name, css[card.type])}>{card.name}</div>
+			<div className={classNames(css.name, css[card.type[0]])}>{card.name}</div>
 		)
 	}
 	return <div className={css.name}>{card.name}</div>
@@ -155,8 +199,10 @@ const getName = (card: WithoutFunctions<Card>): React.ReactNode => {
 
 const RARITY_DISPLAY_TEXT: Record<CardRarityT, string> = {
 	common: 'Common',
-	rare: '✦ Rare ✦',
-	ultra_rare: '★ Ultra Rare ★',
+	rare: '• Rare •',
+	ultra_rare: '✦ Ultra Rare ✦',
+	mythic: '★ Mythic ★',
+	NA: 'N/A',
 }
 
 export const getRarity = (card: WithoutFunctions<Card>): React.ReactNode => {
@@ -172,9 +218,35 @@ const getExpansion = (card: WithoutFunctions<Card>): React.ReactNode => {
 	if (card.expansion !== 'default') {
 		const expansion = card.expansion as
 			| 'default'
+			| 'hermitcraftX'
+			| 'hc_plus'
 			| 'alter_egos'
-			| 'advent_of_tcg'
-			| 'alter_egos_ii'
+			| 'season_x'
+			| 'boss'
+			| 'minecraft'
+			| 'shifttech'
+			| 'btc'
+			| 'discord'
+			| 'mcyt'
+			| 'baseball'
+			| 'ninjago'
+			| 'television'
+			| 'fortnite'
+			| 'survivor'
+			| 'holidays'
+			| 'new_vegas'
+			| 'youtube'
+			| 'marvel'
+			| 'decked_out'
+			| 'artifake'
+			| 'create'
+			| 'his_fig'
+			| 'modesto'
+			| 'vg_legends'
+			| 'touhou'
+			| 'villager_news'
+			| 'gravity_falls'
+			| 'terraria'
 		return (
 			<div className={classNames(css.expansion, css[expansion])}>
 				■ {EXPANSIONS[expansion].name} Card ■
@@ -195,9 +267,13 @@ const getSingleUse = (card: WithoutFunctions<Card>): React.ReactNode => {
 
 const getType = (card: WithoutFunctions<Card>): React.ReactNode => {
 	if (isHermit(card)) {
-		return (
-			<div className={classNames(css.type, css[card.type])}>
-				{HERMIT_TYPES[card.type] || card.type}
+		return card.type ? (
+			<div className={classNames(css.type, css[card.type[0]])}>
+				{HERMIT_TYPES[card.type[0]] || card.type}
+			</div>
+		) : (
+			<div className={classNames(css.type, css['null'])}>
+				{HERMIT_TYPES['null'] || card.type}
 			</div>
 		)
 	}

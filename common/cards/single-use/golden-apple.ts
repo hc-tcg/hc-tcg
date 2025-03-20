@@ -14,7 +14,7 @@ const pickCondition = query.every(
 const GoldenApple: SingleUse = {
 	...singleUse,
 	id: 'golden_apple',
-	numericId: 30,
+	numericId: 74,
 	name: 'Golden Apple',
 	expansion: 'default',
 	rarity: 'ultra_rare',

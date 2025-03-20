@@ -12,12 +12,12 @@ import {Hermit} from '../types'
 const PearlescentMoonRare: Hermit = {
 	...hermit,
 	id: 'pearlescentmoon_rare',
-	numericId: 85,
+	numericId: 36,
 	name: 'Pearl',
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 3,
-	type: 'terraform',
+	type: ['terraform'],
 	health: 300,
 	primary: {
 		name: 'Cleaning Lady',

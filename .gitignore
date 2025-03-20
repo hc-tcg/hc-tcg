@@ -42,3 +42,5 @@ tsconfig.buildinfo
 
 /card-prerender/render/
 
+#todo
+.todo

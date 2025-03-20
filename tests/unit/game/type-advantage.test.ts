@@ -60,7 +60,6 @@ function createTypeAdvantageTest(
 }
 
 describe('Type advantage tests', () => {
-	createTypeAdvantageTest('Prankster', 'PvP')
 	createTypeAdvantageTest('Redstoner', 'PvP')
 	createTypeAdvantageTest('PvP', 'Speedrunner')
 	createTypeAdvantageTest('PvP', 'Farm')

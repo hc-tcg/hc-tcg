@@ -13,12 +13,12 @@ import GeminiTayRare from './geminitay-rare'
 const SmallishbeansRare: Hermit = {
 	...hermit,
 	id: 'smallishbeans_rare',
-	numericId: 161,
+	numericId: 267,
 	name: 'Joel',
 	expansion: 'season_x',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'explorer',
+	type: ['explorer'],
 	health: 260,
 	primary: {
 		name: 'Neck Kisses',

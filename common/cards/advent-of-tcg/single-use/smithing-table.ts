@@ -20,7 +20,7 @@ const SmithingTable: SingleUse = {
 	id: 'smithing_table',
 	numericId: 248,
 	name: 'Smithing Table',
-	expansion: 'advent_of_tcg_ii',
+	expansion: 'villager_news',
 	rarity: 'common',
 	tokens: 1,
 	description:

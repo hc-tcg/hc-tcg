@@ -4,12 +4,12 @@ import {Hermit} from '../types'
 const BdoubleO100Common: Hermit = {
 	...hermit,
 	id: 'bdoubleo100_common',
-	numericId: 0,
+	numericId: 1,
 	name: 'Bdubs',
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: 'builder',
+	type: ['builder'],
 	health: 260,
 	primary: {
 		name: 'Gradient',

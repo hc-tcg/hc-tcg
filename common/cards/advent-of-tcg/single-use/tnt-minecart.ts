@@ -9,9 +9,9 @@ import {SingleUse} from '../../types'
 const MinecartWithTNT: SingleUse = {
 	...singleUse,
 	id: 'tnt_minecart',
-	numericId: 253,
+	numericId: 1397,
 	name: 'Minecart with TNT',
-	expansion: 'advent_of_tcg_ii',
+	expansion: 'minecraft',
 	rarity: 'rare',
 	tokens: 2,
 	description:

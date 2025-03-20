@@ -4,14 +4,14 @@ import {Hermit} from '../types'
 const RenbobCommon: Hermit = {
 	...hermit,
 	id: 'renbob_common',
-	numericId: 169,
+	numericId: 1244,
 	name: 'Renbob',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 1,
-	type: 'speedrunner',
+	type: ['speedrunner'],
 	health: 290,
 	primary: {
 		name: 'Gas Money',

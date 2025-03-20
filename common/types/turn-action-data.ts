@@ -9,6 +9,7 @@ export const slotToPlayCardAction: Record<CardCategoryT, PlayCardAction> = {
 	item: 'PLAY_ITEM_CARD',
 	attach: 'PLAY_EFFECT_CARD',
 	single_use: 'PLAY_SINGLE_USE_CARD',
+	useless: 'PLAY_SINGLE_USE_CARD', // It was originally a single-use before becoming its own category.
 }
 export const attackToAttackAction: Record<HermitAttackType, AttackAction> = {
 	'single-use': 'SINGLE_USE_ATTACK',

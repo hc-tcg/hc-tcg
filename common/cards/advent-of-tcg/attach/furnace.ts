@@ -12,9 +12,9 @@ import {Attach} from '../../types'
 const Furnace: Attach = {
 	...attach,
 	id: 'furnace',
-	numericId: 203,
+	numericId: 508,
 	name: 'Furnace',
-	expansion: 'advent_of_tcg',
+	expansion: 'minecraft',
 	rarity: 'rare',
 	tokens: 1,
 	description:

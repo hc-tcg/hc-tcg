@@ -4,12 +4,12 @@ import {Hermit} from '../types'
 const ImpulseSVCommon: Hermit = {
 	...hermit,
 	id: 'impulsesv_common',
-	numericId: 40,
+	numericId: 23,
 	name: 'Impulse',
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: 'farm',
+	type: ['farm'],
 	health: 270,
 	primary: {
 		name: 'Shovel Shuffle',

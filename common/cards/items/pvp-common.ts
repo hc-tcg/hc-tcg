@@ -1,16 +1,21 @@
 import {item} from '../defaults'
 import {Item} from '../types'
 
+const convenience = 'anarchist'
+function capitalize(s: string) {
+	return s[0].toUpperCase() + s.slice(1)
+}
+
 const PvPItem: Item = {
 	...item,
 	id: 'item_pvp_common',
-	numericId: 61,
+	numericId: 0.032,
 	name: 'PvP Item',
 	shortName: 'PvP',
-	expansion: 'default',
+	expansion: 'item',
 	rarity: 'common',
 	tokens: 0,
-	type: 'pvp',
+	type: ['pvp'],
 	energy: ['pvp'],
 }
 

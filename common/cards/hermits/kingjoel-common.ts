@@ -4,14 +4,14 @@ import {Hermit} from '../types'
 const KingJoelCommon: Hermit = {
 	...hermit,
 	id: 'kingjoel_common',
-	numericId: 162,
+	numericId: 1239,
 	name: 'King Joel',
-	expansion: 'alter_egos_iii',
+	expansion: 'alter_egos',
 	background: 'alter_egos',
 	palette: 'alter_egos',
 	rarity: 'common',
 	tokens: 0,
-	type: 'terraform',
+	type: ['terraform'],
 	health: 290,
 	primary: {
 		name: 'Clone',

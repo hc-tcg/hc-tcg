@@ -7,12 +7,12 @@ import {Hermit} from '../types'
 const WelsknightRare: Hermit = {
 	...hermit,
 	id: 'welsknight_rare',
-	numericId: 107,
+	numericId: 49,
 	name: 'Wels',
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'pvp',
+	type: ['pvp'],
 	health: 280,
 	primary: {
 		name: "Knight's Blade",

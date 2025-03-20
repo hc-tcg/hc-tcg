@@ -13,14 +13,14 @@ import {Hermit} from '../../types'
 const MonkeyfarmRare: Hermit = {
 	...hermit,
 	id: 'monkeyfarm_rare',
-	numericId: 212,
+	numericId: 450,
 	name: 'Monkeyfarm',
-	expansion: 'advent_of_tcg',
+	expansion: 'hc_plus',
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 1,
-	type: 'farm',
+	type: ['farm'],
 	health: 250,
 	primary: {
 		name: 'Skull',

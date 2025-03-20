@@ -14,14 +14,14 @@ import {Hermit} from '../../types'
 const SolidaritygamingRare: Hermit = {
 	...hermit,
 	id: 'solidaritygaming_rare',
-	numericId: 220,
+	numericId: 274,
 	name: 'Jimmy',
-	expansion: 'advent_of_tcg',
+	expansion: 'mcyt',
 	palette: 'advent_of_tcg',
 	background: 'advent_of_tcg',
 	rarity: 'rare',
 	tokens: 2,
-	type: 'prankster',
+	type: ['prankster'],
 	health: 270,
 	primary: {
 		name: 'The Law',

@@ -19,7 +19,7 @@ const pickCondition = query.every(
 const Egg: SingleUse = {
 	...singleUse,
 	id: 'egg',
-	numericId: 140,
+	numericId: 115,
 	name: 'Egg',
 	expansion: 'alter_egos',
 	rarity: 'rare',

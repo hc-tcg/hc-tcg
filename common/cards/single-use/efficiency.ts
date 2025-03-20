@@ -11,7 +11,7 @@ import {SingleUse} from '../types'
 const Efficiency: SingleUse = {
 	...singleUse,
 	id: 'efficiency',
-	numericId: 17,
+	numericId: 67,
 	name: 'Efficiency',
 	expansion: 'default',
 	rarity: 'rare',

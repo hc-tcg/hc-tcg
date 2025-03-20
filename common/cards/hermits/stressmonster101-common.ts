@@ -4,12 +4,12 @@ import {Hermit} from '../types'
 const StressMonster101Common: Hermit = {
 	...hermit,
 	id: 'stressmonster101_common',
-	numericId: 92,
+	numericId: 41,
 	name: 'Stress',
 	expansion: 'default',
 	rarity: 'common',
 	tokens: 0,
-	type: 'builder',
+	type: ['builder'],
 	health: 280,
 	primary: {
 		name: "'Ello",

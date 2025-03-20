@@ -12,12 +12,12 @@ import TangoTekRare from './tangotek-rare'
 const ImpulseSVRare: Hermit = {
 	...hermit,
 	id: 'impulsesv_rare',
-	numericId: 41,
+	numericId: 24,
 	name: 'Impulse',
 	expansion: 'default',
 	rarity: 'rare',
 	tokens: 4,
-	type: 'redstone',
+	type: ['redstone'],
 	health: 250,
 	primary: {
 		name: 'Bop',

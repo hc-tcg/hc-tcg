@@ -17,7 +17,7 @@ const pickCondition = query.every(
 const Bow: SingleUse = {
 	...singleUse,
 	id: 'bow',
-	numericId: 3,
+	numericId: 57,
 	name: 'Bow',
 	expansion: 'default',
 	rarity: 'common',
