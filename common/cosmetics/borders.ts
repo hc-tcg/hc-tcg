@@ -44,6 +44,10 @@ const BorderDefinitions: Omit<Border, 'type'>[] = [
 		name: 'Silver',
 		requires: {achievement: Win.id, level: 1},
 	},
+	{
+		id: 'quartz_pillar',
+		name: 'Quartz',
+	},
 ]
 
 export const ALL_BORDERS: Border[] = BorderDefinitions.map((border) => ({
