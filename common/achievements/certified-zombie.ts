@@ -7,6 +7,7 @@ const CertifiedZombie: Achievement = {
 	...achievement,
 	id: 'certified_zombie',
 	numericId: 18,
+	progressionMethod: 'best',
 	levels: [
 		{
 			name: 'Certified Zombie',
@@ -31,7 +32,7 @@ const CertifiedZombie: Achievement = {
 		)
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
-			component.bestGoalProgress({goal: 0, progress: rounds})
+			component.updateGoalProgress({goal: 0, progress: rounds})
 		})
 	},
 }

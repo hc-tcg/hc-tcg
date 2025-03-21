@@ -7,6 +7,7 @@ const Wipeout: Achievement = {
 	...achievement,
 	numericId: 5,
 	id: 'wipeout',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Wipeout',
@@ -23,7 +24,7 @@ const Wipeout: Achievement = {
 			.forEach((row) => {
 				observer.subscribe(row.hooks.onKnockOut, () => {
 					knockouts += 1
-					component.bestGoalProgress({goal: 0, progress: knockouts})
+					component.updateGoalProgress({goal: 0, progress: knockouts})
 				})
 			})
 

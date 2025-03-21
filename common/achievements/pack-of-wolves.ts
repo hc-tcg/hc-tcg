@@ -8,6 +8,7 @@ const PackOfWolves: Achievement = {
 	...achievement,
 	numericId: 3,
 	id: 'pack_of_wolves',
+	progressionMethod: 'best',
 	levels: [
 		{
 			name: 'Pack of Wolves',
@@ -24,7 +25,7 @@ const PackOfWolves: Achievement = {
 				query.slot.attach,
 				query.slot.has(Wolf),
 			)
-			component.bestGoalProgress({goal: 0, progress: boardCards.length})
+			component.updateGoalProgress({goal: 0, progress: boardCards.length})
 		})
 	},
 }

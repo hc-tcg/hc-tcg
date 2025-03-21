@@ -7,6 +7,7 @@ const RedKing: Achievement = {
 	...achievement,
 	numericId: 46,
 	id: 'red-king',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Red King',
@@ -31,7 +32,7 @@ const RedKing: Achievement = {
 
 		if (redHermits.length !== 5) return
 
-		component.incrementGoalProgress({goal: 0})
+		component.updateGoalProgress({goal: 0})
 	},
 }
 

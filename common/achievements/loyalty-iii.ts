@@ -8,6 +8,7 @@ const LoyaltyIII: Achievement = {
 	...achievement,
 	numericId: 23,
 	id: 'loyalty-iii',
+	progressionMethod: 'best',
 	levels: [
 		{
 			name: 'Loyalty III',
@@ -45,7 +46,7 @@ const LoyaltyIII: Achievement = {
 					steps = 1
 				}
 
-				component.bestGoalProgress({goal: 0, progress: steps})
+				component.updateGoalProgress({goal: 0, progress: steps})
 			},
 		)
 	},

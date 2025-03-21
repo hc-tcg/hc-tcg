@@ -9,6 +9,7 @@ const UselessMachine: Achievement = {
 	...achievement,
 	numericId: 21,
 	id: 'useless-machine',
+	progressionMethod: 'best',
 	levels: [
 		{
 			name: 'Useless Machine',
@@ -41,9 +42,9 @@ const UselessMachine: Achievement = {
 				}
 
 				if (newPlayerHand.length == 1) {
-					component.bestGoalProgress({goal: 0, progress: 1})
+					component.updateGoalProgress({goal: 0, progress: 1})
 				} else if (newPlayerHand.length == 0) {
-					component.bestGoalProgress({goal: 0, progress: 2})
+					component.updateGoalProgress({goal: 0, progress: 2})
 				}
 			},
 		)

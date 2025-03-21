@@ -11,6 +11,7 @@ const AllCards: Achievement = {
 	...achievement,
 	id: 'all_cards',
 	numericId: 0,
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Jack of All Cards',
@@ -54,7 +55,7 @@ const AllCards: Achievement = {
 			if (outcome.type !== 'player-won' || outcome.winner !== player.entity)
 				return
 			for (const card of playedCards.values()) {
-				component.bestGoalProgress({goal: card, progress: 1})
+				component.updateGoalProgress({goal: card, progress: 1})
 			}
 		})
 	},

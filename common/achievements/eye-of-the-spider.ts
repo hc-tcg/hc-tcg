@@ -9,6 +9,7 @@ const EyeOfTheSpider: Achievement = {
 	...achievement,
 	numericId: 24,
 	id: 'eye-of-the-spider',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Eye of the Spider',
@@ -49,7 +50,7 @@ const EyeOfTheSpider: Achievement = {
 
 				if (poisonedHermits.has(targetHermit.entity)) {
 					poisonedHermits.delete(targetHermit.entity)
-					component.incrementGoalProgress({goal: 0})
+					component.updateGoalProgress({goal: 0})
 				}
 			},
 		)
