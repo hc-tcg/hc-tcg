@@ -19,6 +19,11 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		requires: undefined,
 	},
 	{
+		id: 'blue_terracotta',
+		name: 'Blue G.T.',
+		requires: undefined,
+	},
+	{
 		id: 'copper',
 		name: 'Copper',
 		requires: {achievement: Channeling.id},
@@ -27,6 +32,11 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		id: 'emerald',
 		name: 'Emerald',
 		requires: {achievement: TerribleTrades.id},
+	},
+	{
+		id: 'ender',
+		name: 'Ender Pearl',
+		requires: undefined,
 	},
 	{
 		id: 'plant',
@@ -55,11 +65,6 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		requires: undefined,
 	},
 	{
-		id: 'ice',
-		name: 'Ice',
-		requires: undefined,
-	},
-	{
 		id: 'wooden',
 		name: 'Heart Stand',
 		offVariantName: 'wooden_empty',
@@ -72,9 +77,19 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		requires: {achievement: iBuy.id},
 	},
 	{
+		id: 'magenta',
+		name: 'Magenta G.T.',
+		requires: undefined,
+	},
+	{
 		id: 'potion',
 		name: 'Potion',
 		offVariantName: 'potion_empty',
+		requires: undefined,
+	},
+	{
+		id: 'quartz',
+		name: 'Quartz',
 		requires: undefined,
 	},
 	{

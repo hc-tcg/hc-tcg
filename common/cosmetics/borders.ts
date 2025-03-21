@@ -26,6 +26,21 @@ const BorderDefinitions: Omit<Border, 'type'>[] = [
 		requires: {achievement: Win.id, level: 3},
 	},
 	{
+		id: 'lapis_border',
+		name: 'Lapis',
+		requires: undefined,
+	},
+	{
+		id: 'magenta_border',
+		name: 'Magenta',
+		requires: undefined,
+	},
+	{
+		id: 'dark_border',
+		name: 'Netherite',
+		requires: undefined,
+	},
+	{
 		id: 'red_border',
 		name: 'Red',
 		requires: {achievement: HotTake.id},
