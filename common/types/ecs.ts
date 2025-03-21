@@ -93,27 +93,17 @@ export default class ComponentTable {
 			(type as any).table,
 			`Found component type \`${type.name}\` has undefined table`,
 		)
-		let table = this.tables.get((type as any).table)
-		let out = new Array(table?.size)
-		let i = 0
+		let out = new Array()
 		for (const value of this.tables.get((type as any).table)?.values() || []) {
 			if (
 				value instanceof type &&
 				predicates.every(callPredicate(this.game, value))
 			) {
-				out[i] = value
-				i++
+				out.push(value)
 			}
 		}
 
-		if (i <= 0) return []
-		let out2 = new Array(i-1)
-
-		for (let j = 0; j < i; j++) {
-			out2[j] = out[j]
-		}
-
-		return out2
+		return out
 	}
 
 	public filterEntities<T extends Component>(
