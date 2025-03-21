@@ -315,7 +315,9 @@ function playerAction(actionType: string, playerEntity: PlayerEntity) {
 // @TODO completely redo how we calculate if a hermit is dead etc
 function checkHermitHealth(game: GameModel) {
 	const deadPlayers: Array<PlayerComponent> = []
+
 	for (let playerState of game.components.filter(PlayerComponent)) {
+		let noHermitsLeft = true
 		// Players are not allowed to die before they place their first hermit to prevent bugs
 		if (!playerState.hasPlacedHermit) {
 			continue
@@ -327,11 +329,13 @@ function checkHermitHealth(game: GameModel) {
 				query.row.player(playerState.entity),
 				query.row.hasHermit,
 			)
-			.map((row) => row.getHermit())
+			.map((row) => row.getHermit()) as Array<CardComponent>
 
 		for (const card of hermitCards) {
-			if (!card.slot?.inRow()) continue
-			if (card.slot?.row?.health) continue
+			if (!card.slot?.inRow() || card.slot?.row?.health) {
+				noHermitsLeft = false
+				continue
+			}
 			// Add battle log entry. Non Hermit cards can create their detach message themselves.
 			if (card.props.category === 'hermit') {
 				game.battleLog.addDeathEntry(playerState.entity, card.slot.row.entity)
@@ -375,12 +379,6 @@ function checkHermitHealth(game: GameModel) {
 
 		const isDead = playerState.lives <= 0
 
-		const noHermitsLeft = !game.components.exists(
-			CardComponent,
-			query.card.player(playerState.entity),
-			query.card.attached,
-			query.card.slot(query.slot.hermit),
-		)
 		if (isDead || noHermitsLeft) {
 			deadPlayers.push(playerState)
 		}
@@ -660,11 +658,7 @@ function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 				continue
 			}
 
-			const hasActiveHermit = con.game.components.exists(
-				CardComponent,
-				query.card.player(currentPlayer.entity),
-				query.card.slot(query.slot.active, query.slot.hermit),
-			)
+			const hasActiveHermit = con.game.currentPlayer.activeRow !== null
 			if (hasActiveHermit) {
 				break
 			}
