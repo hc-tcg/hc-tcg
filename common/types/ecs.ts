@@ -107,7 +107,13 @@ export default class ComponentTable {
 		}
 
 		if (i <= 0) return []
-		return out.slice(0, i)
+		let out2 = new Array(i-1)
+
+		for (let j = 0; j < i; j++) {
+			out2[j] = out[j]
+		}
+
+		return out2
 	}
 
 	public filterEntities<T extends Component>(
