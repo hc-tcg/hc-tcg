@@ -9,6 +9,10 @@ export type Component = {
 
 export type ComponentClass<T> = new (...args: Array<any>) => T
 
+function callPredicate(game: GameModel, value: any) {
+	return (predicate: any) => predicate(game, value)
+}
+
 /** A map of entities to component objects. Components in the component
  * table can be queried. See the filter and find methods for more information.
  */
@@ -88,11 +92,12 @@ export default class ComponentTable {
 			(type as any).table,
 			`Found component type \`${type.name}\` has undefined table`,
 		)
-		let out = []
+		let table = this.tables.get((type as any).table)
+		let out = new Array(table?.size)
 		for (const value of this.tables.get((type as any).table)?.values() || []) {
 			if (
 				value instanceof type &&
-				predicates.every((predicate) => predicate(this.game, value as T))
+				predicates.every(callPredicate(this.game, value))
 			) {
 				out.push(value)
 			}
@@ -122,7 +127,7 @@ export default class ComponentTable {
 		for (const value of this.tables.get((type as any).table)?.values() || []) {
 			if (
 				value instanceof type &&
-				predicates.every((predicate) => predicate(this.game, value as T))
+				predicates.every(callPredicate(this.game, value))
 			) {
 				return value
 			}
