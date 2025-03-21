@@ -4,6 +4,7 @@ import {
 	DiscardSlotComponent,
 	HandSlotComponent,
 	PlayerComponent,
+	RowComponent,
 	SlotComponent,
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
@@ -320,12 +321,13 @@ function checkHermitHealth(game: GameModel) {
 			continue
 		}
 
-		const hermitCards = game.components.filter(
-			CardComponent,
-			query.card.attached,
-			query.card.slot(query.slot.hermit),
-			query.card.player(playerState.entity),
-		)
+		const hermitCards: Array<CardComponent> = game.components
+			.filter(
+				RowComponent,
+				query.row.player(playerState.entity),
+				query.row.hasHermit,
+			)
+			.map((row) => row.getHermit())
 
 		for (const card of hermitCards) {
 			if (!card.slot?.inRow()) continue
