@@ -88,21 +88,32 @@ export default class ComponentTable {
 		type: ComponentClass<T>,
 		...predicates: Array<ComponentQuery<T>>
 	): Array<T> {
+		// This method is so crazy because it makes the code run a tiny bit faster
 		assert(
 			(type as any).table,
 			`Found component type \`${type.name}\` has undefined table`,
 		)
 		let table = this.tables.get((type as any).table)
 		let out = new Array(table?.size)
+		let i = 0
 		for (const value of this.tables.get((type as any).table)?.values() || []) {
 			if (
 				value instanceof type &&
 				predicates.every(callPredicate(this.game, value))
 			) {
-				out.push(value)
+				out[i] = value
+				i++
 			}
 		}
-		return out
+
+		if (i <= 0) return []
+		let out2 = new Array(i-1)
+
+		for (let j = 0; j < i; j++) {
+			out2[j] = out[j]
+		}
+
+		return out2
 	}
 
 	public filterEntities<T extends Component>(
