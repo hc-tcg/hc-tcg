@@ -1087,7 +1087,7 @@ export class Database {
 			if (
 				!decompressedReplay ||
 				decompressedReplay.length < 2 ||
-				decompressedReplay.readUintBE(0, 1) !== 0x01
+				decompressedReplay.readUintBE(0, 1) !== serverConfig.replayVersion
 			) {
 				return {type: 'failure', reason: 'The game requested has no replay.'}
 			}
