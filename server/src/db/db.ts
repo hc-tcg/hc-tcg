@@ -1998,15 +1998,18 @@ export class Database {
 			)
 			const goalProgress = await this.pool.query(
 				`
-				INSERT INTO user_goals (user_id, achievement_id, goal_id, progress)
-				(SELECT * FROM UNNEST ($2::uuid[], $3::int[], $4::int[], $5::int[]))
+				WITH args AS (
+					SELECT * FROM UNNEST ($1::text[], $2::uuid[], $3::int[], $4::int[], $5::int[]) 
+									AS t(method, user_id, achievement_id, goal_id, progress)
+				)
+				INSERT INTO user_goals (user_id, achievement_id, goal_id, progress) SELECT user_id, achievement_id, goal_id, progress FROM args
 				ON CONFLICT (user_id, achievement_id, goal_id) DO UPDATE
-				SET progress = CASE $1
+				SET progress = CASE (SELECT method FROM args WHERE args.achievement_id = user_goals.achievement_id)
 					WHEN 'sum' THEN user_goals.progress + EXCLUDED.progress
-					WHEN 'best' THEN GREATEST(user_goals.progress, EXCLUDED.progress)
+					WHEN 'best' THEN greatest(user_goals.progress, EXCLUDED.progress)
 					ELSE user_goals.progress
 				END
-				RETURNING achievement_id, goal_id, progress;
+				RETURNING user_goals.achievement_id, user_goals.goal_id, user_goals.progress;
 				`,
 				[
 					goals.map((row) => {
