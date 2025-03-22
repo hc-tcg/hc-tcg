@@ -1996,12 +1996,12 @@ export class Database {
 					return achievementGoals
 				},
 			)
-			await this.pool.query(
+			const goalProgress = await this.pool.query(
 				`
 				INSERT INTO user_goals (user_id, achievement_id, goal_id, progress)
 				(SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::int[], $4::int[]))
 				ON CONFLICT (user_id, achievement_id, goal_id) DO UPDATE
-				SET progress = EXCLUDED.progress;
+				SET progress = user_goals.progress + EXCLUDED.progress RETURNING achievement_id, goal_id, progress;
 				`,
 				[
 					goals.map(() => uuid),
@@ -2011,27 +2011,54 @@ export class Database {
 				],
 			)
 
+			console.log(goalProgress)
+
 			type CompletionTimeRow = {
 				achievement: number
 				level: number
 				completion_time: Date
 			}
 
-			const completion: CompletionTimeRow[] = Object.keys(
-				achievementProgress,
-			).flatMap((achievement_id) => {
+			type AchievementGoals = {
+				achievement: number
+				goals: Record<number, number>
+			}
+
+			const achievementGoals: AchievementGoals[] = goalProgress.rows.reduce(
+				(r: Array<AchievementGoals>, row) => {
+					const achievementId: number = row['achievement_id']
+					const goalId: number = row['goal_id']
+					const progress: number = row['progress']
+
+					const goalEntry = r.find((a) => a.achievement === achievementId)
+
+					if (goalEntry) {
+						goalEntry.goals[goalId] = progress
+					} else {
+						const goals: Record<number, number> = {}
+						goals[goalId] = progress
+						r.push({achievement: achievementId, goals: goals})
+					}
+					return r
+				},
+				[],
+			)
+
+			const completion: CompletionTimeRow[] = achievementGoals.flatMap((a) => {
 				const achievement = this.allAchievements.find(
-					(achievement) => achievement.numericId.toString() === achievement_id,
+					(achievement) => achievement.numericId === a.achievement,
 				)
+
+				const progress = achievement?.getProgress(a.goals)
 				if (!achievement) return []
-				const progress = achievementProgress[achievement.numericId]
+				if (!progress) return []
 				const completionTime: CompletionTimeRow[] = []
-				for (const [i, level] of progress.levels.entries()) {
-					if (!level.completionTime) continue
+				for (const [i, level] of achievement.levels.entries()) {
+					if (level.steps !== progress) continue
 					completionTime.push({
 						achievement: achievement.numericId,
 						level: i,
-						completion_time: level.completionTime,
+						completion_time: new Date(),
 					})
 				}
 				return completionTime
@@ -2039,7 +2066,7 @@ export class Database {
 
 			await this.pool.query(
 				`
-	            INSERT INTO achievement_completion_time (user_id, achievement_id, level, completion_time)
+			    INSERT INTO achievement_completion_time (user_id, achievement_id, level, completion_time)
 				(SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::int[], $4::timestamp[]))
 				ON CONFLICT (user_id, achievement_id, level) DO UPDATE
 				SET completion_time = EXCLUDED.completion_time;
