@@ -2011,8 +2011,6 @@ export class Database {
 				],
 			)
 
-			console.log(goalProgress)
-
 			type CompletionTimeRow = {
 				achievement: number
 				level: number
@@ -2068,8 +2066,7 @@ export class Database {
 				`
 			    INSERT INTO achievement_completion_time (user_id, achievement_id, level, completion_time)
 				(SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::int[], $4::timestamp[]))
-				ON CONFLICT (user_id, achievement_id, level) DO UPDATE
-				SET completion_time = EXCLUDED.completion_time;
+				ON CONFLICT (user_id, achievement_id, level) DO NOTHING;
 			     `,
 				[
 					completion.map(() => uuid),
