@@ -25,9 +25,9 @@ const TargetBlock: SingleUse = {
 	name: 'Target Block',
 	expansion: 'alter_egos',
 	rarity: 'rare',
-	tokens: 4,
+	tokens: 3,
 	description:
-		"Choose one of your opponent's AFK Hermits to take all damage done during this turn.",
+		"Choose one of your opponent's AFK Hermits to attack with your Hermit's primary attack. You can not use another attack this turn.",
 	attachCondition: query.every(
 		singleUse.attachCondition,
 		query.exists(SlotComponent, pickCondition),
@@ -47,7 +47,7 @@ const TargetBlock: SingleUse = {
 			canPick: pickCondition,
 			onResult(pickedSlot) {
 				if (!pickedSlot.inRow()) return
-				// Apply the card
+				game.addBlockedActions(component.entity, 'SECONDARY_ATTACK')
 				applySingleUse(game, pickedSlot)
 				game.components
 					.new(StatusEffectComponent, TargetBlockEffect, component.entity)
