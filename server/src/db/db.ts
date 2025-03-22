@@ -2051,8 +2051,7 @@ export class Database {
 				if (!achievement) return []
 				if (!progress) return []
 				const completionTime: CompletionTimeRow[] = []
-				for (const [i, level] of achievement.levels.entries()) {
-					if (level.steps !== progress) continue
+				for (const [i] of achievement.levels.entries()) {
 					completionTime.push({
 						achievement: achievement.numericId,
 						level: i,
