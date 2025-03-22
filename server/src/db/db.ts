@@ -1999,11 +1999,25 @@ export class Database {
 			const goalProgress = await this.pool.query(
 				`
 				INSERT INTO user_goals (user_id, achievement_id, goal_id, progress)
-				(SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::int[], $4::int[]))
+				(SELECT * FROM UNNEST ($2::uuid[], $3::int[], $4::int[], $5::int[]))
 				ON CONFLICT (user_id, achievement_id, goal_id) DO UPDATE
-				SET progress = user_goals.progress + EXCLUDED.progress RETURNING achievement_id, goal_id, progress;
+				SET progress = CASE $1
+					WHEN 'sum' THEN user_goals.progress + EXCLUDED.progress
+					WHEN 'best' THEN GREATEST(user_goals.progress, EXCLUDED.progress)
+					ELSE user_goals.progress
+				END
+				RETURNING achievement_id, goal_id, progress;
 				`,
 				[
+					goals.map((row) => {
+						const progressionMethod =
+							ACHIEVEMENTS[row.achievment].progressionMethod
+						assert(
+							['best', 'sum'].includes(progressionMethod),
+							`Unknown progression method found: \`${progressionMethod}\``,
+						)
+						return progressionMethod
+					}),
 					goals.map(() => uuid),
 					goals.map((row) => row.achievment),
 					goals.map((row) => row.goal),
