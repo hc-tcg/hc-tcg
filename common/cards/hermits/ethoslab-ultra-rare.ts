@@ -12,7 +12,7 @@ const EthosLabUltraRare: Hermit = {
 	name: 'Etho',
 	expansion: 'default',
 	rarity: 'ultra_rare',
-	tokens: 3,
+	tokens: 'etho-ur',
 	type: 'pvp',
 	health: 250,
 	primary: {
@@ -26,7 +26,7 @@ const EthosLabUltraRare: Hermit = {
 		cost: ['any', 'any'],
 		damage: 70,
 		power:
-			'Flip a coin 3 times.\nDo an additional 20hp damage for every heads.',
+			'Flip a coin 3 times.\nDo an additional 20hp damage for every heads.\n\nThis card will cost 2 tokens if there are no item cards in your deck that are not PvP or wild Items.',
 	},
 	onAttach(
 		game: GameModel,
