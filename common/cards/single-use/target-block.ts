@@ -25,7 +25,7 @@ const TargetBlock: SingleUse = {
 	name: 'Target Block',
 	expansion: 'alter_egos',
 	rarity: 'rare',
-	tokens: 1,
+	tokens: 2,
 	description:
 		"Choose one of your opponent's AFK Hermits to attack with your Hermit's primary attack. You can not use another attack this turn.",
 	attachCondition: query.every(
