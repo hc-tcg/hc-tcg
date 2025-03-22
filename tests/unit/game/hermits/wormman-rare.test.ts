@@ -80,7 +80,7 @@ describe('Test Rare Worm Man', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* attack(game, 'secondary')
+					yield* attack(game, 'primary')
 					expect(
 						game.components.find(
 							CardComponent,
