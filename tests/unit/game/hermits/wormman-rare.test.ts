@@ -32,7 +32,7 @@ describe('Test Rare Worm Man', () => {
 					yield* endTurn(game)
 
 					yield* playCardFromHand(game, WormManRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+				yield* attack(game, 'secondary')
 					yield* playCardFromHand(game, PoultrymanCommon, 'hermit', 1)
 					expect(
 						game.components.find(
