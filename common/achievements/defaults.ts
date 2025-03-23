@@ -9,4 +9,5 @@ export const achievement: Omit<
 	},
 	onGameStart() {},
 	onGameEnd() {},
+	progressionMethod: 'best',
 }

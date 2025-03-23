@@ -2073,7 +2073,6 @@ export class Database {
 				[],
 			)
 
-			console.log(achievementGoals)
 			const earnedAchievements: Array<EarnedAchievement> = []
 
 			const completion: CompletionTimeRow[] = achievementGoals.flatMap((a) => {
@@ -2113,8 +2112,6 @@ export class Database {
 				}
 				return completionTime
 			})
-
-			console.log(earnedAchievements)
 
 			await this.pool.query(
 				`
