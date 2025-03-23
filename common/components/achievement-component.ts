@@ -7,6 +7,7 @@ import {GameHook} from '../types/hooks'
 let ACHIEVEMENTS: Record<string | number, Achievement>
 import('../achievements').then((mod) => (ACHIEVEMENTS = mod.ACHIEVEMENTS))
 
+// Used to combine the progress from before the game, with the progress gained during the game
 function combineAchievementProgress(
 	method: 'sum' | 'best',
 	a: Record<number, number>,
