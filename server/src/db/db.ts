@@ -1988,14 +1988,14 @@ export class Database {
 							achievment: achievement.numericId,
 							goal: goal_id_number,
 							progress:
-								progress.goals[goal_id_number] !== undefined
-									? progress.goals[goal_id_number]
-									: 0,
+								progress.goals[goal_id_number] &&
+								Math.max(progress.goals[goal_id_number], 0),
 						})
 					})
 					return achievementGoals
 				},
 			)
+			console.log(goals)
 			const goalProgress = await this.pool.query(
 				`
 				WITH args AS (
@@ -2004,7 +2004,7 @@ export class Database {
 				)
 				INSERT INTO user_goals (user_id, achievement_id, goal_id, progress) SELECT user_id, achievement_id, goal_id, progress FROM args
 				ON CONFLICT (user_id, achievement_id, goal_id) DO UPDATE
-				SET progress = CASE (SELECT method FROM args WHERE args.achievement_id = user_goals.achievement_id)
+				SET progress = CASE (SELECT method FROM args WHERE args.achievement_id = user_goals.achievement_id LIMIT 1)
 					WHEN 'sum' THEN user_goals.progress + EXCLUDED.progress
 					WHEN 'best' THEN greatest(user_goals.progress, EXCLUDED.progress)
 					ELSE user_goals.progress

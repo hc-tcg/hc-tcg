@@ -43,6 +43,7 @@ const HowDidWeGetHere: Achievement = {
 					if (statusEffects[target] === undefined) statusEffects[target] = []
 					statusEffects[target].push(statusEffect)
 				})
+			if (Object.values(statusEffects).length === 0) return
 			const bestAttempt = Math.max(
 				...Object.values(statusEffects).map((statuses) => statuses.length),
 			)
