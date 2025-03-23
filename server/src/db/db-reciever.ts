@@ -430,6 +430,7 @@ export function* getDeck(code: string) {
 
 export function* updateAchievements(
 	player: PlayerModel,
+	gameEndTime: Date,
 ): Generator<any, Array<EarnedAchievement>> {
 	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 
@@ -437,6 +438,7 @@ export function* updateAchievements(
 		[root.db, root.db.updateAchievements],
 		player.uuid,
 		player.achievementProgress,
+		gameEndTime,
 	)
 	assert(result.type === 'success', 'The database query should not fail')
 

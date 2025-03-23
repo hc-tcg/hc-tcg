@@ -1959,6 +1959,7 @@ export class Database {
 	public async updateAchievements(
 		uuid: string,
 		achievementProgress: AchievementProgress,
+		gameEndTime: Date,
 	): Promise<DatabaseResult<Array<EarnedAchievement>>> {
 		try {
 			type GoalRow = {
@@ -2107,7 +2108,7 @@ export class Database {
 					completionTime.push({
 						achievement: achievement.numericId,
 						level: i,
-						completion_time: new Date(),
+						completion_time: gameEndTime,
 					})
 				}
 				return completionTime

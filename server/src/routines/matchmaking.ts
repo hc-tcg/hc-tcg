@@ -189,6 +189,7 @@ function* gameManager(con: GameController) {
 			return
 		}
 
+		const gameEndTime = new Date()
 		if (con.task) yield* cancel(con.task)
 		con.game.hooks.afterGameEnd.call()
 
@@ -219,7 +220,7 @@ function* gameManager(con: GameController) {
 				)
 			})
 
-			const newProgress = yield* updateAchievements(v.player)
+			const newProgress = yield* updateAchievements(v.player, gameEndTime)
 			newAchievements[playerEntity] = newProgress
 		}
 
@@ -291,7 +292,7 @@ function* gameManager(con: GameController) {
 				gamePlayers[0],
 				gamePlayers[1],
 				outcome,
-				Date.now() - con.createdTime,
+				gameEndTime.getTime() - con.createdTime,
 				winner ? winner.uuid : null,
 				con.game.rngSeed,
 				con.game.state.turn.turnNumber,
@@ -300,7 +301,6 @@ function* gameManager(con: GameController) {
 			)
 		}
 		yield* sendAfterGameInfo(gamePlayers)
-		const rematchTime = Date.now()
 
 		const getGameScore = (
 			outcome: GameOutcome | undefined,
@@ -329,7 +329,7 @@ function* gameManager(con: GameController) {
 			type: serverMessages.SEND_REMATCH,
 			rematch: {
 				opponentId: gamePlayers[1].id,
-				time: rematchTime,
+				time: gameEndTime.getTime(),
 				spectatorCode: con.spectatorCode,
 				playerScore: player1Score,
 				opponentScore: player2Score,
@@ -339,7 +339,7 @@ function* gameManager(con: GameController) {
 			type: serverMessages.SEND_REMATCH,
 			rematch: {
 				opponentId: gamePlayers[0].id,
-				time: rematchTime,
+				time: gameEndTime.getTime(),
 				spectatorCode: con.spectatorCode,
 				playerScore: player2Score,
 				opponentScore: player1Score,
