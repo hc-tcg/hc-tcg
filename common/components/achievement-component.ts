@@ -1,10 +1,36 @@
 import {Achievement} from '../achievements/types'
 import type {AchievementEntity, ObserverEntity, PlayerEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
+import {AchievementProgress, ProgressionEntry} from '../types/achievements'
 import {GameHook} from '../types/hooks'
 
 let ACHIEVEMENTS: Record<string | number, Achievement>
 import('../achievements').then((mod) => (ACHIEVEMENTS = mod.ACHIEVEMENTS))
+
+function combineAchievementProgress(
+	method: 'sum' | 'best',
+	a: Record<number, number>,
+	b: Record<number, number>,
+) {
+	let out: Record<number, number> = {}
+
+	for (const key in a) {
+		if (method === 'sum') {
+			out[key] = a[key] || 0 + b[key] || 0
+		} else if (method === 'best') {
+			out[key] = Math.max(a[key] || 0, b[key] || 0)
+		}
+	}
+	for (const key in b) {
+		if (method === 'sum') {
+			out[key] = a[key] || 0 + b[key] || 0
+		} else if (method === 'best') {
+			out[key] = Math.max(a[key] || 0, b[key] || 0)
+		}
+	}
+
+	return out
+}
 
 /** A component that represents a card in the game. Cards can be in the player's hand, deck, board or discard pile. */
 export class AchievementComponent {
@@ -15,6 +41,7 @@ export class AchievementComponent {
 	readonly entity: AchievementEntity
 
 	goals: Record<number, number>
+	oldProgress: ProgressionEntry
 
 	sentLevels: number[]
 	observerEntity: ObserverEntity | null
@@ -39,6 +66,7 @@ export class AchievementComponent {
 		entity: AchievementEntity,
 		achievement: number | Achievement,
 		player: PlayerEntity,
+		oldProgress: ProgressionEntry,
 	) {
 		this.game = game
 		this.entity = entity
@@ -55,13 +83,35 @@ export class AchievementComponent {
 		}
 
 		this.goals = {}
+		this.oldProgress = oldProgress
 		this.player = player
+
+		this.oldProgress.levels.forEach((level, i) => {
+			if (level.completionTime !== undefined) {
+				this.sentLevels.push(i)
+			}
+		})
 	}
 
 	private checkCompletion(originalGoals: Record<number, number>): () => void {
-		const originalProgress = this.props.getProgress(originalGoals) ?? 0
+		const originalProgress =
+			this.props.getProgress(
+				combineAchievementProgress(
+					this.props.progressionMethod,
+					originalGoals,
+					this.oldProgress.goals,
+				),
+			) ?? 0
+
 		return () => {
-			const newProgress = this.props.getProgress(this.goals) ?? 0
+			const newProgress =
+				this.props.getProgress(
+					combineAchievementProgress(
+						this.props.progressionMethod,
+						this.goals,
+						this.oldProgress.goals,
+					),
+				) ?? 0
 
 			for (const [i, level] of this.props.levels.entries()) {
 				if (

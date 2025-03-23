@@ -172,6 +172,7 @@ export class GameController {
 					AchievementComponent,
 					achievement,
 					playerComponent.entity,
+					player.achievementProgress[achievement.numericId],
 				)
 				const achievementObserver = this.game.components.new(
 					ObserverComponent,
