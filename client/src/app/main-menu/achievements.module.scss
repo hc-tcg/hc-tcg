@@ -335,11 +335,11 @@
 	color: var(--text-light);
 	padding: 4px 16px;
 	border: 3px solid var(--gray-900);
-	border-image-slice: 30 48% 30;
-	border-image-width: 20px 48px;
-	border-image-repeat: stretch stretch;
+	border-image-slice: 64 60 64 64;
+	border-image-width: 40px;
+	border-image-height: 40px;
+	border-image-repeat: round;
 	border-image-source: url("/images/cosmetics/border/blue.png");
-	border-style: solid;
 	background: linear-gradient(-90deg,
 			hsla(195deg, 53%, 60%, 35%),
 			hsla(195deg, 100%, 60%, 50%));
