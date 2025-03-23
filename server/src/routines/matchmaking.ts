@@ -198,10 +198,6 @@ function* gameManager(con: GameController) {
 			if (v.spectator) continue
 			const playerEntity = v.playerOnLeftEntity
 			newAchievements[playerEntity] = []
-			const achievements = con.game.components.filter(
-				AchievementComponent,
-				(_game, achievement) => achievement.player === playerEntity,
-			)
 
 			let player = con.game.components.get(playerEntity)
 			assert(
@@ -209,46 +205,22 @@ function* gameManager(con: GameController) {
 				"There should definitely be a player on the left if there is an entity, if there isn't, something went really wrong",
 			)
 
+			const achievements = con.game.components.filter(
+				AchievementComponent,
+				(_game, achievement) => achievement.player === playerEntity,
+			)
+
 			achievements.forEach((achievement) => {
 				achievement.props.onGameEnd(con.game, player, achievement, outcome)
-
-				const originalProgress =
-					achievement.props.getProgress(
-						v.player.achievementProgress[achievement.props.numericId].goals,
-					) || 0
-				const newProgress =
-					achievement.props.getProgress(achievement.goals) || 0
-
-				if (originalProgress === newProgress) return
 
 				v.player.updateAchievementProgress(
 					achievement.props.numericId,
 					achievement.goals,
 				)
-
-				for (const [i, level] of achievement.props.levels.entries()) {
-					if (newProgress >= level.steps && originalProgress < level.steps) {
-						v.player.achievementProgress[achievement.props.numericId].levels[
-							i
-						] = {completionTime: new Date()}
-					}
-
-					if (
-						newProgress > originalProgress &&
-						newProgress <= level.steps &&
-						(i === 0 || achievement.props.levels[i - 1].steps < newProgress)
-					) {
-						newAchievements[playerEntity].push({
-							achievementId: achievement.props.numericId,
-							level: {index: i, ...level},
-							originalProgress: originalProgress || 0,
-							newProgress: newProgress,
-						})
-					}
-				}
 			})
 
-			yield* updateAchievements(v.player)
+			const newProgress = yield* updateAchievements(v.player)
+			newAchievements[playerEntity] = newProgress
 		}
 
 		for (const viewer of con.viewers) {

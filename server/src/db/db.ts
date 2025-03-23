@@ -10,7 +10,7 @@ import {CARDS} from 'common/cards'
 import {getStarterPack} from 'common/cards/starter-decks'
 import serverConfig from 'common/config/server-config'
 import {defaultAppearance} from 'common/cosmetics/default'
-import {AchievementProgress} from 'common/types/achievements'
+import {AchievementProgress, EarnedAchievement} from 'common/types/achievements'
 import {TypeT} from 'common/types/cards'
 import {
 	AchievementData,
@@ -1959,7 +1959,7 @@ export class Database {
 	public async updateAchievements(
 		uuid: string,
 		achievementProgress: AchievementProgress,
-	): Promise<DatabaseResult> {
+	): Promise<DatabaseResult<Array<EarnedAchievement>>> {
 		try {
 			type GoalRow = {
 				achievment: number
@@ -1995,12 +1995,14 @@ export class Database {
 					return achievementGoals
 				},
 			)
-			console.log(goals)
 			const goalProgress = await this.pool.query(
 				`
 				WITH args AS (
 					SELECT * FROM UNNEST ($1::text[], $2::uuid[], $3::int[], $4::int[], $5::int[]) 
 									AS t(method, user_id, achievement_id, goal_id, progress)
+				),
+				original_goals AS (
+					SELECT * FROM user_goals
 				)
 				INSERT INTO user_goals (user_id, achievement_id, goal_id, progress) SELECT user_id, achievement_id, goal_id, progress FROM args
 				ON CONFLICT (user_id, achievement_id, goal_id) DO UPDATE
@@ -2009,7 +2011,15 @@ export class Database {
 					WHEN 'best' THEN greatest(user_goals.progress, EXCLUDED.progress)
 					ELSE user_goals.progress
 				END
-				RETURNING user_goals.achievement_id, user_goals.goal_id, user_goals.progress;
+				RETURNING 
+					user_goals.achievement_id, 
+					user_goals.goal_id, 
+					user_goals.progress, 
+					coalesce((SELECT progress FROM original_goals WHERE 
+						original_goals.achievement_id = user_goals.achievement_id 
+						AND original_goals.goal_id = user_goals.goal_id
+						AND original_goals.user_id = user_goals.user_id
+					), 0) as old_progress;
 				`,
 				[
 					goals.map((row) => {
@@ -2037,38 +2047,64 @@ export class Database {
 			type AchievementGoals = {
 				achievement: number
 				goals: Record<number, number>
+				oldGoals: Record<number, number>
 			}
 
 			const achievementGoals: AchievementGoals[] = goalProgress.rows.reduce(
 				(r: Array<AchievementGoals>, row) => {
 					const achievementId: number = row['achievement_id']
 					const goalId: number = row['goal_id']
-					const progress: number = row['progress']
-
+					const updatedProgress: number = row['progress']
+					const oldProgress: number = row['old_progress']
 					const goalEntry = r.find((a) => a.achievement === achievementId)
 
 					if (goalEntry) {
-						goalEntry.goals[goalId] = progress
+						goalEntry.goals[goalId] = updatedProgress
+						goalEntry.oldGoals[goalId] = oldProgress
 					} else {
 						const goals: Record<number, number> = {}
-						goals[goalId] = progress
-						r.push({achievement: achievementId, goals: goals})
+						const oldGoals: Record<number, number> = {}
+						goals[goalId] = updatedProgress
+						oldGoals[goalId] = oldProgress
+						r.push({achievement: achievementId, goals, oldGoals})
 					}
 					return r
 				},
 				[],
 			)
 
+			console.log(achievementGoals)
+			const earnedAchievements: Array<EarnedAchievement> = []
+
 			const completion: CompletionTimeRow[] = achievementGoals.flatMap((a) => {
 				const achievement = this.allAchievements.find(
 					(achievement) => achievement.numericId === a.achievement,
 				)
 
-				const progress = achievement?.getProgress(a.goals)
-				if (!achievement) return []
-				if (!progress) return []
+				const newProgress = achievement?.getProgress(a.goals)
+				const oldProgress = achievement?.getProgress(a.oldGoals)
+				if (!achievement || !newProgress) return []
 				const completionTime: CompletionTimeRow[] = []
-				for (const [i] of achievement.levels.entries()) {
+				for (const [i, level] of achievement.levels.entries()) {
+					if (
+						!oldProgress ||
+						(newProgress > oldProgress &&
+							newProgress <= level.steps &&
+							(i === 0 || achievement.levels[i - 1].steps < newProgress))
+					) {
+						earnedAchievements.push({
+							achievementId: achievement.numericId,
+							level: {index: i, ...level},
+							originalProgress: oldProgress || 0,
+							newProgress: newProgress,
+						})
+					}
+
+					if (
+						newProgress < level.steps ||
+						(oldProgress && oldProgress >= level.steps)
+					)
+						continue
 					completionTime.push({
 						achievement: achievement.numericId,
 						level: i,
@@ -2077,6 +2113,8 @@ export class Database {
 				}
 				return completionTime
 			})
+
+			console.log(earnedAchievements)
 
 			await this.pool.query(
 				`
@@ -2092,7 +2130,7 @@ export class Database {
 				],
 			)
 
-			return {type: 'success', body: undefined}
+			return {type: 'success', body: earnedAchievements}
 		} catch (e) {
 			console.log(e)
 			return {

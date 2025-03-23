@@ -12,6 +12,7 @@ import {
 	RecievedClientMessage,
 	clientMessages,
 } from '../../../common/socket-messages/client-messages'
+import {EarnedAchievement} from 'common/types/achievements'
 
 const CONNECTION_ASSERTION_MSG =
 	'The database should always be connected when this function is called.'
@@ -427,17 +428,19 @@ export function* getDeck(code: string) {
 	return deck.body
 }
 
-export function* updateAchievements(player: PlayerModel) {
+export function* updateAchievements(
+	player: PlayerModel,
+): Generator<any, Array<EarnedAchievement>> {
 	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 
-	const {type: success} = yield* call(
+	const result = yield* call(
 		[root.db, root.db.updateAchievements],
 		player.uuid,
 		player.achievementProgress,
 	)
-	if (success === 'failure') return false
+	assert(result.type === 'success', 'The database query should not fail')
 
-	return true
+	return result.body
 }
 
 export function* getGameReplay(gameId: number) {
