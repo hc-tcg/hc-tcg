@@ -689,8 +689,7 @@ describe('Test Database', () => {
 			await database.getAchievementPercentageCompletion(DefeatEvilX, 0),
 		).toStrictEqual(globalProgress(0, 0))
 
-		let completionTime = new Date(Date.now())
-		let completionTimeTwo = new Date(18437418)
+		let completionTime = new Date(18430050)
 
 		await database.updateAchievements(
 			player1.uuid,
@@ -702,7 +701,7 @@ describe('Test Database', () => {
 					goals: {0: 11},
 					levels: [
 						{completionTime: completionTime},
-						{completionTime: completionTimeTwo},
+						{completionTime: completionTime},
 					],
 				},
 			},
@@ -723,7 +722,7 @@ describe('Test Database', () => {
 		expect(achievements[26].goals).toStrictEqual({0: 11})
 		expect(achievements[26].levels).toStrictEqual([
 			{completionTime: completionTime},
-			{completionTime: completionTimeTwo},
+			{completionTime: completionTime},
 			{},
 			{},
 			{},
