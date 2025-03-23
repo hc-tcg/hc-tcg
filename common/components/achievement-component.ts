@@ -1,7 +1,7 @@
 import {Achievement} from '../achievements/types'
 import type {AchievementEntity, ObserverEntity, PlayerEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
-import {AchievementProgress, ProgressionEntry} from '../types/achievements'
+import {ProgressionEntry} from '../types/achievements'
 import {GameHook} from '../types/hooks'
 
 let ACHIEVEMENTS: Record<string | number, Achievement>
@@ -16,14 +16,14 @@ function combineAchievementProgress(
 
 	for (const key in a) {
 		if (method === 'sum') {
-			out[key] = a[key] || 0 + b[key] || 0
+			out[key] = (a[key] || 0) + (b[key] || 0)
 		} else if (method === 'best') {
 			out[key] = Math.max(a[key] || 0, b[key] || 0)
 		}
 	}
 	for (const key in b) {
 		if (method === 'sum') {
-			out[key] = a[key] || 0 + b[key] || 0
+			out[key] = (a[key] || 0) + (b[key] || 0)
 		} else if (method === 'best') {
 			out[key] = Math.max(a[key] || 0, b[key] || 0)
 		}
