@@ -689,7 +689,7 @@ describe('Test Database', () => {
 			await database.getAchievementPercentageCompletion(DefeatEvilX, 0),
 		).toStrictEqual(globalProgress(0, 0))
 
-		let completionTime = new Date(Date.now())
+		let completionTime = new Date(100000)
 		let completionTimeTwo = new Date(18437418)
 
 		await database.updateAchievements(player1.uuid, {
