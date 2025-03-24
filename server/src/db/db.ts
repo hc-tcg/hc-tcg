@@ -1960,7 +1960,12 @@ export class Database {
 		uuid: string,
 		achievementProgress: AchievementProgress,
 		gameEndTime: Date,
-	): Promise<DatabaseResult<Array<EarnedAchievement>>> {
+	): Promise<
+		DatabaseResult<{
+			newAchievements: Array<EarnedAchievement>
+			newProgress: AchievementProgress
+		}>
+	> {
 		try {
 			type GoalRow = {
 				achievment: number
@@ -2051,6 +2056,8 @@ export class Database {
 				oldGoals: Record<number, number>
 			}
 
+			const achievementGoalProgress: AchievementProgress = {}
+
 			const achievementGoals: AchievementGoals[] = goalProgress.rows.reduce(
 				(r: Array<AchievementGoals>, row) => {
 					const achievementId: number = row['achievement_id']
@@ -2069,6 +2076,9 @@ export class Database {
 						oldGoals[goalId] = oldProgress
 						r.push({achievement: achievementId, goals, oldGoals})
 					}
+
+					achievementGoalProgress[achievementId].goals[goalId] = updatedProgress
+
 					return r
 				},
 				[],
@@ -2110,6 +2120,9 @@ export class Database {
 						level: i,
 						completion_time: gameEndTime,
 					})
+					achievementGoalProgress[achievement.numericId].levels[i] = {
+						completionTime: gameEndTime,
+					}
 				}
 				return completionTime
 			})
@@ -2128,7 +2141,13 @@ export class Database {
 				],
 			)
 
-			return {type: 'success', body: earnedAchievements}
+			return {
+				type: 'success',
+				body: {
+					newAchievements: earnedAchievements,
+					newProgress: achievementProgress,
+				},
+			}
 		} catch (e) {
 			console.log(e)
 			return {

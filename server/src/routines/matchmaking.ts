@@ -17,7 +17,7 @@ import {
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {EarnedAchievement} from 'common/types/achievements'
+import {AchievementProgress, EarnedAchievement} from 'common/types/achievements'
 import {Deck} from 'common/types/deck'
 import {GameOutcome} from 'common/types/game-state'
 import {formatText} from 'common/utils/formatting'
@@ -25,6 +25,7 @@ import {OpponentDefs} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import {
 	addGame,
+	getAchievementProgress,
 	getDeck,
 	getGameReplay,
 	sendAfterGameInfo,
@@ -199,6 +200,7 @@ function* gameManager(con: GameController) {
 			if (v.spectator) continue
 			const playerEntity = v.playerOnLeftEntity
 			newAchievements[playerEntity] = []
+			const thisGameAchievements: AchievementProgress = {}
 
 			let player = con.game.components.get(playerEntity)
 			assert(
@@ -213,15 +215,17 @@ function* gameManager(con: GameController) {
 
 			achievements.forEach((achievement) => {
 				achievement.props.onGameEnd(con.game, player, achievement, outcome)
-
-				v.player.updateAchievementProgress(
-					achievement.props.numericId,
-					achievement.goals,
-				)
+				thisGameAchievements[achievement.props.numericId].goals =
+					achievement.goals
 			})
 
-			const newProgress = yield* updateAchievements(v.player, gameEndTime)
-			newAchievements[playerEntity] = newProgress
+			const achievementInfo = yield* updateAchievements(
+				v.player.uuid,
+				thisGameAchievements,
+				gameEndTime,
+			)
+			newAchievements[playerEntity] = achievementInfo.newAchievements
+			v.player.updateAchievementProgress(achievementInfo.newProgress)
 		}
 
 		for (const viewer of con.viewers) {
@@ -446,7 +450,7 @@ function* cleanUpSaga() {
 	}
 }
 
-function* updateDeckSaga(
+function* setupPlayerInfo(
 	player: PlayerModel,
 	payload:
 		| {
@@ -464,6 +468,9 @@ function* updateDeckSaga(
 		return
 	}
 
+	const latestAchievementProgress = yield* getAchievementProgress(player.uuid)
+	player.updateAchievementProgress(latestAchievementProgress)
+
 	player.setPlayerDeck(payload.activeDeck)
 }
 
@@ -477,7 +484,7 @@ export function* joinPublicQueue(
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	yield* updateDeckSaga(player, msg.payload)
+	yield* setupPlayerInfo(player, msg.payload)
 
 	if (!player) {
 		console.info('[Join queue] Player not found: ', playerId)
@@ -545,7 +552,7 @@ export function* joinPrivateGame(
 	} = msg
 	const player = root.players[playerId]
 
-	yield* updateDeckSaga(player, msg.payload)
+	yield* setupPlayerInfo(player, msg.payload)
 
 	if (!player) {
 		console.info('[Join private game] Player not found: ', playerId)
@@ -763,7 +770,7 @@ export function* createPrivateGame(
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	yield* updateDeckSaga(player, msg.payload)
+	yield* setupPlayerInfo(player, msg.payload)
 
 	if (!player) {
 		console.info('[Create private game] Player not found: ', playerId)
@@ -861,7 +868,7 @@ export function* createBossGame(
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	yield* updateDeckSaga(player, msg.payload)
+	yield* setupPlayerInfo(player, msg.payload)
 
 	if (!player) {
 		console.info('[Create Boss game] Player not found: ', playerId)
@@ -953,7 +960,7 @@ export function* createRematchGame(
 	const player = root.players[playerId]
 	const opponent = root.players[opponentId]
 
-	yield* updateDeckSaga(player, msg.payload)
+	yield* setupPlayerInfo(player, msg.payload)
 
 	if (!player) {
 		console.info('[Join rematch game] Player not found: ', playerId)

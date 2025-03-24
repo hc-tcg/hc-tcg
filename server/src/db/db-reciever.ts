@@ -3,7 +3,7 @@ import {CARDS} from 'common/cards'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerModel} from 'common/models/player-model'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {EarnedAchievement} from 'common/types/achievements'
+import {AchievementProgress, EarnedAchievement} from 'common/types/achievements'
 import {GameOutcome} from 'common/types/game-state'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import root from 'serverRoot'
@@ -429,20 +429,30 @@ export function* getDeck(code: string) {
 }
 
 export function* updateAchievements(
-	player: PlayerModel,
+	uuid: string,
+	newProgress: AchievementProgress,
 	gameEndTime: Date,
-): Generator<any, Array<EarnedAchievement>> {
+): Generator<
+	any,
+	{
+		newAchievements: Array<EarnedAchievement>
+		newProgress: AchievementProgress
+	}
+> {
 	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 
 	const result = yield* call(
 		[root.db, root.db.updateAchievements],
-		player.uuid,
-		player.achievementProgress,
+		uuid,
+		newProgress,
 		gameEndTime,
 	)
 	assert(result.type === 'success', 'The database query should not fail')
 
-	return result.body
+	return {
+		newAchievements: result.body.newAchievements,
+		newProgress: result.body.newProgress,
+	}
 }
 
 export function* getGameReplay(gameId: number) {
