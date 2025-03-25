@@ -41,6 +41,7 @@ import {useEffect, useReducer, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CosmeticPreview} from './achievements'
 import css from './play-select.module.scss'
+import {CARDS} from 'common/cards'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -151,7 +152,9 @@ function PlaySelect({
 			})
 			return false
 		}
-		const validation = validateDeck(loadedDeck.cards.map((card) => card.props))
+		const validation = validateDeck(
+			loadedDeck.cards.map((card) => CARDS[card.id]),
+		)
 		if (validation.valid) return true
 		dispatch({
 			type: localMessages.TOAST_OPEN,

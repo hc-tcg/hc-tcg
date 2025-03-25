@@ -35,14 +35,7 @@ interface CardReactProps
 }
 
 const Card = (props: CardReactProps) => {
-	const {
-		onClick,
-		selected,
-		picked,
-		unpickable,
-		displayTokenCost,
-		...otherProps
-	} = props
+	const {onClick, selected, picked, unpickable, displayTokenCost} = props
 
 	let cardProps = CARDS[props.card]
 	const {category} = cardProps
@@ -79,7 +72,9 @@ const Card = (props: CardReactProps) => {
 
 	return (
 		<Tooltip
-			tooltip={<CardInstanceTooltip card={cardProps} showStatsOnTooltip={false} />}
+			tooltip={
+				<CardInstanceTooltip card={cardProps} showStatsOnTooltip={false} />
+			}
 			showAboveModal={props.tooltipAboveModal}
 		>
 			<button

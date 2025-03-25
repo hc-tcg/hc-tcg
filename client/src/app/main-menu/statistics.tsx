@@ -9,7 +9,6 @@ import {EXPANSIONS} from 'common/const/expansions'
 import {TypeT} from 'common/types/cards'
 import {GameHistory} from 'common/types/database'
 import {Tag} from 'common/types/deck'
-import {WithoutFunctions} from 'common/types/server-requests'
 import {sortCards} from 'common/utils/cards'
 import {getDeckTypes, parseDeckCards} from 'common/utils/decks'
 import Button from 'components/button'
@@ -206,7 +205,7 @@ function Statistics({setMenuSection}: Props) {
 				(!compareType ||
 					compareType === 'any' ||
 					getDeckTypes(
-						game.usedDeck.cards.map((card) => card.props.id),
+						game.usedDeck.cards.map((card) => CARDS[card.id].id),
 					).includes(compareType)) &&
 				(!compareName ||
 					compareName === '' ||
@@ -495,10 +494,7 @@ function Statistics({setMenuSection}: Props) {
 									if (!card) return <td key={index}></td>
 									return (
 										<td key={index}>
-											<CardComponent
-												displayTokenCost={false}
-												card={card as WithoutFunctions<CardType>}
-											/>
+											<CardComponent displayTokenCost={false} card={card.id} />
 										</td>
 									)
 								})}
@@ -913,9 +909,7 @@ function Statistics({setMenuSection}: Props) {
 						onClick={() => {
 							setScreenshotDeckModalContents(
 								sortCards(
-									parseDeckCards(
-										game.usedDeck.cards.map((card) => card.props.id),
-									),
+									parseDeckCards(game.usedDeck.cards.map((card) => card.id)),
 								),
 							)
 						}}
