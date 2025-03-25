@@ -1,25 +1,19 @@
-import classNames from 'class {names'
-let card = CARDS[card.id]'
-	return (
-	import {CARDS, CARDS_LIST} rom '(common/cards'
-cardsItem} from 'common/cards/types'
-	import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
-	import {CardEntity, newEntity} from 'common/entities'
-	import {Deck, Tag} from 'common/types/deck'
-	import {LocalCardInstance} from 'common/types/server-requests'
-	import {sortCardInstances} from 'common/utils/cards'
-	import {generateDatabaseCode} from 'common/utils/database-codes'
-	import {getCardRank, getDeckCost} from 'common/utils/ranks'
-	import {getIconPath} from 'common/utils/state-gen'
-	import {validateDeck} from 'common/utils/validation'
-	import Accordion from 'components/accordion'
-	import Button from 'components/button'
-	import CardList from 'components/card-list'
-	import MobileCardList from 'components/card-list/mobile-card-list'
-	import Checkbox from 'components/checkbox'
+import {CARDS, CARDS_LIST} from 'common/cards'
+import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
+import {CardEntity, newEntity} from 'common/entities'
+import {Deck, Tag} from 'common/types/deck'
+import {LocalCardInstance} from 'common/types/server-requests'
+import {sortCardInstances} from 'common/utils/cards'
+import {generateDatabaseCode} from 'common/utils/database-codes'
+import {getCardRank, getDeckCost} from 'common/utils/ranks'
+import {getIconPath} from 'common/utils/state-gen'
+import {validateDeck} from 'common/utils/validation'
+import Accordion from 'components/accordion'
+import Button from 'components/button'
+import CardList from 'components/card-list'
+import MobileCardList from 'components/card-list/mobile-card-list'
+import Checkbox from 'components/checkbox'
 import Dropdown from 'components/dropdown'
-)
-}
 import ColorPickerDropdown from 'components/dropdown/color-picker-dropdown'
 import {ConfirmModal} from 'components/modal'
 import errorIcon from 'components/svgs/errorIcon'
@@ -32,7 +26,8 @@ import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import { Card, isHermit, isItem } from 'common/cards/types'
+import {Card, isHermit, isItem} from 'common/cards/types'
+import classNames from 'classnames'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const ITEM_DECK_ICONS = [
@@ -329,30 +324,25 @@ function EditDeck({
 	const initialDeckState = deck
 
 	const filteredCards: LocalCardInstance[] = sortCardInstances(
-		ALL_CARDS.filter(
-			(card_) => {
-				let card = CARDS[card_.id] as Card
-				return (
-					// Card Name Filter
-					card.name
-						.toLowerCase()
-						.includes(deferredTextQuery.toLowerCase()) &&
-					// Card Rarity Filter
-					(rankQuery === '' ||
-						getCardRank(card.tokens) === rankQuery) &&
-					// Card Type Filter
-					(typeQuery === '' ||
-						!(isHermit(card) || isItem(card)) ||
-						((isHermit(card) || isItem(card)) &&
-							card.type.includes(typeQuery))) &&
-					// Card Expansion Filter
-					(expansionQuery.length === 0 ||
-						expansionQuery.includes(card.expansion)) &&
-					// Don't show disabled cards
-					EXPANSIONS[card.expansion].disabled === false
-				)
-			}
-		),
+		ALL_CARDS.filter((card_) => {
+			let card = CARDS[card_.id] as Card
+			return (
+				// Card Name Filter
+				card.name.toLowerCase().includes(deferredTextQuery.toLowerCase()) &&
+				// Card Rarity Filter
+				(rankQuery === '' || getCardRank(card.tokens) === rankQuery) &&
+				// Card Type Filter
+				(typeQuery === '' ||
+					!(isHermit(card) || isItem(card)) ||
+					((isHermit(card) || isItem(card)) &&
+						card.type.includes(typeQuery))) &&
+				// Card Expansion Filter
+				(expansionQuery.length === 0 ||
+					expansionQuery.includes(card.expansion)) &&
+				// Don't show disabled cards
+				EXPANSIONS[card.expansion].disabled === false
+			)
+		}),
 	)
 
 	const selectedCards = {
