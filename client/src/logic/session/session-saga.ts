@@ -123,10 +123,12 @@ function getNonDatabaseUser(): User {
 function* authenticateUser(
 	playerUuid: string,
 	secret: string,
+	savedAchievements: string,
 ): Generator<any, User | null> {
 	const headers = {
 		userId: playerUuid,
 		secret: secret,
+		savedAchievements: savedAchievements,
 	}
 
 	const auth = yield* call(fetch, `${BASE_URL}/api/auth/`, {
@@ -206,7 +208,12 @@ export function* setupData(user: User) {
 		border: BORDERS[user.border || ''] ?? defaultAppearance.border,
 	}
 
-	console.log(appearance)
+	user.achievements.achievementData = {
+		...JSON.parse(
+			localStorage.getItem('achievements') || '{achievementData: {}}',
+		).achievementData,
+		...user.achievements.achievementData,
+	}
 
 	yield* put<LocalMessage>({
 		type: localMessages.DATABASE_SET,
@@ -279,6 +286,9 @@ export function* setupData(user: User) {
 		type: localMessages.MINECRAFT_NAME_SET,
 		name: user.minecraftName ? user.minecraftName : user.username,
 	})
+
+	// Save achievements local storage
+	localStorage.setItem('achievements', JSON.stringify(user.achievements))
 }
 
 type LoginResult =
@@ -351,7 +361,13 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 		}
 
 		if (userId && secret) {
-			const userResponse = yield* authenticateUser(userId, secret)
+			const savedAchievements: string =
+				localStorage.getItem('achievements') || '{}'
+			const userResponse = yield* authenticateUser(
+				userId,
+				secret,
+				savedAchievements,
+			)
 
 			yield* put<LocalMessage>({
 				type: localMessages.CONNECTING_MESSAGE,
@@ -457,7 +473,14 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 			)
 		}
 
-		const userResponse = yield* authenticateUser(userId, secret)
+		const savedAchievements: string =
+			localStorage.getItem('achievements') || '{}'
+		const userResponse = yield* authenticateUser(
+			userId,
+			secret,
+			savedAchievements,
+		)
+
 		if (!userResponse) {
 			return {
 				success: false,

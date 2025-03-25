@@ -1,3 +1,4 @@
+import {AchievementProgress} from 'common/types/achievements'
 import root from 'serverRoot'
 import {z} from 'zod'
 
@@ -15,6 +16,7 @@ export async function authenticateApiKey(key: string) {
 export async function authenticateUser(
 	userId: string | undefined,
 	secret: string | undefined,
+	savedAchievements: string | undefined,
 ): Promise<[number, any]> {
 	if (!userId || !secret) {
 		return [
@@ -41,6 +43,21 @@ export async function authenticateUser(
 	if (userInfo.body.banned) {
 		return [401, 'You are banned']
 	}
+
+	if (!savedAchievements) return [200, userInfo.body]
+
+	const achievements = userInfo.body.achievements
+
+	const newAchievements: AchievementProgress = {}
+
+	Object.entries(achievements.achievementData).forEach((p) => {
+		const k = p[0]
+		const v = p[1]
+
+		if (!(k in achievements)) newAchievements[Number(k)] = v
+	})
+
+	userInfo.body.achievements = {achievementData: newAchievements}
 
 	return [200, userInfo.body]
 }
