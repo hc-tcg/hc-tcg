@@ -18,7 +18,7 @@ export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
 		)
 		if (!props) continue
 		deck.push({
-			props: WithoutFunctions(props),
+			id: props.numericId,
 			entity: Math.random().toString() as CardEntity,
 			slot: null,
 			turnedOver: false,

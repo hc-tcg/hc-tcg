@@ -6,9 +6,11 @@ import {SagaIterator} from 'redux-saga'
 import {call, put} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
 import {getPlayerEntity} from '../game-selectors'
+import {CARDS} from 'common/cards'
 
 function* singleUseSaga(card: LocalCardInstance): SagaIterator {
-	if (isSingleUse(card.props) && card.props.showConfirmationModal) {
+	let cardProps = CARDS[card.id]
+	if (isSingleUse(cardProps) && cardProps.showConfirmationModal) {
 		yield put<LocalMessage>({
 			type: localMessages.GAME_MODAL_OPENED_SET,
 			id: 'confirm',

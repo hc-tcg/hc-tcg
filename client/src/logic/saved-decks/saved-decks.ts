@@ -109,7 +109,7 @@ export function saveDeckToLocalStorage(deck: Deck) {
 	const legacyDeck: LegacyDeck = {
 		name: deck.name,
 		cards: deck.cards.map((card) => ({
-			cardId: card.props.id,
+			cardId: CARDS[card.id].id,
 			cardInstance: Math.random().toString(),
 		})),
 		icon: deck.icon as LegacyDeck['icon'],
