@@ -20,7 +20,7 @@ import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
 import {CardEntity} from 'common/entities'
 import {Deck} from 'common/types/deck'
-import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
+import {LocalCardInstance} from 'common/types/server-requests'
 import {sortDecks} from 'common/utils/decks'
 import {validateDeck} from 'common/utils/validation'
 import Button from 'components/button'
@@ -215,7 +215,7 @@ function PlaySelect({
 	/* Boss game stuff */
 	function createUICardInstance(card: Card): LocalCardInstance {
 		return {
-			props: WithoutFunctions(card),
+			id: card.numericId,
 			entity: card.id as CardEntity,
 			slot: null,
 			turnedOver: false,

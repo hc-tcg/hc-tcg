@@ -494,7 +494,10 @@ function Statistics({setMenuSection}: Props) {
 									if (!card) return <td key={index}></td>
 									return (
 										<td key={index}>
-											<CardComponent displayTokenCost={false} card={card.id} />
+											<CardComponent
+												displayTokenCost={false}
+												card={card.numericId}
+											/>
 										</td>
 									)
 								})}
@@ -909,7 +912,7 @@ function Statistics({setMenuSection}: Props) {
 						onClick={() => {
 							setScreenshotDeckModalContents(
 								sortCards(
-									parseDeckCards(game.usedDeck.cards.map((card) => card.id)),
+									parseDeckCards(game.usedDeck.cards.map((card) => card)),
 								),
 							)
 						}}
