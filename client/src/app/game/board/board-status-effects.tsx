@@ -5,8 +5,7 @@ import Tooltip from 'components/tooltip'
 
 import statusEffectImageCss from '../../../components/status-effects/status-effect.module.scss'
 import css from './board.module.scss'
-import {STATUS_EFFECTS} from 'common/statusEffectProps'
-let statusEffectProps = STATUS_EFFECTS[effect.id]
+import {STATUS_EFFECTS} from 'common/status-effects'
 
 type ExpandStatusEffectProps = {
 	statusEffects: Array<any>
