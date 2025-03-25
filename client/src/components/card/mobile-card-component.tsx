@@ -6,6 +6,7 @@ import {getDeckCost} from 'common/utils/ranks'
 import Tooltip from 'components/tooltip'
 import CardInstanceTooltip, {getRarity} from './card-tooltip'
 import css from './card.module.scss'
+import {CARDS} from 'common/cards'
 
 interface CardReactProps
 	extends React.DetailedHTMLProps<
@@ -22,55 +23,45 @@ interface CardReactProps
 const MobileCardComponent = (props: CardReactProps) => {
 	const {onSubtractionClick, onAdditionClick, cards, small} = props
 
+	let card = CARDS[props.cards[0].id]
+
 	return (
 		<Tooltip
-			tooltip={
-				<CardInstanceTooltip
-					card={props.cards[0].props}
-					showStatsOnTooltip={true}
-				/>
-			}
+			tooltip={<CardInstanceTooltip card={card} showStatsOnTooltip={true} />}
 			showAboveModal={props.tooltipAboveModal}
 		>
 			<div className={css.MobileCardComponentContainer}>
 				<div
 					className={classNames(css.MobileCardComponent, small && css.small)}
 				>
-					{cards[0].props.category === 'hermit' && (
+					{card.category === 'hermit' && (
 						<div>
 							<img
 								className={css.headInList}
-								src={`/images/hermits-emoji/${cards[0].props.id.split('_')[0]}.png`}
+								src={`/images/hermits-emoji/${card.id.split('_')[0]}.png`}
 							/>
 							{small && (
 								<div
-									className={classNames(
-										css.rarityStar,
-										css[cards[0].props.rarity],
-									)}
+									className={classNames(css.rarityStar, css[card.rarity])}
 								></div>
 							)}
 						</div>
 					)}
-					{(cards[0].props.category === 'attach' ||
-						cards[0].props.category === 'single_use') && (
+					{(card.category === 'attach' || card.category === 'single_use') && (
 						<img
 							className={css.headInList}
-							src={`/images/effects/${cards[0].props.id}.png`}
+							src={`/images/effects/${card.id}.png`}
 						/>
 					)}
-					{cards[0].props.category === 'item' && isItem(cards[0].props) && (
+					{card.category === 'item' && isItem(card) && (
 						<div>
 							<img
 								className={css.headInList}
-								src={getCardTypeIcon(cards[0].props.type)}
+								src={getCardTypeIcon(card.type)}
 							/>
 							{small && (
 								<div
-									className={classNames(
-										css.rarityStar,
-										css[cards[0].props.rarity],
-									)}
+									className={classNames(css.rarityStar, css[card.rarity])}
 								></div>
 							)}
 						</div>
@@ -78,17 +69,15 @@ const MobileCardComponent = (props: CardReactProps) => {
 
 					{!small && (
 						<div>
-							{cards[0].props.name}{' '}
-							{cards[0].props.category === 'hermit' && (
-								<span>{getRarity(cards[0].props)}</span>
-							)}
+							{card.name}{' '}
+							{card.category === 'hermit' && <span>{getRarity(card)}</span>}
 						</div>
 					)}
 
 					<div className={css.amount}>x{cards.length}</div>
 					{!small && (
 						<div className={css.tokens}>
-							{getDeckCost(cards.map((card) => card.props))}
+							{getDeckCost(cards.map((card) => CARDS[card.id]))}
 						</div>
 					)}
 				</div>
