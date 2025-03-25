@@ -11,6 +11,7 @@ import {useSelector} from 'react-redux'
 import EditDeck from './deck-edit'
 import SelectDeck from './deck-select'
 import css from './deck.module.scss'
+import {CARDS} from 'common/cards'
 
 export const cardGroupHeader = (
 	title: string,
@@ -20,7 +21,7 @@ export const cardGroupHeader = (
 		{`${title} `}
 		<span style={{fontSize: '0.9rem'}}>{`(${cards.length}) `}</span>
 		<span className={classNames(css.tokens, css.tokenHeader)}>
-			{getDeckCost(cards.map((card) => card.props))} tokens
+			{getDeckCost(cards.map((card) => CARDS[card.id]))} tokens
 		</span>
 	</p>
 )
