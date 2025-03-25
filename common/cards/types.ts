@@ -16,7 +16,6 @@ import type {
 	TokenCostT,
 	TypeT,
 } from '../types/cards'
-import type {WithoutFunctions} from '../types/server-requests'
 import {FormattedTextNode} from '../utils/formatting'
 
 export type Card = {
@@ -54,13 +53,9 @@ export type Item = Card & {
 	energy: Array<TypeT>
 }
 
-export function isItem(
-	props: WithoutFunctions<Card>,
-): props is WithoutFunctions<Item>
 export function isItem(props: Card): props is Item
-export function isItem(
-	props: Card | WithoutFunctions<Card> | null,
-): props is Item {
+export function isItem(props: Card): props is Item
+export function isItem(props: Card | null): props is Item {
 	return props !== null && 'item' in props
 }
 
@@ -68,13 +63,9 @@ export type HasHealth = Card & {
 	health: number
 }
 
-export function isHealth(
-	props: WithoutFunctions<Card>,
-): props is WithoutFunctions<HasHealth>
 export function isHealth(props: Card): props is HasHealth
-export function isHealth(
-	props: Card | WithoutFunctions<Card> | null,
-): props is HasHealth {
+export function isHealth(props: Card): props is HasHealth
+export function isHealth(props: Card | null): props is HasHealth {
 	return props !== null && 'health' in props
 }
 
@@ -82,12 +73,10 @@ export type Description = Card & {
 	description: string
 }
 
-export function hasDescription(
-	props: WithoutFunctions<Card>,
-): props is WithoutFunctions<Description>
+export function hasDescription(props: Card): props is Description
 export function hasDescription(props: Card): props is Description
 export function hasDescription(
-	props: Card | WithoutFunctions<Card> | null,
+	props: Card | Card | null,
 ): props is Description {
 	return props !== null && 'description' in props
 }
@@ -106,13 +95,9 @@ export type Hermit = HasHealth & {
 	background?: 'alter_egos' | 'advent_of_tcg' | 'advent_of_tcg_ii'
 }
 
-export function isHermit(
-	props: WithoutFunctions<Card>,
-): props is WithoutFunctions<Hermit>
 export function isHermit(props: Card): props is Hermit
-export function isHermit(
-	props: Card | WithoutFunctions<Card> | null,
-): props is Hermit {
+export function isHermit(props: Card): props is Hermit
+export function isHermit(props: Card | null): props is Hermit {
 	return props !== null && 'hermit' in props
 }
 
@@ -122,13 +107,9 @@ export type Attach = Card &
 		getFormattedDescription(): FormattedTextNode
 	}
 
-export function isAttach(
-	props: WithoutFunctions<Card>,
-): props is WithoutFunctions<Attach>
 export function isAttach(props: Card): props is Attach
-export function isAttach(
-	props: Card | WithoutFunctions<Card> | null,
-): props is Attach {
+export function isAttach(props: Card): props is Attach
+export function isAttach(props: Card | null): props is Attach {
 	return props !== null && 'attachable' in props
 }
 
@@ -141,12 +122,8 @@ export type SingleUse = Card &
 		getFormattedDescription(): FormattedTextNode
 	}
 
-export function isSingleUse(
-	props: WithoutFunctions<Card>,
-): props is WithoutFunctions<SingleUse>
 export function isSingleUse(props: Card): props is SingleUse
-export function isSingleUse(
-	props: Card | WithoutFunctions<Card> | null,
-): props is SingleUse {
+export function isSingleUse(props: Card): props is SingleUse
+export function isSingleUse(props: Card | null): props is SingleUse {
 	return props !== null && 'singleUse' in props
 }

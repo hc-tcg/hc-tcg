@@ -1,12 +1,11 @@
 import classnames from 'classnames'
 import {getCardImage, getCardRankIcon} from 'common/cards/card'
 import {Item} from 'common/cards/types'
-import {WithoutFunctions} from 'common/types/server-requests'
 import {memo} from 'react'
 import css from './item-card-svg.module.scss'
 
 export type ItemCardProps = {
-	card: WithoutFunctions<Item> | Item
+	card: Item
 	displayTokenCost: boolean
 }
 

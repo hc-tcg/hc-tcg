@@ -6,12 +6,11 @@ import {
 	getHermitBackground,
 } from 'common/cards/card'
 import {Hermit} from 'common/cards/types'
-import {WithoutFunctions} from 'common/types/server-requests'
 import {memo} from 'react'
 import css from './hermit-card-svg.module.scss'
 
 export type HermitCardProps = {
-	card: WithoutFunctions<Hermit> | Hermit
+	card: Hermit
 	displayTokenCost: boolean
 }
 

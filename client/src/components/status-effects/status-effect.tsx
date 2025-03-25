@@ -1,10 +1,10 @@
 import classnames from 'classnames'
+import {STATUS_EFFECTS} from 'common/status-effects'
 import {isCounter} from 'common/status-effects/status-effect'
 import {LocalStatusEffectInstance} from 'common/types/server-requests'
 import Tooltip from 'components/tooltip'
 import StatusEffectTooltip from './status-effect-tooltip'
 import css from './status-effect.module.scss'
-import {STATUS_EFFECTS} from 'common/status-effects'
 
 interface StatusEffectReactProps
 	extends React.DetailedHTMLProps<

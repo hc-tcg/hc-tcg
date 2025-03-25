@@ -1,8 +1,8 @@
 import classnames from 'classnames'
+import {STATUS_EFFECTS} from 'common/status-effects'
 import {isCounter} from 'common/status-effects/status-effect'
 import {LocalStatusEffectInstance} from 'common/types/server-requests'
 import css from './status-effect-tooltip.module.scss'
-import {STATUS_EFFECTS} from 'common/status-effects'
 
 type Props = {
 	statusEffect: LocalStatusEffectInstance

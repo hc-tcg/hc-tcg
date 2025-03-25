@@ -21,17 +21,6 @@ export type PlayerInfo = {
 	playerDeck: Deck | null
 }
 
-/* A type to remove functions from.props to prevent issues when sending cards to the cient */
-export type WithoutFunctions<Type> = {
-	[Property in keyof Type]: Type[Property] extends Function
-		? never
-		: Type[Property]
-}
-
-export function WithoutFunctions<T>(t: T): WithoutFunctions<T> {
-	return t as WithoutFunctions<T>
-}
-
 export type LocalCardInstance<CardType extends Card = Card> = {
 	readonly id: CardType['numericId']
 	readonly entity: CardEntity

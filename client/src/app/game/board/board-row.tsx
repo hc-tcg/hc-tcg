@@ -1,5 +1,6 @@
 import cn from 'classnames'
 import {PlayerEntity, RowEntity, SlotEntity} from 'common/entities'
+import {STATUS_EFFECTS} from 'common/status-effects'
 import {BoardSlotTypeT, SlotTypeT} from 'common/types/cards'
 import {LocalRowState} from 'common/types/game-state'
 import {LocalCardInstance} from 'common/types/server-requests'
@@ -18,7 +19,6 @@ import HealthSlot from './board-health'
 import Slot from './board-slot'
 import StatusEffectContainer from './board-status-effects'
 import css from './board.module.scss'
-import {STATUS_EFFECTS} from 'common/status-effects'
 
 const getSlotByLocation = (
 	slotType: SlotTypeT,
