@@ -1,10 +1,12 @@
-import {HasHealth, isHermit, isItem} from 'common/cards/types'
+import {Card, HasHealth, isHermit, isItem, Item} from 'common/cards/types'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {ChangeActiveHermitActionData} from 'common/types/turn-action-data'
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {LocalMessageTable, localMessages} from 'logic/messages'
 import {put, select} from 'typed-redux-saga'
 import {getGameState, getPlayerState} from './game-selectors'
+import {CARDS} from 'common/cards'
+import {ItemCardProps} from 'components/card/item-card-svg'
 
 // This file has routines to force the client to update before a message is recieved from the server.
 
@@ -37,9 +39,7 @@ export function* localPutCardInSlot(
 		board.rows[row].hermit.card === null
 	) {
 		board.rows[row].hermit = {slot: slot.slotEntity, card: selectedCard as any}
-		board.rows[row].health = (
-			selectedCard as LocalCardInstance<HasHealth>
-		).props.health
+		board.rows[row].health = (CARDS[selectedCard.id] as HasHealth).health
 
 		if (!board.activeRow) {
 			board.activeRow = board.rows[row].entity
@@ -71,25 +71,22 @@ export function* localPutCardInSlot(
 
 		// When we place a item card, lets update the available actions to include what we have enough
 		// energy for.
-		let hermit = board.rows[row].hermit
+		let hermit =
+			board.rows[row].hermit.card && CARDS[board.rows[row].hermit.card.id]
 		let rowEnergy = board.rows[row].items.flatMap((item) => {
-			if (!item.card || !isItem(item.card.props)) return []
-			return item.card.props.energy
+			if (!item.card || !isItem(CARDS[item.card.id])) return []
+			return (CARDS[item.card.id] as Item).energy
 		})
-		if (
-			hermit.card &&
-			isHermit(hermit.card.props) &&
-			isItem(selectedCard.props)
-		) {
+		if (hermit && isHermit(hermit) && isItem(CARDS[selectedCard.id])) {
 			if (
-				hasEnoughEnergy(hermit.card.props.primary.cost, rowEnergy, false) &&
-				!hermit.card.props.primary.passive
+				hasEnoughEnergy(hermit.primary.cost, rowEnergy, false) &&
+				!hermit.primary.passive
 			) {
 				gameState.turn.availableActions.push('PRIMARY_ATTACK')
 			}
 			if (
-				hasEnoughEnergy(hermit.card.props.secondary.cost, rowEnergy, false) &&
-				!hermit.card.props.secondary.passive
+				hasEnoughEnergy(hermit.secondary.cost, rowEnergy, false) &&
+				!hermit.secondary.passive
 			) {
 				gameState.turn.availableActions.push('SECONDARY_ATTACK')
 			}

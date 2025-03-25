@@ -1,6 +1,5 @@
 import classNames from 'classnames'
 import type {Card as CardType} from 'common/cards/types'
-import {WithoutFunctions} from 'common/types/server-requests'
 import Card from 'components/card'
 import {Modal} from 'components/modal'
 import css from './import-export.module.scss'
@@ -32,7 +31,7 @@ export function ScreenshotDeckModal({setOpen, cards, onClose}: Props) {
 					{cards.map((card, i) => {
 						return (
 							<Card
-								card={WithoutFunctions(card)}
+								card={card.numericId}
 								displayTokenCost={false}
 								key={i}
 								tooltipAboveModal={true}
@@ -50,7 +49,7 @@ export function ScreenshotDeckModal({setOpen, cards, onClose}: Props) {
 					{cards.map((card, i) => {
 						return (
 							<Card
-								card={WithoutFunctions(card)}
+								card={card.numericId}
 								displayTokenCost={false}
 								key={i}
 								tooltipAboveModal={true}

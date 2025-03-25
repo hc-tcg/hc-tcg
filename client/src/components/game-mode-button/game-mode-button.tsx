@@ -19,6 +19,7 @@ import {
 import {useSelector} from 'react-redux'
 import {FilterComponent} from '../../app/deck/deck-select'
 import css from './game-mode-button.module.scss'
+import {CARDS} from 'common/cards'
 
 interface GameModeButtonProps {
 	image: string
@@ -383,7 +384,7 @@ GameModeButton.ChooseDeck = ({
 				(!compareTag || deck.tags?.find((tag) => tag.key === compareTag)) &&
 				(!compareType ||
 					compareType === 'any' ||
-					getDeckTypes(deck.cards.map((card) => card.props.id)).includes(
+					getDeckTypes(deck.cards.map((card) => CARDS[card.id].id)).includes(
 						compareType,
 					)) &&
 				(!compareName ||
