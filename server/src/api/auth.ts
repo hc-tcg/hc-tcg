@@ -54,7 +54,13 @@ export async function authenticateUser(
 		const k = p[0]
 		const v = p[1]
 
-		if (!(k in achievements)) newAchievements[Number(k)] = v
+		if (
+			!(k in achievements) ||
+			achievements.achievementData[Number(k)] !==
+				userInfo.body.achievements.achievementData[Number(k)]
+		) {
+			newAchievements[Number(k)] = v
+		}
 	})
 
 	userInfo.body.achievements = {achievementData: newAchievements}
