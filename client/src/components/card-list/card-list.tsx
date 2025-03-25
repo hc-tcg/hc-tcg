@@ -8,6 +8,7 @@ import {
 } from 'common/types/server-requests'
 import {CSSTransition, TransitionGroup} from 'react-transition-group'
 import StatusEffectContainer from '../../app/game/board/board-status-effects'
+import {CARDS} from 'common/cards'
 
 type CardListProps = {
 	cards: Array<LocalCardInstance>
@@ -44,7 +45,7 @@ const CardList = (props: CardListProps) => {
 		const isPicked = !!picked?.find(
 			(pickedCard) => card.entity === pickedCard.entity,
 		)
-		const isDisabled = !!disabled?.find((id) => id == card.props.id)
+		const isDisabled = !!disabled?.find((id) => id == CARDS[card.id].id)
 		const isUnpickable = !!unpickable?.find(
 			(findCard) => findCard.entity === card.entity,
 		)
@@ -55,7 +56,7 @@ const CardList = (props: CardListProps) => {
 					[css.clickable]: !!onClick && !isDisabled,
 				})}
 				onClick={onClick && !isDisabled ? () => onClick(card) : undefined}
-				card={card.props}
+				card={card.id}
 				unpickable={isUnpickable}
 				disabled={isDisabled}
 				selected={isSelected}
