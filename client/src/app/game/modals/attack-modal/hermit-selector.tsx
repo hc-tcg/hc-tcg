@@ -33,11 +33,11 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 	if (!activeRow || !playerState || !activeRow.hermit) return null
 	if (!opponentRow || !opponentRow.hermit) return null
 
-	const playerHermitInfo = activeRow.hermit
-	if (!playerHermitInfo.card || !isHermit(playerHermitInfo.card.props))
-		return null
+	const playerHermitInfo =
+		activeRow.hermit.card && CARDS[activeRow.hermit.card.id]
+	if (!playerHermitInfo || !isHermit(playerHermitInfo)) return null
 
-	const hermitFullName = playerHermitInfo.card.props.id.split('_')[0]
+	const hermitFullName = CARDS[playerHermitInfo.id].id.split('_')[0]
 
 	const eaResult = extraAttacks.reduce(
 		(agg, extra) => {
@@ -87,7 +87,7 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 				</div>
 				<div className={css.info}>
 					<div className={css.name}>
-						{playerHermitInfo.card.props.secondary.name}
+						{playerHermitInfo.secondary.name}
 						<span className={css.select}> Select a hermit...</span>
 					</div>
 					<button className={css.hermitOptions}>{hermitOptions}</button>
