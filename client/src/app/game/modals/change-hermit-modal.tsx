@@ -6,6 +6,7 @@ import {getGameState} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
+import {CARDS} from 'common/cards'
 
 type Props = {
 	closeModal: () => void
@@ -26,7 +27,7 @@ function ChangeHermitModal({closeModal, info}: Props) {
 		throw new Error('This should never happen')
 	}
 
-	const hermitName = info.card?.props.name || ''
+	const hermitName = (info.card && CARDS[info.card.id].name) || ''
 	const hasActiveHermit = playerState.board.activeRow !== null
 	const canChange =
 		!hasActiveHermit || availableActions.includes('CHANGE_ACTIVE_HERMIT')
