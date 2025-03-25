@@ -101,7 +101,7 @@ const Card = (props: CardReactProps) => {
 					>
 						<img
 							className={css.renderedCardImage}
-							src={getRenderedCardImage(props.card, displayTokenCost)}
+							src={getRenderedCardImage(cardProps, displayTokenCost)}
 						/>
 					</div>
 				)}
