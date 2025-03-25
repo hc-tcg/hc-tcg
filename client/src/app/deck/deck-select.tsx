@@ -40,6 +40,7 @@ import {cardGroupHeader} from './deck'
 import {iconDropdownOptions} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import {CARDS} from 'common/cards'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -206,7 +207,7 @@ function SelectDeck({
 				(!compareTag || deck.tags?.find((tag) => tag.key === compareTag)) &&
 				(!compareType ||
 					compareType === 'any' ||
-					getDeckTypes(deck.cards.map((card) => card.props.id)).includes(
+					getDeckTypes(deck.cards.map((card) => CARDS[card.id].id)).includes(
 						compareType,
 					)) &&
 				(!compareName ||
@@ -356,19 +357,21 @@ function SelectDeck({
 
 	const currentDeck = loadedDeck
 	const validationResult = validateDeck(
-		currentDeck.cards.map((card) => card.props),
+		currentDeck.cards.map((card) => CARDS[card.id]),
 	)
 
 	const selectedCards = {
 		hermits: currentDeck.cards.filter(
-			(card) => card.props.category === 'hermit',
+			(card) => CARDS[card.id].category === 'hermit',
 		),
-		items: currentDeck.cards.filter((card) => card.props.category === 'item'),
+		items: currentDeck.cards.filter(
+			(card) => CARDS[card.id].category === 'item',
+		),
 		attachableEffects: currentDeck.cards.filter(
-			(card) => card.props.category === 'attach',
+			(card) => CARDS[card.id].category === 'attach',
 		),
 		singleUseEffects: currentDeck.cards.filter(
-			(card) => card.props.category === 'single_use',
+			(card) => CARDS[card.id].category === 'single_use',
 		),
 	}
 
@@ -447,7 +450,9 @@ function SelectDeck({
 			/>
 			<ScreenshotDeckModal
 				setOpen={showScreenshotModal}
-				cards={sortCardInstances(loadedDeck.cards).map((card) => card.props)}
+				cards={sortCardInstances(loadedDeck.cards).map(
+					(card) => CARDS[card.id],
+				)}
 				onClose={() => setShowScreenshotModal(false)}
 			/>
 			<TagsModal
@@ -518,8 +523,10 @@ function SelectDeck({
 								</p>
 								<div className={css.cardCount}>
 									<p className={css.tokens}>
-										{getDeckCost(loadedDeck.cards.map((card) => card.props))}/
-										{CONFIG.limits.maxDeckCost}{' '}
+										{getDeckCost(
+											loadedDeck.cards.map((card) => CARDS[card.id]),
+										)}
+										/{CONFIG.limits.maxDeckCost}{' '}
 										<span className={css.hideOnMobile}>tokens</span>
 									</p>
 								</div>
@@ -575,8 +582,10 @@ function SelectDeck({
 										{loadedDeck.cards.length}/{CONFIG.limits.maxCards}
 									</div>
 									<div className={classNames(css.mobileDeckStat, css.tokens)}>
-										{getDeckCost(loadedDeck.cards.map((card) => card.props))}/
-										{CONFIG.limits.maxDeckCost}
+										{getDeckCost(
+											loadedDeck.cards.map((card) => CARDS[card.id]),
+										)}
+										/{CONFIG.limits.maxDeckCost}
 									</div>
 								</div>
 							</div>
