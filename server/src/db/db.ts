@@ -2077,6 +2077,9 @@ export class Database {
 						r.push({achievement: achievementId, goals, oldGoals})
 					}
 
+					if (!achievementGoalProgress[achievementId]) {
+						achievementGoalProgress[achievementId] = {goals: {}, levels: []}
+					}
 					achievementGoalProgress[achievementId].goals[goalId] = updatedProgress
 
 					return r
