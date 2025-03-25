@@ -1,4 +1,6 @@
+import classNames from 'classnames'
 import {CARDS, CARDS_LIST} from 'common/cards'
+import {Card, isHermit, isItem} from 'common/cards/types'
 import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
 import {CardEntity, newEntity} from 'common/entities'
 import {Deck, Tag} from 'common/types/deck'
@@ -26,8 +28,6 @@ import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import {Card, isHermit, isItem} from 'common/cards/types'
-import classNames from 'classnames'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const ITEM_DECK_ICONS = [

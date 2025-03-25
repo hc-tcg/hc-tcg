@@ -1,3 +1,4 @@
+import {CARDS} from 'common/cards'
 import {SlotInfo} from 'common/types/server-requests'
 import Button from 'components/button'
 import {Modal} from 'components/modal'
@@ -6,7 +7,6 @@ import {getGameState} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
-import {CARDS} from 'common/cards'
 
 type Props = {
 	closeModal: () => void

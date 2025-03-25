@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import {CARDS} from 'common/cards'
 import BerryBush from 'common/cards/advent-of-tcg/attach/berry-bush'
 import Dropper from 'common/cards/advent-of-tcg/single-use/dropper'
 import Glowstone from 'common/cards/advent-of-tcg/single-use/glowstone'
@@ -41,7 +42,6 @@ import {useEffect, useReducer, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CosmeticPreview} from './achievements'
 import css from './play-select.module.scss'
-import {CARDS} from 'common/cards'
 
 type Props = {
 	setMenuSection: (section: string) => void

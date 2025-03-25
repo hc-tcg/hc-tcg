@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import {CARDS} from 'common/cards'
 import {ButtonVariant} from 'common/types/buttons'
 import {Deck, Tag} from 'common/types/deck'
 import {getDeckTypes} from 'common/utils/decks'
@@ -19,7 +20,6 @@ import {
 import {useSelector} from 'react-redux'
 import {FilterComponent} from '../../app/deck/deck-select'
 import css from './game-mode-button.module.scss'
-import {CARDS} from 'common/cards'
 
 interface GameModeButtonProps {
 	image: string

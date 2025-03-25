@@ -2,10 +2,7 @@ import {CARDS} from '../cards'
 import {type Card, isHermit, isItem} from '../cards/types'
 import type {CardEntity} from '../entities'
 import type {CardCategoryT} from '../types/cards'
-import type {
-	LocalCardInstance,
-	WithoutFunctions,
-} from '../types/server-requests'
+import type {LocalCardInstance} from '../types/server-requests'
 
 /**
  * Returns true if the two cards are equal

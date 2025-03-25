@@ -1,3 +1,4 @@
+import {CARDS} from 'common/cards'
 import {isSingleUse} from 'common/cards/types'
 import {LocalGameState} from 'common/types/game-state'
 import {LocalCardInstance} from 'common/types/server-requests'
@@ -6,7 +7,6 @@ import {SagaIterator} from 'redux-saga'
 import {call, put} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
 import {getPlayerEntity} from '../game-selectors'
-import {CARDS} from 'common/cards'
 
 function* singleUseSaga(card: LocalCardInstance): SagaIterator {
 	let cardProps = CARDS[card.id]

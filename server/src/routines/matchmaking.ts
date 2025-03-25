@@ -1,4 +1,5 @@
 import assert from 'assert'
+import {CARDS} from 'common/cards'
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
 import {
 	AchievementComponent,
@@ -50,7 +51,6 @@ import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import {TurnActionCompressor} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
-import {CARDS} from 'common/cards'
 
 function setupGame(
 	player1: PlayerModel,

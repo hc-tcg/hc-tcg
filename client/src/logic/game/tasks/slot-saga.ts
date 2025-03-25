@@ -1,3 +1,4 @@
+import {CARDS} from 'common/cards'
 import FrozenEffect from 'common/status-effects/frozen'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {slotToPlayCardAction} from 'common/types/turn-action-data'
@@ -14,7 +15,6 @@ import {SagaIterator} from 'redux-saga'
 import {call, put, putResolve, take, takeLeading} from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
 import {localPutCardInSlot} from '../local-state'
-import {CARDS} from 'common/cards'
 
 function* pickForPickRequestSaga(
 	action: LocalMessageTable[typeof localMessages.GAME_SLOT_PICKED],

@@ -1,4 +1,5 @@
 import cn from 'classnames'
+import {CARDS} from 'common/cards'
 import {DEBUG_CONFIG} from 'common/config'
 import {PlayerEntity} from 'common/entities'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
@@ -36,7 +37,6 @@ import Chat from './chat'
 import EndGameOverlay from './end-game-overlay'
 import css from './game.module.scss'
 import Toolbar from './toolbar'
-import {CARDS} from 'common/cards'
 
 const renderModal = (
 	openedModal: {id: ModalVariant; info: any} | null,

@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import {CARDS} from 'common/cards'
 import {Deck} from 'common/types/deck'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {getDeckCost} from 'common/utils/ranks'
@@ -11,7 +12,6 @@ import {useSelector} from 'react-redux'
 import EditDeck from './deck-edit'
 import SelectDeck from './deck-select'
 import css from './deck.module.scss'
-import {CARDS} from 'common/cards'
 
 export const cardGroupHeader = (
 	title: string,

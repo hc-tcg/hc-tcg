@@ -1,12 +1,11 @@
-import {Card, HasHealth, isHermit, isItem, Item} from 'common/cards/types'
+import {CARDS} from 'common/cards'
+import {HasHealth, Item, isHermit, isItem} from 'common/cards/types'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {ChangeActiveHermitActionData} from 'common/types/turn-action-data'
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {LocalMessageTable, localMessages} from 'logic/messages'
 import {put, select} from 'typed-redux-saga'
 import {getGameState, getPlayerState} from './game-selectors'
-import {CARDS} from 'common/cards'
-import {ItemCardProps} from 'components/card/item-card-svg'
 
 // This file has routines to force the client to update before a message is recieved from the server.
 

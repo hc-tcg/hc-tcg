@@ -2,13 +2,13 @@ import cn from 'classnames'
 import CardComponent from 'components/card'
 import css from './card-list.module.scss'
 
+import {CARDS} from 'common/cards'
 import {
 	LocalCardInstance,
 	LocalStatusEffectInstance,
 } from 'common/types/server-requests'
 import {CSSTransition, TransitionGroup} from 'react-transition-group'
 import StatusEffectContainer from '../../app/game/board/board-status-effects'
-import {CARDS} from 'common/cards'
 
 type CardListProps = {
 	cards: Array<LocalCardInstance>

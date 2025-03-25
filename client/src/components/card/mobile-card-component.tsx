@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import {CARDS} from 'common/cards'
 import {getCardTypeIcon} from 'common/cards/card'
 import {isItem} from 'common/cards/types'
 import {LocalCardInstance} from 'common/types/server-requests'
@@ -6,7 +7,6 @@ import {getDeckCost} from 'common/utils/ranks'
 import Tooltip from 'components/tooltip'
 import CardInstanceTooltip, {getRarity} from './card-tooltip'
 import css from './card.module.scss'
-import {CARDS} from 'common/cards'
 
 interface CardReactProps
 	extends React.DetailedHTMLProps<

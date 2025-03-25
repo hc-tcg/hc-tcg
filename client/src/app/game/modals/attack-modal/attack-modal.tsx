@@ -1,3 +1,4 @@
+import {CARDS} from 'common/cards'
 import {SingleUse, isHermit} from 'common/cards/types'
 import {Modal} from 'components/modal'
 import {
@@ -9,7 +10,6 @@ import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useSelector} from 'react-redux'
 import {getOpponentActiveRow, getPlayerActiveRow} from '../../game-selectors'
 import Attack from './attack'
-import {CARDS} from 'common/cards'
 
 type Props = {
 	closeModal: () => void
