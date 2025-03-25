@@ -1,21 +1,25 @@
-import classNames from 'classnames'
-import {CARDS_LIST} from 'common/cards'
-import {isHermit, isItem} from 'common/cards/types'
-import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
-import {CardEntity, newEntity} from 'common/entities'
-import {Deck, Tag} from 'common/types/deck'
-import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
-import {sortCardInstances} from 'common/utils/cards'
-import {generateDatabaseCode} from 'common/utils/database-codes'
-import {getCardRank, getDeckCost} from 'common/utils/ranks'
-import {getIconPath} from 'common/utils/state-gen'
-import {validateDeck} from 'common/utils/validation'
-import Accordion from 'components/accordion'
-import Button from 'components/button'
-import CardList from 'components/card-list'
-import MobileCardList from 'components/card-list/mobile-card-list'
-import Checkbox from 'components/checkbox'
+import classNames from 'class {names'
+let card = CARDS[card.id]'
+	return (
+	import {CARDS, CARDS_LIST} rom '(common/cards'
+cardsItem} from 'common/cards/types'
+	import {EXPANSIONS, ExpansionT} from 'common/const/expansions'
+	import {CardEntity, newEntity} from 'common/entities'
+	import {Deck, Tag} from 'common/types/deck'
+	import {LocalCardInstance} from 'common/types/server-requests'
+	import {sortCardInstances} from 'common/utils/cards'
+	import {generateDatabaseCode} from 'common/utils/database-codes'
+	import {getCardRank, getDeckCost} from 'common/utils/ranks'
+	import {getIconPath} from 'common/utils/state-gen'
+	import {validateDeck} from 'common/utils/validation'
+	import Accordion from 'components/accordion'
+	import Button from 'components/button'
+	import CardList from 'components/card-list'
+	import MobileCardList from 'components/card-list/mobile-card-list'
+	import Checkbox from 'components/checkbox'
 import Dropdown from 'components/dropdown'
+)
+}
 import ColorPickerDropdown from 'components/dropdown/color-picker-dropdown'
 import {ConfirmModal} from 'components/modal'
 import errorIcon from 'components/svgs/errorIcon'
@@ -28,6 +32,7 @@ import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import { Card, isHermit, isItem } from 'common/cards/types'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const ITEM_DECK_ICONS = [
@@ -240,7 +245,7 @@ const ALL_CARDS = sortCardInstances(
 			),
 	).map(
 		(card): LocalCardInstance => ({
-			props: WithoutFunctions(card),
+			id: card.numericId,
 			entity: newEntity('deck_editor_card'),
 			slot: null,
 			attackHint: null,
@@ -325,36 +330,43 @@ function EditDeck({
 
 	const filteredCards: LocalCardInstance[] = sortCardInstances(
 		ALL_CARDS.filter(
-			(card) =>
-				// Card Name Filter
-				card.props.name
-					.toLowerCase()
-					.includes(deferredTextQuery.toLowerCase()) &&
-				// Card Rarity Filter
-				(rankQuery === '' || getCardRank(card.props.tokens) === rankQuery) &&
-				// Card Type Filter
-				(typeQuery === '' ||
-					!(isHermit(card.props) || isItem(card.props)) ||
-					((isHermit(card.props) || isItem(card.props)) &&
-						card.props.type.includes(typeQuery))) &&
-				// Card Expansion Filter
-				(expansionQuery.length === 0 ||
-					expansionQuery.includes(card.props.expansion)) &&
-				// Don't show disabled cards
-				EXPANSIONS[card.props.expansion].disabled === false,
+			(card_) => {
+				let card = CARDS[card_.id] as Card
+				return (
+					// Card Name Filter
+					card.name
+						.toLowerCase()
+						.includes(deferredTextQuery.toLowerCase()) &&
+					// Card Rarity Filter
+					(rankQuery === '' ||
+						getCardRank(card.tokens) === rankQuery) &&
+					// Card Type Filter
+					(typeQuery === '' ||
+						!(isHermit(card) || isItem(card)) ||
+						((isHermit(card) || isItem(card)) &&
+							card.type.includes(typeQuery))) &&
+					// Card Expansion Filter
+					(expansionQuery.length === 0 ||
+						expansionQuery.includes(card.expansion)) &&
+					// Don't show disabled cards
+					EXPANSIONS[card.expansion].disabled === false
+				)
+			}
 		),
 	)
 
 	const selectedCards = {
 		hermits: loadedDeck.cards.filter(
-			(card) => card.props.category === 'hermit',
+			(card) => CARDS[card.id].category === 'hermit',
 		),
-		items: loadedDeck.cards.filter((card) => card.props.category === 'item'),
+		items: loadedDeck.cards.filter(
+			(card) => CARDS[card.id].category === 'item',
+		),
 		attachableEffects: loadedDeck.cards.filter(
-			(card) => card.props.category === 'attach',
+			(card) => CARDS[card.id].category === 'attach',
 		),
 		singleUseEffects: loadedDeck.cards.filter(
-			(card) => card.props.category === 'single_use',
+			(card) => CARDS[card.id].category === 'single_use',
 		),
 	}
 
@@ -363,13 +375,13 @@ function EditDeck({
 		setLoadedDeck({...loadedDeck, cards: []})
 	}
 	const addCard = (card: LocalCardInstance) => {
-		console.log('Card: ', card.props.id)
+		console.log('Card: ', CARDS[card.id].id)
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
 			cards: [
 				...loadedDeck.cards,
 				{
-					props: card.props,
+					id: card.id,
 					entity: newEntity('card-entity') as CardEntity,
 					slot: null,
 					turnedOver: false,
@@ -478,7 +490,7 @@ function EditDeck({
 		back()
 	}
 	const validationResult = validateDeck(
-		loadedDeck.cards.map((card) => card.props),
+		loadedDeck.cards.map((card) => CARDS[card.id]),
 	)
 
 	return (
@@ -598,7 +610,7 @@ function EditDeck({
 					<Accordion header={'Hermits'}>
 						<CardList
 							cards={filteredCards.filter(
-								(card) => card.props.category === 'hermit',
+								(card) => CARDS[card.id].category === 'hermit',
 							)}
 							displayTokenCost={true}
 							disableAnimations={true}
@@ -609,7 +621,7 @@ function EditDeck({
 					<Accordion header={'Attachable Effects'}>
 						<CardList
 							cards={filteredCards.filter(
-								(card) => card.props.category === 'attach',
+								(card) => CARDS[card.id].category === 'attach',
 							)}
 							displayTokenCost={true}
 							disableAnimations={true}
@@ -620,7 +632,7 @@ function EditDeck({
 					<Accordion header={'Single Use Effects'}>
 						<CardList
 							cards={filteredCards.filter(
-								(card) => card.props.category === 'single_use',
+								(card) => CARDS[card.id].category === 'single_use',
 							)}
 							displayTokenCost={true}
 							disableAnimations={true}
@@ -631,7 +643,7 @@ function EditDeck({
 					<Accordion header={'Items'}>
 						<CardList
 							cards={filteredCards.filter(
-								(card) => card.props.category === 'item',
+								(card) => CARDS[card.id].category === 'item',
 							)}
 							displayTokenCost={true}
 							disableAnimations={true}
@@ -664,21 +676,21 @@ function EditDeck({
 								>
 									{
 										loadedDeck.cards.filter(
-											(card) => card.props.category === 'hermit',
+											(card) => CARDS[card.id].category === 'hermit',
 										).length
 									}
 									H:
 									{
 										loadedDeck.cards.filter(
 											(card) =>
-												card.props.category === 'attach' ||
-												card.props.category === 'single_use',
+												CARDS[card.id].category === 'attach' ||
+												CARDS[card.id].category === 'single_use',
 										).length
 									}
 									E:
 									{
 										loadedDeck.cards.filter(
-											(card) => card.props.category === 'item',
+											(card) => CARDS[card.id].category === 'item',
 										).length
 									}
 									I
@@ -686,7 +698,7 @@ function EditDeck({
 								<div
 									className={classNames(css.cardCount, css.dark, css.tokens)}
 								>
-									{getDeckCost(loadedDeck.cards.map((card) => card.props))}/
+									{getDeckCost(loadedDeck.cards.map((card) => CARDS[card.id]))}/
 									{CONFIG.limits.maxDeckCost}{' '}
 									<span className={css.hideOnMobile}>tokens</span>
 								</div>
