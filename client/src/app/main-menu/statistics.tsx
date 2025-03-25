@@ -911,9 +911,7 @@ function Statistics({setMenuSection}: Props) {
 						id={css.deck}
 						onClick={() => {
 							setScreenshotDeckModalContents(
-								sortCards(
-									parseDeckCards(game.usedDeck.cards.map((card) => card)),
-								),
+								sortCards(game.usedDeck.cards.map((card) => CARDS[card.id])),
 							)
 						}}
 					>
