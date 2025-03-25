@@ -8,6 +8,9 @@ import BdoubleO100Common from './bdoubleo100-common'
 import BdoubleO100Rare from './bdoubleo100-rare'
 import TangoTekCommon from './tangotek-common'
 import TangoTekRare from './tangotek-rare'
+import BoomerBdubsCommon from './boomerbdubs-common'
+import SteampunkTangoCommon from './steampunktango-common'
+import SteampunkTangoRare from './steampunktango-rare'
 
 const ImpulseSVRare: Hermit = {
 	...hermit,
@@ -53,6 +56,10 @@ const ImpulseSVRare: Hermit = {
 						BdoubleO100Rare,
 						TangoTekCommon,
 						TangoTekRare,
+						BoomerBdubsCommon,
+						BoomerBdubsRare,
+						SteampunkTangoCommon,
+						SteampunkTangoRare,
 					),
 					query.not(query.card.active),
 				).length
