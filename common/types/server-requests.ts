@@ -41,10 +41,8 @@ export type LocalCardInstance<CardType extends Card = Card> = {
 	readonly prizeCard: boolean
 }
 
-export type LocalStatusEffectInstance<
-	Props extends StatusEffect = StatusEffect,
-> = {
-	readonly props: WithoutFunctions<Props>
+export type LocalStatusEffectInstance = {
+	readonly id: StatusEffect['id']
 	readonly instance: string
 	readonly target:
 		| {

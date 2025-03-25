@@ -18,6 +18,7 @@ import HealthSlot from './board-health'
 import Slot from './board-slot'
 import StatusEffectContainer from './board-status-effects'
 import css from './board.module.scss'
+import {STATUS_EFFECTS} from 'common/status-effects'
 
 const getSlotByLocation = (
 	slotType: SlotTypeT,
@@ -144,7 +145,7 @@ const BoardRow = ({
 					(a) =>
 						a.target.type === 'card' &&
 						a.target.card === rowState.hermit.card?.entity &&
-						a.props.type === 'damage',
+						STATUS_EFFECTS[a.id].type === 'damage',
 				)}
 			/>
 			<div className={cn(css.effect, css.slot)}>

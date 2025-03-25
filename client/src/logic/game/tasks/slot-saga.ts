@@ -93,7 +93,7 @@ function* pickWithoutSelectedSaga(
 			(effect) =>
 				effect.target.type === 'card' &&
 				effect.target.card === action.slotInfo.card?.entity &&
-				effect.props.id === FrozenEffect.id,
+				effect.id === FrozenEffect.id,
 		)
 	) {
 		if (settings.confirmationDialogsEnabled) {
