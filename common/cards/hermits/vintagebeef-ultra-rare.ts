@@ -33,7 +33,7 @@ const VintageBeefUltraRare: Hermit = {
 		cost: ['explorer', 'explorer', 'explorer'],
 		damage: 100,
 		power:
-			'If you have AFK Docm77, Bdubs AND Etho on the game board, attack damage doubles.',
+			'If you have a base set AFK Docm77, Bdubs AND Etho on the game board, attack damage doubles.',
 	},
 	onAttach(
 		game: GameModel,
