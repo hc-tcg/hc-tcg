@@ -226,7 +226,7 @@ export class Database {
 				deckInfo.name,
 				deckInfo.icon,
 				deckInfo.iconType,
-				deckInfo.cards.map((card) => card.props.numericId),
+				deckInfo.cards.map((card) => card.id),
 				deckInfo.tags,
 				deckInfo.code,
 				playerUuid,
@@ -611,8 +611,8 @@ export class Database {
 
 				if (
 					cardId !== null &&
-					foundDeck.cards.find((card) => card.props.numericId !== cardId) &&
-					!foundDeck.cards.map((card) => card.props.numericId).includes(cardId)
+					foundDeck.cards.find((card) => card.id !== cardId) &&
+					!foundDeck.cards.map((card) => card.id).includes(cardId)
 				) {
 					foundDeck.cards = [
 						...foundDeck.cards,

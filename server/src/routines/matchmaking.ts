@@ -50,6 +50,7 @@ import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import {TurnActionCompressor} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
+import {CARDS} from 'common/cards'
 
 function setupGame(
 	player1: PlayerModel,
@@ -65,16 +66,12 @@ function setupGame(
 	let con = new GameController(
 		{
 			model: player1,
-			deck: player1Deck.cards
-				.map((card) => card.props.numericId)
-				.sort((a, b) => a - b),
+			deck: player1Deck.cards.map((card) => card.id).sort((a, b) => a - b),
 			score: player1Score,
 		},
 		{
 			model: player2,
-			deck: player2Deck.cards
-				.map((card) => card.props.numericId)
-				.sort((a, b) => a - b),
+			deck: player2Deck.cards.map((card) => card.id).sort((a, b) => a - b),
 			score: player2Score,
 		},
 		{gameCode, spectatorCode, apiSecret, countAchievements: 'all'},
@@ -514,7 +511,7 @@ export function* joinPublicQueue(
 
 	if (
 		!player.deck ||
-		!validateDeck(player.deck.cards.map((card) => card.props)).valid
+		!validateDeck(player.deck.cards.map((card) => CARDS[card.id])).valid
 	) {
 		console.info(
 			'[Join queue] Player tried to join queue with an invalid deck:',
@@ -582,7 +579,7 @@ export function* joinPrivateGame(
 
 	if (
 		!player.deck ||
-		!validateDeck(player.deck.cards.map((card) => card.props)).valid
+		!validateDeck(player.deck.cards.map((card) => CARDS[card.id])).valid
 	) {
 		console.info(
 			'[Join private game] Player tried to join private game with an invalid deck: ',
@@ -898,7 +895,7 @@ export function* createBossGame(
 
 	if (
 		!player.deck ||
-		!validateDeck(player.deck.cards.map((card) => card.props)).valid
+		!validateDeck(player.deck.cards.map((card) => CARDS[card.id])).valid
 	) {
 		console.info(
 			'[Join private game] Player tried to join private game with an invalid deck: ',
@@ -990,7 +987,7 @@ export function* createRematchGame(
 
 	if (
 		!player.deck ||
-		!validateDeck(player.deck.cards.map((card) => card.props)).valid
+		!validateDeck(player.deck.cards.map((card) => CARDS[card.id])).valid
 	) {
 		console.info(
 			'[Join rematch game] Player tried to join private game with an invalid deck: ',
@@ -1242,7 +1239,7 @@ function setupSolitareGame(
 	const con = new GameController(
 		{
 			model: player,
-			deck: playerDeck.cards.map((card) => card.props.numericId),
+			deck: playerDeck.cards.map((card) => CARDS[card.id].numericId),
 			score: 0,
 		},
 		{
