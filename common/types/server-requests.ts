@@ -33,7 +33,7 @@ export function WithoutFunctions<T>(t: T): WithoutFunctions<T> {
 }
 
 export type LocalCardInstance<CardType extends Card = Card> = {
-	readonly props: WithoutFunctions<CardType>
+	readonly id: CardType['numericId']
 	readonly entity: CardEntity
 	readonly slot: SlotEntity | null
 	readonly attackHint: string | null

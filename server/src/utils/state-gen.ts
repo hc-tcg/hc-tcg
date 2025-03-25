@@ -59,7 +59,7 @@ export function getLocalCard<CardType extends Card>(
 	}
 
 	return {
-		props: card.props as WithoutFunctions<CardType>,
+		id: card.props.numericId,
 		entity: card.entity,
 		slot: card.slotEntity,
 		turnedOver: card.turnedOver,

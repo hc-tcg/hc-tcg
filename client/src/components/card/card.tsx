@@ -18,7 +18,7 @@ interface CardReactProps
 		React.ButtonHTMLAttributes<HTMLButtonElement>,
 		HTMLButtonElement
 	> {
-	card: WithoutFunctions<CardObject>
+	card: CardObject
 	displayTokenCost: boolean
 	selected?: boolean
 	picked?: boolean

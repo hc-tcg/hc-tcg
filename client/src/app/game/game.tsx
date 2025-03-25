@@ -36,6 +36,7 @@ import Chat from './chat'
 import EndGameOverlay from './end-game-overlay'
 import css from './game.module.scss'
 import Toolbar from './toolbar'
+import {CARDS} from 'common/cards'
 
 const renderModal = (
 	openedModal: {id: ModalVariant; info: any} | null,
@@ -220,7 +221,7 @@ function Hand({gameOver}: {gameOver: boolean}) {
 
 	const filteredCards = DEBUG_CONFIG.unlimitedCards
 		? gameState.hand.filter((c) =>
-				c.props.name.toLowerCase().includes(filter.toLowerCase()),
+				CARDS[c.id].name.toLowerCase().includes(filter.toLowerCase()),
 			)
 		: gameState.hand
 

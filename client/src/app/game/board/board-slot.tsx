@@ -18,6 +18,7 @@ import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {useSelector} from 'react-redux'
 import StatusEffectContainer from './board-status-effects'
 import css from './board.module.scss'
+import {CARDS} from 'common/cards'
 
 export type SlotProps = {
 	type: SlotTypeT
@@ -126,7 +127,7 @@ const Slot = ({
 					) : (
 						<Card
 							disabled={!!gameOver}
-							card={card.props}
+							card={card.id}
 							displayTokenCost={false}
 						/>
 					)}
