@@ -1370,7 +1370,7 @@ export class Database {
 						SELECT card_id,
 						count(CASE WHEN wins THEN 1 END) as wins,
 						count(CASE WHEN losses THEN 1 END) as losses, 
-						count(deck_code) as included_in_decks, 
+						count(DISTINCT deck_code) as included_in_decks, 
 						count(DISTINCT start_time) as included_in_games,
 						sum(copies) as copies FROM (
 							SELECT cards.card_id,
