@@ -29,13 +29,21 @@ const ItemCardModule = memo(({card, displayTokenCost}: ItemCardProps) => {
 			/>
 			<g>
 				{card.type === 'any' && (
-					<image
-						className={css.star}
-						href={'/images/backgrounds/any.png'}
-						x="10"
-						y="10"
-						width="380"
-					/>
+					<>
+						<defs>
+							<rect id="rect" x="10" y="10" width="380" height="380" rx="15" />
+							<clipPath id="clip">
+								<use href="#rect" />
+							</clipPath>
+						</defs>
+						<image
+							href={'/images/backgrounds/any.png'}
+							x="10"
+							y="10"
+							width="380"
+							clip-path="url(#clip)"
+						/>
+					</>
 				)}
 				<image
 					className={css.star}
