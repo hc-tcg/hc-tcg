@@ -21,7 +21,7 @@ const Ethogirl: Achievement = {
 	levels: [
 		{
 			name: 'Ethogirl',
-			description: 'Win a game after playing four different Etho cards.',
+			description: 'Win a game after playing four unique Etho cards.',
 			steps: 4,
 		},
 	],
