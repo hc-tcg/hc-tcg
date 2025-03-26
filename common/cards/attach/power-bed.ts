@@ -7,10 +7,10 @@ const PowerBed: Attach = {
 	...attach,
 	id: 'power_bed',
 	numericId: -3,
-	name: 'Power_bed',
+	name: 'Power Bed',
 	expansion: 'default',
 	rarity: 'ultra_rare',
-	tokens: 2,
+	tokens: 1,
 	description:
 		'Attach as an item. Counts as 3 wild items, but the hermit it is attached to loses 40 hp each time it attacks.',
 	attachCondition: item.attachCondition,
