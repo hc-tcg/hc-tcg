@@ -1,17 +1,10 @@
-import {
-	CardComponent,
-	ObserverComponent,
-	SlotComponent,
-	StatusEffectComponent,
-} from '../../components'
-import query from '../../components/query'
+import {CardComponent, ObserverComponent} from '../../components'
 import {GameModel} from '../../models/game-model'
-import SleepingEffect from '../../status-effects/sleeping'
 import {onTurnEnd} from '../../types/priorities'
 import {attach} from '../defaults'
 import {Attach} from '../types'
 
-const Bed: Attach = {
+const HealthyBed: Attach = {
 	...attach,
 	id: 'healthy_bed',
 	numericId: -2,
@@ -49,4 +42,4 @@ const Bed: Attach = {
 	},
 }
 
-export default Bed
+export default HealthyBed
