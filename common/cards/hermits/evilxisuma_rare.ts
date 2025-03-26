@@ -70,41 +70,44 @@ const EvilXisumaRare: Hermit = {
 				)
 				if (!opponentActiveHermit?.isAlive()) return
 
-				game.addCopyAttackModalRequest({
-					player: player.entity,
-					modal: {
-						type: 'copyAttack',
-						name: 'Evil X: Disable an attack for 1 turn',
-						description:
-							"Which of the opponent's attacks do you want to disable?",
-						hermitCard: opponentActiveHermit.entity,
-						cancelable: false,
-					},
-					onResult(modalResult) {
-						assert(modalResult.pick)
+				game.addCopyAttackModalRequest(
+					{
+						player: player.entity,
+						modal: {
+							type: 'copyAttack',
+							name: 'Evil X: Disable an attack for 1 turn',
+							description:
+								"Which of the opponent's attacks do you want to disable?",
+							hermitCard: opponentActiveHermit.entity,
+							cancelable: false,
+						},
+						onResult(modalResult) {
+							assert(modalResult.pick)
 
-						const actionToBlock =
-							modalResult.pick === 'primary'
-								? PrimaryAttackDisabledEffect
-								: SecondaryAttackDisabledEffect
+							const actionToBlock =
+								modalResult.pick === 'primary'
+									? PrimaryAttackDisabledEffect
+									: SecondaryAttackDisabledEffect
 
-						// This will add a blocked action for the duration of their turn
-						game.components
-							.new(StatusEffectComponent, actionToBlock, component.entity)
-							.apply(opponentPlayer.getActiveHermit()?.entity)
-						return
+							// This will add a blocked action for the duration of their turn
+							game.components
+								.new(StatusEffectComponent, actionToBlock, component.entity)
+								.apply(opponentPlayer.getActiveHermit()?.entity)
+							return
+						},
+						onTimeout() {
+							// Disable the secondary attack if we didn't choose one
+							game.components
+								.new(
+									StatusEffectComponent,
+									SecondaryAttackDisabledEffect,
+									component.entity,
+								)
+								.apply(opponentPlayer.getActiveHermit()?.entity)
+						},
 					},
-					onTimeout() {
-						// Disable the secondary attack if we didn't choose one
-						game.components
-							.new(
-								StatusEffectComponent,
-								SecondaryAttackDisabledEffect,
-								component.entity,
-							)
-							.apply(opponentPlayer.getActiveHermit()?.entity)
-					},
-				})
+					'disable',
+				)
 			},
 		)
 	},

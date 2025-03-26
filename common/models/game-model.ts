@@ -393,17 +393,21 @@ export class GameModel {
 		newRequest: Omit<CopyAttack.Request, 'modal'> & {
 			modal: Omit<CopyAttack.Request['modal'], 'availableAttacks'>
 		},
+		mode: 'copy' | 'disable',
 		before = false,
 	) {
 		let modal = newRequest.modal
 		let hermitCard = this.components.get(modal.hermitCard)!
-		let blockedActions = hermitCard.player.hooks.blockedActions.callSome(
-			[[]],
-			(observerEntity) => {
-				let observer = this.components.get(observerEntity)
-				return observer?.wrappingEntity === hermitCard.entity
-			},
-		)
+		let blockedActions =
+			mode === 'copy'
+				? hermitCard.player.hooks.blockedActions.callSome(
+						[[]],
+						(observerEntity) => {
+							let observer = this.components.get(observerEntity)
+							return observer?.wrappingEntity === hermitCard.entity
+						},
+					)
+				: []
 
 		/* Due to an issue with the blocked actions system, we have to check if our target has thier action
 		 * blocked by status effects here.
