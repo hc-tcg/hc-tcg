@@ -18,7 +18,7 @@ export class PlayerModel {
 	public socket: Socket
 	public uuid: string
 	public appearance: Appearance
-	readonly achievementProgress: AchievementProgress
+	public achievementProgress: AchievementProgress
 
 	constructor(
 		playerName: string,
@@ -75,10 +75,7 @@ export class PlayerModel {
 		}
 	}
 
-	updateAchievementProgress(
-		achievementId: number,
-		goals: Record<number, number>,
-	) {
-		this.achievementProgress[achievementId].goals = goals
+	updateAchievementProgress(achievements: AchievementProgress) {
+		this.achievementProgress = {...this.achievementProgress, ...achievements}
 	}
 }

@@ -7,6 +7,7 @@ const HallOfAll: Achievement = {
 	...achievement,
 	numericId: 43,
 	id: 'hall-of-all',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Hall of All',
@@ -26,7 +27,7 @@ const HallOfAll: Achievement = {
 				)
 			)
 				return
-			component.incrementGoalProgress({goal: 0})
+			component.updateGoalProgress({goal: 0})
 		})
 	},
 }

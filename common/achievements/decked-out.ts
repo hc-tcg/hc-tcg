@@ -5,6 +5,7 @@ const DeckedOut: Achievement = {
 	...achievement,
 	numericId: 1,
 	id: 'decked_out',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Decked Out',
@@ -16,7 +17,7 @@ const DeckedOut: Achievement = {
 		if (outcome.type !== 'player-won' || outcome.winner !== player.entity)
 			return
 		if (outcome.victoryReason !== 'decked-out') return
-		component.incrementGoalProgress({goal: 0})
+		component.updateGoalProgress({goal: 0})
 	},
 }
 

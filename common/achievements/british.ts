@@ -7,6 +7,7 @@ const British: Achievement = {
 	...achievement,
 	numericId: 8,
 	id: 'british',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: "Bri'ish",
@@ -50,7 +51,7 @@ const British: Achievement = {
 					return
 				}
 
-				component.incrementGoalProgress({goal: 0})
+				component.updateGoalProgress({goal: 0})
 				attackedHermits[targetHermit.entity] = 'both'
 			},
 		)

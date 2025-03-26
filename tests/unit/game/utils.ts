@@ -448,8 +448,8 @@ export function testAchivement(
 		achievementComponent = game.components.new(
 			AchievementComponent,
 			options.achievement.numericId,
-			achievementProgress,
 			player.entity,
+			{goals: achievementProgress, levels: []},
 		)
 		const achievementObserver = game.components.new(
 			ObserverComponent,

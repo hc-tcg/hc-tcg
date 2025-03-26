@@ -10,6 +10,7 @@ const SUStainable: Achievement = {
 	...achievement,
 	numericId: 19,
 	id: 'sustainable',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'SUStainable',
@@ -34,7 +35,7 @@ const SUStainable: Achievement = {
 
 				if (su.props.id !== Composter.id) return
 
-				component.incrementGoalProgress({goal: 0, amount: 2})
+				component.updateGoalProgress({goal: 0, progress: 2})
 			},
 		)
 	},
