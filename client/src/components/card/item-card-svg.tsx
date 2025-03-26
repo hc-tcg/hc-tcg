@@ -28,6 +28,15 @@ const ItemCardModule = memo(({card, displayTokenCost}: ItemCardProps) => {
 				ry="15"
 			/>
 			<g>
+				{card.type === 'any' && (
+					<image
+						className={css.star}
+						href={'/images/backgrounds/any.png'}
+						x="10"
+						y="10"
+						width="380"
+					/>
+				)}
 				<image
 					className={css.star}
 					href={'/images/star_white.svg'}
