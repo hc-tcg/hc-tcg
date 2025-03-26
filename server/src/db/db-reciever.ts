@@ -381,16 +381,15 @@ export function* addGame(
 	)
 }
 
-export function* sendAfterGameInfo(players: Array<PlayerModel>) {
+export function* sendAfterGameInfo(
+	players: Array<PlayerModel>,
+	achievementProgress: Record<string, AchievementProgress | undefined>,
+) {
 	for (let i = 0; i < players.length; i++) {
 		const player = players[i]
 		const stats = yield* call([root.db, root.db.getUserStats], player.uuid)
 		const gameHistory = yield* call(
 			[root.db, root.db.getUserGameHistory],
-			player.uuid,
-		)
-		const achievements = yield* call(
-			[root.db, root.db.getAchievements],
 			player.uuid,
 		)
 
@@ -402,16 +401,12 @@ export function* sendAfterGameInfo(players: Array<PlayerModel>) {
 			gameHistory.type === 'success',
 			`Retrieving game history should be successful for user ${player.uuid}.`,
 		)
-		assert(
-			achievements.type === 'success',
-			`Retrieving achievements should be successful for user ${player.uuid}.`,
-		)
 
 		broadcast([player], {
 			type: serverMessages.AFTER_GAME_INFO,
 			stats: stats.body,
 			gameHistory: gameHistory.body,
-			achievements: achievements.body,
+			achievements: {achievementData: achievementProgress[player.id] || {}},
 		})
 	}
 }

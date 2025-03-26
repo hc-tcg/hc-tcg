@@ -783,11 +783,17 @@ export function* recieveAfterGameInfo() {
 					value: result.afterGameInfo.gameHistory,
 				},
 			})
+			const currentAchievements = JSON.parse(
+				localStorage.getItem('achievements') || '{achievementData: {}}',
+			)
 			yield put<LocalMessage>({
 				type: localMessages.DATABASE_SET,
 				data: {
 					key: 'achievements',
-					value: result.afterGameInfo.achievements.achievementData,
+					value: {
+						...currentAchievements.achievementData,
+						...result.afterGameInfo.achievements.achievementData,
+					},
 				},
 			})
 		} else if (result.invalidReplay) {
