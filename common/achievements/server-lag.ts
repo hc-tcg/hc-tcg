@@ -5,6 +5,7 @@ const ServerLag: Achievement = {
 	...achievement,
 	numericId: 9,
 	id: 'server_lag',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Server Lag',
@@ -28,7 +29,7 @@ const ServerLag: Achievement = {
 			!playerLatestAttack.attacker.prizeCard
 		)
 			return
-		component.incrementGoalProgress({goal: 0})
+		component.updateGoalProgress({goal: 0})
 	},
 }
 

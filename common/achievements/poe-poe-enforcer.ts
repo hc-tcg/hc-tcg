@@ -8,6 +8,7 @@ const PoePoeEnforcer: Achievement = {
 	...achievement,
 	numericId: 42,
 	id: 'poe-poe-enforcer',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Poe Poe Enforcer',
@@ -41,7 +42,7 @@ const PoePoeEnforcer: Achievement = {
 						player.opponentPlayer.activeRowEntity &&
 					!deadTargets.includes(attack.target)
 				) {
-					component.incrementGoalProgress({goal: 0})
+					component.updateGoalProgress({goal: 0})
 					deadTargets.push(attack.target)
 				}
 			},

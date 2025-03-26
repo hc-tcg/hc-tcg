@@ -9,6 +9,7 @@ const HotTake: Achievement = {
 	...achievement,
 	numericId: 17,
 	id: 'hot_take',
+	progressionMethod: 'best',
 	levels: [
 		{
 			name: 'Hot Take',
@@ -24,7 +25,7 @@ const HotTake: Achievement = {
 				query.card.onBoard,
 				query.card.hasStatusEffect(FireEffect),
 			)
-			component.bestGoalProgress({goal: 0, progress: burningHermits.length})
+			component.updateGoalProgress({goal: 0, progress: burningHermits.length})
 		}
 
 		observer.subscribeWithPriority(

@@ -6,6 +6,7 @@ const PeskyBird: Achievement = {
 	...achievement,
 	numericId: 10,
 	id: 'pesky_bird',
+	progressionMethod: 'best',
 	levels: [
 		{
 			name: 'Pesky Bird',
@@ -26,7 +27,7 @@ const PeskyBird: Achievement = {
 					if (!newSlot.inDiscardPile()) return
 					if (game.currentPlayerEntity !== player.entity) return
 					forcedDiscards += 1
-					component.bestGoalProgress({goal: 0, progress: forcedDiscards})
+					component.updateGoalProgress({goal: 0, progress: forcedDiscards})
 				},
 			)
 		})

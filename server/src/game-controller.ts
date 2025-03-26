@@ -171,12 +171,8 @@ export class GameController {
 				const achievementComponent = this.game.components.new(
 					AchievementComponent,
 					achievement,
-					JSON.parse(
-						JSON.stringify(
-							player.achievementProgress[achievement.numericId]?.goals,
-						),
-					),
 					playerComponent.entity,
+					player.achievementProgress[achievement.numericId],
 				)
 				const achievementObserver = this.game.components.new(
 					ObserverComponent,
