@@ -25,7 +25,8 @@ const PowerBed: Attach = {
 		observer.subscribe(player.hooks.availableEnergy, (availableEnergy) => {
 			if (!component.slot.inRow()) return availableEnergy
 
-			if (player.activeRow?.index !== component.slot.row.index) return availableEnergy
+			if (player.activeRow?.index !== component.slot.row.index)
+				return availableEnergy
 
 			availableEnergy.push('any', 'any', 'any')
 			return availableEnergy
