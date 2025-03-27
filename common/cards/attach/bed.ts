@@ -44,9 +44,20 @@ const Bed: Attach = {
 			)
 		}
 
+		let slot = hermitCard()?.slot
+		if (!slot || slot === undefined || !slot.onBoard()) return
+		if (!slot.row?.health) return
+
+		slot.row?.fullHeal()
+
 		game.components
 			.new(StatusEffectComponent, SleepingEffect, component.entity)
 			.apply(hermitCard()?.entity)
+
+		game.battleLog.addEntry(
+			player.entity,
+			`$p${hermitCard()?.props.name}$ went to $eSleep$ and restored $gfull health$`,
+		)
 
 		observer.subscribe(player.hooks.onActiveRowChange, () => {
 			let hermit = hermitCard()
