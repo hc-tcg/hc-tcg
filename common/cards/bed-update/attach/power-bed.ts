@@ -45,11 +45,11 @@ const PowerBed: Attach = {
 			game.hooks.beforeAttack,
 			beforeAttack.ADD_ATTACK,
 			(attack) => {
-				if (!attack.isAttacker(component.entity)) return
+				if (!component.slot.inRow() || !component.slot.row.health) return
 
-				if (component.slot.inRow() && component.slot.row.health) {
-					component.slot.row.damage(40)
-				}
+				if (!attack.isAttacker(component.slot.row.hermitSlot.cardEntity)) return
+
+				component.slot.row.damage(40)
 			}
 		)
 	},
