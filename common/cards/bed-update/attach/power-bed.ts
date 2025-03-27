@@ -1,6 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import {beforeAttack} from '../../../types/priorities'
+import query from '../../../components/query'
 import {attach, item} from '../../defaults'
 import {Attach} from '../../types'
 
@@ -14,7 +15,14 @@ const PowerBed: Attach = {
 	tokens: 1,
 	description:
 		'Attach as an item. Counts as 3 wild items, but the hermit this card is attached to loses 40 hp each time it attacks.',
-	attachCondition: item.attachCondition,
+	attachCondition: query.every(
+		query.slot.currentPlayer,
+		query.slot.item,
+		query.slot.empty,
+		query.slot.row(query.row.hasHermit),
+		query.actionAvailable('PLAY_EFFECT_CARD'),
+		query.not(query.slot.frozen),
+	),
 	log: item.log,
 	onAttach(
 		game: GameModel,
