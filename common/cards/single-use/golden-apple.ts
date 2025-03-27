@@ -19,7 +19,7 @@ const GoldenApple: SingleUse = {
 	expansion: 'default',
 	rarity: 'ultra_rare',
 	tokens: 2,
-	description: 'Heal one of your AFK Hermits 100hp.',
+	description: 'Heal any AFK Hermit 100hp.',
 	log: (values) =>
 		`${values.defaultLog} on $p${values.pick.name}$ and healed $g100hp$`,
 	attachCondition: query.every(
@@ -37,7 +37,7 @@ const GoldenApple: SingleUse = {
 		game.addPickRequest({
 			player: player.entity,
 			id: component.entity,
-			message: 'Pick one of your AFK Hermits',
+			message: 'Pick an AFK Hermit',
 			canPick: pickCondition,
 			onResult(pickedSlot) {
 				if (!pickedSlot.onBoard())
