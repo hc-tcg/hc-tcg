@@ -13,7 +13,7 @@ const PowerBed: Attach = {
 	rarity: 'ultra_rare',
 	tokens: 1,
 	description:
-		'Attach as an item. Counts as 3 wild items, but the hermit it is attached to loses 40 hp each time it attacks.',
+		'Attach as an item. Counts as 3 wild items, but the hermit this card is attached to loses 40 hp each time it attacks.',
 	attachCondition: item.attachCondition,
 	log: item.log,
 	onAttach(
