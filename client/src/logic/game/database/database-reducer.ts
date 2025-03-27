@@ -7,7 +7,7 @@ import {Message} from 'common/types/game-state'
 import {LocalMessage, localMessages} from 'logic/messages'
 
 export type DatabaseInfo = {
-	userId: string | null
+	playerUuid: string | null
 	secret: string | null
 	decks: Array<Deck>
 	gameHistory: Array<GameHistory>
@@ -27,7 +27,7 @@ export type LocalDatabase = {
 
 const defaultInfo: DatabaseInfo = {
 	noConnection: false,
-	userId: null,
+	playerUuid: null,
 	secret: null,
 	decks: [],
 	gameHistory: [],
@@ -78,9 +78,9 @@ const databaseReducer = (
 ): DatabaseInfo => {
 	switch (action.type) {
 		case localMessages.SET_ID_AND_SECRET:
-			return {...state, userId: action.userId, secret: action.secret}
+			return {...state, playerUuid: action.playerUuid, secret: action.secret}
 		case localMessages.RESET_ID_AND_SECRET:
-			return {...state, userId: null, secret: null}
+			return {...state, playerUuid: null, secret: null}
 		case localMessages.COSMETICS_SET:
 			return {...state, appearance: action.appearance}
 		case localMessages.DATABASE_SET:
