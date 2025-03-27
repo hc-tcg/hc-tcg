@@ -1,8 +1,8 @@
-import {CardComponent, ObserverComponent} from '../../components'
-import {GameModel} from '../../models/game-model'
-import {onTurnEnd} from '../../types/priorities'
-import {attach} from '../defaults'
-import {Attach} from '../types'
+import {CardComponent, ObserverComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
+import {onTurnEnd} from '../../../types/priorities'
+import {attach} from '../../defaults'
+import {Attach} from '../../types'
 
 const HealthyBed: Attach = {
 	...attach,
@@ -13,7 +13,7 @@ const HealthyBed: Attach = {
 	rarity: 'ultra_rare',
 	tokens: 2,
 	description:
-		'At the end of a turn, heal the hermit this bed is attached to by 10hp.',
+		'At the end of any turn, heal the hermit this bed is attached to by 10hp.',
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
