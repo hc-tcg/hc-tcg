@@ -1,4 +1,5 @@
-import {newRandomNumberGenerator} from './random'
+import {AchievementProgress} from '../types/achievements'
+import {newRandomNumberGenerator, xmur3} from './random'
 
 /**Generates a code consisting of 7 hexidecimal digits.*/
 export function generateDatabaseCode(): string {
@@ -15,4 +16,17 @@ export function generateDatabaseCodeWithSeed(seed: string): string {
 export function NumberOrNull(a: any | null) {
 	if (a !== null && a !== undefined) return Number(a)
 	return null
+}
+
+export function generateAchievementHash(progress: AchievementProgress): string {
+	let s = ''
+	Object.entries(progress).forEach((e) => {
+		s += e[0]
+		Object.values(e[1].goals).forEach((g) => {
+			s += g.toString()
+		})
+		s += e[1].levels.length
+	})
+	const x = xmur3(s)
+	return x().toString()
 }

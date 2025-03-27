@@ -1,4 +1,4 @@
-import {AchievementProgress} from 'common/types/achievements'
+import {generateAchievementHash} from 'common/utils/database-codes'
 import root from 'serverRoot'
 import {z} from 'zod'
 
@@ -48,22 +48,12 @@ export async function authenticateUser(
 
 	const achievements = userInfo.body.achievements
 
-	const newAchievements: AchievementProgress = {}
+	const newAchievementsHash = generateAchievementHash(
+		achievements.achievementData,
+	)
 
-	Object.entries(achievements.achievementData).forEach((p) => {
-		const k = p[0]
-		const v = p[1]
-
-		if (
-			!(k in achievements) ||
-			achievements.achievementData[Number(k)] !==
-				userInfo.body.achievements.achievementData[Number(k)]
-		) {
-			newAchievements[Number(k)] = v
-		}
-	})
-
-	userInfo.body.achievements = {achievementData: newAchievements}
+	if (newAchievementsHash === savedAchievements)
+		userInfo.body.achievements.achievementData = {}
 
 	return [200, userInfo.body]
 }

@@ -15,7 +15,10 @@ import {User} from 'common/types/database'
 import {Deck, Tag} from 'common/types/deck'
 import {PlayerInfo} from 'common/types/server-requests'
 import {toLocalCardInstance} from 'common/utils/cards'
-import {generateDatabaseCode} from 'common/utils/database-codes'
+import {
+	generateAchievementHash,
+	generateDatabaseCode,
+} from 'common/utils/database-codes'
 import {
 	getAchievements,
 	getAppearance,
@@ -123,12 +126,12 @@ function getNonDatabaseUser(): User {
 function* authenticateUser(
 	playerUuid: string,
 	secret: string,
-	savedAchievements: string,
+	achievementsHash: string | null,
 ): Generator<any, User | null> {
 	const headers = {
 		userId: playerUuid,
 		secret: secret,
-		savedAchievements: savedAchievements,
+		savedAchievements: achievementsHash || Math.random().toString(),
 	}
 
 	const auth = yield* call(fetch, `${BASE_URL}/api/auth/`, {
@@ -208,10 +211,12 @@ export function* setupData(user: User) {
 		border: BORDERS[user.border || ''] ?? defaultAppearance.border,
 	}
 
+	const savedAchievementData = JSON.parse(
+		localStorage.getItem('achievements') || '{}',
+	)
+
 	user.achievements.achievementData = {
-		...JSON.parse(
-			localStorage.getItem('achievements') || '{achievementData: {}}',
-		).achievementData,
+		...savedAchievementData,
 		...user.achievements.achievementData,
 	}
 
@@ -248,6 +253,11 @@ export function* setupData(user: User) {
 			value: user.achievements.achievementData,
 		},
 	})
+	// Save achievements local storage if achievements are being resent
+	localStorage.setItem(
+		'achievements',
+		JSON.stringify(user.achievements.achievementData),
+	)
 	yield* put<LocalMessage>({
 		type: localMessages.DATABASE_SET,
 		data: {
@@ -286,9 +296,6 @@ export function* setupData(user: User) {
 		type: localMessages.MINECRAFT_NAME_SET,
 		name: user.minecraftName ? user.minecraftName : user.username,
 	})
-
-	// Save achievements local storage
-	localStorage.setItem('achievements', JSON.stringify(user.achievements))
 }
 
 type LoginResult =
@@ -361,12 +368,13 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 		}
 
 		if (userId && secret) {
-			const savedAchievements: string =
-				localStorage.getItem('achievements') || '{}'
+			const savedAchievements = JSON.parse(
+				localStorage.getItem('achievements') || '{}',
+			)
 			const userResponse = yield* authenticateUser(
 				userId,
 				secret,
-				savedAchievements,
+				generateAchievementHash(savedAchievements),
 			)
 
 			yield* put<LocalMessage>({
@@ -472,13 +480,13 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 				"Players should not be able to reconnect if they don't have a secret.",
 			)
 		}
-
-		const savedAchievements: string =
-			localStorage.getItem('achievements') || '{}'
+		const savedAchievements = JSON.parse(
+			localStorage.getItem('achievements') || '{}',
+		)
 		const userResponse = yield* authenticateUser(
 			userId,
 			secret,
-			savedAchievements,
+			generateAchievementHash(savedAchievements),
 		)
 
 		if (!userResponse) {
@@ -769,6 +777,8 @@ export function* recieveAfterGameInfo() {
 			rematchDenied: call(receiveMsg(socket, serverMessages.REMATCH_DENIED)),
 		})
 		if (result.afterGameInfo) {
+			const databaseInfo = yield* select(getLocalDatabaseInfo)
+
 			yield put<LocalMessage>({
 				type: localMessages.DATABASE_SET,
 				data: {
@@ -783,15 +793,12 @@ export function* recieveAfterGameInfo() {
 					value: result.afterGameInfo.gameHistory,
 				},
 			})
-			const currentAchievements = JSON.parse(
-				localStorage.getItem('achievements') || '{achievementData: {}}',
-			)
 			yield put<LocalMessage>({
 				type: localMessages.DATABASE_SET,
 				data: {
 					key: 'achievements',
 					value: {
-						...currentAchievements.achievementData,
+						...databaseInfo.achievements,
 						...result.afterGameInfo.achievements.achievementData,
 					},
 				},
