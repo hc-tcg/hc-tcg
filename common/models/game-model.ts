@@ -179,7 +179,7 @@ export class GameModel {
 		},
 	) {
 		options = options ?? {}
-		this.id = options.id || `game_${Math.random()}`
+		this.id = options.id || Math.random().toString(16).slice(3, 11)
 
 		if (options?.publishBattleLog) {
 			this.publishBattleLog = options.publishBattleLog
