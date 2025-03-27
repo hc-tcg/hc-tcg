@@ -97,7 +97,7 @@ const ZombieCleoRare: Hermit = {
 						const pickedCard = pickedSlot.card as CardComponent<Hermit> | null
 						if (!pickedCard) return
 
-						game.addCopyAttackModalRequest(
+						game.addPickAttackModalRequest(
 							{
 								player: player.entity,
 								modal: {

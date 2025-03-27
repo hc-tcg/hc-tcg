@@ -389,7 +389,7 @@ export class GameModel {
 		}
 	}
 
-	public addCopyAttackModalRequest(
+	public addPickAttackModalRequest(
 		newRequest: Omit<CopyAttack.Request, 'modal'> & {
 			modal: Omit<CopyAttack.Request['modal'], 'availableAttacks'>
 		},

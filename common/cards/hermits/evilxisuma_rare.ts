@@ -70,7 +70,7 @@ const EvilXisumaRare: Hermit = {
 				)
 				if (!opponentActiveHermit?.isAlive()) return
 
-				game.addCopyAttackModalRequest(
+				game.addPickAttackModalRequest(
 					{
 						player: player.entity,
 						modal: {
