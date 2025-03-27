@@ -10,7 +10,7 @@ import FortuneEffect from '../../status-effects/fortune'
 import SpentFortuneEffect from '../../status-effects/spent-fortune'
 import {SelectCards} from '../../types/modal-requests'
 import {afterAttack, beforeAttack} from '../../types/priorities'
-import {flipCoin} from '../../utils/coinFlips'
+import {flipCoin} from '../../utils/coin-flips'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 
