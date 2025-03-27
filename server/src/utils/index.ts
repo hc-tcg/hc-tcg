@@ -8,6 +8,7 @@ import {ObserverEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
 import {isCounter} from 'common/status-effects/status-effect'
 import {Hook, PriorityHook} from 'common/types/hooks'
+import {quickwitLogGame} from 'common/utils/logging'
 import {GameController} from '../game-controller'
 
 export const getOpponentId = (controller: GameController, playerId: string) => {
@@ -271,7 +272,7 @@ export function printBoardState(game: GameModel) {
 	buffer.push(`Single Use Activated: ${game.currentPlayer.singleUseCardUsed}`)
 	buffer.push('\n')
 
-	console.info(buffer.join(''))
+	quickwitLogGame('info', game, buffer.join(''))
 }
 
 /** Call a function and log errors if they are found. This function is used to prevent errors from reaching
