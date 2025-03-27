@@ -387,7 +387,7 @@ function DragCardsModal({closeModal}: Props) {
 									key={card.entity}
 								>
 									<Card
-										card={card.props}
+										card={card.id}
 										selected={draggedCard === card.entity}
 										displayTokenCost={false}
 										tooltipAboveModal={true}

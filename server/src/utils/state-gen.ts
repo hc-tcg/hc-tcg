@@ -20,7 +20,6 @@ import {
 	LocalCardInstance,
 	LocalModalData,
 	LocalStatusEffectInstance,
-	WithoutFunctions,
 } from 'common/types/server-requests'
 import {GameViewer} from '../game-controller'
 
@@ -38,7 +37,7 @@ function getLocalStatusEffect(effect: StatusEffectComponent) {
 		return null
 	}
 	return {
-		props: WithoutFunctions(effect.props),
+		id: effect.props.id,
 		instance: effect.entity,
 		target:
 			effect.target instanceof CardComponent
@@ -59,7 +58,7 @@ export function getLocalCard<CardType extends Card>(
 	}
 
 	return {
-		props: card.props as WithoutFunctions<CardType>,
+		id: card.props.numericId,
 		entity: card.entity,
 		slot: card.slotEntity,
 		turnedOver: card.turnedOver,

@@ -1,3 +1,4 @@
+import {CARDS} from 'common/cards'
 import {ConfirmModal} from 'components/modal'
 import {getPlayerState} from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
@@ -36,7 +37,7 @@ function SingleUseConfirmModal({closeModal}: Props) {
 		const singleUseCard = playerState.board.singleUse.card
 
 		if (!singleUseCard) return null
-		return singleUseCard.props.name
+		return CARDS[singleUseCard.id].name
 	}
 
 	return (

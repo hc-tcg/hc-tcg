@@ -1,11 +1,10 @@
 import {getCardImage, getCardRankIcon} from 'common/cards/card'
 import {Attach, SingleUse} from 'common/cards/types'
-import {WithoutFunctions} from 'common/types/server-requests'
 import {memo} from 'react'
 import css from './effect-card-svg.module.scss'
 
 export type EffectCardProps = {
-	card: WithoutFunctions<Attach | SingleUse> | Attach | SingleUse
+	card: Attach | SingleUse
 	displayTokenCost: boolean
 }
 

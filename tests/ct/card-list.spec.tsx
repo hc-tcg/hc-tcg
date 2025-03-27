@@ -6,13 +6,12 @@ import {STATUS_EFFECTS} from 'common/status-effects'
 import {
 	LocalCardInstance,
 	LocalStatusEffectInstance,
-	WithoutFunctions,
 } from 'common/types/server-requests'
 
 test('Test Card List Normal', async ({mount}) => {
 	let cards: Array<LocalCardInstance> = [
 		{
-			props: WithoutFunctions(CARDS['item_balanced_common']),
+			id: CARDS['item_balanced_common'].numericId,
 			entity: 'Card1' as CardEntity,
 			slot: null,
 			attackHint: null,
@@ -20,7 +19,7 @@ test('Test Card List Normal', async ({mount}) => {
 			prizeCard: false,
 		},
 		{
-			props: WithoutFunctions(CARDS['ethoslab_rare']),
+			id: CARDS['ethoslab_rare'].numericId,
 			entity: 'Card2' as CardEntity,
 			slot: null,
 			attackHint: null,
@@ -28,7 +27,7 @@ test('Test Card List Normal', async ({mount}) => {
 			prizeCard: false,
 		},
 		{
-			props: WithoutFunctions(CARDS['item_balanced_rare']),
+			id: CARDS['item_balanced_rare'].numericId,
 			entity: 'Card3' as CardEntity,
 			slot: null,
 			attackHint: null,
@@ -47,7 +46,7 @@ test('Test Card List Normal', async ({mount}) => {
 test('Test Card List with status effects', async ({mount}) => {
 	let cards: Array<LocalCardInstance> = [
 		{
-			props: WithoutFunctions(CARDS['item_balanced_common']),
+			id: CARDS['item_balanced_common'].numericId,
 			entity: 'Card1' as CardEntity,
 			slot: null,
 			attackHint: null,
@@ -55,7 +54,7 @@ test('Test Card List with status effects', async ({mount}) => {
 			prizeCard: false,
 		},
 		{
-			props: WithoutFunctions(CARDS['item_balanced_rare']),
+			id: CARDS['item_balanced_rare'].numericId,
 			entity: 'Card2' as CardEntity,
 			slot: null,
 			attackHint: null,
@@ -66,7 +65,7 @@ test('Test Card List with status effects', async ({mount}) => {
 
 	let statusEffects: Array<LocalStatusEffectInstance> = [
 		{
-			props: WithoutFunctions(STATUS_EFFECTS['sleeping']),
+			id: STATUS_EFFECTS['sleeping'].id,
 			instance: "Doesn't Matter" as StatusEffectEntity,
 			target: {type: 'card', card: 'Card1' as CardEntity},
 			counter: 3,

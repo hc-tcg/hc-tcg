@@ -467,7 +467,7 @@ describe('Test Database', () => {
 			allDecks.type === 'success',
 			'The deck should be retrieved successfully',
 		)
-		expect(allDecks.body[0].cards.map((c) => c.props.numericId)).toStrictEqual(
+		expect(allDecks.body[0].cards.map((c) => c.id)).toStrictEqual(
 			playerDeck.cards,
 		)
 	})

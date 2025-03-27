@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import {CARDS} from 'common/cards'
 import BerryBush from 'common/cards/advent-of-tcg/attach/berry-bush'
 import Dropper from 'common/cards/advent-of-tcg/single-use/dropper'
 import Glowstone from 'common/cards/advent-of-tcg/single-use/glowstone'
@@ -20,7 +21,7 @@ import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
 import {CardEntity} from 'common/entities'
 import {Deck} from 'common/types/deck'
-import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
+import {LocalCardInstance} from 'common/types/server-requests'
 import {sortDecks} from 'common/utils/decks'
 import {validateDeck} from 'common/utils/validation'
 import Button from 'components/button'
@@ -151,7 +152,9 @@ function PlaySelect({
 			})
 			return false
 		}
-		const validation = validateDeck(loadedDeck.cards.map((card) => card.props))
+		const validation = validateDeck(
+			loadedDeck.cards.map((card) => CARDS[card.id]),
+		)
 		if (validation.valid) return true
 		dispatch({
 			type: localMessages.TOAST_OPEN,
@@ -212,7 +215,7 @@ function PlaySelect({
 	/* Boss game stuff */
 	function createUICardInstance(card: Card): LocalCardInstance {
 		return {
-			props: WithoutFunctions(card),
+			id: card.numericId,
 			entity: card.id as CardEntity,
 			slot: null,
 			turnedOver: false,

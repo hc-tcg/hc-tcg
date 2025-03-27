@@ -1,3 +1,4 @@
+import {CARDS} from 'common/cards'
 import FrozenEffect from 'common/status-effects/frozen'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {slotToPlayCardAction} from 'common/types/turn-action-data'
@@ -43,7 +44,7 @@ function* pickWithSelectedSaga(
 
 	// If the hand is clicked don't send data
 	if (pickInfo.slotType !== 'hand') {
-		const actionType = slotToPlayCardAction[selectedCard.props.category]
+		const actionType = slotToPlayCardAction[CARDS[selectedCard.id].category]
 		if (!actionType) return
 
 		yield* localPutCardInSlot(action, selectedCard)
@@ -92,7 +93,7 @@ function* pickWithoutSelectedSaga(
 			(effect) =>
 				effect.target.type === 'card' &&
 				effect.target.card === action.slotInfo.card?.entity &&
-				effect.props.id === FrozenEffect.id,
+				effect.id === FrozenEffect.id,
 		)
 	) {
 		if (settings.confirmationDialogsEnabled) {

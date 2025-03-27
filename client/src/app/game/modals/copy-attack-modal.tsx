@@ -1,3 +1,4 @@
+import {CARDS} from 'common/cards'
 import {isHermit} from 'common/cards/types'
 import {ModalData} from 'common/types/game-state'
 import {Modal} from 'components/modal'
@@ -16,10 +17,10 @@ function CopyAttackModal({closeModal}: Props) {
 		useSelector(getGameState)?.currentModalData
 	if (!modalData || modalData.type !== 'copyAttack') return null
 
-	const opponentHermitInfo = modalData.hermitCard
-	if (!isHermit(opponentHermitInfo.props)) return null
+	const opponentHermitInfo = CARDS[modalData.hermitCard.id]
+	if (!isHermit(opponentHermitInfo)) return null
 
-	const hermitFullName = opponentHermitInfo.props.id.split('_')[0]
+	const hermitFullName = CARDS[opponentHermitInfo.id].id.split('_')[0]
 
 	const handlePrimary = () => {
 		dispatch({
@@ -69,18 +70,18 @@ function CopyAttackModal({closeModal}: Props) {
 				{isPrimaryAvailable && (
 					<Attack
 						key="primary"
-						name={opponentHermitInfo.props.primary.name}
+						name={opponentHermitInfo.primary.name}
 						icon={`/images/hermits-nobg/${hermitFullName}.png`}
-						attackInfo={opponentHermitInfo.props.primary}
+						attackInfo={opponentHermitInfo.primary}
 						onClick={handlePrimary}
 					/>
 				)}
 				{isSecondaryAvailable && (
 					<Attack
 						key="secondary"
-						name={opponentHermitInfo.props.secondary.name}
+						name={opponentHermitInfo.secondary.name}
 						icon={`/images/hermits-nobg/${hermitFullName}.png`}
-						attackInfo={opponentHermitInfo.props.secondary}
+						attackInfo={opponentHermitInfo.secondary}
 						onClick={handleSecondary}
 					/>
 				)}

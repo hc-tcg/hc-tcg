@@ -19,7 +19,6 @@ import {
 	LocalCopyAttack,
 	LocalDragCards,
 	LocalSelectCards,
-	WithoutFunctions,
 } from '../../../common/types/server-requests'
 import {
 	AnyTurnActionData,
@@ -96,7 +95,7 @@ const playCard: ReplayAction = {
 			type: replayActionsFromValues[this.value].turnAction as PlayCardAction,
 			slot: selectedSlot,
 			card: {
-				props: WithoutFunctions(selectedCard.props),
+				id: selectedCard.props.numericId,
 				entity: selectedCard.entity,
 				slot: selectedCard.slotEntity,
 				attackHint: null,
