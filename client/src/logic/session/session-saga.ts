@@ -793,6 +793,11 @@ export function* recieveAfterGameInfo() {
 					value: result.afterGameInfo.gameHistory,
 				},
 			})
+			const updatedAchievements = {
+				...databaseInfo.achievements,
+				...result.afterGameInfo.achievements.achievementData,
+			}
+			console.log(result.afterGameInfo.achievements)
 			yield put<LocalMessage>({
 				type: localMessages.DATABASE_SET,
 				data: {
@@ -803,6 +808,7 @@ export function* recieveAfterGameInfo() {
 					},
 				},
 			})
+			localStorage.setItem('achievements', JSON.stringify(updatedAchievements))
 		} else if (result.invalidReplay) {
 			yield put<LocalMessage>({
 				type: localMessages.DATABASE_SET,
