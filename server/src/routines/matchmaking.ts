@@ -192,6 +192,7 @@ function* gameManager(con: GameController) {
 		con.game.hooks.afterGameEnd.call()
 
 		const newAchievements: Record<string, Array<EarnedAchievement>> = {}
+		const newProgress: Record<string, AchievementProgress> = {}
 		for (let k = 0; k < con.viewers.length; k++) {
 			const v = con.viewers[k]
 			if (v.spectator) continue
@@ -224,6 +225,7 @@ function* gameManager(con: GameController) {
 				gameEndTime,
 			)
 			newAchievements[playerEntity] = achievementInfo.newAchievements
+			newProgress[playerEntity] = achievementInfo.newProgress
 			v.player.updateAchievementProgress(achievementInfo.newProgress)
 		}
 
@@ -303,7 +305,7 @@ function* gameManager(con: GameController) {
 				con.gameCode,
 			)
 		}
-		yield* sendAfterGameInfo(gamePlayers)
+		yield* sendAfterGameInfo(gamePlayers, newProgress)
 
 		const getGameScore = (
 			outcome: GameOutcome | undefined,

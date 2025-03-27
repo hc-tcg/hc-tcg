@@ -1,3 +1,4 @@
+import {generateAchievementHash} from 'common/utils/database-codes'
 import root from 'serverRoot'
 import {z} from 'zod'
 
@@ -15,6 +16,7 @@ export async function authenticateApiKey(key: string) {
 export async function authenticateUser(
 	userId: string | undefined,
 	secret: string | undefined,
+	savedAchievements: string | undefined,
 ): Promise<[number, any]> {
 	if (!userId || !secret) {
 		return [
@@ -41,6 +43,17 @@ export async function authenticateUser(
 	if (userInfo.body.banned) {
 		return [401, 'You are banned']
 	}
+
+	if (!savedAchievements) return [200, userInfo.body]
+
+	const achievements = userInfo.body.achievements
+
+	const newAchievementsHash = generateAchievementHash(
+		achievements.achievementData,
+	)
+
+	if (newAchievementsHash === savedAchievements)
+		userInfo.body.achievements.achievementData = {}
 
 	return [200, userInfo.body]
 }

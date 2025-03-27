@@ -42,7 +42,8 @@ export function addApi(app: Express) {
 	app.get('/api/auth/', async (req, res) => {
 		const userId = req.get('userId')
 		const secret = req.get('secret')
-		let ret = await authenticateUser(userId, secret)
+		const savedAchievements = req.get('savedAchievements')
+		let ret = await authenticateUser(userId, secret, savedAchievements)
 		res.statusCode = ret[0]
 		res.send(ret[1])
 	})
