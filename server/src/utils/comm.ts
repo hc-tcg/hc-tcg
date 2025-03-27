@@ -1,3 +1,4 @@
+import {encode} from '@msgpack/msgpack'
 import {ServerMessage} from 'common/socket-messages/server-messages'
 
 export function broadcast(
@@ -8,7 +9,7 @@ export function broadcast(
 		if (!player) return
 		const playerSocket = player.socket
 		if (playerSocket && playerSocket.connected) {
-			playerSocket.emit(message.type, message)
+			playerSocket.emit(message.type, encode(message))
 		}
 	})
 }
