@@ -638,7 +638,7 @@ function* createReplayGameSaga(
 ) {
 	const socket = yield* select(getSocket)
 	const databaseInfo = yield* select(getLocalDatabaseInfo)
-	const uuid = databaseInfo.userId as string
+	const uuid = databaseInfo.playerUuid as string
 
 	try {
 		// Send message to server to create the game

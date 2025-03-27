@@ -125,7 +125,7 @@ function* authenticateUser(
 	secret: string,
 ): Generator<any, User | null> {
 	const headers = {
-		userId: playerUuid,
+		playerUuid: playerUuid,
 		secret: secret,
 	}
 
@@ -302,9 +302,9 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 
 	if (!session) {
 		let secret = localStorage.getItem('databaseInfo:secret')
-		let userId = localStorage.getItem('databaseInfo:userId')
+		let playerUuid = localStorage.getItem('databaseInfo:userId')
 
-		if (!secret || !userId) {
+		if (!secret || !playerUuid) {
 			// Create a new user here
 			yield* put<LocalMessage>({type: localMessages.NOT_CONNECTING})
 
@@ -321,7 +321,7 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 
 				yield* put<LocalMessage>({
 					type: localMessages.SET_ID_AND_SECRET,
-					userId: userResponse.uuid,
+					playerUuid: userResponse.uuid,
 					secret: userResponse.secret,
 				})
 
@@ -345,13 +345,13 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 				yield* setupData(userResponse)
 			} else {
 				playerEnteredCredentials = true
-				userId = loginMessage.uuid
+				playerUuid = loginMessage.uuid
 				secret = loginMessage.secret
 			}
 		}
 
-		if (userId && secret) {
-			const userResponse = yield* authenticateUser(userId, secret)
+		if (playerUuid && secret) {
+			const userResponse = yield* authenticateUser(playerUuid, secret)
 
 			yield* put<LocalMessage>({
 				type: localMessages.CONNECTING_MESSAGE,
@@ -444,9 +444,9 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 			throw new Error('The session should ALWAYS exist if the user logged in.')
 
 		const secret = localStorage.getItem('databaseInfo:secret')
-		const userId = localStorage.getItem('databaseInfo:userId')
+		const playerUuid = localStorage.getItem('databaseInfo:userId')
 
-		if (!userId) {
+		if (!playerUuid) {
 			throw new Error(
 				"Players should not be able to reconnect if they don't have a user ID.",
 			)
@@ -457,7 +457,7 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 			)
 		}
 
-		const userResponse = yield* authenticateUser(userId, secret)
+		const userResponse = yield* authenticateUser(playerUuid, secret)
 		if (!userResponse) {
 			return {
 				success: false,

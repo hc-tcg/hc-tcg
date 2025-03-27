@@ -448,12 +448,12 @@ function Settings({setMenuSection}: Props) {
 								<div className={classNames(css.dbInfo, css.mobileColumn)}>
 									<div className={css.dbItem}>UUID</div>
 									<div className={classNames(css.dbItem, css.right)}>
-										{databaseInfo.userId}
+										{databaseInfo.playerUuid}
 									</div>
 									<button
 										className={css.copy}
 										onClick={() => {
-											if (databaseInfo.userId) {
+											if (databaseInfo.playerUuid) {
 												dispatch({
 													type: localMessages.TOAST_OPEN,
 													open: true,
@@ -461,7 +461,7 @@ function Settings({setMenuSection}: Props) {
 													description: 'Copied UUID to clipboard.',
 													image: 'copy',
 												})
-												navigator.clipboard.writeText(databaseInfo.userId)
+												navigator.clipboard.writeText(databaseInfo.playerUuid)
 											}
 										}}
 									>
@@ -559,7 +559,7 @@ function Settings({setMenuSection}: Props) {
 									onClick={setUuidSecretModal((id, secret) => {
 										dispatch({
 											type: localMessages.SET_ID_AND_SECRET,
-											userId: id,
+											playerUuid: id,
 											secret: secret,
 										})
 										setMenuSection('main-menu')

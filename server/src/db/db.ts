@@ -36,6 +36,7 @@ import {
 	ReplayActionData,
 	TurnActionCompressor,
 } from '../routines/turn-action-compressor'
+import {quickwitLog} from 'common/utils/logging'
 
 export type DatabaseResult<T = undefined> =
 	| {
@@ -161,7 +162,7 @@ export class Database {
 				`,
 			)
 
-			console.log('Database connected')
+			quickwitLog('info', 'db', 'Database connected')
 
 			await this.pool.query(
 				`
@@ -175,12 +176,13 @@ export class Database {
 			`,
 				[this.allAchievements.map((achievement) => achievement.numericId)],
 			)
-			console.log('Database populated')
+			quickwitLog('info', 'db', 'Database populated')
 
 			this.connected = true
 		} catch (e) {
-			console.log(e)
-			console.info('Running server without database...')
+			quickwitLog('error', 'db', {
+				error: `${e}. Running server without database.`,
+			})
 		}
 	}
 	public async close() {
@@ -1082,8 +1084,6 @@ export class Database {
 			const replay: Buffer = game['replay']
 			const decompressedReplay: Buffer | null = huffmanDecompress(replay)
 
-			console.log(decompressedReplay)
-
 			if (
 				!decompressedReplay ||
 				decompressedReplay.length < 2 ||
@@ -1887,9 +1887,8 @@ export class Database {
 
 	/**Get player achievements */
 	public async getAchievements(
-		playerId: string,
+		playerUuid: string,
 	): Promise<DatabaseResult<AchievementData>> {
-		console.log(`GETTING ACHIVEMENTS FOR ${playerId}`)
 		try {
 			const result = await this.pool.query(
 				`
@@ -1899,7 +1898,7 @@ export class Database {
 				ON user_goals.user_id = achievement_completion_time.user_id AND user_goals.achievement_id = achievement_completion_time.achievement_id
 				WHERE user_goals.user_id = $1;
 				`,
-				[playerId],
+				[playerUuid],
 			)
 
 			const progress: AchievementProgress = {}
@@ -1947,7 +1946,10 @@ export class Database {
 				},
 			}
 		} catch (e) {
-			console.log(e)
+			quickwitLog('error', 'db', {
+				error: e,
+				user: playerUuid,
+			})
 			return {
 				type: 'failure',
 				reason: `${e}`,
@@ -1957,7 +1959,7 @@ export class Database {
 
 	/**Update player achievements with their progress */
 	public async updateAchievements(
-		uuid: string,
+		playerUuid: string,
 		achievementProgress: AchievementProgress,
 		gameEndTime: Date,
 	): Promise<
@@ -2037,7 +2039,7 @@ export class Database {
 						)
 						return progressionMethod
 					}),
-					goals.map(() => uuid),
+					goals.map(() => playerUuid),
 					goals.map((row) => row.achievment),
 					goals.map((row) => row.goal),
 					goals.map((row) => row.progress),
@@ -2137,7 +2139,7 @@ export class Database {
 				ON CONFLICT (user_id, achievement_id, level) DO NOTHING;
 			     `,
 				[
-					completion.map(() => uuid),
+					completion.map(() => playerUuid),
 					completion.map((row) => row.achievement),
 					completion.map((row) => row.level),
 					completion.map((row) => row.completion_time),
@@ -2152,7 +2154,10 @@ export class Database {
 				},
 			}
 		} catch (e) {
-			console.log(e)
+			quickwitLog('error', 'db', {
+				error: e,
+				user: playerUuid,
+			})
 			return {
 				type: 'failure',
 				reason: `${e}`,
@@ -2161,7 +2166,7 @@ export class Database {
 	}
 
 	public async setAppearance(
-		playerId: string,
+		playerUuid: string,
 		appearance: {
 			title: string | null
 			coin: string | null
@@ -2183,7 +2188,7 @@ export class Database {
 				WHERE user_id = $1
 				`,
 				[
-					playerId,
+					playerUuid,
 					appearance.title,
 					appearance.coin,
 					appearance.heart,
@@ -2196,7 +2201,10 @@ export class Database {
 				body: undefined,
 			}
 		} catch (e) {
-			console.log(e)
+			quickwitLog('error', 'db', {
+				error: e,
+				user: playerUuid,
+			})
 			return {
 				type: 'failure',
 				reason: `${e}`,
@@ -2206,7 +2214,7 @@ export class Database {
 
 	public async getPlayerAchievementProgress(
 		achievement: Achievement,
-		player: string,
+		playerUuid: string,
 	): Promise<DatabaseResult<{progress: number}>> {
 		try {
 			const result = await this.pool.query(
@@ -2215,7 +2223,7 @@ export class Database {
 				FROM user_goals
 				WHERE user_goals.achievement_id = $1 AND user_goals.user_id = $2;
 				`,
-				[achievement.numericId, player],
+				[achievement.numericId, playerUuid],
 			)
 			const goals = result.rows.reduce((goalRecord, row) => {
 				goalRecord[row['goal_id']] = row['progress']
@@ -2228,7 +2236,10 @@ export class Database {
 				},
 			}
 		} catch (e) {
-			console.log(e)
+			quickwitLog('error', 'db', {
+				error: e,
+				user: playerUuid,
+			})
 			return {
 				type: 'failure',
 				reason: `${e}`,
@@ -2276,7 +2287,9 @@ export class Database {
 				},
 			}
 		} catch (e) {
-			console.log(e)
+			quickwitLog('error', 'db', {
+				error: e,
+			})
 			return {
 				type: 'failure',
 				reason: `${e}`,

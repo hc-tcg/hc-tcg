@@ -250,7 +250,7 @@ type Messages = [
 	{type: typeof localMessages.QUEUE_VOICE; lines: Array<string>},
 	{
 		type: typeof localMessages.SET_ID_AND_SECRET
-		userId: string
+		playerUuid: string
 		secret: string
 	},
 	{type: typeof localMessages.RESET_ID_AND_SECRET},

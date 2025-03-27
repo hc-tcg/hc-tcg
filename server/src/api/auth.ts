@@ -13,10 +13,10 @@ export async function authenticateApiKey(key: string) {
 }
 
 export async function authenticateUser(
-	userId: string | undefined,
+	playerUuid: string | undefined,
 	secret: string | undefined,
 ): Promise<[number, any]> {
-	if (!userId || !secret) {
+	if (!playerUuid || !secret) {
 		return [
 			400,
 			{error: 'Both a User ID and Secret are required to authorize a user.'},
@@ -32,7 +32,7 @@ export async function authenticateUser(
 		]
 	}
 
-	const userInfo = await root.db.authenticateUser(userId, secret)
+	const userInfo = await root.db.authenticateUser(playerUuid, secret)
 
 	if (userInfo.type === 'failure') {
 		return [401, 'Authentication information is not valid']

@@ -196,7 +196,7 @@ function Statistics({setMenuSection}: Props) {
 
 		return games.filter((game) => {
 			const otherPlayer =
-				game.firstPlayer.uuid === databaseInfo.userId
+				game.firstPlayer.uuid === databaseInfo.playerUuid
 					? game.secondPlayer
 					: game.firstPlayer
 			return (
@@ -869,7 +869,7 @@ function Statistics({setMenuSection}: Props) {
 						className={classNames(
 							css.playerName,
 							settings.gameSide === 'Right' && css.reverseSide,
-							game.firstPlayer.uuid === databaseInfo.userId && css.me,
+							game.firstPlayer.uuid === databaseInfo.playerUuid && css.me,
 						)}
 					>
 						{game.firstPlayer.uuid === game.winner && (
@@ -885,21 +885,21 @@ function Statistics({setMenuSection}: Props) {
 					>
 						<div
 							className={classNames(
-								game.winner === databaseInfo.userId && css.win,
-								game.winner !== databaseInfo.userId && css.loss,
+								game.winner === databaseInfo.playerUuid && css.win,
+								game.winner !== databaseInfo.playerUuid && css.loss,
 								css.me,
 							)}
 						>
-							{game.winner === databaseInfo.userId ? 'W' : 'L'}
+							{game.winner === databaseInfo.playerUuid ? 'W' : 'L'}
 						</div>{' '}
 						<div className={css.dash}>-</div>{' '}
-						<div>{game.winner === databaseInfo.userId ? 'L' : 'W'}</div>
+						<div>{game.winner === databaseInfo.playerUuid ? 'L' : 'W'}</div>
 					</div>
 					<div
 						className={classNames(
 							css.playerName,
 							settings.gameSide === 'Right' && css.reverseSide,
-							game.secondPlayer.uuid === databaseInfo.userId && css.me,
+							game.secondPlayer.uuid === databaseInfo.playerUuid && css.me,
 						)}
 					>
 						{game.secondPlayer.uuid === game.winner && (

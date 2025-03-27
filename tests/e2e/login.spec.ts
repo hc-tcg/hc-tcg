@@ -26,7 +26,7 @@ test('sync works as expected', async ({context}) => {
 	const secret = await page.evaluate(() =>
 		localStorage.getItem('databaseInfo:secret'),
 	)
-	const userId = await page.evaluate(() =>
+	const playerUuid = await page.evaluate(() =>
 		localStorage.getItem('databaseInfo:userId'),
 	)
 
@@ -36,11 +36,11 @@ test('sync works as expected', async ({context}) => {
 	const newTab = await context.newPage()
 	await newTab.goto('/?showUpdatesModal=false')
 
-	assert(userId)
+	assert(playerUuid)
 	assert(secret)
 
 	await newTab.getByRole('button', {name: 'Sync Account'}).press('Enter')
-	await newTab.getByPlaceholder('UUID').fill(userId)
+	await newTab.getByPlaceholder('UUID').fill(playerUuid)
 	await newTab.getByPlaceholder('Secret').fill(secret)
 	// Match to "Sync" but not "Sync Account"
 	await newTab
