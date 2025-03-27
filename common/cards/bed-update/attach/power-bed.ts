@@ -1,7 +1,8 @@
-import {CardComponent, ObserverComponent} from '../../components'
-import {GameModel} from '../../models/game-model'
-import {attach, item} from '../defaults'
-import {Attach} from '../types'
+import {CardComponent, ObserverComponent} from '../../../components'
+import {GameModel} from '../../../models/game-model'
+import {beforeAttack} from '../../../types/priorities'
+import {attach, item} from '../../defaults'
+import {Attach} from '../../types'
 
 const PowerBed: Attach = {
 	...attach,
@@ -31,6 +32,18 @@ const PowerBed: Attach = {
 			availableEnergy.push('any', 'any', 'any')
 			return availableEnergy
 		})
+
+		observer.subscribeWithPriority(
+			game.hooks.beforeAttack,
+			beforeAttack.ADD_ATTACK,
+			(attack) => {
+				if (!attack.isAttacker(component.entity)) return
+
+				if (component.slot.inRow() && component.slot.row.health) {
+					component.slot.row.damage(40)
+				}
+			}
+		)
 	},
 }
 
