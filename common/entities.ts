@@ -30,8 +30,11 @@ export type AchievementEntity = Entity<AchievementComponent>
 
 /** Create a new entity */
 export function newEntity<T>(entityName: string, game?: GameModel): Entity<T> {
-	const randomNumber = game ? game.nextEntity() : Math.random()
-	return `${entityName}-${game ? game.id : 'no-game'}-${Math.floor(
-		randomNumber * Number.MAX_SAFE_INTEGER,
+	if (game) {
+		return `${game.id}-${game.nextEntity()}` as Entity<T>
+	}
+
+	return `${entityName}-no-game-${Math.floor(
+		Math.random() * Number.MAX_SAFE_INTEGER,
 	).toString(16)}` as Entity<T>
 }
