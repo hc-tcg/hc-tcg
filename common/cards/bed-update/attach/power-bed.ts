@@ -1,7 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {beforeAttack} from '../../../types/priorities'
-import query from '../../../components/query'
 import {attach, item} from '../../defaults'
 import {Attach} from '../../types'
 
@@ -49,8 +49,18 @@ const PowerBed: Attach = {
 
 				if (!attack.isAttacker(component.slot.row.hermitSlot.cardEntity)) return
 
-				component.slot.row.damage(40)
-			}
+				component.slot.row.damage(40) //Not damage nor attack.
+
+				const hermitName = game.components.find(
+					CardComponent,
+					query.card.slot(query.slot.hermit),
+					query.card.row(query.row.entity(attack.targetEntity)),
+				)?.props.name
+				game.battleLog.addEntry(
+					player.entity,
+					`$p${hermitName}'s$ $ePower Bed$ drained $b40hp$ from its user`,
+				)
+			},
 		)
 	},
 }
