@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import {CARDS} from 'common/cards'
 import {ButtonVariant} from 'common/types/buttons'
 import {Deck, Tag} from 'common/types/deck'
 import {getDeckTypes} from 'common/utils/decks'
@@ -383,7 +384,7 @@ GameModeButton.ChooseDeck = ({
 				(!compareTag || deck.tags?.find((tag) => tag.key === compareTag)) &&
 				(!compareType ||
 					compareType === 'any' ||
-					getDeckTypes(deck.cards.map((card) => card.props.id)).includes(
+					getDeckTypes(deck.cards.map((card) => CARDS[card.id].id)).includes(
 						compareType,
 					)) &&
 				(!compareName ||

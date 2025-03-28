@@ -9,6 +9,7 @@ const NoDerpcoins: Achievement = {
 	numericId: 7,
 	id: 'no_derpcoins',
 	evilXAchievement: true,
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'No Derpcoins Required',
@@ -26,7 +27,7 @@ const NoDerpcoins: Achievement = {
 		observer.subscribe(game.hooks.onGameEnd, (outcome) => {
 			if (outcome.type !== 'player-won') return
 			if (outcome.winner !== player.entity) return
-			component.incrementGoalProgress({goal: 0})
+			component.updateGoalProgress({goal: 0})
 		})
 	},
 }

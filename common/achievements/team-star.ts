@@ -35,6 +35,7 @@ const TeamStar: Achievement = {
 	...achievement,
 	numericId: 12,
 	id: 'team_star',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Hermit Gang',
@@ -55,7 +56,7 @@ const TeamStar: Achievement = {
 		observer.subscribe(game.hooks.onGameEnd, (outcome) => {
 			if (outcome.type !== 'player-won') return
 			if (outcome.winner !== player.entity) return
-			component.incrementGoalProgress({goal: 0})
+			component.updateGoalProgress({goal: 0})
 		})
 	},
 }

@@ -1,4 +1,5 @@
 import assert from 'assert'
+import {CARDS} from 'common/cards'
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
 import {
 	AchievementComponent,
@@ -17,7 +18,7 @@ import {
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {EarnedAchievement} from 'common/types/achievements'
+import {AchievementProgress, EarnedAchievement} from 'common/types/achievements'
 import {Deck} from 'common/types/deck'
 import {GameOutcome} from 'common/types/game-state'
 import {formatText} from 'common/utils/formatting'
@@ -25,6 +26,7 @@ import {OpponentDefs} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import {
 	addGame,
+	getAchievementProgress,
 	getDeck,
 	getGameReplay,
 	sendAfterGameInfo,
@@ -65,16 +67,12 @@ function setupGame(
 	let con = new GameController(
 		{
 			model: player1,
-			deck: player1Deck.cards
-				.map((card) => card.props.numericId)
-				.sort((a, b) => a - b),
+			deck: player1Deck.cards.map((card) => card.id).sort((a, b) => a - b),
 			score: player1Score,
 		},
 		{
 			model: player2,
-			deck: player2Deck.cards
-				.map((card) => card.props.numericId)
-				.sort((a, b) => a - b),
+			deck: player2Deck.cards.map((card) => card.id).sort((a, b) => a - b),
 			score: player2Score,
 		},
 		{gameCode, spectatorCode, apiSecret, countAchievements: 'all'},
@@ -189,6 +187,7 @@ function* gameManager(con: GameController) {
 			return
 		}
 
+		const gameEndTime = new Date()
 		if (con.task) yield* cancel(con.task)
 		con.game.hooks.afterGameEnd.call()
 
@@ -198,10 +197,7 @@ function* gameManager(con: GameController) {
 			if (v.spectator) continue
 			const playerEntity = v.playerOnLeftEntity
 			newAchievements[playerEntity] = []
-			const achievements = con.game.components.filter(
-				AchievementComponent,
-				(_game, achievement) => achievement.player === playerEntity,
-			)
+			const thisGameAchievements: AchievementProgress = {}
 
 			let player = con.game.components.get(playerEntity)
 			assert(
@@ -209,46 +205,26 @@ function* gameManager(con: GameController) {
 				"There should definitely be a player on the left if there is an entity, if there isn't, something went really wrong",
 			)
 
+			const achievements = con.game.components.filter(
+				AchievementComponent,
+				(_game, achievement) => achievement.player === playerEntity,
+			)
+
 			achievements.forEach((achievement) => {
 				achievement.props.onGameEnd(con.game, player, achievement, outcome)
-
-				const originalProgress =
-					achievement.props.getProgress(
-						v.player.achievementProgress[achievement.props.numericId].goals,
-					) || 0
-				const newProgress =
-					achievement.props.getProgress(achievement.goals) || 0
-
-				if (originalProgress === newProgress) return
-
-				v.player.updateAchievementProgress(
-					achievement.props.numericId,
-					achievement.goals,
-				)
-
-				for (const [i, level] of achievement.props.levels.entries()) {
-					if (newProgress >= level.steps && originalProgress < level.steps) {
-						v.player.achievementProgress[achievement.props.numericId].levels[
-							i
-						] = {completionTime: new Date()}
-					}
-
-					if (
-						newProgress > originalProgress &&
-						newProgress <= level.steps &&
-						(i === 0 || achievement.props.levels[i - 1].steps < newProgress)
-					) {
-						newAchievements[playerEntity].push({
-							achievementId: achievement.props.numericId,
-							level: {index: i, ...level},
-							originalProgress: originalProgress || 0,
-							newProgress: newProgress,
-						})
-					}
+				thisGameAchievements[achievement.props.numericId] = {
+					goals: achievement.goals,
+					levels: [],
 				}
 			})
 
-			yield* updateAchievements(v.player)
+			const achievementInfo = yield* updateAchievements(
+				v.player.uuid,
+				thisGameAchievements,
+				gameEndTime,
+			)
+			newAchievements[playerEntity] = achievementInfo.newAchievements
+			v.player.updateAchievementProgress(achievementInfo.newProgress)
 		}
 
 		for (const viewer of con.viewers) {
@@ -319,7 +295,7 @@ function* gameManager(con: GameController) {
 				gamePlayers[0],
 				gamePlayers[1],
 				outcome,
-				Date.now() - con.createdTime,
+				gameEndTime.getTime() - con.createdTime,
 				winner ? winner.uuid : null,
 				con.game.rngSeed,
 				con.game.state.turn.turnNumber,
@@ -328,7 +304,6 @@ function* gameManager(con: GameController) {
 			)
 		}
 		yield* sendAfterGameInfo(gamePlayers)
-		const rematchTime = Date.now()
 
 		const getGameScore = (
 			outcome: GameOutcome | undefined,
@@ -357,7 +332,7 @@ function* gameManager(con: GameController) {
 			type: serverMessages.SEND_REMATCH,
 			rematch: {
 				opponentId: gamePlayers[1].id,
-				time: rematchTime,
+				time: gameEndTime.getTime(),
 				spectatorCode: con.spectatorCode,
 				playerScore: player1Score,
 				opponentScore: player2Score,
@@ -367,7 +342,7 @@ function* gameManager(con: GameController) {
 			type: serverMessages.SEND_REMATCH,
 			rematch: {
 				opponentId: gamePlayers[0].id,
-				time: rematchTime,
+				time: gameEndTime.getTime(),
 				spectatorCode: con.spectatorCode,
 				playerScore: player2Score,
 				opponentScore: player1Score,
@@ -474,7 +449,7 @@ function* cleanUpSaga() {
 	}
 }
 
-function* updateDeckSaga(
+function* setupPlayerInfo(
 	player: PlayerModel,
 	payload:
 		| {
@@ -492,6 +467,9 @@ function* updateDeckSaga(
 		return
 	}
 
+	const latestAchievementProgress = yield* getAchievementProgress(player.uuid)
+	player.updateAchievementProgress(latestAchievementProgress)
+
 	player.setPlayerDeck(payload.activeDeck)
 }
 
@@ -505,7 +483,7 @@ export function* joinPublicQueue(
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	yield* updateDeckSaga(player, msg.payload)
+	yield* setupPlayerInfo(player, msg.payload)
 
 	if (!player) {
 		console.info('[Join queue] Player not found: ', playerId)
@@ -514,7 +492,7 @@ export function* joinPublicQueue(
 
 	if (
 		!player.deck ||
-		!validateDeck(player.deck.cards.map((card) => card.props)).valid
+		!validateDeck(player.deck.cards.map((card) => CARDS[card.id])).valid
 	) {
 		console.info(
 			'[Join queue] Player tried to join queue with an invalid deck:',
@@ -573,7 +551,7 @@ export function* joinPrivateGame(
 	} = msg
 	const player = root.players[playerId]
 
-	yield* updateDeckSaga(player, msg.payload)
+	yield* setupPlayerInfo(player, msg.payload)
 
 	if (!player) {
 		console.info('[Join private game] Player not found: ', playerId)
@@ -582,7 +560,7 @@ export function* joinPrivateGame(
 
 	if (
 		!player.deck ||
-		!validateDeck(player.deck.cards.map((card) => card.props)).valid
+		!validateDeck(player.deck.cards.map((card) => CARDS[card.id])).valid
 	) {
 		console.info(
 			'[Join private game] Player tried to join private game with an invalid deck: ',
@@ -791,7 +769,7 @@ export function* createPrivateGame(
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	yield* updateDeckSaga(player, msg.payload)
+	yield* setupPlayerInfo(player, msg.payload)
 
 	if (!player) {
 		console.info('[Create private game] Player not found: ', playerId)
@@ -889,7 +867,7 @@ export function* createBossGame(
 	const {playerId} = msg
 	const player = root.players[playerId]
 
-	yield* updateDeckSaga(player, msg.payload)
+	yield* setupPlayerInfo(player, msg.payload)
 
 	if (!player) {
 		console.info('[Create Boss game] Player not found: ', playerId)
@@ -898,7 +876,7 @@ export function* createBossGame(
 
 	if (
 		!player.deck ||
-		!validateDeck(player.deck.cards.map((card) => card.props)).valid
+		!validateDeck(player.deck.cards.map((card) => CARDS[card.id])).valid
 	) {
 		console.info(
 			'[Join private game] Player tried to join private game with an invalid deck: ',
@@ -981,7 +959,7 @@ export function* createRematchGame(
 	const player = root.players[playerId]
 	const opponent = root.players[opponentId]
 
-	yield* updateDeckSaga(player, msg.payload)
+	yield* setupPlayerInfo(player, msg.payload)
 
 	if (!player) {
 		console.info('[Join rematch game] Player not found: ', playerId)
@@ -990,7 +968,7 @@ export function* createRematchGame(
 
 	if (
 		!player.deck ||
-		!validateDeck(player.deck.cards.map((card) => card.props)).valid
+		!validateDeck(player.deck.cards.map((card) => CARDS[card.id])).valid
 	) {
 		console.info(
 			'[Join rematch game] Player tried to join private game with an invalid deck: ',
@@ -1242,7 +1220,7 @@ function setupSolitareGame(
 	const con = new GameController(
 		{
 			model: player,
-			deck: playerDeck.cards.map((card) => card.props.numericId),
+			deck: playerDeck.cards.map((card) => CARDS[card.id].numericId),
 			score: 0,
 		},
 		{

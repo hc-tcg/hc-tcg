@@ -1,4 +1,5 @@
 import classnames from 'classnames'
+import {STATUS_EFFECTS} from 'common/status-effects'
 import {isCounter} from 'common/status-effects/status-effect'
 import {LocalStatusEffectInstance} from 'common/types/server-requests'
 import Tooltip from 'components/tooltip'
@@ -17,12 +18,13 @@ interface StatusEffectReactProps
 
 const StatusEffect = (props: StatusEffectReactProps) => {
 	const {statusEffect, counter, tooltipAboveModal} = props
+	let statusEffectProps = STATUS_EFFECTS[statusEffect.id]
 
-	const extension = ['poison', 'fire'].includes(statusEffect.props.icon)
+	const extension = ['poison', 'fire'].includes(statusEffectProps.icon)
 		? '.gif'
 		: '.png'
 	const statusEffectClass =
-		statusEffect.props.type == 'damage'
+		statusEffectProps.type == 'damage'
 			? css.damageStatusEffectImage
 			: css.statusEffectImage
 
@@ -39,12 +41,12 @@ const StatusEffect = (props: StatusEffectReactProps) => {
 			<div className={classnames(css.statusEffect)}>
 				<img
 					className={statusEffectClass}
-					src={'/images/status/' + statusEffect.props.icon + extension}
+					src={'/images/status/' + statusEffectProps.icon + extension}
 				></img>
-				{isCounter(statusEffect.props) &&
-					((statusEffect.props.counterType === 'turns' &&
-						statusEffect.props.counter > 1) ||
-						statusEffect.props.counterType === 'number') && (
+				{isCounter(statusEffectProps) &&
+					((statusEffectProps.counterType === 'turns' &&
+						statusEffectProps.counter > 1) ||
+						statusEffectProps.counterType === 'number') && (
 						<p className={css.durationIndicator}>{counter}</p>
 					)}
 			</div>

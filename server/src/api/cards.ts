@@ -188,9 +188,9 @@ export async function getDeckInformation(
 				icon: null,
 				public: false,
 				cards: deck
-					.map((card) => cardToCardResponse(card.props, url))
+					.map((card) => cardToCardResponse(CARDS[card.id], url))
 					.filter((x) => x !== null),
-				cost: getDeckCost(deck.map((card) => card.props)),
+				cost: getDeckCost(deck.map((card) => CARDS[card.id])),
 			},
 		]
 	} else {

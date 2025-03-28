@@ -12,6 +12,7 @@ export type Achievement = {
 	numericId: number
 	getProgress: (goals: Record<number, number>) => number | undefined
 	getGoals?: (goals: Record<number, number>) => Array<Goal>
+	progressionMethod: 'sum' | 'best'
 	evilXAchievement?: boolean
 
 	levels: Array<{

@@ -4,6 +4,7 @@ import {
 	DiscardSlotComponent,
 	HandSlotComponent,
 	PlayerComponent,
+	RowComponent,
 	SlotComponent,
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
@@ -190,10 +191,7 @@ function getAvailableActions(
 
 		// Attack actions
 		if (activeRowId !== null && turnState.turnNumber > 1) {
-			const hermitCard = game.components.find(
-				CardComponent,
-				query.card.slot(query.slot.rowIs(activeRowId), query.slot.hermit),
-			)
+			const hermitCard = game.components.get(activeRowId)?.getHermit()
 
 			// only add attack options if not sleeping
 			if (hermitCard && hermitCard.isHermit()) {
@@ -243,38 +241,38 @@ function getAvailableActions(
 				// See Issue #1205
 				if (card.isHealth() && !reducer.includes('PLAY_HERMIT_CARD')) {
 					game.state.turn.availableActions = [...actions, 'PLAY_HERMIT_CARD']
-					const pickableSlots = game.components.filter(
+					const pickableSlots = game.components.exists(
 						SlotComponent,
 						card.props.attachCondition,
 					)
-					if (pickableSlots.length !== 0) reducer.push('PLAY_HERMIT_CARD')
+					if (pickableSlots) reducer.push('PLAY_HERMIT_CARD')
 				}
 				if (card.isAttach() && !reducer.includes('PLAY_EFFECT_CARD')) {
 					game.state.turn.availableActions = [...actions, 'PLAY_EFFECT_CARD']
-					const pickableSlots = game.components.filter(
+					const pickableSlots = game.components.exists(
 						SlotComponent,
 						card.props.attachCondition,
 					)
-					if (pickableSlots.length !== 0) reducer.push('PLAY_EFFECT_CARD')
+					if (pickableSlots) reducer.push('PLAY_EFFECT_CARD')
 				}
 				if (card.isItem() && !reducer.includes('PLAY_ITEM_CARD')) {
 					game.state.turn.availableActions = [...actions, 'PLAY_ITEM_CARD']
-					const pickableSlots = game.components.filter(
+					const pickableSlots = game.components.exists(
 						SlotComponent,
 						card.props.attachCondition,
 					)
-					if (pickableSlots.length !== 0) reducer.push('PLAY_ITEM_CARD')
+					if (pickableSlots) reducer.push('PLAY_ITEM_CARD')
 				}
 				if (card.isSingleUse() && !reducer.includes('PLAY_SINGLE_USE_CARD')) {
 					game.state.turn.availableActions = [
 						...actions,
 						'PLAY_SINGLE_USE_CARD',
 					]
-					const pickableSlots = game.components.filter(
+					const pickableSlots = game.components.exists(
 						SlotComponent,
 						card.props.attachCondition,
 					)
-					if (pickableSlots.length !== 0) reducer.push('PLAY_SINGLE_USE_CARD')
+					if (pickableSlots) reducer.push('PLAY_SINGLE_USE_CARD')
 				}
 				return reducer
 			}, [] as TurnActions)
@@ -317,22 +315,27 @@ function playerAction(actionType: string, playerEntity: PlayerEntity) {
 // @TODO completely redo how we calculate if a hermit is dead etc
 function checkHermitHealth(game: GameModel) {
 	const deadPlayers: Array<PlayerComponent> = []
+
 	for (let playerState of game.components.filter(PlayerComponent)) {
+		let noHermitsLeft = true
 		// Players are not allowed to die before they place their first hermit to prevent bugs
 		if (!playerState.hasPlacedHermit) {
 			continue
 		}
 
-		const hermitCards = game.components.filter(
-			CardComponent,
-			query.card.attached,
-			query.card.slot(query.slot.hermit),
-			query.card.player(playerState.entity),
-		)
+		const hermitCards: Array<CardComponent> = game.components
+			.filter(
+				RowComponent,
+				query.row.player(playerState.entity),
+				query.row.hasHermit,
+			)
+			.map((row) => row.getHermit()) as Array<CardComponent>
 
 		for (const card of hermitCards) {
-			if (!card.slot?.inRow()) continue
-			if (card.slot?.row?.health) continue
+			if (!card.slot?.inRow() || card.slot?.row?.health) {
+				noHermitsLeft = false
+				continue
+			}
 			// Add battle log entry. Non Hermit cards can create their detach message themselves.
 			if (card.props.category === 'hermit') {
 				game.battleLog.addDeathEntry(playerState.entity, card.slot.row.entity)
@@ -376,12 +379,6 @@ function checkHermitHealth(game: GameModel) {
 
 		const isDead = playerState.lives <= 0
 
-		const noHermitsLeft = !game.components.exists(
-			CardComponent,
-			query.card.player(playerState.entity),
-			query.card.attached,
-			query.card.slot(query.slot.hermit),
-		)
 		if (isDead || noHermitsLeft) {
 			deadPlayers.push(playerState)
 		}
@@ -661,11 +658,7 @@ function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 				continue
 			}
 
-			const hasActiveHermit = con.game.components.exists(
-				CardComponent,
-				query.card.player(currentPlayer.entity),
-				query.card.slot(query.slot.active, query.slot.hermit),
-			)
+			const hasActiveHermit = con.game.currentPlayer.activeRow !== null
 			if (hasActiveHermit) {
 				break
 			}

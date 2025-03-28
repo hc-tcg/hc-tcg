@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import {CARDS} from 'common/cards'
 import {Deck} from 'common/types/deck'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {getDeckCost} from 'common/utils/ranks'
@@ -20,7 +21,7 @@ export const cardGroupHeader = (
 		{`${title} `}
 		<span style={{fontSize: '0.9rem'}}>{`(${cards.length}) `}</span>
 		<span className={classNames(css.tokens, css.tokenHeader)}>
-			{getDeckCost(cards.map((card) => card.props))} tokens
+			{getDeckCost(cards.map((card) => CARDS[card.id]))} tokens
 		</span>
 	</p>
 )

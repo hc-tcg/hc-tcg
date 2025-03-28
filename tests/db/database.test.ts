@@ -467,7 +467,7 @@ describe('Test Database', () => {
 			allDecks.type === 'success',
 			'The deck should be retrieved successfully',
 		)
-		expect(allDecks.body[0].cards.map((c) => c.props.numericId)).toStrictEqual(
+		expect(allDecks.body[0].cards.map((c) => c.id)).toStrictEqual(
 			playerDeck.cards,
 		)
 	})
@@ -689,21 +689,24 @@ describe('Test Database', () => {
 			await database.getAchievementPercentageCompletion(DefeatEvilX, 0),
 		).toStrictEqual(globalProgress(0, 0))
 
-		let completionTime = new Date(Date.now())
-		let completionTimeTwo = new Date(18437418)
+		let completionTime = new Date(18430050)
 
-		await database.updateAchievements(player1.uuid, {
-			// Default Evil X achievement
-			6: {goals: {0: 1}, levels: [{completionTime: completionTime}]},
-			// Win Achievement
-			26: {
-				goals: {0: 11},
-				levels: [
-					{completionTime: completionTime},
-					{completionTime: completionTimeTwo},
-				],
+		await database.updateAchievements(
+			player1.uuid,
+			{
+				// Default Evil X achievement
+				6: {goals: {0: 1}, levels: [{completionTime: completionTime}]},
+				// Win Achievement
+				26: {
+					goals: {0: 11},
+					levels: [
+						{completionTime: completionTime},
+						{completionTime: completionTime},
+					],
+				},
 			},
-		})
+			completionTime,
+		)
 
 		let results = await database.getAchievements(player1.uuid)
 		assert(
@@ -719,7 +722,7 @@ describe('Test Database', () => {
 		expect(achievements[26].goals).toStrictEqual({0: 11})
 		expect(achievements[26].levels).toStrictEqual([
 			{completionTime: completionTime},
-			{completionTime: completionTimeTwo},
+			{completionTime: completionTime},
 			{},
 			{},
 			{},
@@ -751,10 +754,14 @@ describe('Test Database', () => {
 		expect(
 			await database.getAchievementPercentageCompletion(DefeatEvilX, 0),
 		).toStrictEqual(globalProgress(1, 100))
-		await database.updateAchievements(player2.uuid, {
-			// Default Evil X achievement
-			6: {goals: {0: 1}, levels: [{completionTime: completionTime}]},
-		})
+		await database.updateAchievements(
+			player2.uuid,
+			{
+				// Default Evil X achievement
+				6: {goals: {0: 1}, levels: [{completionTime: completionTime}]},
+			},
+			completionTime,
+		)
 		expect(
 			await database.getAchievementPercentageCompletion(DefeatEvilX, 0),
 		).toStrictEqual(globalProgress(2, 100))

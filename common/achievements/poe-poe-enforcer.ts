@@ -1,6 +1,6 @@
 import query from '../components/query'
 import CurseOfBindingEffect from '../status-effects/curse-of-binding'
-import {afterApply, afterAttack} from '../types/priorities'
+import {afterApply, afterAttack, onTurnEnd} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -8,6 +8,7 @@ const PoePoeEnforcer: Achievement = {
 	...achievement,
 	numericId: 42,
 	id: 'poe-poe-enforcer',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Poe Poe Enforcer',
@@ -23,6 +24,8 @@ const PoePoeEnforcer: Achievement = {
 			turnsSinceCurseOfBindings += 1
 		})
 
+		let deadTargets: Array<any> = []
+
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.ACHIEVEMENTS,
@@ -36,9 +39,11 @@ const PoePoeEnforcer: Achievement = {
 					turnsSinceCurseOfBindings == 1 &&
 					targetHermit.slot.inRow() &&
 					targetHermit.slot.row?.entity ===
-						player.opponentPlayer.activeRowEntity
+						player.opponentPlayer.activeRowEntity &&
+					!deadTargets.includes(attack.target)
 				) {
-					component.incrementGoalProgress({goal: 0})
+					component.updateGoalProgress({goal: 0})
+					deadTargets.push(attack.target)
 				}
 			},
 		)
@@ -55,6 +60,14 @@ const PoePoeEnforcer: Achievement = {
 				) {
 					turnsSinceCurseOfBindings = 0
 				}
+			},
+		)
+
+		observer.subscribeWithPriority(
+			player.hooks.onTurnEnd,
+			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
+			() => {
+				deadTargets = []
 			},
 		)
 	},

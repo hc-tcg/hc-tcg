@@ -19,6 +19,7 @@ const OreSnatcher: Achievement = {
 	...achievement,
 	numericId: 13,
 	id: 'ore_snatcher',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Ore Snatcher',
@@ -42,7 +43,7 @@ const OreSnatcher: Achievement = {
 				if (!Armor.includes(player.activeRow?.getAttach()?.props.id || ''))
 					return
 
-				component.incrementGoalProgress({goal: 0})
+				component.updateGoalProgress({goal: 0})
 			},
 		)
 	},

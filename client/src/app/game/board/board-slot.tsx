@@ -126,7 +126,7 @@ const Slot = ({
 					) : (
 						<Card
 							disabled={!!gameOver}
-							card={card.props}
+							card={card.id}
 							displayTokenCost={false}
 						/>
 					)}

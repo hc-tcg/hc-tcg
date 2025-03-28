@@ -13,6 +13,7 @@ const HermitsAndCrafting: Achievement = {
 	...achievement,
 	numericId: 25,
 	id: 'designer',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Hermits and Crafting',
@@ -42,7 +43,7 @@ const HermitsAndCrafting: Achievement = {
 		observer.subscribe(game.hooks.onGameEnd, (outcome) => {
 			if (outcome.type !== 'player-won') return
 			if (outcome.winner !== player.entity) return
-			component.incrementGoalProgress({goal: 0})
+			component.updateGoalProgress({goal: 0})
 		})
 	},
 }

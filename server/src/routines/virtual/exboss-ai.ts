@@ -14,7 +14,6 @@ import {GameModel} from 'common/models/game-model'
 import ExBossNineEffect, {
 	supplyNineSpecial,
 } from 'common/status-effects/exboss-nine'
-import {WithoutFunctions} from 'common/types/server-requests'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
 
@@ -97,7 +96,7 @@ function getNextTurnAction(
 					type: 'PLAY_HERMIT_CARD',
 					slot,
 					card: {
-						props: WithoutFunctions(bossCard.props),
+						id: bossCard.props.numericId,
 						entity: bossCard.entity,
 						slot: bossCard.slotEntity,
 						turnedOver: false,

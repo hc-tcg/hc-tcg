@@ -4,14 +4,13 @@ import {TooltipTestContainer} from 'client/components/tooltip/tooltip'
 import {CardEntity, PlayerEntity} from 'common/entities'
 import {AussiePingEffect} from 'common/status-effects/aussie-ping'
 import SleepingEffect from 'common/status-effects/sleeping'
-import {WithoutFunctions} from 'common/types/server-requests'
 
 test('Status Effect Tooltip Hermit', async ({mount}) => {
 	const component = await mount(
 		<TooltipTestContainer>
 			<StatusEffectTooltip
 				statusEffect={{
-					props: WithoutFunctions(SleepingEffect),
+					id: SleepingEffect.id,
 					instance: 'anything is okay here',
 					target: {
 						type: 'card',
@@ -32,7 +31,7 @@ test('Status Effect Tooltip Global', async ({mount}) => {
 		<TooltipTestContainer>
 			<StatusEffectTooltip
 				statusEffect={{
-					props: WithoutFunctions(AussiePingEffect),
+					id: AussiePingEffect.id,
 					instance: 'anything is okay here',
 					target: {
 						type: 'global',

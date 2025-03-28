@@ -1,10 +1,8 @@
+import {CARDS} from '../cards'
 import {type Card, isHermit, isItem} from '../cards/types'
 import type {CardEntity} from '../entities'
 import type {CardCategoryT} from '../types/cards'
-import type {
-	LocalCardInstance,
-	WithoutFunctions,
-} from '../types/server-requests'
+import type {LocalCardInstance} from '../types/server-requests'
 
 /**
  * Returns true if the two cards are equal
@@ -24,13 +22,13 @@ export function isCardInstanceType(
 	type: CardCategoryT,
 ): boolean {
 	if (!card) return false
-	return card.props.category == type
+	return CARDS[card.id].category == type
 }
 
 /**Converts a Card to a local card instance */
 export function toLocalCardInstance(card: Card): LocalCardInstance {
 	return {
-		props: card as WithoutFunctions<Card>,
+		id: card.numericId,
 		entity: Math.random().toString() as CardEntity,
 		slot: null,
 		attackHint: null,
@@ -63,7 +61,10 @@ function orderCardProps(a: Card, b: Card) {
 			isHermit(a) &&
 				isHermit(b) &&
 				RARITY_ORDER[a.rarity] - RARITY_ORDER[b.rarity],
-			a.tokens !== 'wild' && b.tokens !== 'wild' && a.tokens - b.tokens,
+			a.tokens !== 'wild' &&
+				b.tokens !== 'wild' &&
+				(a.tokens !== 'etho-ur' ? a.tokens : 3) -
+					(b.tokens !== 'etho-ur' ? b.tokens : 3),
 			isHermit(a) &&
 				isHermit(b) &&
 				a.secondary.cost.length - b.secondary.cost.length,
@@ -85,5 +86,5 @@ export function sortCards(cards: Array<Card>) {
 export function sortCardInstances(
 	cards: Array<LocalCardInstance>,
 ): Array<LocalCardInstance> {
-	return cards.slice().sort((a, b) => orderCardProps(a.props, b.props))
+	return cards.slice().sort((a, b) => orderCardProps(CARDS[a.id], CARDS[b.id]))
 }

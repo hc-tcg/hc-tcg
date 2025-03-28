@@ -5,6 +5,7 @@ const Win: Achievement = {
 	...achievement,
 	numericId: 26,
 	id: 'wins',
+	progressionMethod: 'sum',
 	levels: [
 		{name: 'Card Slinger', description: 'Win 1 game.', steps: 1},
 		{name: 'TCG Novice', description: 'Win 10 games.', steps: 10},
@@ -15,7 +16,7 @@ const Win: Achievement = {
 	onGameEnd(_game, player, component, outcome) {
 		if (outcome.type !== 'player-won' || outcome.winner !== player.entity)
 			return
-		component.incrementGoalProgress({goal: 0})
+		component.updateGoalProgress({goal: 0})
 	},
 }
 

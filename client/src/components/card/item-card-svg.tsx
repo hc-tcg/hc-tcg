@@ -1,12 +1,11 @@
 import classnames from 'classnames'
 import {getCardImage, getCardRankIcon} from 'common/cards/card'
 import {Item} from 'common/cards/types'
-import {WithoutFunctions} from 'common/types/server-requests'
 import {memo} from 'react'
 import css from './item-card-svg.module.scss'
 
 export type ItemCardProps = {
-	card: WithoutFunctions<Item> | Item
+	card: Item
 	displayTokenCost: boolean
 }
 
@@ -28,6 +27,23 @@ const ItemCardModule = memo(({card, displayTokenCost}: ItemCardProps) => {
 				ry="15"
 			/>
 			<g>
+				{card.type === 'any' && (
+					<>
+						<defs>
+							<rect id="rect" x="10" y="10" width="380" height="380" rx="15" />
+							<clipPath id="clip">
+								<use href="#rect" />
+							</clipPath>
+						</defs>
+						<image
+							href={'/images/backgrounds/any.png'}
+							x="10"
+							y="10"
+							width="380"
+							clip-path="url(#clip)"
+						/>
+					</>
+				)}
 				<image
 					className={css.star}
 					href={'/images/star_white.svg'}

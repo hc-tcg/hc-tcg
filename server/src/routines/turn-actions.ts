@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {CardComponent, SlotComponent} from 'common/components'
+import {CardComponent} from 'common/components'
 import query from 'common/components/query'
 import {SlotEntity} from 'common/entities'
 import {AttackModel} from 'common/models/attack-model'
@@ -64,12 +64,7 @@ export function attackAction(
 ): void {
 	const hermitAttackType = attackActionToAttack[turnAction.type]
 	const {currentPlayer, state} = game
-	const activeInstance = game.components.find(
-		CardComponent,
-		query.card.currentPlayer,
-		query.card.isHermit,
-		query.card.active,
-	)
+	const activeInstance = game.currentPlayer.activeRow?.getHermit()
 
 	assert(activeInstance, 'You can not attack without an active hermit.')
 
@@ -81,7 +76,6 @@ export function attackAction(
 			// We have some pick/modal requests that we want to execute before the attack
 			// The code for picking new actions will automatically send the right action back to client
 			state.turn.currentAttack = hermitAttackType
-
 			return
 		}
 	}
@@ -143,10 +137,7 @@ export function playCardAction(
 	const localCard = turnAction?.card
 	assert(slotEntity && localCard)
 
-	const card = game.components.find(
-		CardComponent,
-		query.card.entity(localCard.entity),
-	)
+	const card = game.components.get(localCard.entity)
 	assert(card, 'You can not play a card that is not in the ECS')
 
 	const {currentPlayer} = game
@@ -160,6 +151,11 @@ export function playCardAction(
 	assert(
 		!pickedSlot.card,
 		'You can not play a card in a slot with a card in it',
+	)
+
+	assert(
+		!query.slot.frozen(game, card.slot),
+		'You cannot play cards that are in frozen slots',
 	)
 
 	const row = pickedSlot.row
@@ -263,10 +259,7 @@ export function changeActiveHermitAction(
 	const {currentPlayer} = game
 
 	// Find the row we are trying to change to
-	const pickedSlot = game.components.find(
-		SlotComponent,
-		query.slot.entity(turnAction?.entity),
-	)
+	const pickedSlot = game.components.get(turnAction?.entity)
 	assert(pickedSlot?.inRow(), 'Active hermits must be on the board.')
 	const row = pickedSlot.row
 
@@ -376,10 +369,7 @@ export function pickRequestAction(
 	)
 
 	// Call the bound function with the pick result
-	let slotInfo = game.components.find(
-		SlotComponent,
-		query.slot.entity(pickResult),
-	)
+	let slotInfo = game.components.get(pickResult)
 
 	assert(slotInfo, 'The slot that is picked must be in the ECS')
 

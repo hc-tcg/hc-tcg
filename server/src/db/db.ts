@@ -10,7 +10,7 @@ import {CARDS} from 'common/cards'
 import {getStarterPack} from 'common/cards/starter-decks'
 import serverConfig from 'common/config/server-config'
 import {defaultAppearance} from 'common/cosmetics/default'
-import {AchievementProgress} from 'common/types/achievements'
+import {AchievementProgress, EarnedAchievement} from 'common/types/achievements'
 import {TypeT} from 'common/types/cards'
 import {
 	AchievementData,
@@ -226,7 +226,7 @@ export class Database {
 				deckInfo.name,
 				deckInfo.icon,
 				deckInfo.iconType,
-				deckInfo.cards.map((card) => card.props.numericId),
+				deckInfo.cards.map((card) => card.id),
 				deckInfo.tags,
 				deckInfo.code,
 				playerUuid,
@@ -611,8 +611,8 @@ export class Database {
 
 				if (
 					cardId !== null &&
-					foundDeck.cards.find((card) => card.props.numericId !== cardId) &&
-					!foundDeck.cards.map((card) => card.props.numericId).includes(cardId)
+					foundDeck.cards.find((card) => card.id !== cardId) &&
+					!foundDeck.cards.map((card) => card.id).includes(cardId)
 				) {
 					foundDeck.cards = [
 						...foundDeck.cards,
@@ -1087,7 +1087,7 @@ export class Database {
 			if (
 				!decompressedReplay ||
 				decompressedReplay.length < 2 ||
-				decompressedReplay.readUintBE(0, 1) !== 0x01
+				decompressedReplay.readUintBE(0, 1) !== serverConfig.replayVersion
 			) {
 				return {type: 'failure', reason: 'The game requested has no replay.'}
 			}
@@ -1370,7 +1370,7 @@ export class Database {
 						SELECT card_id,
 						count(CASE WHEN wins THEN 1 END) as wins,
 						count(CASE WHEN losses THEN 1 END) as losses, 
-						count(deck_code) as included_in_decks, 
+						count(DISTINCT deck_code) as included_in_decks, 
 						count(DISTINCT start_time) as included_in_games,
 						sum(copies) as copies FROM (
 							SELECT cards.card_id,
@@ -1959,7 +1959,13 @@ export class Database {
 	public async updateAchievements(
 		uuid: string,
 		achievementProgress: AchievementProgress,
-	): Promise<DatabaseResult> {
+		gameEndTime: Date,
+	): Promise<
+		DatabaseResult<{
+			newAchievements: Array<EarnedAchievement>
+			newProgress: AchievementProgress
+		}>
+	> {
 		try {
 			type GoalRow = {
 				achievment: number
@@ -1988,22 +1994,49 @@ export class Database {
 							achievment: achievement.numericId,
 							goal: goal_id_number,
 							progress:
-								progress.goals[goal_id_number] !== undefined
-									? progress.goals[goal_id_number]
-									: 0,
+								progress.goals[goal_id_number] &&
+								Math.max(progress.goals[goal_id_number], 0),
 						})
 					})
 					return achievementGoals
 				},
 			)
-			await this.pool.query(
+			const goalProgress = await this.pool.query(
 				`
-				INSERT INTO user_goals (user_id, achievement_id, goal_id, progress)
-				(SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::int[], $4::int[]))
+				WITH args AS (
+					SELECT * FROM UNNEST ($1::text[], $2::uuid[], $3::int[], $4::int[], $5::int[]) 
+									AS t(method, user_id, achievement_id, goal_id, progress)
+				),
+				original_goals AS (
+					SELECT * FROM user_goals
+				)
+				INSERT INTO user_goals (user_id, achievement_id, goal_id, progress) SELECT user_id, achievement_id, goal_id, progress FROM args
 				ON CONFLICT (user_id, achievement_id, goal_id) DO UPDATE
-				SET progress = EXCLUDED.progress;
+				SET progress = CASE (SELECT method FROM args WHERE args.achievement_id = user_goals.achievement_id LIMIT 1)
+					WHEN 'sum' THEN user_goals.progress + EXCLUDED.progress
+					WHEN 'best' THEN greatest(user_goals.progress, EXCLUDED.progress)
+					ELSE user_goals.progress
+				END
+				RETURNING 
+					user_goals.achievement_id, 
+					user_goals.goal_id, 
+					user_goals.progress, 
+					coalesce((SELECT progress FROM original_goals WHERE 
+						original_goals.achievement_id = user_goals.achievement_id 
+						AND original_goals.goal_id = user_goals.goal_id
+						AND original_goals.user_id = user_goals.user_id
+					), 0) as old_progress;
 				`,
 				[
+					goals.map((row) => {
+						const progressionMethod =
+							ACHIEVEMENTS[row.achievment].progressionMethod
+						assert(
+							['best', 'sum'].includes(progressionMethod),
+							`Unknown progression method found: \`${progressionMethod}\``,
+						)
+						return progressionMethod
+					}),
 					goals.map(() => uuid),
 					goals.map((row) => row.achievment),
 					goals.map((row) => row.goal),
@@ -2017,32 +2050,91 @@ export class Database {
 				completion_time: Date
 			}
 
-			const completion: CompletionTimeRow[] = Object.keys(
-				achievementProgress,
-			).flatMap((achievement_id) => {
+			type AchievementGoals = {
+				achievement: number
+				goals: Record<number, number>
+				oldGoals: Record<number, number>
+			}
+
+			const achievementGoalProgress: AchievementProgress = {}
+
+			const achievementGoals: AchievementGoals[] = goalProgress.rows.reduce(
+				(r: Array<AchievementGoals>, row) => {
+					const achievementId: number = row['achievement_id']
+					const goalId: number = row['goal_id']
+					const updatedProgress: number = row['progress']
+					const oldProgress: number = row['old_progress']
+					const goalEntry = r.find((a) => a.achievement === achievementId)
+
+					if (goalEntry) {
+						goalEntry.goals[goalId] = updatedProgress
+						goalEntry.oldGoals[goalId] = oldProgress
+					} else {
+						const goals: Record<number, number> = {}
+						const oldGoals: Record<number, number> = {}
+						goals[goalId] = updatedProgress
+						oldGoals[goalId] = oldProgress
+						r.push({achievement: achievementId, goals, oldGoals})
+					}
+
+					if (!achievementGoalProgress[achievementId]) {
+						achievementGoalProgress[achievementId] = {goals: {}, levels: []}
+					}
+					achievementGoalProgress[achievementId].goals[goalId] = updatedProgress
+
+					return r
+				},
+				[],
+			)
+
+			const earnedAchievements: Array<EarnedAchievement> = []
+
+			const completion: CompletionTimeRow[] = achievementGoals.flatMap((a) => {
 				const achievement = this.allAchievements.find(
-					(achievement) => achievement.numericId.toString() === achievement_id,
+					(achievement) => achievement.numericId === a.achievement,
 				)
-				if (!achievement) return []
-				const progress = achievementProgress[achievement.numericId]
+
+				const newProgress = achievement?.getProgress(a.goals)
+				const oldProgress = achievement?.getProgress(a.oldGoals)
+				if (!achievement || !newProgress) return []
 				const completionTime: CompletionTimeRow[] = []
-				for (const [i, level] of progress.levels.entries()) {
-					if (!level.completionTime) continue
+				for (const [i, level] of achievement.levels.entries()) {
+					if (
+						!oldProgress ||
+						(newProgress > oldProgress &&
+							newProgress <= level.steps &&
+							(i === 0 || achievement.levels[i - 1].steps < newProgress))
+					) {
+						earnedAchievements.push({
+							achievementId: achievement.numericId,
+							level: {index: i, ...level},
+							originalProgress: oldProgress || 0,
+							newProgress: newProgress,
+						})
+					}
+
+					if (
+						newProgress < level.steps ||
+						(oldProgress && oldProgress >= level.steps)
+					)
+						continue
 					completionTime.push({
 						achievement: achievement.numericId,
 						level: i,
-						completion_time: level.completionTime,
+						completion_time: gameEndTime,
 					})
+					achievementGoalProgress[achievement.numericId].levels[i] = {
+						completionTime: gameEndTime,
+					}
 				}
 				return completionTime
 			})
 
 			await this.pool.query(
 				`
-	            INSERT INTO achievement_completion_time (user_id, achievement_id, level, completion_time)
+			    INSERT INTO achievement_completion_time (user_id, achievement_id, level, completion_time)
 				(SELECT * FROM UNNEST ($1::uuid[], $2::int[], $3::int[], $4::timestamp[]))
-				ON CONFLICT (user_id, achievement_id, level) DO UPDATE
-				SET completion_time = EXCLUDED.completion_time;
+				ON CONFLICT (user_id, achievement_id, level) DO NOTHING;
 			     `,
 				[
 					completion.map(() => uuid),
@@ -2052,7 +2144,13 @@ export class Database {
 				],
 			)
 
-			return {type: 'success', body: undefined}
+			return {
+				type: 'success',
+				body: {
+					newAchievements: earnedAchievements,
+					newProgress: achievementProgress,
+				},
+			}
 		} catch (e) {
 			console.log(e)
 			return {
