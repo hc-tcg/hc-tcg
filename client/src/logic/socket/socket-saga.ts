@@ -1,3 +1,4 @@
+import {decode, encode} from '@msgpack/msgpack'
 import {ClientMessage} from 'common/socket-messages/client-messages'
 import {ServerMessageTable} from 'common/socket-messages/server-messages'
 import {LocalMessage, localMessages} from 'logic/messages'
@@ -18,12 +19,15 @@ export function* sendMsg(payload: ClientMessage) {
 	if (socket.connected) {
 		console.log('[send]', payload.type, payload)
 		const {playerId, playerSecret} = yield* select(getSession)
-		socket.emit(payload.type, {
-			type: payload.type,
-			payload,
-			playerId,
-			playerSecret,
-		})
+		socket.emit(
+			payload.type,
+			encode({
+				type: payload.type,
+				payload,
+				playerId,
+				playerSecret,
+			}),
+		)
 		return 'success'
 	} else {
 		console.error('Can not send message when socket is not connected')
@@ -67,7 +71,8 @@ export function receiveMsg<T extends keyof ServerMessageTable>(
 ) {
 	return () => {
 		return new Promise<ServerMessageTable[T]>((resolve) => {
-			const listener = (message: ServerMessageTable[T]) => {
+			const listener = (message: any) => {
+				message = decode(message)
 				resolve(message)
 			}
 			socket.once(type as string, listener as any)

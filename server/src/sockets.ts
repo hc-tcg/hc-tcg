@@ -1,3 +1,4 @@
+import {decode} from '@msgpack/msgpack'
 import {CONFIG, VERSION} from 'common/config'
 import {LocalMessage, localMessages} from 'messages'
 import {Server} from 'socket.io'
@@ -49,6 +50,7 @@ function startSocketIO(server: any) {
 			...(socket.handshake.auth as any),
 		})
 		socket.onAny((_event, message) => {
+			message = decode(message)
 			if (!message?.type) return
 			store.dispatch({...message, socket})
 		})
