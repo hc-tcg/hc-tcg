@@ -7,6 +7,7 @@ import {CardComponent} from './card-component'
 import {PlayerComponent} from './player-component'
 import query from './query'
 import {BoardSlotComponent, SlotComponent} from './slot-component'
+import {StatusEffectComponent} from './status-effect-component'
 
 export class RowComponent {
 	public static table = 'rows'
@@ -100,10 +101,16 @@ export class RowComponent {
 		)
 		if (this.health === null) return
 		if (!hermit?.isHealth()) return
+		const overhealed = this.game.components.exists(
+			StatusEffectComponent,
+			query.effect.targetIsCardAnd(query.card.entity(hermit.entity)),
+		)
 		this.health = Math.min(
 			this.health + amount,
 			Math.max(this.health, hermit.props.health),
 		)
+		if (overhealed)
+			this.health = this.health + amount
 	}
 
 	public fullHeal() {

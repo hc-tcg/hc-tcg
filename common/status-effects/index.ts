@@ -38,6 +38,7 @@ import {
 } from './multiturn-attack-disabled'
 import MuseumCollectionEffect from './museum-collection'
 import NaughtyRegiftEffect from './naughty-regift'
+import OverhealEffect from './overheal'
 import PermanentSleepingEffect from './permanent-sleeping'
 import PoisonEffect from './poison'
 import PoisonQuiverEffect from './poison-quiver'
@@ -117,13 +118,14 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	SmeltingEffect,
 	MelodyEffect,
 	LitFuseEffect,
-	ExiledEffect,
+	OverhealEffect,
 	/* Hidden Status Effects */
 	TurnSkippedEffect,
 	GasLightEffect,
 	GasLightPotentialEffect,
 	TFCDiscardedFromEffect,
 	SculkCatalystTriggeredEffect,
+	ExiledEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =
