@@ -105,4 +105,15 @@ export class RowComponent {
 			Math.max(this.health, hermit.props.health),
 		)
 	}
+
+	public fullHeal() {
+		let hermit = this.game.components.find(
+			CardComponent,
+			query.card.isHermit,
+			query.card.rowEntity(this.entity),
+		)
+		if (this.health === null) return
+		if (!hermit?.isHealth()) return
+		this.health = Math.max(this.health, hermit.props.health)
+	}
 }
