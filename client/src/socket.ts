@@ -1,3 +1,4 @@
+import {decode} from '@msgpack/msgpack'
 import {SocketType} from 'logic/socket/socket-reducer'
 import io from 'socket.io-client'
 import {BASE_URL} from './constants'
@@ -10,7 +11,7 @@ export function newSocket(): SocketType {
 	})
 
 	socket.onAny((event, payload) => {
-		console.log('[message]', event, payload)
+		console.log('[message]', event, decode(payload))
 	})
 
 	//@ts-ignore
