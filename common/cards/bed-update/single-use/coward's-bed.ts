@@ -8,7 +8,7 @@ import {GameModel} from '../../../models/game-model'
 import {singleUse} from '../../defaults'
 import {SingleUse} from '../../types'
 
-const pickCondition = query.every(
+const hasSwitchable = query.every(
 	query.slot.hermit,
 	query.not(query.slot.active),
 	query.not(query.slot.empty),
@@ -28,7 +28,7 @@ const CowardsBed: SingleUse = {
 	showConfirmationModal: true,
 	attachCondition: query.every(
 		singleUse.attachCondition,
-		query.exists(SlotComponent, pickCondition),
+		query.exists(SlotComponent, hasSwitchable),
 	),
 	onAttach(
 		game: GameModel,
