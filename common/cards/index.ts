@@ -4,6 +4,7 @@ import adventOfTcgItemCards from './advent-of-tcg/items'
 import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
 import defaultAttachCards from './attach'
 import bedUpdateAttachCards from './bed-update/attach'
+import bedUpdateSingleUseCards from './bed-update/single-use'
 import bossHermitCards from './boss/hermits'
 import defaultHermitCards from './hermits'
 import defaultItemCards from './items'
@@ -30,6 +31,7 @@ export const itemCardClasses: Array<Card> = [
 export const singleUseCardClasses: Array<Card> = [
 	...defaultSingleUseCards,
 	...adventOfTcgSingleUseCards,
+	...bedUpdateSingleUseCards,
 ]
 
 const allCardClasses: Array<Card> = [
