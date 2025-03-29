@@ -40,6 +40,7 @@ import {
 import MuseumCollectionEffect from './museum-collection'
 import NaughtyRegiftEffect from './naughty-regift'
 import OverhealEffect from './overheal'
+import PermanentSleepingEffect from './permanent-sleeping'
 import PoisonEffect from './poison'
 import PoisonQuiverEffect from './poison-quiver'
 import PostInspectorEffect from './post-inspector'
@@ -119,6 +120,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	MelodyEffect,
 	LitFuseEffect,
 	OverhealEffect,
+	ExiledEffect,
 	/* Hidden Status Effects */
 	TurnSkippedEffect,
 	GasLightEffect,
