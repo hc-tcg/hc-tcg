@@ -10,6 +10,7 @@ import {DeathloopReady, RevivedByDeathloopEffect} from './death-loop'
 import DyedEffect from './dyed'
 import EfficiencyEffect from './efficiency'
 import ExBossNineEffect from './exboss-nine'
+import ExiledEffect from './exiled'
 import FireEffect from './fire'
 import FortuneEffect from './fortune'
 import FrozenEffect from './frozen'
@@ -37,6 +38,7 @@ import {
 } from './multiturn-attack-disabled'
 import MuseumCollectionEffect from './museum-collection'
 import NaughtyRegiftEffect from './naughty-regift'
+import PermanentSleepingEffect from './permanent-sleeping'
 import PoisonEffect from './poison'
 import PoisonQuiverEffect from './poison-quiver'
 import PostInspectorEffect from './post-inspector'
@@ -115,6 +117,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	SmeltingEffect,
 	MelodyEffect,
 	LitFuseEffect,
+	ExiledEffect,
 	/* Hidden Status Effects */
 	TurnSkippedEffect,
 	GasLightEffect,
