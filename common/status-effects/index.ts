@@ -24,6 +24,7 @@ import {
 	InvisibilityPotionHeadsEffect as InvisibilityPotionHeadsEffect,
 	InvisibilityPotionTailsEffect as InvisibilityPotionTailsEffect,
 } from './invisibility-potion'
+import LitFuseEffect from './lit_fuse'
 import LooseShellEffect from './loose-shell'
 import MelodyEffect from './melody'
 import {
@@ -113,6 +114,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	MuseumCollectionEffect,
 	SmeltingEffect,
 	MelodyEffect,
+	LitFuseEffect,
 	/* Hidden Status Effects */
 	TurnSkippedEffect,
 	GasLightEffect,
