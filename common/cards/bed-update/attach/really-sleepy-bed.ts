@@ -32,7 +32,6 @@ const ReallySleepyBed: Attach = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		// Give the current row sleeping for 3 turns
 		const {player} = component
 
 		let hermitCard = () => {
