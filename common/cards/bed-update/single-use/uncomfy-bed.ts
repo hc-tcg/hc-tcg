@@ -23,20 +23,22 @@ const UncomfyBed: SingleUse = {
 			player.hooks.afterApply,
 			afterApply.CLEAR_STATUS_EFFECT,
 			() => {
-                let removeFrom = game.components.filter(
-                    StatusEffectComponent,
-                    query.effect.is(SleepingEffect),
-                )
+				let removeFrom = game.components.filter(
+					StatusEffectComponent,
+					query.effect.is(SleepingEffect),
+				)
 
-                if (removeFrom.length === 0) return
-        
+				if (removeFrom.length === 0) return
 
-                removeFrom.forEach((effect) => {
-                    if (effect.target instanceof CardComponent && effect.target.slot.inRow()) {
-                        effect.target.slot.row.health = 80
-                    }
-                    effect.remove()
-                })
+				removeFrom.forEach((effect) => {
+					if (
+						effect.target instanceof CardComponent &&
+						effect.target.slot.inRow()
+					) {
+						effect.target.slot.row.health = 80
+					}
+					effect.remove()
+				})
 			},
 		)
 	},

@@ -1,4 +1,9 @@
-import {CardComponent, DeckSlotComponent, ObserverComponent, StatusEffectComponent} from '../../../components'
+import {
+	CardComponent,
+	DeckSlotComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import LitFuseEffect from '../../../status-effects/lit_fuse'
@@ -14,7 +19,8 @@ const RealisticBed: Attach = {
 	expansion: 'default',
 	rarity: 'ultra_rare',
 	tokens: 3,
-	description: 'When attached to a hermit, add 3 TNT cards to the top of your deck. After 4 turns, any TNT or TNT minecarts in your hand explode, dealing 60hp damage to the hermit.',
+	description:
+		'When attached to a hermit, add 3 TNT cards to the top of your deck. After 4 turns, any TNT or TNT minecarts in your hand explode, dealing 60hp damage to the hermit.',
 	onAttach(
 		game: GameModel,
 		component: CardComponent,

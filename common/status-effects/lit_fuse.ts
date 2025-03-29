@@ -6,7 +6,7 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import { onTurnEnd } from '../types/priorities'
+import {onTurnEnd} from '../types/priorities'
 import {Counter, systemStatusEffect} from './status-effect'
 
 const LitFuseEffect: Counter<CardComponent> = {
@@ -32,9 +32,8 @@ const LitFuseEffect: Counter<CardComponent> = {
 			if (effect.counter === 0) {
 				let damage = 0
 				target.player.getHand().forEach((card) => {
-					if (![TNT.id, MinecartWithTNT.id].includes(card.props.id))
-						return
-                    card.discard()
+					if (![TNT.id, MinecartWithTNT.id].includes(card.props.id)) return
+					card.discard()
 					damage += 60
 				})
 				if (!target.slot.inRow()) return
