@@ -15,7 +15,7 @@ import {Attach, Hermit} from '../../types'
 const BouncyBed: Attach = {
 	...attach,
 	id: 'bouncy_bed',
-	numericId: 266,
+	numericId: 273,
 	expansion: 'default',
 	name: 'Bouncy bed',
 	rarity: 'ultra_rare',
