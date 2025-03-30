@@ -1,7 +1,4 @@
-import {
-	CardComponent,
-	ObserverComponent,
-} from '../../../components'
+import {CardComponent, ObserverComponent} from '../../../components'
 import {GameModel} from '../../../models/game-model'
 import {beforeAttack, onTurnEnd} from '../../../types/priorities'
 import {singleUse} from '../../defaults'
@@ -9,14 +6,14 @@ import {SingleUse} from '../../types'
 
 const DisappointingBed: SingleUse = {
 	...singleUse,
-	id: "disappointing_bed",
+	id: 'disappointing_bed',
 	numericId: 274,
-	name: "Disappointing Bed",
+	name: 'Disappointing Bed',
 	expansion: 'default',
 	rarity: 'ultra_rare',
 	tokens: -0.5,
 	description:
-		'Swap the health of your and your opponent\'s active hermit. Before attacking or ending your turn, swap it back.\nYou can use another single use effect card this turn.',
+		"Swap the health of your and your opponent's active hermit. Before attacking or ending your turn, swap it back.\nYou can use another single use effect card this turn.",
 	showConfirmationModal: true,
 	attachCondition: singleUse.attachCondition,
 	onAttach(
@@ -49,7 +46,7 @@ const DisappointingBed: SingleUse = {
 				playerActiveRow.health = opponentActiveRow.health
 				opponentActiveRow.health = placeholder
 				swappedBack = true
-			}
+			},
 		)
 
 		observer.subscribeWithPriority(
@@ -62,7 +59,7 @@ const DisappointingBed: SingleUse = {
 				let placeholder = playerActiveRow.health
 				playerActiveRow.health = opponentActiveRow.health
 				opponentActiveRow.health = placeholder
-			}
+			},
 		)
 	},
 }

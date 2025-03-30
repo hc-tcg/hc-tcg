@@ -10,14 +10,13 @@ import {SingleUse} from '../../types'
 
 const BlockingBed: SingleUse = {
 	...singleUse,
-	id: "blocking_bed",
+	id: 'blocking_bed',
 	numericId: 271,
-	name: "Blocking Bed",
+	name: 'Blocking Bed',
 	expansion: 'default',
 	rarity: 'ultra_rare',
 	tokens: 2,
-	description:
-		'The opponent player cannot play cards on their next turn.',
+	description: 'The opponent player cannot play cards on their next turn.',
 	showConfirmationModal: true,
 	attachCondition: singleUse.attachCondition,
 	onAttach(
