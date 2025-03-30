@@ -113,8 +113,6 @@ export class RowComponent {
 			this.health + amount,
 			Math.max(this.health, hermit.props.health),
 		)
-		if (overhealed)
-			this.health = this.health + amount
 	}
 
 	public fullHeal() {
