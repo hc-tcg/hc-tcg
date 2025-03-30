@@ -5,17 +5,16 @@ import {
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import SleepingEffect from '../../../status-effects/sleeping'
-import {onTurnEnd} from '../../../types/priorities'
+import PermanentSleepingEffect from '../../../status-effects/permanent-sleeping'
 import {attach} from '../../defaults'
 import {Attach} from '../../types'
 
 const ReallySleepyBed: Attach = {
 	...attach,
-	id: 'bed',
+	id: 'really_sleepy_bed',
 	numericId: 262,
 	expansion: 'default',
-	name: 'Bed',
+	name: 'Really Sleepy Bed',
 	rarity: 'ultra_rare',
 	tokens: 2,
 	description:
@@ -44,39 +43,8 @@ const ReallySleepyBed: Attach = {
 		}
 
 		game.components
-			.new(StatusEffectComponent, SleepingEffect, component.entity)
+			.new(StatusEffectComponent, PermanentSleepingEffect, component.entity)
 			.apply(hermitCard()?.entity)
-
-		observer.subscribe(player.hooks.onActiveRowChange, () => {
-			let hermit = hermitCard()
-			if (!hermit) return
-
-			// If the player is moved by knockback or ladder, we want to remove sleep and discard the bed.
-			if (
-				!hermit.slot.inRow() ||
-				hermit.slot.row.entity !== player.activeRowEntity
-			) {
-				hermit.getStatusEffect(SleepingEffect)?.remove()
-				component.discard()
-			}
-		})
-
-		observer.subscribe(player.hooks.onTurnStart, () => {
-			if (!hermitCard()?.getStatusEffect(SleepingEffect)) {
-				component.discard()
-			}
-		})
-
-		observer.subscribeWithPriority(
-			player.hooks.onTurnEnd,
-			onTurnEnd.BEFORE_STATUS_EFFECT_TIMEOUT,
-			() => {
-				// if sleeping has worn off, discard the bed
-				if (!hermitCard()?.getStatusEffect(SleepingEffect)) {
-					component.discard()
-				}
-			},
-		)
 	},
 }
 
