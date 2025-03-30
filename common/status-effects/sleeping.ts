@@ -27,20 +27,12 @@ const SleepingEffect: Counter<CardComponent> = {
 		effect.counter = this.counter
 
 		if (!target.slot.inRow()) return
-		if (!target.isHealth()) return
 
 		game.addBlockedActions(
 			this.icon,
 			'PRIMARY_ATTACK',
 			'SECONDARY_ATTACK',
 			'CHANGE_ACTIVE_HERMIT',
-		)
-
-		target.slot.row.heal(target.props.health)
-
-		game.battleLog.addEntry(
-			player.entity,
-			`$p${target.props.name}$ went to $eSleep$ and restored $gfull health$`,
 		)
 
 		observer.subscribe(player.hooks.onTurnStart, () => {
