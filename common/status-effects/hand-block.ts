@@ -18,7 +18,7 @@ const HandBlockEffect: StatusEffect<PlayerComponent> = {
 	): void {
 		observer.subscribe(player.hooks.onTurnStart, () => {
 			game.addBlockedActions(
-				this.icon,
+				this.id,
 				'APPLY_EFFECT',
 				'REMOVE_EFFECT',
 				'SINGLE_USE_ATTACK',

@@ -13,9 +13,8 @@ const DisappointingBed: SingleUse = {
 	rarity: 'ultra_rare',
 	tokens: -0.5,
 	description:
-		"Swap the health of your and your opponent's active hermit. Before attacking or ending your turn, swap it back.\nYou can use another single use effect card this turn.",
+		"Swap the health of your and your opponent's active hermit. Before attacking or ending your turn, swap them back.",
 	showConfirmationModal: true,
-	attachCondition: singleUse.attachCondition,
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
