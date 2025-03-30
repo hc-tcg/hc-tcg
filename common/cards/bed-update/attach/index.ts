@@ -5,6 +5,8 @@ import RealisticBed from './realistic-bed'
 import PowerBed from './power-bed'
 import ReallySleepyBed from './really-sleepy-bed'
 import ReallyHealthyBed from './really-health-bed'
+import ThievingBed from './thieving-bed'
+import BouncyBed from './bouncy-bed'
 
 const effectCardClasses: Array<Card> = [
 	PowerBed,
@@ -12,7 +14,9 @@ const effectCardClasses: Array<Card> = [
 	HealthyBed,
 	RealisticBed,
 	ReallyHealthyBed,
-    CorruptionBed
+	CorruptionBed,
+	ThievingBed,
+	BouncyBed,
 ]
 
 export default effectCardClasses

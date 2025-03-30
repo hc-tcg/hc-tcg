@@ -29,16 +29,20 @@ const ReallyHealthyBed: Attach = {
 	) {
 		const {player} = component
 
-        if (!component.slot.inRow()) return
-        const overheal = game.components.new(StatusEffectComponent, OverhealEffect, component.entity)
-        overheal.apply(component.slot.row.hermitSlot.cardEntity)
+		if (!component.slot.inRow()) return
+		const overheal = game.components.new(
+			StatusEffectComponent,
+			OverhealEffect,
+			component.entity,
+		)
+		overheal.apply(component.slot.row.hermitSlot.cardEntity)
 
 		observer.subscribeWithPriority(
 			player.hooks.onTurnEnd,
 			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
 			() => {
 				if (!component.slot.inRow()) return
-                const row = component.slot.row
+				const row = component.slot.row
 				if (!row.hermitSlot.card) return
 				if (
 					(row.hermitSlot.card.props as Hermit).health + 100 >=
@@ -67,10 +71,10 @@ const ReallyHealthyBed: Attach = {
 					row.health = null
 				}
 
-                if (player.activeRow?.entity !== row.entity) {
-                    discardRow()
-                    return
-                }
+				if (player.activeRow?.entity !== row.entity) {
+					discardRow()
+					return
+				}
 
 				let knockbackPickRequest = player.getKnockbackPickRequest(component)
 				if (!knockbackPickRequest) return
