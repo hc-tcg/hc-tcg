@@ -87,7 +87,7 @@ export type ServerMessages = [
 		type: typeof serverMessages.GAME_END
 		gameState: LocalGameState | null
 		outcome: GameOutcome
-		earnedAchievements: Array<EarnedAchievement>
+		earnedAchievements: Array<EarnedAchievement> | null
 		gameEndTime: number
 	},
 	{

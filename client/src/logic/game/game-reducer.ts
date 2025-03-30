@@ -109,7 +109,7 @@ const gameReducer = (
 				...state,
 				endGameOverlay: {
 					outcome: action.outcome,
-					earnedAchievements: action.earnedAchievements,
+					earnedAchievements: action.earnedAchievements || [],
 					gameEndTime: action.gameEndTime,
 				},
 			}
