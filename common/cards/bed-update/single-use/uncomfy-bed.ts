@@ -1,5 +1,6 @@
 import {CardComponent, StatusEffectComponent} from '../../../components'
 import query from '../../../components/query'
+import PermanentSleepingEffect from '../../../status-effects/permanent-sleeping'
 import SleepingEffect from '../../../status-effects/sleeping'
 import {afterApply} from '../../../types/priorities'
 import {singleUse} from '../../defaults'
@@ -25,7 +26,10 @@ const UncomfyBed: SingleUse = {
 			() => {
 				let removeFrom = game.components.filter(
 					StatusEffectComponent,
-					query.effect.is(SleepingEffect),
+					query.some(
+						query.effect.is(SleepingEffect),
+						query.effect.is(PermanentSleepingEffect),
+					),
 				)
 
 				if (removeFrom.length === 0) return

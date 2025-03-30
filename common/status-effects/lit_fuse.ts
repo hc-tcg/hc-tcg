@@ -33,6 +33,7 @@ const LitFuseEffect: Counter<CardComponent> = {
 				let damage = 0
 				target.player.getHand().forEach((card) => {
 					if (![TNT.id, MinecartWithTNT.id].includes(card.props.id)) return
+					effect.remove()
 					card.discard()
 					damage += 60
 				})
@@ -47,6 +48,7 @@ const LitFuseEffect: Counter<CardComponent> = {
 					player.entity,
 					`$p${hermit.props.name}$'s $e${target.props.name}$ detonated, dealing $g${damage}hp$ damage.`,
 				)
+				effect.remove()
 				target.discard()
 			}
 		})
