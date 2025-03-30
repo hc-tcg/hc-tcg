@@ -20,6 +20,7 @@ import {
 	GasLightTriggeredEffect,
 } from './gas-light'
 import GoMiningEffect from './go-mining'
+import HandBlockEffect from './hand-block'
 import {IgnoreAttachSlotEffect} from './ignore-attach'
 import {
 	InvisibilityPotionHeadsEffect as InvisibilityPotionHeadsEffect,
@@ -126,6 +127,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	TFCDiscardedFromEffect,
 	SculkCatalystTriggeredEffect,
 	ExiledEffect,
+	HandBlockEffect,
 ]
 
 export const STATUS_EFFECTS: Record<string, StatusEffect> =
