@@ -105,7 +105,7 @@ export class RowComponent {
 		const overhealed = this.game.components.exists(
 			StatusEffectComponent,
 			query.effect.targetIsCardAnd(query.card.entity(hermit.entity)),
-			query.effect.is(OverhealEffect)
+			query.effect.id('overhealed')
 		)
 		if (overhealed) {
 			this.health = this.health + amount
