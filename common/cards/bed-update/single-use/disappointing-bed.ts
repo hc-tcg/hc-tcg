@@ -9,9 +9,9 @@ const DisappointingBed: SingleUse = {
 	id: 'disappointing_bed',
 	numericId: 274,
 	name: 'Disappointing Bed',
-	expansion: 'default',
+	expansion: 'beds',
 	rarity: 'ultra_rare',
-	tokens: -0.5,
+	tokens: 0,
 	description:
 		"Swap the health of your and your opponent's active hermit. Before attacking or ending your turn, swap them back.",
 	showConfirmationModal: true,

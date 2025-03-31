@@ -8,7 +8,7 @@ const ThievingBed: Attach = {
 	...attach,
 	id: 'thieving_bed',
 	numericId: 268,
-	expansion: 'default',
+	expansion: 'beds',
 	name: 'Thieving Bed',
 	rarity: 'ultra_rare',
 	tokens: 3,

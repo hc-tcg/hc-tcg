@@ -9,7 +9,7 @@ const ImmortalityBed: Attach = {
 	...attach,
 	id: 'immortality_bed',
 	numericId: 265,
-	expansion: 'default',
+	expansion: 'beds',
 	name: 'Immortality Bed',
 	rarity: 'ultra_rare',
 	tokens: 5,

@@ -12,7 +12,7 @@ const ExileBed: SingleUse = {
 	...singleUse,
 	id: 'exile_bed',
 	name: 'Exile Bed',
-	expansion: 'default',
+	expansion: 'beds',
 	numericId: 270,
 	rarity: 'ultra_rare',
 	tokens: 3,

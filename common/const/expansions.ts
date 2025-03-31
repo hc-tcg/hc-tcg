@@ -12,6 +12,7 @@ export type ExpansionT =
 	| 'advent_of_tcg'
 	| 'advent_of_tcg_ii'
 	| 'dream'
+	| 'beds'
 	| 'boss'
 
 export type ExpansionDict = {
@@ -27,5 +28,6 @@ export const EXPANSIONS: ExpansionDict = {
 	advent_of_tcg: {name: 'Advent of TCG', disabled: true},
 	advent_of_tcg_ii: {name: 'Advent of TCG II', disabled: true},
 	dream: {name: 'Dream', disabled: true},
+	beds: {name: 'Beds', disabled: false},
 	boss: {name: 'Boss', disabled: false},
 }

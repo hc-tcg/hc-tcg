@@ -70,6 +70,7 @@ import WeaknessEffect from './weakness'
 export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	/* Regular Status Effects */
 	SleepingEffect,
+	PermanentSleepingEffect,
 	BadOmenEffect,
 	RoyalProtectionEffect,
 	FrozenEffect,
@@ -120,7 +121,6 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	MelodyEffect,
 	LitFuseEffect,
 	OverhealEffect,
-	ExiledEffect,
 	/* Hidden Status Effects */
 	TurnSkippedEffect,
 	GasLightEffect,
