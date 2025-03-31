@@ -1,4 +1,3 @@
-import {CARDS} from '../..'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -10,7 +9,7 @@ import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import ExiledEffect from '../../../status-effects/exiled'
 import {attach} from '../../defaults'
-import {Attach, Hermit} from '../../types'
+import {Attach} from '../../types'
 
 const BouncyBed: Attach = {
 	...attach,

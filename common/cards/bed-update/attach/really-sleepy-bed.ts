@@ -29,10 +29,8 @@ const ReallySleepyBed: Attach = {
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
-		observer: ObserverComponent,
+		_observer: ObserverComponent,
 	) {
-		const {player} = component
-
 		let hermitCard = () => {
 			if (!component.slot.inRow()) return
 			return game.components.find(

@@ -1,5 +1,4 @@
 import {RowComponent} from '../../../components'
-import {afterApply} from '../../../types/priorities'
 import {fisherYatesShuffle} from '../../../utils/fisher-yates'
 import {singleUse} from '../../defaults'
 import {SingleUse} from '../../types'
