@@ -1,7 +1,9 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
+import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {beforeAttack} from '../../../types/priorities'
+import {executeExtraAttacks} from '../../../utils/attacks'
 import {attach, item} from '../../defaults'
 import {Attach} from '../../types'
 
@@ -14,7 +16,7 @@ const PowerBed: Attach = {
 	rarity: 'ultra_rare',
 	tokens: 1,
 	description:
-		'Attach as an item. Counts as 3 wild items, but the hermit this card is attached to loses 40 hp each time it attacks.',
+		'Attach as an item. Counts as 3 wild items, but the hermit this card is attached is drained 40 hp each time it attacks.\nDrained damage ignores effect cards.',
 	attachCondition: query.every(
 		query.slot.currentPlayer,
 		query.slot.item,
@@ -49,17 +51,19 @@ const PowerBed: Attach = {
 
 				if (!attack.isAttacker(component.slot.row.hermitSlot.cardEntity)) return
 
-				component.slot.row.damage(40) //Not damage nor attack.
-
-				const hermitName = game.components.find(
-					CardComponent,
-					query.card.slot(query.slot.hermit),
-					query.card.row(query.row.entity(attack.targetEntity)),
-				)?.props.name
-				game.battleLog.addEntry(
-					player.entity,
-					`$p${hermitName}'s$ $ePower Bed$ drained $b40hp$ from its user`,
+				const newAttack = new AttackModel(game, {
+					attacker: component.entity,
+					player: component.player.entity,
+					type: 'effect',
+					target: component.slot.rowEntity,
+					log: (values) =>
+						`${values.target}'s ${values.attacker} drained ${values.damage} from it's user.`,
+				})
+				attack.shouldIgnoreCards.push(
+					query.card.slot(query.slot.rowIs(component.slot.rowEntity)),
 				)
+				newAttack.addDamage(component.entity, 40)
+				executeExtraAttacks(game, [newAttack])
 			},
 		)
 	},

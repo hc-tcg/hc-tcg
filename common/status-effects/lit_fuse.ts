@@ -5,8 +5,9 @@ import {
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../components'
+import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
-import {onTurnEnd} from '../types/priorities'
+import {executeExtraAttacks} from '../utils/attacks'
 import {Counter, systemStatusEffect} from './status-effect'
 
 const LitFuseEffect: Counter<CardComponent> = {
@@ -43,11 +44,16 @@ const LitFuseEffect: Counter<CardComponent> = {
 					target.discard()
 					return
 				}
-				target.slot.row.damage(damage)
-				game.battleLog.addEntry(
-					player.entity,
-					`$p${hermit.props.name}$'s $e${target.props.name}$ detonated, dealing $g${damage}hp$ damage.`,
-				)
+				const newAttack = new AttackModel(game, {
+					attacker: target.entity,
+					player: target.player.entity,
+					type: 'effect',
+					target: target.slot.row.entity,
+					log: (values) =>
+						`${values.target}'s ${values.attacker} detonated, dealing ${values.damage} damage.`,
+				})
+				newAttack.addDamage(effect.entity, damage)
+				executeExtraAttacks(game, [newAttack])
 				effect.remove()
 				target.discard()
 			}

@@ -42,8 +42,8 @@ const BouncyBed: Attach = {
 			return
 		}
 
-        const row = component.slot.row
-        if (!row) return
+		const row = component.slot.row
+		if (!row) return
 
 		const discardRow = () => {
 			const toDiscard: (CardComponent | null)[] = [
@@ -66,10 +66,10 @@ const BouncyBed: Attach = {
 			row.health = null
 		}
 
-        if (player.activeRow?.entity !== row.entity) {
-            discardRow()
-            return
-        }
+		if (player.activeRow?.entity !== row.entity) {
+			discardRow()
+			return
+		}
 
 		let knockbackPickRequest = player.getKnockbackPickRequest(component)
 		if (!knockbackPickRequest) return
