@@ -16,7 +16,7 @@ const RealisticBed: Attach = {
 	id: 'realistic_bed',
 	numericId: 260,
 	name: 'Realistic Bed',
-	expansion: 'default',
+	expansion: 'beds',
 	rarity: 'ultra_rare',
 	tokens: 3,
 	description:

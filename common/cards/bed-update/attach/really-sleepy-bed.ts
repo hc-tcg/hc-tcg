@@ -13,7 +13,7 @@ const ReallySleepyBed: Attach = {
 	...attach,
 	id: 'really_sleepy_bed',
 	numericId: 262,
-	expansion: 'default',
+	expansion: 'beds',
 	name: 'Really Sleepy Bed',
 	rarity: 'ultra_rare',
 	tokens: 2,

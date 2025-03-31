@@ -20,7 +20,7 @@ const CowardsBed: SingleUse = {
 	id: "coward's_bed",
 	numericId: 264,
 	name: "Coward's Bed",
-	expansion: 'default',
+	expansion: 'beds',
 	rarity: 'ultra_rare',
 	tokens: 1,
 	description:

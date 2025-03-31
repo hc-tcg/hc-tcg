@@ -13,7 +13,7 @@ const BlockingBed: SingleUse = {
 	id: 'blocking_bed',
 	numericId: 271,
 	name: 'Blocking Bed',
-	expansion: 'default',
+	expansion: 'beds',
 	rarity: 'ultra_rare',
 	tokens: 2,
 	description: 'The opponent player cannot play cards on their next turn.',

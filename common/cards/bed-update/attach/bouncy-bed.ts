@@ -15,7 +15,7 @@ const BouncyBed: Attach = {
 	...attach,
 	id: 'bouncy_bed',
 	numericId: 273,
-	expansion: 'default',
+	expansion: 'beds',
 	name: 'Bouncy bed',
 	rarity: 'ultra_rare',
 	tokens: 2,

@@ -12,7 +12,7 @@ const PowerBed: Attach = {
 	id: 'power_bed',
 	numericId: 261,
 	name: 'Power Bed',
-	expansion: 'default',
+	expansion: 'beds',
 	rarity: 'ultra_rare',
 	tokens: 1,
 	description:

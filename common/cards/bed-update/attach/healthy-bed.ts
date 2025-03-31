@@ -8,7 +8,7 @@ const HealthyBed: Attach = {
 	...attach,
 	id: 'healthy_bed',
 	numericId: 266,
-	expansion: 'default',
+	expansion: 'beds',
 	name: 'Healthy Bed',
 	rarity: 'ultra_rare',
 	tokens: 2,

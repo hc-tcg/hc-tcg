@@ -8,7 +8,7 @@ const CorruptionBed: Attach = {
 	...attach,
 	id: 'corruption_bed',
 	numericId: 272,
-	expansion: 'default',
+	expansion: 'beds',
 	name: 'Corruption bed',
 	rarity: 'ultra_rare',
 	tokens: 2,
