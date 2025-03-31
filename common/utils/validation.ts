@@ -1,3 +1,4 @@
+import ImmortalityBed from '../cards/bed-update/attach/immortality-bed'
 import {Card} from '../cards/types'
 import {CONFIG, DEBUG_CONFIG} from '../config'
 import {EXPANSIONS} from '../const/expansions'
@@ -32,7 +33,28 @@ export function validateDeck(deckCards: Array<Card>): ValidateDeckResult {
 	// less than one hermit
 	const hasHermit = deckCards.some((card) => card.category === 'hermit')
 	if (!hasHermit)
-		return {valid: false, reason: 'Deck must have at least one Hermit.'}
+		return { valid: false, reason: 'Deck must have at least one Hermit.' }
+
+	// Immortality Bed, or similar cards
+	const mythicDuplicates = deckCards.some((card) => {
+		const mythics = [ImmortalityBed]
+		for (let i = 0; i < mythics.length; i++) {
+			let count = deckCards.filter(
+				(filterCard) => filterCard.numericId === mythics[i].numericId,
+			).length
+			if (count > 1) {
+				return mythics[i].name
+			}
+		}
+		return false
+	})
+
+	if (mythicDuplicates) {
+		return {
+			valid: false,
+			reason: `You cannot have more than one copy of ${mythicDuplicates}.`,
+		}
+	}
 
 	// more than max duplicates
 	const tooManyDuplicates =
