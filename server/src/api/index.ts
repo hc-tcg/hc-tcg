@@ -1,6 +1,7 @@
 import {DEBUG} from 'common/config'
 import {NumberOrNull} from 'common/utils/database-codes'
 import {Express} from 'express'
+import rateLimit from 'express-rate-limit'
 import root from 'serverRoot'
 import {
 	PlayerAchievementProgressQuery,
@@ -39,13 +40,23 @@ import {UpdateMessage, updateWarning} from './update-warning'
 import {requestUrlRoot} from './utils'
 
 export function addApi(app: Express) {
-	app.get('/api/auth/', async (req, res) => {
-		const userId = req.get('userId')
-		const secret = req.get('secret')
-		let ret = await authenticateUser(userId, secret)
-		res.statusCode = ret[0]
-		res.send(ret[1])
-	})
+	if (!process.env.CI) {
+		console.log('Setting up rate limiter for `api/auth`...')
+		const authLimiter = rateLimit({
+			windowMs: 30 * 1000,
+			limit: 2,
+			standardHeaders: 'draft-8',
+			legacyHeaders: false,
+		})
+		app.use('/api/auth/', authLimiter)
+		app.get('/api/auth/', async (req, res) => {
+			const userId = req.get('userId')
+			const secret = req.get('secret')
+			let ret = await authenticateUser(userId, secret)
+			res.statusCode = ret[0]
+			res.send(ret[1])
+		})
+	}
 
 	app.post('/api/createUser/', async (req, res) => {
 		const username = req.get('username')

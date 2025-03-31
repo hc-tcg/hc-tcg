@@ -5,6 +5,7 @@ import {fileURLToPath} from 'url'
 import {CONFIG} from 'common/config'
 import cors from 'cors'
 import express from 'express'
+import {rateLimit} from 'express-rate-limit'
 import root from 'serverRoot'
 import {addApi} from './api'
 import {loadUpdates} from './load-updates'
@@ -14,6 +15,19 @@ const port = process.env.PORT || CONFIG.port || 9000
 
 const app = express()
 app.use(express.json())
+
+if (!process.env.CI) {
+	console.log('Setting up rate limiter...')
+	const limiter = rateLimit({
+		windowMs: 15 * 60 * 1000, // 15 minutes
+		limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+		standardHeaders: 'draft-8',
+		legacyHeaders: false,
+	})
+
+	// Apply the rate limiting middleware to all requests.
+	app.use(limiter)
+}
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
