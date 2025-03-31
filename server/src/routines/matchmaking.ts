@@ -183,9 +183,7 @@ function* gameManager(con: GameController) {
 	} finally {
 		const outcome = con.game.outcome
 
-		if (!outcome) {
-			return
-		}
+		if (!outcome) return
 
 		const gameEndTime = new Date()
 		if (con.task) yield* cancel(con.task)
@@ -193,6 +191,7 @@ function* gameManager(con: GameController) {
 
 		const newAchievements: Record<string, Array<EarnedAchievement>> = {}
 		for (let k = 0; k < con.viewers.length; k++) {
+			if (!root.db.connected) continue
 			const v = con.viewers[k]
 			if (v.spectator) continue
 			const playerEntity = v.playerOnLeftEntity
@@ -285,6 +284,7 @@ function* gameManager(con: GameController) {
 			: yield* turnActionCompressor.turnActionsToBuffer(con)
 
 		if (
+			root.db.connected &&
 			gamePlayers.length >= 2 &&
 			gamePlayers[0].uuid &&
 			gamePlayers[1].uuid &&
@@ -303,7 +303,7 @@ function* gameManager(con: GameController) {
 				con.gameCode,
 			)
 		}
-		yield* sendAfterGameInfo(gamePlayers)
+		if (root.db.connected) yield* sendAfterGameInfo(gamePlayers)
 
 		const getGameScore = (
 			outcome: GameOutcome | undefined,
@@ -464,11 +464,10 @@ function* setupPlayerInfo(
 	if (payload.databaseConnected) {
 		const newDeck = yield* getDeck(payload.activeDeckCode)
 		player.setPlayerDeck(newDeck)
+		const latestAchievementProgress = yield* getAchievementProgress(player.uuid)
+		player.updateAchievementProgress(latestAchievementProgress)
 		return
 	}
-
-	const latestAchievementProgress = yield* getAchievementProgress(player.uuid)
-	player.updateAchievementProgress(latestAchievementProgress)
 
 	player.setPlayerDeck(payload.activeDeck)
 }
