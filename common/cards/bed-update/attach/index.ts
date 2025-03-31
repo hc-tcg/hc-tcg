@@ -1,6 +1,7 @@
 import {Card} from '../../types'
 import CorruptionBed from './corruption-bed'
 import HealthyBed from './healthy-bed'
+import ImmortalityBed from './immortality-bed'
 import RealisticBed from './realistic-bed'
 import PowerBed from './power-bed'
 import ReallySleepyBed from './really-sleepy-bed'
@@ -17,6 +18,7 @@ const effectCardClasses: Array<Card> = [
 	CorruptionBed,
 	ThievingBed,
 	BouncyBed,
+	ImmortalityBed,
 ]
 
 export default effectCardClasses
