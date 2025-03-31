@@ -8,7 +8,7 @@ import {
 } from '../components'
 import query from '../components/query'
 import {GameModel} from '../models/game-model'
-import {hiddenStatusEffect, StatusEffect} from './status-effect'
+import {StatusEffect, hiddenStatusEffect} from './status-effect'
 
 const ExiledEffect: StatusEffect<CardComponent> = {
 	...hiddenStatusEffect,

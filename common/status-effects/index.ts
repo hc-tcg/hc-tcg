@@ -120,6 +120,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	MelodyEffect,
 	LitFuseEffect,
 	OverhealEffect,
+	ExiledEffect,
 	/* Hidden Status Effects */
 	TurnSkippedEffect,
 	GasLightEffect,

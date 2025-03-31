@@ -36,7 +36,7 @@ export function validateDeck(deckCards: Array<Card>): ValidateDeckResult {
 		return {valid: false, reason: 'Deck must have at least one Hermit.'}
 
 	// Immortality Bed, or similar cards
-	const mythicDuplicates = deckCards.some((card) => {
+	const mythicDuplicates = deckCards.some(() => {
 		const mythics = [ImmortalityBed]
 		for (let i = 0; i < mythics.length; i++) {
 			let count = deckCards.filter(

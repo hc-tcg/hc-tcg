@@ -15,7 +15,7 @@ const HealthyBed: Attach = {
 	description:
 		'At the end of any turn, heal the hermit this bed is attached to by 10hp.',
 	onAttach(
-		game: GameModel,
+		_game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
