@@ -1,7 +1,6 @@
 import {
 	CardComponent,
 	ObserverComponent,
-	StatusEffectComponent,
 } from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
@@ -46,7 +45,7 @@ const ImmortalityBed: Attach = {
 				if (!component.slot.inRow()) return
 
 				game.components.get(component.slot.row.hermitSlot.cardEntity)?.draw()
-			}
+			},
 		)
 	},
 }
