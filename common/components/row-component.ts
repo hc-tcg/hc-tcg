@@ -8,6 +8,7 @@ import {PlayerComponent} from './player-component'
 import query from './query'
 import {BoardSlotComponent, SlotComponent} from './slot-component'
 import {StatusEffectComponent} from './status-effect-component'
+import OverhealEffect from '../status-effects/overheal'
 
 export class RowComponent {
 	public static table = 'rows'
@@ -104,6 +105,7 @@ export class RowComponent {
 		const overhealed = this.game.components.exists(
 			StatusEffectComponent,
 			query.effect.targetIsCardAnd(query.card.entity(hermit.entity)),
+			query.effect.is(OverhealEffect)
 		)
 		if (overhealed) {
 			this.health = this.health + amount
