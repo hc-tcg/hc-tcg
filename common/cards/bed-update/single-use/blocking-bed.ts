@@ -3,6 +3,7 @@ import {
 	ObserverComponent,
 	StatusEffectComponent,
 } from '../../../components'
+import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import HandBlockEffect from '../../../status-effects/hand-block'
 import {singleUse} from '../../defaults'
@@ -18,7 +19,10 @@ const BlockingBed: SingleUse = {
 	tokens: 2,
 	description: 'The opponent player cannot play cards on their next turn.',
 	showConfirmationModal: true,
-	attachCondition: singleUse.attachCondition,
+	attachCondition: query.every(
+		singleUse.attachCondition,
+		(game, _pos) => game.state.turn.turnNumber !== 1,
+	),
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
