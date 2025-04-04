@@ -97,41 +97,49 @@ const ZombieCleoRare: Hermit = {
 						const pickedCard = pickedSlot.card as CardComponent<Hermit> | null
 						if (!pickedCard) return
 
-						game.addCopyAttackModalRequest({
-							player: player.entity,
-							modal: {
-								type: 'copyAttack',
-								name: 'Cleo: Choose an attack to copy',
-								description:
-									"Which of the Hermit's attacks do you want to copy?",
-								hermitCard: pickedCard.entity,
-								cancelable: true,
-							},
-							onResult: (modalResult) => {
-								if (!modalResult) return
-								if (modalResult.cancel) {
-									// Cancel this attack so player can choose a different hermit to imitate
-									game.state.turn.currentAttack = null
-									game.cancelPickRequests()
+						game.addPickAttackModalRequest(
+							{
+								player: player.entity,
+								modal: {
+									type: 'copyAttack',
+									name: 'Cleo: Choose an attack to copy',
+									description:
+										"Which of the Hermit's attacks do you want to copy?",
+									hermitCard: pickedCard.entity,
+									cancelable: true,
+								},
+								onResult: (modalResult) => {
+									if (!modalResult) return
+									if (modalResult.cancel) {
+										// Cancel this attack so player can choose a different hermit to imitate
+										game.state.turn.currentAttack = null
+										game.cancelPickRequests()
+										return
+									}
+									if (!modalResult.pick) return
+
+									// Store the card to copy when creating the attack
+									mockedAttacks.set(
+										component,
+										setupMockCard(
+											game,
+											component,
+											pickedCard,
+											modalResult.pick,
+										),
+									)
+
 									return
-								}
-								if (!modalResult.pick) return
-
-								// Store the card to copy when creating the attack
-								mockedAttacks.set(
-									component,
-									setupMockCard(game, component, pickedCard, modalResult.pick),
-								)
-
-								return
+								},
+								onTimeout: () => {
+									mockedAttacks.set(
+										component,
+										setupMockCard(game, component, pickedCard, 'primary'),
+									)
+								},
 							},
-							onTimeout: () => {
-								mockedAttacks.set(
-									component,
-									setupMockCard(game, component, pickedCard, 'primary'),
-								)
-							},
-						})
+							'copy',
+						)
 					},
 					onTimeout() {
 						// We didn't pick someone so do nothing

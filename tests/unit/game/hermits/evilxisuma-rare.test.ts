@@ -2,10 +2,12 @@ import {describe, expect, test} from '@jest/globals'
 import ArmorStand from 'common/cards/attach/armor-stand'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import EvilXisumaRare from 'common/cards/hermits/evilxisuma_rare'
+import ZombieCleoRare from 'common/cards/hermits/zombiecleo-rare'
 import {StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import {SecondaryAttackDisabledEffect} from 'common/status-effects/singleturn-attack-disabled'
+import {CopyAttack} from 'common/types/modal-requests'
 import {
 	attack,
 	endTurn,
@@ -82,6 +84,29 @@ describe('Test Evil X', () => {
 				},
 			},
 			{noItemRequirements: true, startWithAllCards: true, forceCoinFlip: true},
+		)
+	})
+	test('Test Evil X secondary with no afk hermits can disable Puppetry', () => {
+		testGame(
+			{
+				playerOneDeck: [ZombieCleoRare, EthosLabCommon],
+				playerTwoDeck: [EvilXisumaRare],
+				saga: function* (game) {
+					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 0)
+					yield* attack(game, 'secondary')
+
+					expect(
+						(game.state.modalRequests[0].modal as CopyAttack.Data)
+							.availableAttacks,
+					).toContain('secondary')
+					yield* finishModalRequest(game, {pick: 'secondary'})
+				},
+			},
+			{noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 })
