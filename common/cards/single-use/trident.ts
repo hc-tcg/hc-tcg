@@ -3,7 +3,7 @@ import {GameModel} from '../../models/game-model'
 import {CoinFlipResult} from '../../types/game-state'
 import {afterApply, beforeAttack} from '../../types/priorities'
 import {applySingleUse} from '../../utils/board'
-import {flipCoin} from '../../utils/coinFlips'
+import {flipCoin} from '../../utils/coin-flips'
 import {singleUse} from '../defaults'
 import {SingleUse} from '../types'
 

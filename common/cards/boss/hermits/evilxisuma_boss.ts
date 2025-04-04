@@ -20,7 +20,7 @@ import TFCDiscardedFromEffect from '../../../status-effects/tfc-discarded-from'
 import {AttackLog, HermitAttackType} from '../../../types/attack'
 import {afterApply, afterAttack, beforeAttack} from '../../../types/priorities'
 import {InstancedValue} from '../../card'
-import EvilXisumaRare from '../../hermits/evilxisuma_rare'
+import EvilXisumaRare from '../../hermits/evilxisuma-rare'
 import {Hermit} from '../../types'
 
 type PRIMARY_ATTACK = '50DMG' | '70DMG' | '90DMG'
