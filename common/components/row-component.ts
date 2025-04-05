@@ -107,6 +107,7 @@ export class RowComponent {
 			query.effect.id('overhealed'),
 		)
 		if (overhealed) {
+			//@TODO Make this less hacky.
 			this.health = this.health + amount
 			return
 		}

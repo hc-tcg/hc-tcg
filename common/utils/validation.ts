@@ -52,7 +52,7 @@ export function validateDeck(deckCards: Array<Card>): ValidateDeckResult {
 	if (mythicDuplicates) {
 		return {
 			valid: false,
-			reason: `You cannot have more than one copy of ${mythicDuplicates}.`,
+			reason: `You cannot have more than one copy of ${mythicDuplicates}.`, //@TODO Still have to make this return the name instead of true.
 		}
 	}
 

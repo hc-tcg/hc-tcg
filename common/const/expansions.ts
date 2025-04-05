@@ -28,6 +28,6 @@ export const EXPANSIONS: ExpansionDict = {
 	advent_of_tcg: {name: 'Advent of TCG', disabled: true},
 	advent_of_tcg_ii: {name: 'Advent of TCG II', disabled: true},
 	dream: {name: 'Dream', disabled: true},
-	beds: {name: 'Beds', disabled: false},
+	beds: {name: 'Beds', disabled: true},
 	boss: {name: 'Boss', disabled: false},
 }
