@@ -41,7 +41,7 @@ const ImmortalityBed: Attach = {
 
 				if (!component.slot.inRow()) return
 
-				game.components.get(component.slot.row.hermitSlot.cardEntity)?.draw()
+				game.components.get(component.slot.row.hermitSlot.cardEntity)?.draw() //This did not work as intended _f
 			},
 		)
 	},
