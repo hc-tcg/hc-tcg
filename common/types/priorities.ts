@@ -68,6 +68,8 @@ export const rowRevive = createPriorityDictionary({
 	DEATHLOOP_REVIVE: null,
 	/** Totems may revive their row and be discarded */
 	TOTEM_REVIVE: null,
+	/** Immortality Bed returns hermit to hand */
+	IMMORTALITY_RETURN: null,
 })
 
 export const afterAttack = createPriorityDictionary({

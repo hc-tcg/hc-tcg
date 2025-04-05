@@ -57,7 +57,11 @@ const Chest: SingleUse = {
 				}
 				if (!modalResult.cards) return
 				if (modalResult.cards.length !== 1) return
-				if (modalResult.cards[0].props.id === 'clock') return
+				if (
+					modalResult.cards[0].props.id === 'clock' ||
+					modalResult.cards[0].props.id === 'immortality_bed'
+				)
+					return
 
 				game.components.get(modalResult.cards[0].entity)?.draw()
 
