@@ -106,7 +106,7 @@ export class RowComponent {
 			query.effect.targetIsCardAnd(query.card.entity(hermit.entity)),
 			query.effect.id('overhealed'),
 		)
-		if (overhealed) {
+		if (overhealed) { //@TODO Make this less hacky.
 			this.health = this.health + amount
 			return
 		}
