@@ -59,7 +59,7 @@ const Chest: SingleUse = {
 				if (modalResult.cards.length !== 1) return
 				if (
 					modalResult.cards[0].props.id === 'clock' ||
-					modalResult.cards[0].props.id == 'immortality_bed'
+					modalResult.cards[0].props.id === 'immortality_bed'
 				)
 					return
 
