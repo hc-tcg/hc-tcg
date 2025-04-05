@@ -22,6 +22,8 @@ export function getCardRank(tokens: TokenCostT): RankT {
 		return 'emerald'
 	} else if (displayCost === 4) {
 		return 'diamond'
+	} else if (displayCost === 5) {
+		return 'obsidian'
 	}
 	return 'stone'
 }
