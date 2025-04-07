@@ -8,7 +8,6 @@ import {SingleUse} from '../types'
 
 const pickCondition = query.every(
 	query.slot.hermit,
-	query.slot.currentPlayer,
 	query.not(query.slot.empty),
 )
 
@@ -30,7 +29,7 @@ function newInstantHealth(
 		expansion: 'default',
 		rarity: props.rarity,
 		tokens: props.tokens,
-		description: `Heal one of your Hermits ${amount}hp.`,
+		description: `Heal any Hermit ${amount}hp.`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
 			query.slot.playerHasActiveHermit,
