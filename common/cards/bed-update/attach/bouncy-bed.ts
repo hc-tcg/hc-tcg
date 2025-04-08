@@ -21,6 +21,8 @@ const BouncyBed: Attach = {
 	tokens: 2,
 	description:
 		'Move the hermit this is attached to the top row. If the top row is blocked, exile the hermit.',
+	log: (values) =>
+		`$p{You|${values.player}}$ placed $p${values.pos.name}$ on row #${values.pick.rowIndex}`,
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
