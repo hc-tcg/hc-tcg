@@ -398,16 +398,17 @@ export class GameModel {
 	) {
 		let modal = newRequest.modal
 		let hermitCard = this.components.get(modal.hermitCard)!
-		let blockedActions =
-			mode === 'copy'
-				? hermitCard.player.hooks.blockedActions.callSome(
-						[[]],
-						(observerEntity) => {
-							let observer = this.components.get(observerEntity)
-							return observer?.wrappingEntity === hermitCard.entity
-						},
-					)
-				: []
+		/** If true, prevents picking attacks that are unable to be used */
+		const excludeDisabledAttacks = mode === 'copy'
+		let blockedActions = excludeDisabledAttacks
+			? hermitCard.player.hooks.blockedActions.callSome(
+					[[]],
+					(observerEntity) => {
+						let observer = this.components.get(observerEntity)
+						return observer?.wrappingEntity === hermitCard.entity
+					},
+				)
+			: []
 
 		/* Due to an issue with the blocked actions system, we have to check if our target has thier action
 		 * blocked by status effects here.
@@ -447,6 +448,7 @@ export class GameModel {
 		}
 
 		if (
+			excludeDisabledAttacks &&
 			this.components.exists(
 				StatusEffectComponent,
 				query.effect.is(TimeSkipDisabledEffect),

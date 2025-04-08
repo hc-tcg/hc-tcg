@@ -2,7 +2,9 @@ import {describe, expect, test} from '@jest/globals'
 import ArmorStand from 'common/cards/attach/armor-stand'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import EvilXisumaRare from 'common/cards/hermits/evilxisuma_rare'
+import JoeHillsRare from 'common/cards/hermits/joehills-rare'
 import ZombieCleoRare from 'common/cards/hermits/zombiecleo-rare'
+import ChorusFruit from 'common/cards/single-use/chorus-fruit'
 import {StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
@@ -12,6 +14,7 @@ import {
 	attack,
 	endTurn,
 	finishModalRequest,
+	pick,
 	playCardFromHand,
 	testGame,
 } from '../utils'
@@ -104,6 +107,46 @@ describe('Test Evil X', () => {
 							.availableAttacks,
 					).toContain('secondary')
 					yield* finishModalRequest(game, {pick: 'secondary'})
+				},
+			},
+			{noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+	test('Test Evil X secondary can disable opponent Time Skip after flipping heads to skip a turn', () => {
+		testGame(
+			{
+				playerOneDeck: [JoeHillsRare],
+				playerTwoDeck: [JoeHillsRare, EvilXisumaRare, ChorusFruit],
+				saga: function* (game) {
+					yield* playCardFromHand(game, JoeHillsRare, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, JoeHillsRare, 'hermit', 0)
+					yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 1)
+					yield* playCardFromHand(game, ChorusFruit, 'single_use')
+					yield* attack(game, 'secondary')
+					yield* pick(
+						game,
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* endTurn(game)
+
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					yield* endTurn(game)
+
+					expect(game.getAllBlockedActions()).toContain('SECONDARY_ATTACK')
+					expect(
+						game.components.exists(
+							StatusEffectComponent,
+							query.effect.is(SecondaryAttackDisabledEffect),
+							query.effect.targetIsCardAnd(query.card.currentPlayer),
+						),
+					).toBeTruthy()
 				},
 			},
 			{noItemRequirements: true, forceCoinFlip: true},
