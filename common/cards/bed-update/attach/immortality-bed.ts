@@ -1,7 +1,7 @@
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {rowRevive} from '../../../types/priorities'
+import {afterAttack} from '../../../types/priorities'
 import {attach} from '../../defaults'
 import {Attach} from '../../types'
 
@@ -27,9 +27,11 @@ const ImmortalityBed: Attach = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
+		const {player} = component
+
 		observer.subscribeWithPriority(
-			game.hooks.rowRevive,
-			rowRevive.IMMORTALITY_RETURN,
+			game.hooks.afterAttack,
+			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(attack) => {
 				if (!attack.isTargeting(component)) return
 				let target = attack.target
@@ -39,9 +41,37 @@ const ImmortalityBed: Attach = {
 				let targetHermit = target.getHermit()
 				if (targetHermit?.isAlive()) return
 
-				if (!component.slot.inRow()) return
+				observer.unsubscribe(game.hooks.afterAttack)
 
-				game.components.get(component.slot.row.hermitSlot.cardEntity)?.draw() //@TODO This did not work as intended.
+				const newObserver = game.components.new(
+					ObserverComponent,
+					component.entity,
+				)
+				newObserver.subscribe(target.hooks.onKnockOut, (hermit) => {
+					game.battleLog.addEntry(
+						player.entity,
+						`$e${component.props.name}$ returned $p${hermit.props.name}$ to $p{your|${player.playerName}'s}$ hand and restored one life`,
+					)
+					hermit.draw()
+					player.lives++
+					const prizeCard = player
+						.getDrawPile()
+						.sort(CardComponent.compareOrder)
+						.at(0)
+					if (prizeCard) {
+						newObserver.subscribe(
+							prizeCard.hooks.onChangeSlot,
+							(_newSlot, oldSlot) => {
+								newObserver.unsubscribe(prizeCard.hooks.onChangeSlot)
+								if (prizeCard.prizeCard) {
+									prizeCard.attach(oldSlot)
+									prizeCard.prizeCard = false
+								}
+							},
+						)
+					}
+					newObserver.unsubscribe(target.hooks.onKnockOut)
+				})
 			},
 		)
 	},
