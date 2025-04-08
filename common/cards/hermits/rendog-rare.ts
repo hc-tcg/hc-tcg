@@ -119,40 +119,48 @@ const RendogRare: Hermit = {
 						let pickedCard = pickedSlot.card as CardComponent<Hermit>
 						if (!pickedCard) return
 
-						game.addCopyAttackModalRequest({
-							player: player.entity,
-							modal: {
-								type: 'copyAttack',
-								name: 'Rendog: Choose an attack to copy',
-								description:
-									"Which of the Hermit's attacks do you want to copy?",
-								hermitCard: pickedCard.entity,
-								cancelable: true,
-							},
-							onResult: (modalResult) => {
-								if (!modalResult) return
-								if (modalResult.cancel) {
-									// Cancel this attack so player can choose a different hermit to imitate
-									game.state.turn.currentAttack = null
-									game.cancelPickRequests()
+						game.addPickAttackModalRequest(
+							{
+								player: player.entity,
+								modal: {
+									type: 'copyAttack',
+									name: 'Rendog: Choose an attack to copy',
+									description:
+										"Which of the Hermit's attacks do you want to copy?",
+									hermitCard: pickedCard.entity,
+									cancelable: true,
+								},
+								onResult: (modalResult) => {
+									if (!modalResult) return
+									if (modalResult.cancel) {
+										// Cancel this attack so player can choose a different hermit to imitate
+										game.state.turn.currentAttack = null
+										game.cancelPickRequests()
+										return
+									}
+
+									// Store the chosen attack to copy
+									mockedAttacks.set(
+										component,
+										setupMockCard(
+											game,
+											component,
+											pickedCard,
+											modalResult.pick,
+										),
+									)
+
 									return
-								}
-
-								// Store the chosen attack to copy
-								mockedAttacks.set(
-									component,
-									setupMockCard(game, component, pickedCard, modalResult.pick),
-								)
-
-								return
+								},
+								onTimeout: () => {
+									mockedAttacks.set(
+										component,
+										setupMockCard(game, component, pickedCard, 'primary'),
+									)
+								},
 							},
-							onTimeout: () => {
-								mockedAttacks.set(
-									component,
-									setupMockCard(game, component, pickedCard, 'primary'),
-								)
-							},
-						})
+							'copy',
+						)
 					},
 					onTimeout() {
 						// We didn't pick someone to imitate so do nothing
