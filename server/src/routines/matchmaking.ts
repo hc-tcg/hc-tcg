@@ -945,9 +945,14 @@ export function* createBossGame(
 		// Then delete the row itself
 		game.components.delete(row)
 	}
-    // Remove challenger's rows based on boss type
+
+	// Initialize rows based on boss type
 	if (bossType === 'new') {
-		// For the new boss, keep rows 0, 1, 2, 3, and 4 (all 5 rows)
+		// For the new boss:
+		// - Challenger (opponent player) gets all 5 rows (indexes 0-4)
+		// - Boss (current player) gets all 5 rows (indexes 0-4)
+		
+		// Remove any rows above index 4 for the challenger
 		newBossGameController.game.components
 			.filter(
 				RowComponent,
@@ -955,8 +960,21 @@ export function* createBossGame(
 				(_game, row) => row.index > 4,
 			)
 			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
+		
+		// Remove any rows above index 4 for the boss
+		newBossGameController.game.components
+			.filter(
+				RowComponent,
+				query.row.currentPlayer,
+				(_game, row) => row.index > 4,
+			)
+			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
 	} else {
-		// For EvilX, keep only rows 0, 1, and 2
+		// For EvilX:
+		// - Challenger (opponent player) gets all 5 rows (indexes 0-4)
+		// - Boss (current player) gets only row 0
+		
+		// Remove any rows above index 4 for the challenger
 		newBossGameController.game.components
 			.filter(
 				RowComponent,
@@ -964,32 +982,17 @@ export function* createBossGame(
 				(_game, row) => row.index > 4,
 			)
 			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
-	}
-	
-	// Handle boss rows differently based on boss type
-	if (bossType === 'evilx') {
-		// For the new boss, keep rows 0, 1, 2, 3, and 4 (all 5 rows)
+		
+		// Keep only row 0 for the boss
 		newBossGameController.game.components
 			.filter(
 				RowComponent,
 				query.row.currentPlayer,
-				(_game, row) => row.index > 0,
+				query.not(query.row.index(0)),
 			)
 			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
-			console.log("Boss Type New active")
-	} else {
-		// For EvilX, keep only row 0
-		newBossGameController.game.components
-			.filter(
-				RowComponent,
-				query.row.currentPlayer,
-				(_game, row) => row.index > 4,
-			)
-			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
-	}
-	
-	// Remove boss' item slots only for EvilX
-	if (bossType === 'evilx') {
+		
+		// Remove boss' item slots only for EvilX
 		newBossGameController.game.components
 			.filter(RowComponent, query.row.currentPlayer)
 			.forEach((row) => {
