@@ -947,13 +947,13 @@ export function* createBossGame(
 	}
     // Remove challenger's rows other than indexes 0, 1, and 2 
 	if (bossType === 'evilx') {
-	newBossGameController.game.components
-		.filter(
-			RowComponent,
-			query.row.opponentPlayer,
-			(_game, row) => row.index > 2,
-		)
-		.forEach((row) => destroyRow(newBossGameController.game, row.entity))
+		newBossGameController.game.components
+			.filter(
+				RowComponent,
+				query.row.opponentPlayer,
+				(_game, row) => row.index > 2,
+			)
+			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
 	}
 	
 	// Handle boss rows differently based on boss type
