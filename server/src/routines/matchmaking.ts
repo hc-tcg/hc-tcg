@@ -961,12 +961,12 @@ export function* createBossGame(
 		newBossGameController.game.components
 			.filter(
 				RowComponent,
-				query.row.currentPlayer,
+				query.row.opponentPlayer,
 				(_game, row) => row.index > 4,
 			)
 			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
 	} else {
-		// For EvilX, keep only row 0
+		// For EvilX, keep only row 0 
 		newBossGameController.game.components
 			.filter(
 				RowComponent,
