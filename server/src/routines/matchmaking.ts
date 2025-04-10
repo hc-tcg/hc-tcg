@@ -954,23 +954,39 @@ export function* createBossGame(
 			(_game, row) => row.index > 2,
 		)
 		.forEach((row) => destroyRow(newBossGameController.game, row.entity))
-	// Remove boss' rows other than index 0
-	newBossGameController.game.components
-		.filter(
-			RowComponent,
-			query.row.currentPlayer,
-			query.not(query.row.index(0)),
-		)
-		.forEach((row) => destroyRow(newBossGameController.game, row.entity))
-	// Remove boss' item slots
-	newBossGameController.game.components
-		.filter(RowComponent, query.row.currentPlayer)
-		.forEach((row) => {
-			row.itemsSlotEntities?.forEach((slotEntity) =>
-				newBossGameController.game.components.delete(slotEntity),
+	
+	// Handle boss rows differently based on boss type
+	if (bossType === 'new') {
+		// For the new boss, keep rows 0 and 1
+		newBossGameController.game.components
+			.filter(
+				RowComponent,
+				query.row.currentPlayer,
+				(_game, row) => row.index > 1,
 			)
-			row.itemsSlotEntities = []
-		})
+			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
+	} else {
+		// For EvilX, keep only row 0
+		newBossGameController.game.components
+			.filter(
+				RowComponent,
+				query.row.currentPlayer,
+				query.not(query.row.index(0)),
+			)
+			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
+	}
+	
+	// Remove boss' item slots only for EvilX
+	if (bossType === 'evilx') {
+		newBossGameController.game.components
+			.filter(RowComponent, query.row.currentPlayer)
+			.forEach((row) => {
+				row.itemsSlotEntities?.forEach((slotEntity) =>
+					newBossGameController.game.components.delete(slotEntity),
+				)
+				row.itemsSlotEntities = []
+			})
+	}
 
 	newBossGameController.game.settings.disableRewardCards = true
 
