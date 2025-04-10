@@ -945,8 +945,18 @@ export function* createBossGame(
 		// Then delete the row itself
 		game.components.delete(row)
 	}
-    // Remove challenger's rows other than indexes 0, 1, and 2 
-	if (bossType === 'evilx') {
+    // Remove challenger's rows based on boss type
+	if (bossType === 'new') {
+		// For the new boss, keep rows 0, 1, 2, 3, and 4 (all 5 rows)
+		newBossGameController.game.components
+			.filter(
+				RowComponent,
+				query.row.opponentPlayer,
+				(_game, row) => row.index > 4,
+			)
+			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
+	} else {
+		// For EvilX, keep only rows 0, 1, and 2
 		newBossGameController.game.components
 			.filter(
 				RowComponent,
@@ -967,7 +977,7 @@ export function* createBossGame(
 			)
 			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
 	} else {
-		// For EvilX, keep only row 0 
+		// For EvilX, keep only row 0
 		newBossGameController.game.components
 			.filter(
 				RowComponent,
