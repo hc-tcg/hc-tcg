@@ -967,13 +967,13 @@ export function* createBossGame(
 	}
 	
 	// Handle boss rows differently based on boss type
-	if (bossType === 'new') {
+	if (bossType === 'evilx') {
 		// For the new boss, keep rows 0, 1, 2, 3, and 4 (all 5 rows)
 		newBossGameController.game.components
 			.filter(
 				RowComponent,
 				query.row.currentPlayer,
-				(_game, row) => row.index > 4,
+				(_game, row) => row.index > 2,
 			)
 			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
 			console.log("Boss Type New active")
