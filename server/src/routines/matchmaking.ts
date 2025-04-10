@@ -973,7 +973,7 @@ export function* createBossGame(
 			.filter(
 				RowComponent,
 				query.row.currentPlayer,
-				(_game, row) => row.index > 2,
+				(_game, row) => row.index > 0,
 			)
 			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
 			console.log("Boss Type New active")
