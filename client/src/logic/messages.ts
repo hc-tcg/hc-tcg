@@ -54,9 +54,7 @@ export const localMessages = messages('clientLocalMessages', {
 	MATCHMAKING_CREATE_PRIVATE_GAME: null,
 	MATCHMAKING_JOIN_QUEUE_SUCCESS: null,
 	MATCHMAKING_CREATE_GAME_SUCCESS: null,
-	MATCHMAKING_CREATE_BOSS_GAME: {
-		bossType?: 'evilx' | 'new'
-	},
+	MATCHMAKING_CREATE_BOSS_GAME: null,
 	MATCHMAKING_REPLAY_GAME: null,
 	INVALID_REPLAY: null,
 	MATCHMAKING_LEAVE: null,
@@ -172,7 +170,10 @@ type Messages = [
 		spectatorCode: string
 	},
 	{type: typeof localMessages.MATCHMAKING_LEAVE},
-	{type: typeof localMessages.MATCHMAKING_CREATE_BOSS_GAME},
+	{
+		type: typeof localMessages.MATCHMAKING_CREATE_BOSS_GAME
+		bossType?: 'evilx' | 'new'
+	},
 	{
 		type: typeof localMessages.MATCHMAKING_REPLAY_GAME
 		id: number

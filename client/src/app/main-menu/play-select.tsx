@@ -293,6 +293,20 @@ function PlaySelect({
 			break
 	}
 
+	const onConfirm = () => {
+		const valid = checkForValidation()
+		if (!valid) return
+
+		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+		// Dispatch a custom event with the selected boss type
+		window.dispatchEvent(
+			new CustomEvent('bossTypeSelected', {
+				detail: selectedBossType,
+			}),
+		)
+		dispatch({type: localMessages.MATCHMAKING_CREATE_BOSS_GAME})
+	}
+
 	return (
 		<>
 			<MenuLayout
@@ -595,9 +609,7 @@ or create your own game to challenge someone else."
 										onClick() {
 											addMenuWithBack('bossChooseDeck')
 											setSelectedBossType('evilx')
-											dispatch({
-												type: localMessages.MATCHMAKING_CREATE_BOSS_GAME,
-											})
+											onConfirm()
 										},
 										variant: 'primary',
 									},
@@ -606,9 +618,7 @@ or create your own game to challenge someone else."
 										onClick() {
 											addMenuWithBack('bossChooseDeck')
 											setSelectedBossType('new')
-											dispatch({
-												type: localMessages.MATCHMAKING_CREATE_BOSS_GAME,
-											})
+											onConfirm()
 										},
 										variant: 'primary',
 									},
@@ -701,22 +711,7 @@ or create your own game to challenge someone else."
 								subTitle="When ready, press the Fight! button to begin."
 								confirmMessage="Fight!"
 								disableButton={loadedDeck === undefined}
-								onConfirm={() => {
-									const valid = checkForValidation()
-									if (!valid) return
-
-									dispatch({type: localMessages.EVERY_TOAST_CLOSE})
-									
-									// Create a custom event to pass the boss type
-									const event = new CustomEvent('bossTypeSelected', {
-										detail: { bossType: selectedBossType }
-									});
-									window.dispatchEvent(event);
-									
-									dispatch({
-										type: localMessages.MATCHMAKING_CREATE_BOSS_GAME,
-									})
-								}}
+								onConfirm={onConfirm}
 								decks={decks}
 								onSelectDeck={onSelectDeck}
 							/>
