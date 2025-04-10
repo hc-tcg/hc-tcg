@@ -107,12 +107,29 @@ export class BoardSlotComponent extends SlotComponent {
 	}
 
 	override inRow(): this is BoardSlotComponent & {row: RowComponent} {
-		return this.type !== 'single_use'
+		return this.rowEntity !== null
 	}
 
 	get row() {
-		if (!this.rowEntity) return null
-		return this.game.components.get(this.rowEntity)
+		if (!this.rowEntity) throw new Error('Slot is not in a row')
+		return this.game.components.getOrError(this.rowEntity)
+	}
+
+	// Helper method to determine if this slot is a hermit slot
+	isHermitSlot(): boolean {
+		return this.inRow() && this.row.hermitSlotEntity === this.entity
+	}
+
+	// Helper method to determine if this slot is an attach slot
+	isAttachSlot(): boolean {
+		return this.inRow() && this.row.attachSlotEntity === this.entity
+	}
+
+	// Helper method to determine if this slot is an item slot
+	isItemSlot(): boolean {
+		return this.inRow() && 
+			this.row.hermitSlotEntity !== this.entity && 
+			this.row.attachSlotEntity !== this.entity
 	}
 }
 
