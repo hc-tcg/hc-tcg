@@ -6,6 +6,7 @@ import {
 	BoardSlotComponent,
 	PlayerComponent,
 	RowComponent,
+	SlotComponent,
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
@@ -54,6 +55,8 @@ import {TurnActionCompressor} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
 import NewBossAI from './virtual/new-boss-ai'
 import NewBoss from 'common/cards/boss/hermits/new_boss'
+import { GameModel } from 'common/models/game-model'
+import { RowEntity } from 'common/entities'
 
 function setupGame(
 	player1: PlayerModel,
@@ -933,13 +936,14 @@ export function* createBossGame(
 	newBossGameController.game.state.isEvilXBossGame = true
 	newBossGameController.game.state.bossType = bossType
 
-	function destroyRow(row: RowComponent) {
-		newBossGameController.game.components
-			.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
-			.forEach((slotEntity) =>
-				newBossGameController.game.components.delete(slotEntity),
-			)
-		newBossGameController.game.components.delete(row.entity)
+	const destroyRow = (game: GameModel, row: RowEntity) => {
+		// First delete all slots in the row
+		const slots = game.components.filter(SlotComponent, query.slot.rowIs(row))
+		slots.forEach((slot: SlotComponent) => {
+			game.components.delete(slot.entity)
+		})
+		// Then delete the row itself
+		game.components.delete(row)
 	}
 
 	// Remove challenger's rows other than indexes 0, 1, and 2
@@ -949,7 +953,7 @@ export function* createBossGame(
 			query.row.opponentPlayer,
 			(_game, row) => row.index > 2,
 		)
-		.forEach(destroyRow)
+		.forEach((row) => destroyRow(newBossGameController.game, row.entity))
 	// Remove boss' rows other than index 0
 	newBossGameController.game.components
 		.filter(
@@ -957,7 +961,7 @@ export function* createBossGame(
 			query.row.currentPlayer,
 			query.not(query.row.index(0)),
 		)
-		.forEach(destroyRow)
+		.forEach((row) => destroyRow(newBossGameController.game, row.entity))
 	// Remove boss' item slots
 	newBossGameController.game.components
 		.filter(RowComponent, query.row.currentPlayer)

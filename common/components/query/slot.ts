@@ -99,7 +99,8 @@ export const rowIs = (
 ): ComponentQuery<SlotComponent> => {
 	return (_game, pos) => {
 		if (row === null || !pos.onBoard()) return false
-		return pos.row?.entity === row
+		if (!pos.inRow()) return false
+		return pos.row.entity === row
 	}
 }
 
