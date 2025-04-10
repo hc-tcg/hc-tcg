@@ -961,7 +961,7 @@ export function* createBossGame(
 			.filter(
 				RowComponent,
 				query.row.opponentPlayer,
-				(_game, row) => row.index > 3,
+				(_game, row) => row.index > 4,
 			)
 			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
 	}
