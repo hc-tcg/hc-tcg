@@ -81,6 +81,9 @@ function PlaySelect({
 	const [activeMode, setActiveMode] = useState<string | null>(
 		defaultSection || null,
 	)
+	
+	// Store the selected boss type
+	const [selectedBossType, setSelectedBossType] = useState<'evilx' | 'new' | null>(null)
 
 	const getFirstActiveMenu = (section: string) => {
 		if (firstActiveMenu) return firstActiveMenu
@@ -591,11 +594,9 @@ or create your own game to challenge someone else."
 										text: 'Challenge Evil X',
 										onClick() {
 											addMenuWithBack('bossChooseDeck')
+											setSelectedBossType('evilx')
 											dispatch({
 												type: localMessages.MATCHMAKING_CREATE_BOSS_GAME,
-												payload: {
-													bossType: 'evilx',
-												},
 											})
 										},
 										variant: 'primary',
@@ -604,11 +605,9 @@ or create your own game to challenge someone else."
 										text: 'Challenge New Boss',
 										onClick() {
 											addMenuWithBack('bossChooseDeck')
+											setSelectedBossType('new')
 											dispatch({
 												type: localMessages.MATCHMAKING_CREATE_BOSS_GAME,
-												payload: {
-													bossType: 'new',
-												},
 											})
 										},
 										variant: 'primary',
@@ -707,6 +706,13 @@ or create your own game to challenge someone else."
 									if (!valid) return
 
 									dispatch({type: localMessages.EVERY_TOAST_CLOSE})
+									
+									// Create a custom event to pass the boss type
+									const event = new CustomEvent('bossTypeSelected', {
+										detail: { bossType: selectedBossType }
+									});
+									window.dispatchEvent(event);
+									
 									dispatch({
 										type: localMessages.MATCHMAKING_CREATE_BOSS_GAME,
 									})

@@ -58,6 +58,7 @@ function* sendJoinQueueMessage(
 		| ClientMessageTable['CREATE_PRIVATE_GAME']['type']
 		| ClientMessageTable['JOIN_PUBLIC_QUEUE']['type'],
 	activeDeckResult: activeDeckSagaT,
+	bossType?: 'evilx' | 'new',
 ) {
 	if (!activeDeckResult) return
 	if (activeDeckResult.databaseConnected) {
@@ -65,12 +66,14 @@ function* sendJoinQueueMessage(
 			type: messageType,
 			databaseConnected: true,
 			activeDeckCode: activeDeckResult.activeDeckCode,
+			...(messageType === clientMessages.CREATE_BOSS_GAME ? { bossType } : {}),
 		})
 	} else {
 		yield* sendMsg({
 			type: messageType,
 			databaseConnected: false,
 			activeDeck: activeDeckResult.activeDeck,
+			...(messageType === clientMessages.CREATE_BOSS_GAME ? { bossType } : {}),
 		})
 	}
 }
@@ -512,12 +515,35 @@ function* createPrivateGameSaga() {
 function* createBossGameSaga() {
 	const socket = yield* select(getSocket)
 	const activeDeckResult = yield* getActiveDeckSaga()
+	
+	// Listen for the custom event with the boss type
+	let bossType: 'evilx' | 'new' | undefined = undefined;
+	
+	// Set up a one-time event listener
+	const eventPromise = new Promise<'evilx' | 'new' | undefined>((resolve) => {
+		const handler = (event: CustomEvent) => {
+			resolve(event.detail.bossType);
+			window.removeEventListener('bossTypeSelected', handler as EventListener);
+		};
+		window.addEventListener('bossTypeSelected', handler as EventListener);
+	});
+	
+	// Wait for the event or a timeout
+	const result = yield* race({
+		event: call(() => eventPromise),
+		timeout: delay(1000), // 1 second timeout
+	});
+	
+	if (result.event) {
+		bossType = result.event;
+	}
 
 	try {
 		// Send message to server to create the game
 		yield* sendJoinQueueMessage(
 			clientMessages.CREATE_BOSS_GAME,
 			activeDeckResult,
+			bossType,
 		)
 		const createBossResponse = yield* race({
 			success: call(
