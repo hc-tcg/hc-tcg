@@ -976,13 +976,14 @@ export function* createBossGame(
 				(_game, row) => row.index > 4,
 			)
 			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
+			console.log("Boss Type New active")
 	} else {
 		// For EvilX, keep only row 0
 		newBossGameController.game.components
 			.filter(
 				RowComponent,
 				query.row.currentPlayer,
-				query.not(query.row.index(4)),
+				(_game, row) => row.index > 4,
 			)
 			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
 	}
