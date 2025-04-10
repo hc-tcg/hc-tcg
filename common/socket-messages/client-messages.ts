@@ -78,11 +78,13 @@ export type ClientMessages = [
 		type: typeof clientMessages.CREATE_BOSS_GAME
 		databaseConnected: true
 		activeDeckCode: string
+		bossType?: 'evilx' | 'new'
 	},
 	{
 		type: typeof clientMessages.CREATE_BOSS_GAME
 		databaseConnected: false
 		activeDeck: Deck
+		bossType?: 'evilx' | 'new'
 	},
 	{
 		type: typeof clientMessages.CREATE_PRIVATE_GAME

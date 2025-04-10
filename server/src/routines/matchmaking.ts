@@ -52,6 +52,8 @@ import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import {TurnActionCompressor} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
+import NewBossAI from './virtual/new-boss-ai'
+import NewBoss from 'common/cards/boss/hermits/new_boss'
 
 function setupGame(
 	player1: PlayerModel,
@@ -861,7 +863,11 @@ export function* cancelRematch(
 }
 
 export function* createBossGame(
-	msg: RecievedClientMessage<typeof clientMessages.CREATE_BOSS_GAME>,
+	msg: RecievedClientMessage<typeof clientMessages.CREATE_BOSS_GAME> & {
+		payload: {
+			bossType?: 'evilx' | 'new'
+		}
+	},
 ) {
 	const {playerId} = msg
 	const player = root.players[playerId]
@@ -896,17 +902,36 @@ export function* createBossGame(
 
 	broadcast([player], {type: serverMessages.CREATE_BOSS_GAME_SUCCESS})
 
-	const newBossGameController = setupSolitareGame(player, player.deck, {
-		uuid: '',
-		name: 'Evil Xisuma',
-		minecraftName: 'EvilXisuma',
-		censoredName: 'Evil Xisuma',
-		deck: [EvilXisumaBoss],
-		virtualAI: ExBossAI,
-		disableDeckingOut: true,
-		appearance: {...defaultAppearance, coin: COINS['evilx']},
-	})
+	const bossType = msg.payload.bossType || 'evilx'
+	let bossConfig: OpponentDefs
+
+	if (bossType === 'new') {
+		bossConfig = {
+			uuid: '',
+			name: 'New Boss',
+			minecraftName: 'NewBoss',
+			censoredName: 'New Boss',
+			deck: [NewBoss],
+			virtualAI: NewBossAI,
+			disableDeckingOut: true as const,
+			appearance: {...defaultAppearance, coin: COINS['evilx']},
+		}
+	} else {
+		bossConfig = {
+			uuid: '',
+			name: 'Evil Xisuma',
+			minecraftName: 'EvilXisuma',
+			censoredName: 'Evil Xisuma',
+			deck: [EvilXisumaBoss],
+			virtualAI: ExBossAI,
+			disableDeckingOut: true as const,
+			appearance: {...defaultAppearance, coin: COINS['evilx']},
+		}
+	}
+
+	const newBossGameController = setupSolitareGame(player, player.deck, bossConfig)
 	newBossGameController.game.state.isEvilXBossGame = true
+	newBossGameController.game.state.bossType = bossType
 
 	function destroyRow(row: RowComponent) {
 		newBossGameController.game.components

@@ -87,6 +87,7 @@ export type GameState = {
 	}
 
 	isEvilXBossGame: boolean
+	bossType?: 'evilx' | 'new'
 }
 
 export type PlayCardAction =

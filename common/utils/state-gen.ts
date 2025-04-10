@@ -187,6 +187,7 @@ export function getGameState(game: GameModel, swapPlayers: boolean): GameState {
 		},
 
 		isEvilXBossGame: false,
+		bossType: undefined,
 	}
 
 	return gameState
