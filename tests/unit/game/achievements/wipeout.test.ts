@@ -112,4 +112,40 @@ describe('Test "Wipeout" achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
+	test('Only counts the highest number of knock-outs in one round', () => {
+		testAchivement(
+			{
+				achievement: Wipeout,
+				playerOneDeck: [EthosLabCommon, Anvil],
+				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
+				playGame: function* (game) {
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+					yield* endTurn(game)
+
+					game.components
+						.filter(RowComponent, query.row.hasHermit)
+						.forEach((row) => (row.health = 10))
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* changeActiveHermit(game, 1)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Anvil, 'single_use')
+					yield* attack(game, 'secondary')
+
+					yield* forfeit(game.currentPlayer.entity)
+				},
+				checkAchivement(_game, achievement, _outcome) {
+					expect(Wipeout.getProgress(achievement.goals)).toEqual(2)
+				},
+			},
+			{noItemRequirements: true},
+		)
+	})
 })
