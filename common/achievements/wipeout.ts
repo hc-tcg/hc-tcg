@@ -7,7 +7,7 @@ const Wipeout: Achievement = {
 	...achievement,
 	numericId: 5,
 	id: 'wipeout',
-	progressionMethod: 'sum',
+	progressionMethod: 'best',
 	levels: [
 		{
 			name: 'Wipeout',
