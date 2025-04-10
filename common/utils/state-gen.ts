@@ -105,21 +105,21 @@ function setupEcsForPlayer(
 			),
 			components.new(
 				BoardSlotComponent,
-				{player: playerEntity, type: 'item'},
+				{player: playerEntity, type: 'attach'},
 				3,
 				row.entity,
 			),
 			components.new(
 				BoardSlotComponent,
-				{player: playerEntity, type: 'item'},
+				{player: playerEntity, type: 'hermit'},
 				4,
 				row.entity,
 			),
 		]
 
-		row.itemsSlotEntities = itemSlots.map((x) => x.entity)
-		row.hermitSlotEntity = itemSlots[4].entity // Use the last slot as the hermit slot
-		row.attachSlotEntity = itemSlots[3].entity // Use the second-to-last slot as the attach slot
+		row.itemsSlotEntities = itemSlots.slice(0, 3).map((x) => x.entity)
+		row.hermitSlotEntity = itemSlots[4].entity
+		row.attachSlotEntity = itemSlots[3].entity
 	}
 
 	// Ensure there is a hermit in the first 5 cards
