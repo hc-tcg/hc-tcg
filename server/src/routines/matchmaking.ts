@@ -872,6 +872,7 @@ export function* createBossGame(
 		}
 	},
 ) {
+	console.log('Server received boss type:', msg.payload.bossType)
 	const {playerId} = msg
 	const player = root.players[playerId]
 
@@ -906,6 +907,7 @@ export function* createBossGame(
 	broadcast([player], {type: serverMessages.CREATE_BOSS_GAME_SUCCESS})
 
 	const bossType = msg.payload.bossType || 'evilx'
+	console.log('Server using boss type:', bossType)
 	let bossConfig: OpponentDefs
 
 	if (bossType === 'new') {

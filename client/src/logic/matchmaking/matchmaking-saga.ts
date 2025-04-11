@@ -509,12 +509,14 @@ function* createPrivateGameSaga() {
 }
 
 function* createBossGameSaga(action: { type: string; bossType?: 'evilx' | 'new' }) {
+	console.log('Saga received boss type:', action.bossType)
 	function* matchmaking() {
 		const socket = yield* select(getSocket)
 		const activeDeckResult = yield* getActiveDeckSaga()
 
 		try {
 			// Send message to server to create boss game
+			console.log('Sending to server with boss type:', action.bossType ?? 'evilx')
 			yield* sendJoinQueueMessage(
 				clientMessages.CREATE_BOSS_GAME,
 				activeDeckResult,

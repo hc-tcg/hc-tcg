@@ -297,11 +297,11 @@ function PlaySelect({
 		const valid = checkForValidation()
 		if (!valid) return
 
+		console.log('Dispatching with boss type:', selectedBossType)
 		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
-		// Include the selected boss type directly in the action
 		dispatch({
 			type: localMessages.MATCHMAKING_CREATE_BOSS_GAME,
-			bossType: selectedBossType // Remove the default value here since it's handled in the saga
+			bossType: selectedBossType
 		})
 	}
 
@@ -614,6 +614,7 @@ or create your own game to challenge someone else."
 									{
 										text: 'Challenge New Boss',
 										onClick() {
+											console.log('Setting boss type to new')
 											addMenuWithBack('bossChooseDeck')
 											setSelectedBossType('new')
 											onConfirm()
