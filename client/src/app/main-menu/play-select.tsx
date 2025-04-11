@@ -83,7 +83,7 @@ function PlaySelect({
 	)
 	
 	// Store the selected boss type
-	const [selectedBossType, setSelectedBossType] = useState<'evilx' | 'new' | null>(null)
+	const [selectedBossType, setSelectedBossType] = useState<'evilx' | 'new' | undefined>(undefined)
 
 	const getFirstActiveMenu = (section: string) => {
 		if (firstActiveMenu) return firstActiveMenu
@@ -301,7 +301,7 @@ function PlaySelect({
 		// Include the selected boss type directly in the action
 		dispatch({
 			type: localMessages.MATCHMAKING_CREATE_BOSS_GAME,
-			bossType: selectedBossType || 'evilx' // Provide a default value if null
+			bossType: selectedBossType // Remove the default value here since it's handled in the saga
 		})
 	}
 
