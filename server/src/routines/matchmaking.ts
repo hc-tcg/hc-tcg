@@ -917,7 +917,7 @@ export function* createBossGame(
 			deck: [NewBoss],
 			virtualAI: NewBossAI,
 			disableDeckingOut: true as const,
-			appearance: {...defaultAppearance, coin: COINS['evilx']},
+			appearance: {...defaultAppearance, coin: COINS['creeper']},
 		}
 	} else {
 		bossConfig = {
