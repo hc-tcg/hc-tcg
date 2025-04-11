@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {CardComponent} from 'common/components'
+import {CardComponent, ObserverComponent} from 'common/components'
 import query from 'common/components/query'
 import {SlotEntity} from 'common/entities'
 import {AttackModel} from 'common/models/attack-model'
@@ -233,6 +233,25 @@ export function playCardAction(
 }
 
 export function applyEffectAction(game: GameModel): void {
+	const suCard = game.components.find(
+		CardComponent,
+		query.card.slot(query.slot.singleUse),
+	)
+
+	// Make sure a single use card is present
+	assert(
+		suCard,
+		'Cannot apply single use effect when there is no single use card on the board'
+	)
+
+	// First we execute the onAttach of the card to trigger its effect
+	if (suCard && suCard.props.onAttach) {
+		// Create observer component that will track the effect
+		const observer = game.components.new(ObserverComponent, suCard.entity)
+		suCard.props.onAttach(game, suCard, observer)
+	}
+
+	// Then we apply the single use (mark it as used, etc)
 	applySingleUse(game, null)
 }
 
