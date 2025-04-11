@@ -298,13 +298,11 @@ function PlaySelect({
 		if (!valid) return
 
 		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
-		// Dispatch a custom event with the selected boss type
-		window.dispatchEvent(
-			new CustomEvent('bossTypeSelected', {
-				detail: selectedBossType,
-			}),
-		)
-		dispatch({type: localMessages.MATCHMAKING_CREATE_BOSS_GAME})
+		// Include the selected boss type directly in the action
+		dispatch({
+			type: localMessages.MATCHMAKING_CREATE_BOSS_GAME,
+			bossType: selectedBossType || 'evilx' // Provide a default value if null
+		})
 	}
 
 	return (

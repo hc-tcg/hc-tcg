@@ -719,7 +719,7 @@ function* matchmakingSaga() {
 				}
 				break
 			case localMessages.MATCHMAKING_CREATE_BOSS_GAME:
-				yield* call(createBossGameSaga, action)
+				yield* call(createBossGameSaga, action as { type: string; bossType?: 'evilx' | 'new' })
 				break
 			case localMessages.MATCHMAKING_REPLAY_GAME:
 				if ('id' in action) {
