@@ -161,28 +161,42 @@ export function playCardAction(
 	// Add detailed logging for single use cards
 	if (pickedSlot.type === 'single_use') {
 		console.log('Attempting to play single use card:', card.props.name)
+		
+		// Enhanced validation for single-use cards
+		assert(
+			card.isSingleUse(),
+			'Only single-use cards can be played in single-use slots'
+		)
+		
+		assert(
+			!currentPlayer.singleUseCardUsed,
+			'You have already used a single-use card this turn'
+		)
+		
+		assert(
+			query.slot.playerHasActiveHermit(game, pickedSlot),
+			'You must have an active hermit to play a single-use card'
+		)
+		
+		assert(
+			!game.state.turn.completedActions.includes('PLAY_SINGLE_USE_CARD'),
+			'Single-use card action has already been completed this turn'
+		)
+		
+		// Log validation checks
 		console.log('Slot is single use:', query.slot.singleUse(game, pickedSlot))
 		console.log('Slot is empty:', query.slot.empty(game, pickedSlot))
 		console.log('Player has active hermit:', query.slot.playerHasActiveHermit(game, pickedSlot))
 		console.log('PLAY_SINGLE_USE_CARD action available:', !game.state.turn.completedActions.includes('PLAY_SINGLE_USE_CARD'))
 		console.log('Current player single use card used:', currentPlayer.singleUseCardUsed)
-	}
-
-	// Do we meet requirements to place the card
-	const canAttach = card?.props.attachCondition(game, pickedSlot) || false
-
-	// It's the wrong kind of slot or does not satisfy the condition
-	assert(
-		canAttach,
-		'You can not play a card in a slot it cannot be attached to or at a time it can not be played.',
-	)
-
-	// Finally, execute depending on where we tried to place
-	// And set the action result to be sent to the client
-
-	// Single use slot
-	if (pickedSlot.type === 'single_use') {
+		
+		// Attach the card and trigger any immediate effects
 		card.attach(pickedSlot)
+		
+		// If the card doesn't require confirmation, apply it immediately
+		if (!card.props.showConfirmationModal) {
+			applyEffectAction(game)
+		}
 	} else {
 		// For non-single-use slots, we need to access row and rowIndex
 		const row = pickedSlot.row
@@ -244,6 +258,7 @@ export function playCardAction(
 }
 
 export function applyEffectAction(game: GameModel): void {
+	const {currentPlayer} = game
 	const suCard = game.components.find(
 		CardComponent,
 		query.card.slot(query.slot.singleUse),
@@ -255,23 +270,47 @@ export function applyEffectAction(game: GameModel): void {
 		'Cannot apply single use effect when there is no single use card on the board'
 	)
 
-	// First we execute the onAttach of the card to trigger its effect
-	if (suCard && suCard.props.onAttach) {
-		// Create observer component that will track the effect
-		const observer = game.components.new(ObserverComponent, suCard.entity)
-		suCard.props.onAttach(game, suCard, observer)
-	}
+	// Make sure we haven't already used a single-use card this turn
+	assert(
+		!currentPlayer.singleUseCardUsed,
+		'You have already used a single-use card this turn'
+	)
 
-	// Then we apply the single use (mark it as used, etc)
-	applySingleUse(game, null)
+	// Make sure we have an active hermit
+	assert(
+		currentPlayer.activeRowEntity !== null,
+		'You must have an active hermit to use a single-use card'
+	)
+
+	try {
+		// First we execute the onAttach of the card to trigger its effect
+		if (suCard.props.onAttach) {
+			// Create observer component that will track the effect
+			const observer = game.components.new(ObserverComponent, suCard.entity)
+			suCard.props.onAttach(game, suCard, observer)
+		}
+
+		// Then we apply the single use (mark it as used, etc)
+		applySingleUse(game, null)
+
+		// Log successful application
+		console.log('Successfully applied single-use card effect:', suCard.props.name)
+	} catch (error) {
+		// If there's an error applying the effect, clean up
+		console.error('Error applying single-use card effect:', error)
+		removeEffectAction(game)
+		throw error
+	}
 }
 
 export function removeEffectAction(game: GameModel): void {
+	const {currentPlayer} = game
 	let singleUseCard = game.components.find(
 		CardComponent,
 		query.card.slot(query.slot.singleUse),
 	)
 
+	// Cancel any pending pick requests
 	game.cancelPickRequests()
 
 	// Remove current attack
@@ -279,7 +318,18 @@ export function removeEffectAction(game: GameModel): void {
 		game.state.turn.currentAttack = null
 	}
 
-	singleUseCard?.draw()
+	if (singleUseCard) {
+		// Log the removal
+		console.log('Removing single-use card:', singleUseCard.props.name)
+
+		// Draw the card (move it to appropriate pile)
+		singleUseCard.draw()
+
+		// Reset the single-use card used flag if we're cleaning up after an error
+		if (!currentPlayer.singleUseCardUsed) {
+			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
+		}
+	}
 }
 
 export function changeActiveHermitAction(

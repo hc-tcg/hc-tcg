@@ -157,6 +157,12 @@ function setupEcsForPlayer(
 	cards.slice(0, amountOfStartingCards).forEach((card) => {
 		card.attach(components.new(HandSlotComponent, playerEntity))
 	})
+
+	// Create single-use slot with proper initialization
+	components.new(BoardSlotComponent, {
+		type: 'single_use',
+		player: playerEntity
+	}, 0, null)
 }
 
 export function getGameState(game: GameModel, swapPlayers: boolean): GameState {
