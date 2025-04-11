@@ -132,6 +132,19 @@ function findEmptyHermitSlot(game: GameModel, playerEntity: PlayerEntity) {
 	)
 }
 
+// Helper function to check if all hermits have been placed
+function allHermitsPlaced(game: GameModel, playerEntity: PlayerEntity): boolean {
+	// Check if there are any hermit cards still in hand
+	const hermitCardsInHand = game.components.filter(
+		CardComponent,
+		query.card.player(playerEntity),
+		query.card.slot(query.slot.hand),
+		(_game, card) => card.props.category === 'hermit'
+	)
+	
+	return hermitCardsInHand.length === 0
+}
+
 // Helper function to place all hermits at the beginning of the game
 function placeAllHermits(game: GameModel, playerEntity: PlayerEntity): AnyTurnActionData[] | null {
 	// Find all hermit cards in hand
@@ -142,25 +155,31 @@ function placeAllHermits(game: GameModel, playerEntity: PlayerEntity): AnyTurnAc
 		(_game, card) => card.props.category === 'hermit'
 	)
 
-	// Place each hermit card in an empty hermit slot
-	for (const hermitCard of hermitCards) {
-		const emptySlot = findEmptyHermitSlot(game, playerEntity)
-		if (emptySlot) {
-			return [{
-				type: 'PLAY_HERMIT_CARD' as const,
-				slot: emptySlot.entity,
-				card: {
-					id: hermitCard.props.numericId,
-					entity: hermitCard.entity,
-					slot: hermitCard.slotEntity,
-					turnedOver: false,
-					attackHint: null,
-					prizeCard: false,
-				},
-			}]
-		}
+	// If no hermit cards found, return null
+	if (hermitCards.length === 0) {
+		return null
 	}
-	return null
+
+	// Find an empty hermit slot
+	const emptySlot = findEmptyHermitSlot(game, playerEntity)
+	if (!emptySlot) {
+		return null
+	}
+
+	// Place the first hermit card in the empty slot
+	const hermitCard = hermitCards[0]
+	return [{
+		type: 'PLAY_HERMIT_CARD' as const,
+		slot: emptySlot.entity,
+		card: {
+			id: hermitCard.props.numericId,
+			entity: hermitCard.entity,
+			slot: hermitCard.slotEntity,
+			turnedOver: false,
+			attackHint: null,
+			prizeCard: false,
+		},
+	}]
 }
 
 function getNextTurnAction(
@@ -183,40 +202,12 @@ function getNextTurnAction(
 		}
 	}
 
-	// Place all hermits at the beginning of the game
+	// Place all hermits at the beginning of the game (during turn 1)
 	if (game.state.turn.turnNumber === 1) {
-		const hermitAction = placeAllHermits(game, playerEntity)
-		if (hermitAction) return hermitAction
-	}
-
-	// Place boss card on turn 2
-	if (game.state.turn.turnNumber === 2) {
-		const bossCard = game.components.find(
-			CardComponent,
-			query.card.player(playerEntity),
-			query.card.is(NewBoss),
-			query.card.slot(query.slot.hand),
-		)
-		const slot = game.components.findEntity(
-			BoardSlotComponent,
-			query.slot.player(playerEntity),
-			query.slot.hermit,
-		)
-		if (bossCard && slot) {
-			return [
-				{
-					type: 'PLAY_HERMIT_CARD',
-					slot,
-					card: {
-						id: bossCard.props.numericId,
-						entity: bossCard.entity,
-						slot: bossCard.slotEntity,
-						turnedOver: false,
-						attackHint: null,
-						prizeCard: false,
-					},
-				},
-			]
+		// Check if there are still hermits to place
+		if (!allHermitsPlaced(game, playerEntity)) {
+			const hermitAction = placeAllHermits(game, playerEntity)
+			if (hermitAction) return hermitAction
 		}
 	}
 
@@ -241,12 +232,24 @@ function getNextTurnAction(
 				]
 			}
 		}
-		return [{type: 'END_TURN'}]
+		// Only return END_TURN if it's available
+		if (game.state.turn.availableActions.includes('END_TURN')) {
+			return [{type: 'END_TURN'}]
+		}
+		// If END_TURN is not available, return an empty array to let the game continue
+		return []
 	}
 
 	// Get the active row
 	const activeRowComponent = game.components.get(activeRow)
-	if (!activeRowComponent) return [{type: 'END_TURN'}]
+	if (!activeRowComponent) {
+		// Only return END_TURN if it's available
+		if (game.state.turn.availableActions.includes('END_TURN')) {
+			return [{type: 'END_TURN'}]
+		}
+		// If END_TURN is not available, return an empty array to let the game continue
+		return []
+	}
 
 	// Check if active hermit has less than 80 health
 	if (activeRowComponent.health && activeRowComponent.health < 80) {
@@ -269,18 +272,18 @@ function getNextTurnAction(
 				]
 			}
 		}
-		return [{type: 'END_TURN'}]
+		// Only return END_TURN if it's available
+		if (game.state.turn.availableActions.includes('END_TURN')) {
+			return [{type: 'END_TURN'}]
+		}
+		// If END_TURN is not available, return an empty array to let the game continue
+		return []
 	}
 
 	// Try to play an item card on the active hermit
 	const emptyItemSlot = findEmptyItemSlot(game, playerEntity, activeRow)
 	if (emptyItemSlot) {
-		const itemCard = game.components.find(
-			CardComponent,
-			query.card.player(playerEntity),
-			query.card.slot(query.slot.hand),
-			(_game, card) => card.props.category === 'item'
-		)
+		const itemCard = findItemCard(game, playerEntity)
 		if (itemCard) {
 			return [
 				{
@@ -299,12 +302,7 @@ function getNextTurnAction(
 		}
 	} else {
 		// If active hermit has all item slots filled, try to give item to hermit with most health
-		const itemCard = game.components.find(
-			CardComponent,
-			query.card.player(playerEntity),
-			query.card.slot(query.slot.hand),
-			(_game, card) => card.props.category === 'item'
-		)
+		const itemCard = findItemCard(game, playerEntity)
 		if (itemCard) {
 			const bestRow = findHermitWithMostHealth(game, playerEntity)
 			if (bestRow && bestRow.entity !== activeRow) {
@@ -332,12 +330,7 @@ function getNextTurnAction(
 	// Try to play an effect card on the active hermit
 	const emptyEffectSlot = findEmptyEffectSlot(game, playerEntity, activeRow)
 	if (emptyEffectSlot) {
-		const effectCard = game.components.find(
-			CardComponent,
-			query.card.player(playerEntity),
-			query.card.slot(query.slot.hand),
-			(_game, card) => card.props.category === 'attach'
-		)
+		const effectCard = findEffectCard(game, playerEntity)
 		if (effectCard) {
 			return [
 				{
@@ -356,12 +349,7 @@ function getNextTurnAction(
 		}
 	} else {
 		// If active hermit has an effect card, try to play on a random AFK hermit
-		const effectCard = game.components.find(
-			CardComponent,
-			query.card.player(playerEntity),
-			query.card.slot(query.slot.hand),
-			(_game, card) => card.props.category === 'attach'
-		)
+		const effectCard = findEffectCard(game, playerEntity)
 		if (effectCard) {
 			const afkRow = findRandomAfkHermit(game, playerEntity)
 			if (afkRow) {
@@ -415,16 +403,16 @@ function getNextTurnAction(
 
 	// Try to attack with secondary attack if possible
 	if (game.state.turn.availableActions.includes('SECONDARY_ATTACK')) {
-		const bossCard = game.components.find(
+		const activeHermit = game.components.find(
 			CardComponent,
 			query.card.currentPlayer,
 			query.card.active,
 			query.card.slot(query.slot.hermit)
 		)
-		if (bossCard === null)
-			throw new Error(`Boss's active hermit cannot be found, please report`)
+		if (activeHermit === null)
+			throw new Error(`Active hermit cannot be found, please report`)
 		const bossAttack = getBossAttack(component.player, game)
-		supplyBossAttack(bossCard, bossAttack)
+		supplyBossAttack(activeHermit, bossAttack)
 		for (const sound of bossAttack) {
 			game.voiceLineQueue.push(`/voice/${sound}.ogg`)
 		}
@@ -437,16 +425,16 @@ function getNextTurnAction(
 
 	// Try to attack with primary attack if available
 	if (game.state.turn.availableActions.includes('PRIMARY_ATTACK')) {
-		const bossCard = game.components.find(
+		const activeHermit = game.components.find(
 			CardComponent,
 			query.card.currentPlayer,
 			query.card.active,
 			query.card.slot(query.slot.hermit)
 		)
-		if (bossCard === null)
-			throw new Error(`Boss's active hermit cannot be found, please report`)
+		if (activeHermit === null)
+			throw new Error(`Active hermit cannot be found, please report`)
 		const bossAttack = getBossAttack(component.player, game)
-		supplyBossAttack(bossCard, bossAttack)
+		supplyBossAttack(activeHermit, bossAttack)
 		for (const sound of bossAttack) {
 			game.voiceLineQueue.push(`/voice/${sound}.ogg`)
 		}
@@ -471,24 +459,26 @@ function getNextTurnAction(
 	}
 
 	// End turn if nothing else to do
-	if (!game.state.turn.availableActions.includes('END_TURN'))
-		throw new Error('Boss does not know what to do in this state, please report')
+	if (!game.state.turn.availableActions.includes('END_TURN')) {
+		// If END_TURN is not available, return an empty array to let the game continue
+		return []
+	}
 
 	return [{type: 'END_TURN'}]
 }
 
 function getBossAttack(player: PlayerComponent, game: GameModel): BOSS_ATTACK {
-	const bossCard = game.components.find(
+	const activeHermit = game.components.find(
 		CardComponent,
 		query.card.currentPlayer,
 		query.card.active,
 		query.card.slot(query.slot.hermit)
 	)
-	if (!bossCard) throw new Error(`Boss's active hermit cannot be found, please report`)
+	if (!activeHermit) throw new Error(`Active hermit cannot be found, please report`)
 
 	const nineEffect = game.components.find(
 		StatusEffectComponent,
-		query.effect.targetEntity(bossCard.entity),
+		query.effect.targetEntity(activeHermit.entity),
 		query.effect.is(ExBossNineEffect)
 	)
 	if (nineEffect) {
@@ -512,9 +502,9 @@ function getBossAttack(player: PlayerComponent, game: GameModel): BOSS_ATTACK {
 		return ['50DMG', undefined, undefined]
 	}
 
-	const bossRow = game.components.get(bossCard.slot.entity)
-	const bossHealth = bossRow instanceof RowComponent ? bossRow.health ?? 0 : 0
-	if (bossHealth <= 150) {
+	const activeRow = game.components.get(activeHermit.slot.entity)
+	const activeHealth = activeRow instanceof RowComponent ? activeRow.health ?? 0 : 0
+	if (activeHealth <= 150) {
 		return ['70DMG', 'HEAL150', undefined]
 	}
 
