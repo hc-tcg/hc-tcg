@@ -122,6 +122,47 @@ function findRandomAfkHermit(game: GameModel, playerEntity: PlayerEntity) {
 	return rows[randomIndex]
 }
 
+// Helper function to find an empty hermit slot
+function findEmptyHermitSlot(game: GameModel, playerEntity: PlayerEntity) {
+	return game.components.find(
+		BoardSlotComponent,
+		query.slot.player(playerEntity),
+		query.slot.hermit,
+		query.slot.empty
+	)
+}
+
+// Helper function to place all hermits at the beginning of the game
+function placeAllHermits(game: GameModel, playerEntity: PlayerEntity): AnyTurnActionData[] | null {
+	// Find all hermit cards in hand
+	const hermitCards = game.components.filter(
+		CardComponent,
+		query.card.player(playerEntity),
+		query.card.slot(query.slot.hand),
+		(_game, card) => card.props.category === 'hermit'
+	)
+
+	// Place each hermit card in an empty hermit slot
+	for (const hermitCard of hermitCards) {
+		const emptySlot = findEmptyHermitSlot(game, playerEntity)
+		if (emptySlot) {
+			return [{
+				type: 'PLAY_HERMIT_CARD' as const,
+				slot: emptySlot.entity,
+				card: {
+					id: hermitCard.props.numericId,
+					entity: hermitCard.entity,
+					slot: hermitCard.slotEntity,
+					turnedOver: false,
+					attackHint: null,
+					prizeCard: false,
+				},
+			}]
+		}
+	}
+	return null
+}
+
 function getNextTurnAction(
 	game: GameModel,
 	component: AIComponent,
@@ -140,6 +181,12 @@ function getNextTurnAction(
 				},
 			]
 		}
+	}
+
+	// Place all hermits at the beginning of the game
+	if (game.state.turn.turnNumber === 1) {
+		const hermitAction = placeAllHermits(game, playerEntity)
+		if (hermitAction) return hermitAction
 	}
 
 	// Place boss card on turn 2
