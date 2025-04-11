@@ -5,14 +5,14 @@ type MatchmakingState = {
 	status: MatchmakingStatus
 	gameCode: string | null
 	spectatorCode: string | null
-	selectedBossType: 'evilx' | 'new' | null
+	selectedBossType: 'evilx' | 'new' | undefined
 }
 
 const defaultState: MatchmakingState = {
 	status: null,
 	gameCode: null,
 	spectatorCode: null,
-	selectedBossType: null,
+	selectedBossType: undefined,
 }
 
 const matchmakingReducer = (
@@ -63,7 +63,7 @@ const matchmakingReducer = (
 				status: null,
 				gameCode: null,
 				spectatorCode: null,
-				selectedBossType: null,
+				selectedBossType: undefined,
 			}
 		case localMessages.GAME_START:
 			return {
@@ -74,6 +74,7 @@ const matchmakingReducer = (
 			return {
 				...state,
 				status: 'joining_queue',
+				selectedBossType: action.bossType,
 			}
 		default:
 			return state
