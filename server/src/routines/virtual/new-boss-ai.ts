@@ -21,6 +21,11 @@ import {VirtualAI} from 'common/types/virtual-ai'
 import {PlayerEntity} from 'common/entities'
 import {RowEntity} from 'common/entities'
 
+// Debug function to log available actions
+function logAvailableActions(game: GameModel) {
+	console.log('Available actions:', game.state.turn.availableActions)
+}
+
 const fireDropper = (game: GameModel) => {
 	return Math.floor(game.rng() * 9)
 }
@@ -188,6 +193,9 @@ function getNextTurnAction(
 ): Array<AnyTurnActionData> {
 	const {player} = component
 	const playerEntity = player.entity
+
+	// Log available actions for debugging
+	logAvailableActions(game)
 
 	// Handle modal requests
 	if (game.state.modalRequests.length) {
