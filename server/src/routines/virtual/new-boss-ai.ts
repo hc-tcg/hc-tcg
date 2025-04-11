@@ -136,6 +136,18 @@ function getNextTurnAction(
 				},
 			]
 		}
+		
+		// Handle confirmation modals for single-use cards
+		if (game.state.modalRequests[0].modal.type === 'selectCards' && 
+			game.state.modalRequests[0].modal.name.includes('Confirm')) {
+			console.log('New Boss AI - Confirming single-use card action');
+			return [
+				{
+					type: 'MODAL_REQUEST',
+					modalResult: {result: true, cards: null},
+				},
+			]
+		}
 	}
 
 	// Check if we need to play a hermit card - highest priority
@@ -306,12 +318,7 @@ function getNextTurnAction(
 			if (singleUseSlot) {
 				console.log('New Boss AI - Playing single use card:', singleUseCard.props.id);
 				
-				// Check if the card requires confirmation - only for single use cards
-				const requiresConfirmation = singleUseCard.isSingleUse() && 
-					'showConfirmationModal' in singleUseCard.props && 
-					singleUseCard.props.showConfirmationModal;
-				
-				// Return both the play card action and apply effect action
+				// Return just the play card action - the confirmation modal will be handled separately
 				return [
 					{
 						type: 'PLAY_SINGLE_USE_CARD',
@@ -324,10 +331,7 @@ function getNextTurnAction(
 							attackHint: null,
 							prizeCard: false,
 						},
-					},
-					// If the card requires confirmation, we need to handle it differently
-					// For now, we'll just apply the effect directly
-					{type: 'APPLY_EFFECT'},
+					}
 				]
 			}
 		}
