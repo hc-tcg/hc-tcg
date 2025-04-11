@@ -57,6 +57,7 @@ import NewBossAI from './virtual/new-boss-ai'
 import NewBoss from 'common/cards/boss/hermits/new_boss'
 import { GameModel } from 'common/models/game-model'
 import { RowEntity } from 'common/entities'
+import {STARTER_DECKS, getStarterPack} from 'common/cards/starter-decks'
 
 function setupGame(
 	player1: PlayerModel,
@@ -911,12 +912,17 @@ export function* createBossGame(
 	let bossConfig: OpponentDefs
 
 	if (bossType === 'new') {
+		// Get a random starter deck for the new boss
+		const starterDeck = getStarterPack()
+		console.log(`Selected starter deck "${starterDeck.name}" for New Boss`)
+		
 		bossConfig = {
 			uuid: '',
 			name: 'New Boss',
 			minecraftName: 'NewBoss',
 			censoredName: 'New Boss',
-			deck: [NewBoss],
+			// The boss's deck needs to be Card objects, not just IDs
+			deck: starterDeck.cards,
 			virtualAI: NewBossAI,
 			disableDeckingOut: true as const,
 			appearance: {...defaultAppearance, coin: COINS['creeper']},
