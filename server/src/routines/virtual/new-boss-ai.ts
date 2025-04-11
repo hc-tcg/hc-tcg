@@ -59,6 +59,73 @@ function getNextTurnAction(
 		query.card.slot(query.slot.hand),
 	).map(card => `${card.props.id} (${card.isHermit() ? 'Hermit' : card.isAttach() ? 'Effect' : card.isItem() ? 'Item' : 'SingleUse'})`));
 
+	// Handle pick requests - this must be checked before modal requests
+	if (game.state.pickRequests.length > 0) {
+		console.log('New Boss AI - Handling pick request');
+		const pickRequest = game.state.pickRequests[0];
+		
+		// Find a valid slot to pick based on the pick request's canPick query
+		// We'll try different types of slots to find one that matches the query
+		let validSlot = null;
+		
+		// Try to find a hermit slot that matches the query
+		validSlot = game.components.find(
+			BoardSlotComponent,
+			query.slot.player(player.entity),
+			query.slot.hermit,
+			query.not(query.slot.empty),
+			pickRequest.canPick
+		);
+		
+		// If no hermit slot found, try item slots
+		if (!validSlot) {
+			validSlot = game.components.find(
+				BoardSlotComponent,
+				query.slot.player(player.entity),
+				query.slot.item,
+				query.not(query.slot.empty),
+				pickRequest.canPick
+			);
+		}
+		
+		// If no item slot found, try effect slots
+		if (!validSlot) {
+			validSlot = game.components.find(
+				BoardSlotComponent,
+				query.slot.player(player.entity),
+				query.slot.attach,
+				query.not(query.slot.empty),
+				pickRequest.canPick
+			);
+		}
+		
+		// If no effect slot found, try single use slots
+		if (!validSlot) {
+			validSlot = game.components.find(
+				BoardSlotComponent,
+				query.slot.player(player.entity),
+				(_game, slot) => slot.type === 'single_use',
+				query.not(query.slot.empty),
+				pickRequest.canPick
+			);
+		}
+		
+		if (validSlot) {
+			console.log('New Boss AI - Found valid slot for pick request:', validSlot.entity);
+			return [
+				{
+					type: 'PICK_REQUEST',
+					entity: validSlot.entity,
+				},
+			];
+		} else {
+			console.error('New Boss AI - ERROR: Could not find valid slot for pick request!');
+			// If we can't find a valid slot, we need to handle this gracefully
+			// Return an empty array to let the game continue
+			return [];
+		}
+	}
+
 	if (game.state.modalRequests.length) {
 		if (['Allay', 'Lantern'].includes(game.state.modalRequests[0].modal.name)) {
 			// Handles when challenger reveals card(s) to boss
