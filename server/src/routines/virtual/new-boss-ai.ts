@@ -229,10 +229,11 @@ function getNextTurnAction(
 		)
 		
 		if (singleUseCard) {
-			// For single use cards, we need the single use slot
-			const singleUseSlot = game.components.findEntity(
+			// We need to find the single use slot
+			const singleUseSlot = game.components.find(
 				BoardSlotComponent,
-				query.slot.singleUse,
+				query.slot.player(player.entity),
+				(_game, slot) => slot.type === 'single_use',
 			)
 			
 			if (singleUseSlot) {
@@ -240,7 +241,7 @@ function getNextTurnAction(
 				return [
 					{
 						type: 'PLAY_SINGLE_USE_CARD',
-						slot: singleUseSlot,
+						slot: singleUseSlot.entity,
 						card: {
 							id: singleUseCard.props.numericId,
 							entity: singleUseCard.entity,
