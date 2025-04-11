@@ -238,6 +238,13 @@ function getNextTurnAction(
 			
 			if (singleUseSlot) {
 				console.log('New Boss AI - Playing single use card:', singleUseCard.props.id);
+				
+				// Check if the card requires confirmation - only for single use cards
+				const requiresConfirmation = singleUseCard.isSingleUse() && 
+					'showConfirmationModal' in singleUseCard.props && 
+					singleUseCard.props.showConfirmationModal;
+				
+				// Return both the play card action and apply effect action
 				return [
 					{
 						type: 'PLAY_SINGLE_USE_CARD',
@@ -251,6 +258,9 @@ function getNextTurnAction(
 							prizeCard: false,
 						},
 					},
+					// If the card requires confirmation, we need to handle it differently
+					// For now, we'll just apply the effect directly
+					{type: 'APPLY_EFFECT'},
 				]
 			}
 		}
@@ -293,6 +303,12 @@ function getNextTurnAction(
 	const attackType = game.state.turn.availableActions.find(
 		(action) => action === 'PRIMARY_ATTACK' || action === 'SECONDARY_ATTACK',
 	)
+	
+	// Add detailed logging for attack availability
+	console.log('New Boss AI - Attack availability check:');
+	console.log('Available actions:', game.state.turn.availableActions);
+	console.log('Attack type available:', attackType);
+	
 	if (attackType) {
 		const bossCard = game.components.find(
 			CardComponent,
@@ -300,8 +316,13 @@ function getNextTurnAction(
 			query.card.active,
 			query.card.slot(query.slot.hermit),
 		)
-		if (bossCard === null)
+		
+		console.log('Active hermit found:', bossCard ? bossCard.props.id : 'None');
+		
+		if (bossCard === null) {
+			console.error('New Boss AI - ERROR: Boss\'s active hermit cannot be found!');
 			throw new Error(`Boss's active hermit cannot be found, please report`)
+		}
 		
 		console.log('New Boss AI - FINAL ACTION: Performing attack with hermit:', bossCard.props.id);
 		
@@ -320,6 +341,8 @@ function getNextTurnAction(
 			// Regular attack for standard hermit cards
 			return [{type: attackType}]
 		}
+	} else {
+		console.log('New Boss AI - No attack action available. Available actions:', game.state.turn.availableActions);
 	}
 
 	// Handle any custom action types we haven't explicitly addressed
