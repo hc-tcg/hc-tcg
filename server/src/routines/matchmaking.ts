@@ -933,7 +933,7 @@ export function* createBossGame(
 	}
 
 	const newBossGameController = setupSolitareGame(player, player.deck, bossConfig)
-	newBossGameController.game.state.isEvilXBossGame = true
+	newBossGameController.game.state.isEvilXBossGame = bossType === 'evilx'
 	newBossGameController.game.state.bossType = bossType
 
 	const destroyRow = (game: GameModel, row: RowEntity) => {
