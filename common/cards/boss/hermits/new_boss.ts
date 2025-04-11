@@ -35,7 +35,7 @@ function supplyBossAttack(card: CardComponent, attack: BOSS_ATTACK) {
 	bossAttacks.set(card, attack)
 }
 
-const attackLog = (bossAttack: BOSS_ATTACK): AttackLog => {
+const attackLog = (bossAttack: BOSS_ATTACK): ((values: AttackLog) => string) => {
 	return (values) => {
 		let log = `${values.damage} damage`
 		if (bossAttack[1] === 'DOUBLE') log += ' (doubled)'
@@ -280,4 +280,5 @@ const NewBoss: Hermit = {
 }
 
 export default NewBoss
-export {BOSS_ATTACK, supplyBossAttack} 
+export {supplyBossAttack}
+export type {BOSS_ATTACK} 
