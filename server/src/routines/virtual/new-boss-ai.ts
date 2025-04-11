@@ -29,44 +29,35 @@ function getNextTurnAction(
 
 	// Log available actions for debugging
 	console.log('New Boss AI - Available actions:', game.state.turn.availableActions);
+	
+	// Log information about hermits on the board
+	const hermitsOnBoard = game.components.filter(
+		BoardSlotComponent,
+		query.slot.player(player.entity),
+		query.slot.hermit,
+		query.not(query.slot.empty),
+	);
+	
+	const activeHermit = game.components.find(
+		BoardSlotComponent,
+		query.slot.player(player.entity),
+		query.slot.hermit,
+		query.slot.active,
+	);
+	
+	console.log(`New Boss AI - Hermits on board: ${hermitsOnBoard.length}, Active hermit: ${activeHermit ? 'Yes' : 'No'}`);
+	
+	// Log if we have multiple hermits but CHANGE_ACTIVE_HERMIT isn't available
+	if (hermitsOnBoard.length > 1 && !game.state.turn.availableActions.includes('CHANGE_ACTIVE_HERMIT')) {
+		console.log('New Boss AI - WARNING: Multiple hermits on board but CHANGE_ACTIVE_HERMIT not available!');
+		console.log('New Boss AI - Blocked actions:', game.getAllBlockedActions());
+	}
+	
 	console.log('New Boss AI - Cards in hand:', game.components.filter(
 		CardComponent,
 		query.card.player(player.entity),
 		query.card.slot(query.slot.hand),
 	).map(card => `${card.props.id} (${card.isHermit() ? 'Hermit' : card.isAttach() ? 'Effect' : card.isItem() ? 'Item' : 'SingleUse'})`));
-
-	// Check for attack opportunities first - prioritize attacking
-	const attackType = game.state.turn.availableActions.find(
-		(action) => action === 'PRIMARY_ATTACK' || action === 'SECONDARY_ATTACK',
-	)
-	if (attackType) {
-		const bossCard = game.components.find(
-			CardComponent,
-			query.card.currentPlayer,
-			query.card.active,
-			query.card.slot(query.slot.hermit),
-		)
-		if (bossCard === null)
-			throw new Error(`Boss's active hermit cannot be found, please report`)
-		
-		console.log('New Boss AI - Performing attack with hermit:', bossCard.props.id);
-		
-		// Only use special boss attacks if we're playing as the NewBoss card
-		if (bossCard.props.id === 'new_boss') {
-			const bossAttack = getBossAttack(component.player, game)
-			supplyBossAttack(bossCard, bossAttack)
-			for (const sound of bossAttack) {
-				game.voiceLineQueue.push(`/voice/${sound}.ogg`)
-			}
-			return [
-				{type: 'DELAY', delay: bossAttack.length * 3000},
-				{type: attackType},
-			]
-		} else {
-			// Regular attack for standard hermit cards
-			return [{type: attackType}]
-		}
-	}
 
 	if (game.state.modalRequests.length) {
 		if (['Allay', 'Lantern'].includes(game.state.modalRequests[0].modal.name)) {
@@ -80,18 +71,26 @@ function getNextTurnAction(
 		}
 	}
 
-	// Check if we need to play a hermit card - priority on placing hermits
+	// Check if we need to play a hermit card - highest priority
 	if (game.state.turn.availableActions.includes('PLAY_HERMIT_CARD')) {
 		// First check for a hermit card in hand
-		const hermitCard = game.components.find(
+		const hermitCards = game.components.filter(
 			CardComponent,
 			query.card.player(player.entity),
 			(_game, card) => card.isHermit(),
 			query.card.slot(query.slot.hand),
 		)
 		
-		if (hermitCard) {
-			// Find an empty hermit slot where we can place the hermit
+		// Count how many hermits are already on the board
+		const hermitsOnBoard = game.components.filter(
+			BoardSlotComponent,
+			query.slot.player(player.entity),
+			query.slot.hermit,
+			query.not(query.slot.empty),
+		);
+		
+		if (hermitCards.length > 0) {
+			// Find all empty hermit slots where we can place hermits
 			const emptyHermitSlots = game.components.filter(
 				BoardSlotComponent,
 				query.slot.player(player.entity),
@@ -100,15 +99,30 @@ function getNextTurnAction(
 			)
 			
 			if (emptyHermitSlots.length > 0) {
-				console.log('New Boss AI - Playing hermit card:', hermitCard.props.id);
+				// Log the hermit card and where we're placing it
+				console.log(`New Boss AI - Playing hermit card: ${hermitCards[0].props.id} (${emptyHermitSlots.length} empty slots, ${hermitsOnBoard.length} hermits already on board)`);
+				
+				// If we don't have an active hermit yet, prioritize placing on row 0
+				let targetSlot = emptyHermitSlots[0];
+				if (hermitsOnBoard.length === 0) {
+					// First hermit should go on row 0 to become active
+					const row0Slot = emptyHermitSlots.find(slot => 
+						slot.inRow() && slot.row.index === 0
+					);
+					if (row0Slot) {
+						targetSlot = row0Slot;
+						console.log('New Boss AI - Placing first hermit on row 0 to make it active');
+					}
+				}
+				
 				return [
 					{
 						type: 'PLAY_HERMIT_CARD',
-						slot: emptyHermitSlots[0].entity,
+						slot: targetSlot.entity,
 						card: {
-							id: hermitCard.props.numericId,
-							entity: hermitCard.entity,
-							slot: hermitCard.slotEntity,
+							id: hermitCards[0].props.numericId,
+							entity: hermitCards[0].entity,
+							slot: hermitCards[0].slotEntity,
 							turnedOver: false,
 							attackHint: null,
 							prizeCard: false,
@@ -131,7 +145,7 @@ function getNextTurnAction(
 		if (effectCard) {
 			console.log('New Boss AI - Found effect card to play:', effectCard.props.id);
 			
-			// Find an active hermit slot to attach to
+			// Find hermit slots that have cards in them
 			const hermitSlots = game.components.filter(
 				BoardSlotComponent,
 				query.slot.player(player.entity),
@@ -271,6 +285,39 @@ function getNextTurnAction(
 				type: 'CHANGE_ACTIVE_HERMIT',
 				entity: bestSlot.entity,
 			}]
+		}
+	}
+	
+	// Attack only after we've played all possible cards - lowest priority
+	const attackType = game.state.turn.availableActions.find(
+		(action) => action === 'PRIMARY_ATTACK' || action === 'SECONDARY_ATTACK',
+	)
+	if (attackType) {
+		const bossCard = game.components.find(
+			CardComponent,
+			query.card.currentPlayer,
+			query.card.active,
+			query.card.slot(query.slot.hermit),
+		)
+		if (bossCard === null)
+			throw new Error(`Boss's active hermit cannot be found, please report`)
+		
+		console.log('New Boss AI - FINAL ACTION: Performing attack with hermit:', bossCard.props.id);
+		
+		// Only use special boss attacks if we're playing as the NewBoss card
+		if (bossCard.props.id === 'new_boss') {
+			const bossAttack = getBossAttack(component.player, game)
+			supplyBossAttack(bossCard, bossAttack)
+			for (const sound of bossAttack) {
+				game.voiceLineQueue.push(`/voice/${sound}.ogg`)
+			}
+			return [
+				{type: 'DELAY', delay: bossAttack.length * 3000},
+				{type: attackType},
+			]
+		} else {
+			// Regular attack for standard hermit cards
+			return [{type: attackType}]
 		}
 	}
 
