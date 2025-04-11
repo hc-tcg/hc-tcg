@@ -162,6 +162,16 @@ export function playCardAction(
 	const rowIndex = pickedSlot.index
 	const player = pickedSlot.player
 
+	// Add detailed logging for single use cards
+	if (pickedSlot.type === 'single_use') {
+		console.log('Attempting to play single use card:', card.props.name)
+		console.log('Slot is single use:', query.slot.singleUse(game, pickedSlot))
+		console.log('Slot is empty:', query.slot.empty(game, pickedSlot))
+		console.log('Player has active hermit:', query.slot.playerHasActiveHermit(game, pickedSlot))
+		console.log('PLAY_SINGLE_USE_CARD action available:', !game.state.turn.completedActions.includes('PLAY_SINGLE_USE_CARD'))
+		console.log('Current player single use card used:', currentPlayer.singleUseCardUsed)
+	}
+
 	// Do we meet requirements to place the card
 	const canAttach = card?.props.attachCondition(game, pickedSlot) || false
 
