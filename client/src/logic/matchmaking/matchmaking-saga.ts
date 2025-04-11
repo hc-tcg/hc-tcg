@@ -518,7 +518,7 @@ function* createBossGameSaga(action: { type: string; bossType?: 'evilx' | 'new' 
 			yield* sendJoinQueueMessage(
 				clientMessages.CREATE_BOSS_GAME,
 				activeDeckResult,
-				action.bossType ?? 'evilx' // Use provided bossType or default to evilx
+				action.bossType ?? 'new' // Use provided bossType or default to new
 			)
 
 			// Wait for response
