@@ -293,16 +293,25 @@ function PlaySelect({
 			break
 	}
 
-	const onConfirm = () => {
+	const onBossConfirm = (bossType: 'evilx' | 'new') => {
+		console.log('Dispatching with boss type:', bossType)
+		dispatch({ type: localMessages.MATCHMAKING_CREATE_BOSS_GAME, bossType })
+	}
+
+	const onConfirm = (code?: string) => {
 		const valid = checkForValidation()
 		if (!valid) return
 
-		console.log('Dispatching with boss type:', selectedBossType)
 		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
-		dispatch({
-			type: localMessages.MATCHMAKING_CREATE_BOSS_GAME,
-			bossType: selectedBossType
-		})
+		if (code) {
+			dispatch({type: localMessages.MATCHMAKING_JOIN_PRIVATE_QUEUE, code})
+		}
+	}
+
+	const onDeckSelect = () => {
+		if (selectedBossType) {
+			onBossConfirm(selectedBossType)
+		}
 	}
 
 	return (
@@ -607,7 +616,7 @@ or create your own game to challenge someone else."
 										onClick() {
 											addMenuWithBack('bossChooseDeck')
 											setSelectedBossType('evilx')
-											onConfirm()
+											onBossConfirm('evilx')
 										},
 										variant: 'primary',
 									},
@@ -617,7 +626,7 @@ or create your own game to challenge someone else."
 											console.log('Setting boss type to new')
 											addMenuWithBack('bossChooseDeck')
 											setSelectedBossType('new')
-											onConfirm()
+											onBossConfirm('new')
 										},
 										variant: 'primary',
 									},
@@ -710,7 +719,7 @@ or create your own game to challenge someone else."
 								subTitle="When ready, press the Fight! button to begin."
 								confirmMessage="Fight!"
 								disableButton={loadedDeck === undefined}
-								onConfirm={onConfirm}
+								onConfirm={onDeckSelect}
 								decks={decks}
 								onSelectDeck={onSelectDeck}
 							/>
