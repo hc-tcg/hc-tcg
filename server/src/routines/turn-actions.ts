@@ -158,10 +158,6 @@ export function playCardAction(
 		'You cannot play cards that are in frozen slots',
 	)
 
-	const row = pickedSlot.row
-	const rowIndex = pickedSlot.index
-	const player = pickedSlot.player
-
 	// Add detailed logging for single use cards
 	if (pickedSlot.type === 'single_use') {
 		console.log('Attempting to play single use card:', card.props.name)
@@ -188,6 +184,11 @@ export function playCardAction(
 	if (pickedSlot.type === 'single_use') {
 		card.attach(pickedSlot)
 	} else {
+		// For non-single-use slots, we need to access row and rowIndex
+		const row = pickedSlot.row
+		const rowIndex = pickedSlot.index
+		const player = pickedSlot.player
+
 		assert(
 			row && rowIndex !== null,
 			'Placing a card on the board requires there to be a row.',
