@@ -27,6 +27,9 @@ function getNextTurnAction(
 ): Array<AnyTurnActionData> {
 	const {player} = component
 
+	// Log available actions for debugging
+	console.log('New Boss AI - Available actions:', game.state.turn.availableActions);
+
 	if (game.state.modalRequests.length) {
 		if (['Allay', 'Lantern'].includes(game.state.modalRequests[0].modal.name)) {
 			// Handles when challenger reveals card(s) to boss
@@ -39,33 +42,156 @@ function getNextTurnAction(
 		}
 	}
 
-	if (game.state.turn.turnNumber === 2) {
-		const bossCard = game.components.find(
+	// Check if we need to play a hermit card
+	if (game.state.turn.availableActions.includes('PLAY_HERMIT_CARD')) {
+		// First check for a hermit card in hand
+		const hermitCard = game.components.find(
 			CardComponent,
 			query.card.player(player.entity),
-			query.card.is(NewBoss),
+			(_game, card) => card.isHermit(),
 			query.card.slot(query.slot.hand),
 		)
-		const slot = game.components.findEntity(
-			BoardSlotComponent,
-			query.slot.player(player.entity),
-			query.slot.hermit,
-		)
-		if (bossCard && slot) {
-			return [
-				{
-					type: 'PLAY_HERMIT_CARD',
-					slot,
-					card: {
-						id: bossCard.props.numericId,
-						entity: bossCard.entity,
-						slot: bossCard.slotEntity,
-						turnedOver: false,
-						attackHint: null,
-						prizeCard: false,
+		
+		if (hermitCard) {
+			const slot = game.components.findEntity(
+				BoardSlotComponent,
+				query.slot.player(player.entity),
+				query.slot.hermit,
+			)
+			
+			if (slot) {
+				return [
+					{
+						type: 'PLAY_HERMIT_CARD',
+						slot,
+						card: {
+							id: hermitCard.props.numericId,
+							entity: hermitCard.entity,
+							slot: hermitCard.slotEntity,
+							turnedOver: false,
+							attackHint: null,
+							prizeCard: false,
+						},
 					},
-				},
-			]
+				]
+			}
+		}
+	}
+	
+	// Try to play effect cards
+	if (game.state.turn.availableActions.includes('PLAY_EFFECT_CARD')) {
+		const effectCard = game.components.find(
+			CardComponent,
+			query.card.player(player.entity),
+			(_game, card) => card.isAttach(),
+			query.card.slot(query.slot.hand),
+		)
+		
+		if (effectCard) {
+			// Find an active hermit slot to attach to
+			const activeHermitSlot = game.components.find(
+				BoardSlotComponent,
+				query.slot.player(player.entity),
+				query.slot.hermit,
+				query.not(query.slot.empty),
+			)
+			
+			if (activeHermitSlot) {
+				const attachSlot = game.components.findEntity(
+					BoardSlotComponent,
+					query.slot.player(player.entity),
+					query.slot.attach,
+				)
+				
+				if (attachSlot) {
+					return [
+						{
+							type: 'PLAY_EFFECT_CARD',
+							slot: attachSlot,
+							card: {
+								id: effectCard.props.numericId,
+								entity: effectCard.entity,
+								slot: effectCard.slotEntity,
+								turnedOver: false,
+								attackHint: null,
+								prizeCard: false,
+							},
+						},
+					]
+				}
+			}
+		}
+	}
+	
+	// Try to play item cards
+	if (game.state.turn.availableActions.includes('PLAY_ITEM_CARD')) {
+		const itemCard = game.components.find(
+			CardComponent,
+			query.card.player(player.entity),
+			(_game, card) => card.isItem(),
+			query.card.slot(query.slot.hand),
+		)
+		
+		if (itemCard) {
+			// Find an empty item slot
+			const itemSlot = game.components.findEntity(
+				BoardSlotComponent,
+				query.slot.player(player.entity),
+				query.slot.item,
+				query.slot.empty,
+			)
+			
+			if (itemSlot) {
+				return [
+					{
+						type: 'PLAY_ITEM_CARD',
+						slot: itemSlot,
+						card: {
+							id: itemCard.props.numericId,
+							entity: itemCard.entity,
+							slot: itemCard.slotEntity,
+							turnedOver: false,
+							attackHint: null,
+							prizeCard: false,
+						},
+					},
+				]
+			}
+		}
+	}
+	
+	// Try to play single use cards
+	if (game.state.turn.availableActions.includes('PLAY_SINGLE_USE_CARD')) {
+		const singleUseCard = game.components.find(
+			CardComponent,
+			query.card.player(player.entity),
+			(_game, card) => card.isSingleUse(),
+			query.card.slot(query.slot.hand),
+		)
+		
+		if (singleUseCard) {
+			// For single use cards, we need the single use slot
+			const singleUseSlot = game.components.findEntity(
+				BoardSlotComponent,
+				query.slot.singleUse,
+			)
+			
+			if (singleUseSlot) {
+				return [
+					{
+						type: 'PLAY_SINGLE_USE_CARD',
+						slot: singleUseSlot,
+						card: {
+							id: singleUseCard.props.numericId,
+							entity: singleUseCard.entity,
+							slot: singleUseCard.slotEntity,
+							turnedOver: false,
+							attackHint: null,
+							prizeCard: false,
+						},
+					},
+				]
+			}
 		}
 	}
 
@@ -81,19 +207,69 @@ function getNextTurnAction(
 		)
 		if (bossCard === null)
 			throw new Error(`Boss's active hermit cannot be found, please report`)
-		const bossAttack = getBossAttack(component.player, game)
-		supplyBossAttack(bossCard, bossAttack)
-		for (const sound of bossAttack) {
-			game.voiceLineQueue.push(`/voice/${sound}.ogg`)
+		
+		// Only use special boss attacks if we're playing as the NewBoss card
+		if (bossCard.props.id === 'new_boss') {
+			const bossAttack = getBossAttack(component.player, game)
+			supplyBossAttack(bossCard, bossAttack)
+			for (const sound of bossAttack) {
+				game.voiceLineQueue.push(`/voice/${sound}.ogg`)
+			}
+			return [
+				{type: 'DELAY', delay: bossAttack.length * 3000},
+				{type: attackType},
+			]
+		} else {
+			// Regular attack for standard hermit cards
+			return [{type: attackType}]
 		}
-		return [
-			{type: 'DELAY', delay: bossAttack.length * 3000},
-			{type: attackType},
-		]
 	}
 
-	if (!game.state.turn.availableActions.includes('END_TURN'))
-		throw new Error('Boss does not know what to do in this state, please report')
+	// Handle changing active hermit if needed
+	if (game.state.turn.availableActions.includes('CHANGE_ACTIVE_HERMIT')) {
+		console.log('New Boss AI - Attempting to change active hermit');
+		// Find another row that has a hermit
+		const hermitSlot = game.components.find(
+			BoardSlotComponent,
+			query.slot.player(player.entity),
+			query.slot.hermit,
+			query.not(query.slot.empty),
+			query.not(query.slot.active),
+		)
+		
+		if (hermitSlot) {
+			return [{
+				type: 'CHANGE_ACTIVE_HERMIT',
+				entity: hermitSlot.entity,
+			}]
+		}
+	}
+
+	// Handle any custom action types we haven't explicitly addressed
+	if (game.state.turn.availableActions.length > 0) {
+		console.log('New Boss AI - Handling fallback action:', game.state.turn.availableActions[0]);
+		// Fallback to the first available action if we can't handle it specifically
+		return [{type: game.state.turn.availableActions[0] as any}]
+	}
+
+	if (!game.state.turn.availableActions.includes('END_TURN')) {
+		// Log full game state for debugging
+		console.error('Available actions:', game.state.turn.availableActions);
+		console.error('Board state:', {
+			playerHand: game.components.filter(
+				CardComponent,
+				query.card.player(player.entity),
+				query.card.slot(query.slot.hand),
+			).length,
+			playerBoard: game.components.filter(
+				CardComponent,
+				query.card.player(player.entity),
+				query.card.slot(query.slot.hermit),
+			).length,
+		});
+		
+		throw new Error(`Boss does not know what to do in this state. Available actions: ${JSON.stringify(game.state.turn.availableActions)}`);
+	}
 
 	return [{type: 'END_TURN'}]
 }
