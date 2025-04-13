@@ -407,10 +407,14 @@ function getNextTurnAction(
 			return [
 				{type: 'DELAY', delay: bossAttack.length * 3000},
 				{type: attackType},
+				{type: 'END_TURN'}
 			]
 		} else {
 			// Regular attack for standard hermit cards
-			return [{type: attackType}]
+			return [
+				{type: attackType},
+				{type: 'END_TURN'}
+			]
 		}
 	} else {
 		console.log('New Boss AI - No attack action available. Available actions:', game.state.turn.availableActions);
