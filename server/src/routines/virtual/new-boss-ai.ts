@@ -388,35 +388,6 @@ function getNextTurnAction(
 				}
 			}
 		}
-		
-		// If we didn't switch due to low health, check if we have multiple hermits and one has significantly more health
-		const hermitSlots = game.components.filter(
-			BoardSlotComponent,
-			query.slot.player(player.entity),
-			query.slot.hermit,
-			query.not(query.slot.empty),
-			query.not(query.slot.active),
-		);
-		
-		if (hermitSlots.length > 0) {
-			// Prioritize hermits with higher health if available
-			let bestSlot = hermitSlots[0];
-			let bestHealth = bestSlot.inRow() ? bestSlot.row.health || 0 : 0;
-			
-			for (const slot of hermitSlots) {
-				const health = slot.inRow() ? slot.row.health || 0 : 0;
-				if (health > bestHealth) {
-					bestHealth = health;
-					bestSlot = slot;
-				}
-			}
-			
-			console.log('New Boss AI - Changing to hermit with health:', bestHealth);
-			return [{
-				type: 'CHANGE_ACTIVE_HERMIT',
-				entity: bestSlot.entity,
-			}];
-		}
 	}
 	
 	// Attack only after we've played all possible cards - lowest priority
