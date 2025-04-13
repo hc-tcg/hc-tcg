@@ -322,6 +322,7 @@ function getNextTurnAction(
 				console.log('New Boss AI - Playing single use card:', singleUseCard.props.id);
 				
 				// Return just the play card action - the confirmation modal will be handled separately
+				// Don't include END_TURN here as we need to wait for confirmation
 				return [
 					{
 						type: 'PLAY_SINGLE_USE_CARD',
@@ -450,9 +451,9 @@ function getNextTurnAction(
 		return [{type: game.state.turn.availableActions[0] as any}]
 	}
 
-	// Check if we've been stuck for more than 5 seconds
+	// Check if we've been stuck for more than 15 seconds
 	const currentTime = Date.now();
-	if (currentTime - lastActionCheckTime > 5000) {
+	if (currentTime - lastActionCheckTime > 15000) {
 		console.log('New Boss AI - TIMEOUT: Been stuck for more than 15 seconds, checking available actions again');
 		lastActionCheckTime = currentTime;
 		
@@ -490,6 +491,19 @@ function getNextTurnAction(
 					query.card.active,
 					query.card.slot(query.slot.hermit),
 				);
+				
+				if (bossCard) {
+					console.log('New Boss AI - TIMEOUT: Randomly performing attack with hermit:', bossCard.props.id);
+					// Only include END_TURN if it's available
+					if (game.state.turn.availableActions.includes('END_TURN')) {
+						return [
+							{type: randomAction},
+							{type: 'END_TURN'}
+						];
+					} else {
+						return [{type: randomAction}];
+					}
+				}
 			}
 			
 			// For other actions, just return the action type
@@ -500,27 +514,15 @@ function getNextTurnAction(
 		lastActionCheckTime = currentTime;
 	}
 
-	if (!game.state.turn.availableActions.includes('END_TURN')) {
-		// Log full game state for debugging
-		console.error('Available actions:', game.state.turn.availableActions);
-		console.error('Board state:', {
-			playerHand: game.components.filter(
-				CardComponent,
-				query.card.player(player.entity),
-				query.card.slot(query.slot.hand),
-			).length,
-			playerBoard: game.components.filter(
-				CardComponent,
-				query.card.player(player.entity),
-				query.card.slot(query.slot.hermit),
-			).length,
-		});
-		
-		throw new Error(`Boss does not know what to do in this state. Available actions: ${JSON.stringify(game.state.turn.availableActions)}`);
+	// Only try to end turn if END_TURN is available
+	if (game.state.turn.availableActions.includes('END_TURN')) {
+		console.log('New Boss AI - Ending turn');
+		return [{type: 'END_TURN'}];
+	} else {
+		// If END_TURN is not available, return an empty array to let the game continue
+		console.log('New Boss AI - END_TURN not available, returning empty array');
+		return [];
 	}
-
-	console.log('New Boss AI - Ending turn');
-	return [{type: 'END_TURN'}]
 }
 
 function getBossAttack(player: PlayerComponent, game: GameModel): BOSS_ATTACK {
