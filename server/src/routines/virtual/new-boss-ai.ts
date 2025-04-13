@@ -674,8 +674,27 @@ function getNextTurnAction(
 		
 		// Special handling for APPLY_EFFECT action which is used for single-use cards
 		if (game.state.turn.availableActions[0] === 'APPLY_EFFECT') {
-			console.log('New Boss AI - Applying effect from single-use card');
-			return [{type: 'APPLY_EFFECT'}];
+			// Check if we already applied this effect (to prevent double counting)
+			const singleUseCard = game.components.find(
+				CardComponent,
+				query.card.slot(query.slot.singleUse),
+			);
+			
+			// Only apply effect if there's a single-use card and player hasn't marked it as used yet
+			if (singleUseCard && !player.singleUseCardUsed) {
+				console.log('New Boss AI - Applying effect from single-use card:', singleUseCard.props.id);
+				return [{type: 'APPLY_EFFECT'}];
+			} else {
+				console.log('New Boss AI - Not applying effect - already used or no card found');
+				
+				// Skip this action to avoid double-applying the effect
+				if (game.state.turn.availableActions.length > 1) {
+					// Try the next available action instead
+					const nextAction = game.state.turn.availableActions[1];
+					console.log('New Boss AI - Skipping APPLY_EFFECT, trying next action:', nextAction);
+					return [{type: nextAction as any}];
+				}
+			}
 		}
 		
 		// Fallback to the first available action if we can't handle it specifically
@@ -715,8 +734,21 @@ function getNextTurnAction(
 		
 		// If we have any available actions, randomly select one
 		if (game.state.turn.availableActions.length > 0) {
-			const randomIndex = Math.floor(game.rng() * game.state.turn.availableActions.length);
-			const randomAction = game.state.turn.availableActions[randomIndex];
+			// Filter out APPLY_EFFECT if the single-use card has already been used
+			let availableActions = game.state.turn.availableActions;
+			if (availableActions.includes('APPLY_EFFECT') && player.singleUseCardUsed) {
+				console.log('New Boss AI - TIMEOUT: Filtering out APPLY_EFFECT because single-use card already used');
+				availableActions = availableActions.filter(action => action !== 'APPLY_EFFECT');
+				
+				// If no actions left after filtering, return empty array
+				if (availableActions.length === 0) {
+					console.log('New Boss AI - TIMEOUT: No actions available after filtering');
+					return [];
+				}
+			}
+			
+			const randomIndex = Math.floor(game.rng() * availableActions.length);
+			const randomAction = availableActions[randomIndex];
 			console.log('New Boss AI - TIMEOUT: Randomly selecting action:', randomAction);
 			
 			// Handle special cases for different action types
@@ -755,6 +787,21 @@ function getNextTurnAction(
 						type: 'CHANGE_ACTIVE_HERMIT',
 						entity: afkHermits[0].entity,
 					}];
+				}
+			} else if (randomAction === 'APPLY_EFFECT') {
+				// For APPLY_EFFECT, check if there's a single-use card and it hasn't been used yet
+				const singleUseCard = game.components.find(
+					CardComponent,
+					query.card.slot(query.slot.singleUse),
+				);
+				
+				if (singleUseCard && !player.singleUseCardUsed) {
+					console.log('New Boss AI - TIMEOUT: Applying effect from single-use card:', singleUseCard.props.id);
+					return [{type: 'APPLY_EFFECT'}];
+				} else {
+					console.log('New Boss AI - TIMEOUT: Skipping APPLY_EFFECT - already used or no card found');
+					// Skip this action
+					return [];
 				}
 			}
 			
