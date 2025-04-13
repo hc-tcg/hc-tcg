@@ -340,14 +340,63 @@ function getNextTurnAction(
 	// Handle changing active hermit if needed
 	if (game.state.turn.availableActions.includes('CHANGE_ACTIVE_HERMIT')) {
 		console.log('New Boss AI - Attempting to change active hermit');
-		// Find another row that has a hermit
+		
+		// Check if current active hermit has low health (less than 90)
+		const activeHermit = game.components.find(
+			CardComponent,
+			query.card.currentPlayer,
+			query.card.active,
+			query.card.slot(query.slot.hermit),
+		);
+		
+		if (activeHermit && activeHermit.slot.inRow()) {
+			const activeHealth = activeHermit.slot.row.health || 0;
+			console.log('New Boss AI - Current active hermit health:', activeHealth);
+			
+			// If active hermit has less than 90 health, try to switch to a healthier one
+			if (activeHealth < 90) {
+				// Find another row that has a hermit with more health
+				const hermitSlots = game.components.filter(
+					BoardSlotComponent,
+					query.slot.player(player.entity),
+					query.slot.hermit,
+					query.not(query.slot.empty),
+					query.not(query.slot.active),
+				);
+				
+				if (hermitSlots.length > 0) {
+					// Prioritize hermits with higher health if available
+					let bestSlot = hermitSlots[0];
+					let bestHealth = bestSlot.inRow() ? bestSlot.row.health || 0 : 0;
+					
+					for (const slot of hermitSlots) {
+						const health = slot.inRow() ? slot.row.health || 0 : 0;
+						if (health > bestHealth) {
+							bestHealth = health;
+							bestSlot = slot;
+						}
+					}
+					
+					// Only switch if the new hermit has more health than the current one
+					if (bestHealth > activeHealth) {
+						console.log('New Boss AI - Changing to hermit with health:', bestHealth);
+						return [{
+							type: 'CHANGE_ACTIVE_HERMIT',
+							entity: bestSlot.entity,
+						}];
+					}
+				}
+			}
+		}
+		
+		// If we didn't switch due to low health, check if we have multiple hermits and one has significantly more health
 		const hermitSlots = game.components.filter(
 			BoardSlotComponent,
 			query.slot.player(player.entity),
 			query.slot.hermit,
 			query.not(query.slot.empty),
 			query.not(query.slot.active),
-		)
+		);
 		
 		if (hermitSlots.length > 0) {
 			// Prioritize hermits with higher health if available
@@ -366,7 +415,7 @@ function getNextTurnAction(
 			return [{
 				type: 'CHANGE_ACTIVE_HERMIT',
 				entity: bestSlot.entity,
-			}]
+			}];
 		}
 	}
 	
