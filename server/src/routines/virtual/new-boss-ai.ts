@@ -240,6 +240,7 @@ function getNextTurnAction(
 					BoardSlotComponent,
 					query.slot.player(player.entity),
 					query.slot.attach,
+					query.slot.empty, // Only find empty attach slots
 				)
 				
 				if (attachSlot) {
@@ -258,6 +259,8 @@ function getNextTurnAction(
 							},
 						},
 					]
+				} else {
+					console.log('New Boss AI - No empty attach slot found for effect card');
 				}
 			}
 		}
