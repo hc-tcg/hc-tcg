@@ -50,6 +50,53 @@ function getNextTurnAction(
 	
 	console.log(`New Boss AI - Hermits on board: ${hermitsOnBoard.length}, Active hermit: ${activeHermit ? 'Yes' : 'No'}`);
 	
+	// Check if we have no active hermit but have AFK hermits
+	// This could happen if our active hermit was just knocked out
+	if (!activeHermit && hermitsOnBoard.length > 0) {
+		console.log('New Boss AI - No active hermit found, switching to hermit with most health');
+		
+		// Find the hermit with the most health
+		let bestHermit = null;
+		let bestHealth = -1;
+		
+		for (const slot of hermitsOnBoard) {
+			// Skip slots that are not in a row or have null health (knocked out)
+			if (!slot.inRow() || slot.row.health === null) {
+				continue;
+			}
+			
+			const health = slot.row.health || 0;
+			if (health > bestHealth) {
+				bestHealth = health;
+				bestHermit = slot;
+			}
+		}
+		
+		if (bestHermit) {
+			console.log(`New Boss AI - Switching to hermit with ${bestHealth} health`);
+			
+			// Force unblock the CHANGE_ACTIVE_HERMIT action if it's blocked
+			if (!game.state.turn.availableActions.includes('CHANGE_ACTIVE_HERMIT')) {
+				console.log('New Boss AI - CHANGE_ACTIVE_HERMIT action is blocked, unblocking it');
+				game.removeBlockedActions('game', 'CHANGE_ACTIVE_HERMIT');
+				game.state.turn.availableActions.push('CHANGE_ACTIVE_HERMIT');
+			}
+			
+			return [{
+				type: 'CHANGE_ACTIVE_HERMIT',
+				entity: bestHermit.entity,
+			}];
+		} else {
+			console.log('New Boss AI - No valid hermits found to switch to');
+			
+			// If we have no valid hermits to switch to, end the turn to avoid getting stuck
+			if (game.state.turn.availableActions.includes('END_TURN')) {
+				console.log('New Boss AI - Ending turn since no valid hermits to switch to');
+				return [{type: 'END_TURN'}];
+			}
+		}
+	}
+	
 	// Log if we have multiple hermits but CHANGE_ACTIVE_HERMIT isn't available
 	if (hermitsOnBoard.length > 1 && !game.state.turn.availableActions.includes('CHANGE_ACTIVE_HERMIT')) {
 		console.log('New Boss AI - WARNING: Multiple hermits on board but CHANGE_ACTIVE_HERMIT not available!');
