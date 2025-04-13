@@ -451,9 +451,9 @@ function getNextTurnAction(
 		return [{type: game.state.turn.availableActions[0] as any}]
 	}
 
-	// Check if we've been stuck for more than 15 seconds
+	// Check if we've been stuck for more than 5 seconds
 	const currentTime = Date.now();
-	if (currentTime - lastActionCheckTime > 15000) {
+	if (currentTime - lastActionCheckTime > 5000) {
 		console.log('New Boss AI - TIMEOUT: Been stuck for more than 15 seconds, checking available actions again');
 		lastActionCheckTime = currentTime;
 		
@@ -491,19 +491,6 @@ function getNextTurnAction(
 					query.card.active,
 					query.card.slot(query.slot.hermit),
 				);
-				
-				if (bossCard) {
-					console.log('New Boss AI - TIMEOUT: Randomly performing attack with hermit:', bossCard.props.id);
-					// Only include END_TURN if it's available
-					if (game.state.turn.availableActions.includes('END_TURN')) {
-						return [
-							{type: randomAction},
-							{type: 'END_TURN'}
-						];
-					} else {
-						return [{type: randomAction}];
-					}
-				}
 			}
 			
 			// For other actions, just return the action type
