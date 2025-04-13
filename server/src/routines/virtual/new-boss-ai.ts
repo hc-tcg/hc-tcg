@@ -274,41 +274,116 @@ function getNextTurnAction(
 		if (effectCard) {
 			console.log('New Boss AI - Found effect card to play:', effectCard.props.id);
 			
-			// Find hermit slots that have cards in them
-			const hermitSlots = game.components.filter(
+			// Find active hermit first
+			const activeHermit = game.components.find(
 				BoardSlotComponent,
 				query.slot.player(player.entity),
 				query.slot.hermit,
+				query.slot.active,
 				query.not(query.slot.empty),
-			)
+			);
 			
-			if (hermitSlots.length > 0) {
-				const attachSlot = game.components.findEntity(
+			let targetAttachSlot = null;
+			
+			// First try to find an empty attach slot for the active hermit
+			if (activeHermit && activeHermit.inRow()) {
+				console.log('New Boss AI - Checking if active hermit has empty attach slots');
+				
+				const activeRow = activeHermit.row;
+				const attachSlot = game.components.find(
 					BoardSlotComponent,
 					query.slot.player(player.entity),
 					query.slot.attach,
-					query.slot.empty, // Only find empty attach slots
-				)
+					query.slot.empty,
+					(game, slot) => slot.inRow() && slot.rowEntity === activeRow.entity
+				);
 				
 				if (attachSlot) {
-					console.log('New Boss AI - Playing effect card on hermit');
-					return [
-						{
-							type: 'PLAY_EFFECT_CARD',
-							slot: attachSlot,
-							card: {
-								id: effectCard.props.numericId,
-								entity: effectCard.entity,
-								slot: effectCard.slotEntity,
-								turnedOver: false,
-								attackHint: null,
-								prizeCard: false,
-							},
-						},
-					]
+					console.log('New Boss AI - Found empty attach slot for active hermit');
+					targetAttachSlot = attachSlot.entity;
 				} else {
-					console.log('New Boss AI - No empty attach slot found for effect card');
+					console.log('New Boss AI - Active hermit has no empty attach slots');
 				}
+			}
+			
+			// If active hermit has no empty attach slots, find hermit with most health and free slots
+			if (!targetAttachSlot) {
+				console.log('New Boss AI - Looking for hermit with most health and free attach slots');
+				
+				// Find all hermits on the board
+				const hermitSlots = game.components.filter(
+					BoardSlotComponent,
+					query.slot.player(player.entity),
+					query.slot.hermit,
+					query.not(query.slot.empty),
+				);
+				
+				// Find the hermit with the most health that has empty attach slots
+				let bestHermit = null;
+				let bestHealth = -1;
+				
+				for (const hermitSlot of hermitSlots) {
+					// Skip if not in a row or health is null
+					if (!hermitSlot.inRow() || hermitSlot.row.health === null) {
+						continue;
+					}
+					
+					const health = hermitSlot.row.health || 0;
+					const row = hermitSlot.row;
+					
+					// Check if this hermit's row has an empty attach slot
+					const attachSlot = game.components.find(
+						BoardSlotComponent,
+						query.slot.player(player.entity),
+						query.slot.attach,
+						query.slot.empty,
+						(game, slot) => slot.inRow() && slot.rowEntity === row.entity
+					);
+					
+					if (attachSlot && health > bestHealth) {
+						bestHealth = health;
+						bestHermit = hermitSlot;
+						targetAttachSlot = attachSlot.entity;
+					}
+				}
+				
+				if (targetAttachSlot) {
+					console.log(`New Boss AI - Found hermit with ${bestHealth} health and empty attach slot`);
+				} else {
+					console.log('New Boss AI - No hermits with empty attach slots found');
+					
+					// Fallback to any empty attach slot if no hermit-specific slots are found
+					const anyAttachSlot = game.components.findEntity(
+						BoardSlotComponent,
+						query.slot.player(player.entity),
+						query.slot.attach,
+						query.slot.empty,
+					);
+					
+					if (anyAttachSlot) {
+						targetAttachSlot = anyAttachSlot;
+					}
+				}
+			}
+			
+			if (targetAttachSlot) {
+				console.log('New Boss AI - Playing effect card on selected attach slot');
+				return [
+					{
+						type: 'PLAY_EFFECT_CARD',
+						slot: targetAttachSlot,
+						card: {
+							id: effectCard.props.numericId,
+							entity: effectCard.entity,
+							slot: effectCard.slotEntity,
+							turnedOver: false,
+							attackHint: null,
+							prizeCard: false,
+						},
+					},
+				]
+			} else {
+				console.log('New Boss AI - No empty attach slot found for effect card');
 			}
 		}
 	}
@@ -323,20 +398,108 @@ function getNextTurnAction(
 		)
 		
 		if (itemCard) {
-			// Find an empty item slot
-			const itemSlot = game.components.findEntity(
+			console.log('New Boss AI - Found item card to play:', itemCard.props.id);
+			
+			// Find active hermit first
+			const activeHermit = game.components.find(
 				BoardSlotComponent,
 				query.slot.player(player.entity),
-				query.slot.item,
-				query.slot.empty,
-			)
+				query.slot.hermit,
+				query.slot.active,
+				query.not(query.slot.empty),
+			);
 			
-			if (itemSlot) {
-				console.log('New Boss AI - Playing item card:', itemCard.props.id);
+			let targetItemSlot = null;
+			
+			// First try to find an empty item slot for the active hermit
+			if (activeHermit && activeHermit.inRow()) {
+				console.log('New Boss AI - Checking if active hermit has empty item slots');
+				
+				const activeRow = activeHermit.row;
+				
+				// Find item slots that belong to the active hermit's row
+				const activeHermitItemSlots = game.components.filter(
+					BoardSlotComponent,
+					query.slot.player(player.entity),
+					query.slot.item,
+					query.slot.empty,
+					(game, slot) => slot.inRow() && slot.rowEntity === activeRow.entity
+				);
+				
+				if (activeHermitItemSlots.length > 0) {
+					console.log('New Boss AI - Found empty item slot for active hermit');
+					targetItemSlot = activeHermitItemSlots[0].entity;
+				} else {
+					console.log('New Boss AI - Active hermit has no empty item slots');
+				}
+			}
+			
+			// If active hermit has no empty item slots, find hermit with most health and free slots
+			if (!targetItemSlot) {
+				console.log('New Boss AI - Looking for hermit with most health and free item slots');
+				
+				// Find all hermits on the board
+				const hermitSlots = game.components.filter(
+					BoardSlotComponent,
+					query.slot.player(player.entity),
+					query.slot.hermit,
+					query.not(query.slot.empty),
+				);
+				
+				// Find the hermit with the most health that has empty item slots
+				let bestHermit = null;
+				let bestHealth = -1;
+				
+				for (const hermitSlot of hermitSlots) {
+					// Skip if not in a row or health is null
+					if (!hermitSlot.inRow() || hermitSlot.row.health === null) {
+						continue;
+					}
+					
+					const health = hermitSlot.row.health || 0;
+					const row = hermitSlot.row;
+					
+					// Check if this hermit's row has empty item slots
+					const itemSlots = game.components.filter(
+						BoardSlotComponent,
+						query.slot.player(player.entity),
+						query.slot.item,
+						query.slot.empty,
+						(game, slot) => slot.inRow() && slot.rowEntity === row.entity
+					);
+					
+					if (itemSlots.length > 0 && health > bestHealth) {
+						bestHealth = health;
+						bestHermit = hermitSlot;
+						targetItemSlot = itemSlots[0].entity;
+					}
+				}
+				
+				if (targetItemSlot) {
+					console.log(`New Boss AI - Found hermit with ${bestHealth} health and empty item slots`);
+				} else {
+					console.log('New Boss AI - No hermits with empty item slots found');
+					
+					// Fallback to any empty item slot if no hermit-specific slots are found
+					const anyItemSlot = game.components.findEntity(
+						BoardSlotComponent,
+						query.slot.player(player.entity),
+						query.slot.item,
+						query.slot.empty,
+					);
+					
+					if (anyItemSlot) {
+						targetItemSlot = anyItemSlot;
+					}
+				}
+			}
+			
+			if (targetItemSlot) {
+				console.log('New Boss AI - Playing item card on selected item slot');
 				return [
 					{
 						type: 'PLAY_ITEM_CARD',
-						slot: itemSlot,
+						slot: targetItemSlot,
 						card: {
 							id: itemCard.props.numericId,
 							entity: itemCard.entity,
@@ -347,6 +510,8 @@ function getNextTurnAction(
 						},
 					},
 				]
+			} else {
+				console.log('New Boss AI - No empty item slot found for item card');
 			}
 		}
 	}
