@@ -469,6 +469,15 @@ function getNextTurnAction(
 			throw new Error(`Boss's active hermit cannot be found, please report`)
 		}
 		
+		// Check if both attack types are available and prioritize secondary attack
+		let selectedAttackType = attackType;
+		if (game.state.turn.availableActions.includes('SECONDARY_ATTACK')) {
+			console.log('New Boss AI - Both attack types available, prioritizing secondary attack');
+			selectedAttackType = 'SECONDARY_ATTACK';
+		} else {
+			console.log('New Boss AI - Using primary attack (secondary not available)');
+		}
+		
 		console.log('New Boss AI - FINAL ACTION: Performing attack with hermit:', bossCard.props.id);
 		
 		// Only use special boss attacks if we're playing as the NewBoss card
@@ -480,13 +489,13 @@ function getNextTurnAction(
 			}
 			return [
 				{type: 'DELAY', delay: bossAttack.length * 3000},
-				{type: attackType},
+				{type: selectedAttackType},
 				{type: 'END_TURN'}
 			]
 		} else {
 			// Regular attack for standard hermit cards
 			return [
-				{type: attackType},
+				{type: selectedAttackType},
 				{type: 'END_TURN'}
 			]
 		}
