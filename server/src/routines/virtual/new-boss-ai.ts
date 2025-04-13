@@ -302,44 +302,44 @@ function getNextTurnAction(
 	}
 	
 	// Try to play single use cards
-	if (game.state.turn.availableActions.includes('PLAY_SINGLE_USE_CARD')) {
-		const singleUseCard = game.components.find(
-			CardComponent,
-			query.card.player(player.entity),
-			(_game, card) => card.isSingleUse(),
-			query.card.slot(query.slot.hand),
-		)
+	// if (game.state.turn.availableActions.includes('PLAY_SINGLE_USE_CARD')) {
+	// 	const singleUseCard = game.components.find(
+	// 		CardComponent,
+	// 		query.card.player(player.entity),
+	// 		(_game, card) => card.isSingleUse(),
+	// 		query.card.slot(query.slot.hand),
+	// 	)
 		
-		if (singleUseCard) {
-			// We need to find the single use slot
-			const singleUseSlot = game.components.find(
-				BoardSlotComponent,
-				query.slot.player(player.entity),
-				(_game, slot) => slot.type === 'single_use',
-			)
+	// 	if (singleUseCard) {
+	// 		// We need to find the single use slot
+	// 		const singleUseSlot = game.components.find(
+	// 			BoardSlotComponent,
+	// 			query.slot.player(player.entity),
+	// 			(_game, slot) => slot.type === 'single_use',
+	// 		)
 			
-			if (singleUseSlot) {
-				console.log('New Boss AI - Playing single use card:', singleUseCard.props.id);
+	// 		if (singleUseSlot) {
+	// 			console.log('New Boss AI - Playing single use card:', singleUseCard.props.id);
 				
-				// Return just the play card action - the confirmation modal will be handled separately
-				// Don't include END_TURN here as we need to wait for confirmation
-				return [
-					{
-						type: 'PLAY_SINGLE_USE_CARD',
-						slot: singleUseSlot.entity,
-						card: {
-							id: singleUseCard.props.numericId,
-							entity: singleUseCard.entity,
-							slot: singleUseCard.slotEntity,
-							turnedOver: false,
-							attackHint: null,
-							prizeCard: false,
-						},
-					}
-				]
-			}
-		}
-	}
+	// 			// Return just the play card action - the confirmation modal will be handled separately
+	// 			// Don't include END_TURN here as we need to wait for confirmation
+	// 			return [
+	// 				{
+	// 					type: 'PLAY_SINGLE_USE_CARD',
+	// 					slot: singleUseSlot.entity,
+	// 					card: {
+	// 						id: singleUseCard.props.numericId,
+	// 						entity: singleUseCard.entity,
+	// 						slot: singleUseCard.slotEntity,
+	// 						turnedOver: false,
+	// 						attackHint: null,
+	// 						prizeCard: false,
+	// 					},
+	// 				}
+	// 			]
+	// 		}
+	// 	}
+	// }
 
 	// Handle changing active hermit if needed
 	if (game.state.turn.availableActions.includes('CHANGE_ACTIVE_HERMIT')) {
