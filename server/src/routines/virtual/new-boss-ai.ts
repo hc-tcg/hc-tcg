@@ -447,6 +447,13 @@ function getNextTurnAction(
 	// Handle any custom action types we haven't explicitly addressed
 	if (game.state.turn.availableActions.length > 0) {
 		console.log('New Boss AI - Handling fallback action:', game.state.turn.availableActions[0]);
+		
+		// Special handling for APPLY_EFFECT action which is used for single-use cards
+		if (game.state.turn.availableActions[0] === 'APPLY_EFFECT') {
+			console.log('New Boss AI - Applying effect from single-use card');
+			return [{type: 'APPLY_EFFECT'}];
+		}
+		
 		// Fallback to the first available action if we can't handle it specifically
 		return [{type: game.state.turn.availableActions[0] as any}]
 	}
