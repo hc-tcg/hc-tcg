@@ -454,8 +454,33 @@ function getNextTurnAction(
 	// Check if we've been stuck for more than 5 seconds
 	const currentTime = Date.now();
 	if (currentTime - lastActionCheckTime > 5000) {
-		console.log('New Boss AI - TIMEOUT: Been stuck for more than 15 seconds, checking available actions again');
+		console.log('New Boss AI - TIMEOUT: Been stuck for more than 5 seconds, checking available actions again');
 		lastActionCheckTime = currentTime;
+		
+		// Check if we have no active hermit but have AFK hermits
+		const activeHermit = game.components.find(
+			CardComponent,
+			query.card.currentPlayer,
+			query.card.active,
+			query.card.slot(query.slot.hermit),
+		);
+		
+		const afkHermits = game.components.filter(
+			BoardSlotComponent,
+			query.slot.player(player.entity),
+			query.slot.hermit,
+			query.not(query.slot.empty),
+			query.not(query.slot.active),
+		);
+		
+		// If we have no active hermit but have AFK hermits, prioritize switching to one
+		if (!activeHermit && afkHermits.length > 0 && game.state.turn.availableActions.includes('CHANGE_ACTIVE_HERMIT')) {
+			console.log('New Boss AI - TIMEOUT: No active hermit found, switching to AFK hermit');
+			return [{
+				type: 'CHANGE_ACTIVE_HERMIT',
+				entity: afkHermits[0].entity,
+			}];
+		}
 		
 		// If we have any available actions, randomly select one
 		if (game.state.turn.availableActions.length > 0) {
@@ -491,6 +516,15 @@ function getNextTurnAction(
 					query.card.active,
 					query.card.slot(query.slot.hermit),
 				);
+				
+				// If we don't have an active hermit but have AFK hermits, switch to one first
+				if (!bossCard && afkHermits.length > 0 && game.state.turn.availableActions.includes('CHANGE_ACTIVE_HERMIT')) {
+					console.log('New Boss AI - TIMEOUT: No active hermit for attack, switching to AFK hermit first');
+					return [{
+						type: 'CHANGE_ACTIVE_HERMIT',
+						entity: afkHermits[0].entity,
+					}];
+				}
 			}
 			
 			// For other actions, just return the action type
