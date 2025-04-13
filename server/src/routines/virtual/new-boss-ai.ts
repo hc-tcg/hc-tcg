@@ -17,6 +17,9 @@ import ExBossNineEffect, {
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
 
+// Track the last time we checked for available actions
+let lastActionCheckTime = 0;
+
 const fireDropper = (game: GameModel) => {
 	return Math.floor(game.rng() * 9)
 }
@@ -445,6 +448,56 @@ function getNextTurnAction(
 		console.log('New Boss AI - Handling fallback action:', game.state.turn.availableActions[0]);
 		// Fallback to the first available action if we can't handle it specifically
 		return [{type: game.state.turn.availableActions[0] as any}]
+	}
+
+	// Check if we've been stuck for more than 5 seconds
+	const currentTime = Date.now();
+	if (currentTime - lastActionCheckTime > 5000) {
+		console.log('New Boss AI - TIMEOUT: Been stuck for more than 15 seconds, checking available actions again');
+		lastActionCheckTime = currentTime;
+		
+		// If we have any available actions, randomly select one
+		if (game.state.turn.availableActions.length > 0) {
+			const randomIndex = Math.floor(game.rng() * game.state.turn.availableActions.length);
+			const randomAction = game.state.turn.availableActions[randomIndex];
+			console.log('New Boss AI - TIMEOUT: Randomly selecting action:', randomAction);
+			
+			// Handle special cases for different action types
+			if (randomAction === 'CHANGE_ACTIVE_HERMIT') {
+				// Find a random hermit to switch to
+				const hermitSlots = game.components.filter(
+					BoardSlotComponent,
+					query.slot.player(player.entity),
+					query.slot.hermit,
+					query.not(query.slot.empty),
+					query.not(query.slot.active),
+				);
+				
+				if (hermitSlots.length > 0) {
+					const randomSlotIndex = Math.floor(game.rng() * hermitSlots.length);
+					const randomSlot = hermitSlots[randomSlotIndex];
+					console.log('New Boss AI - TIMEOUT: Randomly switching to hermit at slot:', randomSlot.entity);
+					return [{
+						type: 'CHANGE_ACTIVE_HERMIT',
+						entity: randomSlot.entity,
+					}];
+				}
+			} else if (randomAction === 'PRIMARY_ATTACK' || randomAction === 'SECONDARY_ATTACK') {
+				// For attacks, we need to make sure we have an active hermit
+				const bossCard = game.components.find(
+					CardComponent,
+					query.card.currentPlayer,
+					query.card.active,
+					query.card.slot(query.slot.hermit),
+				);
+			}
+			
+			// For other actions, just return the action type
+			return [{type: randomAction as any}];
+		}
+	} else if (lastActionCheckTime === 0) {
+		// Initialize the last check time if it's the first time
+		lastActionCheckTime = currentTime;
 	}
 
 	if (!game.state.turn.availableActions.includes('END_TURN')) {
