@@ -323,7 +323,7 @@ export function removeEffectAction(game: GameModel): void {
 		console.log('Removing single-use card:', singleUseCard.props.name)
 
 		// Draw the card (move it to appropriate pile)
-		singleUseCard.draw()
+		singleUseCard.discard()
 
 		// Reset the single-use card used flag if we're cleaning up after an error
 		if (!currentPlayer.singleUseCardUsed) {
