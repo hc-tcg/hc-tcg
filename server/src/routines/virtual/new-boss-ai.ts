@@ -177,8 +177,12 @@ function getNextTurnAction(
 	}
 
 	if (game.state.modalRequests.length) {
-		if (['Allay', 'Lantern'].includes(game.state.modalRequests[0].modal.name)) {
-			// Handles when challenger reveals card(s) to boss
+		const modalRequest = game.state.modalRequests[0];
+		console.log('New Boss AI - Handling modal request:', modalRequest.modal.name);
+		
+		// Handle Allay and Lantern modals (when challenger reveals card(s) to boss)
+		if (['Allay', 'Lantern'].includes(modalRequest.modal.name)) {
+			console.log('New Boss AI - Confirming Allay/Lantern modal');
 			return [
 				{
 					type: 'MODAL_REQUEST',
@@ -188,8 +192,8 @@ function getNextTurnAction(
 		}
 		
 		// Handle confirmation modals for single-use cards
-		if (game.state.modalRequests[0].modal.type === 'selectCards' && 
-			game.state.modalRequests[0].modal.name.includes('Confirm')) {
+		if (modalRequest.modal.type === 'selectCards' && 
+			modalRequest.modal.name.includes('Confirm')) {
 			console.log('New Boss AI - Confirming single-use card action');
 			return [
 				{
@@ -198,6 +202,118 @@ function getNextTurnAction(
 				},
 			]
 		}
+		
+		// Handle copyAttack modals (like Cleo's puppetry)
+		if (modalRequest.modal.type === 'copyAttack') {
+			console.log('New Boss AI - Handling copyAttack modal');
+			// Randomly choose between primary and secondary attack
+			const availableAttacks = modalRequest.modal.availableAttacks;
+			if (availableAttacks.length > 0) {
+				const randomIndex = Math.floor(Math.random() * availableAttacks.length);
+				const selectedAttack = availableAttacks[randomIndex];
+				console.log(`New Boss AI - Randomly selected ${selectedAttack} attack`);
+				return [
+					{
+						type: 'MODAL_REQUEST',
+						modalResult: {pick: selectedAttack},
+					},
+				]
+			} else {
+				console.log('New Boss AI - No available attacks, canceling');
+				return [
+					{
+						type: 'MODAL_REQUEST',
+						modalResult: {cancel: true},
+					},
+				]
+			}
+		}
+		
+		// Handle selectCards modals
+		if (modalRequest.modal.type === 'selectCards') {
+			console.log('New Boss AI - Handling selectCards modal');
+			const selectionSize = modalRequest.modal.selectionSize;
+			
+			// If no selection needed, just confirm
+			if (selectionSize === 0) {
+				console.log('New Boss AI - No selection needed, confirming');
+				return [
+					{
+						type: 'MODAL_REQUEST',
+						modalResult: {result: true, cards: null},
+					},
+				]
+			}
+			
+			// If selection needed, randomly select cards
+			const cards = modalRequest.modal.cards;
+			if (cards && cards.length > 0) {
+				// Determine how many cards to select
+				let numToSelect = 0;
+				if (typeof selectionSize === 'number') {
+					numToSelect = selectionSize;
+				} else if (Array.isArray(selectionSize)) {
+					// If it's a range, pick a random number in that range
+					const [min, max] = selectionSize;
+					numToSelect = Math.floor(Math.random() * (max - min + 1)) + min;
+				}
+				
+				// Limit to available cards
+				numToSelect = Math.min(numToSelect, cards.length);
+				
+				if (numToSelect > 0) {
+					// Randomly select cards
+					const selectedCards = [];
+					const shuffled = [...cards].sort(() => 0.5 - Math.random());
+					for (let i = 0; i < numToSelect; i++) {
+						selectedCards.push(shuffled[i]);
+					}
+					
+					console.log(`New Boss AI - Randomly selected ${selectedCards.length} cards`);
+					return [
+						{
+							type: 'MODAL_REQUEST',
+							modalResult: {result: true, cards: selectedCards},
+						},
+					]
+				}
+			}
+			
+			// If we couldn't select cards, just confirm without selection
+			console.log('New Boss AI - Could not select cards, confirming without selection');
+			return [
+				{
+					type: 'MODAL_REQUEST',
+					modalResult: {result: true, cards: null},
+				},
+			]
+		}
+		
+		// Handle dragCards modals
+		if (modalRequest.modal.type === 'dragCards') {
+			console.log('New Boss AI - Handling dragCards modal');
+			// For drag cards, we'll just return the cards as they are
+			// This is a simple approach that should work for most cases
+			return [
+				{
+					type: 'MODAL_REQUEST',
+					modalResult: {
+						result: true,
+						leftCards: modalRequest.modal.leftCards,
+						rightCards: modalRequest.modal.rightCards,
+					},
+				},
+			]
+		}
+		
+		// Default case - just confirm any modal
+		console.log('New Boss AI - Using default handling for modal request');
+		return [
+			{
+				type: 'MODAL_REQUEST',
+				modalResult: {result: true, cards: null},
+			},
+		]
 	}
 
 	// Check if we need to play a hermit card - highest priority
