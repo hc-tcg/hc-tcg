@@ -323,6 +323,8 @@ function* gameManager(con: GameController) {
 
 		if (
 			con.game.state.isEvilXBossGame ||
+			!gamePlayers[0] ||
+			!gamePlayers[1] ||
 			!gamePlayers[0].id ||
 			!gamePlayers[1].id
 		) {
