@@ -350,6 +350,7 @@ export function getLocalGameState(
 		timer,
 
 		isEvilXBossGame: game.state.isEvilXBossGame,
+		bossType: game.state.bossType,
 		voiceLineQueue: game.voiceLineQueue,
 	}
 

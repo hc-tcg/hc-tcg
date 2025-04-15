@@ -189,6 +189,7 @@ export type LocalGameState = {
 	}
 
 	isEvilXBossGame: boolean
+	bossType?: 'evilx' | 'new'
 
 	voiceLineQueue: Array<string>
 }

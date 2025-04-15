@@ -150,7 +150,7 @@ function EndGameOverlayContainer({
 				dispatch({type: localMessages.GAME_CLOSE})
 			}}
 			gameMode={
-				gameState.isEvilXBossGame
+				gameState.bossType
 					? 'boss'
 					: spectatorCode
 						? 'private'
