@@ -4,6 +4,7 @@ import ElderGuardian from 'common/cards/advent-of-tcg/attach/elder-guardian'
 import ZookeeperScarRare from 'common/cards/advent-of-tcg/hermits/zookeeperscar-rare'
 import Wolf from 'common/cards/attach/wolf'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
+import EvilXisumaRare from 'common/cards/hermits/evilxisuma_rare'
 import RendogRare from 'common/cards/hermits/rendog-rare'
 import BalancedItem from 'common/cards/items/balanced-common'
 import Emerald from 'common/cards/single-use/emerald'
@@ -281,6 +282,30 @@ describe('Test Zookeeper Scar', () => {
 				},
 			},
 			{noItemRequirements: true},
+		)
+	})
+
+	test('Evil Xisuma cannot attempt to disable Lasso with Derpcoin', () => {
+		testGame(
+			{
+				playerOneDeck: [ZookeeperScarRare],
+				playerTwoDeck: [EvilXisumaRare],
+				saga: function* (game) {
+					yield* playCardFromHand(game, ZookeeperScarRare, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 0)
+					yield* attack(game, 'secondary')
+					expect(
+						(game.state.modalRequests[0].modal as CopyAttack.Data)
+							.availableAttacks,
+					).not.toContain('primary')
+					yield* finishModalRequest(game, {pick: 'secondary'})
+					expect(game.state.modalRequests).toStrictEqual([])
+					yield* endTurn(game)
+				},
+			},
+			{noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 
