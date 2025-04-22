@@ -10,20 +10,25 @@ import LightningRod from './attach/lightning-rod'
 import Loyalty from './attach/loyalty'
 import Wolf from './attach/wolf'
 import ArchitectFalseCommon from './hermits/architectfalse-common'
+import BdoubleO100Common from './hermits/bdoubleo100-common'
 import BeetlejhostCommon from './hermits/beetlejhost-common'
 import BeetlejhostRare from './hermits/beetlejhost-rare'
 import BoomerBdubsCommon from './hermits/boomerbdubs-common'
 import Cubfan135Rare from './hermits/cubfan135-rare'
+import EthosLabCommon from './hermits/ethoslab-common'
 import EthosLabRare from './hermits/ethoslab-rare'
 import EthosLabUltraRare from './hermits/ethoslab-ultra-rare'
 import EvilJevinRare from './hermits/eviljevin-rare'
 import EvilXisumaRare from './hermits/evilxisuma_rare'
 import FiveAMPearlCommon from './hermits/fiveampearl-common'
+import FiveAMPearlRare from './hermits/fiveampearl-rare'
 import FrenchralisRare from './hermits/frenchralis-rare'
 import GeminiTayRare from './hermits/geminitay-rare'
 import GoatfatherRare from './hermits/goatfather-rare'
+import GrianCommon from './hermits/grian-common'
 import HelsknightRare from './hermits/helsknight-rare'
 import HotguyCommon from './hermits/hotguy-common'
+import HumanCleoCommon from './hermits/humancleo-common'
 import HumanCleoRare from './hermits/humancleo-rare'
 import ImpulseSVRare from './hermits/impulsesv-rare'
 import JinglerRare from './hermits/jingler-rare'
@@ -40,16 +45,21 @@ import StressMonster101Rare from './hermits/stressmonster101-rare'
 import TangoTekCommon from './hermits/tangotek-common'
 import TangoTekRare from './hermits/tangotek-rare'
 import VintageBeefCommon from './hermits/vintagebeef-common'
+import VintageBeefRare from './hermits/vintagebeef-rare'
+import WelsknightCommon from './hermits/welsknight-common'
 import WelsknightRare from './hermits/welsknight-rare'
 import WormManCommon from './hermits/wormman-common'
 import XisumavoidRare from './hermits/xisumavoid-rare'
+import ZombieCleoCommon from './hermits/zombiecleo-common'
 import ZombieCleoRare from './hermits/zombiecleo-rare'
 import BalancedItem from './items/balanced-common'
 import BalancedDoubleItem from './items/balanced-rare'
+import BuilderItem from './items/builder-common'
 import PranksterItem from './items/prankster-common'
 import PvPItem from './items/pvp-common'
 import PvPDoubleItem from './items/pvp-rare'
 import RedstoneItem from './items/redstone-common'
+import RedstoneDoubleItem from './items/redstone-rare'
 import SpeedrunnerItem from './items/speedrunner-common'
 import SpeedrunnerDoubleItem from './items/speedrunner-rare'
 import TerraformItem from './items/terraform-common'
@@ -58,8 +68,11 @@ import WildItem from './items/wild-common'
 import Anvil from './single-use/anvil'
 import BadOmen from './single-use/bad-omen'
 import Bow from './single-use/bow'
+import Chest from './single-use/chest'
 import ChorusFruit from './single-use/chorus-fruit'
+import Clock from './single-use/clock'
 import Composter from './single-use/composter'
+import Crossbow from './single-use/crossbow'
 import CurseOfBinding from './single-use/curse-of-binding'
 import CurseOfVanishing from './single-use/curse-of-vanishing'
 import Efficiency from './single-use/efficiency'
@@ -74,10 +87,12 @@ import InvisibilityPotion from './single-use/invisibility-potion'
 import Knockback from './single-use/knockback'
 import Ladder from './single-use/ladder'
 import LavaBucket from './single-use/lava-bucket'
+import Mending from './single-use/mending'
 import Piston from './single-use/piston'
 import PotionOfWeakness from './single-use/potion-of-weakness'
 import SplashPotionOfPoison from './single-use/splash-potion-of-poison'
 import {DiamondSword} from './single-use/sword'
+import TargetBlock from './single-use/target-block'
 import TNT from './single-use/tnt'
 import Trident from './single-use/trident'
 import {Attach, Hermit, Item, SingleUse} from './types'
@@ -205,7 +220,7 @@ export const NEW_BOSS_AI_DECKS: Array<StarterDeck> = [
 			Composter,
 			InstantHealth,
 			SplashPotionOfPoison,
-			SplashPotionOfPoison,
+            SplashPotionOfPoison,
 			DiamondSword,
 			DiamondSword,
 			Fortune,
@@ -248,7 +263,7 @@ export const NEW_BOSS_AI_DECKS: Array<StarterDeck> = [
 			JinglerRare,
 			BeetlejhostCommon,
 			Wolf,
-			Wolf,
+            Wolf,
 			SpeedrunnerDoubleItem,
 			SpeedrunnerDoubleItem,
 			SpeedrunnerDoubleItem,
@@ -275,8 +290,8 @@ export const NEW_BOSS_AI_DECKS: Array<StarterDeck> = [
 			FishingRod,
 			FishingRod,
 			FishingRod,
-			CurseOfVanishing,
-			CurseOfVanishing,
+			CurseOfBinding,
+			CurseOfBinding,
 			InstantHealthII,
 			InstantHealthII,
 		],
@@ -349,11 +364,11 @@ export const NEW_BOSS_AI_DECKS: Array<StarterDeck> = [
 			DiamondSword,
 			EthosLabUltraRare,
 			EthosLabUltraRare,
-			PvPDoubleItem,
-			PvPDoubleItem,
-			PvPDoubleItem,
-			PvPDoubleItem,
-			PvPDoubleItem,
+			PvPItem,
+			PvPItem,
+			PvPItem,
+			PvPItem,
+			PvPItem,
 			PvPItem,
 			PvPItem,
 			PvPItem,
@@ -437,7 +452,7 @@ export const NEW_BOSS_AI_DECKS: Array<StarterDeck> = [
 			FishingRod,
 			FishingRod,
 			Composter,
-			Composter,
+            Composter,
 			MumboJumboRare,
 			MumboJumboRare,
 			MumboJumboRare,
@@ -520,8 +535,8 @@ export const NEW_BOSS_AI_DECKS: Array<StarterDeck> = [
 			CurseOfBinding,
 		],
 	},
-	// Feel free to add more decks here!
-	// Cards which don't work and should not be included: -target block, -turtle shell, -piston, -clock, -bow, -chorus fruit, -chest
+    // Feel free to add more decks here!
+    // Cards which don't work and should not be included: -target block, -turtle shell, -piston, -clock, -bow, -chorus fruit, -chest, -knockback, -curse of vanishing,	
 ]
 
 export function getStarterPack(): StarterDeck {
