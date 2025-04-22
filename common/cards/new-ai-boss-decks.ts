@@ -30,6 +30,7 @@ import GrianCommon from './hermits/grian-common'
 import HelsknightRare from './hermits/helsknight-rare'
 import HotguyCommon from './hermits/hotguy-common'
 import HumanCleoCommon from './hermits/humancleo-common'
+import HumanCleoRare from './hermits/humancleo-rare'
 import ImpulseSVRare from './hermits/impulsesv-rare'
 import JinglerRare from './hermits/jingler-rare'
 import LlamadadRare from './hermits/llamadad-rare'
@@ -103,7 +104,7 @@ export type StarterDeck = {
 	cards: Array<Hermit | Attach | SingleUse | Item>
 }
 
-export const STARTER_DECKS: Array<StarterDeck> = [
+export const NEW_BOSS_AI_DECKS: Array<StarterDeck> = [
 	{
 		name: 'Farm Deck #1',
 		icon: 'farm',
@@ -219,8 +220,8 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			Composter,
 			Composter,
 			InstantHealth,
-			Knockback,
-			Knockback,
+			SplashPotionOfPoison,
+            SplashPotionOfPoison,
 			DiamondSword,
 			DiamondSword,
 			Fortune,
@@ -353,8 +354,8 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			WelsknightRare,
 			FiveAMPearlCommon,
 			FiveAMPearlCommon,
-			HumanCleoCommon,
-			HumanCleoCommon,
+			HumanCleoRare,
+			HumanCleoRare,
 			FishingRod,
 			FishingRod,
 			FishingRod,
@@ -535,8 +536,10 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			CurseOfBinding,
 		],
 	},
+    // Feel free to add more decks here!
+    // Cards which don't work and should not be included: -target block, -turtle shell, -piston, -clock, -bow, -chorus fruit, -chest
 ]
 
 export function getStarterPack(): StarterDeck {
-	return STARTER_DECKS[Math.floor(Math.random() * STARTER_DECKS.length)]
+	return NEW_BOSS_AI_DECKS[Math.floor(Math.random() * NEW_BOSS_AI_DECKS.length)]
 }

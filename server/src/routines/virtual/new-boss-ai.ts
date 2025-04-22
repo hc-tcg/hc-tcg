@@ -568,6 +568,47 @@ function getNextTurnAction(
 		if (itemCard) {
 			console.log('New Boss AI - Found item card to play:', itemCard.props.id);
 			
+			// First check if any hermits need items
+			let anyHermitNeedsItems = false;
+			
+			// Check all hermits on the board
+			const allHermitSlots = game.components.filter(
+				BoardSlotComponent,
+				query.slot.player(player.entity),
+				query.slot.hermit,
+				query.not(query.slot.empty),
+			);
+			
+			for (const hermitSlot of allHermitSlots) {
+				if (!hermitSlot.inRow() || hermitSlot.row.health === null) {
+					continue;
+				}
+				
+				const row = hermitSlot.row;
+				const hermitCard = row.getHermit();
+				
+				if (hermitCard && hermitCard.isHermit()) {
+					const currentItems = game.components.filter(
+						CardComponent,
+						query.card.slot(query.slot.item),
+						query.card.rowEntity(row.entity),
+					);
+					const currentEnergy = currentItems.flatMap(item => (item.props as any).energy || []);
+					const requiredEnergy = hermitCard.getAttackCost('secondary');
+					
+					if (!hasEnoughEnergy(currentEnergy, requiredEnergy, game.settings.noItemRequirements)) {
+						anyHermitNeedsItems = true;
+						break;
+					}
+				}
+			}
+			
+			if (!anyHermitNeedsItems) {
+				console.log('New Boss AI - No hermits need items, skipping item card play');
+				// Skip playing the item card since no hermits need items
+				return [];
+			}
+			
 			// Find active hermit first
 			let activeHermit: BoardSlotComponent | null = game.components.find(
 				BoardSlotComponent,
