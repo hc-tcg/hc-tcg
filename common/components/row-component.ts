@@ -83,7 +83,7 @@ export class RowComponent {
 		const itemSlots = this.itemSlots as Array<SlotComponent>
 		// Only return the first 3 slots as items (the last 2 are for hermit and attach)
 		return this.game.components.filter(CardComponent, (_game, value) =>
-			itemSlots.slice(0, 3).includes(value.slot),
+			itemSlots.includes(value.slot),
 		)
 	}
 

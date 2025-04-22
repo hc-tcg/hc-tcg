@@ -33,12 +33,12 @@ export const empty: ComponentQuery<SlotComponent> = (_game, pos) => {
 
 /** Return true if the card is attached to a hermit slot. */
 export const hermit: ComponentQuery<SlotComponent> = (_game, pos) => {
-	return pos.onBoard() && pos.isHermitSlot()
+	return pos.type === 'hermit'
 }
 
 /** Return true if the card is attached to an effect slot. */
 export const attach: ComponentQuery<SlotComponent> = (_game, pos) => {
-	return pos.onBoard() && pos.isAttachSlot()
+	return pos.type === 'attach'
 }
 
 /** Return true if this slot is the single use slot. */
@@ -48,7 +48,7 @@ export const singleUse: ComponentQuery<SlotComponent> = (_game, pos) => {
 
 /** Return true if the card is attached to an item slot. */
 export const item: ComponentQuery<SlotComponent> = (_game, pos) => {
-	return pos.onBoard() && pos.isItemSlot()
+	return pos.type === 'item'
 }
 
 /** Return true if the card is attached to the active row. */
@@ -99,8 +99,7 @@ export const rowIs = (
 ): ComponentQuery<SlotComponent> => {
 	return (_game, pos) => {
 		if (row === null || !pos.onBoard()) return false
-		if (!pos.inRow()) return false
-		return pos.row.entity === row
+		return pos.row?.entity === row
 	}
 }
 

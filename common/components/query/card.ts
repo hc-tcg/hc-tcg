@@ -29,7 +29,7 @@ export const prizeCard: ComponentQuery<CardComponent> = (_game, card) =>
 /** Return true if the card is on the board */
 export const attached: ComponentQuery<CardComponent> = (_game, card) =>
 	card.slot !== null &&
-	card.slot.onBoard()
+	['hermit', 'attach', 'item', 'single_use'].includes(card.slot.type)
 
 export function slot(
 	...predicates: Array<ComponentQuery<SlotComponent>>

@@ -1,12 +1,9 @@
-import NewBoss, {
-	BOSS_ATTACK,
-	supplyBossAttack,
-} from 'common/cards/boss/hermits/new_boss'
 import {
 	BoardSlotComponent,
 	CardComponent,
 	PlayerComponent,
 	StatusEffectComponent,
+	SlotComponent,
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
@@ -20,9 +17,19 @@ import {VirtualAI} from 'common/types/virtual-ai'
 // Track the last time we checked for available actions
 let lastActionCheckTime = 0;
 
-const fireDropper = (game: GameModel) => {
-	return Math.floor(game.rng() * 9)
-}
+// Helper function to check if we have enough energy for an attack
+const hasEnoughEnergy = (currentEnergy: Array<string>, requiredEnergy: Array<string>, noRequirements: boolean): boolean => {
+	if (noRequirements) return true;
+	if (!requiredEnergy || requiredEnergy.length === 0) return true;
+	
+	const availableEnergy = [...currentEnergy];
+	for (const energy of requiredEnergy) {
+		const index = availableEnergy.indexOf(energy);
+		if (index === -1) return false;
+		availableEnergy.splice(index, 1);
+	}
+	return true;
+};
 
 function getNextTurnAction(
 	game: GameModel,
@@ -113,65 +120,22 @@ function getNextTurnAction(
 	if (game.state.pickRequests.length > 0) {
 		console.log('New Boss AI - Handling pick request');
 		const pickRequest = game.state.pickRequests[0];
+		if (!pickRequest) return [];
 		
 		// Find a valid slot to pick based on the pick request's canPick query
-		// We'll try different types of slots to find one that matches the query
-		let validSlot = null;
-		
-		// Try to find a hermit slot that matches the query
-		validSlot = game.components.find(
-			BoardSlotComponent,
-			query.slot.player(player.entity),
-			query.slot.hermit,
-			query.not(query.slot.empty),
+		const validSlot = game.components.find(
+			SlotComponent,
 			pickRequest.canPick
 		);
 		
-		// If no hermit slot found, try item slots
-		if (!validSlot) {
-			validSlot = game.components.find(
-				BoardSlotComponent,
-				query.slot.player(player.entity),
-				query.slot.item,
-				query.not(query.slot.empty),
-				pickRequest.canPick
-			);
-		}
-		
-		// If no item slot found, try effect slots
-		if (!validSlot) {
-			validSlot = game.components.find(
-				BoardSlotComponent,
-				query.slot.player(player.entity),
-				query.slot.attach,
-				query.not(query.slot.empty),
-				pickRequest.canPick
-			);
-		}
-		
-		// If no effect slot found, try single use slots
-		if (!validSlot) {
-			validSlot = game.components.find(
-				BoardSlotComponent,
-				query.slot.player(player.entity),
-				(_game, slot) => slot.type === 'single_use',
-				query.not(query.slot.empty),
-				pickRequest.canPick
-			);
-		}
-		
 		if (validSlot) {
 			console.log('New Boss AI - Found valid slot for pick request:', validSlot.entity);
-			return [
-				{
-					type: 'PICK_REQUEST',
-					entity: validSlot.entity,
-				},
-			];
+			return [{
+				type: 'PICK_REQUEST',
+				entity: validSlot.entity,
+			}];
 		} else {
-			console.error('New Boss AI - ERROR: Could not find valid slot for pick request!');
-			// If we can't find a valid slot, we need to handle this gracefully
-			// Return an empty array to let the game continue
+			console.log('New Boss AI - No valid slot found for pick request');
 			return [];
 		}
 	}
@@ -179,17 +143,6 @@ function getNextTurnAction(
 	if (game.state.modalRequests.length) {
 		const modalRequest = game.state.modalRequests[0];
 		console.log('New Boss AI - Handling modal request:', modalRequest.modal.name);
-		
-		// Handle Allay and Lantern modals (when challenger reveals card(s) to boss)
-		if (['Allay', 'Lantern'].includes(modalRequest.modal.name)) {
-			console.log('New Boss AI - Confirming Allay/Lantern modal');
-			return [
-				{
-					type: 'MODAL_REQUEST',
-					modalResult: {result: true, cards: null},
-				},
-			]
-		}
 		
 		// Handle confirmation modals for single-use cards
 		if (modalRequest.modal.type === 'selectCards' && 
@@ -316,6 +269,59 @@ function getNextTurnAction(
 		]
 	}
 
+	// Handle changing active hermit if needed
+	if (game.state.turn.availableActions.includes('CHANGE_ACTIVE_HERMIT')) {
+		console.log('New Boss AI - Attempting to change active hermit');
+		
+		// Check if current active hermit has low health (less than 90)
+		const activeHermit = game.components.find(
+			CardComponent,
+			query.card.currentPlayer,
+			query.card.active,
+			query.card.slot(query.slot.hermit),
+		);
+		
+		if (activeHermit && activeHermit.slot.inRow()) {
+			const activeHealth = activeHermit.slot.row.health || 0;
+			console.log('New Boss AI - Current active hermit health:', activeHealth);
+			
+			// If active hermit has less than 90 health, try to switch to a healthier one
+			if (activeHealth < 90) {
+				// Find another row that has a hermit with more health
+				const hermitSlots = game.components.filter(
+					BoardSlotComponent,
+					query.slot.player(player.entity),
+					query.slot.hermit,
+					query.not(query.slot.empty),
+					query.not(query.slot.active),
+				);
+				
+				if (hermitSlots.length > 0) {
+					// Prioritize hermits with higher health if available
+					let bestSlot = hermitSlots[0];
+					let bestHealth = bestSlot.inRow() ? bestSlot.row.health || 0 : 0;
+					
+					for (const slot of hermitSlots) {
+						const health = slot.inRow() ? slot.row.health || 0 : 0;
+						if (health > bestHealth) {
+							bestHealth = health;
+							bestSlot = slot;
+						}
+					}
+					
+					// Only switch if the new hermit has more health than the current one
+					if (bestHealth > activeHealth) {
+						console.log('New Boss AI - Changing to hermit with health:', bestHealth);
+						return [{
+							type: 'CHANGE_ACTIVE_HERMIT',
+							entity: bestSlot.entity,
+						}];
+					}
+				}
+			}
+		}
+	}
+	
 	// Check if we need to play a hermit card - highest priority
 	if (game.state.turn.availableActions.includes('PLAY_HERMIT_CARD')) {
 		// First check for a hermit card in hand
@@ -347,18 +353,9 @@ function getNextTurnAction(
 				// Log the hermit card and where we're placing it
 				console.log(`New Boss AI - Playing hermit card: ${hermitCards[0].props.id} (${emptyHermitSlots.length} empty slots, ${hermitsOnBoard.length} hermits already on board)`);
 				
-				// If we don't have an active hermit yet, prioritize placing on row 0
-				let targetSlot = emptyHermitSlots[0];
-				if (hermitsOnBoard.length === 0) {
-					// First hermit should go on row 0 to become active
-					const row0Slot = emptyHermitSlots.find(slot => 
-						slot.inRow() && slot.row.index === 0
-					);
-					if (row0Slot) {
-						targetSlot = row0Slot;
-						console.log('New Boss AI - Placing first hermit on row 0 to make it active');
-					}
-				}
+				// Randomly select an empty slot
+				const randomIndex = Math.floor(game.rng() * emptyHermitSlots.length);
+				const targetSlot = emptyHermitSlots[randomIndex];
 				
 				return [
 					{
@@ -377,7 +374,62 @@ function getNextTurnAction(
 			}
 		}
 	}
-	
+
+	// Try to play single use cards
+	if (game.state.turn.availableActions.includes('PLAY_SINGLE_USE_CARD')) {
+		const singleUseCard = game.components.find(
+			CardComponent,
+			query.card.player(player.entity),
+			(_game, card) => card.isSingleUse(),
+			query.card.slot(query.slot.hand),
+		)
+		
+		if (singleUseCard) {
+			// We need to find the single use slot
+			const singleUseSlot = game.components.find(
+				BoardSlotComponent,
+				query.slot.player(player.entity),
+				(_game, slot) => slot.type === 'single_use',
+			)
+			
+			if (singleUseSlot) {
+				console.log('New Boss AI - Playing single use card:', singleUseCard.props.id);
+				
+				// Return just the play card action - the confirmation modal will be handled separately
+				// Don't include END_TURN here as we need to wait for confirmation
+				return [
+					{
+						type: 'PLAY_SINGLE_USE_CARD',
+						slot: singleUseSlot.entity,
+						card: {
+							id: singleUseCard.props.numericId,
+							entity: singleUseCard.entity,
+							slot: singleUseCard.slotEntity,
+							turnedOver: false,
+							attackHint: null,
+							prizeCard: false,
+						},
+					}
+				]
+			}
+		}
+	}
+
+	if (game.state.turn.availableActions.includes('APPLY_EFFECT')) {
+		const effectCard = game.components.find(
+			CardComponent,
+			query.card.player(player.entity),
+			(_game, card) => card.isSingleUse(),
+			query.card.slot(query.slot.singleUse),
+		)
+		if (effectCard && !player.singleUseCardUsed) {
+			console.log('New Boss AI - Found effect card to play:', effectCard.props.id);
+			return [{type: 'APPLY_EFFECT'}];
+		} else {
+			console.log('New Boss AI - Not applying effect - already used or no card found');
+		}
+	}
+
 	// Try to play effect cards
 	if (game.state.turn.availableActions.includes('PLAY_EFFECT_CARD')) {
 		const effectCard = game.components.find(
@@ -517,105 +569,171 @@ function getNextTurnAction(
 			console.log('New Boss AI - Found item card to play:', itemCard.props.id);
 			
 			// Find active hermit first
-			const activeHermit = game.components.find(
+			let activeHermit: BoardSlotComponent | null = game.components.find(
 				BoardSlotComponent,
 				query.slot.player(player.entity),
 				query.slot.hermit,
 				query.slot.active,
 				query.not(query.slot.empty),
 			);
-			
-			let targetItemSlot = null;
-			
-			// First try to find an empty item slot for the active hermit
+
+			let targetItemSlot: string | null = null;
+			let activeHermitNeedsItems = false;
+			let activeHermitRowEntity: string | null = null;
+
+			// Check if the active hermit needs items and has empty slots
 			if (activeHermit && activeHermit.inRow()) {
-				console.log('New Boss AI - Checking if active hermit has empty item slots');
-				
+				activeHermitRowEntity = activeHermit.rowEntity;
+				console.log('New Boss AI - Checking if active hermit needs items');
 				const activeRow = activeHermit.row;
-				
-				// Find item slots that belong to the active hermit's row
-				const activeHermitItemSlots = game.components.filter(
-					BoardSlotComponent,
-					query.slot.player(player.entity),
-					query.slot.item,
-					query.slot.empty,
-					(game, slot) => slot.inRow() && slot.rowEntity === activeRow.entity
-				);
-				
-				if (activeHermitItemSlots.length > 0) {
-					console.log('New Boss AI - Found empty item slot for active hermit');
-					targetItemSlot = activeHermitItemSlots[0].entity;
+				const hermitCard = activeRow.getHermit();
+
+				if (hermitCard && hermitCard.isHermit()) {
+					const currentItems = game.components.filter(
+						CardComponent,
+						query.card.slot(query.slot.item),
+						query.card.rowEntity(activeRow.entity),
+					);
+					const currentEnergy = currentItems.flatMap(item => (item.props as any).energy || []);
+					const requiredEnergy = hermitCard.getAttackCost('secondary');
+
+					if (!hasEnoughEnergy(currentEnergy, requiredEnergy, game.settings.noItemRequirements)) {
+						activeHermitNeedsItems = true;
+						console.log('New Boss AI - Active hermit needs items');
+
+						// Find an empty item slot for the active hermit
+						const activeHermitItemSlots = game.components.filter(
+							BoardSlotComponent,
+							query.slot.player(player.entity),
+							query.slot.item,
+							query.slot.empty,
+							(game, slot) => slot.inRow() && slot.rowEntity === activeRow.entity
+						);
+
+						if (activeHermitItemSlots.length > 0) {
+							console.log('New Boss AI - Found empty item slot for active hermit');
+							targetItemSlot = activeHermitItemSlots[0].entity;
+						} else {
+							console.log('New Boss AI - Active hermit needs items but has no empty slots');
+						}
+					} else {
+						console.log('New Boss AI - Active hermit already has enough items for secondary attack');
+					}
 				} else {
-					console.log('New Boss AI - Active hermit has no empty item slots');
+					// Active hermit card not found or not a hermit, treat as not needing items specifically
+					console.log('New Boss AI - Active hermit card not found or invalid type');
 				}
+			} else {
+				console.log('New Boss AI - No active hermit found or active hermit not in a row');
 			}
-			
-			// If active hermit has no empty item slots, find hermit with most health and free slots
+
+			// If active hermit doesn't need items or has no slots, find another hermit
 			if (!targetItemSlot) {
-				console.log('New Boss AI - Looking for hermit with most health and free item slots');
-				
-				// Find all hermits on the board
-				const hermitSlots = game.components.filter(
+				console.log('New Boss AI - Looking for another hermit (non-active or active didn\'t need items/had no slots)');
+
+				// Find all non-active hermits on the board
+				const nonActiveHermitSlots = game.components.filter(
 					BoardSlotComponent,
 					query.slot.player(player.entity),
 					query.slot.hermit,
 					query.not(query.slot.empty),
+					query.not(query.slot.active), // Exclude the active hermit explicitly
 				);
-				
-				// Find the hermit with the most health that has empty item slots
-				let bestHermit = null;
+
+				let bestHermitSlot: BoardSlotComponent | null = null;
 				let bestHealth = -1;
-				
-				for (const hermitSlot of hermitSlots) {
-					// Skip if not in a row or health is null
+
+				for (const hermitSlot of nonActiveHermitSlots) {
 					if (!hermitSlot.inRow() || hermitSlot.row.health === null) {
 						continue;
 					}
-					
+
 					const health = hermitSlot.row.health || 0;
 					const row = hermitSlot.row;
-					
-					// Check if this hermit's row has empty item slots
-					const itemSlots = game.components.filter(
-						BoardSlotComponent,
-						query.slot.player(player.entity),
-						query.slot.item,
-						query.slot.empty,
-						(game, slot) => slot.inRow() && slot.rowEntity === row.entity
-					);
-					
-					if (itemSlots.length > 0 && health > bestHealth) {
-						bestHealth = health;
-						bestHermit = hermitSlot;
-						targetItemSlot = itemSlots[0].entity;
+					const hermitCard = row.getHermit();
+
+					// Check if this hermit needs items
+					let needsItems = false;
+					if (hermitCard && hermitCard.isHermit()) {
+						const currentItems = game.components.filter(
+							CardComponent,
+							query.card.slot(query.slot.item),
+							query.card.rowEntity(row.entity),
+						);
+						const currentEnergy = currentItems.flatMap(item => (item.props as any).energy || []);
+						const requiredEnergy = hermitCard.getAttackCost('secondary');
+						if (!hasEnoughEnergy(currentEnergy, requiredEnergy, game.settings.noItemRequirements)) {
+							needsItems = true;
+						}
+					}
+
+					if (needsItems) {
+						// Check if this hermit's row has empty item slots
+						const itemSlots = game.components.filter(
+							BoardSlotComponent,
+							query.slot.player(player.entity),
+							query.slot.item,
+							query.slot.empty,
+							(_game, slot) => slot.inRow() && slot.rowEntity === row.entity
+						);
+
+						if (itemSlots.length > 0 && health > bestHealth) {
+							bestHealth = health;
+							bestHermitSlot = hermitSlot;
+							targetItemSlot = itemSlots[0].entity;
+						}
 					}
 				}
-				
+
 				if (targetItemSlot) {
-					console.log(`New Boss AI - Found hermit with ${bestHealth} health and empty item slots`);
+					console.log(`New Boss AI - Found non-active hermit (${bestHermitSlot?.row?.getHermit()?.props.name ?? 'Unknown'}) with ${bestHealth} health needing items and having empty slots`);
 				} else {
-					console.log('New Boss AI - No hermits with empty item slots found');
-					
-					// Fallback to any empty item slot if no hermit-specific slots are found
-					const anyItemSlot = game.components.findEntity(
+					console.log('New Boss AI - No suitable non-active hermits found');
+
+					// Fallback: Find any empty item slot, preferring one not on the active hermit's row (if applicable)
+					const allEmptyItemSlots = game.components.filter(
 						BoardSlotComponent,
 						query.slot.player(player.entity),
 						query.slot.item,
 						query.slot.empty,
 					);
-					
-					if (anyItemSlot) {
-						targetItemSlot = anyItemSlot;
+
+					if (allEmptyItemSlots.length > 0) {
+						// Try to find a slot not belonging to the original active hermit's row (if it existed and didn't need items)
+						let fallbackSlot = allEmptyItemSlots.find(slot => !activeHermitRowEntity || !slot.inRow() || slot.rowEntity !== activeHermitRowEntity);
+
+						if (fallbackSlot) {
+							targetItemSlot = fallbackSlot.entity;
+							console.log('New Boss AI - Fallback: Found empty item slot not on active hermit\'s row');
+						} else {
+							// If all empty slots are on the active hermit's row, just take the first one
+							targetItemSlot = allEmptyItemSlots[0].entity;
+							console.log('New Boss AI - Fallback: Found empty item slot (only available on active hermit\'s row)');
+						}
+					} else {
+						console.log('New Boss AI - Fallback: No empty item slots found anywhere');
 					}
 				}
 			}
-			
+
 			if (targetItemSlot) {
+				// Find the component instance using its entity ID string by providing a query function
+				const targetSlotComponent = game.components.find(
+					BoardSlotComponent,
+					(_game, component) => component.entity === targetItemSlot
+				);
+
+				if (!targetSlotComponent) {
+					console.error(`New Boss AI - ERROR: Could not find BoardSlotComponent for target slot ID: ${targetItemSlot}`);
+					// Optionally, handle this error, e.g., by ending the turn or trying another action
+					return game.state.turn.availableActions.includes('END_TURN') ? [{type: 'END_TURN'}] : []; 
+				}
+				
 				console.log('New Boss AI - Playing item card on selected item slot');
 				return [
 					{
 						type: 'PLAY_ITEM_CARD',
-						slot: targetItemSlot,
+						slot: targetSlotComponent.entity,
 						card: {
 							id: itemCard.props.numericId,
 							entity: itemCard.entity,
@@ -628,99 +746,6 @@ function getNextTurnAction(
 				]
 			} else {
 				console.log('New Boss AI - No empty item slot found for item card');
-			}
-		}
-	}
-	
-	// Try to play single use cards
-	// if (game.state.turn.availableActions.includes('PLAY_SINGLE_USE_CARD')) {
-	// 	const singleUseCard = game.components.find(
-	// 		CardComponent,
-	// 		query.card.player(player.entity),
-	// 		(_game, card) => card.isSingleUse(),
-	// 		query.card.slot(query.slot.hand),
-	// 	)
-		
-	// 	if (singleUseCard) {
-	// 		// We need to find the single use slot
-	// 		const singleUseSlot = game.components.find(
-	// 			BoardSlotComponent,
-	// 			query.slot.player(player.entity),
-	// 			(_game, slot) => slot.type === 'single_use',
-	// 		)
-			
-	// 		if (singleUseSlot) {
-	// 			console.log('New Boss AI - Playing single use card:', singleUseCard.props.id);
-				
-	// 			// Return just the play card action - the confirmation modal will be handled separately
-	// 			// Don't include END_TURN here as we need to wait for confirmation
-	// 			return [
-	// 				{
-	// 					type: 'PLAY_SINGLE_USE_CARD',
-	// 					slot: singleUseSlot.entity,
-	// 					card: {
-	// 						id: singleUseCard.props.numericId,
-	// 						entity: singleUseCard.entity,
-	// 						slot: singleUseCard.slotEntity,
-	// 						turnedOver: false,
-	// 						attackHint: null,
-	// 						prizeCard: false,
-	// 					},
-	// 				}
-	// 			]
-	// 		}
-	// 	}
-	// }
-
-	// Handle changing active hermit if needed
-	if (game.state.turn.availableActions.includes('CHANGE_ACTIVE_HERMIT')) {
-		console.log('New Boss AI - Attempting to change active hermit');
-		
-		// Check if current active hermit has low health (less than 90)
-		const activeHermit = game.components.find(
-			CardComponent,
-			query.card.currentPlayer,
-			query.card.active,
-			query.card.slot(query.slot.hermit),
-		);
-		
-		if (activeHermit && activeHermit.slot.inRow()) {
-			const activeHealth = activeHermit.slot.row.health || 0;
-			console.log('New Boss AI - Current active hermit health:', activeHealth);
-			
-			// If active hermit has less than 90 health, try to switch to a healthier one
-			if (activeHealth < 90) {
-				// Find another row that has a hermit with more health
-				const hermitSlots = game.components.filter(
-					BoardSlotComponent,
-					query.slot.player(player.entity),
-					query.slot.hermit,
-					query.not(query.slot.empty),
-					query.not(query.slot.active),
-				);
-				
-				if (hermitSlots.length > 0) {
-					// Prioritize hermits with higher health if available
-					let bestSlot = hermitSlots[0];
-					let bestHealth = bestSlot.inRow() ? bestSlot.row.health || 0 : 0;
-					
-					for (const slot of hermitSlots) {
-						const health = slot.inRow() ? slot.row.health || 0 : 0;
-						if (health > bestHealth) {
-							bestHealth = health;
-							bestSlot = slot;
-						}
-					}
-					
-					// Only switch if the new hermit has more health than the current one
-					if (bestHealth > activeHealth) {
-						console.log('New Boss AI - Changing to hermit with health:', bestHealth);
-						return [{
-							type: 'CHANGE_ACTIVE_HERMIT',
-							entity: bestSlot.entity,
-						}];
-					}
-				}
 			}
 		}
 	}
@@ -761,25 +786,10 @@ function getNextTurnAction(
 		
 		console.log('New Boss AI - FINAL ACTION: Performing attack with hermit:', bossCard.props.id);
 		
-		// Only use special boss attacks if we're playing as the NewBoss card
-		if (bossCard.props.id === 'new_boss') {
-			const bossAttack = getBossAttack(component.player, game)
-			supplyBossAttack(bossCard, bossAttack)
-			for (const sound of bossAttack) {
-				game.voiceLineQueue.push(`/voice/${sound}.ogg`)
-			}
-			return [
-				{type: 'DELAY', delay: bossAttack.length * 3000},
-				{type: selectedAttackType},
-				{type: 'END_TURN'}
-			]
-		} else {
-			// Regular attack for standard hermit cards
-			return [
-				{type: selectedAttackType},
-				{type: 'END_TURN'}
-			]
-		}
+		return [{
+			type: selectedAttackType,
+		}];
+		
 	} else {
 		console.log('New Boss AI - No attack action available. Available actions:', game.state.turn.availableActions);
 	}
@@ -938,52 +948,6 @@ function getNextTurnAction(
 		console.log('New Boss AI - END_TURN not available, returning empty array');
 		return [];
 	}
-}
-
-function getBossAttack(player: PlayerComponent, game: GameModel): BOSS_ATTACK {
-	const bossCard = game.components.find(
-		CardComponent,
-		query.card.currentPlayer,
-		query.card.active,
-		query.card.slot(query.slot.hermit),
-	)
-	if (!bossCard) throw new Error(`Boss's active hermit cannot be found, please report`)
-
-	const nineEffect = game.components.find(
-		StatusEffectComponent,
-		query.effect.targetEntity(bossCard.entity),
-		query.effect.is(ExBossNineEffect),
-	)
-	if (nineEffect) {
-		supplyNineSpecial(nineEffect, 'NINEATTACHED')
-		return ['90DMG', 'DOUBLE', 'EFFECTCARD']
-	}
-
-	const opponentActiveHermit = game.components.find(
-		CardComponent,
-		query.card.opponentPlayer,
-		query.card.active,
-		query.card.slot(query.slot.hermit),
-	)
-	if (!opponentActiveHermit) {
-		return ['50DMG', 'AFK20', undefined]
-	}
-
-	const opponentHealth = opponentActiveHermit.slot.inRow() 
-		? opponentActiveHermit.slot.row.health ?? 0 
-		: 0
-	if (opponentHealth <= 50) {
-		return ['50DMG', undefined, undefined]
-	}
-
-	const bossHealth = bossCard.slot.inRow() 
-		? bossCard.slot.row.health ?? 0 
-		: 0
-	if (bossHealth <= 150) {
-		return ['70DMG', 'HEAL150', undefined]
-	}
-
-	return ['90DMG', 'ABLAZE', undefined]
 }
 
 const NewBossAI: VirtualAI = {
