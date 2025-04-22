@@ -157,7 +157,6 @@ function setupEcsForPlayer(
 	cards.slice(0, amountOfStartingCards).forEach((card) => {
 		card.attach(components.new(HandSlotComponent, playerEntity))
 	})
-
 }
 
 export function getGameState(game: GameModel, swapPlayers: boolean): GameState {

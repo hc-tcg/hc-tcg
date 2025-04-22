@@ -81,9 +81,11 @@ function PlaySelect({
 	const [activeMode, setActiveMode] = useState<string | null>(
 		defaultSection || null,
 	)
-	
+
 	// Store the selected boss type
-	const [selectedBossType, setSelectedBossType] = useState<'evilx' | 'new' | undefined>(undefined)
+	const [selectedBossType, setSelectedBossType] = useState<
+		'evilx' | 'new' | undefined
+	>(undefined)
 
 	const getFirstActiveMenu = (section: string) => {
 		if (firstActiveMenu) return firstActiveMenu
@@ -295,7 +297,7 @@ function PlaySelect({
 
 	const onBossConfirm = (bossType: 'evilx' | 'new') => {
 		console.log('Dispatching with boss type:', bossType)
-		dispatch({ type: localMessages.MATCHMAKING_CREATE_BOSS_GAME, bossType })
+		dispatch({type: localMessages.MATCHMAKING_CREATE_BOSS_GAME, bossType})
 	}
 
 	const onConfirm = (code?: string) => {

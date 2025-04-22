@@ -1,9 +1,9 @@
 import assert from 'assert'
 import {CARDS} from 'common/cards'
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
+import {NEW_BOSS_AI_DECKS} from 'common/cards/new-ai-boss-decks'
 import {
 	AchievementComponent,
-	BoardSlotComponent,
 	PlayerComponent,
 	RowComponent,
 	SlotComponent,
@@ -13,6 +13,8 @@ import query from 'common/components/query'
 import serverConfig from 'common/config/server-config'
 import {COINS} from 'common/cosmetics/coins'
 import {defaultAppearance} from 'common/cosmetics/default'
+import {RowEntity} from 'common/entities'
+import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
@@ -54,10 +56,6 @@ import gameSaga, {getTimerForSeconds} from './game'
 import {TurnActionCompressor} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
 import NewBossAI from './virtual/new-boss-ai'
-import NewBoss from 'common/cards/boss/hermits/new_boss'
-import { GameModel } from 'common/models/game-model'
-import { RowEntity } from 'common/entities'
-import {NEW_BOSS_AI_DECKS, getStarterPack} from 'common/cards/new-ai-boss-decks'
 
 function setupGame(
 	player1: PlayerModel,
@@ -918,7 +916,7 @@ export function* createBossGame(
 		const randomIndex = Math.floor(Math.random() * NEW_BOSS_AI_DECKS.length)
 		const bossDeck = NEW_BOSS_AI_DECKS[randomIndex]
 		console.log(`Selected new boss AI deck "${bossDeck.name}" for New Boss`)
-		
+
 		bossConfig = {
 			uuid: '',
 			name: 'New Boss',
@@ -942,7 +940,11 @@ export function* createBossGame(
 		}
 	}
 
-	const newBossGameController = setupSolitareGame(player, player.deck, bossConfig)
+	const newBossGameController = setupSolitareGame(
+		player,
+		player.deck,
+		bossConfig,
+	)
 	newBossGameController.game.state.isEvilXBossGame = bossType === 'evilx'
 	newBossGameController.game.state.bossType = bossType
 
@@ -961,7 +963,7 @@ export function* createBossGame(
 		// For the new boss:
 		// - Challenger (opponent player) gets all 5 rows (indexes 0-4)
 		// - Boss (current player) gets all 5 rows (indexes 0-4)
-		
+
 		// Remove any rows above index 4 for the challenger
 		newBossGameController.game.components
 			.filter(
@@ -970,7 +972,7 @@ export function* createBossGame(
 				(_game, row) => row.index > 4,
 			)
 			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
-		
+
 		// Remove any rows above index 4 for the boss
 		newBossGameController.game.components
 			.filter(
@@ -983,7 +985,7 @@ export function* createBossGame(
 		// For EvilX:
 		// - Challenger (opponent player) gets all 5 rows (indexes 0-4)
 		// - Boss (current player) gets only row 0
-		
+
 		// Remove any rows above index 4 for the challenger
 		newBossGameController.game.components
 			.filter(
@@ -992,7 +994,7 @@ export function* createBossGame(
 				(_game, row) => row.index > 4,
 			)
 			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
-		
+
 		// Keep only row 0 for the boss
 		newBossGameController.game.components
 			.filter(
@@ -1001,7 +1003,7 @@ export function* createBossGame(
 				query.not(query.row.index(0)),
 			)
 			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
-		
+
 		// Remove boss' item slots only for EvilX
 		newBossGameController.game.components
 			.filter(RowComponent, query.row.currentPlayer)

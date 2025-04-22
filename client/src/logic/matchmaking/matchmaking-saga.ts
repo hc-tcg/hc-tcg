@@ -6,23 +6,14 @@ import {serverMessages} from 'common/socket-messages/server-messages'
 import {Deck} from 'common/types/deck'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import gameSaga from 'logic/game/game-saga'
-import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
+import {LocalMessage, localMessages} from 'logic/messages'
 import {
 	getPlayerDeckCode,
 	getRematchData,
 } from 'logic/session/session-selectors'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
-import {
-	call,
-	cancelled,
-	delay,
-	put,
-	race,
-	select,
-	take,
-	takeEvery,
-} from 'typed-redux-saga'
+import {call, cancelled, delay, put, race, select, take} from 'typed-redux-saga'
 
 type activeDeckSagaT =
 	| {
@@ -66,14 +57,14 @@ function* sendJoinQueueMessage(
 			type: messageType,
 			databaseConnected: true,
 			activeDeckCode: activeDeckResult.activeDeckCode,
-			...(messageType === clientMessages.CREATE_BOSS_GAME ? { bossType } : {}),
+			...(messageType === clientMessages.CREATE_BOSS_GAME ? {bossType} : {}),
 		})
 	} else {
 		yield* sendMsg({
 			type: messageType,
 			databaseConnected: false,
 			activeDeck: activeDeckResult.activeDeck,
-			...(messageType === clientMessages.CREATE_BOSS_GAME ? { bossType } : {}),
+			...(messageType === clientMessages.CREATE_BOSS_GAME ? {bossType} : {}),
 		})
 	}
 }
@@ -508,7 +499,10 @@ function* createPrivateGameSaga() {
 	}
 }
 
-function* createBossGameSaga(action: { type: string; bossType?: 'evilx' | 'new' }) {
+function* createBossGameSaga(action: {
+	type: string
+	bossType?: 'evilx' | 'new'
+}) {
 	console.log('Saga received boss type:', action.bossType)
 	function* matchmaking() {
 		const socket = yield* select(getSocket)
@@ -516,11 +510,14 @@ function* createBossGameSaga(action: { type: string; bossType?: 'evilx' | 'new' 
 
 		try {
 			// Send message to server to create boss game
-			console.log('Sending to server with boss type:', action.bossType ?? 'evilx')
+			console.log(
+				'Sending to server with boss type:',
+				action.bossType ?? 'evilx',
+			)
 			yield* sendJoinQueueMessage(
 				clientMessages.CREATE_BOSS_GAME,
 				activeDeckResult,
-				action.bossType ?? 'evilx' // Use provided bossType or default to evilx
+				action.bossType ?? 'evilx', // Use provided bossType or default to evilx
 			)
 
 			// Wait for response
@@ -712,20 +709,32 @@ function* matchmakingSaga() {
 				break
 			case localMessages.MATCHMAKING_JOIN_PRIVATE_QUEUE:
 				if ('code' in action) {
-					yield* call(joinPrivateQueueSaga, action as { type: string; code: string })
+					yield* call(
+						joinPrivateQueueSaga,
+						action as {type: string; code: string},
+					)
 				}
 				break
 			case localMessages.MATCHMAKING_SPECTATE_PRIVATE_GAME:
 				if ('code' in action) {
-					yield* call(spectatePrivateGameSaga, action as { type: string; code: string })
+					yield* call(
+						spectatePrivateGameSaga,
+						action as {type: string; code: string},
+					)
 				}
 				break
 			case localMessages.MATCHMAKING_CREATE_BOSS_GAME:
-				yield* call(createBossGameSaga, action as { type: string; bossType?: 'evilx' | 'new' })
+				yield* call(
+					createBossGameSaga,
+					action as {type: string; bossType?: 'evilx' | 'new'},
+				)
 				break
 			case localMessages.MATCHMAKING_REPLAY_GAME:
 				if ('id' in action) {
-					yield* call(createReplayGameSaga, action as { type: string; id: number })
+					yield* call(
+						createReplayGameSaga,
+						action as {type: string; id: number},
+					)
 				}
 				break
 		}

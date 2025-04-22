@@ -30,8 +30,14 @@ export function* localPutCardInSlot(
 	let index = action.index
 
 	if (slot.slotType === 'single_use' && board.singleUse.card === null) {
-		console.log('Local state: Attempting to place single use card:', CARDS[selectedCard.id].name)
-		console.log('Local state: Current single use card used:', board.singleUseCardUsed)
+		console.log(
+			'Local state: Attempting to place single use card:',
+			CARDS[selectedCard.id].name,
+		)
+		console.log(
+			'Local state: Current single use card used:',
+			board.singleUseCardUsed,
+		)
 		console.log('Local state: Has active hermit:', board.activeRow !== null)
 		board.singleUse = {slot: slot.slotEntity, card: selectedCard}
 	}

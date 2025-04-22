@@ -111,7 +111,7 @@ export class BoardSlotComponent extends SlotComponent {
 	}
 
 	get row() {
-	if (!this.rowEntity) return null
+		if (!this.rowEntity) return null
 		return this.game.components.get(this.rowEntity)
 	}
 }

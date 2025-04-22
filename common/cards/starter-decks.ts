@@ -30,6 +30,7 @@ import GrianCommon from './hermits/grian-common'
 import HelsknightRare from './hermits/helsknight-rare'
 import HotguyCommon from './hermits/hotguy-common'
 import HumanCleoCommon from './hermits/humancleo-common'
+import HumanCleoRare from './hermits/humancleo-rare'
 import ImpulseSVRare from './hermits/impulsesv-rare'
 import JinglerRare from './hermits/jingler-rare'
 import LlamadadRare from './hermits/llamadad-rare'
@@ -352,8 +353,8 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			WelsknightRare,
 			FiveAMPearlCommon,
 			FiveAMPearlCommon,
-			HumanCleoCommon,
-			HumanCleoCommon,
+			HumanCleoRare,
+			HumanCleoRare,
 			FishingRod,
 			FishingRod,
 			FishingRod,

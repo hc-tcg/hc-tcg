@@ -29,13 +29,19 @@ type EFFECT_CARD = 'EFFECTCARD' | undefined
 
 type BOSS_ATTACK = [PRIMARY_ATTACK, SECONDARY_ATTACK | undefined, EFFECT_CARD]
 
-const bossAttacks = new InstancedValue<BOSS_ATTACK>(() => ['50DMG', undefined, undefined])
+const bossAttacks = new InstancedValue<BOSS_ATTACK>(() => [
+	'50DMG',
+	undefined,
+	undefined,
+])
 
 function supplyBossAttack(card: CardComponent, attack: BOSS_ATTACK) {
 	bossAttacks.set(card, attack)
 }
 
-const attackLog = (bossAttack: BOSS_ATTACK): ((values: AttackLog) => string) => {
+const attackLog = (
+	bossAttack: BOSS_ATTACK,
+): ((values: AttackLog) => string) => {
 	return (values) => {
 		let log = `${values.damage} damage`
 		if (bossAttack[1] === 'DOUBLE') log += ' (doubled)'
@@ -281,4 +287,4 @@ const NewBoss: Hermit = {
 
 export default NewBoss
 export {supplyBossAttack}
-export type {BOSS_ATTACK} 
+export type {BOSS_ATTACK}
