@@ -1,17 +1,20 @@
 import assert from 'assert'
 import {CARDS} from 'common/cards'
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
+import {NEW_BOSS_AI_DECKS} from 'common/cards/new-ai-boss-decks'
 import {
 	AchievementComponent,
-	BoardSlotComponent,
 	PlayerComponent,
 	RowComponent,
+	SlotComponent,
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import serverConfig from 'common/config/server-config'
 import {COINS} from 'common/cosmetics/coins'
 import {defaultAppearance} from 'common/cosmetics/default'
+import {RowEntity} from 'common/entities'
+import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
@@ -52,6 +55,7 @@ import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import {TurnActionCompressor} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
+import NewBossAI from './virtual/new-boss-ai'
 
 function setupGame(
 	player1: PlayerModel,
@@ -317,6 +321,8 @@ function* gameManager(con: GameController) {
 
 		if (
 			con.game.state.isEvilXBossGame ||
+			!gamePlayers[0] ||
+			!gamePlayers[1] ||
 			!gamePlayers[0].id ||
 			!gamePlayers[1].id
 		) {
@@ -861,8 +867,13 @@ export function* cancelRematch(
 }
 
 export function* createBossGame(
-	msg: RecievedClientMessage<typeof clientMessages.CREATE_BOSS_GAME>,
+	msg: RecievedClientMessage<typeof clientMessages.CREATE_BOSS_GAME> & {
+		payload: {
+			bossType?: 'evilx' | 'new'
+		}
+	},
 ) {
+	console.log('Server received boss type:', msg.payload.bossType)
 	const {playerId} = msg
 	const player = root.players[playerId]
 
@@ -896,52 +907,113 @@ export function* createBossGame(
 
 	broadcast([player], {type: serverMessages.CREATE_BOSS_GAME_SUCCESS})
 
-	const newBossGameController = setupSolitareGame(player, player.deck, {
-		uuid: '',
-		name: 'Evil Xisuma',
-		minecraftName: 'EvilXisuma',
-		censoredName: 'Evil Xisuma',
-		deck: [EvilXisumaBoss],
-		virtualAI: ExBossAI,
-		disableDeckingOut: true,
-		appearance: {...defaultAppearance, coin: COINS['evilx']},
-	})
-	newBossGameController.game.state.isEvilXBossGame = true
+	const bossType = msg.payload.bossType || 'evilx'
+	console.log('Server using boss type:', bossType)
+	let bossConfig: OpponentDefs
 
-	function destroyRow(row: RowComponent) {
-		newBossGameController.game.components
-			.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
-			.forEach((slotEntity) =>
-				newBossGameController.game.components.delete(slotEntity),
-			)
-		newBossGameController.game.components.delete(row.entity)
+	if (bossType === 'new') {
+		// Get a random new boss AI deck
+		const randomIndex = Math.floor(Math.random() * NEW_BOSS_AI_DECKS.length)
+		const bossDeck = NEW_BOSS_AI_DECKS[randomIndex]
+		console.log(`Selected new boss AI deck "${bossDeck.name}" for New Boss`)
+
+		bossConfig = {
+			uuid: '',
+			name: 'New Boss',
+			minecraftName: 'NewBoss',
+			censoredName: 'New Boss',
+			deck: bossDeck.cards,
+			virtualAI: NewBossAI,
+			disableDeckingOut: true as const,
+			appearance: {...defaultAppearance, coin: COINS['creeper']},
+		}
+	} else {
+		bossConfig = {
+			uuid: '',
+			name: 'Evil Xisuma',
+			minecraftName: 'EvilXisuma',
+			censoredName: 'Evil Xisuma',
+			deck: [EvilXisumaBoss],
+			virtualAI: ExBossAI,
+			disableDeckingOut: true as const,
+			appearance: {...defaultAppearance, coin: COINS['evilx']},
+		}
 	}
 
-	// Remove challenger's rows other than indexes 0, 1, and 2
-	newBossGameController.game.components
-		.filter(
-			RowComponent,
-			query.row.opponentPlayer,
-			(_game, row) => row.index > 2,
-		)
-		.forEach(destroyRow)
-	// Remove boss' rows other than index 0
-	newBossGameController.game.components
-		.filter(
-			RowComponent,
-			query.row.currentPlayer,
-			query.not(query.row.index(0)),
-		)
-		.forEach(destroyRow)
-	// Remove boss' item slots
-	newBossGameController.game.components
-		.filter(RowComponent, query.row.currentPlayer)
-		.forEach((row) => {
-			row.itemsSlotEntities?.forEach((slotEntity) =>
-				newBossGameController.game.components.delete(slotEntity),
-			)
-			row.itemsSlotEntities = []
+	const newBossGameController = setupSolitareGame(
+		player,
+		player.deck,
+		bossConfig,
+	)
+	newBossGameController.game.state.isEvilXBossGame = bossType === 'evilx'
+	newBossGameController.game.state.bossType = bossType
+
+	const destroyRow = (game: GameModel, row: RowEntity) => {
+		// First delete all slots in the row
+		const slots = game.components.filter(SlotComponent, query.slot.rowIs(row))
+		slots.forEach((slot: SlotComponent) => {
+			game.components.delete(slot.entity)
 		})
+		// Then delete the row itself
+		game.components.delete(row)
+	}
+
+	// Initialize rows based on boss type
+	if (bossType === 'new') {
+		// For the new boss:
+		// - Challenger (opponent player) gets all 5 rows (indexes 0-4)
+		// - Boss (current player) gets all 5 rows (indexes 0-4)
+
+		// Remove any rows above index 4 for the challenger
+		newBossGameController.game.components
+			.filter(
+				RowComponent,
+				query.row.opponentPlayer,
+				(_game, row) => row.index > 4,
+			)
+			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
+
+		// Remove any rows above index 4 for the boss
+		newBossGameController.game.components
+			.filter(
+				RowComponent,
+				query.row.currentPlayer,
+				(_game, row) => row.index > 4,
+			)
+			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
+	} else {
+		// For EvilX:
+		// - Challenger (opponent player) gets all 5 rows (indexes 0-4)
+		// - Boss (current player) gets only row 0
+
+		// Remove any rows above index 4 for the challenger
+		newBossGameController.game.components
+			.filter(
+				RowComponent,
+				query.row.opponentPlayer,
+				(_game, row) => row.index > 4,
+			)
+			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
+
+		// Keep only row 0 for the boss
+		newBossGameController.game.components
+			.filter(
+				RowComponent,
+				query.row.currentPlayer,
+				query.not(query.row.index(0)),
+			)
+			.forEach((row) => destroyRow(newBossGameController.game, row.entity))
+
+		// Remove boss' item slots only for EvilX
+		newBossGameController.game.components
+			.filter(RowComponent, query.row.currentPlayer)
+			.forEach((row) => {
+				row.itemsSlotEntities?.forEach((slotEntity) =>
+					newBossGameController.game.components.delete(slotEntity),
+				)
+				row.itemsSlotEntities = []
+			})
+	}
 
 	newBossGameController.game.settings.disableRewardCards = true
 

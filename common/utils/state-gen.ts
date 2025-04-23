@@ -103,23 +103,23 @@ function setupEcsForPlayer(
 				2,
 				row.entity,
 			),
+			components.new(
+				BoardSlotComponent,
+				{player: playerEntity, type: 'attach'},
+				3,
+				row.entity,
+			),
+			components.new(
+				BoardSlotComponent,
+				{player: playerEntity, type: 'hermit'},
+				4,
+				row.entity,
+			),
 		]
-		let attachSlot = components.new(
-			BoardSlotComponent,
-			{player: playerEntity, type: 'attach'},
-			3,
-			row.entity,
-		)
-		let hermitSlot = components.new(
-			BoardSlotComponent,
-			{player: playerEntity, type: 'hermit'},
-			4,
-			row.entity,
-		)
 
-		row.itemsSlotEntities = itemSlots.map((x) => x.entity)
-		row.hermitSlotEntity = hermitSlot.entity
-		row.attachSlotEntity = attachSlot.entity
+		row.itemsSlotEntities = itemSlots.slice(0, 3).map((x) => x.entity)
+		row.hermitSlotEntity = itemSlots[4].entity
+		row.attachSlotEntity = itemSlots[3].entity
 	}
 
 	// Ensure there is a hermit in the first 5 cards
@@ -187,6 +187,7 @@ export function getGameState(game: GameModel, swapPlayers: boolean): GameState {
 		},
 
 		isEvilXBossGame: false,
+		bossType: undefined,
 	}
 
 	return gameState

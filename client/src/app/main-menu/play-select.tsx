@@ -82,6 +82,11 @@ function PlaySelect({
 		defaultSection || null,
 	)
 
+	// Store the selected boss type
+	const [selectedBossType, setSelectedBossType] = useState<
+		'evilx' | 'new' | undefined
+	>(undefined)
+
 	const getFirstActiveMenu = (section: string) => {
 		if (firstActiveMenu) return firstActiveMenu
 		if (section === 'public') return 'publicChooseDeck'
@@ -288,6 +293,17 @@ function PlaySelect({
 			break
 		default:
 			break
+	}
+
+	const onBossConfirm = (bossType: 'evilx' | 'new') => {
+		console.log('Dispatching with boss type:', bossType)
+		dispatch({type: localMessages.MATCHMAKING_CREATE_BOSS_GAME, bossType})
+	}
+
+	const onDeckSelect = () => {
+		if (selectedBossType) {
+			onBossConfirm(selectedBossType)
+		}
 	}
 
 	return (
@@ -579,10 +595,7 @@ or create your own game to challenge someone else."
 								id="bossSelect"
 								activeButtonMenu={activeButtonMenu}
 								title="Welcome to your doom."
-								subTitle="That's right, HC-TCG Online has its first boss fight! This is no challenge deck - Evil X cares
-not for the cards. He brings his own moves, and they are vicious! If you think you can defeat him, you'll
-need to be on your best game. Make sure your audio is enabled, as you'll need to listen to voice commands
-during the battle."
+								subTitle="That's right, HC-TCG Online has boss fights! These are no challenge decks - the bosses care not for the cards. They bring their own moves, and they are vicious! If you think you can defeat them, you'll need to be on your best game. Make sure your audio is enabled, as you'll need to listen to voice commands during the battle."
 								buttons={[
 									{
 										text: 'Full Rules',
@@ -594,6 +607,18 @@ during the battle."
 										text: 'Challenge Evil X',
 										onClick() {
 											addMenuWithBack('bossChooseDeck')
+											setSelectedBossType('evilx')
+											onBossConfirm('evilx')
+										},
+										variant: 'primary',
+									},
+									{
+										text: 'Challenge New Boss',
+										onClick() {
+											console.log('Setting boss type to new')
+											addMenuWithBack('bossChooseDeck')
+											setSelectedBossType('new')
+											onBossConfirm('new')
 										},
 										variant: 'primary',
 									},
@@ -686,15 +711,7 @@ during the battle."
 								subTitle="When ready, press the Fight! button to begin."
 								confirmMessage="Fight!"
 								disableButton={loadedDeck === undefined}
-								onConfirm={() => {
-									const valid = checkForValidation()
-									if (!valid) return
-
-									dispatch({type: localMessages.EVERY_TOAST_CLOSE})
-									dispatch({
-										type: localMessages.MATCHMAKING_CREATE_BOSS_GAME,
-									})
-								}}
+								onConfirm={onDeckSelect}
 								decks={decks}
 								onSelectDeck={onSelectDeck}
 							/>

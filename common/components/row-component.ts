@@ -81,6 +81,7 @@ export class RowComponent {
 
 	public getItems() {
 		const itemSlots = this.itemSlots as Array<SlotComponent>
+		// Only return the first 3 slots as items (the last 2 are for hermit and attach)
 		return this.game.components.filter(CardComponent, (_game, value) =>
 			itemSlots.includes(value.slot),
 		)

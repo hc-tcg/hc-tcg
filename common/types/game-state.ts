@@ -87,6 +87,7 @@ export type GameState = {
 	}
 
 	isEvilXBossGame: boolean
+	bossType?: 'evilx' | 'new'
 }
 
 export type PlayCardAction =
@@ -188,6 +189,7 @@ export type LocalGameState = {
 	}
 
 	isEvilXBossGame: boolean
+	bossType?: 'evilx' | 'new'
 
 	voiceLineQueue: Array<string>
 }
