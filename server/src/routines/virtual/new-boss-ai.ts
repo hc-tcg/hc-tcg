@@ -558,6 +558,7 @@ function getNextTurnAction(
 
 				// Find the hermit with the most health that has empty attach slots
 				let bestHealth = -1
+				let bestHermit: BoardSlotComponent | null = null
 
 				for (const hermitSlot of hermitSlots) {
 					// Skip if not in a row or health is null
@@ -749,7 +750,7 @@ function getNextTurnAction(
 							query.slot.player(player.entity),
 							query.slot.item,
 							query.slot.empty,
-							(game, slot) =>
+							(_game, slot) =>
 								slot.inRow() && slot.rowEntity === activeRow.entity,
 						)
 
