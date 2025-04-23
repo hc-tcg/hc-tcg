@@ -300,16 +300,6 @@ function PlaySelect({
 		dispatch({type: localMessages.MATCHMAKING_CREATE_BOSS_GAME, bossType})
 	}
 
-	const onConfirm = (code?: string) => {
-		const valid = checkForValidation()
-		if (!valid) return
-
-		dispatch({type: localMessages.EVERY_TOAST_CLOSE})
-		if (code) {
-			dispatch({type: localMessages.MATCHMAKING_JOIN_PRIVATE_QUEUE, code})
-		}
-	}
-
 	const onDeckSelect = () => {
 		if (selectedBossType) {
 			onBossConfirm(selectedBossType)

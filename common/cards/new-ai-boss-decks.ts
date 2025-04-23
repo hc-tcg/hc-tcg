@@ -6,23 +6,33 @@ import {
 	IronArmor,
 	NetheriteArmor,
 } from './attach/armor'
+import Bed from './attach/bed'
 import LightningRod from './attach/lightning-rod'
 import Loyalty from './attach/loyalty'
+import Shield from './attach/shield'
+import Totem from './attach/totem'
 import Wolf from './attach/wolf'
 import ArchitectFalseCommon from './hermits/architectfalse-common'
+import ArchitectFalseRare from './hermits/architectfalse-rare'
 import BeetlejhostCommon from './hermits/beetlejhost-common'
 import BeetlejhostRare from './hermits/beetlejhost-rare'
 import BoomerBdubsCommon from './hermits/boomerbdubs-common'
 import Cubfan135Rare from './hermits/cubfan135-rare'
+import Docm77Rare from './hermits/docm77-rare'
 import EthosLabRare from './hermits/ethoslab-rare'
 import EthosLabUltraRare from './hermits/ethoslab-ultra-rare'
 import EvilJevinRare from './hermits/eviljevin-rare'
 import EvilXisumaRare from './hermits/evilxisuma_rare'
+import FalseSymmetryRare from './hermits/falsesymmetry-rare'
+import FarmerBeefRare from './hermits/farmerbeef-rare'
 import FiveAMPearlCommon from './hermits/fiveampearl-common'
+import FrenchKeralisCommon from './hermits/frenchkeralis-common'
 import FrenchralisRare from './hermits/frenchralis-rare'
 import GeminiTayRare from './hermits/geminitay-rare'
 import GoatfatherRare from './hermits/goatfather-rare'
+import GoodTimesWithScarRare from './hermits/goodtimeswithscar-rare'
 import HelsknightRare from './hermits/helsknight-rare'
+import HorseHeadHypnoCommon from './hermits/horseheadhypno-common'
 import HotguyCommon from './hermits/hotguy-common'
 import HumanCleoRare from './hermits/humancleo-rare'
 import ImpulseSVRare from './hermits/impulsesv-rare'
@@ -33,19 +43,34 @@ import MumboJumboRare from './hermits/mumbojumbo-rare'
 import PearlescentMoonRare from './hermits/pearlescentmoon-rare'
 import PoePoeSkizzRare from './hermits/poepoeskizz-rare'
 import PotatoBoyCommon from './hermits/potatoboy-common'
+import PotatoBoyRare from './hermits/potatoboy-rare'
+import PoultryManRare from './hermits/poultryman-rare'
+import RenbobRare from './hermits/renbob-rare'
+import RendogRare from './hermits/rendog-rare'
+import SkizzlemanRare from './hermits/skizzleman-rare'
 import SmallishbeansCommon from './hermits/smallishbeans-common'
 import SpookyStressCommon from './hermits/spookystress-common'
 import SteampunkTangoCommon from './hermits/steampunktango-common'
+import StressMonster101Common from './hermits/stressmonster101-common'
 import StressMonster101Rare from './hermits/stressmonster101-rare'
 import TangoTekCommon from './hermits/tangotek-common'
 import TangoTekRare from './hermits/tangotek-rare'
 import VintageBeefCommon from './hermits/vintagebeef-common'
+import VintageBeefRare from './hermits/vintagebeef-rare'
 import WelsknightRare from './hermits/welsknight-rare'
 import WormManCommon from './hermits/wormman-common'
+import XBCraftedRare from './hermits/xbcrafted-rare'
 import XisumavoidRare from './hermits/xisumavoid-rare'
+import ZedaphPlaysRare from './hermits/zedaphplays-rare'
 import ZombieCleoRare from './hermits/zombiecleo-rare'
 import BalancedItem from './items/balanced-common'
 import BalancedDoubleItem from './items/balanced-rare'
+import BuilderItem from './items/builder-common'
+import BuilderDoubleItem from './items/builder-rare'
+import ExplorerItem from './items/explorer-common'
+import ExplorerDoubleItem from './items/explorer-rare'
+import FarmItem from './items/farm-common'
+import FarmDoubleItem from './items/farm-rare'
 import PranksterItem from './items/prankster-common'
 import PvPItem from './items/pvp-common'
 import PvPDoubleItem from './items/pvp-rare'
@@ -57,12 +82,12 @@ import TerraformDoubleItem from './items/terraform-rare'
 import WildItem from './items/wild-common'
 import Anvil from './single-use/anvil'
 import BadOmen from './single-use/bad-omen'
-import Bow from './single-use/bow'
 import ChorusFruit from './single-use/chorus-fruit'
 import Composter from './single-use/composter'
 import CurseOfBinding from './single-use/curse-of-binding'
 import CurseOfVanishing from './single-use/curse-of-vanishing'
 import Efficiency from './single-use/efficiency'
+import Egg from './single-use/egg'
 import Emerald from './single-use/emerald'
 import FishingRod from './single-use/fishing-rod'
 import FlintAndSteel from './single-use/flint-and-steel'
@@ -74,10 +99,10 @@ import InvisibilityPotion from './single-use/invisibility-potion'
 import Knockback from './single-use/knockback'
 import Ladder from './single-use/ladder'
 import LavaBucket from './single-use/lava-bucket'
-import Piston from './single-use/piston'
 import PotionOfWeakness from './single-use/potion-of-weakness'
+import {SplashPotionOfHealing} from './single-use/splash-potion-of-healing'
 import SplashPotionOfPoison from './single-use/splash-potion-of-poison'
-import {DiamondSword} from './single-use/sword'
+import {DiamondSword, NetheriteSword} from './single-use/sword'
 import TNT from './single-use/tnt'
 import Trident from './single-use/trident'
 import {Attach, Hermit, Item, SingleUse} from './types'
@@ -109,9 +134,9 @@ export const NEW_BOSS_AI_DECKS: Array<StarterDeck> = [
 			Composter,
 			Composter,
 			BadOmen,
-			Bow,
-			CurseOfVanishing,
-			CurseOfVanishing,
+			DiamondSword,
+			CurseOfBinding,
+			CurseOfBinding,
 			Trident,
 			Emerald,
 			FishingRod,
@@ -158,7 +183,7 @@ export const NEW_BOSS_AI_DECKS: Array<StarterDeck> = [
 			LightningRod,
 			InstantHealth,
 			InvisibilityPotion,
-			Piston,
+			SplashPotionOfHealing,
 			CurseOfVanishing,
 			Efficiency,
 			FlintAndSteel,
@@ -231,6 +256,149 @@ export const NEW_BOSS_AI_DECKS: Array<StarterDeck> = [
 			BalancedDoubleItem,
 			BalancedDoubleItem,
 			BalancedDoubleItem,
+		],
+	},
+	{
+		name: 'Builder Deck #1',
+		icon: 'builder',
+		cards: [
+			StressMonster101Common,
+			GoodTimesWithScarRare,
+			GoodTimesWithScarRare,
+			FalseSymmetryRare,
+			FalseSymmetryRare,
+			VintageBeefRare,
+			VintageBeefRare,
+			SkizzlemanRare,
+			SkizzlemanRare,
+			RendogRare,
+			Wolf,
+			Wolf,
+			Totem,
+			DiamondArmor,
+			Anvil,
+			SplashPotionOfHealing,
+			SplashPotionOfHealing,
+			DiamondSword,
+			Egg,
+			Trident,
+			Trident,
+			FishingRod,
+			GoldenAxe,
+			InstantHealthII,
+			InstantHealthII,
+			TNT,
+			LavaBucket,
+			BuilderItem,
+			BuilderItem,
+			BuilderItem,
+			BuilderItem,
+			BuilderItem,
+			BuilderItem,
+			BuilderItem,
+			BuilderItem,
+			BuilderItem,
+			BuilderItem,
+			BuilderItem,
+			BuilderItem,
+			BuilderDoubleItem,
+			BuilderDoubleItem,
+			BuilderDoubleItem,
+		],
+	},
+	{
+		name: 'Explorer Deck #1',
+		icon: 'explorer',
+		cards: [
+			FrenchKeralisCommon,
+			XBCraftedRare,
+			XBCraftedRare,
+			RenbobRare,
+			RenbobRare,
+			ZedaphPlaysRare,
+			VintageBeefRare,
+			ArchitectFalseRare,
+			ArchitectFalseRare,
+			Wolf,
+			Bed,
+			IronArmor,
+			Totem,
+			Anvil,
+			SplashPotionOfHealing,
+			SplashPotionOfHealing,
+			BadOmen,
+			DiamondSword,
+			Egg,
+			Trident,
+			Trident,
+			FishingRod,
+			SplashPotionOfPoison,
+			InstantHealthII,
+			InstantHealthII,
+			TNT,
+			ExplorerItem,
+			ExplorerItem,
+			ExplorerItem,
+			ExplorerItem,
+			ExplorerItem,
+			ExplorerItem,
+			ExplorerItem,
+			ExplorerItem,
+			ExplorerItem,
+			ExplorerItem,
+			ExplorerItem,
+			ExplorerItem,
+			ExplorerItem,
+			ExplorerItem,
+			ExplorerDoubleItem,
+		],
+	},
+	{
+		name: 'Farmer Deck #1',
+		icon: 'farm',
+		cards: [
+			PotatoBoyRare,
+			PotatoBoyRare,
+			HorseHeadHypnoCommon,
+			FarmerBeefRare,
+			FarmerBeefRare,
+			Docm77Rare,
+			Docm77Rare,
+			Docm77Rare,
+			PoultryManRare,
+			PoultryManRare,
+			Wolf,
+			IronArmor,
+			Totem,
+			Shield,
+			Anvil,
+			SplashPotionOfHealing,
+			SplashPotionOfHealing,
+			BadOmen,
+			DiamondSword,
+			Egg,
+			Egg,
+			Egg,
+			Trident,
+			Trident,
+			FishingRod,
+			SplashPotionOfPoison,
+			InstantHealthII,
+			TNT,
+			NetheriteSword,
+			FarmItem,
+			FarmItem,
+			FarmItem,
+			FarmItem,
+			FarmItem,
+			FarmItem,
+			FarmItem,
+			FarmItem,
+			FarmItem,
+			FarmItem,
+			FarmItem,
+			FarmItem,
+			FarmDoubleItem,
 		],
 	},
 	{
