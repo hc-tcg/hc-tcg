@@ -860,11 +860,7 @@ export function* cancelRematch(
 }
 
 export function* createBossGame(
-	msg: RecievedClientMessage<typeof clientMessages.CREATE_BOSS_GAME> & {
-		payload: {
-			bossType?: 'evilx' | 'new'
-		}
-	},
+	msg: RecievedClientMessage<typeof clientMessages.CREATE_BOSS_GAME>,
 ) {
 	console.log('Server received boss type:', msg.payload.bossType)
 	const {playerId} = msg
