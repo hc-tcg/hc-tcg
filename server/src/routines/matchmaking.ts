@@ -214,7 +214,7 @@ function* gameManager(con: GameController) {
 			)
 
 			achievements.forEach((achievement) => {
-				achievement.props.onGameEnd(con.game, player, achievement, outcome)
+				achievement.props.onGameEnd(con.game, player!, achievement, outcome)
 				thisGameAchievements[achievement.props.numericId] = {
 					goals: achievement.goals,
 					levels: [],

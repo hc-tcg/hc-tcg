@@ -6,7 +6,7 @@ import {
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
-import {AnyTurnActionData} from 'common/types/turn-action-data'
+import {AnyTurnActionData, AttackActionData} from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
 
 // Track the last time we checked for available actions
@@ -987,7 +987,7 @@ function getNextTurnAction(
 		return [
 			{
 				type: selectedAttackType,
-			},
+			} as AttackActionData,
 		]
 	} else {
 		console.log(
