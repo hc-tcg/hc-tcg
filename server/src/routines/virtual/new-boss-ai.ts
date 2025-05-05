@@ -990,7 +990,7 @@ function getNextTurnAction(
 		return [
 			{
 				type: selectedAttackType,
-			} as AttackActionData,
+			} satisfies AttackActionData,
 		]
 	} else {
 		console.log(
