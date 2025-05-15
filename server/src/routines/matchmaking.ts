@@ -171,7 +171,7 @@ function* gameManager(con: GameController) {
 						].map((type) => playerAction(type, con.game.currentPlayer.entity)),
 					])
 					console.log('recived action', action)
-					con.sendAction({
+					con.sendTurnAction({
 						action: action.action,
 						playerEntity: action.playerEntity,
 					})

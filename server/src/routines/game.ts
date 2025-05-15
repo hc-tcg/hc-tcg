@@ -582,31 +582,18 @@ async function turnActionsSaga(con: GameController) {
 			console.log('player ai turn')
 			raceResult = {turnAction: await virtualPlayerActionSaga(con, playerAI)}
 		} else {
-			let pollingTime = 0
-
-			while (true) {
-				if (pollingTime > remainingTime + graceTime) {
-					raceResult = {
-						timeout: {
-							type: 'TIMEOUT',
-						},
-					}
-					break
-				}
-
-				if (con.turnActions.length > 0) {
-					raceResult = {
-						turnAction: con.turnActions.shift(),
-					}
-					break
-				}
-
-				await new Promise((resolve: any) => setTimeout(resolve, 50))
-
-				pollingTime += 50
-			}
+			raceResult = await Promise.race([
+				new Promise(async (resolve) => {
+					const action = await con.waitForTurnAction()
+					resolve({turnAction: action})
+				}),
+				new Promise((resolve) =>
+					setTimeout(() => resolve({timeout: null}), graceTime + remainingTime),
+				),
+			])
 		}
-		console.log(raceResult)
+
+		console.log('promise', raceResult)
 
 		// Reset coin flips
 		currentPlayer.coinFlips = []

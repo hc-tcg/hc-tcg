@@ -15,7 +15,7 @@ import {
 	ServerMessage,
 	serverMessages,
 } from 'common/socket-messages/server-messages'
-import {CurrentCoinFlip, Message} from 'common/types/game-state'
+import {CurrentCoinFlip, Message, TurnAction} from 'common/types/game-state'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {broadcast} from './utils/comm'
 import {getLocalGameState} from './utils/state-gen'
@@ -75,12 +75,15 @@ export class GameController {
 	apiSecret: string | null
 	game: GameModel
 	chat: Array<Message>
+	task: any
 	viewers: Array<GameViewer>
-	turnActions: TurnActionAndPlayer[]
 
 	readonly props: GameControllerProps
 	readonly player1Defs: PlayerSetupDefs
 	readonly player2Defs: PlayerSetupDefs
+
+	private turnActions: TurnActionAndPlayer[]
+	private turnActionListener: ((turnAction: TurnActionAndPlayer) => any) | null
 
 	constructor(
 		player1: PlayerSetupDefs,
@@ -108,8 +111,11 @@ export class GameController {
 		this.gameCode = props.gameCode || null
 		this.spectatorCode = props.spectatorCode || null
 		this.apiSecret = props.apiSecret || null
+		this.task = null
 		this.viewers = []
+
 		this.turnActions = []
+		this.turnActionListener = null
 
 		this.player1Defs = player1
 		this.player2Defs = player2
@@ -232,8 +238,24 @@ export class GameController {
 		)
 	}
 
-	public sendAction(action: TurnActionAndPlayer) {
+	public sendTurnAction(action: TurnActionAndPlayer) {
+		if (this.turnActionListener) {
+			this.turnActionListener(action)
+			this.turnActionListener = null
+		}
 		this.turnActions.push(action)
+	}
+
+	public async waitForTurnAction(): Promise<TurnActionAndPlayer> {
+		if (this.turnActions.length > 0) {
+			return this.turnActions.shift() as TurnActionAndPlayer
+		}
+
+		return await new Promise((resolve) => {
+			this.turnActionListener = (turnAction) => {
+				resolve(turnAction)
+			}
+		})
 	}
 
 	private async publishBattleLog(logs: Array<Message>, timeout: number) {
