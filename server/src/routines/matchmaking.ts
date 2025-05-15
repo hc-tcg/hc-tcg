@@ -101,20 +101,6 @@ function setupGame(
 	return con
 }
 
-function playerAction(actionType: string, playerEntity: PlayerEntity) {
-	return (actionAny: any) => {
-		const action = actionAny as LocalMessage
-		console.log(action, 'action')
-		return (
-			action.type === localMessages.GAME_TURN_ACTION &&
-			'playerEntity' in action &&
-			'action' in action &&
-			action.action.type === actionType &&
-			action.playerEntity === playerEntity
-		)
-	}
-}
-
 function* gameManager(con: GameController) {
 	// @TODO this one method needs cleanup still
 	try {
@@ -144,29 +130,10 @@ function* gameManager(con: GameController) {
 			outcome: call(gameSaga, con),
 			waitForTurnAction: call(function* () {
 				while (true) {
-					const action: any = yield* take([
-						...['PICK_REQUEST', 'MODAL_REQUEST', 'FORFEIT'].map((type) =>
-							playerAction(type, con.game.opponentPlayer.entity),
-						),
-						...[
-							'PLAY_HERMIT_CARD',
-							'PLAY_ITEM_CARD',
-							'PLAY_EFFECT_CARD',
-							'PLAY_SINGLE_USE_CARD',
-							'PICK_REQUEST',
-							'MODAL_REQUEST',
-							'CHANGE_ACTIVE_HERMIT',
-							'APPLY_EFFECT',
-							'REMOVE_EFFECT',
-							'SINGLE_USE_ATTACK',
-							'PRIMARY_ATTACK',
-							'SECONDARY_ATTACK',
-							'END_TURN',
-							'DELAY',
-							'FORFEIT',
-						].map((type) => playerAction(type, con.game.currentPlayer.entity)),
-					])
+					// @todo limit game
+					const action: any = yield* take(localMessages.GAME_TURN_ACTION)
 					con.sendTurnAction({
+						// @todo limit messages to only this game
 						action: action.action,
 						playerEntity: action.playerEntity,
 					})
@@ -194,6 +161,7 @@ function* gameManager(con: GameController) {
 				(_g, c) => c.entity !== playerThatLeft,
 			)?.entity
 			assert(remainingPlayer, 'There is no way there is no remaining player.')
+			// @todo It would be best if the actual game runner did not know about disconnects.
 			con.game.outcome = {
 				type: 'player-won',
 				victoryReason: 'disconnect',

@@ -377,7 +377,7 @@ export function handleSingleTurnAction(
 	con: GameController,
 	turnAction: TurnActionAndPlayer,
 ) {
-	console.log(turnAction)
+	console.log('turn action saga', turnAction)
 	const actionType = turnAction.action.type
 
 	let endTurn = false
@@ -579,14 +579,12 @@ async function turnActionsSaga(con: GameController) {
 
 		const playerAI = getPlayerAI(con.game)
 		if (playerAI) {
-			console.log('player ai turn')
 			raceResult = {turnAction: await virtualPlayerActionSaga(con, playerAI)}
 		} else {
 			raceResult = await Promise.race([
 				new Promise(async (resolve) => {
 					const action = await con.waitForTurnAction()
 					resolve({turnAction: action})
-					console.log(action)
 				}),
 				new Promise((resolve) =>
 					setTimeout(() => resolve({timeout: null}), graceTime + remainingTime),
