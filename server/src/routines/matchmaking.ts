@@ -130,10 +130,12 @@ function* gameManager(con: GameController) {
 			outcome: call(gameSaga, con),
 			waitForTurnAction: call(function* () {
 				while (true) {
-					// @todo limit game
-					const action: any = yield* take(localMessages.GAME_TURN_ACTION)
+					const action: any = yield* take(
+						(action: any) =>
+							action.type == localMessages.GAME_TURN_ACTION &&
+							action.game == con.id,
+					)
 					con.sendTurnAction({
-						// @todo limit messages to only this game
 						action: action.action,
 						playerEntity: action.playerEntity,
 					})

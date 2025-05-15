@@ -3,7 +3,7 @@ import {
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {LocalMessage, localMessages} from 'messages'
-import {put, takeEvery} from 'typed-redux-saga'
+import {put, select, takeEvery} from 'typed-redux-saga'
 import {safeCall} from 'utils'
 import {
 	deleteDeck,
@@ -40,6 +40,9 @@ import {
 	updateMinecraftNameSaga,
 	updateUsernameSaga,
 } from './player'
+import {getPublicGameCount} from 'api/games'
+import {getGame} from 'selectors'
+import assert from 'assert'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
@@ -113,11 +116,13 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.TURN_ACTION:
 			let actionMessage = message as RecievedClientMessage<typeof message.type>
-			console.log(actionMessage.payload.action)
+			let game = yield* select(getGame(actionMessage.playerId))
+			assert(game, 'Player should be in game if sending a turn action message')
 			return yield* put<LocalMessage>({
 				type: localMessages.GAME_TURN_ACTION,
 				action: actionMessage.payload.action,
 				playerEntity: actionMessage.payload.playerEntity,
+				game: game.id,
 			})
 		case clientMessages.GET_DECKS:
 			return yield* getDecks(
