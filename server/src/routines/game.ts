@@ -585,8 +585,8 @@ async function turnActionsSaga(con: GameController) {
 			raceResult = await Promise.race([
 				new Promise(async (resolve) => {
 					const action = await con.waitForTurnAction()
-					console.log(action)
 					resolve({turnAction: action})
+					console.log(action)
 				}),
 				new Promise((resolve) =>
 					setTimeout(() => resolve({timeout: null}), graceTime + remainingTime),
@@ -798,42 +798,58 @@ async function gameSaga(con: GameController) {
 		console.info(
 			`${con.game.logHeader} ${con.game.opponentPlayer.playerName} was decided to be the first player.`,
 		)
-	while (true) {
-		con.game.state.turn.turnNumber++
-		const result = await turnSaga(con)
-		if (result === 'GAME_END') break
-	}
-	con.game.outcome = figureOutGameResult(con.game)
-	con.game.hooks.onGameEnd.call(con.game.outcome)
 
-	if (con.game.outcome && con.game.outcome.type === 'player-won') {
-		const winningPlayer = con.game.components.find(
-			PlayerComponent,
-			query.player.entity(con.game.outcome.winner),
-		)
-		const winningPlayerName = winningPlayer?.playerName
-		con.game.battleLog.addEntry(
-			con.game.outcome.winner,
-			`$p{You|${winningPlayerName}}$ won the game`,
-		)
-	} else if (con.game.outcome && con.game.outcome.type === 'tie') {
-		con.game.battleLog.addEntry(
-			con.game.currentPlayer.entity,
-			'{$pYou$|$oYou$} tied your opponent',
-		)
-	} else if (con.game.outcome) {
-		con.game.battleLog.addEntry(
-			con.game.currentPlayer.entity,
-			'There was an error',
-		)
-	} else {
-		con.game.battleLog.addEntry(
-			con.game.currentPlayer.entity,
-			'The game ended before an outcome was decided',
-		)
-	}
+	await Promise.race([
+		(async () => {
+			while (true) {
+				con.game.state.turn.turnNumber++
+				const result = await turnSaga(con)
+				if (result === 'GAME_END') break
+			}
 
-	con.game.battleLog.sendLogs()
+			con.game.outcome = figureOutGameResult(con.game)
+			con.game.hooks.onGameEnd.call(con.game.outcome)
+
+			if (con.game.outcome && con.game.outcome.type === 'player-won') {
+				const winningPlayer = con.game.components.find(
+					PlayerComponent,
+					query.player.entity(con.game.outcome.winner),
+				)
+				const winningPlayerName = winningPlayer?.playerName
+				con.game.battleLog.addEntry(
+					con.game.outcome.winner,
+					`$p{You|${winningPlayerName}}$ won the game`,
+				)
+			} else if (con.game.outcome && con.game.outcome.type === 'tie') {
+				con.game.battleLog.addEntry(
+					con.game.currentPlayer.entity,
+					'{$pYou$|$oYou$} tied your opponent',
+				)
+			} else if (con.game.outcome) {
+				con.game.battleLog.addEntry(
+					con.game.currentPlayer.entity,
+					'There was an error',
+				)
+			} else {
+				con.game.battleLog.addEntry(
+					con.game.currentPlayer.entity,
+					'The game ended before an outcome was decided',
+				)
+			}
+
+			con.game.battleLog.sendLogs()
+		})(),
+		/* Timeout games after 2 hours */
+		new Promise((resolve) =>
+			setTimeout(
+				() => {
+					con.game.outcome = {type: 'timeout'}
+					resolve(null)
+				},
+				1000 * 60 * 60 * 2,
+			),
+		),
+	])
 }
 
 export default gameSaga

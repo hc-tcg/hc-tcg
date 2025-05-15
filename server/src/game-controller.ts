@@ -15,11 +15,10 @@ import {
 	ServerMessage,
 	serverMessages,
 } from 'common/socket-messages/server-messages'
-import {CurrentCoinFlip, Message, TurnAction} from 'common/types/game-state'
+import {CurrentCoinFlip, Message} from 'common/types/game-state'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {broadcast} from './utils/comm'
 import {getLocalGameState} from './utils/state-gen'
-import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {TurnActionAndPlayer} from 'routines/game'
 
 export type GameControllerProps = {

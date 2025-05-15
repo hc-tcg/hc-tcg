@@ -140,13 +140,11 @@ function* gameManager(con: GameController) {
 
 		root.hooks.newGame.call(con)
 
-		yield* fork(gameSaga, con)
-
 		// Kill game on timeout or when user leaves for long time + cleanup after game
 		console.log('trying to start game')
 		const result = yield* race({
+			game: call(gameSaga, con),
 			waitForTurnAction: call(function* () {
-				console.log('waiting for next action WAITNG')
 				while (true) {
 					const action: any = yield* take([
 						...['PICK_REQUEST', 'MODAL_REQUEST', 'FORFEIT'].map((type) =>
@@ -177,10 +175,6 @@ function* gameManager(con: GameController) {
 					})
 				}
 			}),
-			// game ended (or crashed -> catch)
-			// gameEnd: join(con.task),
-			// kill a game after one hour
-			timeout: delay(1000 * 60 * 60),
 			// kill game when a player is disconnected for too long
 			playerRemoved: take<
 				LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
@@ -193,10 +187,6 @@ function* gameManager(con: GameController) {
 					),
 			),
 		})
-
-		if (result.timeout) {
-			con.game.outcome = {type: 'timeout'}
-		}
 
 		if (result.playerRemoved) {
 			let playerThatLeft = con.viewers.find(
