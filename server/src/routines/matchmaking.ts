@@ -132,7 +132,6 @@ function* gameManager(con: GameController) {
 			root.getGameIds().length,
 		)
 
-		console.log('sending')
 		con.broadcastToViewers({
 			type: serverMessages.GAME_START,
 			spectatorCode: con.spectatorCode ?? undefined,
@@ -141,7 +140,6 @@ function* gameManager(con: GameController) {
 		root.hooks.newGame.call(con)
 
 		// Kill game on timeout or when user leaves for long time + cleanup after game
-		console.log('trying to start game')
 		const result = yield* race({
 			outcome: call(gameSaga, con),
 			waitForTurnAction: call(function* () {
@@ -168,7 +166,6 @@ function* gameManager(con: GameController) {
 							'FORFEIT',
 						].map((type) => playerAction(type, con.game.currentPlayer.entity)),
 					])
-					console.log('recived action', action)
 					con.sendTurnAction({
 						action: action.action,
 						playerEntity: action.playerEntity,
