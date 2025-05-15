@@ -33,9 +33,11 @@ import {
 	updateAchievements,
 } from 'db/db-reciever'
 import {GameController} from 'game-controller'
-import {LocalMessageTable, localMessages} from 'messages'
+import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
 import {
+	actionChannel,
 	all,
+	call,
 	cancel,
 	delay,
 	fork,
@@ -52,6 +54,7 @@ import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import {TurnActionCompressor} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
+import {PlayerEntity} from 'common/entities'
 
 function setupGame(
 	player1: PlayerModel,
@@ -98,6 +101,20 @@ function setupGame(
 	return con
 }
 
+function playerAction(actionType: string, playerEntity: PlayerEntity) {
+	return (actionAny: any) => {
+		const action = actionAny as LocalMessage
+		console.log(action, 'action')
+		return (
+			action.type === localMessages.GAME_TURN_ACTION &&
+			'playerEntity' in action &&
+			'action' in action &&
+			action.action.type === actionType &&
+			action.playerEntity === playerEntity
+		)
+	}
+}
+
 function* gameManager(con: GameController) {
 	// @TODO this one method needs cleanup still
 	try {
@@ -115,17 +132,53 @@ function* gameManager(con: GameController) {
 			root.getGameIds().length,
 		)
 
+		console.log('sending')
 		con.broadcastToViewers({
 			type: serverMessages.GAME_START,
 			spectatorCode: con.spectatorCode ?? undefined,
 		})
+
 		root.hooks.newGame.call(con)
-		con.task = yield* spawn(gameSaga, con)
+
+		yield* fork(gameSaga, con)
 
 		// Kill game on timeout or when user leaves for long time + cleanup after game
+		console.log('trying to start game')
 		const result = yield* race({
+			waitForTurnAction: call(function* () {
+				console.log('waiting for next action WAITNG')
+				while (true) {
+					const action: any = yield* take([
+						...['PICK_REQUEST', 'MODAL_REQUEST', 'FORFEIT'].map((type) =>
+							playerAction(type, con.game.opponentPlayer.entity),
+						),
+						...[
+							'PLAY_HERMIT_CARD',
+							'PLAY_ITEM_CARD',
+							'PLAY_EFFECT_CARD',
+							'PLAY_SINGLE_USE_CARD',
+							'PICK_REQUEST',
+							'MODAL_REQUEST',
+							'CHANGE_ACTIVE_HERMIT',
+							'APPLY_EFFECT',
+							'REMOVE_EFFECT',
+							'SINGLE_USE_ATTACK',
+							'PRIMARY_ATTACK',
+							'SECONDARY_ATTACK',
+							'END_TURN',
+							'DELAY',
+							'FORFEIT',
+						].map((type) => playerAction(type, con.game.currentPlayer.entity)),
+					])
+					console.log('recived action', action)
+					con.sendAction({
+						action: action.action,
+						playerEntity: action.playerEntity,
+					})
+				}
+			}),
 			// game ended (or crashed -> catch)
-			gameEnd: join(con.task),
+			// gameEnd: join(con.task),
 			// kill a game after one hour
 			timeout: delay(1000 * 60 * 60),
 			// kill game when a player is disconnected for too long
@@ -1128,7 +1181,8 @@ export function* createReplayGame(
 		localGameState: gameState,
 	})
 
-	con.task = yield* spawn(gameSaga, con)
+	// @todo
+	// con.task = yield* spawn(gameSaga, con)
 
 	console.info(
 		`${con.game.logHeader}`,

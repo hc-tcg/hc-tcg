@@ -19,6 +19,8 @@ import {CurrentCoinFlip, Message} from 'common/types/game-state'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {broadcast} from './utils/comm'
 import {getLocalGameState} from './utils/state-gen'
+import {AnyTurnActionData} from 'common/types/turn-action-data'
+import {TurnActionAndPlayer} from 'routines/game'
 
 export type GameControllerProps = {
 	gameCode?: string
@@ -73,8 +75,8 @@ export class GameController {
 	apiSecret: string | null
 	game: GameModel
 	chat: Array<Message>
-	task: any
 	viewers: Array<GameViewer>
+	turnActions: TurnActionAndPlayer[]
 
 	readonly props: GameControllerProps
 	readonly player1Defs: PlayerSetupDefs
@@ -106,8 +108,8 @@ export class GameController {
 		this.gameCode = props.gameCode || null
 		this.spectatorCode = props.spectatorCode || null
 		this.apiSecret = props.apiSecret || null
-		this.task = null
 		this.viewers = []
+		this.turnActions = []
 
 		this.player1Defs = player1
 		this.player2Defs = player2
@@ -228,6 +230,10 @@ export class GameController {
 			},
 			{} as Record<PlayerId, PlayerModel>,
 		)
+	}
+
+	public sendAction(action: TurnActionAndPlayer) {
+		this.turnActions.push(action)
 	}
 
 	private async publishBattleLog(logs: Array<Message>, timeout: number) {
