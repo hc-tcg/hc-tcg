@@ -143,7 +143,7 @@ function* gameManager(con: GameController) {
 		// Kill game on timeout or when user leaves for long time + cleanup after game
 		console.log('trying to start game')
 		const result = yield* race({
-			game: call(gameSaga, con),
+			outcome: call(gameSaga, con),
 			waitForTurnAction: call(function* () {
 				while (true) {
 					const action: any = yield* take([

@@ -850,6 +850,8 @@ async function gameSaga(con: GameController) {
 			),
 		),
 	])
+
+	return con.game.outcome
 }
 
 export default gameSaga
