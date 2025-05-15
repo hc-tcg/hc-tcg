@@ -242,8 +242,9 @@ export class GameController {
 		if (this.turnActionListener) {
 			this.turnActionListener(action)
 			this.turnActionListener = null
+		} else {
+			this.turnActions.push(action)
 		}
-		this.turnActions.push(action)
 	}
 
 	public async waitForTurnAction(): Promise<TurnActionAndPlayer> {
@@ -256,6 +257,10 @@ export class GameController {
 				resolve(turnAction)
 			}
 		})
+	}
+
+	public stopWaitingForAction() {
+		this.turnActionListener = null
 	}
 
 	private async publishBattleLog(logs: Array<Message>, timeout: number) {

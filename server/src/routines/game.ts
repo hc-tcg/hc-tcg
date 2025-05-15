@@ -585,6 +585,7 @@ async function turnActionsSaga(con: GameController) {
 			raceResult = await Promise.race([
 				new Promise(async (resolve) => {
 					const action = await con.waitForTurnAction()
+					console.log(action)
 					resolve({turnAction: action})
 				}),
 				new Promise((resolve) =>
@@ -593,7 +594,7 @@ async function turnActionsSaga(con: GameController) {
 			])
 		}
 
-		console.log('promise', raceResult)
+		con.stopWaitingForAction()
 
 		// Reset coin flips
 		currentPlayer.coinFlips = []
