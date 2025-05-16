@@ -377,7 +377,6 @@ export function handleSingleTurnAction(
 	con: GameController,
 	turnAction: TurnActionAndPlayer,
 ) {
-	console.log('turn action saga', turnAction)
 	const actionType = turnAction.action.type
 
 	let endTurn = false
