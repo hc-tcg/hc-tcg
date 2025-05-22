@@ -60,6 +60,7 @@ export function* receiveGameMessages(con: GameController) {
 		const action: any = yield* take(
 			(action: any) => action.type == 'GAME_TURN_ACTION',
 		)
+		console.log(action)
 		con.sendTurnAction({
 			action: action.action,
 			playerEntity: action.playerEntity,
@@ -318,8 +319,8 @@ export function testGame(
 
 	testSagas(
 		call(function* () {
-			yield* fork(receiveGameMessages, controller)
-			yield* call(gameSaga, controller)
+			yield* fork(gameSaga, controller)
+			yield* call(receiveGameMessages, controller)
 		}),
 		call(function* () {
 			yield* call(options.saga, controller.game)
@@ -332,8 +333,7 @@ export function testGame(
 	}
 
 	if (options.then) {
-		const result = figureOutGameResult(controller.game)
-		options.then(controller.game, result)
+		options.then(controller.game, controller.game.outcome!)
 	}
 }
 
@@ -421,8 +421,8 @@ export function testBossFight(
 
 	testSagas(
 		call(function* () {
-			yield* fork(receiveGameMessages, controller)
 			yield* call(gameSaga, controller)
+			yield* fork(receiveGameMessages, controller)
 		}),
 		call(function* () {
 			yield* call(options.saga, controller.game)
