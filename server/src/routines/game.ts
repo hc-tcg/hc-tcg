@@ -14,18 +14,16 @@ import {GameModel} from 'common/models/game-model'
 import {TypeT} from 'common/types/cards'
 import {GameOutcome, TurnAction, TurnActions} from 'common/types/game-state'
 import {
+	AnyTurnActionData,
 	AttackActionData,
 	PickSlotActionData,
 	attackToAttackAction,
 } from 'common/types/turn-action-data'
 import {hasEnoughEnergy} from 'common/utils/attacks'
-import {buffers} from 'redux-saga'
-import {actionChannel, call, delay, fork, race, take} from 'typed-redux-saga'
 import {printBoardState, printHooksState} from '../utils'
 
 import assert from 'assert'
 import {GameController} from '../game-controller'
-import {LocalMessage, LocalMessageTable, localMessages} from '../messages'
 import {
 	applyEffectAction,
 	attackAction,
@@ -37,9 +35,10 @@ import {
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
 
-////////////////////////////////////////
-// @TODO sort this whole thing out properly
-/////////////////////////////////////////
+export type TurnActionAndPlayer = {
+	action: AnyTurnActionData
+	playerEntity: PlayerEntity
+}
 
 export const getTimerForSeconds = (
 	game: GameModel,
@@ -298,19 +297,6 @@ function getAvailableActions(
 	return filteredActions
 }
 
-function playerAction(actionType: string, playerEntity: PlayerEntity) {
-	return (actionAny: any) => {
-		const action = actionAny as LocalMessage
-		return (
-			action.type === localMessages.GAME_TURN_ACTION &&
-			'playerEntity' in action &&
-			'action' in action &&
-			action.action.type === actionType &&
-			action.playerEntity === playerEntity
-		)
-	}
-}
-
 // return false in case one player is dead
 // @TODO completely redo how we calculate if a hermit is dead etc
 function checkHermitHealth(game: GameModel) {
@@ -389,7 +375,7 @@ function checkHermitHealth(game: GameModel) {
 
 export function handleSingleTurnAction(
 	con: GameController,
-	turnAction: LocalMessageTable[typeof localMessages.GAME_TURN_ACTION],
+	turnAction: TurnActionAndPlayer,
 ) {
 	const actionType = turnAction.action.type
 
@@ -522,7 +508,7 @@ function getPlayerAI(game: GameModel) {
 	)
 }
 
-function* turnActionsSaga(con: GameController, turnActionChannel: any) {
+async function turnActionsSaga(con: GameController) {
 	const {opponentPlayer, currentPlayer} = con.game
 
 	while (true) {
@@ -588,17 +574,24 @@ function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 		con.broadcastState()
 		con.game.battleLog.sendLogs()
 
+		let raceResult: any
+
 		const playerAI = getPlayerAI(con.game)
 		if (playerAI) {
-			yield* fork(function* () {
-				yield* call(virtualPlayerActionSaga, con, playerAI)
-			})
+			raceResult = {turnAction: await virtualPlayerActionSaga(con, playerAI)}
+		} else {
+			raceResult = await Promise.race([
+				new Promise(async (resolve) => {
+					const action = await con.waitForTurnAction()
+					resolve({turnAction: action})
+				}),
+				new Promise((resolve) =>
+					setTimeout(() => resolve({timeout: null}), graceTime + remainingTime),
+				),
+			])
 		}
 
-		const raceResult = yield* race({
-			turnAction: take(turnActionChannel),
-			timeout: delay(remainingTime + graceTime),
-		}) as any // @NOTE - need to type as any due to typed-redux-saga inferring the wrong return type for action channel
+		con.stopWaitingForAction()
 
 		// Reset coin flips
 		currentPlayer.coinFlips = []
@@ -680,7 +673,7 @@ function* turnActionsSaga(con: GameController, turnActionChannel: any) {
 	}
 }
 
-export function* turnSaga(con: GameController) {
+export async function turnSaga(con: GameController) {
 	const {currentPlayer, opponentPlayer} = con.game
 
 	// Reset turn state
@@ -719,34 +712,7 @@ export function* turnSaga(con: GameController) {
 		}
 	}
 
-	const turnActionChannel = yield* actionChannel(
-		[
-			...['PICK_REQUEST', 'MODAL_REQUEST', 'FORFEIT'].map((type) =>
-				playerAction(type, opponentPlayer.entity),
-			),
-			...[
-				'PLAY_HERMIT_CARD',
-				'PLAY_ITEM_CARD',
-				'PLAY_EFFECT_CARD',
-				'PLAY_SINGLE_USE_CARD',
-				'PICK_REQUEST',
-				'MODAL_REQUEST',
-				'CHANGE_ACTIVE_HERMIT',
-				'APPLY_EFFECT',
-				'REMOVE_EFFECT',
-				'SINGLE_USE_ATTACK',
-				'PRIMARY_ATTACK',
-				'SECONDARY_ATTACK',
-				'END_TURN',
-				'DELAY',
-				'FORFEIT',
-			].map((type) => playerAction(type, currentPlayer.entity)),
-		],
-		buffers.dropping(10),
-	)
-
-	let result = yield* call(turnActionsSaga, con, turnActionChannel)
-	turnActionChannel.close()
+	let result = await turnActionsSaga(con)
 
 	if (result === 'GAME_END') return 'GAME_END'
 
@@ -824,47 +790,65 @@ function checkDeckedOut(game: GameModel) {
 	)
 }
 
-function* gameSaga(con: GameController) {
+async function gameSaga(con: GameController) {
 	if (con.game.settings.verboseLogging)
-		console.info(
+	console.info(
 			`${con.game.logHeader} ${con.game.opponentPlayer.playerName} was decided to be the first player.`,
 		)
-	while (true) {
-		con.game.state.turn.turnNumber++
-		const result = yield* call(turnSaga, con)
-		if (result === 'GAME_END') break
-	}
-	con.game.outcome = figureOutGameResult(con.game)
-	con.game.hooks.onGameEnd.call(con.game.outcome)
 
-	if (con.game.outcome && con.game.outcome.type === 'player-won') {
-		const winningPlayer = con.game.components.find(
-			PlayerComponent,
-			query.player.entity(con.game.outcome.winner),
-		)
-		const winningPlayerName = winningPlayer?.playerName
-		con.game.battleLog.addEntry(
-			con.game.outcome.winner,
-			`$p{You|${winningPlayerName}}$ won the game`,
-		)
-	} else if (con.game.outcome && con.game.outcome.type === 'tie') {
-		con.game.battleLog.addEntry(
-			con.game.currentPlayer.entity,
-			'{$pYou$|$oYou$} tied your opponent',
-		)
-	} else if (con.game.outcome) {
-		con.game.battleLog.addEntry(
-			con.game.currentPlayer.entity,
-			'There was an error',
-		)
-	} else {
-		con.game.battleLog.addEntry(
-			con.game.currentPlayer.entity,
-			'The game ended before an outcome was decided',
-		)
-	}
+	await Promise.race([
+		(async () => {
+			while (true) {
+				con.game.state.turn.turnNumber++
+				const result = await turnSaga(con)
+				if (result === 'GAME_END') break
+			}
 
-	con.game.battleLog.sendLogs()
+			con.game.outcome = figureOutGameResult(con.game)
+			con.game.hooks.onGameEnd.call(con.game.outcome)
+
+			if (con.game.outcome && con.game.outcome.type === 'player-won') {
+				const winningPlayer = con.game.components.find(
+					PlayerComponent,
+					query.player.entity(con.game.outcome.winner),
+				)
+				const winningPlayerName = winningPlayer?.playerName
+				con.game.battleLog.addEntry(
+					con.game.outcome.winner,
+					`$p{You|${winningPlayerName}}$ won the game`,
+				)
+			} else if (con.game.outcome && con.game.outcome.type === 'tie') {
+				con.game.battleLog.addEntry(
+					con.game.currentPlayer.entity,
+					'{$pYou$|$oYou$} tied your opponent',
+				)
+			} else if (con.game.outcome) {
+				con.game.battleLog.addEntry(
+					con.game.currentPlayer.entity,
+					'There was an error',
+				)
+			} else {
+				con.game.battleLog.addEntry(
+					con.game.currentPlayer.entity,
+					'The game ended before an outcome was decided',
+				)
+			}
+
+			con.game.battleLog.sendLogs()
+		})(),
+		/* Timeout games after 2 hours */
+		new Promise((resolve) =>
+			setTimeout(
+				() => {
+					con.game.outcome = {type: 'timeout'}
+					resolve(null)
+				},
+				1000 * 60 * 60 * 2,
+			),
+		),
+	])
+
+	return con.game.outcome
 }
 
 export default gameSaga

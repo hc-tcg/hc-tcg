@@ -19,6 +19,7 @@ import {CurrentCoinFlip, Message} from 'common/types/game-state'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {broadcast} from './utils/comm'
 import {getLocalGameState} from './utils/state-gen'
+import {TurnActionAndPlayer} from 'routines/game'
 
 export type GameControllerProps = {
 	gameCode?: string
@@ -80,6 +81,9 @@ export class GameController {
 	readonly player1Defs: PlayerSetupDefs
 	readonly player2Defs: PlayerSetupDefs
 
+	private turnActions: TurnActionAndPlayer[]
+	private turnActionListener: ((turnAction: TurnActionAndPlayer) => any) | null
+
 	constructor(
 		player1: PlayerSetupDefs,
 		player2: PlayerSetupDefs,
@@ -108,6 +112,9 @@ export class GameController {
 		this.apiSecret = props.apiSecret || null
 		this.task = null
 		this.viewers = []
+
+		this.turnActions = []
+		this.turnActionListener = null
 
 		this.player1Defs = player1
 		this.player2Defs = player2
@@ -228,6 +235,31 @@ export class GameController {
 			},
 			{} as Record<PlayerId, PlayerModel>,
 		)
+	}
+
+	public sendTurnAction(action: TurnActionAndPlayer) {
+		if (this.turnActionListener) {
+			this.turnActionListener(action)
+			this.turnActionListener = null
+		} else {
+			this.turnActions.push(action)
+		}
+	}
+
+	public async waitForTurnAction(): Promise<TurnActionAndPlayer> {
+		if (this.turnActions.length > 0) {
+			return this.turnActions.shift() as TurnActionAndPlayer
+		}
+
+		return await new Promise((resolve) => {
+			this.turnActionListener = (turnAction) => {
+				resolve(turnAction)
+			}
+		})
+	}
+
+	public stopWaitingForAction() {
+		this.turnActionListener = null
 	}
 
 	private async publishBattleLog(logs: Array<Message>, timeout: number) {

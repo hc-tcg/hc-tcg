@@ -33,9 +33,11 @@ import {
 	updateAchievements,
 } from 'db/db-reciever'
 import {GameController} from 'game-controller'
-import {LocalMessageTable, localMessages} from 'messages'
+import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
 import {
+	actionChannel,
 	all,
+	call,
 	cancel,
 	delay,
 	fork,
@@ -52,6 +54,7 @@ import {getLocalGameState} from '../utils/state-gen'
 import gameSaga, {getTimerForSeconds} from './game'
 import {TurnActionCompressor} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
+import {PlayerEntity} from 'common/entities'
 
 function setupGame(
 	player1: PlayerModel,
@@ -119,15 +122,25 @@ function* gameManager(con: GameController) {
 			type: serverMessages.GAME_START,
 			spectatorCode: con.spectatorCode ?? undefined,
 		})
+
 		root.hooks.newGame.call(con)
-		con.task = yield* spawn(gameSaga, con)
 
 		// Kill game on timeout or when user leaves for long time + cleanup after game
 		const result = yield* race({
-			// game ended (or crashed -> catch)
-			gameEnd: join(con.task),
-			// kill a game after one hour
-			timeout: delay(1000 * 60 * 60),
+			outcome: call(gameSaga, con),
+			waitForTurnAction: call(function* () {
+				while (true) {
+					const action: any = yield* take(
+						(action: any) =>
+							action.type == localMessages.GAME_TURN_ACTION &&
+							action.game == con.id,
+					)
+					con.sendTurnAction({
+						action: action.action,
+						playerEntity: action.playerEntity,
+					})
+				}
+			}),
 			// kill game when a player is disconnected for too long
 			playerRemoved: take<
 				LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
@@ -141,10 +154,6 @@ function* gameManager(con: GameController) {
 			),
 		})
 
-		if (result.timeout) {
-			con.game.outcome = {type: 'timeout'}
-		}
-
 		if (result.playerRemoved) {
 			let playerThatLeft = con.viewers.find(
 				(v) => v.player.id === result.playerRemoved?.player.id,
@@ -154,6 +163,7 @@ function* gameManager(con: GameController) {
 				(_g, c) => c.entity !== playerThatLeft,
 			)?.entity
 			assert(remainingPlayer, 'There is no way there is no remaining player.')
+			// @todo It would be best if the actual game runner did not know about disconnects.
 			con.game.outcome = {
 				type: 'player-won',
 				victoryReason: 'disconnect',
@@ -1128,7 +1138,8 @@ export function* createReplayGame(
 		localGameState: gameState,
 	})
 
-	con.task = yield* spawn(gameSaga, con)
+	// @todo
+	// con.task = yield* spawn(gameSaga, con)
 
 	console.info(
 		`${con.game.logHeader}`,

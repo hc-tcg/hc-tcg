@@ -31,7 +31,7 @@ import {GameController} from 'server/game-controller'
 import {LocalMessage, localMessages} from 'server/messages'
 import gameSaga, {figureOutGameResult} from 'server/routines/game'
 import {getLocalCard} from 'server/utils/state-gen'
-import {call, put, race} from 'typed-redux-saga'
+import {call, fork, put, race, take} from 'typed-redux-saga'
 
 function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 	return {
@@ -55,10 +55,23 @@ export function findCardInHand(player: PlayerComponent, card: Card) {
 	return cardInHand
 }
 
+export function* receiveGameMessages(con: GameController) {
+	while (true) {
+		const action: any = yield* take(
+			(action: any) => action.type == 'GAME_TURN_ACTION',
+		)
+		console.log(action)
+		con.sendTurnAction({
+			action: action.action,
+			playerEntity: action.playerEntity,
+		})
+	}
+}
+
 /** End the current player's turn. */
 export function* endTurn(game: GameModel) {
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
+	yield* put({
+		type: 'GAME_TURN_ACTION',
 		playerEntity: game.currentPlayer.entity,
 		action: {
 			type: 'END_TURN',
@@ -114,8 +127,8 @@ export function* playCardFromHand(
 		(_game, slot) => slot.type === slotType,
 	)!
 
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
+	yield* put({
+		type: 'GAME_TURN_ACTION',
 		playerEntity: game.currentPlayer.entity,
 		action: {
 			type: slotToPlayCardAction[cardComponent.props.category],
@@ -127,8 +140,8 @@ export function* playCardFromHand(
 
 /** Apply the effect card in the single use slot. This should be used to apply status effects that use the "should apply" modal. */
 export function* applyEffect(game: GameModel) {
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
+	yield* put({
+		type: 'GAME_TURN_ACTION',
 		playerEntity: game.currentPlayer.entity,
 		action: {
 			type: 'APPLY_EFFECT',
@@ -138,8 +151,8 @@ export function* applyEffect(game: GameModel) {
 
 /** Removes the effect card in the single use slot. This should be used to cancel effects that use the "should apply" modal or cancel an attack with pick requests. */
 export function* removeEffect(game: GameModel) {
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
+	yield* put({
+		type: 'GAME_TURN_ACTION',
 		playerEntity: game.currentPlayer.entity,
 		action: {
 			type: 'REMOVE_EFFECT',
@@ -152,8 +165,8 @@ export function* attack(
 	game: GameModel,
 	attack: 'primary' | 'secondary' | 'single-use',
 ) {
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
+	yield* put({
+		type: 'GAME_TURN_ACTION',
 		playerEntity: game.currentPlayer.entity,
 		action: {
 			type: attackToAttackAction[attack],
@@ -163,8 +176,8 @@ export function* attack(
 
 /** Change the active hermit row for the current player. */
 export function* changeActiveHermit(game: GameModel, index: number) {
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
+	yield* put({
+		type: 'GAME_TURN_ACTION',
 		playerEntity: game.currentPlayer.entity,
 		action: {
 			type: 'CHANGE_ACTIVE_HERMIT',
@@ -182,8 +195,8 @@ export function* pick(
 	game: GameModel,
 	...slot: Array<ComponentQuery<SlotComponent>>
 ) {
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
+	yield* put({
+		type: 'GAME_TURN_ACTION',
 		playerEntity: game.state.pickRequests[0].player,
 		action: {
 			type: 'PICK_REQUEST',
@@ -197,8 +210,8 @@ export function* finishModalRequest(
 	game: GameModel,
 	modalResult: LocalModalResult,
 ) {
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
+	yield* put({
+		type: 'GAME_TURN_ACTION',
 		playerEntity: game.state.modalRequests[0].player,
 		action: {
 			type: 'MODAL_REQUEST',
@@ -208,8 +221,8 @@ export function* finishModalRequest(
 }
 
 export function* forfeit(player: PlayerEntity) {
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
+	yield* put({
+		type: 'GAME_TURN_ACTION',
 		playerEntity: player,
 		action: {
 			type: 'FORFEIT',
@@ -306,7 +319,8 @@ export function testGame(
 
 	testSagas(
 		call(function* () {
-			yield* call(gameSaga, controller)
+			yield* fork(gameSaga, controller)
+			yield* call(receiveGameMessages, controller)
 		}),
 		call(function* () {
 			yield* call(options.saga, controller.game)
@@ -319,8 +333,7 @@ export function testGame(
 	}
 
 	if (options.then) {
-		const result = figureOutGameResult(controller.game)
-		options.then(controller.game, result)
+		options.then(controller.game, controller.game.outcome!)
 	}
 }
 
@@ -409,6 +422,7 @@ export function testBossFight(
 	testSagas(
 		call(function* () {
 			yield* call(gameSaga, controller)
+			yield* fork(receiveGameMessages, controller)
 		}),
 		call(function* () {
 			yield* call(options.saga, controller.game)
@@ -499,8 +513,8 @@ export function* bossAttack(game: GameModel, ...attack: BOSS_ATTACK) {
 	if (bossCard === null) throw new Error('Boss card not found to attack with')
 	if (attackType === undefined) throw new Error('Boss can not attack right now')
 	supplyBossAttack(bossCard, attack)
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
+	yield* put({
+		type: 'GAME_TURN_ACTION',
 		playerEntity: game.currentPlayerEntity,
 		action: {
 			type: attackType,
