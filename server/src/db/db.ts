@@ -60,7 +60,13 @@ export class Database {
 		allAchievements: Array<Achievement>,
 		bfDepth: number,
 	) {
-		this.pool = new Pool({connectionString: env.DATABASE_URL})
+		this.pool = new Pool({
+			connectionString: env.DATABASE_URL,
+			/* Refresh a client's connection to the DB every two minutes. This is
+			 * to fix an issue where the client can not connect to the ly database
+			 * and is never reconnectd. Right now this is a theoretical issue and fix. */
+			connectionTimeoutMillis: 60 * 1000,
+		})
 		this.allCards = allCards
 		this.allAchievements = allAchievements
 		this.bfDepth = bfDepth
