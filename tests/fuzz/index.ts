@@ -134,3 +134,7 @@ async function main() {
 }
 
 await main()
+
+/* The process doesn't exit when I want it to, so I'm forcing it to exit */
+process.exit(0)
+
