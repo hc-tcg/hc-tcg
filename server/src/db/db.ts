@@ -63,9 +63,9 @@ export class Database {
 		this.pool = new Pool({
 			connectionString: env.DATABASE_URL,
 			/* Refresh a client's connection to the DB every two minutes. This is
-			 * to fix an issue where the client is disconnectd from the fly database
+			 * to fix an issue where the client can not connect to the ly database
 			 * and is never reconnectd. Right now this is a theoretical issue and fix. */
-			connectionTimeoutMillis: 60 * 1000 * 2,
+			connectionTimeoutMillis: 60 * 1000,
 		})
 		this.allCards = allCards
 		this.allAchievements = allAchievements
