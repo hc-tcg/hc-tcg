@@ -19,6 +19,7 @@ import query from './query'
 import {RowComponent} from './row-component'
 import {SlotComponent} from './slot-component'
 import {StatusEffectComponent} from './status-effect-component'
+import {PickRequest} from '../types/server-requests'
 
 /** The minimal information that must be known about a player to start a game */
 export type PlayerDefs = {
@@ -363,7 +364,7 @@ export class PlayerComponent {
 	/** Create a pick request for knockback. This function will return null if there is no
 	 * valid hermit to switch to or the player can not be knocked back.
 	 */
-	public getKnockbackPickRequest(component: CardComponent) {
+	public getKnockbackPickRequest(component: CardComponent): PickRequest | null {
 		const pickCondition = query.every(
 			query.slot.player(this.entity),
 			query.slot.hermit,

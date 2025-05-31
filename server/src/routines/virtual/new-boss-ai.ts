@@ -14,6 +14,7 @@ import {
 	AttackActionData,
 } from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
+import {hasEnoughEnergy} from 'common/utils/attacks'
 import {getLocalCard} from '../../utils/state-gen'
 
 /** Sorts `BoardSlotComponent`s by active row first then descending row health */
@@ -35,31 +36,6 @@ const cardIsPlayable = (game: GameModel, card: CardComponent): boolean =>
 	game.components.exists(SlotComponent, card.props.attachCondition)
 
 // Helper function to check if we have enough energy for an attack
-const hasEnoughEnergy = (
-	currentEnergy: Array<string>,
-	requiredEnergy: Array<string>,
-	noRequirements: boolean,
-): boolean => {
-	if (noRequirements) return true
-	if (!requiredEnergy || requiredEnergy.length === 0) return true
-
-	const availableEnergy = [...currentEnergy]
-	const required = [...requiredEnergy]
-
-	// First match all specific energy requirements
-	for (let i = required.length - 1; i >= 0; i--) {
-		const energy = required[i]
-		if (energy === 'any') continue
-
-		const index = availableEnergy.indexOf(energy)
-		if (index === -1) return false
-		availableEnergy.splice(index, 1)
-		required.splice(i, 1)
-	}
-
-	// Then use remaining energy (including 'any') for remaining requirements
-	return availableEnergy.length >= required.length
-}
 
 function getNextTurnAction(
 	game: GameModel,
@@ -473,7 +449,14 @@ function getNextTurnAction(
 				query.not(query.slot.empty),
 			)
 
-			let targetAttachSlot = null
+			let targetAttachSlot = game.components
+				.filter(
+					BoardSlotComponent,
+					effectCard.props.attachCondition,
+					attach.attachCondition,
+				)
+				.sort(compareBoardSlots)
+				.at(0)?.entity
 
 			// First try to find an empty attach slot for the active hermit
 			if (activeHermit && activeHermit.inRow()) {
@@ -635,7 +618,7 @@ function getNextTurnAction(
 						query.slot.player(player.entity),
 						query.slot.item,
 						query.slot.empty,
-						(_game, slot) => slot.inRow() && slot.rowEntity === row.entity,
+						query.slot.rowIs(row.entity),
 					)
 
 					if (emptyItemSlots.length > 0) {
@@ -785,7 +768,7 @@ function getNextTurnAction(
 							query.slot.player(player.entity),
 							query.slot.item,
 							query.slot.empty,
-							(_game, slot) => slot.inRow() && slot.rowEntity === row.entity,
+							query.slot.rowIs(row.entity),
 						)
 
 						if (itemSlots.length > 0 && health > bestHealth) {
