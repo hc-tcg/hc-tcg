@@ -74,7 +74,7 @@ function GameModeButton({
 			: 0,
 	)
 
-	const onMobile = window.screen.width / window.screen.height <= 1
+	const onMobile = window.innerWidth <= window.innerHeight
 
 	const [buttonPosition, setButtonPosition] = useState<{
 		x: number
@@ -92,6 +92,7 @@ function GameModeButton({
 			reload()
 		} else {
 			const pos = buttonRef.current.getBoundingClientRect()
+			const onMobile = window.innerWidth <= window.innerHeight
 			setButtonPosition({x: pos.x, y: pos.y, h: pos.height, w: pos.width})
 
 			if (activeMode === mode) {
