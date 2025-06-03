@@ -47,6 +47,10 @@ function blockEffect(
 	component: CardComponent,
 	observer: ObserverComponent,
 ) {
+	const {player, opponentPlayer} = component
+
+	let damageBlocked = 0
+
 	observer.subscribeWithPriority(
 		game.hooks.beforeAttack,
 		beforeAttack.EFFECT_BLOCK_DAMAGE,
@@ -56,7 +60,14 @@ function blockEffect(
 			}
 			if (attack.isType('effect')) {
 				if (amount !== null) {
-					attack.removeDamage(component.entity, amount)
+					if (damageBlocked < amount) {
+						const damageReduction = Math.min(
+							attack.calculateDamage(),
+							amount - damageBlocked,
+						)
+						damageBlocked += damageReduction
+						attack.addDamageReduction(component.entity, damageReduction)
+					}
 				} else {
 					attack
 						.multiplyDamage(component.entity, 0)
@@ -65,6 +76,14 @@ function blockEffect(
 			}
 		},
 	)
+
+	const resetCounter = () => {
+		damageBlocked = 0
+	}
+
+	// Reset counter at the start of every turn
+	observer.subscribe(player.hooks.onTurnStart, resetCounter)
+	observer.subscribe(opponentPlayer.hooks.onTurnStart, resetCounter)
 }
 
 function blockSingleUseRedirect(
