@@ -38,13 +38,6 @@ const designers: CreditProps[] = [
 
 const developers: CreditProps[] = [
 	{
-		name: 'Minion Harou',
-		handle: 'minionharou',
-		social: 'discord',
-		avatar:
-			'https://cdn.discordapp.com/avatars/171689337954500608/c17287ea15fbbbf66f8bfcbcdf6bd705.webp',
-	},
-	{
 		name: 'Benji',
 		handle: '東方愛麗絲',
 		social: 'github',
