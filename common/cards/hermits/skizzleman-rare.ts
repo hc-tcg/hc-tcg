@@ -35,7 +35,7 @@ const SkizzlemanRare: Hermit = {
 		cost: ['builder', 'builder'],
 		damage: 70,
 		power:
-			"After your attack, do an additional 20hp damage to each of your opponent's AFK Hermits that took damage during this turn.",
+			"At the end of your turn, do an additional 20hp damage to each of your opponent's AFK Hermits that took damage during this turn.",
 	},
 	onCreate(game: GameModel, component: CardComponent) {
 		const newObserver = game.components.new(ObserverComponent, component.entity)
