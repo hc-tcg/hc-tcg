@@ -133,7 +133,11 @@ export class AchievementComponent {
 		progress = 1,
 	}: {goal: number; progress?: number}) {
 		const progressChecker = this.checkCompletion(this.goals)
-		this.goals[goal] = progress
+		this.goals = combineAchievementProgress(
+			this.props.progressionMethod,
+			this.goals,
+			{[goal]: progress},
+		)
 		progressChecker()
 	}
 }
