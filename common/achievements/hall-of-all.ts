@@ -17,8 +17,10 @@ const HallOfAll: Achievement = {
 		},
 	],
 	onGameStart(game, player, component, observer) {
-		observer.subscribe(player.hooks.onAttach, () => {
+		observer.subscribe(player.hooks.onAttach, (card) => {
 			if (
+				!card.slot.inRow() ||
+				card.player.entity !== player.entity ||
 				game.components.find(
 					SlotComponent,
 					query.slot.player(player.entity),
@@ -28,6 +30,7 @@ const HallOfAll: Achievement = {
 			)
 				return
 			component.updateGoalProgress({goal: 0})
+			observer.unsubscribeFromEverything()
 		})
 	},
 }
