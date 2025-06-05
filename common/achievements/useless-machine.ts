@@ -20,8 +20,8 @@ const UselessMachine: Achievement = {
 	onGameStart(game, player, component, observer) {
 		let playerHand: Array<string> = []
 
-		observer.subscribe(player.hooks.onAttach, (slot) => {
-			if (!slot.isSingleUse()) return
+		observer.subscribe(player.hooks.onAttach, (card) => {
+			if (card.slot.type !== 'single_use') return
 			playerHand = player.getHand().map((card) => card.props.id)
 		})
 
