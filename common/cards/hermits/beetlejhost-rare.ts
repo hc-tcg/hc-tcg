@@ -44,7 +44,7 @@ const BeetlejhostRare: Hermit = {
 		cost: ['balanced', 'balanced'],
 		damage: 100,
 		power:
-			'This attack does 10hp less damage every time it is used on consecutive turns.',
+			'This attack does 10hp less damage every time it is used by this Hermit on consecutive turns.',
 	},
 	onAttach(
 		game: GameModel,

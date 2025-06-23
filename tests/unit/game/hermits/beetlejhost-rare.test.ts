@@ -5,6 +5,7 @@ import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
 import BadOmen from 'common/cards/single-use/bad-omen'
 import EnderPearl from 'common/cards/single-use/ender-pearl'
 import InvisibilityPotion from 'common/cards/single-use/invisibility-potion'
+import Knockback from 'common/cards/single-use/knockback'
 import PotionOfWeakness from 'common/cards/single-use/potion-of-weakness'
 import {IronSword} from 'common/cards/single-use/sword'
 import {RowComponent, StatusEffectComponent} from 'common/components'
@@ -364,6 +365,56 @@ describe('Test Beetlejhost Rare', () => {
 							.getActiveHermit()
 							?.getStatusEffect(ChromaKeyedEffect)?.counter,
 					).toBe(2)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+	test('Jopacity reduction is not shared between hermits', () => {
+		testGame(
+			{
+				playerOneDeck: [BeetlejhostRare, Knockback],
+				playerTwoDeck: [BeetlejhostRare, BeetlejhostRare],
+				saga: function* (game) {
+					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
+					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 1)
+					yield* attack(game, 'secondary')
+					yield* endTurn(game)
+
+					yield* playCardFromHand(game, Knockback, 'single_use')
+					yield* attack(game, 'secondary')
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						BeetlejhostRare.health - BeetlejhostRare.secondary.damage,
+					)
+					yield* pick(
+						game,
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					yield* endTurn(game)
+
+					yield* attack(game, 'secondary')
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						BeetlejhostRare.health -
+							BeetlejhostRare.secondary.damage -
+							BeetlejhostRare.secondary.damage,
+					)
+					yield* endTurn(game)
+
+					expect(
+						game.opponentPlayer
+							.getActiveHermit()
+							?.getStatusEffect(ChromaKeyedEffect)?.counter,
+					).toBe(1)
+					expect(
+						game.currentPlayer
+							.getActiveHermit()
+							?.getStatusEffect(ChromaKeyedEffect)?.counter,
+					).toBe(1)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
