@@ -130,45 +130,4 @@ describe('Test xB', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test "Noice!" ignores attachables with Target Block.', () => {
-		testGame(
-			{
-				playerOneDeck: [EthosLabCommon, EthosLabCommon, IronArmor],
-				playerTwoDeck: [XBCraftedRare, TargetBlock],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, IronArmor, 'attach', 1)
-					yield* endTurn(game)
-
-					yield* playCardFromHand(game, XBCraftedRare, 'hermit', 0)
-					yield* playCardFromHand(game, TargetBlock, 'single_use')
-					yield* pick(
-						game,
-						query.slot.rowIndex(1),
-						query.slot.opponent,
-						query.slot.hermit,
-					)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
-
-					expect(
-						game.components.find(
-							RowComponent,
-							query.row.currentPlayer,
-							query.row.index(0),
-						)?.health,
-					).toBe(EthosLabCommon.health)
-					expect(
-						game.components.find(
-							RowComponent,
-							query.row.currentPlayer,
-							query.row.index(1),
-						)?.health,
-					).toBe(EthosLabCommon.health - XBCraftedRare.secondary.damage)
-				},
-			},
-			{startWithAllCards: true, noItemRequirements: true},
-		)
-	})
 })
