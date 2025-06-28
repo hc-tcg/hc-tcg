@@ -269,15 +269,13 @@ describe('Test Slimeball', () => {
 				await test.endTurn()
 
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(
-					game,
+				await test.playCardFromHand(
 					Slimeball,
 					'attach',
 					0,
 					game.opponentPlayerEntity,
 				)
-				yield* playCardFromHand(
-					game,
+				await test.playCardFromHand(
 					String,
 					'item',
 					0,
