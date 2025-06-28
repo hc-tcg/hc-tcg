@@ -23,7 +23,7 @@ const deck = [
 ]
 
 function postMasterTest(pearls: number, results: boolean[]) {
-	test(`Test ${pearls} pearl card(s) with ${results}`, () =>
+	test(`Test ${pearls} pearl card(s) with ${results}`, async () =>
 		await testGame({
 			playerOneDeck: deck,
 			playerTwoDeck: deck,
@@ -45,7 +45,7 @@ function postMasterTest(pearls: number, results: boolean[]) {
 							.getDrawPile()
 							.sort(CardComponent.compareOrder)
 							.at(0)?.props
-					await test.finishModalRequest( {result: results[i], cards: null})
+					await test.finishModalRequest({result: results[i], cards: null})
 				}
 				expect(game.state.modalRequests).toHaveLength(0)
 				expect(
