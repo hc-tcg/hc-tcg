@@ -28,14 +28,14 @@ describe('Test Sculk Catalyst', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
-					yield* bossAttack(game, '50DMG')
+					await test.bossAttack('50DMG')
 					await test.endTurn()
 
 					await test.playCardFromHand(SculkCatalyst, 'attach', 0)
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* bossAttack(game, '70DMG')
+					await test.bossAttack('70DMG')
 					await test.endTurn()
 
 					await test.attack('secondary')

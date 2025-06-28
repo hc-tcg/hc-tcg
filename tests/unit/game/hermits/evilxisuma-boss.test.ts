@@ -37,7 +37,7 @@ function* testConsecutiveAmnesia(game: GameModel) {
 	await test.endTurn()
 
 	await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
-	yield* bossAttack(game, '50DMG')
+	await test.bossAttack( '50DMG')
 	await test.endTurn()
 
 	await test.playCardFromHand(Anvil, 'single_use')
@@ -63,7 +63,7 @@ function* testConsecutiveAmnesia(game: GameModel) {
 		),
 	).not.toBeNull()
 
-	yield* bossAttack(game, '50DMG', 'ABLAZE')
+	await test.bossAttack( '50DMG', 'ABLAZE')
 	await test.endTurn()
 
 	expect(game.currentPlayer.activeRow?.health).toBe(
@@ -100,7 +100,7 @@ function* testVersusRendogRare(game: GameModel) {
 	await test.endTurn()
 
 	await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
-	yield* bossAttack(game, '50DMG')
+	await test.bossAttack( '50DMG')
 	await test.endTurn()
 
 	await test.attack('secondary')
@@ -121,7 +121,7 @@ function* testVersusRendogRare(game: GameModel) {
 		),
 	).toBeTruthy()
 
-	yield* bossAttack(game, '50DMG', 'ABLAZE')
+	await test.bossAttack( '50DMG', 'ABLAZE')
 	await test.endTurn()
 
 	expect(game.currentPlayer.activeRow?.health).toBe(RendogRare.health - 50)
@@ -164,7 +164,7 @@ function* testDirectlyOpposite(game: GameModel) {
 	)
 
 	await test.endTurn()
-	yield* bossAttack(game, '50DMG', 'HEAL150')
+	await test.bossAttack( '50DMG', 'HEAL150')
 	await test.endTurn()
 	await test.changeActiveHermit( 0)
 	await test.endTurn()
@@ -247,34 +247,34 @@ function* testChallengerVictory(game: GameModel) {
 	await test.endTurn()
 
 	await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
-	yield* bossAttack(game, '50DMG')
+	await test.bossAttack( '50DMG')
 	await test.endTurn()
 
 	await test.playCardFromHand(PranksterDoubleItem, 'item', 1, 0)
 	await test.attack('secondary')
 	await test.endTurn()
 
-	yield* bossAttack(game, '50DMG')
+	await test.bossAttack( '50DMG')
 	await test.endTurn()
 
 	await test.attack('secondary')
 	expect(game.opponentPlayer.lives).toBe(2)
 	await test.endTurn()
 
-	yield* bossAttack(game, '50DMG', 'ABLAZE')
+	await test.bossAttack( '50DMG', 'ABLAZE')
 	await test.endTurn()
 
 	await test.attack('secondary')
 	await test.endTurn()
 
-	yield* bossAttack(game, '50DMG', 'ABLAZE')
+	await test.bossAttack( '50DMG', 'ABLAZE')
 	await test.endTurn()
 
 	await test.attack('secondary')
 	expect(game.opponentPlayer.lives).toBe(1)
 	await test.endTurn()
 
-	yield* bossAttack(game, '50DMG', 'ABLAZE', 'EFFECTCARD')
+	await test.bossAttack( '50DMG', 'ABLAZE', 'EFFECTCARD')
 	expect(game.opponentPlayer.lives).toBe(2)
 	await test.endTurn()
 
@@ -282,7 +282,7 @@ function* testChallengerVictory(game: GameModel) {
 	await test.attack('secondary')
 	await test.endTurn()
 
-	yield* bossAttack(game, '50DMG', 'ABLAZE', 'EFFECTCARD')
+	await test.bossAttack( '50DMG', 'ABLAZE', 'EFFECTCARD')
 	await test.endTurn()
 
 	await test.attack('secondary')
@@ -366,7 +366,7 @@ describe('Test Evil X Boss Fight', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
-					yield* bossAttack(game, '90DMG')
+					await test.bossAttack( '90DMG')
 				},
 				then: (game) => {
 					expect(getWinner(game)?.playerName).toBe('Evil Xisuma')
@@ -389,19 +389,19 @@ describe('Test Evil X Boss Fight', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
-					yield* bossAttack(game, '90DMG')
+					await test.bossAttack( '90DMG')
 					await test.endTurn()
 
 					await test.changeActiveHermit( 1)
 					await test.endTurn()
 
-					yield* bossAttack(game, '90DMG')
+					await test.bossAttack( '90DMG')
 					await test.endTurn()
 
 					await test.changeActiveHermit( 2)
 					await test.endTurn()
 
-					yield* bossAttack(game, '90DMG')
+					await test.bossAttack( '90DMG')
 				},
 				then: (game) => {
 					expect(getWinner(game)?.playerName).toBe('Evil Xisuma')

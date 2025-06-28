@@ -521,7 +521,7 @@ export function testBossFight(
 		 * 	await test.endTurn()
 		 * 	// Boss' first turn
 		 * 	await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
-		 * 	yield* bossAttack(game, '50DMG')
+		 * 	await test.bossAttack( '50DMG')
 		 * 	...
 		 * }
 		 * ```

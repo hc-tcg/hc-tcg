@@ -6,9 +6,15 @@ import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import TurnSkippedEffect from 'common/status-effects/turn-skipped'
 import UsedClockEffect from 'common/status-effects/used-clock'
-import {applyEffect, endTurn, playCardFromHand, testGame} from '../utils'
+import {
+	applyEffect,
+	endTurn,
+	playCardFromHand,
+	testGame,
+	TestGameFixture,
+} from '../utils'
 
-function* testClockHelperSaga(game: GameModel) {
+async function testClockHelperSaga(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 	await test.endTurn()
