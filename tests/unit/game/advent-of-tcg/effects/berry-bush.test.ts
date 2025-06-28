@@ -143,7 +143,7 @@ describe('Test Berry Bush Attach', () => {
 					),
 				)
 				yield* removeEffect(game)
-				yield* changeActiveHermit(game, 0)
+				await test.changeActiveHermit( 0)
 				await test.endTurn()
 
 				await test.endTurn()
@@ -177,7 +177,7 @@ describe('Test Berry Bush Attach', () => {
 					).toBe(true)
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					expect(
 						game.components.find(CardComponent, query.card.is(BerryBush))
 							?.turnedOver,

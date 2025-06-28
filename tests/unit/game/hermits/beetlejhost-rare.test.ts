@@ -44,7 +44,7 @@ describe('Test Beetlejhost Rare', () => {
 							query.row.index(0),
 						)?.health,
 					).toBe(EthosLabCommon.health - BeetlejhostRare.secondary.damage)
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -59,7 +59,7 @@ describe('Test Beetlejhost Rare', () => {
 					).toBe(
 						EthosLabCommon.health - (BeetlejhostRare.secondary.damage - 10),
 					)
-					yield* changeActiveHermit(game, 2)
+					await test.changeActiveHermit( 2)
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -139,7 +139,7 @@ describe('Test Beetlejhost Rare', () => {
 					await test.endTurn()
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 
 					expect(
 						game.components.find(
@@ -258,7 +258,7 @@ describe('Test Beetlejhost Rare', () => {
 							query.row.index(0),
 						)?.health,
 					).toBe(EthosLabCommon.health - BeetlejhostRare.secondary.damage)
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 
 					await test.playCardFromHand(EnderPearl, 'single_use')
@@ -279,7 +279,7 @@ describe('Test Beetlejhost Rare', () => {
 					).toBe(
 						EthosLabCommon.health - (BeetlejhostRare.secondary.damage - 10),
 					)
-					yield* changeActiveHermit(game, 2)
+					await test.changeActiveHermit( 2)
 					await test.endTurn()
 
 					await test.playCardFromHand(IronSword, 'single_use')
@@ -339,7 +339,7 @@ describe('Test Beetlejhost Rare', () => {
 							.getActiveHermit()
 							?.getStatusEffect(ChromaKeyedEffect)?.counter,
 					).toBe(1)
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')

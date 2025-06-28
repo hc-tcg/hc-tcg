@@ -50,7 +50,7 @@ describe('Test Stratos Joel', () => {
 						1,
 						game.opponentPlayerEntity,
 					)
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 
 					await test.playCardFromHand(PvPDoubleItem, 'item', 0, 2)

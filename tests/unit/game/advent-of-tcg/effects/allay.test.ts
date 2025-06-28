@@ -59,7 +59,7 @@ function testAllayRetrieval(card: Card, canRetrieve: boolean) {
 						query.slot.hand,
 						query.slot.has(card),
 					)
-					yield* finishModalRequest(game, {result: false, cards: null})
+					await test.finishModalRequest( {result: false, cards: null})
 					expect(
 						game.currentPlayer
 							.getHand()

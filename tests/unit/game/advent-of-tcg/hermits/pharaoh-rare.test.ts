@@ -47,7 +47,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(Knockback, 'single_use')
@@ -177,7 +177,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.endTurn()
@@ -351,7 +351,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.endTurn()
@@ -428,10 +428,10 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 2)
+					await test.changeActiveHermit(2)
 					await test.endTurn()
 
 					await test.playCardFromHand(Bow, 'single_use')
@@ -584,7 +584,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.playCardFromHand(DiamondArmor, 'attach', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					await test.applyEffect()
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(BigBSt4tzRare, 'hermit', 0)
@@ -609,7 +609,7 @@ describe('Test Pharaoh Xibalba', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					expect(game.opponentPlayer.activeRow?.health).toBe(GrianchRare.health)
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						ZombieCleoRare.health,
@@ -622,7 +622,7 @@ describe('Test Pharaoh Xibalba', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						GrianchRare.health -
 							(PharaohRare.secondary.damage - 20) /** Diamond Armor */ -

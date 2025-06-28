@@ -156,9 +156,9 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.playCardFromHand(Chest, 'single_use')
-					yield* finishModalRequest(game, {
+					await test.finishModalRequest( {
 						result: true,
 						cards: game.components.filterEntities(
 							CardComponent,
@@ -170,7 +170,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
-					yield* changeActiveHermit(game, 0)
+					await test.changeActiveHermit( 0)
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -225,9 +225,9 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.playCardFromHand(Chest, 'single_use')
-					yield* finishModalRequest(game, {
+					await test.finishModalRequest( {
 						result: true,
 						cards: game.components.filterEntities(
 							CardComponent,
@@ -238,7 +238,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					})
 
 					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
-					yield* changeActiveHermit(game, 0)
+					await test.changeActiveHermit( 0)
 					await test.endTurn()
 
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
@@ -286,7 +286,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 
 					await test.endTurn()
@@ -337,7 +337,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 						query.slot.active,
 						query.slot.hermit,
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 
 					expect(
 						game.components.find(
@@ -367,7 +367,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 						query.slot.active,
 						query.slot.hermit,
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 
 					expect(
 						game.components.find(

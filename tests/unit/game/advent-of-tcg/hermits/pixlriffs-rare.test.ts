@@ -47,7 +47,7 @@ describe('Test Pixl World Build', () => {
 					).toBe(EthosLabCommon.health - PixlriffsRare.secondary.damage)
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 
 					await test.playCardFromHand(EnderPearl, 'single_use')
@@ -66,7 +66,7 @@ describe('Test Pixl World Build', () => {
 					).toBe(EthosLabCommon.health - PixlriffsRare.secondary.damage - 40)
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 2)
+					await test.changeActiveHermit( 2)
 					await test.endTurn()
 
 					await test.playCardFromHand(Ladder, 'single_use')
@@ -112,7 +112,7 @@ describe('Test Pixl World Build', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.attack('secondary')
 					expect(
 						game.components.find(
@@ -161,7 +161,7 @@ describe('Test Pixl World Build', () => {
 					)!.health = 10
 					await test.attack('primary')
 
-					yield* changeActiveHermit(game, 0)
+					await test.changeActiveHermit( 0)
 					await test.attack('secondary')
 					expect(
 						game.components.find(
@@ -215,7 +215,7 @@ describe('Test Pixl World Build', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 					expect(
 						game.components.find(
 							RowComponent,
@@ -237,7 +237,7 @@ describe('Test Pixl World Build', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 					expect(
 						game.components.find(
 							RowComponent,
@@ -288,7 +288,7 @@ describe('Test Pixl World Build', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 					expect(
 						game.components.find(
 							RowComponent,
@@ -310,7 +310,7 @@ describe('Test Pixl World Build', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 					expect(
 						game.components.find(
 							RowComponent,
@@ -361,7 +361,7 @@ describe('Test Pixl World Build', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
@@ -381,7 +381,7 @@ describe('Test Pixl World Build', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 					expect(
 						game.components.find(
 							RowComponent,

@@ -88,14 +88,14 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.attack('secondary')
 					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.playCardFromHand(Fortune, 'single_use')
 					await test.applyEffect()
 					await test.attack('secondary')
@@ -104,7 +104,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					expect(game.state.turn.availableActions).not.toContain(
 						'SECONDARY_ATTACK',
 					)
@@ -136,11 +136,11 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(Fortune, 'single_use')
 					await test.applyEffect()
 					await test.attack('secondary')
-					yield* finishModalRequest(game, {result: true, cards: null})
-					yield* finishModalRequest(game, {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 					await test.attack('secondary')
-					yield* finishModalRequest(game, {result: true, cards: null})
-					yield* finishModalRequest(game, {result: false, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						GrianchRare.health - (BoomerBdubsRare.secondary.damage + 20),
 					)
@@ -234,7 +234,7 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					await test.applyEffect()
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -497,7 +497,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -506,14 +506,14 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.attack('secondary')
 					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.endTurn()
 
 					// Use Anvil to trigger Skizz's bonus damage.
@@ -524,7 +524,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(3),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					// Have Aussie Ping flip tails then heads
 					game.components
 						.find(
@@ -539,7 +539,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(3),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.endTurn()
 
 					expect(
@@ -600,7 +600,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -609,14 +609,14 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.attack('secondary')
 					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.endTurn()
 
 					// Use Anvil to trigger Skizz's bonus damage.
@@ -634,7 +634,7 @@ describe('Test The Grianch Naughty', () => {
 						query.effect.targetIsCardAnd(query.card.opponentPlayer),
 					)
 					badOmenEffect?.remove()
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					badOmenEffect?.apply(game.opponentPlayer.getActiveHermit()?.entity)
 					await test.attack('secondary')
 					await test.pick(
@@ -642,7 +642,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(3),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.endTurn()
 
 					expect(
@@ -768,21 +768,21 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.attack('secondary')
 					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* finishModalRequest(game, {pick: 'primary'})
+					await test.finishModalRequest({pick: 'secondary'})
+					await test.finishModalRequest({pick: 'primary'})
 					await test.endTurn()
 
 					expect(game.state.turn.availableActions).toContain(
 						'CHANGE_ACTIVE_HERMIT',
 					)
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 				},
 			},
@@ -821,7 +821,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -830,7 +830,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					// Have Naughty flip tails then Betrayed flip 2 heads
 					game.components
 						.find(
@@ -845,7 +845,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -854,7 +854,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(3),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					expect(game.state.turn.availableActions).toContain('END_TURN')
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					expect(game.state.turn.availableActions).not.toContain('END_TURN')
@@ -864,7 +864,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(3),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
@@ -929,14 +929,14 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.attack('secondary')
 					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.playCardFromHand(Anvil, 'single_use')
 					expect(
 						game.components.find(CardComponent, query.card.is(Anvil))
@@ -1041,14 +1041,14 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'primary'})
+					await test.finishModalRequest({pick: 'primary'})
 					await test.attack('secondary')
 					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
@@ -1152,7 +1152,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('secondary')
 					await test.pick(
@@ -1160,7 +1160,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
@@ -1278,7 +1278,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(ArchitectFalseRare, 'hermit', 1)
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(GrianchRare, 'hermit', 1)
@@ -1432,7 +1432,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					expect(
 						game.currentPlayer
 							.getActiveHermit()
@@ -1490,14 +1490,14 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.attack('secondary')
 					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					expect(
 						game.currentPlayer
 							.getActiveHermit()

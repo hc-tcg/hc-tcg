@@ -110,14 +110,14 @@ describe('Test Zookeeper Scar', () => {
 							.sort(CardComponent.compareOrder)
 							.at(0)?.props,
 					).toStrictEqual(BalancedItem)
-					yield* finishModalRequest(game, {result: true, cards: null})
+					await test.finishModalRequest( {result: true, cards: null})
 					expect(
 						game.currentPlayer
 							.getDrawPile()
 							.sort(CardComponent.compareOrder)
 							.at(0)?.props,
 					).toStrictEqual(EthosLabCommon)
-					yield* finishModalRequest(game, {result: false, cards: null})
+					await test.finishModalRequest( {result: false, cards: null})
 					await test.endTurn()
 				},
 			},
@@ -185,7 +185,7 @@ describe('Test Zookeeper Scar', () => {
 							.sort(CardComponent.compareOrder)
 							.at(0)?.props,
 					).toStrictEqual(BalancedItem)
-					yield* finishModalRequest(game, {result: true, cards: null})
+					await test.finishModalRequest( {result: true, cards: null})
 					expect(
 						game.currentPlayer
 							.getDrawPile()
@@ -232,7 +232,7 @@ describe('Test Zookeeper Scar', () => {
 							.sort(CardComponent.compareOrder)
 							.at(0)?.props,
 					).toStrictEqual(BalancedItem)
-					yield* finishModalRequest(game, {result: true, cards: null})
+					await test.finishModalRequest( {result: true, cards: null})
 					expect(
 						game.currentPlayer
 							.getDrawPile()
@@ -273,7 +273,7 @@ describe('Test Zookeeper Scar', () => {
 						(game.state.modalRequests[0].modal as CopyAttack.Data)
 							.availableAttacks,
 					).not.toContain('primary')
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 					expect(game.state.modalRequests).toStrictEqual([])
 					await test.endTurn()
 				},
@@ -297,7 +297,7 @@ describe('Test Zookeeper Scar', () => {
 						(game.state.modalRequests[0].modal as CopyAttack.Data)
 							.availableAttacks,
 					).not.toContain('primary')
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 					expect(game.state.modalRequests).toStrictEqual([])
 					await test.endTurn()
 				},
@@ -315,7 +315,7 @@ describe('Test Zookeeper Scar', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Wolf, 'attach', 0)
 					await test.playCardFromHand(ZookeeperScarRare, 'hermit', 1)
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
@@ -326,7 +326,7 @@ describe('Test Zookeeper Scar', () => {
 					) // Wolf attached to Etho & Wolf "attached" to Scar
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 0)
+					await test.changeActiveHermit( 0)
 					await test.endTurn()
 
 					await test.playCardFromHand(GoldenAxe, 'single_use')

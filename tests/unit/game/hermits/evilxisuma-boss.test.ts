@@ -106,9 +106,9 @@ function* testVersusRendogRare(game: GameModel) {
 	await test.attack('secondary')
 	// Pick target for Role Play
 	await test.pick(query.slot.opponent, query.slot.hermit)
-	yield* finishModalRequest(game, {pick: 'secondary'})
+	await test.finishModalRequest( {pick: 'secondary'})
 	// Pick attack to disable for Derpcoin
-	yield* finishModalRequest(game, {pick: 'primary'})
+	await test.finishModalRequest( {pick: 'primary'})
 
 	await test.endTurn()
 
@@ -129,9 +129,9 @@ function* testVersusRendogRare(game: GameModel) {
 	await test.attack('secondary')
 	// Pick target for Role Play
 	await test.pick(query.slot.opponent, query.slot.hermit)
-	yield* finishModalRequest(game, {pick: 'secondary'})
+	await test.finishModalRequest( {pick: 'secondary'})
 	// Pick attack to disable for Derpcoin
-	yield* finishModalRequest(game, {pick: 'primary'})
+	await test.finishModalRequest( {pick: 'primary'})
 
 	await test.endTurn()
 
@@ -166,7 +166,7 @@ function* testDirectlyOpposite(game: GameModel) {
 	await test.endTurn()
 	yield* bossAttack(game, '50DMG', 'HEAL150')
 	await test.endTurn()
-	yield* changeActiveHermit(game, 0)
+	await test.changeActiveHermit( 0)
 	await test.endTurn()
 	await test.endTurn()
 	// Test Jumpscare
@@ -278,7 +278,7 @@ function* testChallengerVictory(game: GameModel) {
 	expect(game.opponentPlayer.lives).toBe(2)
 	await test.endTurn()
 
-	yield* changeActiveHermit(game, 1)
+	await test.changeActiveHermit( 1)
 	await test.attack('secondary')
 	await test.endTurn()
 
@@ -392,13 +392,13 @@ describe('Test Evil X Boss Fight', () => {
 					yield* bossAttack(game, '90DMG')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 
 					yield* bossAttack(game, '90DMG')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 2)
+					await test.changeActiveHermit( 2)
 					await test.endTurn()
 
 					yield* bossAttack(game, '90DMG')

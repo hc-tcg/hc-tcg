@@ -97,7 +97,7 @@ describe('Test Dwarf Impulse Rare', () => {
 					await test.playCardFromHand(Wolf, 'attach', 0)
 					await test.playCardFromHand(LightningRod, 'attach', 2)
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 
 					await test.endTurn()
 

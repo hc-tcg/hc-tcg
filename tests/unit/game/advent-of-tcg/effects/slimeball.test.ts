@@ -181,7 +181,7 @@ describe('Test Slimeball', () => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 				await test.playCardFromHand(Slimeball, 'attach', 0)
 				expect(game.getPickableSlots(Ladder.attachCondition)).toStrictEqual([])
-				yield* changeActiveHermit(game, 1)
+				await test.changeActiveHermit( 1)
 				await test.endTurn()
 
 				await test.playCardFromHand(FarmerBeefCommon, 'hermit', 0)
@@ -345,10 +345,10 @@ describe('Test Slimeball', () => {
 					expect(game.state.pickRequests).toHaveLength(0)
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 
 					await test.attack('secondary') // Test "Steal"
@@ -537,7 +537,7 @@ describe('Test Slimeball', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
@@ -550,7 +550,7 @@ describe('Test Slimeball', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 					await test.pick(
 						query.slot.opponent,
 						query.slot.item,
@@ -578,7 +578,7 @@ describe('Test Slimeball', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
@@ -591,7 +591,7 @@ describe('Test Slimeball', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(3),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 					await test.pick(
 						query.slot.opponent,
 						query.slot.item,

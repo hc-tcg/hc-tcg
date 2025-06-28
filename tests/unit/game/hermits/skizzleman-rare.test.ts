@@ -143,14 +143,14 @@ describe('Test Skizzleman Rare', () => {
 					await test.applyEffect()
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 2)
+					await test.changeActiveHermit( 2)
 					await test.endTurn()
 
 					await test.playCardFromHand(LavaBucket, 'single_use')
 					await test.applyEffect()
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 
 					// Manually set Etho (1) health to trigger zone

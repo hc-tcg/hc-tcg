@@ -36,7 +36,7 @@ describe('Test Candle Single Use', () => {
 					expect(
 						cardEntities.map((entity) => game.components.get(entity)?.props),
 					).toStrictEqual([BalancedItem, EthosLabCommon])
-					yield* finishModalRequest(game, {
+					await test.finishModalRequest( {
 						result: true,
 						cards: [cardEntities[0]],
 					})
@@ -94,7 +94,7 @@ describe('Test Candle Single Use', () => {
 					expect(
 						cardEntities.map((entity) => game.components.get(entity)?.props),
 					).toStrictEqual([BalancedItem])
-					yield* finishModalRequest(game, {
+					await test.finishModalRequest( {
 						result: true,
 						cards: [cardEntities[0]],
 					})
@@ -144,7 +144,7 @@ describe('Test Candle Single Use', () => {
 					expect(
 						(game.state.modalRequests[0] as SelectCards.Request).modal.cards,
 					).toStrictEqual([])
-					yield* finishModalRequest(game, {result: false, cards: null})
+					await test.finishModalRequest( {result: false, cards: null})
 					expect(
 						game.currentPlayer.getHand().map((card) => card.props),
 					).toStrictEqual([...Array(5).fill(BalancedItem)])

@@ -64,7 +64,7 @@ describe('Test Human Cleo Betrayal', () => {
 						query.slot.rowIndex(2),
 					)
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.attack('secondary')
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						VintageBeefCommon.health,
@@ -94,7 +94,7 @@ describe('Test Human Cleo Betrayal', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					expect(game.state.turn.availableActions).not.toContain('END_TURN')
 					await test.attack('primary')
 					await test.pick(
@@ -132,7 +132,7 @@ describe('Test Human Cleo Betrayal', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 				},
 			},
@@ -230,7 +230,7 @@ describe('Test Human Cleo Betrayal', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					expect(game.state.turn.availableActions).toContain('END_TURN')
 					await test.endTurn()
 				},

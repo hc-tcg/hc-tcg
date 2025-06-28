@@ -27,7 +27,7 @@ function* testEvilXDisablesForOneTurn(game: GameModel) {
 	await test.endTurn()
 
 	await test.attack('secondary')
-	yield* finishModalRequest(game, {
+	await test.finishModalRequest( {
 		pick: 'secondary',
 	})
 
@@ -106,7 +106,7 @@ describe('Test Evil X', () => {
 						(game.state.modalRequests[0].modal as CopyAttack.Data)
 							.availableAttacks,
 					).toContain('secondary')
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 				},
 			},
 			{noItemRequirements: true, forceCoinFlip: true},
@@ -135,7 +135,7 @@ describe('Test Evil X', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 					await test.endTurn()
 
 					expect(game.getAllBlockedActions()).toContain('SECONDARY_ATTACK')

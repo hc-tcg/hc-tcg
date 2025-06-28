@@ -293,7 +293,7 @@ describe('Test BigB Soulmate', () => {
 					expect(game.currentPlayer.activeRow).toBe(null)
 					expect(game.opponentPlayer.activeRow).toBe(null)
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.playCardFromHand(IronSword, 'single_use')
 					await test.attack('secondary')
 					expect(
@@ -305,7 +305,7 @@ describe('Test BigB Soulmate', () => {
 					).toBe(EthosLabCommon.health)
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
@@ -344,14 +344,14 @@ describe('Test BigB Soulmate', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 					await test.attack('secondary')
 					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest( {pick: 'secondary'})
 					await test.endTurn()
 
 					// Manually set BigB health to trigger zone

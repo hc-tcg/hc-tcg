@@ -182,7 +182,7 @@ describe('Test Replays', () => {
 				await test.playCardFromHand(Chest, 'single_use')
 				await test.applyEffect()
 				const discardedCard = game.currentPlayer.getDiscarded()[0].entity
-				yield* finishModalRequest(game, {
+				await test.finishModalRequest( {
 					result: true,
 					cards: [discardedCard],
 				})
@@ -302,7 +302,7 @@ describe('Test Replays', () => {
 				await test.playCardFromHand(EvilXisumaRare, 'hermit', 0)
 				await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
 				await test.attack('secondary')
-				yield* finishModalRequest(game, {
+				await test.finishModalRequest( {
 					pick: 'primary',
 				})
 				await test.endTurn()
@@ -311,7 +311,7 @@ describe('Test Replays', () => {
 				await test.endTurn()
 
 				await test.attack('secondary')
-				yield* finishModalRequest(game, {
+				await test.finishModalRequest( {
 					pick: 'secondary',
 				})
 				await test.endTurn()
@@ -339,7 +339,7 @@ describe('Test Replays', () => {
 				await test.playCardFromHand(RendogCommon, 'hermit', 0)
 				await test.endTurn()
 
-				yield* changeActiveHermit(game, 1)
+				await test.changeActiveHermit( 1)
 
 				yield* forfeit(con.game.currentPlayer.entity)
 			},

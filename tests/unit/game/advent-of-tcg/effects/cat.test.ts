@@ -45,7 +45,7 @@ describe('Test Cat Effect Card', () => {
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
 					)?.props,
 				).toStrictEqual(BalancedItem)
-				yield* finishModalRequest(game, {result: true, cards: null})
+				await test.finishModalRequest( {result: true, cards: null})
 				expect(
 					game.currentPlayer
 						.getDrawPile()
@@ -96,14 +96,14 @@ describe('Test Cat Effect Card', () => {
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
 					)?.props,
 				).toStrictEqual(IronSword)
-				yield* finishModalRequest(game, {result: true, cards: null})
+				await test.finishModalRequest( {result: true, cards: null})
 				expect(
 					game.currentPlayer
 						.getDrawPile()
 						.sort(CardComponent.compareOrder)
 						.at(0)?.props,
 				).toStrictEqual(BalancedDoubleItem)
-				yield* changeActiveHermit(game, 1)
+				await test.changeActiveHermit( 1)
 				await test.endTurn()
 
 				expect(
@@ -183,7 +183,7 @@ describe('Test Cat Effect Card', () => {
 							(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
 						)?.props,
 					).toStrictEqual(Cat)
-					yield* finishModalRequest(game, {result: true, cards: null})
+					await test.finishModalRequest( {result: true, cards: null})
 					await test.endTurn()
 
 					expect(
@@ -211,7 +211,7 @@ describe('Test Cat Effect Card', () => {
 
 					await test.playCardFromHand(GrianRare, 'hermit', 0)
 					await test.attack('primary')
-					yield* finishModalRequest(game, {result: true, cards: null})
+					await test.finishModalRequest( {result: true, cards: null})
 					expect(
 						game.components.find(
 							CardComponent,
@@ -227,8 +227,8 @@ describe('Test Cat Effect Card', () => {
 
 					await test.attack('primary')
 					expect(game.state.modalRequests).toHaveLength(2)
-					yield* finishModalRequest(game, {result: false, cards: null})
-					yield* finishModalRequest(game, {result: true, cards: null})
+					await test.finishModalRequest( {result: false, cards: null})
+					await test.finishModalRequest( {result: true, cards: null})
 					await test.endTurn()
 				},
 			},

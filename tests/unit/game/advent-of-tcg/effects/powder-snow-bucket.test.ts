@@ -152,7 +152,7 @@ describe('Test Powder Snow Bucket', () => {
 					await test.applyEffect()
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 
 					await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
@@ -165,7 +165,7 @@ describe('Test Powder Snow Bucket', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* changeActiveHermit(game, 2)
+					await test.changeActiveHermit( 2)
 					await test.endTurn()
 
 					await test.playCardFromHand(PowderSnowBucket, 'single_use')

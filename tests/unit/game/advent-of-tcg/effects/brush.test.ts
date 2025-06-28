@@ -46,7 +46,7 @@ describe('Test Brush Single Use', () => {
 					const cardEntities = (
 						game.state.modalRequests[0].modal as DragCards.Data
 					).rightCards
-					yield* finishModalRequest(game, {
+					await test.finishModalRequest( {
 						result: true,
 						leftCards: [],
 						rightCards: [cardEntities[0], cardEntities[1]],
@@ -94,7 +94,7 @@ describe('Test Brush Single Use', () => {
 					const cardEntities = (
 						game.state.modalRequests[0].modal as DragCards.Data
 					).rightCards
-					yield* finishModalRequest(game, {
+					await test.finishModalRequest( {
 						result: true,
 						leftCards: [cardEntities[0], cardEntities[1]],
 						rightCards: [],
@@ -142,7 +142,7 @@ describe('Test Brush Single Use', () => {
 					const cardEntities = (
 						game.state.modalRequests[0].modal as DragCards.Data
 					).rightCards
-					yield* finishModalRequest(game, {
+					await test.finishModalRequest( {
 						result: true,
 						leftCards: [cardEntities[0]],
 						rightCards: [cardEntities[1]],

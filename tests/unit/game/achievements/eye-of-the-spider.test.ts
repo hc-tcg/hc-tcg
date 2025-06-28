@@ -44,7 +44,7 @@ describe('Test Eye of the Spider achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 
 					await test.endTurn()
@@ -131,7 +131,7 @@ describe('Test Eye of the Spider achievement', () => {
 					await test.attack('primary')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 					await test.endTurn()
 

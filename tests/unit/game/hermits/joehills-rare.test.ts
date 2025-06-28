@@ -27,7 +27,7 @@ describe('Test Joe Time Skip', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 
 					expect(game.state.turn.availableActions).not.toContain(
@@ -43,7 +43,7 @@ describe('Test Joe Time Skip', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 0)
+					await test.changeActiveHermit( 0)
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -67,7 +67,7 @@ describe('Test Joe Time Skip', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 
 					expect(game.getPickableSlots(Clock.attachCondition)).toStrictEqual([])
@@ -77,7 +77,7 @@ describe('Test Joe Time Skip', () => {
 					await test.attack('primary')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 0)
+					await test.changeActiveHermit( 0)
 					await test.endTurn()
 
 					await test.playCardFromHand(Clock, 'single_use')
@@ -85,7 +85,7 @@ describe('Test Joe Time Skip', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 					await test.endTurn()
 
 					await test.attack('secondary')

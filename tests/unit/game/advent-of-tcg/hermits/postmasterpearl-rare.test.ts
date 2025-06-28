@@ -45,7 +45,7 @@ function postMasterTest(pearls: number, results: boolean[]) {
 							.getDrawPile()
 							.sort(CardComponent.compareOrder)
 							.at(0)?.props
-					yield* finishModalRequest(game, {result: results[i], cards: null})
+					await test.finishModalRequest( {result: results[i], cards: null})
 				}
 				expect(game.state.modalRequests).toHaveLength(0)
 				expect(

@@ -49,7 +49,7 @@ describe('Test Immortality Bed', () => {
 					expect(game.state.turn.availableActions).toStrictEqual([
 						'CHANGE_ACTIVE_HERMIT',
 					])
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit( 1)
 				},
 			},
 			{noItemRequirements: true, oneShotMode: true, startWithAllCards: false},
