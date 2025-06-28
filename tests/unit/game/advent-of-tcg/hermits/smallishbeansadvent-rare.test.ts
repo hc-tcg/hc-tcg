@@ -5,14 +5,7 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import PvPDoubleItem from 'common/cards/items/pvp-rare'
 import WildItem from 'common/cards/items/wild-common'
 import Efficiency from 'common/cards/single-use/efficiency'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Stratos Joel', () => {
 	test('Lore functionality', async () => {
@@ -42,15 +35,14 @@ describe('Test Stratos Joel', () => {
 					)
 					await test.endTurn()
 
-					yield* playCardFromHand(
-						game,
+					await test.playCardFromHand(
 						String,
 						'item',
 						0,
 						1,
 						game.opponentPlayerEntity,
 					)
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(PvPDoubleItem, 'item', 0, 2)

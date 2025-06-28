@@ -17,6 +17,7 @@ import {
 	pick,
 	playCardFromHand,
 	testGame,
+	TestGameFixture,
 } from '../utils'
 
 describe('Test Dwarf Impulse Rare', () => {
@@ -25,7 +26,7 @@ describe('Test Dwarf Impulse Rare', () => {
 			{
 				playerOneDeck: [DwarfImpulseRare, GoldenAxe],
 				playerTwoDeck: [EthosLabCommon, FiveAMPearlRare],
-				saga: function* (game: GameModel) {
+				saga: async (test: TestGameFixture, game: GameModel) => {
 					await test.playCardFromHand(DwarfImpulseRare, 'hermit', 0)
 
 					await test.endTurn()
@@ -85,7 +86,7 @@ describe('Test Dwarf Impulse Rare', () => {
 					LightningRod,
 					Wolf,
 				],
-				saga: function* (game: GameModel) {
+				saga: async (test: TestGameFixture, game: GameModel) => {
 					await test.playCardFromHand(DwarfImpulseRare, 'hermit', 0)
 
 					await test.endTurn()
@@ -97,7 +98,7 @@ describe('Test Dwarf Impulse Rare', () => {
 					await test.playCardFromHand(Wolf, 'attach', 0)
 					await test.playCardFromHand(LightningRod, 'attach', 2)
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 
 					await test.endTurn()
 

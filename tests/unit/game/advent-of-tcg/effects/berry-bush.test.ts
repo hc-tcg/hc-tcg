@@ -7,15 +7,7 @@ import {InstantHealthII} from 'common/cards/single-use/instant-health'
 import Ladder from 'common/cards/single-use/ladder'
 import {CardComponent, RowComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	attack,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Berry Bush Attach', () => {
 	test('Berry Bush functionality', async () => {
@@ -32,15 +24,13 @@ describe('Test Berry Bush Attach', () => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.endTurn()
 
-				yield* playCardFromHand(
-					game,
+				await test.playCardFromHand(
 					BerryBush,
 					'hermit',
 					1,
 					game.opponentPlayerEntity,
 				)
-				yield* playCardFromHand(
-					game,
+				await test.playCardFromHand(
 					BerryBush,
 					'hermit',
 					2,
@@ -117,8 +107,7 @@ describe('Test Berry Bush Attach', () => {
 				await test.endTurn()
 
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(
-					game,
+				await test.playCardFromHand(
 					BerryBush,
 					'hermit',
 					0,
@@ -143,7 +132,7 @@ describe('Test Berry Bush Attach', () => {
 					),
 				)
 				await test.removeEffect()
-				await test.changeActiveHermit( 0)
+				await test.changeActiveHermit(0)
 				await test.endTurn()
 
 				await test.endTurn()
@@ -164,8 +153,7 @@ describe('Test Berry Bush Attach', () => {
 
 					await test.playCardFromHand(WormManRare, 'hermit', 0)
 					await test.attack('secondary')
-					yield* playCardFromHand(
-						game,
+					await playCardFromHand(
 						BerryBush,
 						'hermit',
 						1,
@@ -177,7 +165,7 @@ describe('Test Berry Bush Attach', () => {
 					).toBe(true)
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					expect(
 						game.components.find(CardComponent, query.card.is(BerryBush))
 							?.turnedOver,

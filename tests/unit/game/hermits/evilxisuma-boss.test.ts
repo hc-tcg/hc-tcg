@@ -20,19 +20,12 @@ import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 } from 'common/status-effects/singleturn-attack-disabled'
-import {
-	attack,
-	bossAttack,
-	changeActiveHermit,
-	endTurn,
-	finishModalRequest,
-	getWinner,
-	pick,
-	playCardFromHand,
-	testBossFight,
-} from '../utils'
+import {testBossFight, BossGameTestFixture} from '../utils'
 
-async function testConsecutiveAmnesia(test: TestGameFixture, game: GameModel) {
+async function testConsecutiveAmnesia(
+	test: BossGameTestFixture,
+	game: GameModel,
+) {
 	await test.playCardFromHand(ArchitectFalseRare, 'hermit', 0)
 	await test.endTurn()
 
@@ -95,7 +88,10 @@ async function testConsecutiveAmnesia(test: TestGameFixture, game: GameModel) {
 	).toBeNull()
 }
 
-async function testVersusRendogRare(test: TestGameFixture, game: GameModel) {
+async function testVersusRendogRare(
+	test: BossGameTestFixture,
+	game: GameModel,
+) {
 	await test.playCardFromHand(RendogRare, 'hermit', 0)
 	await test.endTurn()
 
@@ -145,7 +141,10 @@ async function testVersusRendogRare(test: TestGameFixture, game: GameModel) {
 	).toHaveLength(1)
 }
 
-async function testDirectlyOpposite(test: TestGameFixture, game: GameModel) {
+async function testDirectlyOpposite(
+	test: BossGameTestFixture,
+	game: GameModel,
+) {
 	await test.playCardFromHand(RenbobRare, 'hermit', 1)
 	await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
 
@@ -184,7 +183,7 @@ async function testDirectlyOpposite(test: TestGameFixture, game: GameModel) {
 	)
 }
 
-async function testNineAttached(test: TestGameFixture, game: GameModel) {
+async function testNineAttached(test: BossGameTestFixture, game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 	await test.playCardFromHand(GoldArmor, 'attach', 0)
@@ -239,7 +238,10 @@ async function testNineAttached(test: TestGameFixture, game: GameModel) {
 	).toHaveLength(3)
 }
 
-async function testChallengerVictory(test: TestGameFixture, game: GameModel) {
+async function testChallengerVictory(
+	test: BossGameTestFixture,
+	game: GameModel,
+) {
 	await test.playCardFromHand(MumboJumboRare, 'hermit', 0)
 	await test.playCardFromHand(MumboJumboRare, 'hermit', 1)
 	await test.playCardFromHand(MumboJumboRare, 'hermit', 2)
