@@ -10,7 +10,7 @@ describe('Test Jingler Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [JinglerRare],
-				saga: async (test, game) => {
+				saga: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 

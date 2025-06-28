@@ -24,7 +24,7 @@ describe('Test Server Lag achievement', () => {
 					VintageBeefCommon,
 					BalancedItem,
 				],
-				playGame: async (test, game) => {
+				playGame: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -73,7 +73,7 @@ describe('Test Server Lag achievement', () => {
 					StressMonster101Rare,
 					BalancedItem,
 				],
-				playGame: async (test, game) => {
+				playGame: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -119,7 +119,7 @@ describe('Test Server Lag achievement', () => {
 					VintageBeefCommon,
 					BalancedItem,
 				],
-				playGame: async (test, game) => {
+				playGame: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -237,7 +237,7 @@ describe('Test Server Lag achievement', () => {
 					...Array(5).fill(BalancedItem),
 					GeminiTayRare,
 				],
-				playGame: async (test, game) => {
+				playGame: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -294,7 +294,7 @@ describe('Test Server Lag achievement', () => {
 					VintageBeefCommon,
 					BalancedItem,
 				],
-				playGame: async (test, game) => {
+				playGame: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 

@@ -69,7 +69,7 @@ describe('Test Eye of the Spider achievement', () => {
 				achievement: EyeOfTheSpider,
 				playerOneDeck: [EthosLabCommon, SplashPotionOfPoison, Anvil],
 				playerTwoDeck: [GeminiTayCommon],
-				playGame: async (test, game) => {
+				playGame: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)

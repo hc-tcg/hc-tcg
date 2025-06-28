@@ -112,7 +112,7 @@ describe('Test Human Cleo Betrayal', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HumanCleoRare, Clock],
-				saga: async (test, game) => {
+				saga: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()

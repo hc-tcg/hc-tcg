@@ -12,7 +12,7 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 				achievement: PoePoeEnforcer,
 				playerOneDeck: [ImpulseSVCommon, CurseOfBinding],
 				playerTwoDeck: [ImpulseSVCommon, ImpulseSVCommon],
-				playGame: async (test, game) => {
+				playGame: async (test, _game) => {
 					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -36,7 +36,7 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 				achievement: PoePoeEnforcer,
 				playerOneDeck: [ImpulseSVCommon, CurseOfBinding],
 				playerTwoDeck: [JoeHillsCommon, ImpulseSVCommon],
-				playGame: async (test, game) => {
+				playGame: async (test, _game) => {
 					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -64,7 +64,7 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 				achievement: PoePoeEnforcer,
 				playerOneDeck: [ImpulseSVCommon, CurseOfBinding],
 				playerTwoDeck: [ImpulseSVCommon, ImpulseSVCommon],
-				playGame: async (test, game) => {
+				playGame: async (test, _game) => {
 					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 0)
 					await test.endTurn()
 

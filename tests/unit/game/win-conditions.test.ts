@@ -8,7 +8,7 @@ describe('Test Game Win Conditions', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				saga: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -28,7 +28,7 @@ describe('Test Game Win Conditions', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				saga: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 				},

@@ -363,7 +363,7 @@ describe('Test Evil X Boss Fight', () => {
 		testBossFight(
 			{
 				playerDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				saga: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -384,7 +384,7 @@ describe('Test Evil X Boss Fight', () => {
 		testBossFight(
 			{
 				playerDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
-				saga: async (test, game) => {
+				saga: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)

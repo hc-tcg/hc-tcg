@@ -19,7 +19,7 @@ describe('Test type win achivements', () => {
 				],
 
 				playerTwoDeck: [EthosLabCommon],
-				playGame: async (test, game) => {
+				playGame: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
@@ -50,7 +50,7 @@ describe('Test type win achivements', () => {
 				],
 
 				playerTwoDeck: [EthosLabCommon],
-				playGame: async (test, game) => {
+				playGame: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
@@ -69,7 +69,7 @@ describe('Test type win achivements', () => {
 				achievement: BalancedWins,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: async (test, game) => {
+				playGame: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)

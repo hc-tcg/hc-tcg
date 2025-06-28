@@ -20,7 +20,7 @@ describe('Test Ethogirl achievement', () => {
 					EthosLabRare,
 				],
 				playerTwoDeck: [ShadEECommon],
-				playGame: async (test, game) => {
+				playGame: async (test, _game) => {
 					// Identical cards should be counted the same
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)

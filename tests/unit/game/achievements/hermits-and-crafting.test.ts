@@ -12,7 +12,7 @@ describe('Test Hermits and Crafting achievement', () => {
 				achievement: HermitsAndCrafting,
 				playerOneDeck: STARTER_DECKS[1].cards,
 				playerTwoDeck: [EthosLabCommon],
-				playGame: async (test, game) => {
+				playGame: async (test, _game) => {
 					await test.playCardFromHand(SmallishbeansCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -39,7 +39,7 @@ describe('Test Hermits and Crafting achievement', () => {
 				achievement: HermitsAndCrafting,
 				playerOneDeck: [SmallishbeansCommon],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: async (test, game) => {
+				playGame: async (test, _game) => {
 					await test.playCardFromHand(SmallishbeansCommon, 'hermit', 0)
 					await test.endTurn()
 

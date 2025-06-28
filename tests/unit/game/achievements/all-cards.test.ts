@@ -12,7 +12,7 @@ describe('Test Jack of All Cards achivement', () => {
 				achievement: AllCards,
 				playerOneDeck: [EthosLabCommon, ShadEECommon, BalancedItem],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: async (test, game) => {
+				playGame: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 					await test.playCardFromHand(ShadEECommon, 'hermit', 1)
@@ -34,7 +34,7 @@ describe('Test Jack of All Cards achivement', () => {
 				achievement: AllCards,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: async (test, game) => {
+				playGame: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
