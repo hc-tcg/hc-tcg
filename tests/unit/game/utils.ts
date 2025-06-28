@@ -28,7 +28,6 @@ import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware, {SagaMiddleware} from 'redux-saga'
 import {GameController} from 'server/game-controller'
-import {LocalMessage, localMessages} from 'server/messages'
 import gameSaga, {figureOutGameResult} from 'server/routines/game'
 import {getLocalCard} from 'server/utils/state-gen'
 import {call, fork, put, race, take} from 'typed-redux-saga'
@@ -60,7 +59,6 @@ export function* receiveGameMessages(con: GameController) {
 		const action: any = yield* take(
 			(action: any) => action.type == 'GAME_TURN_ACTION',
 		)
-		console.log(action)
 		con.sendTurnAction({
 			action: action.action,
 			playerEntity: action.playerEntity,
@@ -264,6 +262,78 @@ function testSagas(rootSaga: any, testingSaga: any) {
 	}
 }
 
+class TestGameFixture {
+	con: GameController
+	game: GameModel
+
+	constructor(con: GameController) {
+		this.con = con
+		this.game = con.game
+	}
+
+	/** End the current player's turn. */
+	async endTurn() {
+		await this.con.waitForWaitingForTurnAction()
+		await this.con.sendTurnAction({
+			playerEntity: this.game.currentPlayer.entity,
+			action: {
+				type: 'END_TURN',
+			},
+		})
+		await this.con.waitForWaitingForTurnAction()
+	}
+
+	async playCardFromHand(
+		card: Card,
+		slotType: SlotTypeT,
+		row?: number,
+		indexOrPlayer?: number | PlayerEntity,
+		itemSlotPlayer?: PlayerEntity,
+	) {
+		await this.con.waitForWaitingForTurnAction()
+		let cardComponent = findCardInHand(this.game.currentPlayer, card)
+		const player =
+			itemSlotPlayer ||
+			(typeof indexOrPlayer === 'string'
+				? indexOrPlayer
+				: this.game.currentPlayerEntity)
+		const index = typeof indexOrPlayer === 'number' ? indexOrPlayer : undefined
+
+		const slot = this.game.components.find(
+			SlotComponent,
+			query.slot.player(player),
+			(_game, slot) =>
+				(!slot.inRow() && index === undefined) ||
+				(slot.inRow() && slot.row.index === row),
+			(_game, slot) =>
+				index === undefined || (slot.inRow() && slot.index === index),
+			(_game, slot) => slot.type === slotType,
+		)!
+
+		await this.con.sendTurnAction({
+			playerEntity: this.game.currentPlayer.entity,
+			action: {
+				type: slotToPlayCardAction[cardComponent.props.category],
+				card: getLocalCard(this.game, cardComponent),
+				slot: slot.entity,
+			},
+		})
+		await this.con.waitForWaitingForTurnAction()
+	}
+	/** Attack with the current player. */
+	async attack(attack: 'primary' | 'secondary' | 'single-use') {
+		await this.con.waitForWaitingForTurnAction()
+		await this.con.sendTurnAction({
+			type: 'GAME_TURN_ACTION',
+			playerEntity: this.game.currentPlayer.entity,
+			action: {
+				type: attackToAttackAction[attack],
+			},
+		})
+		await this.con.waitForWaitingForTurnAction()
+	}
+}
+
 const defaultGameSettings = {
 	maxTurnTime: 90 * 1000,
 	extraActionTime: 30 * 1000,
@@ -292,9 +362,9 @@ const defaultGameSettings = {
  * Test a saga against a game. The game is created with default settings similar to what would be found in production.
  * Note that decks are not shuffled in test games.
  */
-export function testGame(
+export async function testGame(
 	options: {
-		saga: (game: GameModel) => any
+		saga: (test: TestGameFixture, game: GameModel) => any
 		// This is the place to check the state of the game after it ends.
 		then?: (game: GameModel, outcome: GameOutcome) => any
 		playerOneDeck: Array<Card>
@@ -317,16 +387,13 @@ export function testGame(
 
 	let testEnded = false
 
-	testSagas(
-		call(function* () {
-			yield* fork(gameSaga, controller)
-			yield* call(receiveGameMessages, controller)
-		}),
-		call(function* () {
-			yield* call(options.saga, controller.game)
+	await Promise.race([
+		gameSaga(controller),
+		(async () => {
+			await options.saga(new TestGameFixture(controller), controller.game)
 			testEnded = true
-		}),
-	)
+		})(),
+	])
 
 	if (!options.then && !testEnded) {
 		throw new Error('Game was ended before the test finished running.')

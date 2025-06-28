@@ -81,8 +81,8 @@ export class GameController {
 	readonly player1Defs: PlayerSetupDefs
 	readonly player2Defs: PlayerSetupDefs
 
-	private turnActions: TurnActionAndPlayer[]
 	private turnActionListener: ((turnAction: TurnActionAndPlayer) => any) | null
+	private waitingForTurnActionList: Array<() => any>
 
 	constructor(
 		player1: PlayerSetupDefs,
@@ -113,7 +113,7 @@ export class GameController {
 		this.task = null
 		this.viewers = []
 
-		this.turnActions = []
+		this.waitingForTurnActionList = []
 		this.turnActionListener = null
 
 		this.player1Defs = player1
@@ -237,29 +237,41 @@ export class GameController {
 		)
 	}
 
-	public sendTurnAction(action: TurnActionAndPlayer) {
+	public async sendTurnAction(action: TurnActionAndPlayer) {
 		if (this.turnActionListener) {
-			this.turnActionListener(action)
+			await this.turnActionListener(action)
 			this.turnActionListener = null
-		} else {
-			this.turnActions.push(action)
 		}
 	}
 
 	public async waitForTurnAction(): Promise<TurnActionAndPlayer> {
-		if (this.turnActions.length > 0) {
-			return this.turnActions.shift() as TurnActionAndPlayer
+		for (const w of this.waitingForTurnActionList) {
+			w()
 		}
+		this.waitingForTurnActionList = []
 
-		return await new Promise((resolve) => {
-			this.turnActionListener = (turnAction) => {
-				resolve(turnAction)
-			}
-		})
+		const promise: Promise<TurnActionAndPlayer> = (await new Promise(
+			(resolve) => {
+				this.turnActionListener = (turnAction) => {
+					resolve(turnAction)
+				}
+			},
+		)) as any
+
+		return promise
 	}
 
 	public stopWaitingForAction() {
 		this.turnActionListener = null
+	}
+
+	public async waitForWaitingForTurnAction() {
+		if (this.turnActionListener) return
+		return await new Promise((resolve) => {
+			this.waitingForTurnActionList.push(() => {
+				resolve(null)
+			})
+		})
 	}
 
 	private async publishBattleLog(logs: Array<Message>, timeout: number) {
