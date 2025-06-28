@@ -69,8 +69,7 @@ describe('Test Slimeball', () => {
 
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(Slimeball, 'attach', 0)
-				yield* playCardFromHand(
-					game,
+				await test.playCardFromHand(
 					Slimeball,
 					'attach',
 					0,

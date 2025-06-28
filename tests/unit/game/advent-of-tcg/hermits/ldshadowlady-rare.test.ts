@@ -51,8 +51,7 @@ describe('Test Lizzie Evict', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(LDShadowLadyRare, 'hermit', 0)
-					yield* playCardFromHand(
-						game,
+					await test.playCardFromHand(
 						Slimeball,
 						'attach',
 						0,
@@ -90,8 +89,7 @@ describe('Test Lizzie Evict', () => {
 						query.slot.rowIndex(4),
 					)
 					await test.removeEffect()
-					yield* playCardFromHand(
-						game,
+					await test.playCardFromHand(
 						BerryBush,
 						'hermit',
 						4,
