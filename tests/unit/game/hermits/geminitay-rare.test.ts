@@ -19,7 +19,7 @@ describe('Test Gemini Tay', () => {
 			{
 				playerOneDeck: [EthosLabCommon, IronArmor],
 				playerTwoDeck: [GeminiTayRare, GoldenAxe, IronSword],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(IronArmor, 'attach', 0)
 
@@ -68,7 +68,7 @@ describe('Test Gemini Tay', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Totem],
 				playerTwoDeck: [GeminiTayRare, LavaBucket, GoldenAxe],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Totem, 'attach', 0)
@@ -110,7 +110,7 @@ describe('Test Gemini Tay', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Totem],
 				playerTwoDeck: [GeminiTayRare, LavaBucket, GoldenAxe],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Totem, 'attach', 0)
@@ -150,7 +150,7 @@ describe('Test Gemini Tay', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [GeminiTayRare, EthosLabCommon, ChorusFruit],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 

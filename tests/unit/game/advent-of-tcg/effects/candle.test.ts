@@ -20,7 +20,7 @@ describe('Test Candle Single Use', () => {
 					EthosLabCommon,
 				],
 				playerTwoDeck: [EthosLabCommon, Candle, ...Array(6).fill(BalancedItem)],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Candle, 'single_use')
 					await test.applyEffect()
@@ -70,7 +70,7 @@ describe('Test Candle Single Use', () => {
 					...Array(10).fill(BalancedItem),
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Candle, 'single_use')
 					await test.applyEffect()
@@ -126,7 +126,7 @@ describe('Test Candle Single Use', () => {
 					Candle,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Candle, 'single_use')
 					await test.applyEffect()

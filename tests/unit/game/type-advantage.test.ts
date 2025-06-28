@@ -37,7 +37,7 @@ function createTypeAdvantageTest(
 			{
 				playerOneDeck: [defender],
 				playerTwoDeck: [attacker],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(defender, 'hermit', 0)
 					await test.endTurn()
 

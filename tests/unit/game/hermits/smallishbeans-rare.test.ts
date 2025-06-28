@@ -10,7 +10,7 @@ describe('Test Smallishbeans Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [SmallishbeansRare, EthosLabCommon, GeminiTayRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 

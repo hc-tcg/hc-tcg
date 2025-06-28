@@ -21,7 +21,7 @@ describe('Test Powder Snow Bucket', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, PowderSnowBucket],
 				playerTwoDeck: [EthosLabCommon, Bow],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(PowderSnowBucket, 'single_use')
@@ -63,7 +63,7 @@ describe('Test Powder Snow Bucket', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, PowderSnowBucket],
 				playerTwoDeck: [EthosLabCommon, Knockback, Egg],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(PowderSnowBucket, 'single_use')
@@ -90,7 +90,7 @@ describe('Test Powder Snow Bucket', () => {
 			{
 				playerOneDeck: [Cubfan135Rare, EthosLabCommon, ChorusFruit],
 				playerTwoDeck: [IJevinRare, PowderSnowBucket],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(Cubfan135Rare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -133,7 +133,7 @@ describe('Test Powder Snow Bucket', () => {
 					SplashPotionOfPoison,
 					PowderSnowBucket,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
@@ -206,7 +206,7 @@ describe('Test Powder Snow Bucket', () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [EthosLabCommon, BerryBush, PowderSnowBucket, Bow],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.endTurn()
 
@@ -260,7 +260,7 @@ describe('Test Powder Snow Bucket', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, PowderSnowBucket],
 				playerTwoDeck: [TangoTekRare, EthosLabCommon, PowderSnowBucket],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(PowderSnowBucket, 'single_use')

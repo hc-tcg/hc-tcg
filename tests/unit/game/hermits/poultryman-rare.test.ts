@@ -14,7 +14,7 @@ describe('Test Poutry Man Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [PoultryManRare, Egg, GoldenAxe],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
@@ -56,7 +56,7 @@ describe('Test Poutry Man Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, BadOmen],
 				playerTwoDeck: [PoultryManRare, Egg],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
@@ -93,7 +93,7 @@ describe('Test Poutry Man Rare', () => {
 			{
 				playerOneDeck: [PoultryManRare, Egg],
 				playerTwoDeck: [HelsknightRare, EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(PoultryManRare, 'hermit', 0)
 					await test.endTurn()
 

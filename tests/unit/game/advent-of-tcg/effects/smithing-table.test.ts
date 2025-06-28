@@ -20,7 +20,7 @@ describe('Test Smithing Table', () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon, SmithingTable, WaterBucket],
 			playerTwoDeck: [EthosLabCommon],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(SmithingTable, 'single_use')
 				await test.pick(
@@ -54,7 +54,7 @@ describe('Test Smithing Table', () => {
 			{
 				playerOneDeck: [EthosLabCommon, SmithingTable, Shield],
 				playerTwoDeck: [EthosLabCommon, CurseOfVanishing],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(SmithingTable, 'single_use')
 					await test.pick(
@@ -91,7 +91,7 @@ describe('Test Smithing Table', () => {
 	test('Reinforced Slimeball protects against Evil X Boss discarding from row', async () => {
 		testBossFight({
 			playerDeck: [EthosLabCommon, SmithingTable, Slimeball, BalancedItem],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(SmithingTable, 'single_use')
 				await test.pick(

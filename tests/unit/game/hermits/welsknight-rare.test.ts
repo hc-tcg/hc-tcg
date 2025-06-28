@@ -13,7 +13,7 @@ describe('Test rare welsknight', () => {
 			{
 				playerOneDeck: [GeminiTayCommon, GoldArmor, InstantHealthII],
 				playerTwoDeck: [WelsknightRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
 					await test.endTurn()
 

@@ -255,6 +255,7 @@ export class TestGameFixture {
 
 export class BossGameTestFixture extends TestGameFixture {
 	async bossAttack(...attack: BOSS_ATTACK) {
+		await this.con.waitForWaitingForTurnAction()
 		const bossCard = this.game.components.find(
 			CardComponent,
 			query.card.is(EvilXisumaBoss),
@@ -273,6 +274,7 @@ export class BossGameTestFixture extends TestGameFixture {
 				type: attackType,
 			},
 		})
+		await this.con.waitForWaitingForTurnAction()
 	}
 }
 
@@ -306,7 +308,7 @@ const defaultGameSettings = {
  */
 export async function testGame(
 	options: {
-		saga: (test: TestGameFixture, game: GameModel) => any
+		testGame: (test: TestGameFixture, game: GameModel) => any
 		// This is the place to check the state of the game after it ends.
 		then?: (game: GameModel, outcome: GameOutcome) => any
 		playerOneDeck: Array<Card>
@@ -332,7 +334,7 @@ export async function testGame(
 	await Promise.race([
 		gameSaga(controller),
 		(async () => {
-			await options.saga(new TestGameFixture(controller), controller.game)
+			await options.testGame(new TestGameFixture(controller), controller.game)
 			testEnded = true
 		})(),
 	])
@@ -353,7 +355,7 @@ export async function testBossFight(
 	options: {
 		/**
 		 * ```ts
-		 * saga: async (test, game) => {
+		 * testGame: async (test, game) => {
 		 * 	...
 		 * 	await test.endTurn()
 		 * 	// Boss' first turn
@@ -363,7 +365,7 @@ export async function testBossFight(
 		 * }
 		 * ```
 		 */
-		saga: (test: BossGameTestFixture, game: GameModel) => any
+		testGame: (test: BossGameTestFixture, game: GameModel) => any
 		// This is the place to check the state of the game after it ends.
 		then?: (game: GameModel) => any
 		playerDeck: Array<Card>
@@ -431,7 +433,10 @@ export async function testBossFight(
 	await Promise.race([
 		gameSaga(controller),
 		(async () => {
-			await options.saga(new BossGameTestFixture(controller), controller.game)
+			await options.testGame(
+				new BossGameTestFixture(controller),
+				controller.game,
+			)
 			testEnded = true
 		})(),
 	])
@@ -498,7 +503,7 @@ export async function testAchivement(
 
 	await testGame(
 		{
-			saga: achievementTest,
+			testGame: achievementTest,
 			then,
 			playerOneDeck: options.playerOneDeck,
 			playerTwoDeck: options.playerTwoDeck,
@@ -507,7 +512,7 @@ export async function testAchivement(
 	)
 }
 
-export function testReplayGame(options: {
+export async function testReplayGame(options: {
 	gameSaga: (test: TestGameFixture, con: GameController) => any
 	afterGame: (con: GameController) => any
 	playerOneDeck: Array<Card>
@@ -533,14 +538,15 @@ export function testReplayGame(options: {
 		},
 	)
 
-	testSagas(
-		call(function* () {
-			yield* call(gameSaga, controller)
-		}),
-		call(function* () {
-			yield* call(options.gameSaga, controller)
-		}),
-	)
+	await Promise.race([
+		gameSaga(controller),
+		(async () => {
+			await options.gameSaga(
+				new BossGameTestFixture(controller),
+				controller.game,
+			)
+		})(),
+	])
 
 	const sagaMiddleware = getSagaMiddleware()
 

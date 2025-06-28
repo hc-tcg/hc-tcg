@@ -31,7 +31,7 @@ function testThorns(thorns: ThornsType) {
 				{
 					playerOneDeck: [EthosLabCommon, thornsMap[thorns].card],
 					playerTwoDeck: [EthosLabCommon, IronSword],
-					saga: async (test, game) => {
+					testGame: async (test, game) => {
 						await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 						await test.playCardFromHand(thornsMap[thorns].card, 'attach', 0)
 						await test.endTurn()

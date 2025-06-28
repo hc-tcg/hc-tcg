@@ -14,7 +14,7 @@ describe('Test Weakness', () => {
 			{
 				playerOneDeck: [VintageBeefCommon],
 				playerTwoDeck: [VintageBeefCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -40,7 +40,7 @@ describe('Test Weakness', () => {
 			{
 				playerOneDeck: [VintageBeefCommon],
 				playerTwoDeck: [VintageBeefCommon, PotionOfWeakness],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -88,7 +88,7 @@ describe('Test Weakness', () => {
 					PotionOfWeakness,
 					ChorusFruit,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
 					await test.endTurn()
@@ -144,7 +144,7 @@ describe('Test Weakness', () => {
 			{
 				playerOneDeck: [VintageBeefCommon, ImpulseSVCommon],
 				playerTwoDeck: [VintageBeefCommon, PotionOfWeakness],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 1)
 					await test.endTurn()
@@ -189,7 +189,7 @@ describe('Test Weakness', () => {
 			{
 				playerOneDeck: [VintageBeefCommon],
 				playerTwoDeck: [VintageBeefCommon, PotionOfWeakness, PotionOfWeakness],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -225,7 +225,7 @@ describe('Test Weakness', () => {
 			{
 				playerOneDeck: [SmallishbeansRare],
 				playerTwoDeck: [ImpulseSVCommon, PotionOfWeakness],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(SmallishbeansRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -258,7 +258,7 @@ describe('Test Weakness', () => {
 					SmallishbeansRare,
 					PotionOfWeakness,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(SmallishbeansRare, 'hermit', 0)
 					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 1)
 					await test.playCardFromHand(SmallishbeansRare, 'hermit', 2)

@@ -58,7 +58,7 @@ describe('Test Evil X', () => {
 	test('Test Evil X disables attack for one turn', async () => {
 		await testGame(
 			{
-				saga: testEvilXDisablesForOneTurn,
+				testGame: testEvilXDisablesForOneTurn,
 				playerOneDeck: [EvilXisumaRare],
 				playerTwoDeck: [EthosLabCommon],
 			},
@@ -70,7 +70,7 @@ describe('Test Evil X', () => {
 			{
 				playerOneDeck: [ArmorStand, EthosLabCommon],
 				playerTwoDeck: [EvilXisumaRare],
-				saga: async (test: TestGameFixture, game: GameModel) => {
+				testGame: async (test: TestGameFixture, game: GameModel) => {
 					await test.playCardFromHand(ArmorStand, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -90,7 +90,7 @@ describe('Test Evil X', () => {
 			{
 				playerOneDeck: [ZombieCleoRare, EthosLabCommon],
 				playerTwoDeck: [EvilXisumaRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -113,7 +113,7 @@ describe('Test Evil X', () => {
 			{
 				playerOneDeck: [JoeHillsRare],
 				playerTwoDeck: [JoeHillsRare, EvilXisumaRare, ChorusFruit],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(JoeHillsRare, 'hermit', 0)
 					await test.endTurn()
 

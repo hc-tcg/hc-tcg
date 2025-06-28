@@ -27,7 +27,7 @@ describe('Test Zookeeper Scar', () => {
 					Cat,
 					...Array(40).fill(EthosLabCommon),
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -46,7 +46,7 @@ describe('Test Zookeeper Scar', () => {
 			{
 				playerOneDeck: [EthosLabCommon, ZookeeperScarRare, Wolf],
 				playerTwoDeck: [EthosLabCommon, Emerald],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Wolf, 'attach', 0)
 					await test.playCardFromHand(ZookeeperScarRare, 'hermit', 1)
@@ -85,7 +85,7 @@ describe('Test Zookeeper Scar', () => {
 					...Array(5).fill(BalancedItem),
 					EthosLabCommon,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -121,7 +121,7 @@ describe('Test Zookeeper Scar', () => {
 			{
 				playerOneDeck: [ZookeeperScarRare, EthosLabCommon, ElderGuardian],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(ZookeeperScarRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(ElderGuardian, 'attach', 1)
@@ -155,7 +155,7 @@ describe('Test Zookeeper Scar', () => {
 					...Array(5).fill(BalancedItem),
 					Cat,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -202,7 +202,7 @@ describe('Test Zookeeper Scar', () => {
 					...Array(5).fill(BalancedItem),
 					Cat,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -247,7 +247,7 @@ describe('Test Zookeeper Scar', () => {
 					Cat,
 					...Array(7).fill(BalancedItem),
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(ZookeeperScarRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -278,7 +278,7 @@ describe('Test Zookeeper Scar', () => {
 			{
 				playerOneDeck: [ZookeeperScarRare],
 				playerTwoDeck: [EvilXisumaRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(ZookeeperScarRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -302,7 +302,7 @@ describe('Test Zookeeper Scar', () => {
 			{
 				playerOneDeck: [EthosLabCommon, ZookeeperScarRare, Wolf],
 				playerTwoDeck: [EthosLabCommon, GoldenAxe, GoldenAxe],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Wolf, 'attach', 0)
 					await test.playCardFromHand(ZookeeperScarRare, 'hermit', 1)

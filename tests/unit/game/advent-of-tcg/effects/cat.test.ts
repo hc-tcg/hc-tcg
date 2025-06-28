@@ -25,7 +25,7 @@ describe('Test Cat Effect Card', () => {
 				...Array(7).fill(BalancedItem),
 				IronSword,
 			],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.endTurn()
 
@@ -67,7 +67,7 @@ describe('Test Cat Effect Card', () => {
 				IronSword,
 				...Array(4).fill(BalancedDoubleItem),
 			],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 				await test.playCardFromHand(Thorns, 'attach', 0)
@@ -117,7 +117,7 @@ describe('Test Cat Effect Card', () => {
 				...Array(4).fill(BalancedItem),
 				IronSword,
 			],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 				await test.playCardFromHand(Thorns, 'attach', 0)
@@ -156,7 +156,7 @@ describe('Test Cat Effect Card', () => {
 					MinerItem,
 					IronSword,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(OriginalXBRare, 'hermit', 0)
 					await test.playCardFromHand(MinerDoubleItem, 'item', 0, 0)
 					await test.endTurn()
@@ -197,7 +197,7 @@ describe('Test Cat Effect Card', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Cat, Cat],
 				playerTwoDeck: [GrianRare, ...Array(10).fill(BalancedItem)],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Cat, 'attach', 0)
 					await test.endTurn()

@@ -19,7 +19,7 @@ describe('Test Invisiblity Potion.', () => {
 			{
 				playerOneDeck: [EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					await test.applyEffect()
@@ -62,7 +62,7 @@ describe('Test Invisiblity Potion.', () => {
 			{
 				playerOneDeck: [EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -109,7 +109,7 @@ describe('Test Invisiblity Potion.', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [SkizzlemanRare, Anvil],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
@@ -146,7 +146,7 @@ describe('Test Invisiblity Potion.', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [PoePoeSkizzRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
@@ -186,7 +186,7 @@ describe('Test Invisiblity Potion.', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [SpookyStressRare, WaterBucket],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')

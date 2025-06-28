@@ -13,7 +13,7 @@ describe('Test Chorus Fruit', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, ChorusFruit],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -38,7 +38,7 @@ describe('Test Chorus Fruit', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, ChorusFruit],
 				playerTwoDeck: [HumanCleoRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
@@ -81,7 +81,7 @@ describe('Test Chorus Fruit', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, ChorusFruit],
 				playerTwoDeck: [EthosLabCommon, CurseOfBinding],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
@@ -112,7 +112,7 @@ describe('Test Chorus Fruit', () => {
 					ChorusFruit,
 					ChorusFruit,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 

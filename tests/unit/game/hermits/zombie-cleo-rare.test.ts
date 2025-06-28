@@ -386,7 +386,7 @@ describe('Test Zombie Cleo', () => {
 	test('Test Zombie Cleo Primary Does Not Crash Server', async () => {
 		await testGame(
 			{
-				saga: testPrimaryDoesNotCrash,
+				testGame: testPrimaryDoesNotCrash,
 				playerOneDeck: [ZombieCleoRare],
 				playerTwoDeck: [EthosLabCommon],
 			},
@@ -397,7 +397,7 @@ describe('Test Zombie Cleo', () => {
 	test('Test Puppetry is Disabled by Amnesia', async () => {
 		await testGame(
 			{
-				saga: testAmnesiaDisablesPuppetry,
+				testGame: testAmnesiaDisablesPuppetry,
 				playerOneDeck: [ArchitectFalseRare],
 				playerTwoDeck: [ZombieCleoRare, EthosLabCommon],
 			},
@@ -408,7 +408,7 @@ describe('Test Zombie Cleo', () => {
 	test('Test Amnesia Blocks Mocking Attack with Puppetry', async () => {
 		await testGame(
 			{
-				saga: testAmnesiaBlocksPuppetryMock,
+				testGame: testAmnesiaBlocksPuppetryMock,
 				playerOneDeck: [ArchitectFalseRare],
 				playerTwoDeck: [EthosLabCommon, ZombieCleoRare, ChorusFruit],
 			},
@@ -419,7 +419,7 @@ describe('Test Zombie Cleo', () => {
 	test('Test Puppetry After Canceling', async () => {
 		await testGame(
 			{
-				saga: testPuppetryCanceling,
+				testGame: testPuppetryCanceling,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [ZombieCleoRare, ZombieCleoRare, BoomerBdubsRare],
 			},
@@ -430,7 +430,7 @@ describe('Test Zombie Cleo', () => {
 	test('Test using Puppetry on Jopacity', async () => {
 		await testGame(
 			{
-				saga: testPuppetingJopacity,
+				testGame: testPuppetingJopacity,
 				playerOneDeck: [SmallishbeansCommon],
 				playerTwoDeck: [ZombieCleoRare, BeetlejhostRare, SmallishbeansCommon],
 			},
@@ -441,7 +441,7 @@ describe('Test Zombie Cleo', () => {
 	test('Test Puppeting an attack that requites an item to be discarded', async () => {
 		await testGame(
 			{
-				saga: testPuppetryDiscardingItem,
+				testGame: testPuppetryDiscardingItem,
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [ZombieCleoRare, PvPItem, HypnotizdRare],
 			},
@@ -452,7 +452,7 @@ describe('Test Zombie Cleo', () => {
 	test('Test using Puppetry on Total Anonymity', async () => {
 		await testGame(
 			{
-				saga: testPuppetingTotalAnonymity,
+				testGame: testPuppetingTotalAnonymity,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [ZombieCleoRare, WormManRare, EthosLabCommon],
 			},
@@ -465,7 +465,7 @@ describe('Test Zombie Cleo', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [ZombieCleoRare, Cubfan135Rare, ChorusFruit],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -500,7 +500,7 @@ describe('Test Zombie Cleo', () => {
 	test('Test using Puppetry on Time Skip', async () => {
 		await testGame(
 			{
-				saga: testPuppetingTimeSkip,
+				testGame: testPuppetingTimeSkip,
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [ZombieCleoRare, JoeHillsRare, Bow],
 			},

@@ -15,7 +15,7 @@ describe('Test Milk Bucket', () => {
 		await testGame({
 			playerOneDeck: [FarmerBeefCommon, MilkBucket],
 			playerTwoDeck: [EthosLabCommon, BadOmen, SplashPotionOfPoison],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(FarmerBeefCommon, 'hermit', 0)
 				await test.endTurn()
 

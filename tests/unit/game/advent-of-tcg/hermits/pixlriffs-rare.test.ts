@@ -20,7 +20,7 @@ describe('Test Pixl World Build', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [PixlriffsRare, PixlriffsRare, EnderPearl, Ladder],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
@@ -85,7 +85,7 @@ describe('Test Pixl World Build', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [PixlriffsRare, PixlriffsRare, EnderPearl],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -124,7 +124,7 @@ describe('Test Pixl World Build', () => {
 			{
 				playerOneDeck: [GrianchRare, Thorns],
 				playerTwoDeck: [EthosLabCommon, PixlriffsRare, BadOmen, Ladder],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(Thorns, 'attach', 0)
 					await test.endTurn()
@@ -178,7 +178,7 @@ describe('Test Pixl World Build', () => {
 			{
 				playerOneDeck: [GrianchRare, PixlriffsRare, GeminiTayRare],
 				playerTwoDeck: [RendogRare, RendogRare, BadOmen, Ladder, Ladder],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(PixlriffsRare, 'hermit', 1)
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 2)
@@ -252,7 +252,7 @@ describe('Test Pixl World Build', () => {
 			{
 				playerOneDeck: [GrianchRare, PixlriffsRare, GeminiTayRare],
 				playerTwoDeck: [RendogRare, BadOmen, EnderPearl, EnderPearl],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(PixlriffsRare, 'hermit', 1)
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 2)
@@ -325,7 +325,7 @@ describe('Test Pixl World Build', () => {
 			{
 				playerOneDeck: [GrianchRare, PixlriffsRare, PoePoeSkizzRare],
 				playerTwoDeck: [RendogRare, BadOmen, EnderPearl],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(PixlriffsRare, 'hermit', 1)
 					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 2)

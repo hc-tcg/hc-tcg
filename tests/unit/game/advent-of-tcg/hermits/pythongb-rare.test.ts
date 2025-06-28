@@ -46,7 +46,7 @@ describe('Test PythonGB Logfellas', () => {
 	test('Test Python Is Triggered By Adjacent Rendog', async () => {
 		await testGame(
 			{
-				saga: testOneHermit,
+				testGame: testOneHermit,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [PythonGBRare, RendogCommon, RendogCommon],
 			},
@@ -56,7 +56,7 @@ describe('Test PythonGB Logfellas', () => {
 	test('Test Python Is Triggered By Multiple Hermits', async () => {
 		await testGame(
 			{
-				saga: testManyHermits,
+				testGame: testManyHermits,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [PythonGBRare, RendogCommon, XisumavoidRare],
 			},

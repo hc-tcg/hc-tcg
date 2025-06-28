@@ -13,7 +13,7 @@ describe('Test Hels Trap Hole', () => {
 			{
 				playerOneDeck: [EthosLabCommon, TNT],
 				playerTwoDeck: [HelsknightRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 					await test.endTurn()
@@ -42,7 +42,7 @@ describe('Test Hels Trap Hole', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Anvil],
 				playerTwoDeck: [HelsknightRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
 
@@ -67,7 +67,7 @@ describe('Test Hels Trap Hole', () => {
 			{
 				playerOneDeck: [GeminiTayRare, IronSword, IronSword],
 				playerTwoDeck: [HelsknightRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
 					await test.endTurn()
 

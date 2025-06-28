@@ -23,7 +23,7 @@ describe('Test Brush Single Use', () => {
 					Feather,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Brush, 'single_use')
 					await test.applyEffect()
@@ -71,7 +71,7 @@ describe('Test Brush Single Use', () => {
 					Feather,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Brush, 'single_use')
 					await test.applyEffect()
@@ -119,7 +119,7 @@ describe('Test Brush Single Use', () => {
 					Feather,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Brush, 'single_use')
 					await test.applyEffect()

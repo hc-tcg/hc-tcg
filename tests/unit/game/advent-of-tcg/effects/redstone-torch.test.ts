@@ -26,7 +26,7 @@ describe('Test Redstone Torch', () => {
 					...Array(3).fill(BalancedItem),
 					TNT,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -75,7 +75,7 @@ describe('Test Redstone Torch', () => {
 					MinecartWithTNT,
 					MinecartWithTNT,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -108,7 +108,7 @@ describe('Test Redstone Torch', () => {
 					...Array(7).fill(BalancedItem),
 				],
 				playerTwoDeck: [EthosLabCommon, RedstoneTorch],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					expect(game.currentPlayer.getDrawPile().length).toBe(2)
 					expect(

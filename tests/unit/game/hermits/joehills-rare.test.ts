@@ -11,7 +11,7 @@ describe('Test Joe Time Skip', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, BadOmen],
 				playerTwoDeck: [JoeHillsRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -51,7 +51,7 @@ describe('Test Joe Time Skip', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [JoeHillsRare, Clock],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()

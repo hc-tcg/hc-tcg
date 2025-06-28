@@ -294,7 +294,7 @@ describe('Test Evil X Boss Fight', () => {
 	test('Test Boss versus consecutive Amnesia', async () => {
 		await testBossFight(
 			{
-				saga: testConsecutiveAmnesia,
+				testGame: testConsecutiveAmnesia,
 				playerDeck: [ArchitectFalseRare, Anvil, Anvil],
 			},
 			{startWithAllCards: true, noItemRequirements: true},
@@ -304,7 +304,7 @@ describe('Test Evil X Boss Fight', () => {
 	test('Test Boss versus rare Rendog', async () => {
 		await testBossFight(
 			{
-				saga: testVersusRendogRare,
+				testGame: testVersusRendogRare,
 				playerDeck: [RendogRare],
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
@@ -314,7 +314,7 @@ describe('Test Evil X Boss Fight', () => {
 	test('Test Boss is "directly opposite" opponent active hermit', async () => {
 		await testBossFight(
 			{
-				saga: testDirectlyOpposite,
+				testGame: testDirectlyOpposite,
 				playerDeck: [PoePoeSkizzRare, RenbobRare, Anvil],
 			},
 			{startWithAllCards: true, noItemRequirements: true},
@@ -324,7 +324,7 @@ describe('Test Evil X Boss Fight', () => {
 	test('Test "NINEATTACHED" discards all cards from active', async () => {
 		await testBossFight(
 			{
-				saga: testNineAttached,
+				testGame: testNineAttached,
 				playerDeck: [
 					EthosLabCommon,
 					EthosLabCommon,
@@ -349,7 +349,7 @@ describe('Test Evil X Boss Fight', () => {
 					PranksterDoubleItem,
 					PranksterDoubleItem,
 				],
-				saga: testChallengerVictory,
+				testGame: testChallengerVictory,
 				then: (game) => {
 					expect(getWinner(game)?.playerName).toBe('playerOne')
 					expect(game.outcome).toHaveProperty('victoryReason', 'lives')
@@ -363,7 +363,7 @@ describe('Test Evil X Boss Fight', () => {
 		await testBossFight(
 			{
 				playerDeck: [EthosLabCommon],
-				saga: async (test, _game) => {
+				testGame: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -384,7 +384,7 @@ describe('Test Evil X Boss Fight', () => {
 		await testBossFight(
 			{
 				playerDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
-				saga: async (test, _game) => {
+				testGame: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)

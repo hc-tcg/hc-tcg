@@ -14,7 +14,7 @@ describe('Test Zedaph Sheep Stare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, TNT],
 				playerTwoDeck: [ZedaphPlaysRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -47,7 +47,7 @@ describe('Test Zedaph Sheep Stare', () => {
 			{
 				playerOneDeck: [GoatfatherRare],
 				playerTwoDeck: [ZedaphPlaysRare, EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GoatfatherRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -87,7 +87,7 @@ describe('Test Zedaph Sheep Stare', () => {
 			{
 				playerOneDeck: [ZedaphPlaysRare],
 				playerTwoDeck: [ZedaphPlaysRare, PotionOfWeakness],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 0)
 					await test.endTurn()
 

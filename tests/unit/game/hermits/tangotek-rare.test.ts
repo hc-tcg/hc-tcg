@@ -14,7 +14,7 @@ describe('Test Tango Extra Flee', () => {
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon],
 				playerTwoDeck: [TangoTekRare, FarmerBeefRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 
@@ -52,7 +52,7 @@ describe('Test Tango Extra Flee', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [TangoTekRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 					await test.endTurn()
@@ -73,7 +73,7 @@ describe('Test Tango Extra Flee', () => {
 			{
 				playerOneDeck: [TangoTekRare, FarmerBeefRare],
 				playerTwoDeck: [EthosLabCommon, CurseOfBinding],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
 					await test.playCardFromHand(FarmerBeefRare, 'hermit', 1)
 
@@ -100,7 +100,7 @@ describe('Test Tango Extra Flee', () => {
 			{
 				playerOneDeck: [TangoTekRare, FarmerBeefRare],
 				playerTwoDeck: [HumanCleoRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
 					await test.playCardFromHand(FarmerBeefRare, 'hermit', 1)
 

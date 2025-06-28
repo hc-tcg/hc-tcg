@@ -11,7 +11,7 @@ describe('Test Shield', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Shield],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Shield, 'attach', 0)
 					await test.endTurn()

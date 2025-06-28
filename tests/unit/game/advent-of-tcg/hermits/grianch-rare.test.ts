@@ -55,7 +55,7 @@ describe('Test The Grianch Naughty', () => {
 					Fortune,
 					Fortune,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -110,7 +110,7 @@ describe('Test The Grianch Naughty', () => {
 			{
 				playerOneDeck: [GrianchRare, BadOmen],
 				playerTwoDeck: [BoomerBdubsRare, BadOmen, Fortune],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -146,7 +146,7 @@ describe('Test The Grianch Naughty', () => {
 			{
 				playerOneDeck: [GrianchRare, Fortune],
 				playerTwoDeck: [PearlescentMoonRare, BadOmen],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -203,7 +203,7 @@ describe('Test The Grianch Naughty', () => {
 					InvisibilityPotion,
 				],
 				playerTwoDeck: [GrianchRare, BadOmen],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
@@ -249,7 +249,7 @@ describe('Test The Grianch Naughty', () => {
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon, Totem],
 				playerTwoDeck: [SkizzlemanRare, BadOmen, Anvil],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Totem, 'attach', 1)
@@ -305,7 +305,7 @@ describe('Test The Grianch Naughty', () => {
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [SkizzlemanRare, BadOmen, Anvil],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
@@ -357,7 +357,7 @@ describe('Test The Grianch Naughty', () => {
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [SkizzlemanRare, BadOmen, Anvil],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -412,7 +412,7 @@ describe('Test The Grianch Naughty', () => {
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon],
 				playerTwoDeck: [SkizzlemanRare, BadOmen, Anvil],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -468,7 +468,7 @@ describe('Test The Grianch Naughty', () => {
 					SkizzlemanRare,
 					BadOmen,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(RendogRare, 'hermit', 2)
 					await test.endTurn()
 
@@ -571,7 +571,7 @@ describe('Test The Grianch Naughty', () => {
 					SkizzlemanRare,
 					BadOmen,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(RendogRare, 'hermit', 2)
 					await test.endTurn()
 
@@ -668,7 +668,7 @@ describe('Test The Grianch Naughty', () => {
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon, Fortune],
 				playerTwoDeck: [HumanCleoRare, BadOmen],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -732,7 +732,7 @@ describe('Test The Grianch Naughty', () => {
 					PvPDoubleItem,
 					BadOmen,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(BuilderItem, 'item', 0, 0)
@@ -792,7 +792,7 @@ describe('Test The Grianch Naughty', () => {
 					WormManRare,
 					BadOmen,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(RendogRare, 'hermit', 2)
 					await test.endTurn()
 
@@ -899,7 +899,7 @@ describe('Test The Grianch Naughty', () => {
 					BadOmen,
 					Anvil,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -944,7 +944,7 @@ describe('Test The Grianch Naughty', () => {
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon, Fortune],
 				playerTwoDeck: [ZedaphPlaysRare, BadOmen],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -1011,7 +1011,7 @@ describe('Test The Grianch Naughty', () => {
 					HumanCleoRare,
 					BadOmen,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -1080,7 +1080,7 @@ describe('Test The Grianch Naughty', () => {
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon],
 				playerTwoDeck: [PoultryManRare, BadOmen, Egg],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -1122,7 +1122,7 @@ describe('Test The Grianch Naughty', () => {
 					BadOmen,
 					Egg,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -1171,7 +1171,7 @@ describe('Test The Grianch Naughty', () => {
 			{
 				playerOneDeck: [GrianchRare, Fortune],
 				playerTwoDeck: [HelsknightRare, BadOmen],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -1205,7 +1205,7 @@ describe('Test The Grianch Naughty', () => {
 			{
 				playerOneDeck: [GrianchRare, Fortune],
 				playerTwoDeck: [ArchitectFalseRare, BadOmen],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -1240,7 +1240,7 @@ describe('Test The Grianch Naughty', () => {
 			{
 				playerOneDeck: [ArchitectFalseRare, ArchitectFalseRare],
 				playerTwoDeck: [GrianchRare, GrianchRare, ChorusFruit],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(ArchitectFalseRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -1316,7 +1316,7 @@ describe('Test The Grianch Naughty', () => {
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon],
 				playerTwoDeck: [GeminiTayRare, BadOmen, ...Array(3).fill(Anvil)],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
@@ -1352,7 +1352,7 @@ describe('Test The Grianch Naughty', () => {
 			{
 				playerOneDeck: [GrianchRare],
 				playerTwoDeck: [BeetlejhostRare, BadOmen, Anvil],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -1403,7 +1403,7 @@ describe('Test The Grianch Naughty', () => {
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon],
 				playerTwoDeck: [ZombieCleoRare, BeetlejhostRare, BadOmen],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -1459,7 +1459,7 @@ describe('Test The Grianch Naughty', () => {
 					BadOmen,
 					Anvil,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -1512,7 +1512,7 @@ describe('Test The Grianch Naughty', () => {
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon],
 				playerTwoDeck: [DwarfImpulseRare, BadOmen, GoldenAxe],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()

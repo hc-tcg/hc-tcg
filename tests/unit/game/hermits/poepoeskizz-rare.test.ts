@@ -12,7 +12,7 @@ describe('Test Poe Poe Skizz Rare', () => {
 			{
 				playerOneDeck: [PoePoeSkizzRare],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -53,7 +53,7 @@ describe('Test Poe Poe Skizz Rare', () => {
 			{
 				playerOneDeck: [PoePoeSkizzRare, ...Array(4).fill(EthosLabCommon), Bow],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
 					await test.endTurn()
 

@@ -24,7 +24,7 @@ describe('Test prize card.', () => {
 					EthosLabCommon,
 				],
 				playerTwoDeck: [GeminiTayCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					/** Make sure `prizeCard` does not start out as true */
 					expect(
 						game.components.find(

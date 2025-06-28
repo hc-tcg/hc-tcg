@@ -22,7 +22,7 @@ function testAllayRetrieval(card: Card, canRetrieve: boolean) {
 				Allay,
 			],
 			playerTwoDeck: [EthosLabCommon],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(Composter, 'single_use')
 				await test.pick(

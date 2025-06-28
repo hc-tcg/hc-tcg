@@ -24,7 +24,7 @@ describe('Test Human Cleo Betrayal', () => {
 					EnderPearl,
 				],
 				playerTwoDeck: [HumanCleoRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
 					await test.endTurn()
@@ -75,7 +75,7 @@ describe('Test Human Cleo Betrayal', () => {
 			{
 				playerOneDeck: [ArmorStand, EthosLabCommon, VintageBeefCommon],
 				playerTwoDeck: [HumanCleoRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(ArmorStand, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 2)
@@ -112,7 +112,7 @@ describe('Test Human Cleo Betrayal', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HumanCleoRare, Clock],
-				saga: async (test, _game) => {
+				testGame: async (test, _game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -141,7 +141,7 @@ describe('Test Human Cleo Betrayal', () => {
 					BalancedDoubleItem,
 				],
 				playerTwoDeck: [HumanCleoRare, CommandBlock, BalancedDoubleItem],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
@@ -175,7 +175,7 @@ describe('Test Human Cleo Betrayal', () => {
 			{
 				playerOneDeck: [HumanCleoRare, EthosLabCommon, Efficiency],
 				playerTwoDeck: [HumanCleoRare, Efficiency],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -209,7 +209,7 @@ describe('Test Human Cleo Betrayal', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, BalancedDoubleItem],
 				playerTwoDeck: [HumanCleoRare, Efficiency],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(BalancedDoubleItem, 'item', 1, 0)

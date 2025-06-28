@@ -19,7 +19,7 @@ describe('Test Oli Melody', () => {
 					InvisibilityPotion,
 				],
 				playerTwoDeck: [OrionSoundRare, EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 

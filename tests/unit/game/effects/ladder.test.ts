@@ -22,7 +22,7 @@ describe('Test Ladder', () => {
 					Ladder,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(SmallishbeansCommon, 'hermit', 1)
 					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
@@ -128,7 +128,7 @@ describe('Test Ladder', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [FalseSymmetryRare, GrianCommon, Ladder],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 

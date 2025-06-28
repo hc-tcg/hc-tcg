@@ -22,7 +22,7 @@ describe('Test Glowstone Single Use', () => {
 					MinerItem,
 					Feather,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Glowstone, 'single_use')
 					await test.applyEffect()

@@ -18,7 +18,7 @@ describe('Test Elder Guardian', () => {
 			{
 				playerOneDeck: [EthosLabCommon, ElderGuardian],
 				playerTwoDeck: [GeminiTayCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ElderGuardian, 'attach', 0)
 					await test.endTurn()
@@ -84,7 +84,7 @@ describe('Test Elder Guardian', () => {
 					BalancedDoubleItem,
 					BalancedItem,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ElderGuardian, 'attach', 0)
 					await test.endTurn()
@@ -123,7 +123,7 @@ describe('Test Elder Guardian', () => {
 			{
 				playerOneDeck: [EthosLabCommon, ElderGuardian],
 				playerTwoDeck: [EthosLabCommon, Efficiency, Efficiency],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ElderGuardian, 'attach', 0)
 					await test.endTurn()
@@ -162,7 +162,7 @@ describe('Test Elder Guardian', () => {
 					ElderGuardian,
 				],
 				playerTwoDeck: [GrianchRare, Anvil],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(ElderGuardian, 'attach', 0)

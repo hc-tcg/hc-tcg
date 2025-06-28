@@ -28,7 +28,7 @@ describe('Test Cyberpunk Impulse', () => {
 					RedstoneItem,
 				],
 				playerTwoDeck: [EthosLabCommon, CyberpunkImpulseRare, FarmItem, String],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
 					await test.playCardFromHand(WildItem, 'item', 1, 0)
@@ -68,7 +68,7 @@ describe('Test Cyberpunk Impulse', () => {
 					FarmItem,
 				],
 				playerTwoDeck: [HumanCleoRare, Efficiency],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 0)
 					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
 					await test.playCardFromHand(FarmItem, 'item', 1, 0)
@@ -102,7 +102,7 @@ describe('Test Cyberpunk Impulse', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HypnotizdRare, CyberpunkImpulseRare, FarmItem],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -127,7 +127,7 @@ describe('Test Cyberpunk Impulse', () => {
 					CyberpunkImpulseRare,
 					FarmItem,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -157,7 +157,7 @@ describe('Test Cyberpunk Impulse', () => {
 					FarmItem,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
 					await test.playCardFromHand(BrewingStand, 'attach', 0)
@@ -213,7 +213,7 @@ describe('Test Cyberpunk Impulse', () => {
 				FarmItem,
 			],
 			playerTwoDeck: [EthosLabCommon],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
 				await test.playCardFromHand(Furnace, 'attach', 0)

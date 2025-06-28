@@ -11,7 +11,7 @@ describe('Test Frenchralis Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [FrenchralisRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -35,7 +35,7 @@ describe('Test Frenchralis Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [FrenchralisRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -60,7 +60,7 @@ describe('Test Frenchralis Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [FrenchralisRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 

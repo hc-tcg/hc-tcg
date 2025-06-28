@@ -18,7 +18,7 @@ describe('Test Scott "To Dye For"', () => {
 				...Array(3).fill(BuilderDoubleItem),
 			],
 			playerTwoDeck: [EthosLabCommon, ...Array(3).fill(BalancedItem)],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(Smajor1995Rare, 'hermit', 0)
 				await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
 				await test.playCardFromHand(BuilderDoubleItem, 'item', 0, 0)

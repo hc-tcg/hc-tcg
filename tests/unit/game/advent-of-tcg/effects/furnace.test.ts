@@ -33,7 +33,7 @@ describe('Test Furnace Attach Effect', () => {
 				RedstoneItem,
 			],
 			playerTwoDeck: [EthosLabCommon],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 				await test.playCardFromHand(Furnace, 'attach', 0)
@@ -109,7 +109,7 @@ describe('Test Furnace Attach Effect', () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon, Furnace, Emerald, Emerald],
 			playerTwoDeck: [EthosLabCommon],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(Furnace, 'attach', 0)
 				expect(
@@ -193,7 +193,7 @@ describe('Test Furnace Attach Effect', () => {
 				Ladder,
 			],
 			playerTwoDeck: [EthosLabCommon],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(Furnace, 'attach', 0)
 				await test.playCardFromHand(BalancedItem, 'item', 0, 0)

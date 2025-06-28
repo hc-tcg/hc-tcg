@@ -10,7 +10,7 @@ describe('Test TNT Minecart', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon, MinecartWithTNT],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -35,7 +35,7 @@ describe('Test TNT Minecart', () => {
 			{
 				playerOneDeck: [EthosLabCommon, MinecartWithTNT],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 

@@ -33,12 +33,7 @@ import {
 	huffmanCompress,
 	huffmanDecompress,
 } from '../../server/src/utils/compression'
-import {
-	applyEffect,
-	endTurn,
-	finishModalRequest,
-	testReplayGame,
-} from '../unit/game/utils'
+import {testReplayGame} from '../unit/game/utils'
 
 function* afterGame(con: GameController) {
 	const turnActionCompressor = new TurnActionCompressor()
@@ -65,7 +60,7 @@ function* afterGame(con: GameController) {
 
 describe('Test Replays', () => {
 	test('Test play card and attack actions', async () => {
-		testReplayGame({
+		await testReplayGame({
 			playerOneDeck: [BalancedDoubleItem, EthosLabCommon],
 			playerTwoDeck: [EthosLabCommon, BalancedDoubleItem],
 			gameSaga: async (test, con) => {
@@ -87,7 +82,7 @@ describe('Test Replays', () => {
 	})
 
 	test('Test play card action for all card types', async () => {
-		testReplayGame({
+		await testReplayGame({
 			playerOneDeck: [
 				EthosLabCommon,
 				BalancedDoubleItem,
@@ -116,8 +111,8 @@ describe('Test Replays', () => {
 		})
 	})
 
-	test('Test drag cards modal', () => {
-		testReplayGame({
+	test('Test drag cards modal', async () => {
+		await testReplayGame({
 			playerOneDeck: [
 				EthosLabCommon,
 				Brush,
@@ -147,8 +142,8 @@ describe('Test Replays', () => {
 		})
 	})
 
-	test('Test Chest', () => {
-		testReplayGame({
+	test('Test Chest', async () => {
+		await testReplayGame({
 			playerOneDeck: [
 				EthosLabCommon,
 				CurseOfBinding,
@@ -188,8 +183,8 @@ describe('Test Replays', () => {
 		})
 	})
 
-	test('Test that pick selects properly work', () => {
-		testReplayGame({
+	test('Test that pick selects properly work', async () => {
+		await testReplayGame({
 			playerOneDeck: [EthosLabCommon, GeminiTayCommon],
 			playerTwoDeck: [
 				TangoTekRare,
@@ -231,8 +226,8 @@ describe('Test Replays', () => {
 		})
 	})
 
-	test('Test Speedrunner Jevin', () => {
-		testReplayGame({
+	test('Test Speedrunner Jevin', async () => {
+		await testReplayGame({
 			playerOneDeck: [
 				TinFoilChefRare,
 				MinerItem,
@@ -282,8 +277,8 @@ describe('Test Replays', () => {
 		})
 	})
 
-	test('Test select attack modal works properly', () => {
-		testReplayGame({
+	test('Test select attack modal works properly', async () => {
+		await testReplayGame({
 			playerOneDeck: [FarmerBeefRare, FarmDoubleItem],
 			playerTwoDeck: [EvilXisumaRare, BalancedDoubleItem],
 			gameSaga: async (test, con) => {
@@ -317,8 +312,8 @@ describe('Test Replays', () => {
 		})
 	})
 
-	test('Test change active Hermit action', () => {
-		testReplayGame({
+	test('Test change active Hermit action', async () => {
+		await testReplayGame({
 			playerOneDeck: [VintageBeefRare, FalseSymmetryRare],
 			playerTwoDeck: [RendogCommon],
 			gameSaga: async (test, con) => {

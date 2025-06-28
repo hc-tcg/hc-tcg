@@ -20,7 +20,7 @@ describe('Test Rare Worm Man', () => {
 			{
 				playerOneDeck: [EthosLabCommon, TargetBlock],
 				playerTwoDeck: [WormManRare, PoultrymanCommon, PoultrymanCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -96,7 +96,7 @@ describe('Test Rare Worm Man', () => {
 					PoultrymanCommon,
 				],
 				playerTwoDeck: [EthosLabCommon, ThornsIII],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(WormManRare, 'hermit', 0)
 					await test.playCardFromHand(ArmorStand, 'hermit', 1)
 					await test.endTurn()
@@ -136,7 +136,7 @@ describe('Test Rare Worm Man', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [WormManRare, ArmorStand],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -161,7 +161,7 @@ describe('Test Rare Worm Man', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Anvil, Bow],
 				playerTwoDeck: [WormManRare, PoultrymanCommon, ThornsIII],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -216,7 +216,7 @@ describe('Test Rare Worm Man', () => {
 			{
 				playerOneDeck: [WormManRare, EthosLabCommon],
 				playerTwoDeck: [HumanCleoRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(WormManRare, 'hermit', 0)
 					await test.endTurn()
 

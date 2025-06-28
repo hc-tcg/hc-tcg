@@ -22,7 +22,7 @@ function postMasterTest(pearls: number, results: boolean[]) {
 		await testGame({
 			playerOneDeck: deck,
 			playerTwoDeck: deck,
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				let drawnCard: Card | undefined = EthosLabCommon
 				for (let i = 0; i < pearls; i++) {
 					await test.playCardFromHand(PostmasterPearlRare, 'hermit', i)

@@ -13,7 +13,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [BoomerBdubsRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
@@ -62,7 +62,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 			{
 				playerOneDeck: [BoomerBdubsRare],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(BoomerBdubsRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -90,7 +90,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 			{
 				playerOneDeck: [BoomerBdubsRare, Fortune],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(BoomerBdubsRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -121,7 +121,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [BoomerBdubsRare, Crossbow],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 

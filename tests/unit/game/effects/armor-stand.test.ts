@@ -11,7 +11,7 @@ describe('Test Armor Stand', () => {
 			{
 				playerOneDeck: [ArmorStand, EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(ArmorStand, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -32,7 +32,7 @@ describe('Test Armor Stand', () => {
 			{
 				playerOneDeck: [ArmorStand],
 				playerTwoDeck: [],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(ArmorStand, 'hermit', 0)
 
 					for (const slot of game.components.filter(

@@ -21,7 +21,7 @@ describe('Test Shelby Parallel World', () => {
 				IronSword,
 				...Array(4).fill(TerraformItem),
 			],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.endTurn()
 
@@ -61,7 +61,7 @@ describe('Test Shelby Parallel World', () => {
 				IronSword,
 				...Array(4).fill(TerraformItem),
 			],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 				await test.playCardFromHand(Thorns, 'attach', 0)
@@ -102,7 +102,7 @@ describe('Test Shelby Parallel World', () => {
 				...Array(5).fill(TerraformDoubleItem),
 				IronSword,
 			],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 				await test.playCardFromHand(Thorns, 'attach', 0)
@@ -136,7 +136,7 @@ describe('Test Shelby Parallel World', () => {
 				IronSword,
 				...Array(4).fill(TerraformItem),
 			],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.endTurn()
 

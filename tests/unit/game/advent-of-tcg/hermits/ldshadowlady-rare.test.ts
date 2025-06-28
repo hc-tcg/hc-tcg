@@ -13,7 +13,7 @@ describe('Test Lizzie Evict', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [LDShadowLadyRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -39,7 +39,7 @@ describe('Test Lizzie Evict', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [LDShadowLadyRare, Slimeball],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -66,7 +66,7 @@ describe('Test Lizzie Evict', () => {
 			{
 				playerOneDeck: Array(4).fill(EthosLabCommon),
 				playerTwoDeck: [LDShadowLadyRare, Crossbow, BerryBush],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)

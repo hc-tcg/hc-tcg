@@ -26,7 +26,7 @@ describe('Test Totem of Undying', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [PearlescentMoonCommon, WelsknightCommon, Totem, TNT],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 					await test.endTurn()
@@ -72,7 +72,7 @@ describe('Test Totem of Undying', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Thorns],
 				playerTwoDeck: [PearlescentMoonCommon, WelsknightCommon, Totem],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Thorns, 'attach', 0)
 
@@ -118,7 +118,7 @@ describe('Test Totem of Undying', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Thorns],
 				playerTwoDeck: [GoodTimesWithScarRare, WelsknightCommon, Totem],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Thorns, 'attach', 0)
 
@@ -198,7 +198,7 @@ describe('Test Totem of Undying', () => {
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, Thorns, Thorns],
 				playerTwoDeck: [PearlescentMoonCommon, WelsknightCommon, Totem, Bow],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 
@@ -255,7 +255,7 @@ describe('Test Totem of Undying', () => {
 			{
 				playerOneDeck: [PearlescentMoonCommon, WelsknightCommon, Totem],
 				playerTwoDeck: [EthosLabCommon, LavaBucket],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(PearlescentMoonCommon, 'hermit', 0)
 					await test.playCardFromHand(WelsknightCommon, 'hermit', 1)
 
@@ -319,7 +319,7 @@ describe('Test Totem of Undying', () => {
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, Totem],
 				playerTwoDeck: [IJevinRare, Bow],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(Totem, 'attach', 1)

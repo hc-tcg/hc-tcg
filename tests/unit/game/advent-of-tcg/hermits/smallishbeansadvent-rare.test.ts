@@ -18,7 +18,7 @@ describe('Test Stratos Joel', () => {
 					Efficiency,
 					PvPDoubleItem,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()

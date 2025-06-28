@@ -16,7 +16,7 @@ describe('Test Skizzleman Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [SkizzlemanRare, Anvil],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -58,7 +58,7 @@ describe('Test Skizzleman Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns],
 				playerTwoDeck: [SkizzlemanRare, Anvil],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Thorns, 'attach', 1)
@@ -87,7 +87,7 @@ describe('Test Skizzleman Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, GoldArmor],
 				playerTwoDeck: [SkizzlemanRare, Anvil],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(GoldArmor, 'attach', 1)
@@ -123,7 +123,7 @@ describe('Test Skizzleman Rare', () => {
 					Totem,
 				],
 				playerTwoDeck: [SkizzlemanRare, LavaBucket, LavaBucket, Anvil],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)

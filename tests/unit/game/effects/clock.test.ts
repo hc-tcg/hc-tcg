@@ -43,7 +43,7 @@ describe('Test Clock', () => {
 	test('Test Clock', async () => {
 		await testGame(
 			{
-				saga: testClockHelperSaga,
+				testGame: testClockHelperSaga,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon, Clock],
 			},

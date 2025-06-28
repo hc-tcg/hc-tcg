@@ -18,7 +18,7 @@ describe('Test Pearlescent Moon Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [PearlescentMoonRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -72,7 +72,7 @@ describe('Test Pearlescent Moon Rare', () => {
 			{
 				playerOneDeck: [SkizzlemanRare, Anvil],
 				playerTwoDeck: [PearlescentMoonRare, EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -113,7 +113,7 @@ describe('Test Pearlescent Moon Rare', () => {
 			{
 				playerOneDeck: [PoePoeSkizzRare],
 				playerTwoDeck: [PearlescentMoonRare, EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
 					await test.endTurn()
 

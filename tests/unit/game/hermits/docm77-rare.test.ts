@@ -15,7 +15,7 @@ describe('Test Docm77 World Eater', () => {
 			{
 				playerOneDeck: [GeminiTayRare, BadOmen, InvisibilityPotion],
 				playerTwoDeck: [Docm77Rare, BadOmen],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
 
 					await test.endTurn()

@@ -10,7 +10,7 @@ describe('Test Looting.', () => {
 			{
 				playerOneDeck: [EthosLabCommon, BalancedItem],
 				playerTwoDeck: [EthosLabCommon, Looting],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 					await test.endTurn()

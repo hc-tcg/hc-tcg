@@ -16,7 +16,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 			{
 				playerOneDeck: [EthosLabCommon, ChainmailArmor, ChainmailArmor],
 				playerTwoDeck: [TinFoilChefUltraRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					await test.endTurn()
@@ -64,7 +64,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					Ladder,
 				],
 				playerTwoDeck: [TinFoilChefUltraRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
@@ -119,7 +119,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					ChainmailArmor,
 				],
 				playerTwoDeck: [TinFoilChefUltraRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
@@ -186,7 +186,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 			{
 				playerOneDeck: [EthosLabCommon, ChainmailArmor, ChainmailArmor],
 				playerTwoDeck: [TinFoilChefUltraRare, ArmorStand, Chest],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					await test.endTurn()
@@ -257,7 +257,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 			{
 				playerOneDeck: [EthosLabCommon, ChainmailArmor, ChainmailArmor],
 				playerTwoDeck: [TinFoilChefUltraRare, TinFoilChefUltraRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					await test.endTurn()
@@ -304,7 +304,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 			{
 				playerOneDeck: [RendogRare, ChainmailArmor, ChainmailArmor],
 				playerTwoDeck: [TinFoilChefUltraRare, ChainmailArmor, ChainmailArmor],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(RendogRare, 'hermit', 0)
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					await test.endTurn()

@@ -21,7 +21,7 @@ describe('Test DM Tango Lackey', () => {
 				EthosLabCommon,
 				DungeonTangoRare,
 			],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.endTurn()
 
@@ -57,7 +57,7 @@ describe('Test DM Tango Lackey', () => {
 				...Array(5).fill(MinerItem),
 				EthosLabCommon,
 			],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.endTurn()
 
@@ -107,7 +107,7 @@ describe('Test DM Tango Lackey', () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [DungeonTangoRare, ...Array(10).fill(MinerItem)],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.endTurn()
 

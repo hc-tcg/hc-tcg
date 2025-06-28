@@ -11,7 +11,7 @@ describe('Test TFC Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [TinFoilChefRare, ...new Array(16).fill(BalancedItem)],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -44,7 +44,7 @@ describe('Test TFC Rare', () => {
 			{
 				playerOneDeck: [OriginalXBRare],
 				playerTwoDeck: [TinFoilChefRare, ...new Array(16).fill(BalancedItem)],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(OriginalXBRare, 'hermit', 0)
 					await test.endTurn()
 

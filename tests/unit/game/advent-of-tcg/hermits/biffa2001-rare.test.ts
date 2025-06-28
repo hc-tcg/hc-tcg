@@ -26,7 +26,7 @@ describe('Test Biffa Secondary', () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 			playerTwoDeck: [Biffa2001Rare, MinerDoubleItem, IronArmor, InstantHealth],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
@@ -79,7 +79,7 @@ describe('Test Biffa Secondary', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Totem],
 				playerTwoDeck: [Biffa2001Rare, Knockback],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Totem, 'attach', 0)
@@ -112,7 +112,7 @@ describe('Test Biffa Secondary', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [Biffa2001Rare, PotionOfSlowness],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -144,7 +144,7 @@ describe('Test Biffa Secondary', () => {
 			{
 				playerOneDeck: [Biffa2001Rare, ArmorStand, Chest],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(Biffa2001Rare, 'hermit', 0)
 					await test.playCardFromHand(ArmorStand, 'hermit', 1)
 					await test.changeActiveHermit(1)
@@ -185,7 +185,7 @@ describe('Test Biffa Secondary', () => {
 					...Array(9).fill(ArmorStand),
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(Biffa2001Rare, 'hermit', 0)
 					game.currentPlayer
 						.getHand()
@@ -217,7 +217,7 @@ describe('Test Biffa Secondary', () => {
 			{
 				playerOneDeck: [Biffa2001Rare, ArmorStand, ArmorStand, Allay],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(Biffa2001Rare, 'hermit', 0)
 					await test.playCardFromHand(ArmorStand, 'hermit', 1)
 					await test.changeActiveHermit(1)
@@ -254,7 +254,7 @@ describe('Test Biffa Secondary', () => {
 			{
 				playerOneDeck: [GrianchRare],
 				playerTwoDeck: [Biffa2001Rare, BadOmen, IronSword],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -300,7 +300,7 @@ describe('Test Biffa Secondary', () => {
 					Trident,
 					Biffa2001Rare,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.endTurn()
 

@@ -34,7 +34,7 @@ describe('Test Trapdoor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Trapdoor],
 				playerTwoDeck: [FarmerBeefCommon, NetheriteSword],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
@@ -100,7 +100,7 @@ describe('Test Trapdoor', () => {
 					EthosLabCommon,
 				],
 				playerTwoDeck: [VintageBeefCommon, Anvil],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					await test.playCardFromHand(IronArmor, 'attach', 2)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -158,7 +158,7 @@ describe('Test Trapdoor', () => {
 					EthosLabCommon,
 				],
 				playerTwoDeck: [SpookyStressRare, WaterBucket, Anvil],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 3)
 					await test.playCardFromHand(IronArmor, 'attach', 3)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -228,7 +228,7 @@ describe('Test Trapdoor', () => {
 					EthosLabCommon,
 				],
 				playerTwoDeck: [GoatfatherRare, Anvil],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 3)
 					await test.playCardFromHand(IronArmor, 'attach', 3)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
@@ -302,7 +302,7 @@ describe('Test Trapdoor', () => {
 					EthosLabCommon,
 				],
 				playerTwoDeck: [VintageBeefCommon, SplashPotionOfHarming],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					await test.playCardFromHand(IronArmor, 'attach', 2)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -354,7 +354,7 @@ describe('Test Trapdoor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Trapdoor, LightningRod],
 				playerTwoDeck: [FarmerBeefCommon, TargetBlock],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
@@ -420,7 +420,7 @@ describe('Test Trapdoor', () => {
 					...Array(3).fill(Trapdoor),
 				],
 				playerTwoDeck: [VintageBeefCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
@@ -473,7 +473,7 @@ describe('Test Trapdoor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Wolf, Trapdoor],
 				playerTwoDeck: [VintageBeefCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Wolf, 'attach', 0)
@@ -506,7 +506,7 @@ describe('Test Trapdoor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns, Trapdoor],
 				playerTwoDeck: [VintageBeefCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Thorns, 'attach', 0)
@@ -539,7 +539,7 @@ describe('Test Trapdoor', () => {
 			{
 				playerOneDeck: [VintageBeefCommon, PotionOfWeakness],
 				playerTwoDeck: [PrincessGemRare, EthosLabCommon, Wolf, Trapdoor],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -586,7 +586,7 @@ describe('Test Trapdoor', () => {
 			{
 				playerOneDeck: [VintageBeefCommon, PotionOfWeakness],
 				playerTwoDeck: [PrincessGemRare, EthosLabCommon, Thorns, Trapdoor],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -633,7 +633,7 @@ describe('Test Trapdoor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Trapdoor],
 				playerTwoDeck: [RenbobRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
 					await test.endTurn()
@@ -661,7 +661,7 @@ describe('Test Trapdoor', () => {
 					Trapdoor,
 				],
 				playerTwoDeck: [PoePoeSkizzRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
@@ -713,7 +713,7 @@ describe('Test Trapdoor', () => {
 					...Array(3).fill(Trapdoor),
 				],
 				playerTwoDeck: [SkizzlemanRare, LavaBucket, Anvil],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
@@ -805,7 +805,7 @@ describe('Test Trapdoor', () => {
 					InvisibilityPotion,
 				],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Trapdoor, 'attach', 1)

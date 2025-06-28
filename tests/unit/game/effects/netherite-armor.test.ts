@@ -14,7 +14,7 @@ describe('Test Netherite Armor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, NetheriteArmor],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(NetheriteArmor, 'attach', 0)
 					await test.endTurn()
@@ -38,7 +38,7 @@ describe('Test Netherite Armor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, NetheriteArmor],
 				playerTwoDeck: [EthosLabCommon, Egg],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(NetheriteArmor, 'attach', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -64,7 +64,7 @@ describe('Test Netherite Armor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, NetheriteArmor],
 				playerTwoDeck: [EthosLabCommon, DiamondSword],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(NetheriteArmor, 'attach', 0)
 					await test.endTurn()
@@ -90,7 +90,7 @@ describe('Test Netherite Armor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, NetheriteArmor],
 				playerTwoDeck: [EthosLabCommon, TargetBlock],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(NetheriteArmor, 'attach', 1)

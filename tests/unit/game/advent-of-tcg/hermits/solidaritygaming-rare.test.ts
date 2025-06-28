@@ -20,7 +20,7 @@ describe('Test Jimmy "The Law"', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [SolidaritygamingRare, EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -97,7 +97,7 @@ describe('Test Jimmy "The Law"', () => {
 					ArmorStand,
 					ChorusFruit,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -241,7 +241,7 @@ describe('Test Jimmy "The Law"', () => {
 			{
 				playerOneDeck: [EthosLabCommon, SolidaritygamingRare],
 				playerTwoDeck: [SkizzlemanRare, LavaBucket, Egg],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 1)
 					await test.endTurn()
@@ -288,7 +288,7 @@ describe('Test Jimmy "The Law"', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Knockback],
 				playerTwoDeck: [SolidaritygamingRare, EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -340,7 +340,7 @@ describe('Test Jimmy "The Law"', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Knockback],
 				playerTwoDeck: [SolidaritygamingRare, EthosLabCommon, ChorusFruit],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -394,7 +394,7 @@ describe('Test Jimmy "The Law"', () => {
 			{
 				playerOneDeck: [SolidaritygamingRare, EthosLabCommon],
 				playerTwoDeck: [TangoTekRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -450,7 +450,7 @@ describe('Test Jimmy "The Law"', () => {
 			{
 				playerOneDeck: [IJevinRare, Egg, Egg],
 				playerTwoDeck: [SolidaritygamingRare, EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(IJevinRare, 'hermit', 0)
 					await test.endTurn()
 

@@ -17,7 +17,7 @@ describe('Test Grian Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Loyalty, BalancedItem],
 				playerTwoDeck: [GrianRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Loyalty, 'attach', 0)
 					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
@@ -63,7 +63,7 @@ describe('Test Grian Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Shield],
 				playerTwoDeck: [GrianRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Shield, 'attach', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -107,7 +107,7 @@ describe('Test Grian Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Totem],
 				playerTwoDeck: [GrianRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Totem, 'attach', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -144,7 +144,7 @@ describe('Test Grian Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Loyalty],
 				playerTwoDeck: [GrianRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Loyalty, 'attach', 0)
 					await test.endTurn()
@@ -177,7 +177,7 @@ describe('Test Grian Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Loyalty],
 				playerTwoDeck: [GrianRare, Shield],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Loyalty, 'attach', 0)
 					await test.endTurn()
@@ -217,7 +217,7 @@ describe('Test Grian Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Thorns],
 				playerTwoDeck: [GrianRare, EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Thorns, 'attach', 0)
 					await test.endTurn()

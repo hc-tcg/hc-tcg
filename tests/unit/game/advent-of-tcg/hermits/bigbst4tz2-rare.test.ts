@@ -23,7 +23,7 @@ describe('Test BigB Soulmate', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, ChorusFruit],
 				playerTwoDeck: [BigBSt4tzRare, EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -82,7 +82,7 @@ describe('Test BigB Soulmate', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [BigBSt4tzRare, Totem],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -117,7 +117,7 @@ describe('Test BigB Soulmate', () => {
 			{
 				playerOneDeck: [EthosLabCommon, GoldenAxe],
 				playerTwoDeck: [BigBSt4tzRare, EthosLabCommon, Totem],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -158,7 +158,7 @@ describe('Test BigB Soulmate', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Totem],
 				playerTwoDeck: [BigBSt4tzRare, EthosLabCommon, Thorns],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Totem, 'attach', 0)
 					await test.endTurn()
@@ -206,7 +206,7 @@ describe('Test BigB Soulmate', () => {
 					LavaBucket,
 					ChorusFruit,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(BigBSt4tzRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -254,7 +254,7 @@ describe('Test BigB Soulmate', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LavaBucket],
 				playerTwoDeck: [BigBSt4tzRare, EthosLabCommon, IronSword],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -314,7 +314,7 @@ describe('Test BigB Soulmate', () => {
 					GoodTimesWithScarRare,
 					BadOmen,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()

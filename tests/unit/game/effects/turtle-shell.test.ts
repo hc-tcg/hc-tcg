@@ -29,7 +29,7 @@ describe('Test Turtle Shell', () => {
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [ZombieCleoCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(TurtleShell, 'attach', 1)
@@ -65,7 +65,7 @@ describe('Test Turtle Shell', () => {
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [SkizzlemanRare, LavaBucket, Egg],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 
@@ -113,7 +113,7 @@ describe('Test Turtle Shell', () => {
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [ZombieCleoCommon, Knockback],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(TurtleShell, 'attach', 1)
@@ -158,7 +158,7 @@ describe('Test Turtle Shell', () => {
 					Ladder,
 				],
 				playerTwoDeck: [ZombieCleoCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(TurtleShell, 'attach', 1)
@@ -232,7 +232,7 @@ describe('Test Turtle Shell', () => {
 					Ladder,
 				],
 				playerTwoDeck: [ZombieCleoCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(ArmorStand, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
@@ -287,7 +287,7 @@ describe('Test Turtle Shell', () => {
 					Mending,
 				],
 				playerTwoDeck: [ZombieCleoCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(ArmorStand, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 2)
@@ -336,7 +336,7 @@ describe('Test Turtle Shell', () => {
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [ZombieCleoCommon, Knockback],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(TurtleShell, 'attach', 1)
@@ -381,7 +381,7 @@ describe('Test Turtle Shell', () => {
 					TurtleShell,
 				],
 				playerTwoDeck: [IJevinRare, Egg],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(ArmorStand, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 2)
@@ -449,7 +449,7 @@ describe('Test Turtle Shell', () => {
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [TangoTekRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -500,7 +500,7 @@ describe('Test Turtle Shell', () => {
 					ChorusFruit,
 				],
 				playerTwoDeck: [GrianRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(TurtleShell, 'attach', 1)
@@ -577,7 +577,7 @@ describe('Test Turtle Shell', () => {
 					ChorusFruit,
 				],
 				playerTwoDeck: [ZombieCleoCommon, Emerald, Emerald],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(TurtleShell, 'attach', 1)
@@ -657,7 +657,7 @@ describe('Test Turtle Shell', () => {
 					Emerald,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(ArmorStand, 'hermit', 0)
 					await test.playCardFromHand(Cubfan135Rare, 'hermit', 1)
 					await test.playCardFromHand(TurtleShell, 'attach', 1)
@@ -748,7 +748,7 @@ describe('Test Turtle Shell', () => {
 					Ladder,
 				],
 				playerTwoDeck: [GrianRare, Emerald],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 1)
 					await test.playCardFromHand(TurtleShell, 'attach', 1)

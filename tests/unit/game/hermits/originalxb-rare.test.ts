@@ -10,7 +10,7 @@ describe('Test Original Xb Rare', () => {
 			{
 				playerOneDeck: [OriginalXBRare],
 				playerTwoDeck: [EthosLabCommon, ...new Array(16).fill(BalancedItem)],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(OriginalXBRare, 'hermit', 0)
 					await test.endTurn()
 

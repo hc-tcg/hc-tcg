@@ -20,7 +20,7 @@ describe('Test Lightning Rod', () => {
 					LightningRod,
 				],
 				playerTwoDeck: [EthosLabCommon, Bow],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
@@ -73,7 +73,7 @@ describe('Test Lightning Rod', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [EthosLabCommon, TargetBlock],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 1)
@@ -112,7 +112,7 @@ describe('Test Lightning Rod', () => {
 					InvisibilityPotion,
 				],
 				playerTwoDeck: [EthosLabCommon, TargetBlock],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 1)
@@ -149,7 +149,7 @@ describe('Test Lightning Rod', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon, PrincessGemRare, LightningRod],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 					await test.endTurn()

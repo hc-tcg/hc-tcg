@@ -28,7 +28,7 @@ describe('Test Pharaoh Xibalba', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, PharaohRare],
 				playerTwoDeck: [EthosLabCommon, Knockback, DiamondArmor],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(PharaohRare, 'hermit', 2)
@@ -100,7 +100,7 @@ describe('Test Pharaoh Xibalba', () => {
 			{
 				playerOneDeck: [EthosLabCommon, PharaohRare, PotionOfWeakness],
 				playerTwoDeck: [EthosLabCommon, DiamondArmor, Knockback],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(PharaohRare, 'hermit', 1)
 					await test.endTurn()
@@ -157,7 +157,7 @@ describe('Test Pharaoh Xibalba', () => {
 			{
 				playerOneDeck: [EthosLabCommon, PharaohRare, BadOmen],
 				playerTwoDeck: [EthosLabCommon, InvisibilityPotion, InvisibilityPotion],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(PharaohRare, 'hermit', 1)
 					await test.endTurn()
@@ -231,7 +231,7 @@ describe('Test Pharaoh Xibalba', () => {
 			{
 				playerOneDeck: [EthosLabCommon, PharaohRare],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, Trapdoor, Knockback],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(PharaohRare, 'hermit', 1)
 					await test.endTurn()
@@ -280,7 +280,7 @@ describe('Test Pharaoh Xibalba', () => {
 					...Array(4).fill(Trapdoor),
 					Knockback,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(PharaohRare, 'hermit', 1)
 					await test.endTurn()
@@ -331,7 +331,7 @@ describe('Test Pharaoh Xibalba', () => {
 			{
 				playerOneDeck: [EthosLabCommon, PharaohRare, TNT],
 				playerTwoDeck: [EthosLabCommon, InvisibilityPotion],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(PharaohRare, 'hermit', 1)
 					await test.endTurn()
@@ -405,7 +405,7 @@ describe('Test Pharaoh Xibalba', () => {
 					Thorns,
 					TurtleShell,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(PharaohRare, 'hermit', 1)
 					await test.endTurn()
@@ -495,7 +495,7 @@ describe('Test Pharaoh Xibalba', () => {
 			{
 				playerOneDeck: [EthosLabCommon, PharaohRare],
 				playerTwoDeck: [BigBSt4tzRare, EthosLabCommon, Shield, Knockback],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(PharaohRare, 'hermit', 1)
 					await test.endTurn()
@@ -568,7 +568,7 @@ describe('Test Pharaoh Xibalba', () => {
 					Knockback,
 				],
 				playerTwoDeck: [BigBSt4tzRare, ZombieCleoRare, PharaohRare, BadOmen],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(GrianchRare, 'hermit', 1)
 					await test.playCardFromHand(Wolf, 'attach', 0)

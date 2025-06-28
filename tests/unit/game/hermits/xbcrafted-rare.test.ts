@@ -17,7 +17,7 @@ describe('Test xB', () => {
 			{
 				playerOneDeck: [GeminiTayCommon, DiamondArmor],
 				playerTwoDeck: [XBCraftedRare, IronSword],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
 					await test.playCardFromHand(DiamondArmor, 'attach', 0)
 
@@ -62,7 +62,7 @@ describe('Test xB', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [XBCraftedRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 1)
@@ -96,7 +96,7 @@ describe('Test xB', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [XBCraftedRare, IronSword],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 1)
@@ -135,7 +135,7 @@ describe('Test xB', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, IronArmor],
 				playerTwoDeck: [XBCraftedRare, TargetBlock],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(IronArmor, 'attach', 1)

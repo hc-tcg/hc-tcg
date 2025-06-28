@@ -11,7 +11,7 @@ describe('Test Game Utils', () => {
 					{
 						playerOneDeck: [EthosLabCommon],
 						playerTwoDeck: [EthosLabCommon],
-						saga: async (test, _game) => {
+						testGame: async (test, _game) => {
 							await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 							await test.endTurn()
 
@@ -23,7 +23,7 @@ describe('Test Game Utils', () => {
 					},
 					{oneShotMode: true},
 				),
-		).toThrow()
+		).rejects.toThrow()
 	})
 	test('Test achievment tests run', async () => {
 		let playedGame = false

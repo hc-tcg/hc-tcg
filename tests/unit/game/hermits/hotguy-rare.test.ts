@@ -15,7 +15,7 @@ describe('Test Hotguy Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HotguyRare, Bow],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
@@ -71,7 +71,7 @@ describe('Test Hotguy Rare', () => {
 					ThornsIII,
 				],
 				playerTwoDeck: [HotguyRare, Crossbow],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
@@ -135,7 +135,7 @@ describe('Test Hotguy Rare', () => {
 			{
 				playerOneDeck: [RendogRare, RendogRare, RendogRare],
 				playerTwoDeck: [HotguyRare, Crossbow],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					/** This tests the bug found in https://discord.com/channels/1073763159187390584/1341987170180796487/1352075972245192805 */
 					await test.playCardFromHand(RendogRare, 'hermit', 0)
 					await test.playCardFromHand(RendogRare, 'hermit', 1)

@@ -12,7 +12,7 @@ describe('Test Diamond Armor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, DiamondArmor],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(DiamondArmor, 'attach', 0)
 					await test.endTurn()
@@ -36,7 +36,7 @@ describe('Test Diamond Armor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, DiamondArmor],
 				playerTwoDeck: [EthosLabCommon, DiamondSword],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(DiamondArmor, 'attach', 0)
 					await test.endTurn()

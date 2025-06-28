@@ -26,7 +26,7 @@ describe('Test Arrow of Poison', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [GoatfatherRare, ArrowOfPoison],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -56,7 +56,7 @@ describe('Test Arrow of Poison', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [RenbobRare, ArrowOfPoison],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -86,7 +86,7 @@ describe('Test Arrow of Poison', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [SpookyStressRare, WaterBucket, ArrowOfPoison],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -117,7 +117,7 @@ describe('Test Arrow of Poison', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [EthosLabCommon, ArrowOfPoison],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 1)
@@ -148,7 +148,7 @@ describe('Test Arrow of Poison', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Trapdoor],
 				playerTwoDeck: [EthosLabCommon, ArrowOfPoison],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
@@ -179,7 +179,7 @@ describe('Test Arrow of Poison', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon, ArrowOfPoison, Egg],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -219,7 +219,7 @@ describe('Test Arrow of Poison', () => {
 			{
 				playerOneDeck: [EthosLabCommon, ArrowOfPoison, Bow],
 				playerTwoDeck: [HelsknightRare, EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -264,7 +264,7 @@ describe('Test Arrow of Poison', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, MilkBucket],
 				playerTwoDeck: [EthosLabCommon, ArrowOfPoison, Bow],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(MilkBucket, 'attach', 1)

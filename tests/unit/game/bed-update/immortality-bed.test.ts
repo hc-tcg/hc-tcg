@@ -16,7 +16,7 @@ describe('Test Immortality Bed', () => {
 					...Array(7).fill(BalancedItem),
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(ImmortalityBed, 'attach', 0)

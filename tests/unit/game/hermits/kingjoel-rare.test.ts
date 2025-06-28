@@ -15,7 +15,7 @@ describe('Test rare King Joel Steal', () => {
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, BalancedItem],
 				playerTwoDeck: [KingJoelRare, WelsknightCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(BalancedItem, 'item', 1, 0)
@@ -62,7 +62,7 @@ describe('Test rare King Joel Steal', () => {
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, BalancedItem],
 				playerTwoDeck: [KingJoelRare, WelsknightCommon, Egg],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(BalancedItem, 'item', 1, 0)

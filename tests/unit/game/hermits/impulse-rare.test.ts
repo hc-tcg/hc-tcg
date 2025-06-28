@@ -44,7 +44,7 @@ describe('Test Impulse Test', () => {
 	test('Test Impulse Is Triggered By Bdubs', async () => {
 		await testGame(
 			{
-				saga: testOneHermit,
+				testGame: testOneHermit,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [ImpulseSVRare, BdoubleO100Common],
 			},
@@ -54,7 +54,7 @@ describe('Test Impulse Test', () => {
 	test('Test Impulse Is Triggered By Multiple Hermits', async () => {
 		await testGame(
 			{
-				saga: testManyHermits,
+				testGame: testManyHermits,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [
 					ImpulseSVRare,

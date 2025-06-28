@@ -11,7 +11,7 @@ describe('Test `row.hooks.onKnockOut` hook', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					let hookHasBeenCalled = false
 
 					let observer = game.components.new(

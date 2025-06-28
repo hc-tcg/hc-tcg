@@ -11,7 +11,7 @@ describe('Test Fletching Table', () => {
 			{
 				playerOneDeck: [EthosLabCommon, FletchingTable],
 				playerTwoDeck: [EthosLabCommon, ...Array(3).fill(FletchingTable)],
-				saga: async (_test, game) => {
+				testGame: async (_test, game) => {
 					expect(
 						game.currentPlayer
 							.getHand()

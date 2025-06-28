@@ -51,7 +51,7 @@ describe('Test Slimeball', () => {
 				FireCharge,
 				CurseOfVanishing,
 			],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(FarmerBeefCommon, 'hermit', 0)
 				await test.endTurn()
 
@@ -111,7 +111,7 @@ describe('Test Slimeball', () => {
 				Piston,
 				Lead,
 			],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(FarmerBeefCommon, 'hermit', 0)
 				await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 				await test.playCardFromHand(Slimeball, 'attach', 0)
@@ -163,7 +163,7 @@ describe('Test Slimeball', () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Slimeball, Ladder],
 			playerTwoDeck: [FarmerBeefCommon],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 				await test.playCardFromHand(Slimeball, 'attach', 0)
@@ -189,7 +189,7 @@ describe('Test Slimeball', () => {
 					EnderPearl,
 					InstantHealthII,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(LDShadowLadyRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -251,7 +251,7 @@ describe('Test Slimeball', () => {
 		await testGame({
 			playerOneDeck: [FarmerBeefCommon, WaterBucket, FireCharge],
 			playerTwoDeck: [EthosLabCommon, Slimeball, String],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(FarmerBeefCommon, 'hermit', 0)
 				await test.endTurn()
 
@@ -311,7 +311,7 @@ describe('Test Slimeball', () => {
 					MinerItem,
 				],
 				playerTwoDeck: [MonkeyfarmRare, KingJoelRare],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(DungeonTangoRare, 'hermit', 0)
 					await test.playCardFromHand(HypnotizdRare, 'hermit', 1)
 					await test.playCardFromHand(Slimeball, 'attach', 0)
@@ -353,7 +353,7 @@ describe('Test Slimeball', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Slimeball, BalancedItem],
 				playerTwoDeck: [GeminiTayRare, GoldenAxe, Looting],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Slimeball, 'attach', 0)
 					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
@@ -392,7 +392,7 @@ describe('Test Slimeball', () => {
 					BalancedItem,
 				],
 				playerTwoDeck: [GeminiTayRare, GoldenAxe, Lead],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Slimeball, 'attach', 0)
@@ -436,7 +436,7 @@ describe('Test Slimeball', () => {
 		testBossFight(
 			{
 				playerDeck: [EthosLabCommon, Slimeball, BalancedItem],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Slimeball, 'attach', 0)
 					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
@@ -495,7 +495,7 @@ describe('Test Slimeball', () => {
 					GoldenAxe,
 					GoldenAxe,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Slimeball, 'attach', 0)

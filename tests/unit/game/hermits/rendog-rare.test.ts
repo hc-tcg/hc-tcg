@@ -16,7 +16,7 @@ describe('Test Rendog Role Play', () => {
 			{
 				playerOneDeck: [ZombieCleoRare, EthosLabCommon],
 				playerTwoDeck: [RendogRare, EthosLabCommon, Crossbow],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -74,7 +74,7 @@ describe('Test Rendog Role Play', () => {
 			{
 				playerOneDeck: [ArmorStand, ArmorStand, EthosLabCommon],
 				playerTwoDeck: [ZombieCleoRare, RendogRare, Crossbow],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(ArmorStand, 'hermit', 0)
 					await test.playCardFromHand(ArmorStand, 'hermit', 1)
 					await test.endTurn()
@@ -145,7 +145,7 @@ describe('Test Rendog Role Play', () => {
 			{
 				playerOneDeck: [EthosLabCommon, JoeHillsRare],
 				playerTwoDeck: [RendogRare, Crossbow],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(JoeHillsRare, 'hermit', 1)
 					await test.endTurn()
@@ -194,7 +194,7 @@ describe('Test Rendog Role Play', () => {
 			{
 				playerOneDeck: [RendogRare],
 				playerTwoDeck: [ArmorStand],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(RendogRare, 'hermit', 0)
 					await test.endTurn()
 

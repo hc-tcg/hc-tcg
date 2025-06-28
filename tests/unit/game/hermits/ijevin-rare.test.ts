@@ -11,7 +11,7 @@ describe('Test iJevin Peace Out', () => {
 			{
 				playerOneDeck: [IJevinRare],
 				playerTwoDeck: [EthosLabCommon, FarmerBeefCommon],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(IJevinRare, 'hermit', 0)
 
 					await test.endTurn()

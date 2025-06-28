@@ -14,7 +14,7 @@ describe('Test Berry Bush Attach', () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon, BerryBush, BerryBush, Bow],
 			playerTwoDeck: [EthosLabCommon],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				expect(game.getPickableSlots(BerryBush.attachCondition)).toStrictEqual(
 					[],
@@ -102,7 +102,7 @@ describe('Test Berry Bush Attach', () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Ladder],
 			playerTwoDeck: [EthosLabCommon, BerryBush],
-			saga: async (test, game) => {
+			testGame: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 				await test.endTurn()
 
@@ -147,7 +147,7 @@ describe('Test Berry Bush Attach', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [WormManRare, BerryBush],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 

@@ -15,7 +15,7 @@ describe('Test Sculk Catalyst', () => {
 					TangoTekCommon,
 					SculkCatalyst,
 				],
-				saga: async (test, game) => {
+				testGame: async (test, game) => {
 					await test.playCardFromHand(ImpulseSVRare, 'hermit', 0)
 					await test.playCardFromHand(TangoTekCommon, 'hermit', 1)
 					await test.playCardFromHand(TangoTekCommon, 'hermit', 2)

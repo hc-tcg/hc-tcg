@@ -18,7 +18,7 @@ describe('Test Dwarf Impulse Rare', () => {
 			{
 				playerOneDeck: [DwarfImpulseRare, GoldenAxe],
 				playerTwoDeck: [EthosLabCommon, FiveAMPearlRare],
-				saga: async (test: TestGameFixture, game: GameModel) => {
+				testGame: async (test: TestGameFixture, game: GameModel) => {
 					await test.playCardFromHand(DwarfImpulseRare, 'hermit', 0)
 
 					await test.endTurn()
@@ -78,7 +78,7 @@ describe('Test Dwarf Impulse Rare', () => {
 					LightningRod,
 					Wolf,
 				],
-				saga: async (test: TestGameFixture, game: GameModel) => {
+				testGame: async (test: TestGameFixture, game: GameModel) => {
 					await test.playCardFromHand(DwarfImpulseRare, 'hermit', 0)
 
 					await test.endTurn()
