@@ -3,7 +3,7 @@ import Shield from 'common/cards/attach/shield'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {RowComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Shield', () => {
 	test('Base Functionality', async () => {
