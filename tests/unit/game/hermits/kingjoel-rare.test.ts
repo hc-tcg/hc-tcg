@@ -29,16 +29,14 @@ describe('Test rare King Joel Steal', () => {
 
 					expect(game.state.pickRequests).toHaveLength(2)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.item,
 						query.slot.rowIndex(1),
 						query.slot.index(0),
 					)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.item,
 						query.slot.rowIndex(1),
@@ -80,15 +78,13 @@ describe('Test rare King Joel Steal', () => {
 					expect(game.state.pickRequests).toHaveLength(3)
 
 					// Steal requests
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.item,
 						query.slot.rowIndex(1),
 						query.slot.index(0),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.item,
 						query.slot.rowIndex(1),
@@ -105,8 +101,7 @@ describe('Test rare King Joel Steal', () => {
 					).toBeTruthy()
 
 					// Egg request
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

@@ -162,8 +162,7 @@ describe('Test Invisiblity Potion.', () => {
 
 					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.rowIndex(1),
 						query.slot.hermit,
 						query.slot.currentPlayer,

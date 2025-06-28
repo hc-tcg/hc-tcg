@@ -219,15 +219,13 @@ describe('Test Replays', () => {
 				await test.playCardFromHand(FarmDoubleItem, 'item', 0, 1)
 				await test.attack('secondary')
 
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.opponent,
 					query.slot.hermit,
 					query.slot.rowIndex(1),
 				)
 
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.hermit,
 					query.slot.rowIndex(1),
@@ -277,8 +275,7 @@ describe('Test Replays', () => {
 				await test.playCardFromHand(JinglerRare, 'hermit', 3)
 
 				await test.attack('secondary')
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.opponent,
 					query.slot.hermit,
 					query.slot.rowIndex(1),

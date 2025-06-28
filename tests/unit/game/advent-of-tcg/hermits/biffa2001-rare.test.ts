@@ -68,8 +68,7 @@ describe('Test Biffa Secondary', () => {
 				await test.playCardFromHand(InstantHealth, 'single_use')
 				yield* removeEffect(game)
 				await test.playCardFromHand(InstantHealth, 'single_use')
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.hermit,
 					query.slot.active,
@@ -240,8 +239,7 @@ describe('Test Biffa Secondary', () => {
 
 					yield* changeActiveHermit(game, 0)
 					await test.playCardFromHand(Allay, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hand,
 						query.slot.has(ArmorStand),
@@ -327,8 +325,7 @@ describe('Test Biffa Secondary', () => {
 
 					await test.playCardFromHand(Trident, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -341,8 +338,7 @@ describe('Test Biffa Secondary', () => {
 					)
 					await test.playCardFromHand(Biffa2001Rare, 'hermit', 2)
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),

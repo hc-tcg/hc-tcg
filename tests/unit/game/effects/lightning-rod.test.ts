@@ -37,8 +37,7 @@ describe('Test Lightning Rod', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Bow, 'single_use')
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -89,8 +88,7 @@ describe('Test Lightning Rod', () => {
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(TargetBlock, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -169,8 +167,7 @@ describe('Test Lightning Rod', () => {
 
 					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

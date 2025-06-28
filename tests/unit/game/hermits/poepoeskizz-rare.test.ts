@@ -28,8 +28,7 @@ describe('Test Poe Poe Skizz Rare', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.rowIndex(1),
 						query.slot.hermit,
 						query.slot.currentPlayer,
@@ -71,8 +70,7 @@ describe('Test Poe Poe Skizz Rare', () => {
 
 					await test.playCardFromHand(Bow, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.rowIndex(1),
 						query.slot.hermit,
 						query.slot.currentPlayer,

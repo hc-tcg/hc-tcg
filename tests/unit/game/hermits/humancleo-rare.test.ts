@@ -50,8 +50,7 @@ describe('Test Human Cleo Betrayal', () => {
 					expect(game.state.turn.availableActions).not.toContain('END_TURN')
 					await test.playCardFromHand(Crossbow, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -59,8 +58,7 @@ describe('Test Human Cleo Betrayal', () => {
 					yield* removeEffect(game)
 
 					await test.playCardFromHand(EnderPearl, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -99,8 +97,7 @@ describe('Test Human Cleo Betrayal', () => {
 					yield* changeActiveHermit(game, 1)
 					expect(game.state.turn.availableActions).not.toContain('END_TURN')
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -169,8 +166,7 @@ describe('Test Human Cleo Betrayal', () => {
 					await test.playCardFromHand(CommandBlock, 'attach', 0)
 					expect(game.state.turn.availableActions).not.toContain('END_TURN')
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -204,8 +200,7 @@ describe('Test Human Cleo Betrayal', () => {
 					await test.applyEffect()
 					expect(game.state.turn.availableActions).not.toContain('END_TURN')
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

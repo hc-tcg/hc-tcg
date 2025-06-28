@@ -50,8 +50,7 @@ describe('Test rare welsknight', () => {
 
 					//make it possible to survive 140 damage
 					await test.playCardFromHand(InstantHealthII, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),

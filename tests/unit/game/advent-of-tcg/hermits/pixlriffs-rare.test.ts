@@ -51,8 +51,7 @@ describe('Test Pixl World Build', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(EnderPearl, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -71,8 +70,7 @@ describe('Test Pixl World Build', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -109,8 +107,7 @@ describe('Test Pixl World Build', () => {
 						query.row.currentPlayer,
 						query.row.active,
 					)!.health = 10
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -151,8 +148,7 @@ describe('Test Pixl World Build', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -207,16 +203,14 @@ describe('Test Pixl World Build', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -231,16 +225,14 @@ describe('Test Pixl World Build', () => {
 					).toBe(GrianchRare.health - GeminiTayRare.secondary.damage)
 
 					await test.playCardFromHand(Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -284,16 +276,14 @@ describe('Test Pixl World Build', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(EnderPearl, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -308,16 +298,14 @@ describe('Test Pixl World Build', () => {
 					).toBe(GrianchRare.health - GeminiTayRare.secondary.damage)
 
 					await test.playCardFromHand(EnderPearl, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -361,23 +349,20 @@ describe('Test Pixl World Build', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(EnderPearl, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -391,8 +376,7 @@ describe('Test Pixl World Build', () => {
 					).toBe(GrianchRare.health - PoePoeSkizzRare.secondary.damage)
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

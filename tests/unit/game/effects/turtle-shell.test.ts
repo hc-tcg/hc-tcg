@@ -99,8 +99,7 @@ describe('Test Turtle Shell', () => {
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -134,8 +133,7 @@ describe('Test Turtle Shell', () => {
 					await test.playCardFromHand(Knockback, 'single_use')
 					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -175,8 +173,7 @@ describe('Test Turtle Shell', () => {
 					await test.playCardFromHand(TurtleShell, 'attach', 1)
 
 					await test.playCardFromHand(Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -204,8 +201,7 @@ describe('Test Turtle Shell', () => {
 					await test.playCardFromHand(TurtleShell, 'attach', 0)
 
 					await test.playCardFromHand(Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -260,8 +256,7 @@ describe('Test Turtle Shell', () => {
 
 					yield* changeActiveHermit(game, 1)
 					await test.playCardFromHand(Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -316,8 +311,7 @@ describe('Test Turtle Shell', () => {
 
 					yield* changeActiveHermit(game, 1)
 					await test.playCardFromHand(Mending, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.attach,
 						query.slot.rowIndex(2),
@@ -363,8 +357,7 @@ describe('Test Turtle Shell', () => {
 					await test.playCardFromHand(Knockback, 'single_use')
 					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -411,14 +404,12 @@ describe('Test Turtle Shell', () => {
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -485,8 +476,7 @@ describe('Test Turtle Shell', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -541,8 +531,7 @@ describe('Test Turtle Shell', () => {
 					await test.playCardFromHand(TurtleShell, 'attach', 0)
 					await test.playCardFromHand(ChorusFruit, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -617,8 +606,7 @@ describe('Test Turtle Shell', () => {
 					await test.playCardFromHand(TurtleShell, 'attach', 0)
 					await test.playCardFromHand(ChorusFruit, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -701,8 +689,7 @@ describe('Test Turtle Shell', () => {
 					await test.applyEffect()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -731,8 +718,7 @@ describe('Test Turtle Shell', () => {
 					await test.applyEffect()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(3),
@@ -783,8 +769,7 @@ describe('Test Turtle Shell', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -800,8 +785,7 @@ describe('Test Turtle Shell', () => {
 
 					await test.attack('secondary')
 					await test.playCardFromHand(Mending, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.attach,
 						query.slot.rowIndex(0),
@@ -819,8 +803,7 @@ describe('Test Turtle Shell', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -836,8 +819,7 @@ describe('Test Turtle Shell', () => {
 
 					await test.attack('secondary')
 					await test.playCardFromHand(Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -855,8 +837,7 @@ describe('Test Turtle Shell', () => {
 					await test.endTurn()
 					await test.endTurn()
 					await test.playCardFromHand(Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),

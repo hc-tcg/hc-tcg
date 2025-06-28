@@ -36,8 +36,7 @@ describe('Test Pesky Bird Achievement', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.hand,
 						query.slot.opponent,
 						query.not(query.slot.empty),

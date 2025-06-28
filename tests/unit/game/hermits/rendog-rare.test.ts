@@ -33,8 +33,7 @@ describe('Test Rendog Role Play', () => {
 					await test.playCardFromHand(RendogRare, 'hermit', 0)
 					await test.playCardFromHand(Crossbow, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -48,8 +47,7 @@ describe('Test Rendog Role Play', () => {
 					expect(game.state.turn.availableActions).toContain('SECONDARY_ATTACK')
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -59,8 +57,7 @@ describe('Test Rendog Role Play', () => {
 							.availableAttacks,
 					).toContain('secondary')
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -95,8 +92,7 @@ describe('Test Rendog Role Play', () => {
 					await test.playCardFromHand(RendogRare, 'hermit', 1)
 					await test.playCardFromHand(Crossbow, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -108,8 +104,7 @@ describe('Test Rendog Role Play', () => {
 					yield* finishModalRequest(game, {pick: 'primary'})
 					yield* removeEffect(game)
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -123,8 +118,7 @@ describe('Test Rendog Role Play', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -134,8 +128,7 @@ describe('Test Rendog Role Play', () => {
 							.availableAttacks,
 					).toContain('secondary')
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -168,8 +161,7 @@ describe('Test Rendog Role Play', () => {
 
 					await test.playCardFromHand(RendogRare, 'hermit', 0)
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -182,8 +174,7 @@ describe('Test Rendog Role Play', () => {
 
 					await test.playCardFromHand(Crossbow, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -195,8 +186,7 @@ describe('Test Rendog Role Play', () => {
 					yield* finishModalRequest(game, {pick: 'primary'})
 					yield* removeEffect(game)
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),

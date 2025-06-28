@@ -62,8 +62,7 @@ describe('Test Berry Bush Attach', () => {
 				).toBe(30)
 				await test.playCardFromHand(Bow, 'single_use')
 				await test.attack('single-use')
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.opponent,
 					query.slot.hermit,
 					query.slot.rowIndex(1),

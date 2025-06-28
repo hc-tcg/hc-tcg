@@ -93,8 +93,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -333,8 +332,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.active,
 						query.slot.hermit,
@@ -364,8 +362,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.active,
 						query.slot.hermit,

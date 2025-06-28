@@ -31,14 +31,12 @@ function testAllayRetrieval(card: Card, canRetrieve: boolean) {
 			saga: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(Composter, 'single_use')
-				yield* pick(
-					game,
+				await test.pick(
 					game.state.pickRequests[0].canPick,
 					query.slot.currentPlayer,
 					query.slot.has(card),
 				)
-				yield* pick(
-					game,
+				await test.pick(
 					game.state.pickRequests[0].canPick,
 					query.slot.currentPlayer,
 					query.slot.has(card),
@@ -56,8 +54,7 @@ function testAllayRetrieval(card: Card, canRetrieve: boolean) {
 
 				if (canRetrieve) {
 					await test.playCardFromHand(Allay, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hand,
 						query.slot.has(card),

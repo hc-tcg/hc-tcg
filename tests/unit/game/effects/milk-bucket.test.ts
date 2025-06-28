@@ -46,8 +46,7 @@ describe('Test Milk Bucket', () => {
 				).not.toBe(null)
 
 				await test.playCardFromHand(MilkBucket, 'single_use')
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.hermit,
 					query.slot.rowIndex(0),

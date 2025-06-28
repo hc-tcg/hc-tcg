@@ -29,15 +29,13 @@ describe('Test Master of Puppets Achievement', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.rowIndex(0),
 						query.slot.hermit,
 						query.slot.opponent,
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.rowIndex(1),
 						query.slot.hermit,
 						query.slot.currentPlayer,
@@ -67,15 +65,13 @@ describe('Test Master of Puppets Achievement', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.rowIndex(1),
 						query.slot.hermit,
 						query.slot.currentPlayer,
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.rowIndex(1),
 						query.slot.hermit,
 						query.slot.currentPlayer,

@@ -83,16 +83,14 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(Fortune, 'single_use')
 					await test.applyEffect()
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -101,8 +99,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(Fortune, 'single_use')
 					await test.applyEffect()
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -495,8 +492,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(BadOmen, 'single_use')
 					await test.applyEffect()
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -505,16 +501,14 @@ describe('Test The Grianch Naughty', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -525,8 +519,7 @@ describe('Test The Grianch Naughty', () => {
 					// Use Anvil to trigger Skizz's bonus damage.
 					await test.playCardFromHand(Anvil, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(3),
@@ -541,8 +534,7 @@ describe('Test The Grianch Naughty', () => {
 						)
 						?.remove()
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(3),
@@ -603,8 +595,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(BadOmen, 'single_use')
 					await test.applyEffect()
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -613,16 +604,14 @@ describe('Test The Grianch Naughty', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -633,8 +622,7 @@ describe('Test The Grianch Naughty', () => {
 					// Use Anvil to trigger Skizz's bonus damage.
 					await test.playCardFromHand(Anvil, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(3),
@@ -649,8 +637,7 @@ describe('Test The Grianch Naughty', () => {
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					badOmenEffect?.apply(game.opponentPlayer.getActiveHermit()?.entity)
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(3),
@@ -718,8 +705,7 @@ describe('Test The Grianch Naughty', () => {
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						HumanCleoRare.health - GrianchRare.secondary.damage,
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -777,16 +763,14 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(PvPDoubleItem, 'item', 0, 1)
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -832,8 +816,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(BadOmen, 'single_use')
 					await test.applyEffect()
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -842,8 +825,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -858,8 +840,7 @@ describe('Test The Grianch Naughty', () => {
 						)
 						?.remove()
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -868,8 +849,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(3),
@@ -879,15 +859,13 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					expect(game.state.turn.availableActions).not.toContain('END_TURN')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(3),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -946,16 +924,14 @@ describe('Test The Grianch Naughty', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -1060,16 +1036,14 @@ describe('Test The Grianch Naughty', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 					yield* finishModalRequest(game, {pick: 'primary'})
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -1086,8 +1060,7 @@ describe('Test The Grianch Naughty', () => {
 						ZombieCleoRare.health - GrianchRare.secondary.damage,
 					)
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -1131,8 +1104,7 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -1175,8 +1147,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -1184,15 +1155,13 @@ describe('Test The Grianch Naughty', () => {
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -1315,8 +1284,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 1)
 					await test.playCardFromHand(ChorusFruit, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -1459,8 +1427,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -1518,16 +1485,14 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(Anvil, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -1571,8 +1536,7 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(GoldenAxe, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

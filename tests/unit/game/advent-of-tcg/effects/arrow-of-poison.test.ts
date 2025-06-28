@@ -196,8 +196,7 @@ describe('Test Arrow of Poison', () => {
 					await test.applyEffect()
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -240,8 +239,7 @@ describe('Test Arrow of Poison', () => {
 					await test.applyEffect()
 					await test.playCardFromHand(Bow, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -284,8 +282,7 @@ describe('Test Arrow of Poison', () => {
 					await test.applyEffect()
 					await test.playCardFromHand(Bow, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

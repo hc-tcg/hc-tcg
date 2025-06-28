@@ -34,16 +34,14 @@ describe('Test Tango Extra Flee', () => {
 
 					expect(game.state.pickRequests).toHaveLength(2)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 					expect(game.opponentPlayer.activeRow?.index).toBe(1)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -125,8 +123,7 @@ describe('Test Tango Extra Flee', () => {
 
 					// First request should be for Betrayal target
 					expect(game.state.pickRequests).toHaveLength(1)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -134,8 +131,7 @@ describe('Test Tango Extra Flee', () => {
 
 					// Second request should be to switch active row
 					expect(game.state.pickRequests).toHaveLength(1)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

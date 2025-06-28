@@ -230,8 +230,7 @@ describe('Test Totem of Undying', () => {
 					await test.attack('primary')
 
 					// Bow request
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -343,8 +342,7 @@ describe('Test Totem of Undying', () => {
 					await test.playCardFromHand(IJevinRare, 'hermit', 0)
 					await test.playCardFromHand(Bow, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

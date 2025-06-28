@@ -38,8 +38,7 @@ describe('Test Scott "To Dye For"', () => {
 
 				await test.playCardFromHand(BuilderDoubleItem, 'item', 0, 1)
 				await test.attack('secondary')
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.hermit,
 					query.slot.rowIndex(1),

@@ -52,8 +52,7 @@ describe('Test Pharaoh Xibalba', () => {
 
 					await test.playCardFromHand(Knockback, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -61,8 +60,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -84,8 +82,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -121,8 +118,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.playCardFromHand(DiamondArmor, 'attach', 0)
 					await test.playCardFromHand(Knockback, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -132,8 +128,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')
 					await test.applyEffect()
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -211,8 +206,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -256,8 +250,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
 					await test.playCardFromHand(Knockback, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -265,8 +258,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -313,8 +305,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.playCardFromHand(Trapdoor, 'attach', 4)
 					await test.playCardFromHand(Knockback, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -322,8 +313,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -389,8 +379,7 @@ describe('Test Pharaoh Xibalba', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(PharaohRare.health - 20 /** TNT backlash */)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -447,8 +436,7 @@ describe('Test Pharaoh Xibalba', () => {
 
 					await test.playCardFromHand(Bow, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -488,8 +476,7 @@ describe('Test Pharaoh Xibalba', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(PharaohRare.health - 20 /** Wolf */ - 20 /** Thorns */)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -533,8 +520,7 @@ describe('Test Pharaoh Xibalba', () => {
 					)!.health = 10
 					await test.playCardFromHand(Knockback, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -556,8 +542,7 @@ describe('Test Pharaoh Xibalba', () => {
 							query.row.index(0),
 						)?.health,
 					).toBe(null)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -611,8 +596,7 @@ describe('Test Pharaoh Xibalba', () => {
 
 					await test.playCardFromHand(Knockback, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -620,8 +604,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -634,8 +617,7 @@ describe('Test Pharaoh Xibalba', () => {
 					// Manually set Cleo health to trigger zone
 					game.currentPlayer.activeRow!.health = 10
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -654,8 +636,7 @@ describe('Test Pharaoh Xibalba', () => {
 						)?.health,
 					).toBe(BigBSt4tzRare.health - GrianchRare.secondary.damage)
 					expect(game.currentPlayer.activeRow).toBe(null)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),

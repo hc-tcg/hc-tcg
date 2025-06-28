@@ -65,8 +65,7 @@ function* testAmnesiaDisablesPuppetry(game: GameModel) {
 
 	await test.attack('secondary')
 
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.currentPlayer,
 		query.slot.hermit,
 		query.slot.rowIndex(1),
@@ -98,8 +97,7 @@ function* testAmnesiaBlocksPuppetryMock(game: GameModel) {
 	await test.playCardFromHand(ZombieCleoRare, 'hermit', 1)
 	await test.playCardFromHand(ChorusFruit, 'single_use')
 	await test.attack('secondary')
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.currentPlayer,
 		query.slot.hermit,
 		query.slot.rowIndex(1),
@@ -120,8 +118,7 @@ function* testAmnesiaBlocksPuppetryMock(game: GameModel) {
 	await test.endTurn()
 
 	await test.attack('secondary')
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.currentPlayer,
 		query.slot.hermit,
 		query.slot.rowIndex(0),
@@ -143,8 +140,7 @@ function* testPuppetryCanceling(game: GameModel) {
 
 	await test.attack('secondary')
 
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.currentPlayer,
 		query.slot.hermit,
 		query.slot.rowIndex(1),
@@ -153,8 +149,7 @@ function* testPuppetryCanceling(game: GameModel) {
 	yield* finishModalRequest(game, {pick: 'secondary'})
 
 	expect(game.state.pickRequests).toHaveLength(1)
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.currentPlayer,
 		query.slot.hermit,
 		query.slot.rowIndex(2),
@@ -165,8 +160,7 @@ function* testPuppetryCanceling(game: GameModel) {
 	await test.attack('secondary')
 
 	expect(game.state.pickRequests).toHaveLength(1)
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.currentPlayer,
 		query.slot.hermit,
 		query.slot.rowIndex(1),
@@ -175,8 +169,7 @@ function* testPuppetryCanceling(game: GameModel) {
 	yield* finishModalRequest(game, {pick: 'secondary'})
 
 	expect(game.state.pickRequests).toHaveLength(1)
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.currentPlayer,
 		query.slot.hermit,
 		query.slot.rowIndex(2),
@@ -210,8 +203,7 @@ function* testPuppetingJopacity(game: GameModel) {
 	await test.playCardFromHand(SmallishbeansCommon, 'hermit', 2)
 
 	await test.attack('secondary')
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.currentPlayer,
 		query.slot.hermit,
 		query.slot.rowIndex(1),
@@ -222,8 +214,7 @@ function* testPuppetingJopacity(game: GameModel) {
 	await test.endTurn()
 
 	await test.attack('secondary')
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.currentPlayer,
 		query.slot.hermit,
 		query.slot.rowIndex(1),
@@ -240,8 +231,7 @@ function* testPuppetingJopacity(game: GameModel) {
 	await test.endTurn()
 
 	await test.attack('secondary')
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.currentPlayer,
 		query.slot.hermit,
 		query.slot.rowIndex(2),
@@ -274,8 +264,7 @@ function* testPuppetryDiscardingItem(game: GameModel) {
 	await test.playCardFromHand(HypnotizdRare, 'hermit', 1)
 	await test.attack('secondary')
 
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.currentPlayer,
 		query.slot.hermit,
 		query.slot.rowIndex(1),
@@ -283,15 +272,13 @@ function* testPuppetryDiscardingItem(game: GameModel) {
 
 	yield* finishModalRequest(game, {pick: 'secondary'})
 
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.opponent,
 		query.slot.hermit,
 		query.slot.rowIndex(1),
 	)
 
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.currentPlayer,
 		query.slot.item,
 		query.slot.index(0),
@@ -316,8 +303,7 @@ function* testPuppetingTotalAnonymity(game: GameModel) {
 	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 	await test.playCardFromHand(WormManRare, 'hermit', 1)
 	await test.attack('secondary')
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.currentPlayer,
 		query.slot.hermit,
 		query.slot.rowIndex(1),
@@ -361,8 +347,7 @@ function* testPuppetingTimeSkip(game: GameModel) {
 	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 	await test.playCardFromHand(JoeHillsRare, 'hermit', 1)
 	await test.attack('secondary')
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.currentPlayer,
 		query.slot.hermit,
 		query.slot.rowIndex(1),
@@ -375,8 +360,7 @@ function* testPuppetingTimeSkip(game: GameModel) {
 
 	await test.playCardFromHand(Bow, 'single_use')
 	await test.attack('secondary')
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.currentPlayer,
 		query.slot.hermit,
 		query.slot.rowIndex(1),
@@ -387,8 +371,7 @@ function* testPuppetingTimeSkip(game: GameModel) {
 	yield* finishModalRequest(game, {pick: 'primary'})
 	yield* removeEffect(game)
 	await test.attack('secondary')
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.currentPlayer,
 		query.slot.hermit,
 		query.slot.rowIndex(1),
@@ -487,22 +470,19 @@ describe('Test Zombie Cleo', () => {
 					await test.playCardFromHand(Cubfan135Rare, 'hermit', 1)
 					await test.playCardFromHand(ChorusFruit, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 					expect(game.currentPlayer.activeRow?.index).toBe(1)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),

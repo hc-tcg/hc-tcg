@@ -33,14 +33,12 @@ describe('Test Useless Machine Achievement', () => {
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Composter, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.hand,
 						query.slot.currentPlayer,
 						query.slot.order(2),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.hand,
 						query.slot.currentPlayer,
 						query.slot.order(3),
@@ -75,14 +73,12 @@ describe('Test Useless Machine Achievement', () => {
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Composter, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.hand,
 						query.slot.currentPlayer,
 						query.slot.order(2),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.hand,
 						query.slot.currentPlayer,
 						query.slot.order(3),
@@ -117,14 +113,12 @@ describe('Test Useless Machine Achievement', () => {
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Composter, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.hand,
 						query.slot.currentPlayer,
 						query.slot.order(2),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.hand,
 						query.slot.currentPlayer,
 						query.slot.order(3),

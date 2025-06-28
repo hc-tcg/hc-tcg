@@ -77,8 +77,7 @@ describe('Test Slimeball', () => {
 					game.opponentPlayerEntity,
 				)
 				await test.playCardFromHand(FireCharge, 'single_use')
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.attach,
 					query.slot.rowIndex(0),
@@ -144,30 +143,26 @@ describe('Test Slimeball', () => {
 
 				await test.playCardFromHand(BalancedItem, 'item', 1, 0)
 				await test.playCardFromHand(Piston, 'single_use')
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.item,
 					query.slot.rowIndex(1),
 					query.slot.index(0),
 				)
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.item,
 					query.slot.rowIndex(0),
 					query.slot.index(1),
 				)
 				await test.playCardFromHand(Lead, 'single_use')
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.opponent,
 					query.slot.item,
 					query.slot.rowIndex(0),
 					query.slot.index(0),
 				)
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.opponent,
 					query.slot.item,
 					query.slot.rowIndex(1),
@@ -230,8 +225,7 @@ describe('Test Slimeball', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(InstantHealthII, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -246,8 +240,7 @@ describe('Test Slimeball', () => {
 
 					await test.playCardFromHand(GoldenAxe, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -309,8 +302,7 @@ describe('Test Slimeball', () => {
 				)
 				yield* removeEffect(game)
 				await test.playCardFromHand(WaterBucket, 'single_use')
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.active,
 					query.slot.hermit,
@@ -390,8 +382,7 @@ describe('Test Slimeball', () => {
 					await test.attack('secondary')
 					await test.playCardFromHand(Looting, 'single_use')
 					await test.applyEffect()
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.item,
 						query.slot.rowIndex(0),
@@ -427,15 +418,13 @@ describe('Test Slimeball', () => {
 					await test.playCardFromHand(GoldenAxe, 'single_use')
 					await test.attack('secondary')
 					await test.playCardFromHand(Lead, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.item,
 						query.slot.rowIndex(0),
 						query.slot.index(0),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.item,
 						query.slot.rowIndex(1),
@@ -543,30 +532,26 @@ describe('Test Slimeball', () => {
 					// Attack with "Can I Axe You A Question?"
 					await test.playCardFromHand(GoldenAxe, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 					// Attack with "Monkeystep"
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.item,
 						query.slot.rowIndex(1),
@@ -588,37 +573,32 @@ describe('Test Slimeball', () => {
 					// Attack with "Can I Axe You A Question?"
 					await test.playCardFromHand(GoldenAxe, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 					// Attack with "Steal"
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(3),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.item,
 						query.slot.rowIndex(1),
 						query.slot.index(1),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.item,
 						query.slot.rowIndex(1),

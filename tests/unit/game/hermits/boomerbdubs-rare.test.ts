@@ -149,8 +149,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 					expect(game.state.turn.availableActions).not.toContain(
 						'REMOVE_EFFECT',
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.active,

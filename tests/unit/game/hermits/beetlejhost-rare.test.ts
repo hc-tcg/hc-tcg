@@ -262,8 +262,7 @@ describe('Test Beetlejhost Rare', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(EnderPearl, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

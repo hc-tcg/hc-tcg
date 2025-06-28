@@ -170,8 +170,7 @@ describe('Test Gemini Tay', () => {
 
 					expect(game.state.pickRequests).toHaveLength(1)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

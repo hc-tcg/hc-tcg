@@ -17,8 +17,7 @@ describe('Test Jingler Rare', () => {
 					await test.playCardFromHand(JinglerRare, 'hermit', 0)
 					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.hand,
 						query.slot.opponent,
 						query.not(query.slot.empty),

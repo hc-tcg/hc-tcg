@@ -173,8 +173,7 @@ describe('Test Eye of the Spider achievement', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(MilkBucket, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.rowIndex(0),
 						query.slot.hermit,

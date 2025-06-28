@@ -75,8 +75,7 @@ describe('Test Go Fish Achievement', () => {
 
 					await test.playCardFromHand(Mending, 'single_use')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.attach,
 						query.slot.currentPlayer,
 						query.slot.rowIndex(1),

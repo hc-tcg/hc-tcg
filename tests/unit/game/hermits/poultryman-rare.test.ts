@@ -33,8 +33,7 @@ describe('Test Poutry Man Rare', () => {
 
 					expect(game.state.pickRequests).toHaveLength(1)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -80,8 +79,7 @@ describe('Test Poutry Man Rare', () => {
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -113,8 +111,7 @@ describe('Test Poutry Man Rare', () => {
 
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

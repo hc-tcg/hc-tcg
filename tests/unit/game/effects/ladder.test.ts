@@ -34,8 +34,7 @@ describe('Test Ladder', () => {
 
 					await test.playCardFromHand(IronArmor, 'attach', 0)
 					await test.playCardFromHand(Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -136,8 +135,7 @@ describe('Test Ladder', () => {
 					await test.playCardFromHand(FalseSymmetryRare, 'hermit', 1)
 					await test.playCardFromHand(GrianCommon, 'hermit', 0)
 					await test.playCardFromHand(Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),

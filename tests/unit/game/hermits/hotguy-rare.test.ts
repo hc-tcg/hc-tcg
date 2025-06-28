@@ -25,8 +25,7 @@ describe('Test Hotguy Rare', () => {
 					await test.playCardFromHand(Bow, 'single_use')
 					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -83,20 +82,17 @@ describe('Test Hotguy Rare', () => {
 					await test.playCardFromHand(Crossbow, 'single_use')
 					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -150,20 +146,17 @@ describe('Test Hotguy Rare', () => {
 					await test.playCardFromHand(Crossbow, 'single_use')
 					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(2),

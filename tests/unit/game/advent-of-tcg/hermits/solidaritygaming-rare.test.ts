@@ -35,8 +35,7 @@ describe('Test Jimmy "The Law"', () => {
 					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -115,8 +114,7 @@ describe('Test Jimmy "The Law"', () => {
 					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 1)
 					await test.playCardFromHand(ArmorStand, 'hermit', 2)
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -134,8 +132,7 @@ describe('Test Jimmy "The Law"', () => {
 					await test.endTurn()
 
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -164,8 +161,7 @@ describe('Test Jimmy "The Law"', () => {
 					).not.toBe(null)
 					await test.playCardFromHand(ChorusFruit, 'single_use')
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -190,8 +186,7 @@ describe('Test Jimmy "The Law"', () => {
 							),
 						),
 					).not.toBe(null)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -199,8 +194,7 @@ describe('Test Jimmy "The Law"', () => {
 					await test.endTurn()
 
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -219,8 +213,7 @@ describe('Test Jimmy "The Law"', () => {
 						),
 					).not.toBe(null)
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -272,8 +265,7 @@ describe('Test Jimmy "The Law"', () => {
 					await test.endTurn()
 
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -282,8 +274,7 @@ describe('Test Jimmy "The Law"', () => {
 
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -312,8 +303,7 @@ describe('Test Jimmy "The Law"', () => {
 					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -322,8 +312,7 @@ describe('Test Jimmy "The Law"', () => {
 
 					await test.playCardFromHand(Knockback, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -367,14 +356,12 @@ describe('Test Jimmy "The Law"', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(ChorusFruit, 'single_use')
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -390,8 +377,7 @@ describe('Test Jimmy "The Law"', () => {
 
 					await test.playCardFromHand(Knockback, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -431,8 +417,7 @@ describe('Test Jimmy "The Law"', () => {
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -440,8 +425,7 @@ describe('Test Jimmy "The Law"', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -481,8 +465,7 @@ describe('Test Jimmy "The Law"', () => {
 					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -498,14 +481,12 @@ describe('Test Jimmy "The Law"', () => {
 
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -524,14 +505,12 @@ describe('Test Jimmy "The Law"', () => {
 
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

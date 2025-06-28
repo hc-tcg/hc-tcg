@@ -172,8 +172,7 @@ describe('Test Zookeeper Scar', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Cat, 'attach', 0)
 					await test.playCardFromHand(Mending, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.attach,
 						query.slot.rowIndex(1),
@@ -220,8 +219,7 @@ describe('Test Zookeeper Scar', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Cat, 'attach', 0)
 					await test.playCardFromHand(Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -266,8 +264,7 @@ describe('Test Zookeeper Scar', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Cat, 'attach', 1)
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),

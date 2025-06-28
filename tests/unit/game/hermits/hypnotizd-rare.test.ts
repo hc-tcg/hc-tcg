@@ -41,22 +41,19 @@ describe('Test Rare Hypnotizd', () => {
 
 					expect(game.state.pickRequests).toHaveLength(2)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.item,
 						query.slot.rowIndex(0),
@@ -157,22 +154,19 @@ describe('Test Rare Hypnotizd', () => {
 
 					expect(game.state.pickRequests).toHaveLength(2)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.item,
 						query.slot.rowIndex(0),
@@ -180,8 +174,7 @@ describe('Test Rare Hypnotizd', () => {
 					)
 					yield* removeEffect(game)
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),

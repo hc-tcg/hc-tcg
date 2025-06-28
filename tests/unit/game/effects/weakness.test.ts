@@ -112,8 +112,7 @@ describe('Test Weakness', () => {
 
 					await test.playCardFromHand(ChorusFruit, 'single_use')
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

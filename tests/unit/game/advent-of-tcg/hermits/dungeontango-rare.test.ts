@@ -36,8 +36,7 @@ describe('Test DM Tango Lackey', () => {
 				await test.playCardFromHand(DungeonTangoRare, 'hermit', 0)
 				await test.playCardFromHand(MinerItem, 'item', 0, 0)
 				await test.attack('primary')
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.item,
 					query.slot.rowIndex(0),
@@ -75,8 +74,7 @@ describe('Test DM Tango Lackey', () => {
 				await test.playCardFromHand(MinerItem, 'item', 0, 0)
 				await test.playCardFromHand(Crossbow, 'single_use')
 				await test.attack('primary')
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.item,
 					query.slot.rowIndex(0),
@@ -84,15 +82,13 @@ describe('Test DM Tango Lackey', () => {
 				)
 				yield* removeEffect(game)
 				await test.playCardFromHand(Piston, 'single_use')
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.item,
 					query.slot.rowIndex(0),
 					query.slot.index(0),
 				)
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.item,
 					query.slot.rowIndex(1),
@@ -126,8 +122,7 @@ describe('Test DM Tango Lackey', () => {
 				await test.playCardFromHand(DungeonTangoRare, 'hermit', 0)
 				await test.playCardFromHand(MinerItem, 'item', 0, 0)
 				await test.attack('primary')
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.item,
 					query.slot.rowIndex(0),

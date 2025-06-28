@@ -39,8 +39,7 @@ describe('Test Dwarf Impulse Rare', () => {
 
 					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -106,8 +105,7 @@ describe('Test Dwarf Impulse Rare', () => {
 
 					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.hermit,
 						query.slot.opponent,
 						query.slot.rowIndex(0),

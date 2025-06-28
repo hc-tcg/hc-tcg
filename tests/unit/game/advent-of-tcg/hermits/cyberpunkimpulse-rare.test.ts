@@ -193,8 +193,7 @@ describe('Test Cyberpunk Impulse', () => {
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - EthosLabCommon.secondary.damage,
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.item,
 						query.slot.rowIndex(0),

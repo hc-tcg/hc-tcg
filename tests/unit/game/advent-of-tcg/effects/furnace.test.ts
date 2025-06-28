@@ -232,8 +232,7 @@ describe('Test Furnace Attach Effect', () => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 				await test.playCardFromHand(BalancedItem, 'item', 1, 0)
 				await test.playCardFromHand(Mending, 'single_use')
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.attach,
 					query.slot.rowIndex(1),
@@ -266,8 +265,7 @@ describe('Test Furnace Attach Effect', () => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 				await test.playCardFromHand(BalancedItem, 'item', 2, 0)
 				await test.playCardFromHand(Ladder, 'single_use')
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.hermit,
 					query.slot.rowIndex(2),

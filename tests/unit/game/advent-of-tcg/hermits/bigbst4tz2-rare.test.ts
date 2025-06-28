@@ -51,8 +51,7 @@ describe('Test BigB Soulmate', () => {
 							query.row.index(0),
 						)?.health,
 					).toBe(EthosLabCommon.health - BigBSt4tzRare.secondary.damage)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -232,14 +231,12 @@ describe('Test BigB Soulmate', () => {
 
 					await test.playCardFromHand(ChorusFruit, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -342,16 +339,14 @@ describe('Test BigB Soulmate', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),

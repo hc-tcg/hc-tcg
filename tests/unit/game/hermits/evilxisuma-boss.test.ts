@@ -171,8 +171,7 @@ function* testDirectlyOpposite(game: GameModel) {
 	await test.endTurn()
 	// Test Jumpscare
 	await test.attack('secondary')
-	yield* pick(
-		game,
+	await test.pick(
 		query.slot.currentPlayer,
 		query.slot.hermit,
 		query.slot.rowIndex(2),

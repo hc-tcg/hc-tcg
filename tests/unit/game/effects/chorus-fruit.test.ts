@@ -28,8 +28,7 @@ describe('Test Chorus Fruit', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(ChorusFruit, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -63,8 +62,7 @@ describe('Test Chorus Fruit', () => {
 
 					// First request should be for Betrayal target
 					expect(game.state.pickRequests).toHaveLength(1)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -72,8 +70,7 @@ describe('Test Chorus Fruit', () => {
 
 					// Second request should be to switch active row
 					expect(game.state.pickRequests).toHaveLength(1)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

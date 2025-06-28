@@ -33,8 +33,7 @@ describe('Test Oli Melody', () => {
 					await test.playCardFromHand(OrionSoundRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -43,8 +42,7 @@ describe('Test Oli Melody', () => {
 
 					await test.playCardFromHand(Bow, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -73,8 +71,7 @@ describe('Test Oli Melody', () => {
 						)?.health,
 					).toBe(EthosLabCommon.health - 40 + 10)
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -116,8 +113,7 @@ describe('Test Oli Melody', () => {
 						)?.health,
 					).toBe(EthosLabCommon.health - 40 + 20)
 					await test.attack('primary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),

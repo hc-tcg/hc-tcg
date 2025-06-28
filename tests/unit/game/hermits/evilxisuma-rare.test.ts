@@ -125,8 +125,7 @@ describe('Test Evil X', () => {
 					await test.playCardFromHand(EvilXisumaRare, 'hermit', 1)
 					await test.playCardFromHand(ChorusFruit, 'single_use')
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

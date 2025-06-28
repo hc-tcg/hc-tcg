@@ -32,8 +32,7 @@ describe('Test Smithing Table', () => {
 			saga: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(SmithingTable, 'single_use')
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.hand,
 					query.slot.has(WaterBucket),
@@ -67,8 +66,7 @@ describe('Test Smithing Table', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(SmithingTable, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hand,
 						query.slot.has(Shield),
@@ -105,8 +103,7 @@ describe('Test Smithing Table', () => {
 			saga: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(SmithingTable, 'single_use')
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.hand,
 					query.slot.has(Slimeball),

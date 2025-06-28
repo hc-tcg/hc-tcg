@@ -113,8 +113,7 @@ describe('Test Trapdoor', () => {
 					await test.playCardFromHand(IronArmor, 'attach', 2)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EnderPearl, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -172,8 +171,7 @@ describe('Test Trapdoor', () => {
 					await test.playCardFromHand(IronArmor, 'attach', 3)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EnderPearl, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -243,8 +241,7 @@ describe('Test Trapdoor', () => {
 					await test.playCardFromHand(IronArmor, 'attach', 3)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					await test.playCardFromHand(EnderPearl, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -318,8 +315,7 @@ describe('Test Trapdoor', () => {
 					await test.playCardFromHand(IronArmor, 'attach', 2)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EnderPearl, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -394,8 +390,7 @@ describe('Test Trapdoor', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(TargetBlock, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -561,8 +556,7 @@ describe('Test Trapdoor', () => {
 					await test.playCardFromHand(Wolf, 'attach', 0)
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -609,8 +603,7 @@ describe('Test Trapdoor', () => {
 					await test.playCardFromHand(Thorns, 'attach', 0)
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -685,8 +678,7 @@ describe('Test Trapdoor', () => {
 
 					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
 					await test.attack('secondary')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),

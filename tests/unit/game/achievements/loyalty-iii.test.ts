@@ -34,8 +34,7 @@ describe('Test Loyalty III Achievement', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(InstantHealthII, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.active,
 						query.slot.currentPlayer,
 						query.slot.hermit,
@@ -77,8 +76,7 @@ describe('Test Loyalty III Achievement', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(InstantHealthII, 'single_use')
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.active,
 						query.slot.currentPlayer,
 						query.slot.hermit,
