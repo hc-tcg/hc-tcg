@@ -37,7 +37,7 @@ async function testConsecutiveAmnesia(test: TestGameFixture, game: GameModel) {
 	await test.endTurn()
 
 	await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
-	await test.bossAttack( '50DMG')
+	await test.bossAttack('50DMG')
 	await test.endTurn()
 
 	await test.playCardFromHand(Anvil, 'single_use')
@@ -63,7 +63,7 @@ async function testConsecutiveAmnesia(test: TestGameFixture, game: GameModel) {
 		),
 	).not.toBeNull()
 
-	await test.bossAttack( '50DMG', 'ABLAZE')
+	await test.bossAttack('50DMG', 'ABLAZE')
 	await test.endTurn()
 
 	expect(game.currentPlayer.activeRow?.health).toBe(
@@ -100,15 +100,15 @@ async function testVersusRendogRare(test: TestGameFixture, game: GameModel) {
 	await test.endTurn()
 
 	await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
-	await test.bossAttack( '50DMG')
+	await test.bossAttack('50DMG')
 	await test.endTurn()
 
 	await test.attack('secondary')
 	// Pick target for Role Play
 	await test.pick(query.slot.opponent, query.slot.hermit)
-	await test.finishModalRequest( {pick: 'secondary'})
+	await test.finishModalRequest({pick: 'secondary'})
 	// Pick attack to disable for Derpcoin
-	await test.finishModalRequest( {pick: 'primary'})
+	await test.finishModalRequest({pick: 'primary'})
 
 	await test.endTurn()
 
@@ -121,7 +121,7 @@ async function testVersusRendogRare(test: TestGameFixture, game: GameModel) {
 		),
 	).toBeTruthy()
 
-	await test.bossAttack( '50DMG', 'ABLAZE')
+	await test.bossAttack('50DMG', 'ABLAZE')
 	await test.endTurn()
 
 	expect(game.currentPlayer.activeRow?.health).toBe(RendogRare.health - 50)
@@ -129,9 +129,9 @@ async function testVersusRendogRare(test: TestGameFixture, game: GameModel) {
 	await test.attack('secondary')
 	// Pick target for Role Play
 	await test.pick(query.slot.opponent, query.slot.hermit)
-	await test.finishModalRequest( {pick: 'secondary'})
+	await test.finishModalRequest({pick: 'secondary'})
 	// Pick attack to disable for Derpcoin
-	await test.finishModalRequest( {pick: 'primary'})
+	await test.finishModalRequest({pick: 'primary'})
 
 	await test.endTurn()
 
@@ -164,9 +164,9 @@ async function testDirectlyOpposite(test: TestGameFixture, game: GameModel) {
 	)
 
 	await test.endTurn()
-	await test.bossAttack( '50DMG', 'HEAL150')
+	await test.bossAttack('50DMG', 'HEAL150')
 	await test.endTurn()
-	await test.changeActiveHermit( 0)
+	await test.changeActiveHermit(0)
 	await test.endTurn()
 	await test.endTurn()
 	// Test Jumpscare
@@ -247,42 +247,42 @@ async function testChallengerVictory(test: TestGameFixture, game: GameModel) {
 	await test.endTurn()
 
 	await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
-	await test.bossAttack( '50DMG')
+	await test.bossAttack('50DMG')
 	await test.endTurn()
 
 	await test.playCardFromHand(PranksterDoubleItem, 'item', 1, 0)
 	await test.attack('secondary')
 	await test.endTurn()
 
-	await test.bossAttack( '50DMG')
+	await test.bossAttack('50DMG')
 	await test.endTurn()
 
 	await test.attack('secondary')
 	expect(game.opponentPlayer.lives).toBe(2)
 	await test.endTurn()
 
-	await test.bossAttack( '50DMG', 'ABLAZE')
+	await test.bossAttack('50DMG', 'ABLAZE')
 	await test.endTurn()
 
 	await test.attack('secondary')
 	await test.endTurn()
 
-	await test.bossAttack( '50DMG', 'ABLAZE')
+	await test.bossAttack('50DMG', 'ABLAZE')
 	await test.endTurn()
 
 	await test.attack('secondary')
 	expect(game.opponentPlayer.lives).toBe(1)
 	await test.endTurn()
 
-	await test.bossAttack( '50DMG', 'ABLAZE', 'EFFECTCARD')
+	await test.bossAttack('50DMG', 'ABLAZE', 'EFFECTCARD')
 	expect(game.opponentPlayer.lives).toBe(2)
 	await test.endTurn()
 
-	await test.changeActiveHermit( 1)
+	await test.changeActiveHermit(1)
 	await test.attack('secondary')
 	await test.endTurn()
 
-	await test.bossAttack( '50DMG', 'ABLAZE', 'EFFECTCARD')
+	await test.bossAttack('50DMG', 'ABLAZE', 'EFFECTCARD')
 	await test.endTurn()
 
 	await test.attack('secondary')
@@ -366,7 +366,7 @@ describe('Test Evil X Boss Fight', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
-					await test.bossAttack( '90DMG')
+					await test.bossAttack('90DMG')
 				},
 				then: (game) => {
 					expect(getWinner(game)?.playerName).toBe('Evil Xisuma')
@@ -389,19 +389,19 @@ describe('Test Evil X Boss Fight', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
-					await test.bossAttack( '90DMG')
+					await test.bossAttack('90DMG')
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
-					await test.bossAttack( '90DMG')
+					await test.bossAttack('90DMG')
 					await test.endTurn()
 
-					await test.changeActiveHermit( 2)
+					await test.changeActiveHermit(2)
 					await test.endTurn()
 
-					await test.bossAttack( '90DMG')
+					await test.bossAttack('90DMG')
 				},
 				then: (game) => {
 					expect(getWinner(game)?.playerName).toBe('Evil Xisuma')
