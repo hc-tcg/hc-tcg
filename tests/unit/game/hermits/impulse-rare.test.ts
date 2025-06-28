@@ -8,7 +8,7 @@ import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
-function* testOneHermit(game: GameModel) {
+async function testOneHermit(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 	await test.endTurn()
@@ -23,7 +23,7 @@ function* testOneHermit(game: GameModel) {
 	).toStrictEqual(260 - (70 + 40))
 }
 
-function* testManyHermits(game: GameModel) {
+async function testManyHermits(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 	await test.endTurn()

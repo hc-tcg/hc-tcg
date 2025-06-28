@@ -55,7 +55,7 @@ export function findCardInHand(player: PlayerComponent, card: Card) {
 }
 
 /** End the current player's turn. */
-export function* endTurn(game: GameModel) {
+export async function endTurn(test: TestGameFixture, game: GameModel) {
 	yield* put({
 		type: 'GAME_TURN_ACTION',
 		playerEntity: game.currentPlayer.entity,
@@ -125,7 +125,7 @@ export function* playCardFromHand(
 }
 
 /** Apply the effect card in the single use slot. This should be used to apply status effects that use the "should apply" modal. */
-export function* applyEffect(game: GameModel) {
+export async function applyEffect(test: TestGameFixture, game: GameModel) {
 	yield* put({
 		type: 'GAME_TURN_ACTION',
 		playerEntity: game.currentPlayer.entity,
@@ -136,7 +136,7 @@ export function* applyEffect(game: GameModel) {
 }
 
 /** Removes the effect card in the single use slot. This should be used to cancel effects that use the "should apply" modal or cancel an attack with pick requests. */
-export function* removeEffect(game: GameModel) {
+export async function removeEffect(test: TestGameFixture, game: GameModel) {
 	yield* put({
 		type: 'GAME_TURN_ACTION',
 		playerEntity: game.currentPlayer.entity,
@@ -161,7 +161,7 @@ export function* attack(
 }
 
 /** Change the active hermit row for the current player. */
-export function* changeActiveHermit(game: GameModel, index: number) {
+export async function changeActiveHermit(test: TestGameFixture, game: GameModel, index: number) {
 	yield* put({
 		type: 'GAME_TURN_ACTION',
 		playerEntity: game.currentPlayer.entity,

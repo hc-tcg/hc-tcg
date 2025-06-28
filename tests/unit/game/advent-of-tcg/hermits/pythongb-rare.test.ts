@@ -6,7 +6,7 @@ import XisumavoidRare from 'common/cards/hermits/xisumavoid-rare'
 import {GameModel} from 'common/models/game-model'
 import {attack, endTurn, playCardFromHand, testGame} from '../../utils'
 
-function* testOneHermit(game: GameModel) {
+async function testOneHermit(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 	await test.endTurn()
 
@@ -29,7 +29,7 @@ function* testOneHermit(game: GameModel) {
 	)
 }
 
-function* testManyHermits(game: GameModel) {
+async function testManyHermits(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 	await test.endTurn()
 

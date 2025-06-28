@@ -19,7 +19,7 @@ import {
 	testGame,
 } from '../utils'
 
-function* testEvilXDisablesForOneTurn(game: GameModel) {
+async function testEvilXDisablesForOneTurn(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(EvilXisumaRare, 'hermit', 0)
 	await test.endTurn()
 

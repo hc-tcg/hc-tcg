@@ -32,7 +32,7 @@ import {
 	testBossFight,
 } from '../utils'
 
-function* testConsecutiveAmnesia(game: GameModel) {
+async function testConsecutiveAmnesia(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(ArchitectFalseRare, 'hermit', 0)
 	await test.endTurn()
 
@@ -95,7 +95,7 @@ function* testConsecutiveAmnesia(game: GameModel) {
 	).toBeNull()
 }
 
-function* testVersusRendogRare(game: GameModel) {
+async function testVersusRendogRare(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(RendogRare, 'hermit', 0)
 	await test.endTurn()
 
@@ -145,7 +145,7 @@ function* testVersusRendogRare(game: GameModel) {
 	).toHaveLength(1)
 }
 
-function* testDirectlyOpposite(game: GameModel) {
+async function testDirectlyOpposite(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(RenbobRare, 'hermit', 1)
 	await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
 
@@ -184,7 +184,7 @@ function* testDirectlyOpposite(game: GameModel) {
 	)
 }
 
-function* testNineAttached(game: GameModel) {
+async function testNineAttached(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 	await test.playCardFromHand(GoldArmor, 'attach', 0)
@@ -239,7 +239,7 @@ function* testNineAttached(game: GameModel) {
 	).toHaveLength(3)
 }
 
-function* testChallengerVictory(game: GameModel) {
+async function testChallengerVictory(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(MumboJumboRare, 'hermit', 0)
 	await test.playCardFromHand(MumboJumboRare, 'hermit', 1)
 	await test.playCardFromHand(MumboJumboRare, 'hermit', 2)
