@@ -35,7 +35,7 @@ describe('Test Eye of the Spider achievement', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 
@@ -85,7 +85,7 @@ describe('Test Eye of the Spider achievement', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 
@@ -119,7 +119,7 @@ describe('Test Eye of the Spider achievement', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(LavaBucket, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 
@@ -163,7 +163,7 @@ describe('Test Eye of the Spider achievement', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 

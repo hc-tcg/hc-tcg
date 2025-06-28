@@ -145,7 +145,7 @@ describe('Test Furnace Attach Effect', () => {
 					)?.counter,
 				).toBe(3)
 				await test.playCardFromHand(Emerald, 'single_use')
-				yield* applyEffect(game)
+				await test.applyEffect()
 				expect(
 					game.components.find(
 						StatusEffectComponent,
@@ -171,7 +171,7 @@ describe('Test Furnace Attach Effect', () => {
 				await test.endTurn()
 
 				await test.playCardFromHand(Emerald, 'single_use')
-				yield* applyEffect(game)
+				await test.applyEffect()
 				expect(
 					game.components.find(
 						StatusEffectComponent,

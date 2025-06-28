@@ -71,7 +71,7 @@ describe('Test Zookeeper Scar', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(Emerald, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('primary')
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - 2 * 20,

@@ -105,7 +105,7 @@ describe('Test Oli Melody', () => {
 							10,
 					)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					expect(
@@ -137,7 +137,7 @@ describe('Test Oli Melody', () => {
 							20,
 					)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					expect(
 						game.components.find(

@@ -29,7 +29,7 @@ describe('Test Candle Single Use', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Candle, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					const cardEntities = (
 						game.state.modalRequests[0] as SelectCards.Request
 					).modal.cards
@@ -79,7 +79,7 @@ describe('Test Candle Single Use', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Candle, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					expect(
 						game.components.filter(
 							CardComponent,
@@ -135,7 +135,7 @@ describe('Test Candle Single Use', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Candle, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					expect(game.state.modalRequests[0]?.modal).toMatchObject({
 						type: 'selectCards',
 						selectionSize: 0,

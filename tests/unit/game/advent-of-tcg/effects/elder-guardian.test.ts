@@ -136,7 +136,7 @@ describe('Test Elder Guardian', () => {
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Efficiency, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('primary')
 					await test.endTurn()
 
@@ -149,7 +149,7 @@ describe('Test Elder Guardian', () => {
 						'SECONDARY_ATTACK',
 					)
 					await test.playCardFromHand(Efficiency, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					expect(game.state.turn.availableActions).toContain('PRIMARY_ATTACK')
 					expect(game.state.turn.availableActions).toContain('SECONDARY_ATTACK')
 				},

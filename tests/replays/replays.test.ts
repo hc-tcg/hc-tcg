@@ -174,13 +174,13 @@ describe('Test Replays', () => {
 				await test.endTurn()
 
 				await test.playCardFromHand(CurseOfBinding, 'single_use')
-				yield* applyEffect(game)
+				await test.applyEffect()
 				await test.endTurn()
 
 				await test.endTurn()
 
 				await test.playCardFromHand(Chest, 'single_use')
-				yield* applyEffect(game)
+				await test.applyEffect()
 				const discardedCard = game.currentPlayer.getDiscarded()[0].entity
 				yield* finishModalRequest(game, {
 					result: true,
@@ -273,7 +273,7 @@ describe('Test Replays', () => {
 
 				await test.playCardFromHand(SpeedrunnerDoubleItem, 'item', 4, 1)
 				await test.playCardFromHand(FishingRod, 'single_use')
-				yield* applyEffect(game)
+				await test.applyEffect()
 				await test.playCardFromHand(JinglerRare, 'hermit', 3)
 
 				await test.attack('secondary')

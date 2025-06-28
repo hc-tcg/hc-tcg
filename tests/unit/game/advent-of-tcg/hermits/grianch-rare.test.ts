@@ -70,18 +70,18 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 
 					await test.playCardFromHand(GrianchRare, 'hermit', 1)
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 2)
 					await test.playCardFromHand(Fortune, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					yield* pick(
 						game,
@@ -99,7 +99,7 @@ describe('Test The Grianch Naughty', () => {
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					await test.playCardFromHand(Fortune, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					yield* pick(
 						game,
@@ -128,16 +128,16 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(BoomerBdubsRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 
 					await test.playCardFromHand(Fortune, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					yield* finishModalRequest(game, {result: true, cards: null})
 					yield* finishModalRequest(game, {result: true, cards: null})
@@ -164,7 +164,7 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(PearlescentMoonRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -180,7 +180,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(Fortune, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					expect(
 						game.currentPlayer.coinFlips.filter(
@@ -219,12 +219,12 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
@@ -236,7 +236,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					yield* changeActiveHermit(game, 1)
 					await test.endTurn()
 
@@ -275,7 +275,7 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -321,12 +321,12 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -376,11 +376,11 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 
@@ -431,7 +431,7 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -489,11 +489,11 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(PearlescentMoonRare, 'hermit', 1)
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 3)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					yield* pick(
 						game,
@@ -597,11 +597,11 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(PearlescentMoonRare, 'hermit', 1)
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 3)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					yield* pick(
 						game,
@@ -697,7 +697,7 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -710,7 +710,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(Fortune, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						HumanCleoRare.health - GrianchRare.secondary.damage,
 					)
@@ -766,12 +766,12 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(EvilXisumaRare, 'hermit', 2)
 					await test.playCardFromHand(PvPDoubleItem, 'item', 0, 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(PvPDoubleItem, 'item', 0, 1)
 					await test.playCardFromHand(Efficiency, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 
@@ -826,11 +826,11 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 1)
 					await test.playCardFromHand(WormManRare, 'hermit', 3)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					yield* pick(
 						game,
@@ -939,7 +939,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(WormManRare, 'hermit', 1)
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 2)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -984,7 +984,7 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -997,7 +997,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(Fortune, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						ZedaphPlaysRare.health - GrianchRare.secondary.damage,
 					)
@@ -1053,7 +1053,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 1)
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 2)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -1123,7 +1123,7 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(PoultryManRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -1168,7 +1168,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 1)
 					await test.playCardFromHand(PoultryManRare, 'hermit', 2)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -1217,7 +1217,7 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(HelsknightRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -1228,7 +1228,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(Fortune, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					expect(
 						game.currentPlayer.coinFlips.filter(
 							(coinFlip) => coinFlip.opponentFlip,
@@ -1251,11 +1251,11 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(ArchitectFalseRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(Fortune, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.attack('secondary')
 					await test.endTurn()
@@ -1364,7 +1364,7 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 1)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -1399,7 +1399,7 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(BeetlejhostRare, 'hermit', 1)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -1452,7 +1452,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(BeetlejhostRare, 'hermit', 1)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -1510,7 +1510,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 1)
 					await test.playCardFromHand(BeetlejhostRare, 'hermit', 2)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -1563,7 +1563,7 @@ describe('Test The Grianch Naughty', () => {
 
 					await test.playCardFromHand(DwarfImpulseRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')

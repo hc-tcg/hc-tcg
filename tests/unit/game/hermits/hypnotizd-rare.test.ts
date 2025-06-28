@@ -114,7 +114,7 @@ describe('Test Rare Hypnotizd', () => {
 
 					await test.playCardFromHand(HypnotizdRare, 'hermit', 0)
 					await test.playCardFromHand(Efficiency, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					expect(
 						game.components.find(

@@ -54,7 +54,7 @@ describe('Test Weakness', () => {
 
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('primary')
 					await test.endTurn()
 
@@ -104,7 +104,7 @@ describe('Test Weakness', () => {
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
@@ -160,7 +160,7 @@ describe('Test Weakness', () => {
 
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
@@ -204,13 +204,13 @@ describe('Test Weakness', () => {
 
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.endTurn()
 
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('primary')
 					await test.endTurn()
 
@@ -240,7 +240,7 @@ describe('Test Weakness', () => {
 
 					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 0)
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('primary')
 					await test.endTurn()
 
@@ -282,7 +282,7 @@ describe('Test Weakness', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 

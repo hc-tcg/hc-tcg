@@ -29,7 +29,7 @@ describe('Test Invisiblity Potion.', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
@@ -75,7 +75,7 @@ describe('Test Invisiblity Potion.', () => {
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					// Verify effect lasts for multiple turns.
@@ -83,7 +83,7 @@ describe('Test Invisiblity Potion.', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -120,7 +120,7 @@ describe('Test Invisiblity Potion.', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
@@ -157,7 +157,7 @@ describe('Test Invisiblity Potion.', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
@@ -198,7 +198,7 @@ describe('Test Invisiblity Potion.', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(SpookyStressRare, 'hermit', 0)

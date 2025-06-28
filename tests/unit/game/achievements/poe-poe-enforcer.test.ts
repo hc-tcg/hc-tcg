@@ -26,7 +26,7 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(CurseOfBinding, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
@@ -50,7 +50,7 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(CurseOfBinding, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					await test.endTurn()
 					await test.endTurn()
@@ -78,7 +78,7 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(CurseOfBinding, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					await test.endTurn()
 					await test.endTurn()

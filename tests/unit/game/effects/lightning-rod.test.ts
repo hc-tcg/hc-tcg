@@ -127,7 +127,7 @@ describe('Test Lightning Rod', () => {
 					await test.playCardFromHand(LightningRod, 'attach', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					await test.endTurn()
 

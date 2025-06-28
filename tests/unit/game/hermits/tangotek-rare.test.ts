@@ -91,7 +91,7 @@ describe('Test Tango Extra Flee', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(CurseOfBinding, 'single_use')
 
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					await test.endTurn()
 

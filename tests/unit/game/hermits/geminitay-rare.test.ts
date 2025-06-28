@@ -88,7 +88,7 @@ describe('Test Gemini Tay', () => {
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
 
 					await test.playCardFromHand(LavaBucket, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					await test.attack('secondary')
 
@@ -133,7 +133,7 @@ describe('Test Gemini Tay', () => {
 					await test.attack('secondary')
 
 					await test.playCardFromHand(LavaBucket, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					expect(
 						game.components.find(

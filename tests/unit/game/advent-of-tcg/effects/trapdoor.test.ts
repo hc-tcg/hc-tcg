@@ -570,7 +570,7 @@ describe('Test Trapdoor', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('primary')
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						VintageBeefCommon.health -
@@ -618,7 +618,7 @@ describe('Test Trapdoor', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('primary')
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						VintageBeefCommon.health -
@@ -742,7 +742,7 @@ describe('Test Trapdoor', () => {
 
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 2)
 					await test.playCardFromHand(LavaBucket, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					yield* changeActiveHermit(game, 2)
@@ -829,11 +829,11 @@ describe('Test Trapdoor', () => {
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')

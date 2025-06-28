@@ -28,21 +28,21 @@ describe('Test How Did We Get Here achievement', () => {
 
 					await test.playCardFromHand(PearlescentMoonRare, 'hermit', 0)
 					await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.playCardFromHand(Clock, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					yield* forfeit(game.currentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, _outcome) {

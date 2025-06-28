@@ -21,7 +21,7 @@ function* testClockHelperSaga(game: GameModel) {
 
 	await test.playCardFromHand(Clock, 'single_use')
 
-	yield* applyEffect(game)
+	await test.applyEffect()
 
 	expect(
 		game.components.find(

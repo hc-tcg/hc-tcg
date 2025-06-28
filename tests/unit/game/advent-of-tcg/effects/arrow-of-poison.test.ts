@@ -40,7 +40,7 @@ describe('Test Arrow of Poison', () => {
 
 					await test.playCardFromHand(GoatfatherRare, 'hermit', 0)
 					await test.playCardFromHand(ArrowOfPoison, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					expect(
 						game.components.find(
@@ -70,7 +70,7 @@ describe('Test Arrow of Poison', () => {
 
 					await test.playCardFromHand(RenbobRare, 'hermit', 1)
 					await test.playCardFromHand(ArrowOfPoison, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					expect(
 						game.components.find(
@@ -101,7 +101,7 @@ describe('Test Arrow of Poison', () => {
 					await test.playCardFromHand(SpookyStressRare, 'hermit', 0)
 					await test.playCardFromHand(WaterBucket, 'attach', 0)
 					await test.playCardFromHand(ArrowOfPoison, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					expect(
 						game.components.find(
@@ -132,7 +132,7 @@ describe('Test Arrow of Poison', () => {
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ArrowOfPoison, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('primary')
 					expect(
 						game.components.find(
@@ -163,7 +163,7 @@ describe('Test Arrow of Poison', () => {
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ArrowOfPoison, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('primary')
 					expect(
 						game.components.find(
@@ -193,7 +193,7 @@ describe('Test Arrow of Poison', () => {
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ArrowOfPoison, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('secondary')
 					yield* pick(
@@ -237,7 +237,7 @@ describe('Test Arrow of Poison', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(ArrowOfPoison, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.playCardFromHand(Bow, 'single_use')
 					await test.attack('secondary')
 					yield* pick(
@@ -281,7 +281,7 @@ describe('Test Arrow of Poison', () => {
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ArrowOfPoison, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.playCardFromHand(Bow, 'single_use')
 					await test.attack('secondary')
 					yield* pick(

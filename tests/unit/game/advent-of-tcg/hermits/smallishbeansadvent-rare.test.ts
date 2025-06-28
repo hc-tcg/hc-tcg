@@ -33,7 +33,7 @@ describe('Test Stratos Joel', () => {
 					await test.playCardFromHand(SmallishbeansAdventRare, 'hermit', 0)
 					await test.playCardFromHand(WildItem, 'item', 0, 0)
 					await test.playCardFromHand(Efficiency, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health -

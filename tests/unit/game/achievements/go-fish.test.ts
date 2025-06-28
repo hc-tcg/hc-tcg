@@ -35,7 +35,7 @@ describe('Test Go Fish Achievement', () => {
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FishingRod, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 					yield* forfeit(game.currentPlayer.entity)
 				},
@@ -84,7 +84,7 @@ describe('Test Go Fish Achievement', () => {
 					await test.attack('secondary')
 
 					await test.playCardFromHand(FishingRod, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					yield* forfeit(game.currentPlayer.entity)

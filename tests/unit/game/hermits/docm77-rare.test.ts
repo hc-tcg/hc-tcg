@@ -29,17 +29,17 @@ describe('Test Docm77 World Eater', () => {
 					await test.playCardFromHand(Docm77Rare, 'hermit', 0)
 
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					await test.attack('secondary')
 
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					// Ensure Invilibility flipped tails to double damage
 					expect(
 						game.components.find(

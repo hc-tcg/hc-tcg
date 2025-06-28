@@ -38,7 +38,7 @@ describe('Test Redstone Torch', () => {
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(RedstoneTorch, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					expect(game.state.modalRequests[0]?.modal).toMatchObject({
 						type: 'selectCards',
 						selectionSize: 0,
@@ -87,7 +87,7 @@ describe('Test Redstone Torch', () => {
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(RedstoneTorch, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					expect(
 						(game.state.modalRequests[0] as SelectCards.Request).modal.cards,
 					).toStrictEqual([
@@ -131,7 +131,7 @@ describe('Test Redstone Torch', () => {
 
 					expect(game.currentPlayer.getDrawPile().length).toBe(1)
 					await test.playCardFromHand(RedstoneTorch, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					expect(
 						(game.state.modalRequests[0] as SelectCards.Request).modal.cards,
 					).toStrictEqual([])

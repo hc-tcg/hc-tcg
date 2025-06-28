@@ -99,7 +99,7 @@ describe('Test Zedaph Sheep Stare', () => {
 
 					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 0)
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('primary')
 					await test.endTurn()
 

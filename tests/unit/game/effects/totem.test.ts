@@ -281,7 +281,7 @@ describe('Test Totem of Undying', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(LavaBucket, 'single_use')
 
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					expect(
 						game.components.find(

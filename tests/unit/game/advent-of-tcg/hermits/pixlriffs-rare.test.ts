@@ -144,7 +144,7 @@ describe('Test Pixl World Build', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(PixlriffsRare, 'hermit', 1)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -200,7 +200,7 @@ describe('Test Pixl World Build', () => {
 					await test.playCardFromHand(RendogRare, 'hermit', 0)
 					await test.playCardFromHand(RendogRare, 'hermit', 1)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -277,7 +277,7 @@ describe('Test Pixl World Build', () => {
 
 					await test.playCardFromHand(RendogRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -354,7 +354,7 @@ describe('Test Pixl World Build', () => {
 
 					await test.playCardFromHand(RendogRare, 'hermit', 1)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')

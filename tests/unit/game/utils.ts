@@ -54,18 +54,6 @@ export function findCardInHand(player: PlayerComponent, card: Card) {
 	return cardInHand
 }
 
-export function* receiveGameMessages(con: GameController) {
-	while (true) {
-		const action: any = yield* take(
-			(action: any) => action.type == 'GAME_TURN_ACTION',
-		)
-		con.sendTurnAction({
-			action: action.action,
-			playerEntity: action.playerEntity,
-		})
-	}
-}
-
 /** End the current player's turn. */
 export function* endTurn(game: GameModel) {
 	yield* put({
@@ -283,6 +271,21 @@ class TestGameFixture {
 		await this.con.waitForWaitingForTurnAction()
 	}
 
+	/** Play a card from your hand to a row on the game board */
+	async playCardFromHand(card: Card, slotType: 'single_use'): Promise<any>
+	async playCardFromHand(
+		card: Card,
+		slotType: 'hermit' | 'attach',
+		row: number,
+		player?: PlayerEntity,
+	): Promise<any>
+	async playCardFromHand(
+		card: Card,
+		slotType: 'item',
+		row: number,
+		index: number,
+		player?: PlayerEntity,
+	): Promise<any>
 	async playCardFromHand(
 		card: Card,
 		slotType: SlotTypeT,
@@ -320,6 +323,31 @@ class TestGameFixture {
 		})
 		await this.con.waitForWaitingForTurnAction()
 	}
+
+	/** Apply the effect card in the single use slot. This should be used to apply status effects that use the "should apply" modal. */
+	async applyEffect() {
+		await this.con.waitForWaitingForTurnAction()
+		await this.con.sendTurnAction({
+			playerEntity: this.game.currentPlayer.entity,
+			action: {
+				type: 'APPLY_EFFECT',
+			},
+		})
+		await this.con.waitForWaitingForTurnAction()
+	}
+
+	/** Removes the effect card in the single use slot. This should be used to cancel effects that use the "should apply" modal or cancel an attack with pick requests. */
+	async removeEffect() {
+		await this.con.waitForWaitingForTurnAction()
+		await this.con.sendTurnAction({
+			playerEntity: this.game.currentPlayer.entity,
+			action: {
+				type: 'REMOVE_EFFECT',
+			},
+		})
+		await this.con.waitForWaitingForTurnAction()
+	}
+
 	/** Attack with the current player. */
 	async attack(attack: 'primary' | 'secondary' | 'single-use') {
 		await this.con.waitForWaitingForTurnAction()
@@ -328,6 +356,60 @@ class TestGameFixture {
 			playerEntity: this.game.currentPlayer.entity,
 			action: {
 				type: attackToAttackAction[attack],
+			},
+		})
+		await this.con.waitForWaitingForTurnAction()
+	}
+
+	/** Change the active hermit row for the current player. */
+	async changeActiveHermit(index: number) {
+		await this.con.waitForWaitingForTurnAction()
+		await this.con.sendTurnAction({
+			playerEntity: this.game.currentPlayer.entity,
+			action: {
+				entity: this.game.components.findEntity(
+					SlotComponent,
+					query.slot.currentPlayer,
+					query.slot.rowIndex(index),
+				)!,
+			},
+		})
+		await this.con.waitForWaitingForTurnAction()
+	}
+
+	/** Pick a slot for a pick request */
+	async pick(...slot: Array<ComponentQuery<SlotComponent>>) {
+		await this.con.waitForWaitingForTurnAction()
+		await this.con.sendTurnAction({
+			playerEntity: this.game.state.pickRequests[0].player,
+			action: {
+				type: 'PICK_REQUEST',
+				entity: this.game.components.find(SlotComponent, ...slot)!.entity,
+			},
+		})
+		await this.con.waitForWaitingForTurnAction()
+	}
+
+	/** Respond to a modal request. */
+	async finishModalRequest(modalResult: LocalModalResult) {
+		await this.con.waitForWaitingForTurnAction()
+		await this.con.sendTurnAction({
+			playerEntity: this.game.state.modalRequests[0].player,
+			action: {
+				type: 'MODAL_REQUEST',
+				modalResult,
+			},
+		})
+		await this.con.waitForWaitingForTurnAction()
+	}
+
+	async forfeit(player: PlayerEntity) {
+		await this.con.waitForWaitingForTurnAction()
+		await this.con.sendTurnAction({
+			playerEntity: player,
+			action: {
+				type: 'FORFEIT',
+				player,
 			},
 		})
 		await this.con.waitForWaitingForTurnAction()

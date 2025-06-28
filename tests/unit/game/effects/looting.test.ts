@@ -17,7 +17,7 @@ describe('Test Looting.', () => {
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Looting, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					expect(
 						game.getPickableSlots(game.state.pickRequests[0].canPick).length,

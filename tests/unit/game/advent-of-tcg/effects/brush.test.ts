@@ -32,7 +32,7 @@ describe('Test Brush Single Use', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Brush, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					expect(
 						(game.state.modalRequests[0].modal as DragCards.Data).leftCards.map(
 							(entity) => game.components.get(entity)?.props,
@@ -80,7 +80,7 @@ describe('Test Brush Single Use', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Brush, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					expect(
 						(game.state.modalRequests[0].modal as DragCards.Data).leftCards.map(
 							(entity) => game.components.get(entity)?.props,
@@ -128,7 +128,7 @@ describe('Test Brush Single Use', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Brush, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					expect(
 						(game.state.modalRequests[0].modal as DragCards.Data).leftCards.map(
 							(entity) => game.components.get(entity)?.props,

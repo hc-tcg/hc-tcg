@@ -91,7 +91,7 @@ describe('Test "Wipeout" achievement', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(LavaBucket, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)

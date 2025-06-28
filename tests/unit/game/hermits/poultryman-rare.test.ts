@@ -74,7 +74,7 @@ describe('Test Poutry Man Rare', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(Egg, 'single_use')

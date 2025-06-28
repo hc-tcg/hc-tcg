@@ -31,7 +31,7 @@ describe('Test Glowstone Single Use', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Glowstone, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					expect(
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards.map(
 							(entity) => game.components.get(entity)?.props,

@@ -31,7 +31,7 @@ describe('Test Cant Touch This achievement', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(GoatfatherRare, 'hermit', 0)
@@ -57,7 +57,7 @@ describe('Test Cant Touch This achievement', () => {
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
@@ -66,7 +66,7 @@ describe('Test Cant Touch This achievement', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 

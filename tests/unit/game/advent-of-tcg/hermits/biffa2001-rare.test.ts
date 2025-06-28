@@ -209,7 +209,7 @@ describe('Test Biffa Secondary', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(FlintAndSteel, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.playCardFromHand(ArmorStand, 'hermit', 1)
 					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
@@ -272,7 +272,7 @@ describe('Test Biffa Secondary', () => {
 
 					await test.playCardFromHand(Biffa2001Rare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -319,7 +319,7 @@ describe('Test Biffa Secondary', () => {
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(WormManRare, 'hermit', 1)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')

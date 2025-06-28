@@ -140,14 +140,14 @@ describe('Test Skizzleman Rare', () => {
 
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 1)
 					await test.playCardFromHand(LavaBucket, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					yield* changeActiveHermit(game, 2)
 					await test.endTurn()
 
 					await test.playCardFromHand(LavaBucket, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)

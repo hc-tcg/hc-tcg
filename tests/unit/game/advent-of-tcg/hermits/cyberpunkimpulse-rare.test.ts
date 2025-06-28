@@ -84,7 +84,7 @@ describe('Test Cyberpunk Impulse', () => {
 
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.playCardFromHand(Efficiency, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 

@@ -84,7 +84,7 @@ describe('Test Slimeball', () => {
 					query.slot.rowIndex(0),
 				)
 				await test.playCardFromHand(CurseOfVanishing, 'single_use')
-				yield* applyEffect(game)
+				await test.applyEffect()
 
 				expect(
 					game.components.find(
@@ -389,7 +389,7 @@ describe('Test Slimeball', () => {
 					await test.playCardFromHand(GoldenAxe, 'single_use')
 					await test.attack('secondary')
 					await test.playCardFromHand(Looting, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -533,7 +533,7 @@ describe('Test Slimeball', () => {
 					await test.playCardFromHand(MonkeyfarmRare, 'hermit', 2)
 					await test.playCardFromHand(KingJoelRare, 'hermit', 3)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(BalancedItem, 'item', 1, 1)

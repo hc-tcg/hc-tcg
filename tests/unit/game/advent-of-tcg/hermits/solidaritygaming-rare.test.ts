@@ -263,7 +263,7 @@ describe('Test Jimmy "The Law"', () => {
 
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					await test.playCardFromHand(LavaBucket, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)

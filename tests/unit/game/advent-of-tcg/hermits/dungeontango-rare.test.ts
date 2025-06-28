@@ -99,7 +99,7 @@ describe('Test DM Tango Lackey', () => {
 					query.slot.index(0),
 				)
 				await test.playCardFromHand(Efficiency, 'single_use')
-				yield* applyEffect(game)
+				await test.applyEffect()
 				await test.attack('primary')
 				expect(game.state.pickRequests).toHaveLength(0)
 				expect(

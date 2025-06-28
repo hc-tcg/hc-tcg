@@ -131,7 +131,7 @@ describe('Test Human Cleo Betrayal', () => {
 
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.playCardFromHand(Clock, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 
@@ -195,13 +195,13 @@ describe('Test Human Cleo Betrayal', () => {
 
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.playCardFromHand(Efficiency, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 
 					expect(game.state.turn.availableActions).toContain('END_TURN')
 					await test.playCardFromHand(Efficiency, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					expect(game.state.turn.availableActions).not.toContain('END_TURN')
 					await test.attack('primary')
 					yield* pick(
@@ -231,7 +231,7 @@ describe('Test Human Cleo Betrayal', () => {
 
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.playCardFromHand(Efficiency, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 

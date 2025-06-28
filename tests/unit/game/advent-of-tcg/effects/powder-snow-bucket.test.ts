@@ -153,14 +153,14 @@ describe('Test Powder Snow Bucket', () => {
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(LavaBucket, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
 					await test.endTurn()
 
 					await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(PowderSnowBucket, 'single_use')

@@ -130,7 +130,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					yield* pick(
 						game,
@@ -178,7 +178,7 @@ describe('Test Pharaoh Xibalba', () => {
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 
@@ -188,7 +188,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					expect(
 						game.components.find(
@@ -207,7 +207,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -357,7 +357,7 @@ describe('Test Pharaoh Xibalba', () => {
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 
@@ -598,7 +598,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.playCardFromHand(Wolf, 'attach', 0)
 					await test.playCardFromHand(DiamondArmor, 'attach', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					yield* changeActiveHermit(game, 1)
 					await test.endTurn()
 
@@ -606,7 +606,7 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 1)
 					await test.playCardFromHand(PharaohRare, 'hermit', 2)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.playCardFromHand(Knockback, 'single_use')

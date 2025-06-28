@@ -83,7 +83,7 @@ describe('Test Turtle Shell', () => {
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 
 					await test.playCardFromHand(LavaBucket, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					await test.endTurn()
 
@@ -610,7 +610,7 @@ describe('Test Turtle Shell', () => {
 						undefined,
 					) // Check if Emerald can move Turtle Shells
 					await test.playCardFromHand(Emerald, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					await test.endTurn()
 
@@ -639,7 +639,7 @@ describe('Test Turtle Shell', () => {
 					)
 
 					await test.playCardFromHand(Emerald, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					await test.endTurn()
 
@@ -698,7 +698,7 @@ describe('Test Turtle Shell', () => {
 						undefined,
 					) // Check if Emerald can move Turtle Shells
 					await test.playCardFromHand(Emerald, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -728,7 +728,7 @@ describe('Test Turtle Shell', () => {
 
 					yield* changeActiveHermit(game, 3)
 					await test.playCardFromHand(Emerald, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -895,7 +895,7 @@ describe('Test Turtle Shell', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(Emerald, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					expect(oldEffect?.targetEntity).toBe(null)
 

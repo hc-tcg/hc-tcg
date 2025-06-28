@@ -21,13 +21,13 @@ describe('Test Milk Bucket', () => {
 
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
-				yield* applyEffect(game)
+				await test.applyEffect()
 				await test.endTurn()
 
 				await test.endTurn()
 
 				await test.playCardFromHand(BadOmen, 'single_use')
-				yield* applyEffect(game)
+				await test.applyEffect()
 				await test.endTurn()
 
 				expect(

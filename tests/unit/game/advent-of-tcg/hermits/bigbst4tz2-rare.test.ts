@@ -224,7 +224,7 @@ describe('Test BigB Soulmate', () => {
 					await test.playCardFromHand(PrincessGemRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LavaBucket, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -289,7 +289,7 @@ describe('Test BigB Soulmate', () => {
 						query.row.index(0),
 					)!.health = 10
 					await test.playCardFromHand(LavaBucket, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					// TODO: Decide if this is desired behavior
@@ -335,7 +335,7 @@ describe('Test BigB Soulmate', () => {
 					await test.playCardFromHand(BigBSt4tzRare, 'hermit', 1)
 					await test.playCardFromHand(GoodTimesWithScarRare, 'hermit', 2)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 
 					await test.attack('secondary')

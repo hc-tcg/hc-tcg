@@ -268,7 +268,7 @@ describe('Test Server Lag achievement', () => {
 
 					await test.attack('secondary')
 					await test.playCardFromHand(LavaBucket, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.endTurn()
 				},
 				checkAchivement(_game, achievement, outcome) {

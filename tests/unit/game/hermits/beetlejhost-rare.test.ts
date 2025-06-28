@@ -209,7 +209,7 @@ describe('Test Beetlejhost Rare', () => {
 
 					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					await test.attack('secondary')
 
@@ -220,7 +220,7 @@ describe('Test Beetlejhost Rare', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					await test.endTurn()
 
@@ -320,7 +320,7 @@ describe('Test Beetlejhost Rare', () => {
 
 					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 
@@ -344,7 +344,7 @@ describe('Test Beetlejhost Rare', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
+					await test.applyEffect()
 					await test.attack('secondary')
 					await test.endTurn()
 
