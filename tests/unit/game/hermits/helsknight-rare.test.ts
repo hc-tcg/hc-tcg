@@ -9,7 +9,7 @@ import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Hels Trap Hole', () => {
 	test('Test Trap Hole with TNT', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, TNT],
 				playerTwoDeck: [HelsknightRare],
@@ -38,7 +38,7 @@ describe('Test Hels Trap Hole', () => {
 	})
 
 	test('Test Trap Hole when Anvil misses', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Anvil],
 				playerTwoDeck: [HelsknightRare],
@@ -63,7 +63,7 @@ describe('Test Hels Trap Hole', () => {
 	})
 
 	test('Test Trap Hole against Geminislay', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GeminiTayRare, IronSword, IronSword],
 				playerTwoDeck: [HelsknightRare],

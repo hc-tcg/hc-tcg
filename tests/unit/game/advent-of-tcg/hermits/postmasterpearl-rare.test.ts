@@ -24,7 +24,7 @@ const deck = [
 
 function postMasterTest(pearls: number, results: boolean[]) {
 	test(`Test ${pearls} pearl card(s) with ${results}`, () =>
-		testGame({
+		await testGame({
 			playerOneDeck: deck,
 			playerTwoDeck: deck,
 			saga: async (test, game) => {

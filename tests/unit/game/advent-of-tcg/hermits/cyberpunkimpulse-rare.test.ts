@@ -26,7 +26,7 @@ import {
 
 describe('Test Cyberpunk Impulse', () => {
 	test('Energy transferred', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -67,7 +67,7 @@ describe('Test Cyberpunk Impulse', () => {
 	})
 
 	test('Betrayed uses the correct amount of transferred energy available', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					CyberpunkImpulseRare,
@@ -106,7 +106,7 @@ describe('Test Cyberpunk Impulse', () => {
 	})
 
 	test('Hypno can discard a Farm item from Cyberpunk Impulse', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HypnotizdRare, CyberpunkImpulseRare, FarmItem],
@@ -127,7 +127,7 @@ describe('Test Cyberpunk Impulse', () => {
 	})
 
 	test('Stratos Joel counts items attached to Cyberpunk Impulse', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [
@@ -155,7 +155,7 @@ describe('Test Cyberpunk Impulse', () => {
 	})
 
 	test('Brewing Stand does not include items attached to adjacent Cyberpunk Impulse', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -212,7 +212,7 @@ describe('Test Cyberpunk Impulse', () => {
 	})
 
 	test('Furnace does not include items attached to adjacent Cyberpunk Impulse', () => {
-		testGame({
+		await testGame({
 			playerOneDeck: [
 				EthosLabCommon,
 				CyberpunkImpulseRare,

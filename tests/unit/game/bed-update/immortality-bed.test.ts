@@ -13,7 +13,7 @@ import {
 
 describe('Test Immortality Bed', () => {
 	test('Immortality Bed returns attached hermit to hand on knock-out without losing a life or giving a prize card', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,

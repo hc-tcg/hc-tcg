@@ -6,7 +6,7 @@ import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Smallishbeans Rare', () => {
 	test('Test "Obsess"', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [SmallishbeansRare, EthosLabCommon, GeminiTayRare],

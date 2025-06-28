@@ -8,7 +8,7 @@ import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Diamond Armor', () => {
 	test('Diamond Armor prevents damage', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, DiamondArmor],
 				playerTwoDeck: [EthosLabCommon],
@@ -32,7 +32,7 @@ describe('Test Diamond Armor', () => {
 		)
 	})
 	test('Diamond Armor prevents effect damage', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, DiamondArmor],
 				playerTwoDeck: [EthosLabCommon, DiamondSword],

@@ -14,7 +14,7 @@ import {
 
 describe('Test Joe Time Skip', () => {
 	test('Time Skip functionality', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, BadOmen],
 				playerTwoDeck: [JoeHillsRare],
@@ -54,7 +54,7 @@ describe('Test Joe Time Skip', () => {
 	})
 
 	test('Time Skip and Clock cannot skip consecutive turns', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [JoeHillsRare, Clock],

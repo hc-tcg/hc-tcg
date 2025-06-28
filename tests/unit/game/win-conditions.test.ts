@@ -11,7 +11,7 @@ import {
 
 describe('Test Game Win Conditions', () => {
 	test('Killing all hermits results in victory.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
@@ -31,7 +31,7 @@ describe('Test Game Win Conditions', () => {
 		)
 	})
 	test('Decked out results in victory.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
@@ -48,7 +48,7 @@ describe('Test Game Win Conditions', () => {
 		)
 	})
 	test('Forfeit results in victory (current player)', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
@@ -64,7 +64,7 @@ describe('Test Game Win Conditions', () => {
 		)
 	})
 	test('Forfeit results in victory (opponent player)', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],

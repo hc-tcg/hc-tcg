@@ -7,7 +7,7 @@ import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test TFC Rare', () => {
 	test('TFC draws exactly one card.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [TinFoilChefRare, ...new Array(16).fill(BalancedItem)],
@@ -40,7 +40,7 @@ describe('Test TFC Rare', () => {
 	})
 
 	test('TFC + Original XB draws two additional cards at end of turn', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [OriginalXBRare],
 				playerTwoDeck: [TinFoilChefRare, ...new Array(16).fill(BalancedItem)],

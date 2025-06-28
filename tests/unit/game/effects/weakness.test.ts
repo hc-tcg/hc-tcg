@@ -18,7 +18,7 @@ import {
 
 describe('Test Weakness', () => {
 	test('Weakness Damage Negative Control', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon],
 				playerTwoDeck: [VintageBeefCommon],
@@ -44,7 +44,7 @@ describe('Test Weakness', () => {
 	})
 
 	test('Weakness Works Both Ways', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon],
 				playerTwoDeck: [VintageBeefCommon, PotionOfWeakness],
@@ -87,7 +87,7 @@ describe('Test Weakness', () => {
 	})
 
 	test('Weakness Works Through Switches', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon, VintageBeefCommon],
 				playerTwoDeck: [
@@ -148,7 +148,7 @@ describe('Test Weakness', () => {
 	})
 
 	test('Weakness Does Not Work on Wrong Types', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon, ImpulseSVCommon],
 				playerTwoDeck: [VintageBeefCommon, PotionOfWeakness],
@@ -193,7 +193,7 @@ describe('Test Weakness', () => {
 	})
 
 	test('Weakness Does Not Stack Self', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon],
 				playerTwoDeck: [VintageBeefCommon, PotionOfWeakness, PotionOfWeakness],
@@ -229,7 +229,7 @@ describe('Test Weakness', () => {
 	})
 
 	test('Weakness Does Not Stack With Type Chart', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [SmallishbeansRare],
 				playerTwoDeck: [ImpulseSVCommon, PotionOfWeakness],
@@ -257,7 +257,7 @@ describe('Test Weakness', () => {
 	})
 
 	test('Weakness Works Through KOs', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [SmallishbeansRare, ImpulseSVCommon, SmallishbeansRare],
 				playerTwoDeck: [

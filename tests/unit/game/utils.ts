@@ -639,7 +639,7 @@ export function testAchivement(
 		options.checkAchivement(game, achievementComponent, gameOutcome)
 	}
 
-	testGame(
+	await testGame(
 		{
 			saga,
 			then,

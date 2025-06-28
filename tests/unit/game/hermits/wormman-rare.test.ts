@@ -23,7 +23,7 @@ import {
 
 describe('Test Rare Worm Man', () => {
 	test('Total Anonymity functionality', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, TargetBlock],
 				playerTwoDeck: [WormManRare, PoultrymanCommon, PoultrymanCommon],
@@ -94,7 +94,7 @@ describe('Test Rare Worm Man', () => {
 	})
 
 	test('One Hermit can be placed face-up after Thorns knock-out', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					WormManRare,
@@ -139,7 +139,7 @@ describe('Test Rare Worm Man', () => {
 	})
 
 	test('Total Anonymity can place Armor Stand', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [WormManRare, ArmorStand],
@@ -164,7 +164,7 @@ describe('Test Rare Worm Man', () => {
 	})
 
 	test('Face-down hermits are revealed when picked, not attacked/attached to', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Anvil, Bow],
 				playerTwoDeck: [WormManRare, PoultrymanCommon, ThornsIII],
@@ -219,7 +219,7 @@ describe('Test Rare Worm Man', () => {
 	})
 
 	test('Total Anonymity interactions with Betrayed effect', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [WormManRare, EthosLabCommon],
 				playerTwoDeck: [HumanCleoRare],

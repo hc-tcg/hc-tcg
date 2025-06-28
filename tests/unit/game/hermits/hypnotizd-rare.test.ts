@@ -24,7 +24,7 @@ import {
 
 describe('Test Rare Hypnotizd', () => {
 	test('Secondary attack and bow can select different targets', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HypnotizdRare, Bow, MinerDoubleItem],
@@ -100,7 +100,7 @@ describe('Test Rare Hypnotizd', () => {
 	})
 
 	test('Secondary attack can not select AFK target without item card', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HypnotizdRare, Efficiency],
@@ -137,7 +137,7 @@ describe('Test Rare Hypnotizd', () => {
 	})
 
 	test('Secondary attack can be canceled to change target', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HypnotizdRare, MinerDoubleItem, Crossbow],

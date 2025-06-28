@@ -10,7 +10,7 @@ import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test Netherite Armor', () => {
 	test('Netherite Armor prevents damage', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, NetheriteArmor],
 				playerTwoDeck: [EthosLabCommon],
@@ -34,7 +34,7 @@ describe('Test Netherite Armor', () => {
 		)
 	})
 	test('Netherite Armor prevents knockback', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, NetheriteArmor],
 				playerTwoDeck: [EthosLabCommon, Egg],
@@ -60,7 +60,7 @@ describe('Test Netherite Armor', () => {
 		)
 	})
 	test('Netherite Armor prevents damage from effects', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, NetheriteArmor],
 				playerTwoDeck: [EthosLabCommon, DiamondSword],
@@ -86,7 +86,7 @@ describe('Test Netherite Armor', () => {
 		)
 	})
 	test('Netherite Armor does not protect against redirects', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, NetheriteArmor],
 				playerTwoDeck: [EthosLabCommon, TargetBlock],

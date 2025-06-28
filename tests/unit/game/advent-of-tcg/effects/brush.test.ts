@@ -17,7 +17,7 @@ import {
 
 describe('Test Brush Single Use', () => {
 	test('Leaving both cards on top', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -65,7 +65,7 @@ describe('Test Brush Single Use', () => {
 	})
 
 	test('Moving both cards to bottom', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -113,7 +113,7 @@ describe('Test Brush Single Use', () => {
 	})
 
 	test('Moving 1 card to bottom and leaving 1 on top', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,

@@ -18,7 +18,7 @@ import {
 
 describe('Test Scott "To Dye For"', () => {
 	test('"To Dye For" functionality', () => {
-		testGame({
+		await testGame({
 			playerOneDeck: [
 				Smajor1995Rare,
 				VintageBeefCommon,

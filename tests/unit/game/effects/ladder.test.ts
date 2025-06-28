@@ -12,7 +12,7 @@ import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test Ladder', () => {
 	test('Basic Functionality', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -124,7 +124,7 @@ describe('Test Ladder', () => {
 			GrianCommon.health - FalseSymmetryRare.health,
 		)
 
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [FalseSymmetryRare, GrianCommon, Ladder],

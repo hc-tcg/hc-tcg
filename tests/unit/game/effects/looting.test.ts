@@ -6,7 +6,7 @@ import {applyEffect, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Looting.', () => {
 	test('Test looting works as expected', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, BalancedItem],
 				playerTwoDeck: [EthosLabCommon, Looting],

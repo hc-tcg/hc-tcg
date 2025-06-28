@@ -7,7 +7,7 @@ import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Armor Stand', () => {
 	test("Armor stand doesn't give a prize card", () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [ArmorStand, EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
@@ -28,7 +28,7 @@ describe('Test Armor Stand', () => {
 		)
 	})
 	test('Armor stand disables correct slots', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [ArmorStand],
 				playerTwoDeck: [],

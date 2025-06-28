@@ -28,7 +28,7 @@ import {
 
 describe('Test Zookeeper Scar', () => {
 	test('Effect not duplicated when attached to Zookeeper Scar', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [
@@ -51,7 +51,7 @@ describe('Test Zookeeper Scar', () => {
 	})
 
 	test('Effect doubles and detaches', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ZookeeperScarRare, Wolf],
 				playerTwoDeck: [EthosLabCommon, Emerald],
@@ -83,7 +83,7 @@ describe('Test Zookeeper Scar', () => {
 	})
 
 	test('Lasso can stack Cat functionality', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [
@@ -126,7 +126,7 @@ describe('Test Zookeeper Scar', () => {
 	})
 
 	test('Lasso + Elder Guardian functionality', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [ZookeeperScarRare, EthosLabCommon, ElderGuardian],
 				playerTwoDeck: [EthosLabCommon],
@@ -153,7 +153,7 @@ describe('Test Zookeeper Scar', () => {
 	})
 
 	test('Mending Cat from active Zookeeper Scar', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [
@@ -200,7 +200,7 @@ describe('Test Zookeeper Scar', () => {
 	})
 
 	test('Moving Zookeeper Scar from Cat using Ladder', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [
@@ -247,7 +247,7 @@ describe('Test Zookeeper Scar', () => {
 	})
 
 	test('Rendog cannot mock Lasso with Roleplay', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [ZookeeperScarRare],
 				playerTwoDeck: [
@@ -283,7 +283,7 @@ describe('Test Zookeeper Scar', () => {
 	})
 
 	test('Evil Xisuma cannot attempt to disable Lasso with Derpcoin', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [ZookeeperScarRare],
 				playerTwoDeck: [EvilXisumaRare],
@@ -307,7 +307,7 @@ describe('Test Zookeeper Scar', () => {
 	})
 
 	test('Golden Axe disables Wolf + Lasso when Wolf is attached to active', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ZookeeperScarRare, Wolf],
 				playerTwoDeck: [EthosLabCommon, GoldenAxe, GoldenAxe],

@@ -6,7 +6,7 @@ import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Original Xb Rare', () => {
 	test('Original Xb draws exactly one card.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [OriginalXBRare],
 				playerTwoDeck: [EthosLabCommon, ...new Array(16).fill(BalancedItem)],

@@ -16,7 +16,7 @@ import {
 
 describe('Test Zedaph Sheep Stare', () => {
 	test('Sheep Stare functionality', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, TNT],
 				playerTwoDeck: [ZedaphPlaysRare],
@@ -49,7 +49,7 @@ describe('Test Zedaph Sheep Stare', () => {
 	})
 
 	test('Sheep Stare does not redirect Anvil Drop AFK damage', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GoatfatherRare],
 				playerTwoDeck: [ZedaphPlaysRare, EthosLabCommon],
@@ -89,7 +89,7 @@ describe('Test Zedaph Sheep Stare', () => {
 	})
 
 	test('Sheep Stare does not flip for weakness', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [ZedaphPlaysRare],
 				playerTwoDeck: [ZedaphPlaysRare, PotionOfWeakness],

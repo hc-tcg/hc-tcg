@@ -21,7 +21,7 @@ import {
 
 describe('Test Rendog Role Play', () => {
 	test('Using Role Play on Puppetry', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [ZombieCleoRare, EthosLabCommon],
 				playerTwoDeck: [RendogRare, EthosLabCommon, Crossbow],
@@ -79,7 +79,7 @@ describe('Test Rendog Role Play', () => {
 	})
 
 	test('Using Puppetry on Role Play', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [ArmorStand, ArmorStand, EthosLabCommon],
 				playerTwoDeck: [ZombieCleoRare, RendogRare, Crossbow],
@@ -150,7 +150,7 @@ describe('Test Rendog Role Play', () => {
 	})
 
 	test('Using Role Play on Time Skip', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, JoeHillsRare],
 				playerTwoDeck: [RendogRare, Crossbow],
@@ -199,7 +199,7 @@ describe('Test Rendog Role Play', () => {
 	})
 
 	test('Role Play is disabled when opponent has no Hermit cards', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [RendogRare],
 				playerTwoDeck: [ArmorStand],

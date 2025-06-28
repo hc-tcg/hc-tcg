@@ -16,7 +16,7 @@ import {
 
 describe('Test Chorus Fruit', () => {
 	test('Basic functionality', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, ChorusFruit],
@@ -41,7 +41,7 @@ describe('Test Chorus Fruit', () => {
 	})
 
 	test('Chorus Fruit can be used to swap after attacking for Betrayed', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, ChorusFruit],
 				playerTwoDeck: [HumanCleoRare],
@@ -84,7 +84,7 @@ describe('Test Chorus Fruit', () => {
 	})
 
 	test('Curse of Binding prevents using Chorus Fruit', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, ChorusFruit],
 				playerTwoDeck: [EthosLabCommon, CurseOfBinding],
@@ -110,7 +110,7 @@ describe('Test Chorus Fruit', () => {
 	})
 
 	test('Shreep prevents using Chorus Fruit', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [

@@ -7,7 +7,7 @@ import {testGame} from '../../utils'
 
 describe('Test Fletching Table', () => {
 	test('Each Fletching Table in the starting deck adds a Feather', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FletchingTable],
 				playerTwoDeck: [EthosLabCommon, ...Array(3).fill(FletchingTable)],

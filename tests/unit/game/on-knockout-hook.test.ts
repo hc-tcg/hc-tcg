@@ -7,7 +7,7 @@ import {attack, endTurn, playCardFromHand, testGame} from './utils'
 
 describe('Test `row.hooks.onKnockOut` hook', () => {
 	test('Test `row.hooks.onKnockOut` hook', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],

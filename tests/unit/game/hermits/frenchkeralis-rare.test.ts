@@ -7,7 +7,7 @@ import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Frenchralis Rare', () => {
 	test('Test Zero Lives Lost', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [FrenchralisRare],
@@ -31,7 +31,7 @@ describe('Test Frenchralis Rare', () => {
 		)
 	})
 	test('Test One Life Lost', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [FrenchralisRare],
@@ -56,7 +56,7 @@ describe('Test Frenchralis Rare', () => {
 		)
 	})
 	test('Test Two Lives Lost', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [FrenchralisRare],

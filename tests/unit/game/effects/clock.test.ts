@@ -41,7 +41,7 @@ function* testClockHelperSaga(game: GameModel) {
 
 describe('Test Clock', () => {
 	test('Test Clock', () => {
-		testGame(
+		await testGame(
 			{
 				saga: testClockHelperSaga,
 				playerOneDeck: [EthosLabCommon],

@@ -6,7 +6,7 @@ import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test Jingler Rare', () => {
 	test('Test Jingler forces opponent to discard one card', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [JinglerRare],
@@ -28,7 +28,7 @@ describe('Test Jingler Rare', () => {
 		)
 	})
 	test("Test Jingler does nothing when opponent's hand is empty", () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [JinglerRare],

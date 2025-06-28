@@ -18,7 +18,7 @@ import {
 
 describe('Test Lightning Rod', () => {
 	test('Test redirecting multiple attacks at once', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -76,7 +76,7 @@ describe('Test Lightning Rod', () => {
 		)
 	})
 	test('Lightning Rod is not discarded when overridden', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [EthosLabCommon, TargetBlock],
@@ -110,7 +110,7 @@ describe('Test Lightning Rod', () => {
 	})
 	test('Lightning Rod is not discarded from missed attacks', () => {
 		// Practically includes 0-damage atttacks.
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -152,7 +152,7 @@ describe('Test Lightning Rod', () => {
 		)
 	})
 	test('Rod discards from 0 damage due to Royal Protection', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon, PrincessGemRare, LightningRod],

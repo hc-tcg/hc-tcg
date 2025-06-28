@@ -19,7 +19,7 @@ import {
 
 describe('Test Shelby Parallel World', () => {
 	test('Parallel World Functionality', () => {
-		testGame({
+		await testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [
 				ShubbleYTRare,
@@ -58,7 +58,7 @@ describe('Test Shelby Parallel World', () => {
 	})
 
 	test('Parallel World shows correct card when Shelby is knocked-out by Thorns', () => {
-		testGame({
+		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns],
 			playerTwoDeck: [
 				ShubbleYTRare,
@@ -100,7 +100,7 @@ describe('Test Shelby Parallel World', () => {
 	})
 
 	test('Parallel World removes modal when Shelby is knocked-out by Thorns and gives away last card as prize', () => {
-		testGame({
+		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns],
 			playerTwoDeck: [
 				ShubbleYTRare,
@@ -133,7 +133,7 @@ describe('Test Shelby Parallel World', () => {
 	})
 
 	test('Parallel World + Cat', () => {
-		testGame({
+		await testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [
 				ShubbleYTRare,

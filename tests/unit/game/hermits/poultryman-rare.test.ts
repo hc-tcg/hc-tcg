@@ -17,7 +17,7 @@ import {
 
 describe('Test Poutry Man Rare', () => {
 	test('Poultry Man only recycles Egg.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [PoultryManRare, Egg, GoldenAxe],
@@ -59,7 +59,7 @@ describe('Test Poutry Man Rare', () => {
 	})
 
 	test('Poultry Man recycles Egg on tails.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, BadOmen],
 				playerTwoDeck: [PoultryManRare, Egg],
@@ -96,7 +96,7 @@ describe('Test Poutry Man Rare', () => {
 	})
 
 	test('Poultry Man does not recycle Egg when Trap Hole flips heads', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [PoultryManRare, Egg],
 				playerTwoDeck: [HelsknightRare, EthosLabCommon],

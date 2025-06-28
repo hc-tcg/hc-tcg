@@ -33,7 +33,7 @@ import {
 
 describe('Test Pharaoh Xibalba', () => {
 	test('Xibalba Functionality', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, PharaohRare],
 				playerTwoDeck: [EthosLabCommon, Knockback, DiamondArmor],
@@ -105,7 +105,7 @@ describe('Test Pharaoh Xibalba', () => {
 	})
 
 	test('Xibalba + Potion of Weakness', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, PharaohRare, PotionOfWeakness],
 				playerTwoDeck: [EthosLabCommon, DiamondArmor, Knockback],
@@ -162,7 +162,7 @@ describe('Test Pharaoh Xibalba', () => {
 	})
 
 	test('Xibalba + Potion of Invisibility', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, PharaohRare, BadOmen],
 				playerTwoDeck: [EthosLabCommon, InvisibilityPotion, InvisibilityPotion],
@@ -236,7 +236,7 @@ describe('Test Pharaoh Xibalba', () => {
 	})
 
 	test('Xibalba + Trapdoor', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, PharaohRare],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, Trapdoor, Knockback],
@@ -281,7 +281,7 @@ describe('Test Pharaoh Xibalba', () => {
 	})
 
 	test('Xibalba + 4 Trapdoors', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, PharaohRare],
 				playerTwoDeck: [
@@ -336,7 +336,7 @@ describe('Test Pharaoh Xibalba', () => {
 	})
 
 	test('Xibalba + TNT against Invisibility heads', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, PharaohRare, TNT],
 				playerTwoDeck: [EthosLabCommon, InvisibilityPotion],
@@ -403,7 +403,7 @@ describe('Test Pharaoh Xibalba', () => {
 	})
 
 	test('Xibalba + Bow against Wolf + Thorns + Turtle Shell', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, PharaohRare, Bow],
 				playerTwoDeck: [
@@ -500,7 +500,7 @@ describe('Test Pharaoh Xibalba', () => {
 	})
 
 	test('Xibalba against Soulmate + Shield', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, PharaohRare],
 				playerTwoDeck: [BigBSt4tzRare, EthosLabCommon, Shield, Knockback],
@@ -566,7 +566,7 @@ describe('Test Pharaoh Xibalba', () => {
 
 	// Test interactions with Grianch which allows two attacks in one turn
 	test('Soulmate + Xibalba against Wolf knock-out', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,

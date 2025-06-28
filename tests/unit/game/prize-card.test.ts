@@ -7,7 +7,7 @@ import {attack, endTurn, playCardFromHand, testGame} from './utils'
 
 describe('Test prize card.', () => {
 	test('Test prize card is gained after knockout', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					/** Hand is seven cards */

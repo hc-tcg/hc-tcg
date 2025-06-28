@@ -12,7 +12,7 @@ import {applyEffect, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test Milk Bucket', () => {
 	test('Single Use Functionality', () => {
-		testGame({
+		await testGame({
 			playerOneDeck: [FarmerBeefCommon, MilkBucket],
 			playerTwoDeck: [EthosLabCommon, BadOmen, SplashPotionOfPoison],
 			saga: async (test, game) => {

@@ -16,7 +16,7 @@ import {
 
 describe('Test Lizzie Evict', () => {
 	test('Evict moves opponent active row', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [LDShadowLadyRare],
@@ -42,7 +42,7 @@ describe('Test Lizzie Evict', () => {
 	})
 
 	test('Slimeball triggers Evict damage', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [LDShadowLadyRare, Slimeball],
@@ -70,7 +70,7 @@ describe('Test Lizzie Evict', () => {
 	})
 
 	test('Canceling Evict then dealing bonus damage for full board', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: Array(4).fill(EthosLabCommon),
 				playerTwoDeck: [LDShadowLadyRare, Crossbow, BerryBush],

@@ -38,7 +38,7 @@ import {
 
 describe('Test Trapdoor', () => {
 	test('Trapdoor functionality', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Trapdoor],
 				playerTwoDeck: [FarmerBeefCommon, NetheriteSword],
@@ -97,7 +97,7 @@ describe('Test Trapdoor', () => {
 	})
 
 	test('Anvil attacks rows in order', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -154,7 +154,7 @@ describe('Test Trapdoor', () => {
 	})
 
 	test('Spooky Stress attacks rows in order', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -224,7 +224,7 @@ describe('Test Trapdoor', () => {
 	})
 
 	test('Anvil Drop attacks rows in order', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -299,7 +299,7 @@ describe('Test Trapdoor', () => {
 	})
 
 	test('Splash Harming attacks rows in order', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -358,7 +358,7 @@ describe('Test Trapdoor', () => {
 	})
 
 	test('Trapdoor priority vs Lightning Rod/Target Block', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Trapdoor, LightningRod],
 				playerTwoDeck: [FarmerBeefCommon, TargetBlock],
@@ -421,7 +421,7 @@ describe('Test Trapdoor', () => {
 	})
 
 	test('Multiple Trapdoors at once', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					...Array(4).fill(EthosLabCommon),
@@ -477,7 +477,7 @@ describe('Test Trapdoor', () => {
 	})
 
 	test('Wolf triggers when Trapdoor redirects all damage', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Wolf, Trapdoor],
 				playerTwoDeck: [VintageBeefCommon],
@@ -510,7 +510,7 @@ describe('Test Trapdoor', () => {
 	})
 
 	test('Thorns does not trigger when Trapdoor redirects all damage', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns, Trapdoor],
 				playerTwoDeck: [VintageBeefCommon],
@@ -543,7 +543,7 @@ describe('Test Trapdoor', () => {
 	})
 
 	test('Thorns triggers from Weakness damage when Trapdoor + Royal Protection blocks hermit damage', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon, PotionOfWeakness],
 				playerTwoDeck: [PrincessGemRare, EthosLabCommon, Wolf, Trapdoor],
@@ -590,7 +590,7 @@ describe('Test Trapdoor', () => {
 	})
 
 	test('Thorns triggers from Weakness damage when Trapdoor + Royal Protection blocks hermit damage', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon, PotionOfWeakness],
 				playerTwoDeck: [PrincessGemRare, EthosLabCommon, Thorns, Trapdoor],
@@ -637,7 +637,7 @@ describe('Test Trapdoor', () => {
 	})
 
 	test('Trapdoor does not redirect when Renbob "Hyperspace" attacks an empty row', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Trapdoor],
 				playerTwoDeck: [RenbobRare],
@@ -660,7 +660,7 @@ describe('Test Trapdoor', () => {
 	})
 
 	test('Trapdoor only redirects 40hp of Poe Poe Skizz "Jumpscare"', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -714,7 +714,7 @@ describe('Test Trapdoor', () => {
 	})
 
 	test('Trapdoor does not redirect "Gas Light" bonus damage at end of turn', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					...Array(5).fill(EthosLabCommon),
@@ -804,7 +804,7 @@ describe('Test Trapdoor', () => {
 	})
 
 	test('Invisibility Tails does not multiply damage intercepted by Trapdoor', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,

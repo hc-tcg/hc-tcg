@@ -26,7 +26,7 @@ import {
 
 describe('Test Smithing Table', () => {
 	test('Using Smithing Table on Water Bucket', () => {
-		testGame({
+		await testGame({
 			playerOneDeck: [EthosLabCommon, SmithingTable, WaterBucket],
 			playerTwoDeck: [EthosLabCommon],
 			saga: async (test, game) => {
@@ -59,7 +59,7 @@ describe('Test Smithing Table', () => {
 	})
 
 	test('Using Smithing Table on Shield', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, SmithingTable, Shield],
 				playerTwoDeck: [EthosLabCommon, CurseOfVanishing],

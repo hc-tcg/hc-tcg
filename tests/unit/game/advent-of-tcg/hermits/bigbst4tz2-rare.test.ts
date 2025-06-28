@@ -28,7 +28,7 @@ import {
 
 describe('Test BigB Soulmate', () => {
 	test('Soulmate functionality', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, ChorusFruit],
 				playerTwoDeck: [BigBSt4tzRare, EthosLabCommon],
@@ -87,7 +87,7 @@ describe('Test BigB Soulmate', () => {
 	})
 
 	test('Soulmate does not deal extra damage when revived by Totem', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [BigBSt4tzRare, Totem],
@@ -122,7 +122,7 @@ describe('Test BigB Soulmate', () => {
 	})
 
 	test('Disabled Totem does not prevent extra Soulmate damage', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, GoldenAxe],
 				playerTwoDeck: [BigBSt4tzRare, EthosLabCommon, Totem],
@@ -163,7 +163,7 @@ describe('Test BigB Soulmate', () => {
 	})
 
 	test('Soulmate + Thorns does not knock-out hermit as it is revived', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Totem],
 				playerTwoDeck: [BigBSt4tzRare, EthosLabCommon, Thorns],
@@ -206,7 +206,7 @@ describe('Test BigB Soulmate', () => {
 	})
 
 	test('Soulmate extra damage is not blocked by "Royal Protection"', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [BigBSt4tzRare, EthosLabCommon],
 				playerTwoDeck: [
@@ -259,7 +259,7 @@ describe('Test BigB Soulmate', () => {
 	})
 
 	test('Soulmate causing double knock-out when triggered by Burn', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LavaBucket],
 				playerTwoDeck: [BigBSt4tzRare, EthosLabCommon, IronSword],
@@ -314,7 +314,7 @@ describe('Test BigB Soulmate', () => {
 
 	// Test interactions with Grianch which allows two attacks in one turn
 	test('Soulmate does not deal extra damage when revived by Deathloop', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon],
 				playerTwoDeck: [

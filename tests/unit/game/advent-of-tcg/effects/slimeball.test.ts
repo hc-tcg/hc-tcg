@@ -54,7 +54,7 @@ import Piston from 'common/cards/single-use/piston'
 
 describe('Test Slimeball', () => {
 	test('Slimeball can be placed on and removed from both players', () => {
-		testGame({
+		await testGame({
 			playerOneDeck: [FarmerBeefCommon],
 			playerTwoDeck: [
 				EthosLabCommon,
@@ -106,7 +106,7 @@ describe('Test Slimeball', () => {
 	})
 
 	test('Slimeball prevents Lead and Piston removing items', () => {
-		testGame({
+		await testGame({
 			playerOneDeck: [
 				FarmerBeefCommon,
 				FarmerBeefCommon,
@@ -173,7 +173,7 @@ describe('Test Slimeball', () => {
 	})
 
 	test('Slimeball prevents Ladder swapping Hermits', () => {
-		testGame({
+		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Slimeball, Ladder],
 			playerTwoDeck: [FarmerBeefCommon],
 			saga: async (test, game) => {
@@ -193,7 +193,7 @@ describe('Test Slimeball', () => {
 	})
 
 	test('Slimeball prevents moving the entire row, unless disabled by Golden Axe', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [LDShadowLadyRare, GoldenAxe],
 				playerTwoDeck: [
@@ -261,7 +261,7 @@ describe('Test Slimeball', () => {
 	})
 
 	test('Slimeball prevents Fire Charge and Water Bucket removing items', () => {
-		testGame({
+		await testGame({
 			playerOneDeck: [FarmerBeefCommon, WaterBucket, FireCharge],
 			playerTwoDeck: [EthosLabCommon, Slimeball, String],
 			saga: async (test, game) => {
@@ -315,7 +315,7 @@ describe('Test Slimeball', () => {
 	})
 
 	test('Slimeball prevents Hermits from removing items', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					DungeonTangoRare,
@@ -364,7 +364,7 @@ describe('Test Slimeball', () => {
 	})
 
 	test('Slimeball prevents Looting removing items, unless disabled by Golden Axe', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Slimeball, BalancedItem],
 				playerTwoDeck: [GeminiTayRare, GoldenAxe, Looting],
@@ -398,7 +398,7 @@ describe('Test Slimeball', () => {
 	})
 
 	test('Golden Axe + Lead can remove an item card from a row with Slimeball', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -492,7 +492,7 @@ describe('Test Slimeball', () => {
 
 	// Test interactions with Grianch which allows two attacks in one turn
 	test('King Joel and Monkeyfarm can remove an item card from a row with Slimeball when disabled by D. Impulse secondary', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					GrianchRare,

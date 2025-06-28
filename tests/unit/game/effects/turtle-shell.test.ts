@@ -34,7 +34,7 @@ import {
 
 describe('Test Turtle Shell', () => {
 	test('Turtle Shell applies to next turn', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [ZombieCleoCommon],
@@ -70,7 +70,7 @@ describe('Test Turtle Shell', () => {
 	})
 
 	test('Turtle Shell protects against Gas Light and Egg, but not status-effect damage', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [SkizzlemanRare, LavaBucket, Egg],
@@ -118,7 +118,7 @@ describe('Test Turtle Shell', () => {
 	})
 
 	test('Turtle Shell is not discarded when row is activated by Knockback', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [ZombieCleoCommon, Knockback],
@@ -156,7 +156,7 @@ describe('Test Turtle Shell', () => {
 	})
 
 	test("Turtle Shell works with Ladder only on hermit's first turn active", () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -231,7 +231,7 @@ describe('Test Turtle Shell', () => {
 	})
 
 	test('Ladder deactivates Turtle Shell after active moves', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					ArmorStand,
@@ -286,7 +286,7 @@ describe('Test Turtle Shell', () => {
 	})
 
 	test('Mending deactivates moved Turtle Shell', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					ArmorStand,
@@ -341,7 +341,7 @@ describe('Test Turtle Shell', () => {
 	})
 
 	test('Turtle Shell is still discarded when row is deactivated by Knockback', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [ZombieCleoCommon, Knockback],
@@ -380,7 +380,7 @@ describe('Test Turtle Shell', () => {
 	})
 
 	test('Correct Turtle Shell is discarded after defending against Peace Out + Egg', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					ArmorStand,
@@ -454,7 +454,7 @@ describe('Test Turtle Shell', () => {
 	})
 
 	test("Turtle Shell works after previous active was KO'd by Extra Flee", () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [TangoTekRare],
@@ -499,7 +499,7 @@ describe('Test Turtle Shell', () => {
 	})
 
 	test("Turtle Shells borrowed by Grian only work on Grian's first turn", () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -576,7 +576,7 @@ describe('Test Turtle Shell', () => {
 	})
 
 	test("Turtle Shells taken by Emerald only work on destination hermit's first turn", () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -653,7 +653,7 @@ describe('Test Turtle Shell', () => {
 	})
 
 	test("Turtle Shells given by Emerald only work on destination hermit's first turn", () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					ArmorStand,
@@ -744,7 +744,7 @@ describe('Test Turtle Shell', () => {
 	})
 
 	test('Loose Shell effect is removed when Turtle Shell or attached hermit is moved', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					GeminiTayRare,

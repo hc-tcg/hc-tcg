@@ -17,7 +17,7 @@ import {
 
 describe('Test Redstone Torch', () => {
 	test('Detonate 3 TNT', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [
@@ -71,7 +71,7 @@ describe('Test Redstone Torch', () => {
 	})
 
 	test('Detonate 1 TNT Minecart', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [
@@ -106,7 +106,7 @@ describe('Test Redstone Torch', () => {
 	})
 
 	test('Redstone Torch can not be used with 0 cards in deck or opponent has no active Hermit', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,

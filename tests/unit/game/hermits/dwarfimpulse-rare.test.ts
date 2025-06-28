@@ -21,7 +21,7 @@ import {
 
 describe('Test Dwarf Impulse Rare', () => {
 	test('Test Dwarf Impulse with golden axe.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [DwarfImpulseRare, GoldenAxe],
 				playerTwoDeck: [EthosLabCommon, FiveAMPearlRare],
@@ -75,7 +75,7 @@ describe('Test Dwarf Impulse Rare', () => {
 		)
 	})
 	test('Test Dwarf Impulse works with lightning rod.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [DwarfImpulseRare, GoldenAxe],
 				playerTwoDeck: [

@@ -25,7 +25,7 @@ import {
 
 describe('Test Powder Snow Bucket', () => {
 	test('Frozen effect prevents attack damage and activating row', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, PowderSnowBucket],
 				playerTwoDeck: [EthosLabCommon, Bow],
@@ -67,7 +67,7 @@ describe('Test Powder Snow Bucket', () => {
 	})
 
 	test("Knockback and Egg can not be used when opponent's AFK Hermits are Frozen", () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, PowderSnowBucket],
 				playerTwoDeck: [EthosLabCommon, Knockback, Egg],
@@ -94,7 +94,7 @@ describe('Test Powder Snow Bucket', () => {
 	})
 
 	test("Powder Snow disables switching for Peace Out, Chorus Fruit and Let's Go", () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [Cubfan135Rare, EthosLabCommon, ChorusFruit],
 				playerTwoDeck: [IJevinRare, PowderSnowBucket],
@@ -127,7 +127,7 @@ describe('Test Powder Snow Bucket', () => {
 	})
 
 	test('Frozen hermits still take status effect damage', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -211,7 +211,7 @@ describe('Test Powder Snow Bucket', () => {
 	})
 
 	test('Frozen Berry Bush cannot be damaged, but still removes its health each turn', () => {
-		testGame({
+		await testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [EthosLabCommon, BerryBush, PowderSnowBucket, Bow],
 			saga: async (test, game) => {
@@ -265,7 +265,7 @@ describe('Test Powder Snow Bucket', () => {
 	})
 
 	test('Extra Flee does not switch Hermits while AFK Hermits are Frozen', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, PowderSnowBucket],
 				playerTwoDeck: [TangoTekRare, EthosLabCommon, PowderSnowBucket],

@@ -19,7 +19,7 @@ import {
 
 describe('Test Skizzleman Rare', () => {
 	test('Gaslight works as intended', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [SkizzlemanRare, Anvil],
@@ -61,7 +61,7 @@ describe('Test Skizzleman Rare', () => {
 	})
 
 	test('Gaslight only triggers Thorns once', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns],
 				playerTwoDeck: [SkizzlemanRare, Anvil],
@@ -90,7 +90,7 @@ describe('Test Skizzleman Rare', () => {
 		)
 	})
 	test("Gaslight doesn't trigger if the hermit takes no damage", () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, GoldArmor],
 				playerTwoDeck: [SkizzlemanRare, Anvil],
@@ -120,7 +120,7 @@ describe('Test Skizzleman Rare', () => {
 	})
 
 	test('Totem keeps hermits alive when damaged by Gaslight and Burn at end of turn', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,

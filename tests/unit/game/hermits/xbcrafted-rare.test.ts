@@ -13,7 +13,7 @@ import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test xB', () => {
 	test('Test "Noice!" functions with type advantage and single use attacks', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GeminiTayCommon, DiamondArmor],
 				playerTwoDeck: [XBCraftedRare, IronSword],
@@ -58,7 +58,7 @@ describe('Test xB', () => {
 		)
 	})
 	test('Test "Noice!" ignores Lightning Rod.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [XBCraftedRare],
@@ -92,7 +92,7 @@ describe('Test xB', () => {
 		)
 	})
 	test('Test "Noice!" ignores Lightning Rod when using single use.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [XBCraftedRare, IronSword],
@@ -131,7 +131,7 @@ describe('Test xB', () => {
 		)
 	})
 	test('Test "Noice!" ignores attachables with Target Block.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, IronArmor],
 				playerTwoDeck: [XBCraftedRare, TargetBlock],

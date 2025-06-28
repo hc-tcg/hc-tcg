@@ -25,7 +25,7 @@ import {
 
 describe('Test Pixl World Build', () => {
 	test('World Build Functionality', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [PixlriffsRare, PixlriffsRare, EnderPearl, Ladder],
@@ -90,7 +90,7 @@ describe('Test Pixl World Build', () => {
 	})
 
 	test('Does not deal extra damage if hermit was activated by backlash KO', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [PixlriffsRare, PixlriffsRare, EnderPearl],
@@ -129,7 +129,7 @@ describe('Test Pixl World Build', () => {
 
 	// Test interactions with Grianch which allows two attacks in one turn
 	test('Deals extra damage when swapped with Ladder and activated by backlash KO', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, Thorns],
 				playerTwoDeck: [EthosLabCommon, PixlriffsRare, BadOmen, Ladder],
@@ -183,7 +183,7 @@ describe('Test Pixl World Build', () => {
 	})
 
 	test('Deals extra damage when hermit moves and returns to same row using two Ladders', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, PixlriffsRare, GeminiTayRare],
 				playerTwoDeck: [RendogRare, RendogRare, BadOmen, Ladder, Ladder],
@@ -257,7 +257,7 @@ describe('Test Pixl World Build', () => {
 	})
 
 	test('Deals extra damage when hermit moves and returns to same row using two Ender Pearls', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, PixlriffsRare, GeminiTayRare],
 				playerTwoDeck: [RendogRare, BadOmen, EnderPearl, EnderPearl],
@@ -330,7 +330,7 @@ describe('Test Pixl World Build', () => {
 	})
 
 	test('Deals extra damage when hermit moves and returns to same row using Ender Pearl + Jumpscare', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, PixlriffsRare, PoePoeSkizzRare],
 				playerTwoDeck: [RendogRare, BadOmen, EnderPearl],

@@ -13,7 +13,7 @@ import {
 describe('Test Game Utils', () => {
 	test('Test fails if game ends', () => {
 		expect(() =>
-			testGame(
+			await testGame(
 				{
 					playerOneDeck: [EthosLabCommon],
 					playerTwoDeck: [EthosLabCommon],

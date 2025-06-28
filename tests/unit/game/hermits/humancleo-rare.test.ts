@@ -24,7 +24,7 @@ import {
 
 describe('Test Human Cleo Betrayal', () => {
 	test('Test Betrayal with canceling to Ender Pearl knock-out', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -80,7 +80,7 @@ describe('Test Human Cleo Betrayal', () => {
 	})
 
 	test('Test Betrayal knocking-out opponent active hermit', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [ArmorStand, EthosLabCommon, VintageBeefCommon],
 				playerTwoDeck: [HumanCleoRare],
@@ -117,7 +117,7 @@ describe('Test Human Cleo Betrayal', () => {
 	})
 
 	test('Test Betrayal + Clock', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HumanCleoRare, Clock],
@@ -141,7 +141,7 @@ describe('Test Human Cleo Betrayal', () => {
 	})
 
 	test('Test Betrayal works when opponent has Command Block', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					HumanCleoRare,
@@ -180,7 +180,7 @@ describe('Test Human Cleo Betrayal', () => {
 	})
 
 	test('Test Betrayal works when opponent uses Efficiency', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [HumanCleoRare, EthosLabCommon, Efficiency],
 				playerTwoDeck: [HumanCleoRare, Efficiency],
@@ -214,7 +214,7 @@ describe('Test Human Cleo Betrayal', () => {
 	})
 
 	test('Test Betrayed allows ending turn when opponent switches from row with no items', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, BalancedDoubleItem],
 				playerTwoDeck: [HumanCleoRare, Efficiency],

@@ -7,7 +7,7 @@ import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test iJevin Peace Out', () => {
 	test('Test Peace Out when opponent times out request', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [IJevinRare],
 				playerTwoDeck: [EthosLabCommon, FarmerBeefCommon],

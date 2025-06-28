@@ -9,7 +9,7 @@ import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test rare welsknight', () => {
 	test('Vengance functionality', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GeminiTayCommon, GoldArmor, InstantHealthII],
 				playerTwoDeck: [WelsknightRare],

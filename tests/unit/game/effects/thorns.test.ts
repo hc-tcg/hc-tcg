@@ -25,7 +25,7 @@ type ThornsType = keyof typeof thornsMap
 
 function testThorns(thorns: ThornsType) {
 	test('Test ' + thorns + ' damage after attacks with effect card only', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, thornsMap[thorns].card],
 				playerTwoDeck: [EthosLabCommon, IronSword],

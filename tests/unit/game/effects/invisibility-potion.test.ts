@@ -22,7 +22,7 @@ import {
 
 describe('Test Invisiblity Potion.', () => {
 	test('Invisibility Potion blocks damage on heads.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [EthosLabCommon],
@@ -65,7 +65,7 @@ describe('Test Invisiblity Potion.', () => {
 		)
 	})
 	test('Invisibility Potion doubles damage on tails.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
@@ -112,7 +112,7 @@ describe('Test Invisiblity Potion.', () => {
 		)
 	})
 	test('Invisibility Potion blocks Skizzleman Rare damage on heads.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [SkizzlemanRare, Anvil],
@@ -149,7 +149,7 @@ describe('Test Invisiblity Potion.', () => {
 		)
 	})
 	test('Invisibility Potion blocks Poe Poe Skizz Rare damage on heads.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [PoePoeSkizzRare],
@@ -189,7 +189,7 @@ describe('Test Invisiblity Potion.', () => {
 		)
 	})
 	test('Invisibility Potion blocks Spooky Stress damage on heads.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [SpookyStressRare, WaterBucket],

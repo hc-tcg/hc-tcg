@@ -169,7 +169,7 @@ import {attack, endTurn, playCardFromHand, testGame} from './utils'
 describe('Test Something', () => {
 	test('Test Game', () => {
 		expect(() =>
-			testGame(
+			await testGame(
 				{
 					playerOneDeck: [EthosLabCommon],
 					playerTwoDeck: [EthosLabCommon],
@@ -319,7 +319,7 @@ import {attack, endTurn, playCardFromHand, testGame} from './utils'
 describe('Test Something', () => {
 	test('Test Game', () => {
 		expect(() =>
-			testGame(
+			await testGame(
 				{
 					playerOneDeck: [EthosLabCommon],
 					playerTwoDeck: [EthosLabCommon],

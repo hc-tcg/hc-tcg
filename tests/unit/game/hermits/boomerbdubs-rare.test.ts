@@ -19,7 +19,7 @@ import {
 
 describe('Test Boomer Bdubs Watch This', () => {
 	test('Watch This adds 20hp damage per heads', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [BoomerBdubsRare],
@@ -68,7 +68,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 	})
 
 	test('Watch This deals 0hp damage after flipping tails', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [BoomerBdubsRare],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
@@ -96,7 +96,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 	})
 
 	test('Fortune only applies to first coinflip for Watch This', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [BoomerBdubsRare, Fortune],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
@@ -127,7 +127,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 	})
 
 	test('Watch This can only be canceled if it has not flipped a coin', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [BoomerBdubsRare, Crossbow],

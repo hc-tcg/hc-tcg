@@ -33,7 +33,7 @@ function createTypeAdvantageTest(
 	test(attackingType + ' v ' + defendingType, () => {
 		const attacker = typeToHermitMap[attackingType]
 		const defender = typeToHermitMap[defendingType]
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [defender],
 				playerTwoDeck: [attacker],

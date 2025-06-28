@@ -7,7 +7,7 @@ import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Goatfather Rare', () => {
 	test('Test anvil drop does the proper amount of damage', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [GoatfatherRare],

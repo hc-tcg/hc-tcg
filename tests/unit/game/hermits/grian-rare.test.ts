@@ -19,7 +19,7 @@ import {
 
 describe('Test Grian Rare', () => {
 	test('Test Borrow steals Loyalty after knock out', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Loyalty, BalancedItem],
 				playerTwoDeck: [GrianRare],
@@ -65,7 +65,7 @@ describe('Test Grian Rare', () => {
 		)
 	})
 	test('Test Borrow steals Shield after blocking damage', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Shield],
 				playerTwoDeck: [GrianRare],
@@ -109,7 +109,7 @@ describe('Test Grian Rare', () => {
 	})
 
 	test('Test Borrow cannot steal Totem that revives hermit', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Totem],
 				playerTwoDeck: [GrianRare],
@@ -146,7 +146,7 @@ describe('Test Grian Rare', () => {
 	})
 
 	test("Test Borrow discards to Grian's discard pile", () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Loyalty],
 				playerTwoDeck: [GrianRare],
@@ -179,7 +179,7 @@ describe('Test Grian Rare', () => {
 	})
 
 	test("Test Borrow cannot replace card in Grian's attach slot", () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Loyalty],
 				playerTwoDeck: [GrianRare, Shield],
@@ -219,7 +219,7 @@ describe('Test Grian Rare', () => {
 	})
 
 	test('Test Borrow cannot attach card when Grian is knocked-out by Thorns', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Thorns],
 				playerTwoDeck: [GrianRare, EthosLabCommon],

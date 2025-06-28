@@ -44,7 +44,7 @@ function* testManyHermits(game: GameModel) {
 
 describe('Test PythonGB Logfellas', () => {
 	test('Test Python Is Triggered By Adjacent Rendog', () => {
-		testGame(
+		await testGame(
 			{
 				saga: testOneHermit,
 				playerOneDeck: [EthosLabCommon],
@@ -54,7 +54,7 @@ describe('Test PythonGB Logfellas', () => {
 		)
 	})
 	test('Test Python Is Triggered By Multiple Hermits', () => {
-		testGame(
+		await testGame(
 			{
 				saga: testManyHermits,
 				playerOneDeck: [EthosLabCommon],

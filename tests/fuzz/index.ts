@@ -13,7 +13,7 @@ async function performFuzzTest(seed: string, debug: boolean) {
 
 	let gameSeed = randomNumberGenerator().toString().slice(16)
 
-	await testGame({
+	await await testGame({
 		playerOne,
 		playerTwo,
 		seed: gameSeed,

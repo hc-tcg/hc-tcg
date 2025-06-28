@@ -20,7 +20,7 @@ import {
 
 describe('Test Ultra Rare TFC "Take It Easy"', () => {
 	test('Can not discard two attach effects from the same hermit', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ChainmailArmor, ChainmailArmor],
 				playerTwoDeck: [TinFoilChefUltraRare],
@@ -62,7 +62,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 	})
 
 	test('Can not discard twice after hermit swaps rows with Ladder', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -117,7 +117,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 	})
 
 	test('Can discard from the same hermit after they are knocked-out', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -190,7 +190,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 	})
 
 	test('Can discard from the same hermit after TFC is knocked-out', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ChainmailArmor, ChainmailArmor],
 				playerTwoDeck: [TinFoilChefUltraRare, ArmorStand, Chest],
@@ -261,7 +261,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 	})
 
 	test('Different TFC can discard from the same hermit', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ChainmailArmor, ChainmailArmor],
 				playerTwoDeck: [TinFoilChefUltraRare, TinFoilChefUltraRare],
@@ -308,7 +308,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 	})
 
 	test('Can not discard twice when used by/facing Role Play', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [RendogRare, ChainmailArmor, ChainmailArmor],
 				playerTwoDeck: [TinFoilChefUltraRare, ChainmailArmor, ChainmailArmor],

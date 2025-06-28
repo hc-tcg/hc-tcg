@@ -18,7 +18,7 @@ import {
 
 describe('Test Lantern Single Use', () => {
 	test('Lantern functionality', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,

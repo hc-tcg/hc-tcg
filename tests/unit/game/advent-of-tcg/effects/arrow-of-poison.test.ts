@@ -29,7 +29,7 @@ import {
 
 describe('Test Arrow of Poison', () => {
 	test('Anvil Drop triggers Arrow of Poison', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [GoatfatherRare, ArrowOfPoison],
@@ -59,7 +59,7 @@ describe('Test Arrow of Poison', () => {
 	})
 
 	test('Hyperspace triggers Arrow of Poison', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [RenbobRare, ArrowOfPoison],
@@ -89,7 +89,7 @@ describe('Test Arrow of Poison', () => {
 	})
 
 	test("Wa'a triggers Arrow of Poison", () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [SpookyStressRare, WaterBucket, ArrowOfPoison],
@@ -120,7 +120,7 @@ describe('Test Arrow of Poison', () => {
 	})
 
 	test('Lightning Rod triggers Arrow of Poison', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [EthosLabCommon, ArrowOfPoison],
@@ -151,7 +151,7 @@ describe('Test Arrow of Poison', () => {
 	})
 
 	test('Trapdoor triggers Arrow of Poison', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Trapdoor],
 				playerTwoDeck: [EthosLabCommon, ArrowOfPoison],
@@ -182,7 +182,7 @@ describe('Test Arrow of Poison', () => {
 	})
 
 	test('Egg does not trigger Arrow of Poison', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon, ArrowOfPoison, Egg],
@@ -222,7 +222,7 @@ describe('Test Arrow of Poison', () => {
 	})
 
 	test('Arrow of Poison works when stolen by Traphole', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ArrowOfPoison, Bow],
 				playerTwoDeck: [HelsknightRare, EthosLabCommon],
@@ -267,7 +267,7 @@ describe('Test Arrow of Poison', () => {
 	})
 
 	test('Attached Milk Bucket prevents Arrow of Poison effect', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, MilkBucket],
 				playerTwoDeck: [EthosLabCommon, ArrowOfPoison, Bow],

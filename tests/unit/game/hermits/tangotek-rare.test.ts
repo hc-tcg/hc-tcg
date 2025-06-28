@@ -17,7 +17,7 @@ import {
 
 describe('Test Tango Extra Flee', () => {
 	test('Both players change active hermits', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon],
 				playerTwoDeck: [TangoTekRare, FarmerBeefRare],
@@ -55,7 +55,7 @@ describe('Test Tango Extra Flee', () => {
 	})
 
 	test('Both players can not change active hermit with 0 afk', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [TangoTekRare],
@@ -76,7 +76,7 @@ describe('Test Tango Extra Flee', () => {
 	})
 
 	test('Curse of Binding prevents Tango from fleeing', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [TangoTekRare, FarmerBeefRare],
 				playerTwoDeck: [EthosLabCommon, CurseOfBinding],
@@ -103,7 +103,7 @@ describe('Test Tango Extra Flee', () => {
 	})
 
 	test('Betrayal effect does not prevent Tango from fleeing', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [TangoTekRare, FarmerBeefRare],
 				playerTwoDeck: [HumanCleoRare],

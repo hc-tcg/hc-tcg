@@ -60,7 +60,7 @@ function* testEvilXDisablesForOneTurn(game: GameModel) {
 
 describe('Test Evil X', () => {
 	test('Test Evil X disables attack for one turn', () => {
-		testGame(
+		await testGame(
 			{
 				saga: testEvilXDisablesForOneTurn,
 				playerOneDeck: [EvilXisumaRare],
@@ -70,7 +70,7 @@ describe('Test Evil X', () => {
 		)
 	})
 	test('Test Evil X secondary does not open popup if there are no opponent active hermits', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [ArmorStand, EthosLabCommon],
 				playerTwoDeck: [EvilXisumaRare],
@@ -90,7 +90,7 @@ describe('Test Evil X', () => {
 		)
 	})
 	test('Test Evil X secondary with no afk hermits can disable Puppetry', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [ZombieCleoRare, EthosLabCommon],
 				playerTwoDeck: [EvilXisumaRare],
@@ -113,7 +113,7 @@ describe('Test Evil X', () => {
 		)
 	})
 	test('Test Evil X secondary can disable opponent Time Skip after flipping heads to skip a turn', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [JoeHillsRare],
 				playerTwoDeck: [JoeHillsRare, EvilXisumaRare, ChorusFruit],

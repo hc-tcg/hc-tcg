@@ -53,7 +53,7 @@ import {
 
 describe('Test The Grianch Naughty', () => {
 	test('Fortune only applies to first flip for Naughty per turn', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, BadOmen],
 				playerTwoDeck: [
@@ -115,7 +115,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Boomer Bdubs "Watch This" twice', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, BadOmen],
 				playerTwoDeck: [BoomerBdubsRare, BadOmen, Fortune],
@@ -151,7 +151,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Pearl "Aussie Ping" twice', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, Fortune],
 				playerTwoDeck: [PearlescentMoonRare, BadOmen],
@@ -203,7 +203,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Invisibility only affects the first attack in a turn', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -254,7 +254,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Skizz "Gas Light" twice + Totem revive', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon, Totem],
 				playerTwoDeck: [SkizzlemanRare, BadOmen, Anvil],
@@ -310,7 +310,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Skizz "Gas Light" twice + Invisibility heads', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [SkizzlemanRare, BadOmen, Anvil],
@@ -362,7 +362,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Skizz "Gas Light" twice + Invisibility tails', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [SkizzlemanRare, BadOmen, Anvil],
@@ -417,7 +417,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Skizz "Gas Light" after Anvil', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon],
 				playerTwoDeck: [SkizzlemanRare, BadOmen, Anvil],
@@ -467,7 +467,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Skizz "Gas Light" twice against Pearl "Aussie Ping" (1 of 2)', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [RendogRare, BadOmen, Anvil],
 				playerTwoDeck: [
@@ -570,7 +570,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Skizz "Gas Light" twice against Pearl "Aussie Ping" (2 of 2)', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [RendogRare, BadOmen, Anvil],
 				playerTwoDeck: [
@@ -673,7 +673,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Human Cleo "Betrayed" twice', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon, Fortune],
 				playerTwoDeck: [HumanCleoRare, BadOmen],
@@ -724,7 +724,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Human Cleo "Betrayed" + Evil Xisuma "Derpcoin"', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					GrianchRare,
@@ -791,7 +791,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Worm Man "Total Anonymity" twice against "Betrayed"', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [RendogRare, BadOmen, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [
@@ -898,7 +898,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Worm Man "Total Anonymity" + Gem "Geminislay"', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon],
 				playerTwoDeck: [
@@ -949,7 +949,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Zedaph "Sheep Stare" twice', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon, Fortune],
 				playerTwoDeck: [ZedaphPlaysRare, BadOmen],
@@ -1011,7 +1011,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Zedaph "Sheep Stare" + Human Cleo "Betrayed"', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon],
 				playerTwoDeck: [
@@ -1085,7 +1085,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Poultry Man only recycles Egg when used with secondary', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon],
 				playerTwoDeck: [PoultryManRare, BadOmen, Egg],
@@ -1121,7 +1121,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Gem "Geminislay" and Egg + Poultry Man secondary', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon],
 				playerTwoDeck: [
@@ -1176,7 +1176,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Hels "Trap Hole" twice', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, Fortune],
 				playerTwoDeck: [HelsknightRare, BadOmen],
@@ -1210,7 +1210,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using G. Architect "Amnesia" twice', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, Fortune],
 				playerTwoDeck: [ArchitectFalseRare, BadOmen],
@@ -1245,7 +1245,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('G. Architect "Amnesia" blocks ALL hermit attacks used last turn', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [ArchitectFalseRare, ArchitectFalseRare],
 				playerTwoDeck: [GrianchRare, GrianchRare, ChorusFruit],
@@ -1321,7 +1321,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Gem "Geminislay" twice', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon],
 				playerTwoDeck: [GeminiTayRare, BadOmen, ...Array(3).fill(Anvil)],
@@ -1357,7 +1357,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Beetlejhost "Jopacity" twice', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare],
 				playerTwoDeck: [BeetlejhostRare, BadOmen, Anvil],
@@ -1408,7 +1408,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Beetlejhost "Jopactity" + Cleo primary', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon],
 				playerTwoDeck: [ZombieCleoRare, BeetlejhostRare, BadOmen],
@@ -1458,7 +1458,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using Skizz "Gas Light" + Beetlejhost "Jopactity"', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon],
 				playerTwoDeck: [
@@ -1517,7 +1517,7 @@ describe('Test The Grianch Naughty', () => {
 	})
 
 	test('Using D. Impulse + Golden Axe twice', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon],
 				playerTwoDeck: [DwarfImpulseRare, BadOmen, GoldenAxe],

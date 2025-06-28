@@ -15,7 +15,7 @@ import {
 
 describe('Test Candle Single Use', () => {
 	test('Candle functionality', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -68,7 +68,7 @@ describe('Test Candle Single Use', () => {
 	})
 
 	test('Selecting a card with more than 2 copies', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -122,7 +122,7 @@ describe('Test Candle Single Use', () => {
 	})
 
 	test('If deck has only unique cards, only shuffle', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,

@@ -42,7 +42,7 @@ function* testManyHermits(game: GameModel) {
 
 describe('Test Impulse Test', () => {
 	test('Test Impulse Is Triggered By Bdubs', () => {
-		testGame(
+		await testGame(
 			{
 				saga: testOneHermit,
 				playerOneDeck: [EthosLabCommon],
@@ -52,7 +52,7 @@ describe('Test Impulse Test', () => {
 		)
 	})
 	test('Test Impulse Is Triggered By Multiple Hermits', () => {
-		testGame(
+		await testGame(
 			{
 				saga: testManyHermits,
 				playerOneDeck: [EthosLabCommon],

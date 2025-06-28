@@ -29,7 +29,7 @@ import {
 
 describe('Test Totem of Undying', () => {
 	test('Test Totem with TNT', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [PearlescentMoonCommon, WelsknightCommon, Totem, TNT],
@@ -75,7 +75,7 @@ describe('Test Totem of Undying', () => {
 	})
 
 	test('Test Totem with Thorns', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Thorns],
 				playerTwoDeck: [PearlescentMoonCommon, WelsknightCommon, Totem],
@@ -121,7 +121,7 @@ describe('Test Totem of Undying', () => {
 	})
 
 	test('Test Totem with Deathloop', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Thorns],
 				playerTwoDeck: [GoodTimesWithScarRare, WelsknightCommon, Totem],
@@ -201,7 +201,7 @@ describe('Test Totem of Undying', () => {
 	})
 
 	test('Test Totem with AFK Thorns', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, Thorns, Thorns],
 				playerTwoDeck: [PearlescentMoonCommon, WelsknightCommon, Totem, Bow],
@@ -258,7 +258,7 @@ describe('Test Totem of Undying', () => {
 	})
 
 	test('Test Totem with Burn', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [PearlescentMoonCommon, WelsknightCommon, Totem],
 				playerTwoDeck: [EthosLabCommon, LavaBucket],
@@ -322,7 +322,7 @@ describe('Test Totem of Undying', () => {
 	})
 
 	test('Test Totem revives rows before `afterAttack` requests are created', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, Totem],
 				playerTwoDeck: [IJevinRare, Bow],

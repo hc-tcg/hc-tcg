@@ -15,7 +15,7 @@ import {
 
 describe('Test Poe Poe Skizz Rare', () => {
 	test('Jumpscare.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [PoePoeSkizzRare],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon],
@@ -56,7 +56,7 @@ describe('Test Poe Poe Skizz Rare', () => {
 	})
 
 	test('Canceling Jumpscare', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [PoePoeSkizzRare, ...Array(4).fill(EthosLabCommon), Bow],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon],

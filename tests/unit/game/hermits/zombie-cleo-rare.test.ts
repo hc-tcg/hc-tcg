@@ -381,7 +381,7 @@ function* testPuppetingTimeSkip(game: GameModel) {
 
 describe('Test Zombie Cleo', () => {
 	test('Test Zombie Cleo Primary Does Not Crash Server', () => {
-		testGame(
+		await testGame(
 			{
 				saga: testPrimaryDoesNotCrash,
 				playerOneDeck: [ZombieCleoRare],
@@ -392,7 +392,7 @@ describe('Test Zombie Cleo', () => {
 	})
 
 	test('Test Puppetry is Disabled by Amnesia', () => {
-		testGame(
+		await testGame(
 			{
 				saga: testAmnesiaDisablesPuppetry,
 				playerOneDeck: [ArchitectFalseRare],
@@ -403,7 +403,7 @@ describe('Test Zombie Cleo', () => {
 	})
 
 	test('Test Amnesia Blocks Mocking Attack with Puppetry', () => {
-		testGame(
+		await testGame(
 			{
 				saga: testAmnesiaBlocksPuppetryMock,
 				playerOneDeck: [ArchitectFalseRare],
@@ -414,7 +414,7 @@ describe('Test Zombie Cleo', () => {
 	})
 
 	test('Test Puppetry After Canceling', () => {
-		testGame(
+		await testGame(
 			{
 				saga: testPuppetryCanceling,
 				playerOneDeck: [EthosLabCommon],
@@ -425,7 +425,7 @@ describe('Test Zombie Cleo', () => {
 	})
 
 	test('Test using Puppetry on Jopacity', () => {
-		testGame(
+		await testGame(
 			{
 				saga: testPuppetingJopacity,
 				playerOneDeck: [SmallishbeansCommon],
@@ -436,7 +436,7 @@ describe('Test Zombie Cleo', () => {
 	})
 
 	test('Test Puppeting an attack that requites an item to be discarded', () => {
-		testGame(
+		await testGame(
 			{
 				saga: testPuppetryDiscardingItem,
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
@@ -447,7 +447,7 @@ describe('Test Zombie Cleo', () => {
 	})
 
 	test('Test using Puppetry on Total Anonymity', () => {
-		testGame(
+		await testGame(
 			{
 				saga: testPuppetingTotalAnonymity,
 				playerOneDeck: [EthosLabCommon],
@@ -458,7 +458,7 @@ describe('Test Zombie Cleo', () => {
 	})
 
 	test("Test using Puppetry on Let's Go with Chorus Fruit", () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [ZombieCleoRare, Cubfan135Rare, ChorusFruit],
@@ -495,7 +495,7 @@ describe('Test Zombie Cleo', () => {
 	})
 
 	test('Test using Puppetry on Time Skip', () => {
-		testGame(
+		await testGame(
 			{
 				saga: testPuppetingTimeSkip,
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],

@@ -19,7 +19,7 @@ import {
 
 function testAllayRetrieval(card: Card, canRetrieve: boolean) {
 	test(`Allay ${canRetrieve ? 'can' : 'can not'} retrieve ${card.name}`, () => {
-		testGame({
+		await testGame({
 			playerOneDeck: [
 				EthosLabCommon,
 				Composter,

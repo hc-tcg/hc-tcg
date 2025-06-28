@@ -16,7 +16,7 @@ import {
 
 describe('Test Stratos Joel', () => {
 	test('Lore functionality', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, String],
 				playerTwoDeck: [

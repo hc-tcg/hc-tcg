@@ -23,7 +23,7 @@ import {
 
 describe('Test Beetlejhost Rare', () => {
 	test('Test Jopacity damage is reduced', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare],
@@ -80,7 +80,7 @@ describe('Test Beetlejhost Rare', () => {
 		)
 	})
 	test('Attacking with primary removes Chroma Keyed', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare],
@@ -116,7 +116,7 @@ describe('Test Beetlejhost Rare', () => {
 		)
 	})
 	test('Attacking with other hermit removes Chroma Keyed', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare, GeminiTayCommon],
@@ -167,7 +167,7 @@ describe('Test Beetlejhost Rare', () => {
 		)
 	})
 	test('Chroma Keyed is removed when doing nothing', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare],
@@ -198,7 +198,7 @@ describe('Test Beetlejhost Rare', () => {
 		)
 	})
 	test('Test Jopacity with Invisibility tails', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GeminiTayCommon, InvisibilityPotion],
 				playerTwoDeck: [BeetlejhostRare, BadOmen],
@@ -237,7 +237,7 @@ describe('Test Beetlejhost Rare', () => {
 		)
 	})
 	test('Chroma Keyed is not removed by single use damage', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare, EnderPearl, IronSword],
@@ -308,7 +308,7 @@ describe('Test Beetlejhost Rare', () => {
 		)
 	})
 	test('Chroma Keyed is not removed by weakness damage', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare, PotionOfWeakness, PotionOfWeakness],

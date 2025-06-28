@@ -17,7 +17,7 @@ import {
 
 describe('Test Oli Melody', () => {
 	test('Melody functionality', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,

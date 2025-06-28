@@ -14,7 +14,7 @@ import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test Pearlescent Moon Rare', () => {
 	test('Aussie Ping', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [PearlescentMoonRare],
@@ -68,7 +68,7 @@ describe('Test Pearlescent Moon Rare', () => {
 	})
 
 	test('Aussie Ping blocks Skizzleman Rare extra damage.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [SkizzlemanRare, Anvil],
 				playerTwoDeck: [PearlescentMoonRare, EthosLabCommon],
@@ -109,7 +109,7 @@ describe('Test Pearlescent Moon Rare', () => {
 	})
 
 	test('Aussie Ping blocks Poe Poe Skizz Rare extra damage.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [PoePoeSkizzRare],
 				playerTwoDeck: [PearlescentMoonRare, EthosLabCommon],

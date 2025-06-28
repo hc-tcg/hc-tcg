@@ -17,7 +17,7 @@ import {
 
 describe('Test Docm77 World Eater', () => {
 	test('Test World Eater with Invisibility (both tails)', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [GeminiTayRare, BadOmen, InvisibilityPotion],
 				playerTwoDeck: [Docm77Rare, BadOmen],

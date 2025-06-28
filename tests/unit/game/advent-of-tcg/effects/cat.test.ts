@@ -24,7 +24,7 @@ import {
 
 describe('Test Cat Effect Card', () => {
 	test('Basic functionality', () => {
-		testGame({
+		await testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [
 				EthosLabCommon,
@@ -64,7 +64,7 @@ describe('Test Cat Effect Card', () => {
 	})
 
 	test('Cat shows correct card when attacker is knocked-out by Thorns', () => {
-		testGame({
+		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns],
 			playerTwoDeck: [
 				EthosLabCommon,
@@ -115,7 +115,7 @@ describe('Test Cat Effect Card', () => {
 	})
 
 	test('Cat removes modal when attacker is knocked-out by Thorns and gives away last card as prize', () => {
-		testGame({
+		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns],
 			playerTwoDeck: [
 				EthosLabCommon,
@@ -150,7 +150,7 @@ describe('Test Cat Effect Card', () => {
 	})
 
 	test("Cat + TFC's Branch Mine and Original xB's Get Good", () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [OriginalXBRare, MinerDoubleItem, MinerItem],
 				playerTwoDeck: [
@@ -200,7 +200,7 @@ describe('Test Cat Effect Card', () => {
 	})
 
 	test('Test Borrow does not trigger Cat when attached after flipping heads', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Cat, Cat],
 				playerTwoDeck: [GrianRare, ...Array(10).fill(BalancedItem)],

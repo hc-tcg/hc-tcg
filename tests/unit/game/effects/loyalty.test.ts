@@ -34,7 +34,7 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 
 describe('Test Loyalty', () => {
 	test('Test Loyalty only returns item cards from attached hermit.', () => {
-		testGame(
+		await testGame(
 			{
 				saga: testLoyaltyHelperSaga,
 				playerOneDeck: [

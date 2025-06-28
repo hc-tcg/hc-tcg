@@ -11,7 +11,7 @@ import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test Hotguy Rare', () => {
 	test('Test Hotguy with Bow', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HotguyRare, Bow],
@@ -60,7 +60,7 @@ describe('Test Hotguy Rare', () => {
 		)
 	})
 	test('Test Hotguy with Crossbow', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -131,7 +131,7 @@ describe('Test Hotguy Rare', () => {
 		)
 	})
 	test('Test Hotguy with type advantage', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [RendogRare, RendogRare, RendogRare],
 				playerTwoDeck: [HotguyRare, Crossbow],

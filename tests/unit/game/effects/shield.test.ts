@@ -7,7 +7,7 @@ import {testGame} from '../utils'
 
 describe('Test Shield', () => {
 	test('Base Functionality', async () => {
-		await testGame(
+		await await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Shield],
 				playerTwoDeck: [EthosLabCommon],

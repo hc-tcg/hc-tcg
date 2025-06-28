@@ -11,7 +11,7 @@ import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test rare King Joel Steal', () => {
 	test('Test regular Steal behavior', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, BalancedItem],
 				playerTwoDeck: [KingJoelRare, WelsknightCommon],
@@ -58,7 +58,7 @@ describe('Test rare King Joel Steal', () => {
 	})
 
 	test('Test Steal pick request runs before Egg pick request.', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, BalancedItem],
 				playerTwoDeck: [KingJoelRare, WelsknightCommon, Egg],

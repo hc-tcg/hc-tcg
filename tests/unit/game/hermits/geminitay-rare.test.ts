@@ -22,7 +22,7 @@ import {
 
 describe('Test Gemini Tay', () => {
 	test('Test Axe Functions Until End Of Turn', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, IronArmor],
 				playerTwoDeck: [GeminiTayRare, GoldenAxe, IronSword],
@@ -71,7 +71,7 @@ describe('Test Gemini Tay', () => {
 	})
 
 	test('Test Totem against Lava Bucket then Axe', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Totem],
 				playerTwoDeck: [GeminiTayRare, LavaBucket, GoldenAxe],
@@ -113,7 +113,7 @@ describe('Test Gemini Tay', () => {
 	})
 
 	test('Test Totem against Axe then Lava Bucket', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Totem],
 				playerTwoDeck: [GeminiTayRare, LavaBucket, GoldenAxe],
@@ -153,7 +153,7 @@ describe('Test Gemini Tay', () => {
 	})
 
 	test('Test Chorus Fruit with Gemini Slay', () => {
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [GeminiTayRare, EthosLabCommon, ChorusFruit],
