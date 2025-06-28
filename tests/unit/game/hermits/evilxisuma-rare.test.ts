@@ -10,16 +10,12 @@ import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import {SecondaryAttackDisabledEffect} from 'common/status-effects/singleturn-attack-disabled'
 import {CopyAttack} from 'common/types/modal-requests'
-import {
-	attack,
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame, TestGameFixture} from '../utils'
 
-async function testEvilXDisablesForOneTurn(test: TestGameFixture, game: GameModel) {
+async function testEvilXDisablesForOneTurn(
+	test: TestGameFixture,
+	game: GameModel,
+) {
 	await test.playCardFromHand(EvilXisumaRare, 'hermit', 0)
 	await test.endTurn()
 
@@ -27,7 +23,7 @@ async function testEvilXDisablesForOneTurn(test: TestGameFixture, game: GameMode
 	await test.endTurn()
 
 	await test.attack('secondary')
-	await test.finishModalRequest( {
+	await test.finishModalRequest({
 		pick: 'secondary',
 	})
 
@@ -74,7 +70,7 @@ describe('Test Evil X', () => {
 			{
 				playerOneDeck: [ArmorStand, EthosLabCommon],
 				playerTwoDeck: [EvilXisumaRare],
-				saga: function* (game: GameModel) {
+				saga: async (test: TestGameFixture, game: GameModel) => {
 					await test.playCardFromHand(ArmorStand, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -106,7 +102,7 @@ describe('Test Evil X', () => {
 						(game.state.modalRequests[0].modal as CopyAttack.Data)
 							.availableAttacks,
 					).toContain('secondary')
-					await test.finishModalRequest( {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 				},
 			},
 			{noItemRequirements: true, forceCoinFlip: true},
@@ -135,7 +131,7 @@ describe('Test Evil X', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					await test.finishModalRequest( {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.endTurn()
 
 					expect(game.getAllBlockedActions()).toContain('SECONDARY_ATTACK')
