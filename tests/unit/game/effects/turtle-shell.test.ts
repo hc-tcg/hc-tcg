@@ -43,7 +43,7 @@ describe('Test Turtle Shell', () => {
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(TurtleShell, 'attach', 1)
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 
 					await test.endTurn()
 
@@ -87,7 +87,7 @@ describe('Test Turtle Shell', () => {
 
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 
 					await test.endTurn()
 					await test.endTurn()
@@ -254,7 +254,7 @@ describe('Test Turtle Shell', () => {
 
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.playCardFromHand(Ladder, 'single_use')
 					await test.pick(
 						query.slot.currentPlayer,
@@ -309,7 +309,7 @@ describe('Test Turtle Shell', () => {
 
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.playCardFromHand(Mending, 'single_use')
 					await test.pick(
 						query.slot.currentPlayer,
@@ -349,7 +349,7 @@ describe('Test Turtle Shell', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(TurtleShell, 'attach', 1)
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 
 					await test.endTurn()
 
@@ -396,7 +396,7 @@ describe('Test Turtle Shell', () => {
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 2)
 					await test.playCardFromHand(TurtleShell, 'attach', 1)
 					await test.playCardFromHand(TurtleShell, 'attach', 2)
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 
 					await test.endTurn()
 
@@ -513,7 +513,7 @@ describe('Test Turtle Shell', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(TurtleShell, 'attach', 1)
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 
 					await test.endTurn()
 
@@ -524,7 +524,7 @@ describe('Test Turtle Shell', () => {
 							.primaryButton,
 					).toBeTruthy()
 					// If `primaryButton` is null, Grian may not attach borrowed Turtle Shells
-					await test.finishModalRequest( {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 
 					await test.endTurn()
 
@@ -550,7 +550,7 @@ describe('Test Turtle Shell', () => {
 					expect(game.currentPlayer.activeRow?.health).toBe(GrianRare.health)
 
 					await test.attack('primary')
-					await test.finishModalRequest( {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 
 					await test.endTurn()
 
@@ -590,7 +590,7 @@ describe('Test Turtle Shell', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(TurtleShell, 'attach', 1)
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 
 					await test.endTurn()
 
@@ -681,7 +681,7 @@ describe('Test Turtle Shell', () => {
 
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					expect(game.getPickableSlots(Emerald.attachCondition).at(0)).not.toBe(
 						undefined,
 					) // Check if Emerald can move Turtle Shells
@@ -713,7 +713,7 @@ describe('Test Turtle Shell', () => {
 
 					await test.endTurn()
 
-					await test.changeActiveHermit( 3)
+					await test.changeActiveHermit(3)
 					await test.playCardFromHand(Emerald, 'single_use')
 					await test.applyEffect()
 
@@ -859,7 +859,7 @@ describe('Test Turtle Shell', () => {
 							.primaryButton,
 					).toBeTruthy()
 					// If `primaryButton` is null, Grian may not attach borrowed Turtle Shells
-					await test.finishModalRequest( {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 
 					expect(oldEffect?.targetEntity).toBe(null)
 
@@ -891,7 +891,7 @@ describe('Test Turtle Shell', () => {
 
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 
 					expect(
 						game.components.find(

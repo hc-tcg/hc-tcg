@@ -40,7 +40,7 @@ describe('Test Glowstone Single Use', () => {
 					const cardEntities = (
 						game.state.modalRequests[0].modal as SelectCards.Data
 					).cards
-					await test.finishModalRequest( {
+					await test.finishModalRequest({
 						result: true,
 						cards: [cardEntities[1]],
 					})

@@ -62,7 +62,7 @@ describe('Test Jimmy "The Law"', () => {
 					).toBe(SolidaritygamingRare.health - EthosLabCommon.secondary.damage)
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.attack('secondary')
@@ -201,7 +201,7 @@ describe('Test Jimmy "The Law"', () => {
 					)
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					expect(
 						game.components.find(
 							StatusEffectComponent,
@@ -259,7 +259,7 @@ describe('Test Jimmy "The Law"', () => {
 					await test.applyEffect()
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.endTurn()
@@ -326,7 +326,7 @@ describe('Test Jimmy "The Law"', () => {
 							query.effect.targetIsCardAnd(query.card.currentPlayer),
 						),
 					).not.toBe(null)
-					await test.changeActiveHermit( 0)
+					await test.changeActiveHermit(0)
 					await test.endTurn()
 
 					await test.endTurn()
@@ -500,7 +500,7 @@ describe('Test Jimmy "The Law"', () => {
 							query.effect.targetIsCardAnd(query.card.currentPlayer),
 						),
 					).not.toBe(null)
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(Egg, 'single_use')

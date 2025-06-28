@@ -671,7 +671,7 @@ export function* bossAttack(game: GameModel, ...attack: BOSS_ATTACK) {
 }
 
 export function testReplayGame(options: {
-	gameSaga: (con: GameController) => any
+	gameSaga: (test: TestGameFixture, con: GameController) => any
 	afterGame: (con: GameController) => any
 	playerOneDeck: Array<Card>
 	playerTwoDeck: Array<Card>

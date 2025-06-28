@@ -27,7 +27,7 @@ describe('Test Gotta Screep achivement', () => {
 
 					await test.attack('secondary')
 					await test.endTurn()
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(DiamondSword, 'single_use')

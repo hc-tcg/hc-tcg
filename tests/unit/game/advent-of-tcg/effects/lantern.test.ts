@@ -43,7 +43,7 @@ describe('Test Lantern Single Use', () => {
 					const cardEntities = (
 						game.state.modalRequests[0].modal as SelectCards.Data
 					).cards
-					await test.finishModalRequest( {
+					await test.finishModalRequest({
 						result: true,
 						cards: [cardEntities[0], cardEntities[3]],
 					})
@@ -65,7 +65,7 @@ describe('Test Lantern Single Use', () => {
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
 					).toStrictEqual([BuilderItem, MinerItem, Feather])
-					await test.finishModalRequest( {result: false, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 					await test.endTurn()
 				},
 			},

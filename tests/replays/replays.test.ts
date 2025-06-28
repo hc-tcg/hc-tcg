@@ -73,7 +73,7 @@ describe('Test Replays', () => {
 		testReplayGame({
 			playerOneDeck: [BalancedDoubleItem, EthosLabCommon],
 			playerTwoDeck: [EthosLabCommon, BalancedDoubleItem],
-			gameSaga: function* (con) {
+			gameSaga: async (test, con) => {
 				const game = con.game
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
@@ -100,7 +100,7 @@ describe('Test Replays', () => {
 				DiamondArmor,
 			],
 			playerTwoDeck: [EthosLabCommon, BalancedDoubleItem],
-			gameSaga: function* (con) {
+			gameSaga: async (test, con) => {
 				const game = con.game
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
@@ -133,21 +133,21 @@ describe('Test Replays', () => {
 				Feather,
 			],
 			playerTwoDeck: [EthosLabCommon],
-			gameSaga: function* (con) {
+			gameSaga: async (test, con) => {
 				await test.playCardFromHand(
  EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(
  Brush, 'single_use')
-				yield* applyEffect(con.game)
+				await applyEffect(con.game)
 				const cardEntities = (
 					con.game.state.modalRequests[0].modal as DragCards.Data
 				).rightCards
-				yield* finishModalRequest(con.game, {
+				await finishModalRequest(con.game, {
 					result: true,
 					leftCards: [cardEntities[0]],
 					rightCards: [cardEntities[1]],
 				})
-				yield* endTurn(con.game)
+				await endTurn(con.game)
 				await test.forfeit(con.game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
@@ -167,7 +167,7 @@ describe('Test Replays', () => {
 				Feather,
 			],
 			playerTwoDeck: [EthosLabCommon],
-			gameSaga: function* (con) {
+			gameSaga: async (test, con) => {
 				const game = con.game
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.endTurn()
@@ -204,8 +204,7 @@ describe('Test Replays', () => {
 				FarmDoubleItem,
 				FarmDoubleItem,
 			],
-			gameSaga: function* (con) {
-				const game = con.game
+			gameSaga: async (test, con) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(GeminiTayCommon, 'hermit', 1)
 
@@ -255,7 +254,7 @@ describe('Test Replays', () => {
 				JinglerRare,
 				...Array(40).fill(SpeedrunnerItem),
 			],
-			gameSaga: function* (con) {
+			gameSaga: async (test, con) => {
 				const game = con.game
 				await test.playCardFromHand(TinFoilChefRare, 'hermit', 2)
 				await test.playCardFromHand(MinerItem, 'item', 2, 0)
@@ -294,9 +293,7 @@ describe('Test Replays', () => {
 		testReplayGame({
 			playerOneDeck: [FarmerBeefRare, FarmDoubleItem],
 			playerTwoDeck: [EvilXisumaRare, BalancedDoubleItem],
-			gameSaga: function* (con) {
-				const game = con.game
-
+			gameSaga: async (test, con) => {
 				await test.playCardFromHand(FarmerBeefRare, 'hermit', 0)
 				await test.playCardFromHand(FarmDoubleItem, 'item', 0, 0)
 				await test.endTurn()
@@ -331,9 +328,7 @@ describe('Test Replays', () => {
 		testReplayGame({
 			playerOneDeck: [VintageBeefRare, FalseSymmetryRare],
 			playerTwoDeck: [RendogCommon],
-			gameSaga: function* (con) {
-				const game = con.game
-
+			gameSaga: async (test, con) => {
 				await test.playCardFromHand(VintageBeefRare, 'hermit', 0)
 				await test.playCardFromHand(FalseSymmetryRare, 'hermit', 1)
 				await test.endTurn()

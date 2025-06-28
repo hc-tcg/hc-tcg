@@ -792,7 +792,7 @@ function checkDeckedOut(game: GameModel) {
 
 async function gameSaga(con: GameController) {
 	if (con.game.settings.verboseLogging)
-	console.info(
+		console.info(
 			`${con.game.logHeader} ${con.game.opponentPlayer.playerName} was decided to be the first player.`,
 		)
 

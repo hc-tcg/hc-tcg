@@ -109,7 +109,7 @@ describe('Test Totem of Undying', () => {
 					).toBe(10)
 					expect(
 						game.components.find(
-						CardComponent,
+							CardComponent,
 							query.card.is(Totem),
 							query.card.attached,
 						),

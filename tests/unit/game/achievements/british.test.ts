@@ -65,7 +65,7 @@ describe('Test British achievement', () => {
 
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.endTurn()

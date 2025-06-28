@@ -107,7 +107,7 @@ describe('Test Weakness', () => {
 					await test.applyEffect()
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(ChorusFruit, 'single_use')
@@ -162,7 +162,7 @@ describe('Test Weakness', () => {
 					await test.applyEffect()
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.attack('primary')
@@ -291,7 +291,7 @@ describe('Test Weakness', () => {
 					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow).toBe(null)
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.attack('primary')
@@ -305,7 +305,7 @@ describe('Test Weakness', () => {
 						)?.health,
 					).toBe(ImpulseSVCommon.health - SmallishbeansRare.primary.damage)
 
-					await test.changeActiveHermit( 2)
+					await test.changeActiveHermit(2)
 					await test.endTurn()
 
 					await test.attack('primary')

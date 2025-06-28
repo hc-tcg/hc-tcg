@@ -737,7 +737,7 @@ describe('Test Trapdoor', () => {
 					await test.applyEffect()
 					await test.endTurn()
 
-					await test.changeActiveHermit( 2)
+					await test.changeActiveHermit(2)
 					await test.endTurn()
 
 					await test.playCardFromHand(Anvil, 'single_use')

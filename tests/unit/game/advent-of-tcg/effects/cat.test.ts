@@ -45,7 +45,7 @@ describe('Test Cat Effect Card', () => {
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
 					)?.props,
 				).toStrictEqual(BalancedItem)
-				await test.finishModalRequest( {result: true, cards: null})
+				await test.finishModalRequest({result: true, cards: null})
 				expect(
 					game.currentPlayer
 						.getDrawPile()
@@ -96,14 +96,14 @@ describe('Test Cat Effect Card', () => {
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
 					)?.props,
 				).toStrictEqual(IronSword)
-				await test.finishModalRequest( {result: true, cards: null})
+				await test.finishModalRequest({result: true, cards: null})
 				expect(
 					game.currentPlayer
 						.getDrawPile()
 						.sort(CardComponent.compareOrder)
 						.at(0)?.props,
 				).toStrictEqual(BalancedDoubleItem)
-				await test.changeActiveHermit( 1)
+				await test.changeActiveHermit(1)
 				await test.endTurn()
 
 				expect(
@@ -183,7 +183,7 @@ describe('Test Cat Effect Card', () => {
 							(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
 						)?.props,
 					).toStrictEqual(Cat)
-					await test.finishModalRequest( {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 					await test.endTurn()
 
 					expect(
@@ -211,7 +211,7 @@ describe('Test Cat Effect Card', () => {
 
 					await test.playCardFromHand(GrianRare, 'hermit', 0)
 					await test.attack('primary')
-					await test.finishModalRequest( {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 					expect(
 						game.components.find(
 							CardComponent,
@@ -227,8 +227,8 @@ describe('Test Cat Effect Card', () => {
 
 					await test.attack('primary')
 					expect(game.state.modalRequests).toHaveLength(2)
-					await test.finishModalRequest( {result: false, cards: null})
-					await test.finishModalRequest( {result: true, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 					await test.endTurn()
 				},
 			},

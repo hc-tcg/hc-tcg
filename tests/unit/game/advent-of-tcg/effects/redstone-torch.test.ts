@@ -53,7 +53,7 @@ describe('Test Redstone Torch', () => {
 							game.state.modalRequests[0] as SelectCards.Request
 						).modal.cards.map((entity) => deckEntities.indexOf(entity)),
 					).toStrictEqual([0, 1, 2, 3, 4, 6, 7])
-					await test.finishModalRequest( {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - 40 * 3,
 					)
@@ -98,7 +98,7 @@ describe('Test Redstone Torch', () => {
 							query.card.slot(query.slot.deck),
 						),
 					])
-					await test.finishModalRequest( {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 				},
 			},
 			{startWithAllCards: false},
@@ -135,7 +135,7 @@ describe('Test Redstone Torch', () => {
 					expect(
 						(game.state.modalRequests[0] as SelectCards.Request).modal.cards,
 					).toStrictEqual([])
-					await test.finishModalRequest( {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
 					)

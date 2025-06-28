@@ -73,7 +73,7 @@ describe('Test Scott "To Dye For"', () => {
 				await test.attack('secondary')
 				await test.endTurn()
 
-				await test.changeActiveHermit( 1)
+				await test.changeActiveHermit(1)
 				await test.attack('secondary')
 				expect(
 					game.components.find(

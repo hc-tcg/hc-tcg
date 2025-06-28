@@ -39,7 +39,7 @@ describe('Test Shelby Parallel World', () => {
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
 					)?.props,
 				).toStrictEqual(IronSword)
-				await test.finishModalRequest( {result: true, cards: null})
+				await test.finishModalRequest({result: true, cards: null})
 				expect(
 					game.currentPlayer
 						.getDrawPile()
@@ -88,7 +88,7 @@ describe('Test Shelby Parallel World', () => {
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
 					)?.props,
 				).toStrictEqual(IronSword)
-				await test.finishModalRequest( {result: true, cards: null})
+				await test.finishModalRequest({result: true, cards: null})
 				expect(
 					game.currentPlayer
 						.getDrawPile()
@@ -155,7 +155,7 @@ describe('Test Shelby Parallel World', () => {
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
 					)?.props,
 				).toStrictEqual(IronSword)
-				await test.finishModalRequest( {result: true, cards: null})
+				await test.finishModalRequest({result: true, cards: null})
 				expect(
 					game.currentPlayer
 						.getDrawPile()
@@ -167,7 +167,7 @@ describe('Test Shelby Parallel World', () => {
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
 					)?.props,
 				).toStrictEqual(TerraformItem)
-				await test.finishModalRequest( {result: true, cards: null})
+				await test.finishModalRequest({result: true, cards: null})
 				expect(
 					game.currentPlayer
 						.getDrawPile()

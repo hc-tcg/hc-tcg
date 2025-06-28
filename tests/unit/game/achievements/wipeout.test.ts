@@ -94,7 +94,7 @@ describe('Test "Wipeout" achievement', () => {
 					await test.applyEffect()
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					game.components
@@ -133,7 +133,7 @@ describe('Test "Wipeout" achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(Anvil, 'single_use')

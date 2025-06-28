@@ -44,7 +44,7 @@ describe('Test Grian Rare', () => {
 							.primaryButton,
 					).toBeTruthy()
 
-					await test.finishModalRequest( {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 
 					expect(
 						game.components.find(
@@ -88,7 +88,7 @@ describe('Test Grian Rare', () => {
 							.primaryButton,
 					).toBeTruthy()
 
-					await test.finishModalRequest( {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 
 					expect(
 						game.components.find(
@@ -158,7 +158,7 @@ describe('Test Grian Rare', () => {
 					await test.playCardFromHand(GrianRare, 'hermit', 0)
 					await test.attack('primary')
 
-					await test.finishModalRequest( {result: false, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 
 					expect(
 						game.components.find(
@@ -198,7 +198,7 @@ describe('Test Grian Rare', () => {
 							.primaryButton,
 					).toBe(null)
 
-					await test.finishModalRequest( {result: false, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 
 					expect(
 						game.components.find(
@@ -241,7 +241,7 @@ describe('Test Grian Rare', () => {
 							.primaryButton,
 					).toBe(null)
 
-					await test.finishModalRequest( {result: false, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 
 					expect(
 						game.components.find(

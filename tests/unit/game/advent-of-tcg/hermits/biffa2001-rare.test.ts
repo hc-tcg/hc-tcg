@@ -52,7 +52,7 @@ describe('Test Biffa Secondary', () => {
 				)
 				await test.endTurn()
 
-				await test.changeActiveHermit( 1)
+				await test.changeActiveHermit(1)
 				await test.endTurn()
 
 				await test.attack('secondary')
@@ -61,7 +61,7 @@ describe('Test Biffa Secondary', () => {
 				)
 				await test.endTurn()
 
-				await test.changeActiveHermit( 2)
+				await test.changeActiveHermit(2)
 				await test.endTurn()
 
 				await test.playCardFromHand(IronArmor, 'attach', 0)
@@ -157,16 +157,16 @@ describe('Test Biffa Secondary', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(Biffa2001Rare, 'hermit', 0)
 					await test.playCardFromHand(ArmorStand, 'hermit', 1)
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.attack('secondary')
 					await test.endTurn()
 
-					await test.changeActiveHermit( 0)
+					await test.changeActiveHermit(0)
 					await test.playCardFromHand(Chest, 'single_use')
-					await test.finishModalRequest( {
+					await test.finishModalRequest({
 						result: true,
 						cards: game.components.filterEntities(
 							CardComponent,
@@ -230,21 +230,21 @@ describe('Test Biffa Secondary', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(Biffa2001Rare, 'hermit', 0)
 					await test.playCardFromHand(ArmorStand, 'hermit', 1)
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.attack('secondary')
 					await test.endTurn()
 
-					await test.changeActiveHermit( 0)
+					await test.changeActiveHermit(0)
 					await test.playCardFromHand(Allay, 'single_use')
 					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hand,
 						query.slot.has(ArmorStand),
 					)
-					await test.finishModalRequest( {result: false, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 					await test.playCardFromHand(ArmorStand, 'hermit', 1)
 					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
@@ -330,7 +330,7 @@ describe('Test Biffa Secondary', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					await test.finishModalRequest( {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						GrianchRare.health -
 							WormManRare.secondary.damage -
@@ -343,7 +343,7 @@ describe('Test Biffa Secondary', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					await test.finishModalRequest( {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						GrianchRare.health -
 							WormManRare.secondary.damage -

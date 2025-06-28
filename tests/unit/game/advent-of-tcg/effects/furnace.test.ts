@@ -237,7 +237,7 @@ describe('Test Furnace Attach Effect', () => {
 					query.slot.attach,
 					query.slot.rowIndex(1),
 				)
-				await test.changeActiveHermit( 1)
+				await test.changeActiveHermit(1)
 				expect(
 					game.components.find(
 						StatusEffectComponent,

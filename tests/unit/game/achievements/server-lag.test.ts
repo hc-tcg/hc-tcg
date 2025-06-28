@@ -43,11 +43,11 @@ describe('Test Server Lag achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.endTurn()
@@ -92,7 +92,7 @@ describe('Test Server Lag achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(StressMonster101Rare, 'hermit', 1)
@@ -101,7 +101,7 @@ describe('Test Server Lag achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, outcome) {
@@ -138,7 +138,7 @@ describe('Test Server Lag achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
@@ -147,7 +147,7 @@ describe('Test Server Lag achievement', () => {
 					await test.attack('primary')
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, outcome) {
@@ -195,11 +195,11 @@ describe('Test Server Lag achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.endTurn()
@@ -257,11 +257,11 @@ describe('Test Server Lag achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 1)
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.endTurn()
@@ -313,11 +313,11 @@ describe('Test Server Lag achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.endTurn()
@@ -365,11 +365,11 @@ describe('Test Server Lag achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.endTurn()
@@ -417,11 +417,11 @@ describe('Test Server Lag achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.endTurn()

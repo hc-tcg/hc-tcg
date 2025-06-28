@@ -63,7 +63,7 @@ describe('Test Rare Worm Man', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					expect(
 						game.components.find(
 							CardComponent,
@@ -120,7 +120,7 @@ describe('Test Rare Worm Man', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.playCardFromHand(PoultrymanCommon, 'hermit', 2)
 					expect(
 						game.components.find(

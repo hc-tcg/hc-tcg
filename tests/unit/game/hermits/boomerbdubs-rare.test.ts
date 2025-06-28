@@ -32,32 +32,32 @@ describe('Test Boomer Bdubs Watch This', () => {
 					await test.playCardFromHand(BoomerBdubsRare, 'hermit', 0)
 					await test.attack('secondary')
 					// Flip 0 coins
-					await test.finishModalRequest( {result: false, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - BoomerBdubsRare.secondary.damage,
 					)
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.attack('secondary')
 					// Flip 1 heads
-					await test.finishModalRequest( {result: true, cards: null})
-					await test.finishModalRequest( {result: false, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - (BoomerBdubsRare.secondary.damage + 20),
 					)
 					await test.endTurn()
 
-					await test.changeActiveHermit( 2)
+					await test.changeActiveHermit(2)
 					await test.endTurn()
 
 					await test.attack('secondary')
 					// Flip 2 heads
-					await test.finishModalRequest( {result: true, cards: null})
-					await test.finishModalRequest( {result: true, cards: null})
-					await test.finishModalRequest( {result: false, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - (BoomerBdubsRare.secondary.damage + 40),
 					)
@@ -83,7 +83,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 
 					await test.attack('secondary')
 					// Flip tails
-					await test.finishModalRequest( {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 					expect(game.state.modalRequests).toHaveLength(0)
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
@@ -113,8 +113,8 @@ describe('Test Boomer Bdubs Watch This', () => {
 					await test.applyEffect()
 					await test.attack('secondary')
 					// Flip heads then tails
-					await test.finishModalRequest( {result: true, cards: null})
-					await test.finishModalRequest( {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 					expect(game.state.modalRequests).toHaveLength(0)
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
@@ -139,13 +139,13 @@ describe('Test Boomer Bdubs Watch This', () => {
 					await test.playCardFromHand(Crossbow, 'single_use')
 					await test.attack('secondary')
 					// Flip 0 coins and cancel
-					await test.finishModalRequest( {result: false, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 					await test.removeEffect()
 					// Flip a coin and finish attack
 					await test.playCardFromHand(Crossbow, 'single_use')
 					await test.attack('secondary')
-					await test.finishModalRequest( {result: true, cards: null})
-					await test.finishModalRequest( {result: false, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 					expect(game.state.turn.availableActions).not.toContain(
 						'REMOVE_EFFECT',
 					)
