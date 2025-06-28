@@ -15,7 +15,7 @@ import {
 
 describe('Test "Signal Inversion" achievement', () => {
 	test('"Signal Inversion" increments', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: SignalInversion,
 				playerOneDeck: [EthosLabUltraRare, Fortune],
@@ -44,7 +44,7 @@ describe('Test "Signal Inversion" achievement', () => {
 		)
 	})
 	test('does not increment if there is no coin flip', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: SignalInversion,
 				playerOneDeck: [EthosLabCommon, Fortune],
@@ -73,7 +73,7 @@ describe('Test "Signal Inversion" achievement', () => {
 		)
 	})
 	test('does not increment if there is no bad omen', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: SignalInversion,
 				playerOneDeck: [EthosLabUltraRare, Fortune],
@@ -100,7 +100,7 @@ describe('Test "Signal Inversion" achievement', () => {
 		)
 	})
 	test('does not increment if there is no Fortune', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: SignalInversion,
 				playerOneDeck: [EthosLabUltraRare],

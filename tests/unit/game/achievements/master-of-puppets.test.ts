@@ -16,7 +16,7 @@ import {
 
 describe('Test Master of Puppets Achievement', () => {
 	test('Test achievement is gained after using both Ren and Cleo to mimic attack', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: MasterOfPuppets,
 				playerOneDeck: [RendogRare, EthosLabCommon],
@@ -52,7 +52,7 @@ describe('Test Master of Puppets Achievement', () => {
 		)
 	})
 	test('Test achievement is not gained after using only Cleo', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: MasterOfPuppets,
 				playerOneDeck: [ZombieCleoRare, ZombieCleoRare],

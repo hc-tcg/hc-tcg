@@ -10,7 +10,7 @@ import {endTurn, forfeit, playCardFromHand, testAchivement} from '../utils'
 
 describe('Test New Team Canada achievement', () => {
 	test('New Team Canada only triggers when containing all members and no other hermits', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: NewTeamCanada,
 				playerOneDeck: [
@@ -33,7 +33,7 @@ describe('Test New Team Canada achievement', () => {
 		)
 	})
 	test('New Team Canada does not trigger when missing member', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: NewTeamCanada,
 				playerOneDeck: [EthosLabCommon, VintageBeefCommon],
@@ -51,7 +51,7 @@ describe('Test New Team Canada achievement', () => {
 		)
 	})
 	test('New Team Canada does not trigger when containing others', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: NewTeamCanada,
 				playerOneDeck: [

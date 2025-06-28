@@ -4,7 +4,7 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
 
 test("Test Hurtin' Hermits achivement", async () => {
-	testAchivement(
+	await testAchivement(
 		{
 			achievement: HurtinHermits,
 			playerOneDeck: [EthosLabCommon],

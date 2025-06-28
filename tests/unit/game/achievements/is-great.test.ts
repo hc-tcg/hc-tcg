@@ -7,7 +7,7 @@ import {forfeit, testAchivement} from '../utils'
 
 describe('Test "...is Great" achievement', () => {
 	test('Check should be valid', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: IsGreat,
 				playerOneDeck: [BdoubleO100Rare, BdoubleO100Rare, BdoubleO100Rare],
@@ -23,7 +23,7 @@ describe('Test "...is Great" achievement', () => {
 		)
 	})
 	test('Check invalid (two costs are in deck)', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: IsGreat,
 				playerOneDeck: [BdoubleO100Rare, EthosLabRare],

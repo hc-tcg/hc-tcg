@@ -13,7 +13,7 @@ import {
 
 describe('Test British achievement', () => {
 	test('"British" achievement does not progress if only Cup of Tea is used', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: British,
 				playerOneDeck: [XisumavoidRare],
@@ -47,7 +47,7 @@ describe('Test British achievement', () => {
 	})
 
 	test('"British" achievement makes progress if both secondaries are used', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: British,
 				playerOneDeck: [XisumavoidRare, SpookyStressRare],

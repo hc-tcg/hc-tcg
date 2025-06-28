@@ -22,7 +22,7 @@ import {
 
 describe('Test Eye of the Spider achievement', () => {
 	test('"Eye of the Spider" counts multiple attacks as one progress', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: EyeOfTheSpider,
 				playerOneDeck: [RenbobRare, SplashPotionOfPoison, Anvil],
@@ -73,7 +73,7 @@ describe('Test Eye of the Spider achievement', () => {
 		)
 	})
 	test('Test Eye of the Spider achievement does not increase when active hermit is knocked out', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: EyeOfTheSpider,
 				playerOneDeck: [EthosLabCommon, SplashPotionOfPoison, Anvil],
@@ -106,7 +106,7 @@ describe('Test Eye of the Spider achievement', () => {
 		)
 	})
 	test('Test Eye of the Spider achievement does not increase when any AFK is knocked out', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: EyeOfTheSpider,
 				playerOneDeck: [EthosLabCommon, LavaBucket],
@@ -151,7 +151,7 @@ describe('Test Eye of the Spider achievement', () => {
 		)
 	})
 	test('Test Eye of the Spider achievement does not increase when poison is removed with milk', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: EyeOfTheSpider,
 				playerOneDeck: [EthosLabCommon, SplashPotionOfPoison, Anvil],

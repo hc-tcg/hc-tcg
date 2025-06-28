@@ -13,7 +13,7 @@ import {
 
 describe('Test Poe Poe Enforcer Achievement', () => {
 	test('Test achievement is not gained when knocking out active hermit whle opponent has curse of binding', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: PoePoeEnforcer,
 				playerOneDeck: [ImpulseSVCommon, CurseOfBinding],
@@ -37,7 +37,7 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 		)
 	})
 	test('Test achievement is gained when knocking out active hermit the round after opponent has curse of binding', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: PoePoeEnforcer,
 				playerOneDeck: [ImpulseSVCommon, CurseOfBinding],
@@ -65,7 +65,7 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 		)
 	})
 	test('Test achievement is not gained after two rounds', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: PoePoeEnforcer,
 				playerOneDeck: [ImpulseSVCommon, CurseOfBinding],

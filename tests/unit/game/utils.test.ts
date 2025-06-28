@@ -35,7 +35,7 @@ describe('Test Game Utils', () => {
 	test('Test achievment tests run', async () => {
 		let playedGame = false
 		let checkedAchievment = false
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: Win,
 				playerOneDeck: [EthosLabCommon],

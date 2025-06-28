@@ -18,7 +18,7 @@ import {
 
 describe('Test Go Fish Achievement', () => {
 	test('Test achievement is gained after mending is drawn', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: GoFish,
 				playerOneDeck: [
@@ -47,7 +47,7 @@ describe('Test Go Fish Achievement', () => {
 		)
 	})
 	test('Test achievement works properly with Gem', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: GoFish,
 				playerOneDeck: [

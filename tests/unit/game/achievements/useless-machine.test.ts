@@ -15,7 +15,7 @@ import {
 
 describe('Test Useless Machine Achievement', () => {
 	test('Test achievement is gained when drawing two duplicates', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: UselessMachine,
 				playerOneDeck: [
@@ -55,7 +55,7 @@ describe('Test Useless Machine Achievement', () => {
 		)
 	})
 	test('Test one duplicate card', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: UselessMachine,
 				playerOneDeck: [
@@ -95,7 +95,7 @@ describe('Test Useless Machine Achievement', () => {
 		)
 	})
 	test('Test zero duplicate cards', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: UselessMachine,
 				playerOneDeck: [

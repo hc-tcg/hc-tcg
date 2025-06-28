@@ -11,7 +11,7 @@ import {
 
 describe('Test win achivement', () => {
 	test('Test win achivement', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: Win,
 				playerOneDeck: [EthosLabCommon],
@@ -33,7 +33,7 @@ describe('Test win achivement', () => {
 		)
 	})
 	test('Test win achivement does not count wrong player wins', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: Win,
 				playerOneDeck: [EthosLabCommon],
@@ -52,13 +52,13 @@ describe('Test win achivement', () => {
 		)
 	})
 	test('Test forfeit wins count', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: Win,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: async (test, game) => {
-					yield forfeit(game.opponentPlayer.entity)
+					test.forfeit(game.opponentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Win.getProgress(achievement.goals)).toBe(1)

@@ -13,7 +13,7 @@ import {
 
 describe('Test Gotta Screep achivement', () => {
 	test('increments when opponent is knocked out', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: GottaSchreep,
 				playerOneDeck: [BdoubleO100Rare, DiamondSword],
@@ -41,7 +41,7 @@ describe('Test Gotta Screep achivement', () => {
 		)
 	})
 	test('does not increment when you are awake', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: GottaSchreep,
 				playerOneDeck: [BdoubleO100Rare, DiamondSword],

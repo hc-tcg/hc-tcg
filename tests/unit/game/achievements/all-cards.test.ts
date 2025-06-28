@@ -7,7 +7,7 @@ import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
 
 describe('Test Jack of All Cards achivement', () => {
 	test('Test Jack of All Cards increments progress on win for only default cards', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: AllCards,
 				playerOneDeck: [EthosLabCommon, ShadEECommon, BalancedItem],
@@ -29,7 +29,7 @@ describe('Test Jack of All Cards achivement', () => {
 		)
 	})
 	test('Test Jack of All Cards does not increment progress on loss', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: AllCards,
 				playerOneDeck: [EthosLabCommon],

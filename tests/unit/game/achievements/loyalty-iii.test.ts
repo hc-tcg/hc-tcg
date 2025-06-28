@@ -17,7 +17,7 @@ import {
 
 describe('Test Loyalty III Achievement', () => {
 	test('Test achievement is gained after three uses', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: LoyaltyIII,
 				playerOneDeck: [EthosLabCommon, Trident],
@@ -57,7 +57,7 @@ describe('Test Loyalty III Achievement', () => {
 		)
 	})
 	test('Test steps is one if using different tridents', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: LoyaltyIII,
 				playerOneDeck: [EthosLabCommon, Trident, Trident],
@@ -97,7 +97,7 @@ describe('Test Loyalty III Achievement', () => {
 		)
 	})
 	test('Test streak is broken after waiting a turn', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: LoyaltyIII,
 				playerOneDeck: [EthosLabCommon, Trident],

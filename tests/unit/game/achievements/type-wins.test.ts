@@ -5,7 +5,7 @@ import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
 
 describe('Test type win achivements', () => {
 	test('Test win counts when you 7 hermits of type', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: BalancedWins,
 				playerOneDeck: [
@@ -36,7 +36,7 @@ describe('Test type win achivements', () => {
 		)
 	})
 	test('Test win does not count when you 7 hermits of type but do not win', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: BalancedWins,
 				playerOneDeck: [
@@ -64,7 +64,7 @@ describe('Test type win achivements', () => {
 		)
 	})
 	test('Test win does not count when you have less than 7 hermits', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: BalancedWins,
 				playerOneDeck: [EthosLabCommon],

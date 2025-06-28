@@ -15,7 +15,7 @@ import {
 
 describe('Test Channeling achievement', () => {
 	test('"Channeling" increases properly', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: Channeling,
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
@@ -41,7 +41,7 @@ describe('Test Channeling achievement', () => {
 		)
 	})
 	test('"Channeling" does not increase if the lightning rod didn\'t redirect damage from active Hermit', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: Channeling,
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
@@ -67,7 +67,7 @@ describe('Test Channeling achievement', () => {
 		)
 	})
 	test('"Channeling" does not increase if the active Hermit has at least 100hp', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: Channeling,
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
@@ -93,7 +93,7 @@ describe('Test Channeling achievement', () => {
 		)
 	})
 	test('"Channeling" does not increase when Lightning Rod on active row', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: Channeling,
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],

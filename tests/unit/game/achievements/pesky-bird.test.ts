@@ -17,7 +17,7 @@ import {
 
 describe('Test Pesky Bird Achievement', () => {
 	test('Test achievement progress increases after forcing opponnet to discard card', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: PeskyBird,
 				playerOneDeck: [JinglerRare],
@@ -53,7 +53,7 @@ describe('Test Pesky Bird Achievement', () => {
 		)
 	})
 	test('Test achievement progress stays the same when you discard your own card', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: PeskyBird,
 				playerOneDeck: [

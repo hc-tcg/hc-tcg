@@ -610,7 +610,7 @@ export function testBossFight(
 }
 
 /** Test an achievement for player one in a game */
-export async function testAchivement(
+export async function await testAchivement(
 	options: {
 		achievement: Achievement
 		playGame: (test: TestGameFixture, game: GameModel) => any

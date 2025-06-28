@@ -13,7 +13,7 @@ import {
 
 describe('Test Free & Steel Achievement', () => {
 	test('Test achievement is when hand only contains flint and steel', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: FreeAndSteel,
 				playerOneDeck: [
@@ -49,7 +49,7 @@ describe('Test Free & Steel Achievement', () => {
 		)
 	})
 	test('Negative test', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: FreeAndSteel,
 				playerOneDeck: [

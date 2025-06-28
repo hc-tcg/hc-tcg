@@ -7,7 +7,7 @@ import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
 
 describe('Test Hermits and Crafting achievement', () => {
 	test('Test "Hermits and Crafting" does not progress after winning with a Starter Deck', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: HermitsAndCrafting,
 				playerOneDeck: STARTER_DECKS[1].cards,
@@ -34,7 +34,7 @@ describe('Test Hermits and Crafting achievement', () => {
 	})
 
 	test('Test "Hermits and Crafting" progresses after winning with a deck that is not a starter deck', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: HermitsAndCrafting,
 				playerOneDeck: [SmallishbeansCommon],

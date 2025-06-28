@@ -15,7 +15,7 @@ import {
 
 describe('Test Ethogirl achievement', () => {
 	test('Ethogirl progress only counts unique Etho variants on one side of the board', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: Ethogirl,
 				playerOneDeck: [
@@ -48,7 +48,7 @@ describe('Test Ethogirl achievement', () => {
 		)
 	})
 	test('progress does not increase on loss', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: Ethogirl,
 				playerOneDeck: [

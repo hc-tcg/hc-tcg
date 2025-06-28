@@ -5,7 +5,7 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {endTurn, forfeit, playCardFromHand, testAchivement} from '../utils'
 
 test('Test Use Like a Hermit achievement', async () => {
-	testAchivement(
+	await testAchivement(
 		{
 			achievement: CertifiedZombie,
 			playerOneDeck: [ArmorStand],

@@ -21,7 +21,7 @@ import {
 
 describe('Test Server Lag achievement', () => {
 	test('Test "Server Lag" knock-out-win with secondary Succeeds', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: ServerLag,
 				playerOneDeck: [EthosLabCommon, ...Array(9).fill(BalancedItem)],
@@ -70,7 +70,7 @@ describe('Test Server Lag achievement', () => {
 	})
 
 	test('Test "Server Lag" knock-out-tie with secondary Succeeds', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: ServerLag,
 				playerOneDeck: [EthosLabCommon, ...Array(9).fill(BalancedItem)],
@@ -116,7 +116,7 @@ describe('Test Server Lag achievement', () => {
 	})
 
 	test('Test "Server Lag" knock-out-loss with secondary Succeeds', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: ServerLag,
 				playerOneDeck: [EthosLabCommon, ...Array(9).fill(BalancedItem)],
@@ -171,7 +171,7 @@ describe('Test Server Lag achievement', () => {
 	})
 
 	test('Test "Server Lag" deck-out-loss with secondary Succeeds', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: ServerLag,
 				playerOneDeck: [EthosLabCommon, ...Array(9).fill(BalancedItem)],
@@ -230,7 +230,7 @@ describe('Test Server Lag achievement', () => {
 	})
 
 	test('Test "Server Lag" knock-out-win with Burn Succeeds', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: ServerLag,
 				playerOneDeck: [
@@ -287,7 +287,7 @@ describe('Test Server Lag achievement', () => {
 	})
 
 	test('Test "Server Lag" knock-out-win with secondary + sword Succeeds', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: ServerLag,
 				playerOneDeck: [
@@ -341,7 +341,7 @@ describe('Test Server Lag achievement', () => {
 	})
 
 	test('Test "Server Lag" forfeit-win before turn end Succeeds', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: ServerLag,
 				playerOneDeck: [EthosLabCommon, ...Array(9).fill(BalancedItem)],
@@ -393,7 +393,7 @@ describe('Test Server Lag achievement', () => {
 	})
 
 	test('Test "Server Lag" forfeit-loss Fails', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: ServerLag,
 				playerOneDeck: [EthosLabCommon, ...Array(9).fill(BalancedItem)],

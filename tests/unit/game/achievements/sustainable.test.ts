@@ -8,7 +8,7 @@ import {forfeit, pick, playCardFromHand, testAchivement} from '../utils'
 
 describe('Test SUStainable achivement', () => {
 	test('Test SUStainable achivement', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: SUStainable,
 				playerOneDeck: [

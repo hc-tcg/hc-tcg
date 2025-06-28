@@ -17,7 +17,7 @@ import {
 
 describe('Test "Wipeout" achievement', () => {
 	test('Works when game ends when all Hermits are knocked out and game ends', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: Wipeout,
 				playerOneDeck: [EthosLabCommon, Anvil],
@@ -46,7 +46,7 @@ describe('Test "Wipeout" achievement', () => {
 		)
 	})
 	test('Works when some hermits live', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: Wipeout,
 				playerOneDeck: [EthosLabCommon, Anvil],
@@ -77,7 +77,7 @@ describe('Test "Wipeout" achievement', () => {
 		)
 	})
 	test('Works when killed by Lava Bucket', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: Wipeout,
 				playerOneDeck: [EthosLabCommon, LavaBucket],
@@ -113,7 +113,7 @@ describe('Test "Wipeout" achievement', () => {
 		)
 	})
 	test('Only counts the highest number of knock-outs in one round', async () => {
-		testAchivement(
+		await testAchivement(
 			{
 				achievement: Wipeout,
 				playerOneDeck: [EthosLabCommon, Anvil],
