@@ -20,7 +20,7 @@ import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 } from 'common/status-effects/singleturn-attack-disabled'
-import {BossGameTestFixture, testBossFight} from '../utils'
+import {BossGameTestFixture, getWinner, testBossFight} from '../utils'
 
 async function testConsecutiveAmnesia(
 	test: BossGameTestFixture,
@@ -292,7 +292,7 @@ async function testChallengerVictory(
 
 describe('Test Evil X Boss Fight', () => {
 	test('Test Boss versus consecutive Amnesia', async () => {
-		testBossFight(
+		await testBossFight(
 			{
 				saga: testConsecutiveAmnesia,
 				playerDeck: [ArchitectFalseRare, Anvil, Anvil],
@@ -302,7 +302,7 @@ describe('Test Evil X Boss Fight', () => {
 	})
 
 	test('Test Boss versus rare Rendog', async () => {
-		testBossFight(
+		await testBossFight(
 			{
 				saga: testVersusRendogRare,
 				playerDeck: [RendogRare],
@@ -312,7 +312,7 @@ describe('Test Evil X Boss Fight', () => {
 	})
 
 	test('Test Boss is "directly opposite" opponent active hermit', async () => {
-		testBossFight(
+		await testBossFight(
 			{
 				saga: testDirectlyOpposite,
 				playerDeck: [PoePoeSkizzRare, RenbobRare, Anvil],
@@ -322,7 +322,7 @@ describe('Test Evil X Boss Fight', () => {
 	})
 
 	test('Test "NINEATTACHED" discards all cards from active', async () => {
-		testBossFight(
+		await testBossFight(
 			{
 				saga: testNineAttached,
 				playerDeck: [
@@ -340,7 +340,7 @@ describe('Test Evil X Boss Fight', () => {
 	})
 
 	test('Test challenger victory against boss', async () => {
-		testBossFight(
+		await testBossFight(
 			{
 				playerDeck: [
 					MumboJumboRare,
@@ -360,7 +360,7 @@ describe('Test Evil X Boss Fight', () => {
 	})
 
 	test('Test boss victory against challenger', async () => {
-		testBossFight(
+		await testBossFight(
 			{
 				playerDeck: [EthosLabCommon],
 				saga: async (test, _game) => {
@@ -381,7 +381,7 @@ describe('Test Evil X Boss Fight', () => {
 			{startWithAllCards: true, oneShotMode: true},
 		)
 
-		testBossFight(
+		await testBossFight(
 			{
 				playerDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				saga: async (test, _game) => {

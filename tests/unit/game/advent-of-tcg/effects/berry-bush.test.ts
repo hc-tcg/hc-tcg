@@ -153,7 +153,7 @@ describe('Test Berry Bush Attach', () => {
 
 					await test.playCardFromHand(WormManRare, 'hermit', 0)
 					await test.attack('secondary')
-					await playCardFromHand(
+					await test.playCardFromHand(
 						BerryBush,
 						'hermit',
 						1,

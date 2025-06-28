@@ -349,7 +349,7 @@ export async function testGame(
 /**
  * Works similarly to `testGame`, but for testing the Evil X boss fight
  */
-export function testBossFight(
+export async function testBossFight(
 	options: {
 		/**
 		 * ```ts
@@ -428,16 +428,13 @@ export function testBossFight(
 
 	let testEnded = false
 
-	testSagas(
-		call(function* () {
-			yield* call(gameSaga, controller)
-			yield* fork(receiveGameMessages, controller)
-		}),
-		call(function* () {
-			yield* call(options.saga, controller.game)
+	await Promise.race([
+		gameSaga(controller),
+		(async () => {
+			await options.saga(new BossGameTestFixture(controller), controller.game)
 			testEnded = true
-		}),
-	)
+		})(),
+	])
 
 	if (!options.then && !testEnded) {
 		throw new Error('Game was ended before the test finished running.')
