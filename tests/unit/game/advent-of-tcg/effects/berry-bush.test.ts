@@ -142,7 +142,7 @@ describe('Test Berry Bush Attach', () => {
 						query.slot.rowIndex(2),
 					),
 				)
-				yield* removeEffect(game)
+				await test.removeEffect()
 				await test.changeActiveHermit( 0)
 				await test.endTurn()
 

@@ -75,7 +75,7 @@ describe('Test Poe Poe Skizz Rare', () => {
 						query.slot.hermit,
 						query.slot.currentPlayer,
 					)
-					yield* removeEffect(game)
+					await test.removeEffect()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 3)

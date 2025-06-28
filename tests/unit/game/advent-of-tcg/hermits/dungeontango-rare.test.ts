@@ -80,7 +80,7 @@ describe('Test DM Tango Lackey', () => {
 					query.slot.rowIndex(0),
 					query.slot.index(0),
 				)
-				yield* removeEffect(game)
+				await test.removeEffect()
 				await test.playCardFromHand(Piston, 'single_use')
 				await test.pick(
 					query.slot.currentPlayer,

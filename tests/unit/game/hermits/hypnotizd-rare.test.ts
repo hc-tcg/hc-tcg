@@ -172,7 +172,7 @@ describe('Test Rare Hypnotizd', () => {
 						query.slot.rowIndex(0),
 						query.slot.index(0),
 					)
-					yield* removeEffect(game)
+					await test.removeEffect()
 					await test.attack('secondary')
 					await test.pick(
 						query.slot.opponent,

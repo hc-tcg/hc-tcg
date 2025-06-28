@@ -140,7 +140,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 					await test.attack('secondary')
 					// Flip 0 coins and cancel
 					await test.finishModalRequest( {result: false, cards: null})
-					yield* removeEffect(game)
+					await test.removeEffect()
 					// Flip a coin and finish attack
 					await test.playCardFromHand(Crossbow, 'single_use')
 					await test.attack('secondary')

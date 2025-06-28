@@ -43,7 +43,7 @@ describe('Test Smithing Table', () => {
 				await test.endTurn()
 
 				await test.playCardFromHand(WaterBucket, 'single_use')
-				yield* removeEffect(game)
+				await test.removeEffect()
 				await test.playCardFromHand(WaterBucket, 'attach', 0)
 				expect(
 					game.components.find(

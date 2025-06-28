@@ -43,7 +43,7 @@ describe('Test Rendog Role Play', () => {
 							.availableAttacks,
 					).not.toContain('secondary')
 					await test.finishModalRequest( {pick: 'primary'})
-					yield* removeEffect(game)
+					await test.removeEffect()
 					expect(game.state.turn.availableActions).toContain('SECONDARY_ATTACK')
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.attack('secondary')
@@ -102,7 +102,7 @@ describe('Test Rendog Role Play', () => {
 							.availableAttacks,
 					).not.toContain('secondary')
 					await test.finishModalRequest( {pick: 'primary'})
-					yield* removeEffect(game)
+					await test.removeEffect()
 					await test.attack('secondary')
 					await test.pick(
 						query.slot.currentPlayer,
@@ -184,7 +184,7 @@ describe('Test Rendog Role Play', () => {
 							.availableAttacks,
 					).not.toContain('secondary')
 					await test.finishModalRequest( {pick: 'primary'})
-					yield* removeEffect(game)
+					await test.removeEffect()
 					await test.attack('secondary')
 					await test.pick(
 						query.slot.opponent,

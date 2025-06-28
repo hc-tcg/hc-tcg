@@ -89,7 +89,7 @@ describe('Test Lizzie Evict', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(4),
 					)
-					yield* removeEffect(game)
+					await test.removeEffect()
 					yield* playCardFromHand(
 						game,
 						BerryBush,

@@ -138,7 +138,7 @@ describe('Test Slimeball', () => {
 				await test.playCardFromHand(Slimeball, 'attach', 1)
 				await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 				await test.playCardFromHand(Piston, 'single_use')
-				yield* removeEffect(game)
+				await test.removeEffect()
 				await test.endTurn()
 
 				await test.playCardFromHand(BalancedItem, 'item', 1, 0)
@@ -300,7 +300,7 @@ describe('Test Slimeball', () => {
 						query.slot.attach,
 					),
 				)
-				yield* removeEffect(game)
+				await test.removeEffect()
 				await test.playCardFromHand(WaterBucket, 'single_use')
 				await test.pick(
 					query.slot.currentPlayer,

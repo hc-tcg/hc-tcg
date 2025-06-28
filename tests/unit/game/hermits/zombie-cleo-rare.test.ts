@@ -369,7 +369,7 @@ function* testPuppetingTimeSkip(game: GameModel) {
 		(game.state.modalRequests[0].modal as CopyAttack.Data).availableAttacks,
 	).not.toContain('secondary')
 	await test.finishModalRequest( {pick: 'primary'})
-	yield* removeEffect(game)
+	await test.removeEffect()
 	await test.attack('secondary')
 	await test.pick(
 		query.slot.currentPlayer,

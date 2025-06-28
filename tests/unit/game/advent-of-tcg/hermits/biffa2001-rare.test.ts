@@ -66,7 +66,7 @@ describe('Test Biffa Secondary', () => {
 
 				await test.playCardFromHand(IronArmor, 'attach', 0)
 				await test.playCardFromHand(InstantHealth, 'single_use')
-				yield* removeEffect(game)
+				await test.removeEffect()
 				await test.playCardFromHand(InstantHealth, 'single_use')
 				await test.pick(
 					query.slot.currentPlayer,
@@ -131,7 +131,7 @@ describe('Test Biffa Secondary', () => {
 					expect(game.state.turn.availableActions).not.toContain(
 						'SECONDARY_ATTACK',
 					)
-					yield* removeEffect(game)
+					await test.removeEffect()
 					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health -

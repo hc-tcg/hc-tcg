@@ -55,7 +55,7 @@ describe('Test Human Cleo Betrayal', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* removeEffect(game)
+					await test.removeEffect()
 
 					await test.playCardFromHand(EnderPearl, 'single_use')
 					await test.pick(
