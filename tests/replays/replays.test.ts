@@ -134,8 +134,10 @@ describe('Test Replays', () => {
 			],
 			playerTwoDeck: [EthosLabCommon],
 			gameSaga: function* (con) {
-				yield* playCardFromHand(con.game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(con.game, Brush, 'single_use')
+				await test.playCardFromHand(
+ EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(
+ Brush, 'single_use')
 				yield* applyEffect(con.game)
 				const cardEntities = (
 					con.game.state.modalRequests[0].modal as DragCards.Data
