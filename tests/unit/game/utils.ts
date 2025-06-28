@@ -366,6 +366,7 @@ export class TestGameFixture {
 		await this.con.sendTurnAction({
 			playerEntity: this.game.currentPlayer.entity,
 			action: {
+				type: 'CHANGE_ACTIVE_HERMIT',
 				entity: this.game.components.findEntity(
 					SlotComponent,
 					query.slot.currentPlayer,

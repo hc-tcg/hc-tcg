@@ -134,10 +134,8 @@ describe('Test Replays', () => {
 			],
 			playerTwoDeck: [EthosLabCommon],
 			gameSaga: async (test, con) => {
-				await test.playCardFromHand(
- EthosLabCommon, 'hermit', 0)
-				await test.playCardFromHand(
- Brush, 'single_use')
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(Brush, 'single_use')
 				await applyEffect(con.game)
 				const cardEntities = (
 					con.game.state.modalRequests[0].modal as DragCards.Data
@@ -184,7 +182,7 @@ describe('Test Replays', () => {
 				await test.playCardFromHand(Chest, 'single_use')
 				await test.applyEffect()
 				const discardedCard = game.currentPlayer.getDiscarded()[0].entity
-				await test.finishModalRequest( {
+				await test.finishModalRequest({
 					result: true,
 					cards: [discardedCard],
 				})
@@ -301,7 +299,7 @@ describe('Test Replays', () => {
 				await test.playCardFromHand(EvilXisumaRare, 'hermit', 0)
 				await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
 				await test.attack('secondary')
-				await test.finishModalRequest( {
+				await test.finishModalRequest({
 					pick: 'primary',
 				})
 				await test.endTurn()
@@ -310,7 +308,7 @@ describe('Test Replays', () => {
 				await test.endTurn()
 
 				await test.attack('secondary')
-				await test.finishModalRequest( {
+				await test.finishModalRequest({
 					pick: 'secondary',
 				})
 				await test.endTurn()
@@ -336,7 +334,7 @@ describe('Test Replays', () => {
 				await test.playCardFromHand(RendogCommon, 'hermit', 0)
 				await test.endTurn()
 
-				await test.changeActiveHermit( 1)
+				await test.changeActiveHermit(1)
 
 				await test.forfeit(con.game.currentPlayer.entity)
 			},
