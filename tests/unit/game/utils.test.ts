@@ -12,23 +12,24 @@ import {
 
 describe('Test Game Utils', () => {
 	test('Test fails if game ends', async () => {
-		expect(() =>
-			await testGame(
-				{
-					playerOneDeck: [EthosLabCommon],
-					playerTwoDeck: [EthosLabCommon],
-					saga: async (test, game) => {
-						await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-						await test.endTurn()
+		expect(
+			async () =>
+				await testGame(
+					{
+						playerOneDeck: [EthosLabCommon],
+						playerTwoDeck: [EthosLabCommon],
+						saga: async (test, game) => {
+							await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+							await test.endTurn()
 
-						await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-						await test.attack('secondary')
-						// The game should never reach this point
-						await test.endTurn()
+							await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+							await test.attack('secondary')
+							// The game should never reach this point
+							await test.endTurn()
+						},
 					},
-				},
-				{oneShotMode: true},
-			),
+					{oneShotMode: true},
+				),
 		).toThrow()
 	})
 	test('Test achievment tests run', async () => {

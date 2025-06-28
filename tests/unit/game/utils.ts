@@ -587,10 +587,10 @@ export function testBossFight(
 }
 
 /** Test an achievement for player one in a game */
-export function testAchivement(
+export async function testAchivement(
 	options: {
 		achievement: Achievement
-		playGame: (game: GameModel) => any
+		playGame: (test: TestGameFixture, game: GameModel) => any
 		checkAchivement: (
 			game: GameModel,
 			achievement: AchievementComponent,
