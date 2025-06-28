@@ -40,7 +40,7 @@ describe('Test Game Utils', () => {
 				achievement: Win,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					playedGame = true
 					yield* forfeit(game.currentPlayer.entity)
 				},

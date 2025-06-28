@@ -22,7 +22,7 @@ describe('Test How Did We Get Here achievement', () => {
 				achievement: HowDidWeGetHere,
 				playerOneDeck: [GeminiTayRare, InvisibilityPotion, Clock],
 				playerTwoDeck: [PearlescentMoonRare, SplashPotionOfPoison, BadOmen],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
 					await test.endTurn()
 

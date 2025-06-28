@@ -352,7 +352,6 @@ class TestGameFixture {
 	async attack(attack: 'primary' | 'secondary' | 'single-use') {
 		await this.con.waitForWaitingForTurnAction()
 		await this.con.sendTurnAction({
-			type: 'GAME_TURN_ACTION',
 			playerEntity: this.game.currentPlayer.entity,
 			action: {
 				type: attackToAttackAction[attack],

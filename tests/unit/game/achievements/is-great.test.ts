@@ -12,7 +12,7 @@ describe('Test "...is Great" achievement', () => {
 				achievement: IsGreat,
 				playerOneDeck: [BdoubleO100Rare, BdoubleO100Rare, BdoubleO100Rare],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					yield* forfeit(game.opponentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
@@ -28,7 +28,7 @@ describe('Test "...is Great" achievement', () => {
 				achievement: IsGreat,
 				playerOneDeck: [BdoubleO100Rare, EthosLabRare],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					yield* forfeit(game.opponentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {

@@ -20,7 +20,7 @@ describe('Test Channeling achievement', () => {
 				achievement: Channeling,
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [GoatfatherRare, Anvil],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 1)
@@ -46,7 +46,7 @@ describe('Test Channeling achievement', () => {
 				achievement: Channeling,
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [BdoubleO100Rare, Anvil],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 1)
@@ -72,7 +72,7 @@ describe('Test Channeling achievement', () => {
 				achievement: Channeling,
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [GoatfatherRare, Anvil],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 1)
@@ -98,7 +98,7 @@ describe('Test Channeling achievement', () => {
 				achievement: Channeling,
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 0)

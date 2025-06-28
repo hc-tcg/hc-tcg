@@ -32,7 +32,7 @@ describe('Test Server Lag achievement', () => {
 					VintageBeefCommon,
 					BalancedItem,
 				],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -81,7 +81,7 @@ describe('Test Server Lag achievement', () => {
 					StressMonster101Rare,
 					BalancedItem,
 				],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -127,7 +127,7 @@ describe('Test Server Lag achievement', () => {
 					VintageBeefCommon,
 					BalancedItem,
 				],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -183,7 +183,7 @@ describe('Test Server Lag achievement', () => {
 					VintageBeefCommon,
 					...Array(3).fill(BalancedItem),
 				],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -245,7 +245,7 @@ describe('Test Server Lag achievement', () => {
 					...Array(5).fill(BalancedItem),
 					GeminiTayRare,
 				],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -302,7 +302,7 @@ describe('Test Server Lag achievement', () => {
 					VintageBeefCommon,
 					BalancedItem,
 				],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -353,7 +353,7 @@ describe('Test Server Lag achievement', () => {
 					VintageBeefCommon,
 					...Array(3).fill(BalancedItem),
 				],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -405,7 +405,7 @@ describe('Test Server Lag achievement', () => {
 					VintageBeefCommon,
 					...Array(3).fill(BalancedItem),
 				],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 

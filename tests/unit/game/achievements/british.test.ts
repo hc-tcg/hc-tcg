@@ -18,7 +18,7 @@ describe('Test British achievement', () => {
 				achievement: British,
 				playerOneDeck: [XisumavoidRare],
 				playerTwoDeck: [SpookyStressRare],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(XisumavoidRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -52,7 +52,7 @@ describe('Test British achievement', () => {
 				achievement: British,
 				playerOneDeck: [XisumavoidRare, SpookyStressRare],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(XisumavoidRare, 'hermit', 0)
 					await test.playCardFromHand(SpookyStressRare, 'hermit', 1)
 					await test.endTurn()

@@ -28,7 +28,7 @@ describe('Test Pesky Bird Achievement', () => {
 					BalancedItem,
 					BalancedItem,
 				],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(JinglerRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -65,7 +65,7 @@ describe('Test Pesky Bird Achievement', () => {
 					Composter,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Composter, 'single_use')
 

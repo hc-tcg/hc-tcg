@@ -26,7 +26,7 @@ describe('Test Cant Touch This achievement', () => {
 					InvisibilityPotion,
 				],
 				playerTwoDeck: [GoatfatherRare],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
@@ -54,7 +54,7 @@ describe('Test Cant Touch This achievement', () => {
 				achievement: CantTouchThis,
 				playerOneDeck: [EthosLabCommon, InvisibilityPotion, InvisibilityPotion],
 				playerTwoDeck: [EthosLabCommon, Thorns],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					await test.applyEffect()
@@ -89,7 +89,7 @@ describe('Test Cant Touch This achievement', () => {
 				achievement: CantTouchThis,
 				playerOneDeck: [ZedaphPlaysRare],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 0)
 					await test.endTurn()
 

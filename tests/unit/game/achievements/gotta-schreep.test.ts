@@ -18,7 +18,7 @@ describe('Test Gotta Screep achivement', () => {
 				achievement: GottaSchreep,
 				playerOneDeck: [BdoubleO100Rare, DiamondSword],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(BdoubleO100Rare, 'hermit', 0)
 					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
@@ -46,7 +46,7 @@ describe('Test Gotta Screep achivement', () => {
 				achievement: GottaSchreep,
 				playerOneDeck: [BdoubleO100Rare, DiamondSword],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(BdoubleO100Rare, 'hermit', 0)
 					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)

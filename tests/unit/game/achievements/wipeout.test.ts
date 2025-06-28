@@ -22,7 +22,7 @@ describe('Test "Wipeout" achievement', () => {
 				achievement: Wipeout,
 				playerOneDeck: [EthosLabCommon, Anvil],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
@@ -51,7 +51,7 @@ describe('Test "Wipeout" achievement', () => {
 				achievement: Wipeout,
 				playerOneDeck: [EthosLabCommon, Anvil],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
@@ -82,7 +82,7 @@ describe('Test "Wipeout" achievement', () => {
 				achievement: Wipeout,
 				playerOneDeck: [EthosLabCommon, LavaBucket],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
@@ -118,7 +118,7 @@ describe('Test "Wipeout" achievement', () => {
 				achievement: Wipeout,
 				playerOneDeck: [EthosLabCommon, Anvil],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 

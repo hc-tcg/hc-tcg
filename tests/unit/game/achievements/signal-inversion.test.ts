@@ -20,7 +20,7 @@ describe('Test "Signal Inversion" achievement', () => {
 				achievement: SignalInversion,
 				playerOneDeck: [EthosLabUltraRare, Fortune],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabUltraRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -49,7 +49,7 @@ describe('Test "Signal Inversion" achievement', () => {
 				achievement: SignalInversion,
 				playerOneDeck: [EthosLabCommon, Fortune],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -78,7 +78,7 @@ describe('Test "Signal Inversion" achievement', () => {
 				achievement: SignalInversion,
 				playerOneDeck: [EthosLabUltraRare, Fortune],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabUltraRare, 'hermit', 0)
 					await test.endTurn()
 
@@ -105,7 +105,7 @@ describe('Test "Signal Inversion" achievement', () => {
 				achievement: SignalInversion,
 				playerOneDeck: [EthosLabUltraRare],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabUltraRare, 'hermit', 0)
 					await test.endTurn()
 

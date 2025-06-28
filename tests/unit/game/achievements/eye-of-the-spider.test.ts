@@ -27,7 +27,7 @@ describe('Test Eye of the Spider achievement', () => {
 				achievement: EyeOfTheSpider,
 				playerOneDeck: [RenbobRare, SplashPotionOfPoison, Anvil],
 				playerTwoDeck: [GeminiTayCommon, GeminiTayCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(RenbobRare, 'hermit', 0)
 					await test.endTurn()
 					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
@@ -78,7 +78,7 @@ describe('Test Eye of the Spider achievement', () => {
 				achievement: EyeOfTheSpider,
 				playerOneDeck: [EthosLabCommon, SplashPotionOfPoison, Anvil],
 				playerTwoDeck: [GeminiTayCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
@@ -111,7 +111,7 @@ describe('Test Eye of the Spider achievement', () => {
 				achievement: EyeOfTheSpider,
 				playerOneDeck: [EthosLabCommon, LavaBucket],
 				playerTwoDeck: [GeminiTayCommon, GeminiTayCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
@@ -156,7 +156,7 @@ describe('Test Eye of the Spider achievement', () => {
 				achievement: EyeOfTheSpider,
 				playerOneDeck: [EthosLabCommon, SplashPotionOfPoison, Anvil],
 				playerTwoDeck: [GeminiTayCommon, MilkBucket],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)

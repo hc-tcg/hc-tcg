@@ -21,7 +21,7 @@ describe('Test Master of Puppets Achievement', () => {
 				achievement: MasterOfPuppets,
 				playerOneDeck: [RendogRare, EthosLabCommon],
 				playerTwoDeck: [ZombieCleoRare],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(RendogRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
@@ -57,7 +57,7 @@ describe('Test Master of Puppets Achievement', () => {
 				achievement: MasterOfPuppets,
 				playerOneDeck: [ZombieCleoRare, ZombieCleoRare],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 1)
 					await test.endTurn()

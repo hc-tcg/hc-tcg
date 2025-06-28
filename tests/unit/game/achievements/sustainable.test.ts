@@ -20,7 +20,7 @@ describe('Test SUStainable achivement', () => {
 					Composter,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Composter, 'single_use')
 

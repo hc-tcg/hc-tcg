@@ -10,7 +10,7 @@ test('Test Use Like a Hermit achievement', async () => {
 			achievement: CertifiedZombie,
 			playerOneDeck: [ArmorStand],
 			playerTwoDeck: [EthosLabCommon],
-			playGame: function* (game) {
+			playGame: async (test, game) => {
 				await test.playCardFromHand(ArmorStand, 'hermit', 0)
 				await test.endTurn()
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)

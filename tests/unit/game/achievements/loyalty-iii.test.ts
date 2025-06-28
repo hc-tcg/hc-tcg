@@ -22,7 +22,7 @@ describe('Test Loyalty III Achievement', () => {
 				achievement: LoyaltyIII,
 				playerOneDeck: [EthosLabCommon, Trident],
 				playerTwoDeck: [EthosLabCommon, InstantHealthII],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -62,7 +62,7 @@ describe('Test Loyalty III Achievement', () => {
 				achievement: LoyaltyIII,
 				playerOneDeck: [EthosLabCommon, Trident, Trident],
 				playerTwoDeck: [EthosLabCommon, BadOmen, InstantHealthII],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 
@@ -102,7 +102,7 @@ describe('Test Loyalty III Achievement', () => {
 				achievement: LoyaltyIII,
 				playerOneDeck: [EthosLabCommon, Trident],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
 

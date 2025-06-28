@@ -29,7 +29,7 @@ describe('Test Free & Steel Achievement', () => {
 					BalancedItem,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
@@ -61,7 +61,7 @@ describe('Test Free & Steel Achievement', () => {
 					BalancedItem,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FlintAndSteel, 'single_use')
 					await test.applyEffect()

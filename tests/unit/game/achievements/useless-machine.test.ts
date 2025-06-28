@@ -30,7 +30,7 @@ describe('Test Useless Machine Achievement', () => {
 					BalancedItem,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Composter, 'single_use')
 					await test.pick(
@@ -70,7 +70,7 @@ describe('Test Useless Machine Achievement', () => {
 					FlintAndSteel,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Composter, 'single_use')
 					await test.pick(
@@ -110,7 +110,7 @@ describe('Test Useless Machine Achievement', () => {
 					FlintAndSteel,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Composter, 'single_use')
 					await test.pick(

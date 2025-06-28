@@ -32,7 +32,7 @@ describe('Test Go Fish Achievement', () => {
 					Mending,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FishingRod, 'single_use')
 					await test.applyEffect()
@@ -64,7 +64,7 @@ describe('Test Go Fish Achievement', () => {
 					Mending,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
+				playGame: async (test, game) => {
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(IronArmor, 'attach', 0)
