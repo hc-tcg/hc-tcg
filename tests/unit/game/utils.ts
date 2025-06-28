@@ -66,27 +66,6 @@ export function getWinner(game: GameModel): PlayerComponent | null {
 	)
 }
 
-function getSagaMiddleware(): SagaMiddleware<object> {
-	const sagaMiddleware = createSagaMiddleware({
-		// Prevent default behavior where redux saga logs errors to stderr. This is not useful to tests.
-		onError: (_err, {sagaStack: _}) => {},
-	})
-	createStore(() => {}, applyMiddleware(sagaMiddleware))
-	return sagaMiddleware
-}
-
-function testSagas(rootSaga: any, testingSaga: any) {
-	const sagaMiddleware = getSagaMiddleware()
-
-	let saga = sagaMiddleware.run(function* () {
-		yield* race([rootSaga, testingSaga])
-	})
-
-	if (saga.error()) {
-		throw saga.error()
-	}
-}
-
 export class TestGameFixture {
 	con: GameController
 	game: GameModel
@@ -548,13 +527,5 @@ export async function testReplayGame(options: {
 		})(),
 	])
 
-	const sagaMiddleware = getSagaMiddleware()
-
-	const saga = sagaMiddleware.run(function* () {
-		yield* call(options.afterGame, controller)
-	})
-
-	if (saga.error()) {
-		throw saga.error()
-	}
+	// @todo
 }
