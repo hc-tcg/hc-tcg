@@ -18,12 +18,12 @@ describe('Test Pearlescent Moon Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [PearlescentMoonRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PearlescentMoonRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(PearlescentMoonRare, 'hermit', 0)
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							StatusEffectComponent,
@@ -34,7 +34,7 @@ describe('Test Pearlescent Moon Rare', () => {
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -51,7 +51,7 @@ describe('Test Pearlescent Moon Rare', () => {
 							query.effect.targetEntity(game.opponentPlayer.entity),
 						),
 					).not.toBe(null)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					// Aussie Ping should be blocked by the AussiePingImmune effect.
 					expect(
@@ -72,20 +72,20 @@ describe('Test Pearlescent Moon Rare', () => {
 			{
 				playerOneDeck: [SkizzlemanRare, Anvil],
 				playerTwoDeck: [PearlescentMoonRare, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PearlescentMoonRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(PearlescentMoonRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
 					// Give Skizzleman Rare the Aussie Ping effect.
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					// Use Anvil to trigger Skizz's bonus damage.
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(
@@ -113,18 +113,18 @@ describe('Test Pearlescent Moon Rare', () => {
 			{
 				playerOneDeck: [PoePoeSkizzRare],
 				playerTwoDeck: [PearlescentMoonRare, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, PoePoeSkizzRare, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PearlescentMoonRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(PearlescentMoonRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
 					// Give Poe Poe Skizz the Aussie Ping effect.
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.rowIndex(1),

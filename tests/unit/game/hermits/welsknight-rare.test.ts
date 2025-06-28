@@ -13,12 +13,12 @@ describe('Test rare welsknight', () => {
 			{
 				playerOneDeck: [GeminiTayCommon, GoldArmor, InstantHealthII],
 				playerTwoDeck: [WelsknightRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, WelsknightRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(WelsknightRare, 'hermit', 0)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(
@@ -29,10 +29,10 @@ describe('Test rare welsknight', () => {
 						)?.health,
 					).toBe(GeminiTayCommon.health - WelsknightRare.secondary.damage)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(
@@ -49,18 +49,18 @@ describe('Test rare welsknight', () => {
 					)
 
 					//make it possible to survive 140 damage
-					yield* playCardFromHand(game, InstantHealthII, 'single_use')
+					await test.playCardFromHand(InstantHealthII, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* playCardFromHand(game, GoldArmor, 'attach', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(GoldArmor, 'attach', 0)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(

@@ -28,9 +28,9 @@ function testAllayRetrieval(card: Card, canRetrieve: boolean) {
 				Allay,
 			],
 			playerTwoDeck: [EthosLabCommon],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, Composter, 'single_use')
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(Composter, 'single_use')
 				yield* pick(
 					game,
 					game.state.pickRequests[0].canPick,
@@ -51,11 +51,11 @@ function testAllayRetrieval(card: Card, canRetrieve: boolean) {
 						.map((card) => card.props),
 				).toStrictEqual([card, Allay, Allay])
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* endTurn(game)
 
 				if (canRetrieve) {
-					yield* playCardFromHand(game, Allay, 'single_use')
+					await test.playCardFromHand(Allay, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,

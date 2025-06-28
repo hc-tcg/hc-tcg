@@ -27,13 +27,13 @@ describe('Test Rare Worm Man', () => {
 			{
 				playerOneDeck: [EthosLabCommon, TargetBlock],
 				playerTwoDeck: [WormManRare, PoultrymanCommon, PoultrymanCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, WormManRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
-					yield* playCardFromHand(game, PoultrymanCommon, 'hermit', 1)
+					await test.playCardFromHand(WormManRare, 'hermit', 0)
+					await test.attack('secondary')
+					await test.playCardFromHand(PoultrymanCommon, 'hermit', 1)
 					expect(
 						game.components.find(
 							CardComponent,
@@ -46,11 +46,11 @@ describe('Test Rare Worm Man', () => {
 					)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
-					yield* playCardFromHand(game, PoultrymanCommon, 'hermit', 2)
+					await test.attack('secondary')
+					await test.playCardFromHand(PoultrymanCommon, 'hermit', 2)
 					expect(
 						game.components.find(
 							CardComponent,
@@ -60,7 +60,7 @@ describe('Test Rare Worm Man', () => {
 					).toBe(true)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 1)
@@ -73,14 +73,14 @@ describe('Test Rare Worm Man', () => {
 					).toBe(false)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, TargetBlock, 'single_use')
+					await test.playCardFromHand(TargetBlock, 'single_use')
 					yield* pick(
 						game,
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							CardComponent,
@@ -104,25 +104,25 @@ describe('Test Rare Worm Man', () => {
 					PoultrymanCommon,
 				],
 				playerTwoDeck: [EthosLabCommon, ThornsIII],
-				saga: function* (game) {
-					yield* playCardFromHand(game, WormManRare, 'hermit', 0)
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(WormManRare, 'hermit', 0)
+					await test.playCardFromHand(ArmorStand, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ThornsIII, 'attach', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(ThornsIII, 'attach', 0)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* changeActiveHermit(game, 1)
-					yield* playCardFromHand(game, PoultrymanCommon, 'hermit', 2)
+					await test.playCardFromHand(PoultrymanCommon, 'hermit', 2)
 					expect(
 						game.components.find(
 							CardComponent,
@@ -144,13 +144,13 @@ describe('Test Rare Worm Man', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [WormManRare, ArmorStand],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, WormManRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 1)
+					await test.playCardFromHand(WormManRare, 'hermit', 0)
+					await test.attack('secondary')
+					await test.playCardFromHand(ArmorStand, 'hermit', 1)
 					expect(
 						game.components.find(
 							CardComponent,
@@ -169,17 +169,17 @@ describe('Test Rare Worm Man', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Anvil, Bow],
 				playerTwoDeck: [WormManRare, PoultrymanCommon, ThornsIII],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, WormManRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
-					yield* playCardFromHand(game, PoultrymanCommon, 'hermit', 1)
+					await test.playCardFromHand(WormManRare, 'hermit', 0)
+					await test.attack('secondary')
+					await test.playCardFromHand(PoultrymanCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'single-use')
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('single-use')
 					expect(
 						game.components.find(
 							CardComponent,
@@ -189,7 +189,7 @@ describe('Test Rare Worm Man', () => {
 					).toBe(true)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ThornsIII, 'attach', 1)
+					await test.playCardFromHand(ThornsIII, 'attach', 1)
 					expect(
 						game.components.find(
 							CardComponent,
@@ -199,8 +199,8 @@ describe('Test Rare Worm Man', () => {
 					).toBe(true)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Bow, 'single_use')
-					yield* attack(game, 'single-use')
+					await test.playCardFromHand(Bow, 'single_use')
+					await test.attack('single-use')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -225,22 +225,22 @@ describe('Test Rare Worm Man', () => {
 			{
 				playerOneDeck: [WormManRare, EthosLabCommon],
 				playerTwoDeck: [HumanCleoRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, WormManRare, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(WormManRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						HumanCleoRare.health -
 							WormManRare.secondary.damage -
 							WEAKNESS_DAMAGE /** Prankster -> PvP */,
 					)
 					expect(game.state.turn.availableActions).toContain('END_TURN')
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					expect(
 						game.components.find(
 							CardComponent,
@@ -251,10 +251,10 @@ describe('Test Rare Worm Man', () => {
 					expect(game.state.turn.availableActions).toContain('END_TURN')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,

@@ -42,14 +42,14 @@ describe('Test Trapdoor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Trapdoor],
 				playerTwoDeck: [FarmerBeefCommon, NetheriteSword],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(Trapdoor, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 0)
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -70,8 +70,8 @@ describe('Test Trapdoor', () => {
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, NetheriteSword, 'single_use')
-					yield* attack(game, 'single-use')
+					await test.playCardFromHand(NetheriteSword, 'single_use')
+					await test.attack('single-use')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -108,25 +108,25 @@ describe('Test Trapdoor', () => {
 					EthosLabCommon,
 				],
 				playerTwoDeck: [VintageBeefCommon, Anvil],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, IronArmor, 'attach', 2)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EnderPearl, 'single_use')
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(IronArmor, 'attach', 2)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EnderPearl, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(Trapdoor, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Anvil, 'single_use')
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(Anvil, 'single_use')
 					expect(Anvil.attackPreview?.(game)).toBe('$A30$ + $A10$ x 2')
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -167,27 +167,27 @@ describe('Test Trapdoor', () => {
 					EthosLabCommon,
 				],
 				playerTwoDeck: [SpookyStressRare, WaterBucket, Anvil],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 3)
-					yield* playCardFromHand(game, IronArmor, 'attach', 3)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EnderPearl, 'single_use')
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 3)
+					await test.playCardFromHand(IronArmor, 'attach', 3)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EnderPearl, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 3)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 3)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 3)
+					await test.playCardFromHand(Trapdoor, 'attach', 3)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SpookyStressRare, 'hermit', 3)
-					yield* playCardFromHand(game, WaterBucket, 'attach', 3)
-					yield* playCardFromHand(game, Anvil, 'single_use')
+					await test.playCardFromHand(SpookyStressRare, 'hermit', 3)
+					await test.playCardFromHand(WaterBucket, 'attach', 3)
+					await test.playCardFromHand(Anvil, 'single_use')
 					expect(Anvil.attackPreview?.(game)).toBe('$A30$')
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -238,26 +238,26 @@ describe('Test Trapdoor', () => {
 					EthosLabCommon,
 				],
 				playerTwoDeck: [GoatfatherRare, Anvil],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 3)
-					yield* playCardFromHand(game, IronArmor, 'attach', 3)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, EnderPearl, 'single_use')
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 3)
+					await test.playCardFromHand(IronArmor, 'attach', 3)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(EnderPearl, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 3)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 2)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 3)
+					await test.playCardFromHand(Trapdoor, 'attach', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GoatfatherRare, 'hermit', 3)
-					yield* playCardFromHand(game, Anvil, 'single_use')
+					await test.playCardFromHand(GoatfatherRare, 'hermit', 3)
+					await test.playCardFromHand(Anvil, 'single_use')
 					expect(Anvil.attackPreview?.(game)).toBe('$A30$')
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -313,27 +313,27 @@ describe('Test Trapdoor', () => {
 					EthosLabCommon,
 				],
 				playerTwoDeck: [VintageBeefCommon, SplashPotionOfHarming],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, IronArmor, 'attach', 2)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EnderPearl, 'single_use')
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(IronArmor, 'attach', 2)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EnderPearl, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(Trapdoor, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* playCardFromHand(game, SplashPotionOfHarming, 'single_use')
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.playCardFromHand(SplashPotionOfHarming, 'single_use')
 					expect(SplashPotionOfHarming.attackPreview?.(game)).toBe(
 						'$A40$ + $A20$ x 2',
 					)
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -366,15 +366,15 @@ describe('Test Trapdoor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Trapdoor, LightningRod],
 				playerTwoDeck: [FarmerBeefCommon, TargetBlock],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
-					yield* playCardFromHand(game, LightningRod, 'attach', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Trapdoor, 'attach', 1)
+					await test.playCardFromHand(LightningRod, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 0)
+					await test.attack('primary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -393,14 +393,14 @@ describe('Test Trapdoor', () => {
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, TargetBlock, 'single_use')
+					await test.playCardFromHand(TargetBlock, 'single_use')
 					yield* pick(
 						game,
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -433,18 +433,18 @@ describe('Test Trapdoor', () => {
 					...Array(3).fill(Trapdoor),
 				],
 				playerTwoDeck: [VintageBeefCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 3)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 0)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 2)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 3)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 3)
+					await test.playCardFromHand(Trapdoor, 'attach', 0)
+					await test.playCardFromHand(Trapdoor, 'attach', 2)
+					await test.playCardFromHand(Trapdoor, 'attach', 3)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -486,15 +486,15 @@ describe('Test Trapdoor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Wolf, Trapdoor],
 				playerTwoDeck: [VintageBeefCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Wolf, 'attach', 0)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(Wolf, 'attach', 0)
+					await test.playCardFromHand(Trapdoor, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.attack('primary')
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						VintageBeefCommon.health - 20 /** Wolf */,
 					)
@@ -519,15 +519,15 @@ describe('Test Trapdoor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns, Trapdoor],
 				playerTwoDeck: [VintageBeefCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Thorns, 'attach', 0)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(Thorns, 'attach', 0)
+					await test.playCardFromHand(Trapdoor, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.attack('primary')
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						VintageBeefCommon.health,
 					)
@@ -552,15 +552,15 @@ describe('Test Trapdoor', () => {
 			{
 				playerOneDeck: [VintageBeefCommon, PotionOfWeakness],
 				playerTwoDeck: [PrincessGemRare, EthosLabCommon, Wolf, Trapdoor],
-				saga: function* (game) {
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PrincessGemRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Wolf, 'attach', 0)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(PrincessGemRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(Wolf, 'attach', 0)
+					await test.playCardFromHand(Trapdoor, 'attach', 1)
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -569,9 +569,9 @@ describe('Test Trapdoor', () => {
 					)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						VintageBeefCommon.health -
 							PrincessGemRare.secondary.damage -
@@ -600,15 +600,15 @@ describe('Test Trapdoor', () => {
 			{
 				playerOneDeck: [VintageBeefCommon, PotionOfWeakness],
 				playerTwoDeck: [PrincessGemRare, EthosLabCommon, Thorns, Trapdoor],
-				saga: function* (game) {
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PrincessGemRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Thorns, 'attach', 0)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(PrincessGemRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(Thorns, 'attach', 0)
+					await test.playCardFromHand(Trapdoor, 'attach', 1)
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -617,9 +617,9 @@ describe('Test Trapdoor', () => {
 					)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						VintageBeefCommon.health -
 							PrincessGemRare.secondary.damage -
@@ -648,13 +648,13 @@ describe('Test Trapdoor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Trapdoor],
 				playerTwoDeck: [RenbobRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(Trapdoor, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, RenbobRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(RenbobRare, 'hermit', 0)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
@@ -676,15 +676,15 @@ describe('Test Trapdoor', () => {
 					Trapdoor,
 				],
 				playerTwoDeck: [PoePoeSkizzRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(Trapdoor, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PoePoeSkizzRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -729,27 +729,27 @@ describe('Test Trapdoor', () => {
 					...Array(3).fill(Trapdoor),
 				],
 				playerTwoDeck: [SkizzlemanRare, LavaBucket, Anvil],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 3)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 4)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 3)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 4)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 3)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 4)
+					await test.playCardFromHand(Trapdoor, 'attach', 1)
+					await test.playCardFromHand(Trapdoor, 'attach', 3)
+					await test.playCardFromHand(Trapdoor, 'attach', 4)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 2)
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
+					await test.playCardFromHand(SkizzlemanRare, 'hermit', 2)
+					await test.playCardFromHand(LavaBucket, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(
@@ -821,22 +821,22 @@ describe('Test Trapdoor', () => {
 					InvisibilityPotion,
 				],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(Trapdoor, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,

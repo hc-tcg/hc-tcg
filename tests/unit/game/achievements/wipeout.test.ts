@@ -23,18 +23,18 @@ describe('Test "Wipeout" achievement', () => {
 				playerOneDeck: [EthosLabCommon, Anvil],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					yield* endTurn(game)
 
 					game.components
 						.filter(RowComponent, query.row.hasHermit)
 						.forEach((row) => (row.health = 10))
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
 
 					yield* forfeit(game.currentPlayer.entity)
 				},
@@ -52,18 +52,18 @@ describe('Test "Wipeout" achievement', () => {
 				playerOneDeck: [EthosLabCommon, Anvil],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					game.components
 						.filter(RowComponent, query.row.hasHermit)
 						.forEach((row) => (row.health = 10))
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
 
 					yield* endTurn(game)
 
@@ -83,14 +83,14 @@ describe('Test "Wipeout" achievement', () => {
 				playerOneDeck: [EthosLabCommon, LavaBucket],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
+					await test.playCardFromHand(LavaBucket, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
@@ -100,7 +100,7 @@ describe('Test "Wipeout" achievement', () => {
 					game.components
 						.filter(RowComponent, query.row.hasHermit)
 						.forEach((row) => (row.health = 10))
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* forfeit(game.currentPlayer.entity)
@@ -119,25 +119,25 @@ describe('Test "Wipeout" achievement', () => {
 				playerOneDeck: [EthosLabCommon, Anvil],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					yield* endTurn(game)
 
 					game.components
 						.filter(RowComponent, query.row.hasHermit)
 						.forEach((row) => (row.health = 10))
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
 
 					yield* forfeit(game.currentPlayer.entity)
 				},

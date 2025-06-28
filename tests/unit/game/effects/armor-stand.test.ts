@@ -11,13 +11,13 @@ describe('Test Armor Stand', () => {
 			{
 				playerOneDeck: [ArmorStand, EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(ArmorStand, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(game.currentPlayer.lives).toBe(3)
@@ -32,8 +32,8 @@ describe('Test Armor Stand', () => {
 			{
 				playerOneDeck: [ArmorStand],
 				playerTwoDeck: [],
-				saga: function* (game) {
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(ArmorStand, 'hermit', 0)
 
 					for (const slot of game.components.filter(
 						SlotComponent,

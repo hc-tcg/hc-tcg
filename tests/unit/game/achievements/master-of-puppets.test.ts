@@ -22,13 +22,13 @@ describe('Test Master of Puppets Achievement', () => {
 				playerOneDeck: [RendogRare, EthosLabCommon],
 				playerTwoDeck: [ZombieCleoRare],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, RendogRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(RendogRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
-					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.rowIndex(0),
@@ -60,13 +60,13 @@ describe('Test Master of Puppets Achievement', () => {
 				playerOneDeck: [ZombieCleoRare, ZombieCleoRare],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
-					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 1)
+					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
+					await test.playCardFromHand(ZombieCleoRare, 'hermit', 1)
 					yield* endTurn(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.rowIndex(1),

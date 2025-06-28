@@ -15,17 +15,17 @@ describe('Test rare King Joel Steal', () => {
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, BalancedItem],
 				playerTwoDeck: [KingJoelRare, WelsknightCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
-					yield* playCardFromHand(game, BalancedItem, 'item', 1, 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
+					await test.playCardFromHand(BalancedItem, 'item', 1, 0)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, KingJoelRare, 'hermit', 0)
-					yield* playCardFromHand(game, WelsknightCommon, 'hermit', 1)
+					await test.playCardFromHand(KingJoelRare, 'hermit', 0)
+					await test.playCardFromHand(WelsknightCommon, 'hermit', 1)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toHaveLength(2)
 
@@ -64,18 +64,18 @@ describe('Test rare King Joel Steal', () => {
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, BalancedItem],
 				playerTwoDeck: [KingJoelRare, WelsknightCommon, Egg],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
-					yield* playCardFromHand(game, BalancedItem, 'item', 1, 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
+					await test.playCardFromHand(BalancedItem, 'item', 1, 0)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, KingJoelRare, 'hermit', 0)
-					yield* playCardFromHand(game, WelsknightCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Egg, 'single_use')
+					await test.playCardFromHand(KingJoelRare, 'hermit', 0)
+					await test.playCardFromHand(WelsknightCommon, 'hermit', 1)
+					await test.playCardFromHand(Egg, 'single_use')
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toHaveLength(3)
 

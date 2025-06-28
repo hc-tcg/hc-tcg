@@ -31,8 +31,8 @@ describe('Test Useless Machine Achievement', () => {
 				],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Composter, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Composter, 'single_use')
 					yield* pick(
 						game,
 						query.slot.hand,
@@ -73,8 +73,8 @@ describe('Test Useless Machine Achievement', () => {
 				],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Composter, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Composter, 'single_use')
 					yield* pick(
 						game,
 						query.slot.hand,
@@ -115,8 +115,8 @@ describe('Test Useless Machine Achievement', () => {
 				],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Composter, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Composter, 'single_use')
 					yield* pick(
 						game,
 						query.slot.hand,

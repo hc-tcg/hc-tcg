@@ -9,17 +9,17 @@ import UsedClockEffect from 'common/status-effects/used-clock'
 import {applyEffect, endTurn, playCardFromHand, testGame} from '../utils'
 
 function* testClockHelperSaga(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 	// Clock can not be played on turn one.
 	yield* endTurn(game)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, Clock, 'single_use')
+	await test.playCardFromHand(Clock, 'single_use')
 
 	yield* applyEffect(game)
 

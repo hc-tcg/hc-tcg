@@ -19,15 +19,15 @@ describe('Test Poe Poe Skizz Rare', () => {
 			{
 				playerOneDeck: [PoePoeSkizzRare],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, PoePoeSkizzRare, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.rowIndex(1),
@@ -61,16 +61,16 @@ describe('Test Poe Poe Skizz Rare', () => {
 			{
 				playerOneDeck: [PoePoeSkizzRare, ...Array(4).fill(EthosLabCommon), Bow],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, PoePoeSkizzRare, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Bow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Bow, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.rowIndex(1),
@@ -78,11 +78,11 @@ describe('Test Poe Poe Skizz Rare', () => {
 						query.slot.currentPlayer,
 					)
 					yield* removeEffect(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 3)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 4)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 3)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 4)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(

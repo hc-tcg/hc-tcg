@@ -14,13 +14,13 @@ describe('Test Netherite Armor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, NetheriteArmor],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, NetheriteArmor, 'attach', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(NetheriteArmor, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.attack('primary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -38,15 +38,15 @@ describe('Test Netherite Armor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, NetheriteArmor],
 				playerTwoDeck: [EthosLabCommon, Egg],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, NetheriteArmor, 'attach', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(NetheriteArmor, 'attach', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Egg, 'single_use')
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Egg, 'single_use')
+					await test.attack('primary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -65,14 +65,14 @@ describe('Test Netherite Armor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, NetheriteArmor],
 				playerTwoDeck: [EthosLabCommon, DiamondSword],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, NetheriteArmor, 'attach', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(NetheriteArmor, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, DiamondSword, 'single_use')
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(DiamondSword, 'single_use')
+					await test.attack('primary')
 
 					expect(
 						game.components.find(
@@ -91,14 +91,14 @@ describe('Test Netherite Armor', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, NetheriteArmor],
 				playerTwoDeck: [EthosLabCommon, TargetBlock],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, NetheriteArmor, 'attach', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(NetheriteArmor, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, TargetBlock, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(TargetBlock, 'single_use')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -106,7 +106,7 @@ describe('Test Netherite Armor', () => {
 						query.slot.rowIndex(1),
 					)
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 
 					expect(
 						game.components.find(

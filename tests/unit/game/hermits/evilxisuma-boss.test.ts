@@ -33,15 +33,15 @@ import {
 } from '../utils'
 
 function* testConsecutiveAmnesia(game: GameModel) {
-	yield* playCardFromHand(game, ArchitectFalseRare, 'hermit', 0)
+	await test.playCardFromHand(ArchitectFalseRare, 'hermit', 0)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
+	await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
 	yield* bossAttack(game, '50DMG')
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, Anvil, 'single_use')
-	yield* attack(game, 'secondary')
+	await test.playCardFromHand(Anvil, 'single_use')
+	await test.attack('secondary')
 	yield* endTurn(game)
 
 	expect(
@@ -70,8 +70,8 @@ function* testConsecutiveAmnesia(game: GameModel) {
 		ArchitectFalseRare.health - 50,
 	)
 
-	yield* playCardFromHand(game, Anvil, 'single_use')
-	yield* attack(game, 'secondary')
+	await test.playCardFromHand(Anvil, 'single_use')
+	await test.attack('secondary')
 	yield* endTurn(game)
 
 	// The status should not be present.
@@ -96,16 +96,16 @@ function* testConsecutiveAmnesia(game: GameModel) {
 }
 
 function* testVersusRendogRare(game: GameModel) {
-	yield* playCardFromHand(game, RendogRare, 'hermit', 0)
+	await test.playCardFromHand(RendogRare, 'hermit', 0)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
+	await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
 	yield* bossAttack(game, '50DMG')
 	yield* endTurn(game)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	// Pick target for Role Play
-	yield* pick(game, query.slot.opponent, query.slot.hermit)
+	await test.pick(query.slot.opponent, query.slot.hermit)
 	yield* finishModalRequest(game, {pick: 'secondary'})
 	// Pick attack to disable for Derpcoin
 	yield* finishModalRequest(game, {pick: 'primary'})
@@ -126,9 +126,9 @@ function* testVersusRendogRare(game: GameModel) {
 
 	expect(game.currentPlayer.activeRow?.health).toBe(RendogRare.health - 50)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	// Pick target for Role Play
-	yield* pick(game, query.slot.opponent, query.slot.hermit)
+	await test.pick(query.slot.opponent, query.slot.hermit)
 	yield* finishModalRequest(game, {pick: 'secondary'})
 	// Pick attack to disable for Derpcoin
 	yield* finishModalRequest(game, {pick: 'primary'})
@@ -146,19 +146,19 @@ function* testVersusRendogRare(game: GameModel) {
 }
 
 function* testDirectlyOpposite(game: GameModel) {
-	yield* playCardFromHand(game, RenbobRare, 'hermit', 1)
-	yield* playCardFromHand(game, PoePoeSkizzRare, 'hermit', 0)
+	await test.playCardFromHand(RenbobRare, 'hermit', 1)
+	await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
 
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
+	await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
 
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, Anvil, 'single_use')
+	await test.playCardFromHand(Anvil, 'single_use')
 	expect(Anvil.attackPreview?.(game)).toBe('$A30$')
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	expect(game.opponentPlayer.activeRow?.health).toBe(
 		EvilXisumaBoss.health - RenbobRare.secondary.damage - 30 /* Anvil */,
 	)
@@ -170,7 +170,7 @@ function* testDirectlyOpposite(game: GameModel) {
 	yield* endTurn(game)
 	yield* endTurn(game)
 	// Test Jumpscare
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	yield* pick(
 		game,
 		query.slot.currentPlayer,
@@ -186,14 +186,14 @@ function* testDirectlyOpposite(game: GameModel) {
 }
 
 function* testNineAttached(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-	yield* playCardFromHand(game, GoldArmor, 'attach', 0)
-	yield* playCardFromHand(game, GoldArmor, 'attach', 1)
-	yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+	await test.playCardFromHand(GoldArmor, 'attach', 0)
+	await test.playCardFromHand(GoldArmor, 'attach', 1)
+	await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 	yield* endTurn(game)
 	// Boss Turn 1
-	yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
+	await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
 	const nineEffect = game.components.filter(
 		StatusEffectComponent,
 		query.effect.is(ExBossNineEffect),
@@ -202,12 +202,12 @@ function* testNineAttached(game: GameModel) {
 	expect(nineEffect).not.toBe(undefined)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, BalancedItem, 'item', 0, 1)
+	await test.playCardFromHand(BalancedItem, 'item', 0, 1)
 	yield* endTurn(game)
 	// Boss Turn 2
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, BalancedItem, 'item', 1, 0)
+	await test.playCardFromHand(BalancedItem, 'item', 1, 0)
 	yield* endTurn(game)
 	// Boss Turns 3-8
 	while (game.state.turn.turnNumber < 18) {
@@ -241,37 +241,37 @@ function* testNineAttached(game: GameModel) {
 }
 
 function* testChallengerVictory(game: GameModel) {
-	yield* playCardFromHand(game, MumboJumboRare, 'hermit', 0)
-	yield* playCardFromHand(game, MumboJumboRare, 'hermit', 1)
-	yield* playCardFromHand(game, MumboJumboRare, 'hermit', 2)
-	yield* playCardFromHand(game, PranksterDoubleItem, 'item', 0, 0)
+	await test.playCardFromHand(MumboJumboRare, 'hermit', 0)
+	await test.playCardFromHand(MumboJumboRare, 'hermit', 1)
+	await test.playCardFromHand(MumboJumboRare, 'hermit', 2)
+	await test.playCardFromHand(PranksterDoubleItem, 'item', 0, 0)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
+	await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
 	yield* bossAttack(game, '50DMG')
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, PranksterDoubleItem, 'item', 1, 0)
-	yield* attack(game, 'secondary')
+	await test.playCardFromHand(PranksterDoubleItem, 'item', 1, 0)
+	await test.attack('secondary')
 	yield* endTurn(game)
 
 	yield* bossAttack(game, '50DMG')
 	yield* endTurn(game)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	expect(game.opponentPlayer.lives).toBe(2)
 	yield* endTurn(game)
 
 	yield* bossAttack(game, '50DMG', 'ABLAZE')
 	yield* endTurn(game)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	yield* endTurn(game)
 
 	yield* bossAttack(game, '50DMG', 'ABLAZE')
 	yield* endTurn(game)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	expect(game.opponentPlayer.lives).toBe(1)
 	yield* endTurn(game)
 
@@ -280,13 +280,13 @@ function* testChallengerVictory(game: GameModel) {
 	yield* endTurn(game)
 
 	yield* changeActiveHermit(game, 1)
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	yield* endTurn(game)
 
 	yield* bossAttack(game, '50DMG', 'ABLAZE', 'EFFECTCARD')
 	yield* endTurn(game)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 }
 
 describe('Test Evil X Boss Fight', () => {
@@ -362,11 +362,11 @@ describe('Test Evil X Boss Fight', () => {
 		testBossFight(
 			{
 				playerDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
+					await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
 					yield* bossAttack(game, '90DMG')
 				},
 				then: (game) => {
@@ -383,13 +383,13 @@ describe('Test Evil X Boss Fight', () => {
 		testBossFight(
 			{
 				playerDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
+					await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
 					yield* bossAttack(game, '90DMG')
 					yield* endTurn(game)
 

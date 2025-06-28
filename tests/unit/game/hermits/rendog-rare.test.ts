@@ -25,14 +25,14 @@ describe('Test Rendog Role Play', () => {
 			{
 				playerOneDeck: [ZombieCleoRare, EthosLabCommon],
 				playerTwoDeck: [RendogRare, EthosLabCommon, Crossbow],
-				saga: function* (game) {
-					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, RendogRare, 'hermit', 0)
-					yield* playCardFromHand(game, Crossbow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(RendogRare, 'hermit', 0)
+					await test.playCardFromHand(Crossbow, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -46,8 +46,8 @@ describe('Test Rendog Role Play', () => {
 					yield* finishModalRequest(game, {pick: 'primary'})
 					yield* removeEffect(game)
 					expect(game.state.turn.availableActions).toContain('SECONDARY_ATTACK')
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -86,15 +86,15 @@ describe('Test Rendog Role Play', () => {
 			{
 				playerOneDeck: [ArmorStand, ArmorStand, EthosLabCommon],
 				playerTwoDeck: [ZombieCleoRare, RendogRare, Crossbow],
-				saga: function* (game) {
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(ArmorStand, 'hermit', 0)
+					await test.playCardFromHand(ArmorStand, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
-					yield* playCardFromHand(game, RendogRare, 'hermit', 1)
-					yield* playCardFromHand(game, Crossbow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
+					await test.playCardFromHand(RendogRare, 'hermit', 1)
+					await test.playCardFromHand(Crossbow, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -107,7 +107,7 @@ describe('Test Rendog Role Play', () => {
 					).not.toContain('secondary')
 					yield* finishModalRequest(game, {pick: 'primary'})
 					yield* removeEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -118,11 +118,11 @@ describe('Test Rendog Role Play', () => {
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* changeActiveHermit(game, 0)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -161,13 +161,13 @@ describe('Test Rendog Role Play', () => {
 			{
 				playerOneDeck: [EthosLabCommon, JoeHillsRare],
 				playerTwoDeck: [RendogRare, Crossbow],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, JoeHillsRare, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(JoeHillsRare, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, RendogRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(RendogRare, 'hermit', 0)
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -180,8 +180,8 @@ describe('Test Rendog Role Play', () => {
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Crossbow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Crossbow, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -194,7 +194,7 @@ describe('Test Rendog Role Play', () => {
 					).not.toContain('secondary')
 					yield* finishModalRequest(game, {pick: 'primary'})
 					yield* removeEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -213,11 +213,11 @@ describe('Test Rendog Role Play', () => {
 			{
 				playerOneDeck: [RendogRare],
 				playerTwoDeck: [ArmorStand],
-				saga: function* (game) {
-					yield* playCardFromHand(game, RendogRare, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(RendogRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
+					await test.playCardFromHand(ArmorStand, 'hermit', 0)
 					yield* endTurn(game)
 
 					expect(game.state.turn.availableActions).not.toContain(

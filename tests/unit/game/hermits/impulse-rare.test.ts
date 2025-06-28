@@ -9,14 +9,14 @@ import {GameModel} from 'common/models/game-model'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 function* testOneHermit(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, ImpulseSVRare, 'hermit', 0)
-	yield* playCardFromHand(game, BdoubleO100Common, 'hermit', 1)
+	await test.playCardFromHand(ImpulseSVRare, 'hermit', 0)
+	await test.playCardFromHand(BdoubleO100Common, 'hermit', 1)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 
 	expect(
 		game.components.find(RowComponent, query.row.active)?.health,
@@ -24,16 +24,16 @@ function* testOneHermit(game: GameModel) {
 }
 
 function* testManyHermits(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, ImpulseSVRare, 'hermit', 0)
-	yield* playCardFromHand(game, BdoubleO100Common, 'hermit', 1)
-	yield* playCardFromHand(game, BdoubleO100Common, 'hermit', 2)
-	yield* playCardFromHand(game, TangoTekRare, 'hermit', 3)
+	await test.playCardFromHand(ImpulseSVRare, 'hermit', 0)
+	await test.playCardFromHand(BdoubleO100Common, 'hermit', 1)
+	await test.playCardFromHand(BdoubleO100Common, 'hermit', 2)
+	await test.playCardFromHand(TangoTekRare, 'hermit', 3)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 
 	expect(
 		game.components.find(RowComponent, query.row.active)?.health,

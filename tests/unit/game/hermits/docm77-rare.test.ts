@@ -21,24 +21,24 @@ describe('Test Docm77 World Eater', () => {
 			{
 				playerOneDeck: [GeminiTayRare, BadOmen, InvisibilityPotion],
 				playerTwoDeck: [Docm77Rare, BadOmen],
-				saga: function* (game) {
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Docm77Rare, 'hermit', 0)
+					await test.playCardFromHand(Docm77Rare, 'hermit', 0)
 
-					yield* playCardFromHand(game, BadOmen, 'single_use')
+					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, BadOmen, 'single_use')
+					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
 					// Ensure Invilibility flipped tails to double damage
 					expect(
@@ -60,7 +60,7 @@ describe('Test Docm77 World Eater', () => {
 						),
 					).toBeTruthy()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(

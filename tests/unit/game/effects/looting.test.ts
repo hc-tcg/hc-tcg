@@ -10,13 +10,13 @@ describe('Test Looting.', () => {
 			{
 				playerOneDeck: [EthosLabCommon, BalancedItem],
 				playerTwoDeck: [EthosLabCommon, Looting],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Looting, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Looting, 'single_use')
 					yield* applyEffect(game)
 
 					expect(

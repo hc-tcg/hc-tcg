@@ -20,16 +20,16 @@ describe('Test Zedaph Sheep Stare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, TNT],
 				playerTwoDeck: [ZedaphPlaysRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ZedaphPlaysRare, 'hermit', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 0)
+					await test.attack('primary')
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, TNT, 'single_use')
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(TNT, 'single_use')
+					await test.attack('primary')
 					expect(
 						game.currentPlayer.coinFlips.filter((flip) => flip.opponentFlip),
 					).toHaveLength(1)
@@ -53,16 +53,16 @@ describe('Test Zedaph Sheep Stare', () => {
 			{
 				playerOneDeck: [GoatfatherRare],
 				playerTwoDeck: [ZedaphPlaysRare, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, GoatfatherRare, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(GoatfatherRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ZedaphPlaysRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.attack('primary')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.currentPlayer.coinFlips.filter((flip) => flip.opponentFlip),
 					).toHaveLength(1)
@@ -93,17 +93,17 @@ describe('Test Zedaph Sheep Stare', () => {
 			{
 				playerOneDeck: [ZedaphPlaysRare],
 				playerTwoDeck: [ZedaphPlaysRare, PotionOfWeakness],
-				saga: function* (game) {
-					yield* playCardFromHand(game, ZedaphPlaysRare, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ZedaphPlaysRare, 'hermit', 0)
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 0)
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.currentPlayer.coinFlips.filter((flip) => flip.opponentFlip),
 					).toHaveLength(1)

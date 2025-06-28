@@ -21,15 +21,15 @@ describe('Test Channeling achievement', () => {
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [GoatfatherRare, Anvil],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, LightningRod, 'attach', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(LightningRod, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GoatfatherRare, 'hermit', 0)
-					yield* playCardFromHand(game, Anvil, 'single_use')
+					await test.playCardFromHand(GoatfatherRare, 'hermit', 0)
+					await test.playCardFromHand(Anvil, 'single_use')
 					game.opponentPlayer.activeRow!.health = 90
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					yield* forfeit(game.opponentPlayer.entity)
 				},
@@ -47,15 +47,15 @@ describe('Test Channeling achievement', () => {
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [BdoubleO100Rare, Anvil],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, LightningRod, 'attach', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(LightningRod, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, BdoubleO100Rare, 'hermit', 1)
-					yield* playCardFromHand(game, Anvil, 'single_use')
+					await test.playCardFromHand(BdoubleO100Rare, 'hermit', 1)
+					await test.playCardFromHand(Anvil, 'single_use')
 					game.opponentPlayer.activeRow!.health = 90
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					yield* forfeit(game.opponentPlayer.entity)
 				},
@@ -73,15 +73,15 @@ describe('Test Channeling achievement', () => {
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [GoatfatherRare, Anvil],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, LightningRod, 'attach', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(LightningRod, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GoatfatherRare, 'hermit', 1)
-					yield* playCardFromHand(game, Anvil, 'single_use')
+					await test.playCardFromHand(GoatfatherRare, 'hermit', 1)
+					await test.playCardFromHand(Anvil, 'single_use')
 					game.opponentPlayer.activeRow!.health = 100
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					yield* forfeit(game.opponentPlayer.entity)
 				},
@@ -99,14 +99,14 @@ describe('Test Channeling achievement', () => {
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, LightningRod, 'attach', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(LightningRod, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					game.opponentPlayer.activeRow!.health = 10
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					yield* forfeit(game.opponentPlayer.entity)
 				},

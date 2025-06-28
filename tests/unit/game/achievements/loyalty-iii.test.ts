@@ -23,17 +23,17 @@ describe('Test Loyalty III Achievement', () => {
 				playerOneDeck: [EthosLabCommon, Trident],
 				playerTwoDeck: [EthosLabCommon, InstantHealthII],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Trident, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Trident, 'single_use')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, InstantHealthII, 'single_use')
+					await test.playCardFromHand(InstantHealthII, 'single_use')
 					yield* pick(
 						game,
 						query.slot.active,
@@ -42,13 +42,13 @@ describe('Test Loyalty III Achievement', () => {
 					)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Trident, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Trident, 'single_use')
+					await test.attack('secondary')
 					yield* endTurn(game)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Trident, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Trident, 'single_use')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(LoyaltyIII.getProgress(achievement.goals)).toBe(3)
@@ -64,19 +64,19 @@ describe('Test Loyalty III Achievement', () => {
 				playerOneDeck: [EthosLabCommon, Trident, Trident],
 				playerTwoDeck: [EthosLabCommon, BadOmen, InstantHealthII],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Trident, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Trident, 'single_use')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, InstantHealthII, 'single_use')
+					await test.playCardFromHand(InstantHealthII, 'single_use')
 					yield* pick(
 						game,
 						query.slot.active,
@@ -85,8 +85,8 @@ describe('Test Loyalty III Achievement', () => {
 					)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Trident, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Trident, 'single_use')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* forfeit(game.currentPlayerEntity)
@@ -105,14 +105,14 @@ describe('Test Loyalty III Achievement', () => {
 				playerOneDeck: [EthosLabCommon, Trident],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Trident, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Trident, 'single_use')
+					await test.attack('secondary')
 					yield* endTurn(game)
 					yield* endTurn(game)
 
@@ -120,8 +120,8 @@ describe('Test Loyalty III Achievement', () => {
 					yield* endTurn(game)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Trident, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Trident, 'single_use')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(LoyaltyIII.getProgress(achievement.goals)).toBe(1)

@@ -22,14 +22,14 @@ describe('Test Berry Bush Attach', () => {
 		testGame({
 			playerOneDeck: [EthosLabCommon, BerryBush, BerryBush, Bow],
 			playerTwoDeck: [EthosLabCommon],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				expect(game.getPickableSlots(BerryBush.attachCondition)).toStrictEqual(
 					[],
 				)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* endTurn(game)
 
 				yield* playCardFromHand(
@@ -60,8 +60,8 @@ describe('Test Berry Bush Attach', () => {
 						query.row.index(2),
 					)?.health,
 				).toBe(30)
-				yield* playCardFromHand(game, Bow, 'single_use')
-				yield* attack(game, 'single-use')
+				await test.playCardFromHand(Bow, 'single_use')
+				await test.attack('single-use')
 				yield* pick(
 					game,
 					query.slot.opponent,
@@ -113,11 +113,11 @@ describe('Test Berry Bush Attach', () => {
 		testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Ladder],
 			playerTwoDeck: [EthosLabCommon, BerryBush],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* playCardFromHand(
 					game,
 					BerryBush,
@@ -128,8 +128,8 @@ describe('Test Berry Bush Attach', () => {
 				yield* endTurn(game)
 
 				expect(game.getPickableSlots(Ladder.attachCondition)).toStrictEqual([])
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-				yield* playCardFromHand(game, Ladder, 'single_use')
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+				await test.playCardFromHand(Ladder, 'single_use')
 				expect(
 					game.components.filter(
 						SlotComponent,
@@ -159,12 +159,12 @@ describe('Test Berry Bush Attach', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [WormManRare, BerryBush],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, WormManRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(WormManRare, 'hermit', 0)
+					await test.attack('secondary')
 					yield* playCardFromHand(
 						game,
 						BerryBush,

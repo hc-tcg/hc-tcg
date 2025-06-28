@@ -32,12 +32,12 @@ describe('Test Redstone Torch', () => {
 					...Array(3).fill(BalancedItem),
 					TNT,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, RedstoneTorch, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(RedstoneTorch, 'single_use')
 					yield* applyEffect(game)
 					expect(game.state.modalRequests[0]?.modal).toMatchObject({
 						type: 'selectCards',
@@ -81,12 +81,12 @@ describe('Test Redstone Torch', () => {
 					MinecartWithTNT,
 					MinecartWithTNT,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, RedstoneTorch, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(RedstoneTorch, 'single_use')
 					yield* applyEffect(game)
 					expect(
 						(game.state.modalRequests[0] as SelectCards.Request).modal.cards,
@@ -114,15 +114,15 @@ describe('Test Redstone Torch', () => {
 					...Array(7).fill(BalancedItem),
 				],
 				playerTwoDeck: [EthosLabCommon, RedstoneTorch],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					expect(game.currentPlayer.getDrawPile().length).toBe(2)
 					expect(
 						game.getPickableSlots(RedstoneTorch.attachCondition),
 					).toStrictEqual([])
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					expect(game.currentPlayer.getDrawPile().length).toBe(0)
 					expect(
 						game.getPickableSlots(RedstoneTorch.attachCondition),
@@ -130,7 +130,7 @@ describe('Test Redstone Torch', () => {
 					yield* endTurn(game)
 
 					expect(game.currentPlayer.getDrawPile().length).toBe(1)
-					yield* playCardFromHand(game, RedstoneTorch, 'single_use')
+					await test.playCardFromHand(RedstoneTorch, 'single_use')
 					yield* applyEffect(game)
 					expect(
 						(game.state.modalRequests[0] as SelectCards.Request).modal.cards,

@@ -29,14 +29,14 @@ function testThorns(thorns: ThornsType) {
 			{
 				playerOneDeck: [EthosLabCommon, thornsMap[thorns].card],
 				playerTwoDeck: [EthosLabCommon, IronSword],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, thornsMap[thorns].card, 'attach', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(thornsMap[thorns].card, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, IronSword, 'single_use')
-					yield* attack(game, 'single-use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(IronSword, 'single_use')
+					await test.attack('single-use')
 
 					expect(
 						game.components.find(

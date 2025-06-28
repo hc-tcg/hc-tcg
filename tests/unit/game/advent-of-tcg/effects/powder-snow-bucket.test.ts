@@ -29,10 +29,10 @@ describe('Test Powder Snow Bucket', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, PowderSnowBucket],
 				playerTwoDeck: [EthosLabCommon, Bow],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, PowderSnowBucket, 'single_use')
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(PowderSnowBucket, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -41,9 +41,9 @@ describe('Test Powder Snow Bucket', () => {
 					)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Bow, 'single_use')
-					yield* attack(game, 'single-use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Bow, 'single_use')
+					await test.attack('single-use')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -73,10 +73,10 @@ describe('Test Powder Snow Bucket', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, PowderSnowBucket],
 				playerTwoDeck: [EthosLabCommon, Knockback, Egg],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, PowderSnowBucket, 'single_use')
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(PowderSnowBucket, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -85,7 +85,7 @@ describe('Test Powder Snow Bucket', () => {
 					)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					expect(
 						game.getPickableSlots(Knockback.attachCondition),
 					).toStrictEqual([])
@@ -101,27 +101,27 @@ describe('Test Powder Snow Bucket', () => {
 			{
 				playerOneDeck: [Cubfan135Rare, EthosLabCommon, ChorusFruit],
 				playerTwoDeck: [IJevinRare, PowderSnowBucket],
-				saga: function* (game) {
-					yield* playCardFromHand(game, Cubfan135Rare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(Cubfan135Rare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, IJevinRare, 'hermit', 0)
-					yield* playCardFromHand(game, PowderSnowBucket, 'single_use')
+					await test.playCardFromHand(IJevinRare, 'hermit', 0)
+					await test.playCardFromHand(PowderSnowBucket, 'single_use')
 					yield* pick(
 						game,
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.state.pickRequests).toStrictEqual([])
 					yield* endTurn(game)
 
 					expect(
 						game.getPickableSlots(ChorusFruit.attachCondition),
 					).toStrictEqual([])
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.state.pickRequests).toStrictEqual([])
 					yield* endTurn(game)
 				},
@@ -145,25 +145,25 @@ describe('Test Powder Snow Bucket', () => {
 					SplashPotionOfPoison,
 					PowderSnowBucket,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(LavaBucket, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SplashPotionOfPoison, 'single_use')
+					await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PowderSnowBucket, 'single_use')
+					await test.playCardFromHand(PowderSnowBucket, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -173,7 +173,7 @@ describe('Test Powder Snow Bucket', () => {
 					yield* changeActiveHermit(game, 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PowderSnowBucket, 'single_use')
+					await test.playCardFromHand(PowderSnowBucket, 'single_use')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -220,11 +220,11 @@ describe('Test Powder Snow Bucket', () => {
 		testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [EthosLabCommon, BerryBush, PowderSnowBucket, Bow],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* playCardFromHand(
 					game,
 					BerryBush,
@@ -232,7 +232,7 @@ describe('Test Powder Snow Bucket', () => {
 					1,
 					game.opponentPlayerEntity,
 				)
-				yield* playCardFromHand(game, PowderSnowBucket, 'single_use')
+				await test.playCardFromHand(PowderSnowBucket, 'single_use')
 				yield* pick(
 					game,
 					query.slot.opponent,
@@ -250,8 +250,8 @@ describe('Test Powder Snow Bucket', () => {
 				).toBe(BerryBush.health - 10)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, Bow, 'single_use')
-				yield* attack(game, 'single-use')
+				await test.playCardFromHand(Bow, 'single_use')
+				await test.attack('single-use')
 				yield* pick(
 					game,
 					query.slot.opponent,
@@ -277,10 +277,10 @@ describe('Test Powder Snow Bucket', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, PowderSnowBucket],
 				playerTwoDeck: [TangoTekRare, EthosLabCommon, PowderSnowBucket],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, PowderSnowBucket, 'single_use')
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(PowderSnowBucket, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -289,28 +289,28 @@ describe('Test Powder Snow Bucket', () => {
 					)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, PowderSnowBucket, 'single_use')
+					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(PowderSnowBucket, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.state.pickRequests).toStrictEqual([])
 					yield* endTurn(game)
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.state.pickRequests).toStrictEqual([])
 					yield* endTurn(game)
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.opponentPlayer.lives).toBe(2)
 					expect(game.opponentPlayer.activeRow).toBe(null)
 
@@ -324,7 +324,7 @@ describe('Test Powder Snow Bucket', () => {
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.state.pickRequests).toStrictEqual([])
 					yield* endTurn(game)
 				},

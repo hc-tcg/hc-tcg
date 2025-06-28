@@ -22,18 +22,18 @@ describe('Test Ladder', () => {
 					Ladder,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, SmallishbeansCommon, 'hermit', 1)
-					yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(SmallishbeansCommon, 'hermit', 1)
+					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.attack('primary')
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, IronArmor, 'attach', 0)
-					yield* playCardFromHand(game, Ladder, 'single_use')
+					await test.playCardFromHand(IronArmor, 'attach', 0)
+					await test.playCardFromHand(Ladder, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -129,13 +129,13 @@ describe('Test Ladder', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [FalseSymmetryRare, GrianCommon, Ladder],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, FalseSymmetryRare, 'hermit', 1)
-					yield* playCardFromHand(game, GrianCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Ladder, 'single_use')
+					await test.playCardFromHand(FalseSymmetryRare, 'hermit', 1)
+					await test.playCardFromHand(GrianCommon, 'hermit', 0)
+					await test.playCardFromHand(Ladder, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -143,11 +143,11 @@ describe('Test Ladder', () => {
 						query.slot.rowIndex(0),
 					)
 					expect(game.currentPlayer.activeRow?.health).toBe(GrianCommon.health)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.currentPlayer.activeRow?.health).toBe(GrianCommon.health)
 					yield* endTurn(game)
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						GrianCommon.health - EthosLabCommon.primary.damage,
 					)

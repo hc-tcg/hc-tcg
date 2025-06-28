@@ -29,9 +29,9 @@ describe('Test Brush Single Use', () => {
 					Feather,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Brush, 'single_use')
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Brush, 'single_use')
 					yield* applyEffect(game)
 					expect(
 						(game.state.modalRequests[0].modal as DragCards.Data).leftCards.map(
@@ -77,9 +77,9 @@ describe('Test Brush Single Use', () => {
 					Feather,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Brush, 'single_use')
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Brush, 'single_use')
 					yield* applyEffect(game)
 					expect(
 						(game.state.modalRequests[0].modal as DragCards.Data).leftCards.map(
@@ -125,9 +125,9 @@ describe('Test Brush Single Use', () => {
 					Feather,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Brush, 'single_use')
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Brush, 'single_use')
 					yield* applyEffect(game)
 					expect(
 						(game.state.modalRequests[0].modal as DragCards.Data).leftCards.map(

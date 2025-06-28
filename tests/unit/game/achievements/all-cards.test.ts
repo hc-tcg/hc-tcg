@@ -13,13 +13,13 @@ describe('Test Jack of All Cards achivement', () => {
 				playerOneDeck: [EthosLabCommon, ShadEECommon, BalancedItem],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
-					yield* playCardFromHand(game, ShadEECommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
+					await test.playCardFromHand(ShadEECommon, 'hermit', 1)
 					yield* endTurn(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(AllCards.getProgress(achievement.goals)).toEqual(2)
@@ -35,10 +35,10 @@ describe('Test Jack of All Cards achivement', () => {
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(AllCards.getProgress(achievement.goals)).toEqual(0)

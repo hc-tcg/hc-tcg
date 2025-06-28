@@ -25,16 +25,16 @@ describe('Test Stratos Joel', () => {
 					Efficiency,
 					PvPDoubleItem,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SmallishbeansAdventRare, 'hermit', 0)
-					yield* playCardFromHand(game, WildItem, 'item', 0, 0)
-					yield* playCardFromHand(game, Efficiency, 'single_use')
+					await test.playCardFromHand(SmallishbeansAdventRare, 'hermit', 0)
+					await test.playCardFromHand(WildItem, 'item', 0, 0)
+					await test.playCardFromHand(Efficiency, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health -
 							SmallishbeansAdventRare.secondary.damage -
@@ -53,8 +53,8 @@ describe('Test Stratos Joel', () => {
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PvPDoubleItem, 'item', 0, 2)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(PvPDoubleItem, 'item', 0, 2)
+					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health -
 							SmallishbeansAdventRare.secondary.damage -

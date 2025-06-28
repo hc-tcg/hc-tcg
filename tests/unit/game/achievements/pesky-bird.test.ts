@@ -29,13 +29,13 @@ describe('Test Pesky Bird Achievement', () => {
 					BalancedItem,
 				],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, JinglerRare, 'hermit', 0)
+					await test.playCardFromHand(JinglerRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.hand,
@@ -67,8 +67,8 @@ describe('Test Pesky Bird Achievement', () => {
 				],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Composter, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Composter, 'single_use')
 
 					let cards = game.components.filterEntities(
 						SlotComponent,
@@ -76,8 +76,8 @@ describe('Test Pesky Bird Achievement', () => {
 						query.slot.hand,
 						query.not(query.slot.empty),
 					)
-					yield* pick(game, query.slot.entity(cards[0]))
-					yield* pick(game, query.slot.entity(cards[1]))
+					await test.pick(query.slot.entity(cards[0]))
+					await test.pick(query.slot.entity(cards[1]))
 
 					yield* forfeit(game.currentPlayerEntity)
 				},

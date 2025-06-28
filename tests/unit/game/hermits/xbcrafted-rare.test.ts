@@ -17,16 +17,16 @@ describe('Test xB', () => {
 			{
 				playerOneDeck: [GeminiTayCommon, DiamondArmor],
 				playerTwoDeck: [XBCraftedRare, IronSword],
-				saga: function* (game) {
-					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 0)
-					yield* playCardFromHand(game, DiamondArmor, 'attach', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
+					await test.playCardFromHand(DiamondArmor, 'attach', 0)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, XBCraftedRare, 'hermit', 0)
-					yield* playCardFromHand(game, IronSword, 'single_use')
+					await test.playCardFromHand(XBCraftedRare, 'hermit', 0)
+					await test.playCardFromHand(IronSword, 'single_use')
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					// We expect that the diamond armor attached to Gem did not block any damage.
 					expect(
@@ -62,14 +62,14 @@ describe('Test xB', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [XBCraftedRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, LightningRod, 'attach', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(LightningRod, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, XBCraftedRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(XBCraftedRare, 'hermit', 0)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(
@@ -96,15 +96,15 @@ describe('Test xB', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [XBCraftedRare, IronSword],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, LightningRod, 'attach', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(LightningRod, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, XBCraftedRare, 'hermit', 0)
-					yield* playCardFromHand(game, IronSword, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(XBCraftedRare, 'hermit', 0)
+					await test.playCardFromHand(IronSword, 'single_use')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(
@@ -135,21 +135,21 @@ describe('Test xB', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, IronArmor],
 				playerTwoDeck: [XBCraftedRare, TargetBlock],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, IronArmor, 'attach', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(IronArmor, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, XBCraftedRare, 'hermit', 0)
-					yield* playCardFromHand(game, TargetBlock, 'single_use')
+					await test.playCardFromHand(XBCraftedRare, 'hermit', 0)
+					await test.playCardFromHand(TargetBlock, 'single_use')
 					yield* pick(
 						game,
 						query.slot.rowIndex(1),
 						query.slot.opponent,
 						query.slot.hermit,
 					)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(

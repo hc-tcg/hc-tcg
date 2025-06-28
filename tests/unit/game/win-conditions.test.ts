@@ -15,12 +15,12 @@ describe('Test Game Win Conditions', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.attack('secondary')
 				},
 				then: (game, outcome) => {
 					expect(getWinner(game)?.playerName).toBe('playerTwo')
@@ -35,8 +35,8 @@ describe('Test Game Win Conditions', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 				},
 				then: (game, outcome) => {
@@ -52,7 +52,7 @@ describe('Test Game Win Conditions', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
+				saga: async (test, game) => {
 					yield* forfeit(game.currentPlayerEntity)
 				},
 				then: (game, outcome) => {
@@ -68,7 +68,7 @@ describe('Test Game Win Conditions', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
+				saga: async (test, game) => {
 					yield* forfeit(game.opponentPlayerEntity)
 				},
 				then: (game, outcome) => {

@@ -11,9 +11,9 @@ test('Test Use Like a Hermit achievement', () => {
 			playerOneDeck: [ArmorStand],
 			playerTwoDeck: [EthosLabCommon],
 			playGame: function* (game) {
-				yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
+				await test.playCardFromHand(ArmorStand, 'hermit', 0)
 				yield* endTurn(game)
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* endTurn(game)
 
 				yield* endTurn(game)

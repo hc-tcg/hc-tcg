@@ -20,14 +20,14 @@ describe('Test Chorus Fruit', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, ChorusFruit],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, ChorusFruit, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(ChorusFruit, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -46,20 +46,20 @@ describe('Test Chorus Fruit', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, ChorusFruit],
 				playerTwoDeck: [HumanCleoRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 0)
+					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ChorusFruit, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(ChorusFruit, 'single_use')
+					await test.attack('secondary')
 
 					// First request should be for Betrayal target
 					expect(game.state.pickRequests).toHaveLength(1)
@@ -91,14 +91,14 @@ describe('Test Chorus Fruit', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, ChorusFruit],
 				playerTwoDeck: [EthosLabCommon, CurseOfBinding],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, CurseOfBinding, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(CurseOfBinding, 'single_use')
 					yield* applyEffect(game)
 
 					yield* endTurn(game)
@@ -122,14 +122,14 @@ describe('Test Chorus Fruit', () => {
 					ChorusFruit,
 					ChorusFruit,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, BdoubleO100Rare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, ChorusFruit, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(BdoubleO100Rare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(ChorusFruit, 'single_use')
+					await test.attack('secondary')
 					expect(game.currentPlayer.singleUseCardUsed).toBe(true)
 					expect(game.state.pickRequests).toHaveLength(0)
 					yield* endTurn(game)

@@ -11,7 +11,7 @@ describe('Test `row.hooks.onKnockOut` hook', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
+				saga: async (test, game) => {
 					let hookHasBeenCalled = false
 
 					let observer = game.components.new(
@@ -30,13 +30,13 @@ describe('Test `row.hooks.onKnockOut` hook', () => {
 						hookHasBeenCalled = true
 					})
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					/** Play two hermits to prevent the game from finishing before the tests finish */
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
 					yield* endTurn(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(hookHasBeenCalled).toBeTruthy()
 				},

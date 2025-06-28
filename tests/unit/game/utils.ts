@@ -411,11 +411,11 @@ export function testBossFight(
 	options: {
 		/**
 		 * ```ts
-		 * saga: function* (game) {
+		 * saga: async (test, game) => {
 		 * 	...
 		 * 	yield* endTurn(game)
 		 * 	// Boss' first turn
-		 * 	yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
+		 * 	await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
 		 * 	yield* bossAttack(game, '50DMG')
 		 * 	...
 		 * }

@@ -23,25 +23,25 @@ describe('Test How Did We Get Here achievement', () => {
 				playerOneDeck: [GeminiTayRare, InvisibilityPotion, Clock],
 				playerTwoDeck: [PearlescentMoonRare, SplashPotionOfPoison, BadOmen],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 0)
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PearlescentMoonRare, 'hermit', 0)
-					yield* playCardFromHand(game, SplashPotionOfPoison, 'single_use')
+					await test.playCardFromHand(PearlescentMoonRare, 'hermit', 0)
+					await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, BadOmen, 'single_use')
+					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
-					yield* playCardFromHand(game, Clock, 'single_use')
+					await test.attack('secondary')
+					await test.playCardFromHand(Clock, 'single_use')
 					yield* applyEffect(game)
 					yield* forfeit(game.currentPlayerEntity)
 				},

@@ -19,24 +19,24 @@ describe('Test British achievement', () => {
 				playerOneDeck: [XisumavoidRare],
 				playerTwoDeck: [SpookyStressRare],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, XisumavoidRare, 'hermit', 0)
+					await test.playCardFromHand(XisumavoidRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SpookyStressRare, 'hermit', 0)
+					await test.playCardFromHand(SpookyStressRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(British.getProgress(achievement.goals)).toBeFalsy()
@@ -53,14 +53,14 @@ describe('Test British achievement', () => {
 				playerOneDeck: [XisumavoidRare, SpookyStressRare],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, XisumavoidRare, 'hermit', 0)
-					yield* playCardFromHand(game, SpookyStressRare, 'hermit', 1)
+					await test.playCardFromHand(XisumavoidRare, 'hermit', 0)
+					await test.playCardFromHand(SpookyStressRare, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
@@ -70,12 +70,12 @@ describe('Test British achievement', () => {
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(British.getProgress(achievement.goals)).toBe(1)

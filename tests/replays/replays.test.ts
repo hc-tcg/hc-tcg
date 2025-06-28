@@ -75,16 +75,16 @@ describe('Test Replays', () => {
 			playerTwoDeck: [EthosLabCommon, BalancedDoubleItem],
 			gameSaga: function* (con) {
 				const game = con.game
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 0)
-				yield* attack(game, 'primary')
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
+				await test.attack('primary')
 				yield* endTurn(game)
 
-				yield* attack(game, 'primary')
+				await test.attack('primary')
 				yield* forfeit(game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
@@ -102,17 +102,17 @@ describe('Test Replays', () => {
 			playerTwoDeck: [EthosLabCommon, BalancedDoubleItem],
 			gameSaga: function* (con) {
 				const game = con.game
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, DiamondSword, 'single_use')
-				yield* playCardFromHand(game, DiamondArmor, 'attach', 0)
+				await test.playCardFromHand(DiamondSword, 'single_use')
+				await test.playCardFromHand(DiamondArmor, 'attach', 0)
 
-				yield* attack(game, 'secondary')
+				await test.attack('secondary')
 				yield* endTurn(game)
 
 				yield* forfeit(game.currentPlayer.entity)
@@ -167,19 +167,19 @@ describe('Test Replays', () => {
 			playerTwoDeck: [EthosLabCommon],
 			gameSaga: function* (con) {
 				const game = con.game
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, CurseOfBinding, 'single_use')
+				await test.playCardFromHand(CurseOfBinding, 'single_use')
 				yield* applyEffect(game)
 				yield* endTurn(game)
 
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, Chest, 'single_use')
+				await test.playCardFromHand(Chest, 'single_use')
 				yield* applyEffect(game)
 				const discardedCard = game.currentPlayer.getDiscarded()[0].entity
 				yield* finishModalRequest(game, {
@@ -204,20 +204,20 @@ describe('Test Replays', () => {
 			],
 			gameSaga: function* (con) {
 				const game = con.game
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 1)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(GeminiTayCommon, 'hermit', 1)
 
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
-				yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 1)
-				yield* playCardFromHand(game, FarmDoubleItem, 'item', 0, 0)
+				await test.playCardFromHand(TangoTekRare, 'hermit', 0)
+				await test.playCardFromHand(GeminiTayCommon, 'hermit', 1)
+				await test.playCardFromHand(FarmDoubleItem, 'item', 0, 0)
 				yield* endTurn(game)
 
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, FarmDoubleItem, 'item', 0, 1)
-				yield* attack(game, 'secondary')
+				await test.playCardFromHand(FarmDoubleItem, 'item', 0, 1)
+				await test.attack('secondary')
 
 				yield* pick(
 					game,
@@ -257,26 +257,26 @@ describe('Test Replays', () => {
 			],
 			gameSaga: function* (con) {
 				const game = con.game
-				yield* playCardFromHand(game, TinFoilChefRare, 'hermit', 2)
-				yield* playCardFromHand(game, MinerItem, 'item', 2, 0)
+				await test.playCardFromHand(TinFoilChefRare, 'hermit', 2)
+				await test.playCardFromHand(MinerItem, 'item', 2, 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, IJevinRare, 'hermit', 4)
-				yield* playCardFromHand(game, SpeedrunnerItem, 'item', 4, 0)
-				yield* attack(game, 'primary')
+				await test.playCardFromHand(IJevinRare, 'hermit', 4)
+				await test.playCardFromHand(SpeedrunnerItem, 'item', 4, 0)
+				await test.attack('primary')
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, MinerItem, 'item', 2, 1)
-				yield* playCardFromHand(game, HelsknightRare, 'hermit', 1)
-				yield* attack(game, 'secondary')
+				await test.playCardFromHand(MinerItem, 'item', 2, 1)
+				await test.playCardFromHand(HelsknightRare, 'hermit', 1)
+				await test.attack('secondary')
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, SpeedrunnerDoubleItem, 'item', 4, 1)
-				yield* playCardFromHand(game, FishingRod, 'single_use')
+				await test.playCardFromHand(SpeedrunnerDoubleItem, 'item', 4, 1)
+				await test.playCardFromHand(FishingRod, 'single_use')
 				yield* applyEffect(game)
-				yield* playCardFromHand(game, JinglerRare, 'hermit', 3)
+				await test.playCardFromHand(JinglerRare, 'hermit', 3)
 
-				yield* attack(game, 'secondary')
+				await test.attack('secondary')
 				yield* pick(
 					game,
 					query.slot.opponent,
@@ -298,28 +298,28 @@ describe('Test Replays', () => {
 			gameSaga: function* (con) {
 				const game = con.game
 
-				yield* playCardFromHand(game, FarmerBeefRare, 'hermit', 0)
-				yield* playCardFromHand(game, FarmDoubleItem, 'item', 0, 0)
+				await test.playCardFromHand(FarmerBeefRare, 'hermit', 0)
+				await test.playCardFromHand(FarmDoubleItem, 'item', 0, 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 0)
-				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 0)
-				yield* attack(game, 'secondary')
+				await test.playCardFromHand(EvilXisumaRare, 'hermit', 0)
+				await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
+				await test.attack('secondary')
 				yield* finishModalRequest(game, {
 					pick: 'primary',
 				})
 				yield* endTurn(game)
 
-				yield* attack(game, 'secondary')
+				await test.attack('secondary')
 				yield* endTurn(game)
 
-				yield* attack(game, 'secondary')
+				await test.attack('secondary')
 				yield* finishModalRequest(game, {
 					pick: 'secondary',
 				})
 				yield* endTurn(game)
 
-				yield* attack(game, 'primary')
+				await test.attack('primary')
 				yield* endTurn(game)
 
 				yield* forfeit(con.game.currentPlayer.entity)
@@ -335,11 +335,11 @@ describe('Test Replays', () => {
 			gameSaga: function* (con) {
 				const game = con.game
 
-				yield* playCardFromHand(game, VintageBeefRare, 'hermit', 0)
-				yield* playCardFromHand(game, FalseSymmetryRare, 'hermit', 1)
+				await test.playCardFromHand(VintageBeefRare, 'hermit', 0)
+				await test.playCardFromHand(FalseSymmetryRare, 'hermit', 1)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, RendogCommon, 'hermit', 0)
+				await test.playCardFromHand(RendogCommon, 'hermit', 0)
 				yield* endTurn(game)
 
 				yield* changeActiveHermit(game, 1)

@@ -20,12 +20,12 @@ describe('Test Lizzie Evict', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [LDShadowLadyRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, LDShadowLadyRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(LDShadowLadyRare, 'hermit', 0)
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -47,11 +47,11 @@ describe('Test Lizzie Evict', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [LDShadowLadyRare, Slimeball],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, LDShadowLadyRare, 'hermit', 0)
+					await test.playCardFromHand(LDShadowLadyRare, 'hermit', 0)
 					yield* playCardFromHand(
 						game,
 						Slimeball,
@@ -59,7 +59,7 @@ describe('Test Lizzie Evict', () => {
 						0,
 						game.opponentPlayerEntity,
 					)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - LDShadowLadyRare.secondary.damage - 40,
 					)
@@ -75,16 +75,16 @@ describe('Test Lizzie Evict', () => {
 			{
 				playerOneDeck: Array(4).fill(EthosLabCommon),
 				playerTwoDeck: [LDShadowLadyRare, Crossbow, BerryBush],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 3)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 3)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, LDShadowLadyRare, 'hermit', 0)
-					yield* playCardFromHand(game, Crossbow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(LDShadowLadyRare, 'hermit', 0)
+					await test.playCardFromHand(Crossbow, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -99,7 +99,7 @@ describe('Test Lizzie Evict', () => {
 						4,
 						game.opponentPlayerEntity,
 					)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.state.pickRequests).toHaveLength(0)
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - LDShadowLadyRare.secondary.damage - 40,

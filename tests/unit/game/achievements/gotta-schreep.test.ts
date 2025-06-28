@@ -19,19 +19,19 @@ describe('Test Gotta Screep achivement', () => {
 				playerOneDeck: [BdoubleO100Rare, DiamondSword],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, BdoubleO100Rare, 'hermit', 0)
+					await test.playCardFromHand(BdoubleO100Rare, 'hermit', 0)
 					yield* endTurn(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, DiamondSword, 'single_use')
-					yield* attack(game, 'single-use')
+					await test.playCardFromHand(DiamondSword, 'single_use')
+					await test.attack('single-use')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(GottaSchreep.getProgress(achievement.goals)).toBe(1)
@@ -47,11 +47,11 @@ describe('Test Gotta Screep achivement', () => {
 				playerOneDeck: [BdoubleO100Rare, DiamondSword],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, BdoubleO100Rare, 'hermit', 0)
+					await test.playCardFromHand(BdoubleO100Rare, 'hermit', 0)
 					yield* endTurn(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(GottaSchreep.getProgress(achievement.goals)).toBeFalsy()

@@ -21,17 +21,17 @@ describe('Test "Signal Inversion" achievement', () => {
 				playerOneDeck: [EthosLabUltraRare, Fortune],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabUltraRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabUltraRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Fortune, 'single_use')
+					await test.playCardFromHand(Fortune, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* forfeit(game.currentPlayer.entity)
@@ -50,17 +50,17 @@ describe('Test "Signal Inversion" achievement', () => {
 				playerOneDeck: [EthosLabCommon, Fortune],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Fortune, 'single_use')
+					await test.playCardFromHand(Fortune, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* forfeit(game.currentPlayer.entity)
@@ -79,15 +79,15 @@ describe('Test "Signal Inversion" achievement', () => {
 				playerOneDeck: [EthosLabUltraRare, Fortune],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabUltraRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabUltraRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Fortune, 'single_use')
+					await test.playCardFromHand(Fortune, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* forfeit(game.currentPlayer.entity)
@@ -106,15 +106,15 @@ describe('Test "Signal Inversion" achievement', () => {
 				playerOneDeck: [EthosLabUltraRare],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabUltraRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabUltraRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* forfeit(game.currentPlayer.entity)

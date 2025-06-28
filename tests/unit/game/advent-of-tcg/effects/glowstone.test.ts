@@ -28,9 +28,9 @@ describe('Test Glowstone Single Use', () => {
 					MinerItem,
 					Feather,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Glowstone, 'single_use')
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Glowstone, 'single_use')
 					yield* applyEffect(game)
 					expect(
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards.map(

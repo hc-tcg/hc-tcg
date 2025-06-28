@@ -16,13 +16,13 @@ describe('Test TNT Minecart', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon, MinecartWithTNT],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, MinecartWithTNT, 'single_use')
-					yield* attack(game, 'single-use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(MinecartWithTNT, 'single_use')
+					await test.attack('single-use')
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
 					)
@@ -41,17 +41,17 @@ describe('Test TNT Minecart', () => {
 			{
 				playerOneDeck: [EthosLabCommon, MinecartWithTNT],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, MinecartWithTNT, 'single_use')
-					yield* attack(game, 'single-use')
+					await test.playCardFromHand(MinecartWithTNT, 'single_use')
+					await test.attack('single-use')
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - 40,
 					)

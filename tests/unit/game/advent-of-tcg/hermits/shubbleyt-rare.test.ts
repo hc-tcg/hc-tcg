@@ -27,13 +27,13 @@ describe('Test Shelby Parallel World', () => {
 				IronSword,
 				...Array(4).fill(TerraformItem),
 			],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, ShubbleYTRare, 'hermit', 0)
-				yield* playCardFromHand(game, TerraformDoubleItem, 'item', 0, 0)
-				yield* attack(game, 'secondary')
+				await test.playCardFromHand(ShubbleYTRare, 'hermit', 0)
+				await test.playCardFromHand(TerraformDoubleItem, 'item', 0, 0)
+				await test.attack('secondary')
 				expect(
 					game.components.get(
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
@@ -67,22 +67,22 @@ describe('Test Shelby Parallel World', () => {
 				IronSword,
 				...Array(4).fill(TerraformItem),
 			],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-				yield* playCardFromHand(game, Thorns, 'attach', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+				await test.playCardFromHand(Thorns, 'attach', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, ShubbleYTRare, 'hermit', 0)
+				await test.playCardFromHand(ShubbleYTRare, 'hermit', 0)
 				// Manually set Shelby health to trigger zone
 				game.components.find(
 					RowComponent,
 					query.row.currentPlayer,
 					query.row.index(0),
 				)!.health = 10
-				yield* playCardFromHand(game, ShubbleYTRare, 'hermit', 1)
-				yield* playCardFromHand(game, TerraformDoubleItem, 'item', 0, 0)
-				yield* attack(game, 'secondary')
+				await test.playCardFromHand(ShubbleYTRare, 'hermit', 1)
+				await test.playCardFromHand(TerraformDoubleItem, 'item', 0, 0)
+				await test.attack('secondary')
 				expect(
 					game.components.get(
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
@@ -108,25 +108,25 @@ describe('Test Shelby Parallel World', () => {
 				...Array(5).fill(TerraformDoubleItem),
 				IronSword,
 			],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-				yield* playCardFromHand(game, Thorns, 'attach', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+				await test.playCardFromHand(Thorns, 'attach', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, ShubbleYTRare, 'hermit', 0)
+				await test.playCardFromHand(ShubbleYTRare, 'hermit', 0)
 				// Manually set Shelby health to trigger zone
 				game.components.find(
 					RowComponent,
 					query.row.currentPlayer,
 					query.row.index(0),
 				)!.health = 10
-				yield* playCardFromHand(game, ShubbleYTRare, 'hermit', 1)
-				yield* playCardFromHand(game, TerraformDoubleItem, 'item', 0, 0)
+				await test.playCardFromHand(ShubbleYTRare, 'hermit', 1)
+				await test.playCardFromHand(TerraformDoubleItem, 'item', 0, 0)
 				expect(
 					game.currentPlayer.getDrawPile().map((card) => card.props),
 				).toStrictEqual([IronSword])
-				yield* attack(game, 'secondary')
+				await test.attack('secondary')
 				expect(game.state.modalRequests).toHaveLength(0)
 			},
 		})
@@ -142,14 +142,14 @@ describe('Test Shelby Parallel World', () => {
 				IronSword,
 				...Array(4).fill(TerraformItem),
 			],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, ShubbleYTRare, 'hermit', 0)
-				yield* playCardFromHand(game, Cat, 'attach', 0)
-				yield* playCardFromHand(game, TerraformDoubleItem, 'item', 0, 0)
-				yield* attack(game, 'secondary')
+				await test.playCardFromHand(ShubbleYTRare, 'hermit', 0)
+				await test.playCardFromHand(Cat, 'attach', 0)
+				await test.playCardFromHand(TerraformDoubleItem, 'item', 0, 0)
+				await test.attack('secondary')
 				expect(
 					game.components.get(
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],

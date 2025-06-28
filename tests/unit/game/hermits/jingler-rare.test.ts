@@ -10,12 +10,12 @@ describe('Test Jingler Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [JinglerRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, JinglerRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(JinglerRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					yield* pick(
 						game,
@@ -33,12 +33,12 @@ describe('Test Jingler Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [JinglerRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, JinglerRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(JinglerRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toHaveLength(0)
 				},

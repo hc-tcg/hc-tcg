@@ -10,14 +10,14 @@ describe('Test Smallishbeans Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [SmallishbeansRare, EthosLabCommon, GeminiTayRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 2)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(SmallishbeansRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 2)
+					await test.attack('secondary')
 
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health -

@@ -29,15 +29,15 @@ describe('Test Pixl World Build', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [PixlriffsRare, PixlriffsRare, EnderPearl, Ladder],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PixlriffsRare, 'hermit', 0)
-					yield* playCardFromHand(game, PixlriffsRare, 'hermit', 1)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(PixlriffsRare, 'hermit', 0)
+					await test.playCardFromHand(PixlriffsRare, 'hermit', 1)
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -50,14 +50,14 @@ describe('Test Pixl World Build', () => {
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EnderPearl, 'single_use')
+					await test.playCardFromHand(EnderPearl, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -70,14 +70,14 @@ describe('Test Pixl World Build', () => {
 					yield* changeActiveHermit(game, 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Ladder, 'single_use')
+					await test.playCardFromHand(Ladder, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -96,13 +96,13 @@ describe('Test Pixl World Build', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [PixlriffsRare, PixlriffsRare, EnderPearl],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PixlriffsRare, 'hermit', 0)
-					yield* playCardFromHand(game, PixlriffsRare, 'hermit', 1)
-					yield* playCardFromHand(game, EnderPearl, 'single_use')
+					await test.playCardFromHand(PixlriffsRare, 'hermit', 0)
+					await test.playCardFromHand(PixlriffsRare, 'hermit', 1)
+					await test.playCardFromHand(EnderPearl, 'single_use')
 					// Manually set Pixl health to be KO'd by Ender Pearl
 					game.components.find(
 						RowComponent,
@@ -116,7 +116,7 @@ describe('Test Pixl World Build', () => {
 						query.slot.rowIndex(2),
 					)
 					yield* changeActiveHermit(game, 1)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -136,21 +136,21 @@ describe('Test Pixl World Build', () => {
 			{
 				playerOneDeck: [GrianchRare, Thorns],
 				playerTwoDeck: [EthosLabCommon, PixlriffsRare, BadOmen, Ladder],
-				saga: function* (game) {
-					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
-					yield* playCardFromHand(game, Thorns, 'attach', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(GrianchRare, 'hermit', 0)
+					await test.playCardFromHand(Thorns, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, PixlriffsRare, 'hermit', 1)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(PixlriffsRare, 'hermit', 1)
+					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Ladder, 'single_use')
+					await test.playCardFromHand(Ladder, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -163,10 +163,10 @@ describe('Test Pixl World Build', () => {
 						query.row.currentPlayer,
 						query.row.active,
 					)!.health = 10
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 
 					yield* changeActiveHermit(game, 0)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -191,22 +191,22 @@ describe('Test Pixl World Build', () => {
 			{
 				playerOneDeck: [GrianchRare, PixlriffsRare, GeminiTayRare],
 				playerTwoDeck: [RendogRare, RendogRare, BadOmen, Ladder, Ladder],
-				saga: function* (game) {
-					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
-					yield* playCardFromHand(game, PixlriffsRare, 'hermit', 1)
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 2)
+				saga: async (test, game) => {
+					await test.playCardFromHand(GrianchRare, 'hermit', 0)
+					await test.playCardFromHand(PixlriffsRare, 'hermit', 1)
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, RendogRare, 'hermit', 0)
-					yield* playCardFromHand(game, RendogRare, 'hermit', 1)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
+					await test.playCardFromHand(RendogRare, 'hermit', 0)
+					await test.playCardFromHand(RendogRare, 'hermit', 1)
+					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Ladder, 'single_use')
+					await test.playCardFromHand(Ladder, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -214,7 +214,7 @@ describe('Test Pixl World Build', () => {
 						query.slot.rowIndex(1),
 					)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -230,7 +230,7 @@ describe('Test Pixl World Build', () => {
 						)?.health,
 					).toBe(GrianchRare.health - GeminiTayRare.secondary.damage)
 
-					yield* playCardFromHand(game, Ladder, 'single_use')
+					await test.playCardFromHand(Ladder, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -238,7 +238,7 @@ describe('Test Pixl World Build', () => {
 						query.slot.rowIndex(0),
 					)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -269,21 +269,21 @@ describe('Test Pixl World Build', () => {
 			{
 				playerOneDeck: [GrianchRare, PixlriffsRare, GeminiTayRare],
 				playerTwoDeck: [RendogRare, BadOmen, EnderPearl, EnderPearl],
-				saga: function* (game) {
-					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
-					yield* playCardFromHand(game, PixlriffsRare, 'hermit', 1)
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 2)
+				saga: async (test, game) => {
+					await test.playCardFromHand(GrianchRare, 'hermit', 0)
+					await test.playCardFromHand(PixlriffsRare, 'hermit', 1)
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, RendogRare, 'hermit', 0)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
+					await test.playCardFromHand(RendogRare, 'hermit', 0)
+					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EnderPearl, 'single_use')
+					await test.playCardFromHand(EnderPearl, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -291,7 +291,7 @@ describe('Test Pixl World Build', () => {
 						query.slot.rowIndex(1),
 					)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -307,7 +307,7 @@ describe('Test Pixl World Build', () => {
 						)?.health,
 					).toBe(GrianchRare.health - GeminiTayRare.secondary.damage)
 
-					yield* playCardFromHand(game, EnderPearl, 'single_use')
+					await test.playCardFromHand(EnderPearl, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -315,7 +315,7 @@ describe('Test Pixl World Build', () => {
 						query.slot.rowIndex(0),
 					)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -346,21 +346,21 @@ describe('Test Pixl World Build', () => {
 			{
 				playerOneDeck: [GrianchRare, PixlriffsRare, PoePoeSkizzRare],
 				playerTwoDeck: [RendogRare, BadOmen, EnderPearl],
-				saga: function* (game) {
-					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
-					yield* playCardFromHand(game, PixlriffsRare, 'hermit', 1)
-					yield* playCardFromHand(game, PoePoeSkizzRare, 'hermit', 2)
+				saga: async (test, game) => {
+					await test.playCardFromHand(GrianchRare, 'hermit', 0)
+					await test.playCardFromHand(PixlriffsRare, 'hermit', 1)
+					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, RendogRare, 'hermit', 1)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
+					await test.playCardFromHand(RendogRare, 'hermit', 1)
+					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EnderPearl, 'single_use')
+					await test.playCardFromHand(EnderPearl, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -368,7 +368,7 @@ describe('Test Pixl World Build', () => {
 						query.slot.rowIndex(2),
 					)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -390,7 +390,7 @@ describe('Test Pixl World Build', () => {
 						)?.health,
 					).toBe(GrianchRare.health - PoePoeSkizzRare.secondary.damage)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,

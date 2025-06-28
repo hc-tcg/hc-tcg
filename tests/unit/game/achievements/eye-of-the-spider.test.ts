@@ -28,20 +28,20 @@ describe('Test Eye of the Spider achievement', () => {
 				playerOneDeck: [RenbobRare, SplashPotionOfPoison, Anvil],
 				playerTwoDeck: [GeminiTayCommon, GeminiTayCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, RenbobRare, 'hermit', 0)
+					await test.playCardFromHand(RenbobRare, 'hermit', 0)
 					yield* endTurn(game)
-					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 0)
-					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 1)
+					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
+					await test.playCardFromHand(GeminiTayCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SplashPotionOfPoison, 'single_use')
+					await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 1)
@@ -59,8 +59,8 @@ describe('Test Eye of the Spider achievement', () => {
 					yield* endTurn(game)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
 
 					yield* endTurn(game)
 					yield* forfeit(game.currentPlayerEntity)
@@ -79,23 +79,23 @@ describe('Test Eye of the Spider achievement', () => {
 				playerOneDeck: [EthosLabCommon, SplashPotionOfPoison, Anvil],
 				playerTwoDeck: [GeminiTayCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
-					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 0)
+					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SplashPotionOfPoison, 'single_use')
+					await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 				},
 				checkAchivement(_game, achievement, _outcome) {
@@ -112,23 +112,23 @@ describe('Test Eye of the Spider achievement', () => {
 				playerOneDeck: [EthosLabCommon, LavaBucket],
 				playerTwoDeck: [GeminiTayCommon, GeminiTayCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
-					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 0)
-					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 1)
+					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
+					await test.playCardFromHand(GeminiTayCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
+					await test.playCardFromHand(LavaBucket, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 1)
@@ -157,22 +157,22 @@ describe('Test Eye of the Spider achievement', () => {
 				playerOneDeck: [EthosLabCommon, SplashPotionOfPoison, Anvil],
 				playerTwoDeck: [GeminiTayCommon, MilkBucket],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
-					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 0)
+					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SplashPotionOfPoison, 'single_use')
+					await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, MilkBucket, 'single_use')
+					await test.playCardFromHand(MilkBucket, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -185,8 +185,8 @@ describe('Test Eye of the Spider achievement', () => {
 						if (row.health !== null) row.health = 10
 					})
 
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(EyeOfTheSpider.getProgress(achievement.goals)).toBeFalsy()

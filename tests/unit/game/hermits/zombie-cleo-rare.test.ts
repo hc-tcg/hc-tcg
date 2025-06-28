@@ -35,15 +35,15 @@ import {
 } from '../utils'
 
 function* testPrimaryDoesNotCrash(game: GameModel) {
-	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
+	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 	yield* endTurn(game)
 
-	yield* attack(game, 'primary')
+	await test.attack('primary')
 
 	// Verify that the attack worked.
 	expect(
@@ -56,14 +56,14 @@ function* testPrimaryDoesNotCrash(game: GameModel) {
 }
 
 function* testAmnesiaDisablesPuppetry(game: GameModel) {
-	yield* playCardFromHand(game, ArchitectFalseRare, 'hermit', 0)
+	await test.playCardFromHand(ArchitectFalseRare, 'hermit', 0)
 
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 
 	yield* pick(
 		game,
@@ -76,7 +76,7 @@ function* testAmnesiaDisablesPuppetry(game: GameModel) {
 
 	yield* endTurn(game)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 
 	expect(
 		game.components.find(
@@ -91,13 +91,13 @@ function* testAmnesiaDisablesPuppetry(game: GameModel) {
 }
 
 function* testAmnesiaBlocksPuppetryMock(game: GameModel) {
-	yield* playCardFromHand(game, ArchitectFalseRare, 'hermit', 0)
+	await test.playCardFromHand(ArchitectFalseRare, 'hermit', 0)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 1)
-	yield* playCardFromHand(game, ChorusFruit, 'single_use')
-	yield* attack(game, 'secondary')
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+	await test.playCardFromHand(ZombieCleoRare, 'hermit', 1)
+	await test.playCardFromHand(ChorusFruit, 'single_use')
+	await test.attack('secondary')
 	yield* pick(
 		game,
 		query.slot.currentPlayer,
@@ -106,7 +106,7 @@ function* testAmnesiaBlocksPuppetryMock(game: GameModel) {
 	)
 	yield* endTurn(game)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	expect(
 		game.components.find(
 			StatusEffectComponent,
@@ -119,7 +119,7 @@ function* testAmnesiaBlocksPuppetryMock(game: GameModel) {
 	).not.toBe(null)
 	yield* endTurn(game)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	yield* pick(
 		game,
 		query.slot.currentPlayer,
@@ -133,15 +133,15 @@ function* testAmnesiaBlocksPuppetryMock(game: GameModel) {
 }
 
 function* testPuppetryCanceling(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
-	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 1)
-	yield* playCardFromHand(game, BoomerBdubsRare, 'hermit', 2)
+	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
+	await test.playCardFromHand(ZombieCleoRare, 'hermit', 1)
+	await test.playCardFromHand(BoomerBdubsRare, 'hermit', 2)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 
 	yield* pick(
 		game,
@@ -162,7 +162,7 @@ function* testPuppetryCanceling(game: GameModel) {
 
 	yield* finishModalRequest(game, {cancel: true})
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 
 	expect(game.state.pickRequests).toHaveLength(1)
 	yield* pick(
@@ -201,15 +201,15 @@ function* testPuppetryCanceling(game: GameModel) {
 }
 
 function* testPuppetingJopacity(game: GameModel) {
-	yield* playCardFromHand(game, SmallishbeansCommon, 'hermit', 0)
+	await test.playCardFromHand(SmallishbeansCommon, 'hermit', 0)
 
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
-	yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 1)
-	yield* playCardFromHand(game, SmallishbeansCommon, 'hermit', 2)
+	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
+	await test.playCardFromHand(BeetlejhostRare, 'hermit', 1)
+	await test.playCardFromHand(SmallishbeansCommon, 'hermit', 2)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	yield* pick(
 		game,
 		query.slot.currentPlayer,
@@ -221,7 +221,7 @@ function* testPuppetingJopacity(game: GameModel) {
 	yield* endTurn(game)
 	yield* endTurn(game)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	yield* pick(
 		game,
 		query.slot.currentPlayer,
@@ -239,7 +239,7 @@ function* testPuppetingJopacity(game: GameModel) {
 	yield* endTurn(game)
 	yield* endTurn(game)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	yield* pick(
 		game,
 		query.slot.currentPlayer,
@@ -265,14 +265,14 @@ function* testPuppetingJopacity(game: GameModel) {
 }
 
 function* testPuppetryDiscardingItem(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
-	yield* playCardFromHand(game, PvPItem, 'item', 0, 0)
-	yield* playCardFromHand(game, HypnotizdRare, 'hermit', 1)
-	yield* attack(game, 'secondary')
+	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
+	await test.playCardFromHand(PvPItem, 'item', 0, 0)
+	await test.playCardFromHand(HypnotizdRare, 'hermit', 1)
+	await test.attack('secondary')
 
 	yield* pick(
 		game,
@@ -310,12 +310,12 @@ function* testPuppetryDiscardingItem(game: GameModel) {
 }
 
 function* testPuppetingTotalAnonymity(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
-	yield* playCardFromHand(game, WormManRare, 'hermit', 1)
-	yield* attack(game, 'secondary')
+	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
+	await test.playCardFromHand(WormManRare, 'hermit', 1)
+	await test.attack('secondary')
 	yield* pick(
 		game,
 		query.slot.currentPlayer,
@@ -323,7 +323,7 @@ function* testPuppetingTotalAnonymity(game: GameModel) {
 		query.slot.rowIndex(1),
 	)
 	yield* finishModalRequest(game, {pick: 'secondary'})
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 	expect(
 		game.components.find(
 			CardComponent,
@@ -333,17 +333,17 @@ function* testPuppetingTotalAnonymity(game: GameModel) {
 	).toBe(true)
 	yield* endTurn(game)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	yield* endTurn(game)
 
 	yield* endTurn(game)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	yield* endTurn(game)
 
 	yield* endTurn(game)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	expect(
 		game.components.find(
 			CardComponent,
@@ -354,13 +354,13 @@ function* testPuppetingTotalAnonymity(game: GameModel) {
 }
 
 function* testPuppetingTimeSkip(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
-	yield* playCardFromHand(game, JoeHillsRare, 'hermit', 1)
-	yield* attack(game, 'secondary')
+	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
+	await test.playCardFromHand(JoeHillsRare, 'hermit', 1)
+	await test.attack('secondary')
 	yield* pick(
 		game,
 		query.slot.currentPlayer,
@@ -373,8 +373,8 @@ function* testPuppetingTimeSkip(game: GameModel) {
 	yield* changeActiveHermit(game, 1)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, Bow, 'single_use')
-	yield* attack(game, 'secondary')
+	await test.playCardFromHand(Bow, 'single_use')
+	await test.attack('secondary')
 	yield* pick(
 		game,
 		query.slot.currentPlayer,
@@ -386,7 +386,7 @@ function* testPuppetingTimeSkip(game: GameModel) {
 	).not.toContain('secondary')
 	yield* finishModalRequest(game, {pick: 'primary'})
 	yield* removeEffect(game)
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	yield* pick(
 		game,
 		query.slot.currentPlayer,
@@ -479,14 +479,14 @@ describe('Test Zombie Cleo', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [ZombieCleoRare, Cubfan135Rare, ChorusFruit],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
-					yield* playCardFromHand(game, Cubfan135Rare, 'hermit', 1)
-					yield* playCardFromHand(game, ChorusFruit, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
+					await test.playCardFromHand(Cubfan135Rare, 'hermit', 1)
+					await test.playCardFromHand(ChorusFruit, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,

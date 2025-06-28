@@ -27,15 +27,15 @@ describe('Test Cant Touch This achievement', () => {
 				],
 				playerTwoDeck: [GoatfatherRare],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GoatfatherRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(GoatfatherRare, 'hermit', 0)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* forfeit(game.currentPlayerEntity)
@@ -55,22 +55,22 @@ describe('Test Cant Touch This achievement', () => {
 				playerOneDeck: [EthosLabCommon, InvisibilityPotion, InvisibilityPotion],
 				playerTwoDeck: [EthosLabCommon, Thorns],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Thorns, 'attach', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Thorns, 'attach', 0)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* forfeit(game.currentPlayerEntity)
@@ -90,16 +90,16 @@ describe('Test Cant Touch This achievement', () => {
 				playerOneDeck: [ZedaphPlaysRare],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, ZedaphPlaysRare, 'hermit', 0)
+					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* forfeit(game.currentPlayerEntity)

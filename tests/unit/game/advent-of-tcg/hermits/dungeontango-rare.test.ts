@@ -29,13 +29,13 @@ describe('Test DM Tango Lackey', () => {
 				EthosLabCommon,
 				DungeonTangoRare,
 			],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, DungeonTangoRare, 'hermit', 0)
-				yield* playCardFromHand(game, MinerItem, 'item', 0, 0)
-				yield* attack(game, 'primary')
+				await test.playCardFromHand(DungeonTangoRare, 'hermit', 0)
+				await test.playCardFromHand(MinerItem, 'item', 0, 0)
+				await test.attack('primary')
 				yield* pick(
 					game,
 					query.slot.currentPlayer,
@@ -66,15 +66,15 @@ describe('Test DM Tango Lackey', () => {
 				...Array(5).fill(MinerItem),
 				EthosLabCommon,
 			],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, DungeonTangoRare, 'hermit', 0)
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-				yield* playCardFromHand(game, MinerItem, 'item', 0, 0)
-				yield* playCardFromHand(game, Crossbow, 'single_use')
-				yield* attack(game, 'primary')
+				await test.playCardFromHand(DungeonTangoRare, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+				await test.playCardFromHand(MinerItem, 'item', 0, 0)
+				await test.playCardFromHand(Crossbow, 'single_use')
+				await test.attack('primary')
 				yield* pick(
 					game,
 					query.slot.currentPlayer,
@@ -83,7 +83,7 @@ describe('Test DM Tango Lackey', () => {
 					query.slot.index(0),
 				)
 				yield* removeEffect(game)
-				yield* playCardFromHand(game, Piston, 'single_use')
+				await test.playCardFromHand(Piston, 'single_use')
 				yield* pick(
 					game,
 					query.slot.currentPlayer,
@@ -98,9 +98,9 @@ describe('Test DM Tango Lackey', () => {
 					query.slot.rowIndex(1),
 					query.slot.index(0),
 				)
-				yield* playCardFromHand(game, Efficiency, 'single_use')
+				await test.playCardFromHand(Efficiency, 'single_use')
 				yield* applyEffect(game)
-				yield* attack(game, 'primary')
+				await test.attack('primary')
 				expect(game.state.pickRequests).toHaveLength(0)
 				expect(
 					game.components.find(
@@ -119,13 +119,13 @@ describe('Test DM Tango Lackey', () => {
 		testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [DungeonTangoRare, ...Array(10).fill(MinerItem)],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, DungeonTangoRare, 'hermit', 0)
-				yield* playCardFromHand(game, MinerItem, 'item', 0, 0)
-				yield* attack(game, 'primary')
+				await test.playCardFromHand(DungeonTangoRare, 'hermit', 0)
+				await test.playCardFromHand(MinerItem, 'item', 0, 0)
+				await test.attack('primary')
 				yield* pick(
 					game,
 					query.slot.currentPlayer,

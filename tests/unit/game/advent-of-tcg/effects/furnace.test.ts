@@ -40,10 +40,10 @@ describe('Test Furnace Attach Effect', () => {
 				RedstoneItem,
 			],
 			playerTwoDeck: [EthosLabCommon],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
-				yield* playCardFromHand(game, Furnace, 'attach', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(BalancedItem, 'item', 0, 0)
+				await test.playCardFromHand(Furnace, 'attach', 0)
 				expect(
 					game.components.find(
 						StatusEffectComponent,
@@ -56,15 +56,15 @@ describe('Test Furnace Attach Effect', () => {
 				).toBe(4)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, WildItem, 'item', 0, 1)
+				await test.playCardFromHand(WildItem, 'item', 0, 1)
 				yield* endTurn(game)
 
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, RedstoneItem, 'item', 0, 2)
+				await test.playCardFromHand(RedstoneItem, 'item', 0, 2)
 				yield* endTurn(game)
 
 				yield* endTurn(game)
@@ -116,9 +116,9 @@ describe('Test Furnace Attach Effect', () => {
 		testGame({
 			playerOneDeck: [EthosLabCommon, Furnace, Emerald, Emerald],
 			playerTwoDeck: [EthosLabCommon],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, Furnace, 'attach', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(Furnace, 'attach', 0)
 				expect(
 					game.components.find(
 						StatusEffectComponent,
@@ -131,7 +131,7 @@ describe('Test Furnace Attach Effect', () => {
 				).toBe(4)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* endTurn(game)
 
 				expect(
@@ -144,7 +144,7 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(3)
-				yield* playCardFromHand(game, Emerald, 'single_use')
+				await test.playCardFromHand(Emerald, 'single_use')
 				yield* applyEffect(game)
 				expect(
 					game.components.find(
@@ -170,7 +170,7 @@ describe('Test Furnace Attach Effect', () => {
 				).toBe(3)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, Emerald, 'single_use')
+				await test.playCardFromHand(Emerald, 'single_use')
 				yield* applyEffect(game)
 				expect(
 					game.components.find(
@@ -200,10 +200,10 @@ describe('Test Furnace Attach Effect', () => {
 				Ladder,
 			],
 			playerTwoDeck: [EthosLabCommon],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, Furnace, 'attach', 0)
-				yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(Furnace, 'attach', 0)
+				await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 				expect(
 					game.components.find(
 						StatusEffectComponent,
@@ -216,7 +216,7 @@ describe('Test Furnace Attach Effect', () => {
 				).toBe(4)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* endTurn(game)
 
 				expect(
@@ -229,9 +229,9 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(3)
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-				yield* playCardFromHand(game, BalancedItem, 'item', 1, 0)
-				yield* playCardFromHand(game, Mending, 'single_use')
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+				await test.playCardFromHand(BalancedItem, 'item', 1, 0)
+				await test.playCardFromHand(Mending, 'single_use')
 				yield* pick(
 					game,
 					query.slot.currentPlayer,
@@ -263,9 +263,9 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(2)
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-				yield* playCardFromHand(game, BalancedItem, 'item', 2, 0)
-				yield* playCardFromHand(game, Ladder, 'single_use')
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+				await test.playCardFromHand(BalancedItem, 'item', 2, 0)
+				await test.playCardFromHand(Ladder, 'single_use')
 				yield* pick(
 					game,
 					query.slot.currentPlayer,

@@ -26,18 +26,18 @@ describe('Test Dwarf Impulse Rare', () => {
 				playerOneDeck: [DwarfImpulseRare, GoldenAxe],
 				playerTwoDeck: [EthosLabCommon, FiveAMPearlRare],
 				saga: function* (game: GameModel) {
-					yield* playCardFromHand(game, DwarfImpulseRare, 'hermit', 0)
+					await test.playCardFromHand(DwarfImpulseRare, 'hermit', 0)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, FiveAMPearlRare, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(FiveAMPearlRare, 'hermit', 1)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GoldenAxe, 'single_use')
+					await test.playCardFromHand(GoldenAxe, 'single_use')
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					yield* pick(
 						game,
@@ -87,24 +87,24 @@ describe('Test Dwarf Impulse Rare', () => {
 					Wolf,
 				],
 				saga: function* (game: GameModel) {
-					yield* playCardFromHand(game, DwarfImpulseRare, 'hermit', 0)
+					await test.playCardFromHand(DwarfImpulseRare, 'hermit', 0)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, FiveAMPearlRare, 'hermit', 0)
-					yield* playCardFromHand(game, TangoTekCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(FiveAMPearlRare, 'hermit', 0)
+					await test.playCardFromHand(TangoTekCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 
-					yield* playCardFromHand(game, Wolf, 'attach', 0)
-					yield* playCardFromHand(game, LightningRod, 'attach', 2)
+					await test.playCardFromHand(Wolf, 'attach', 0)
+					await test.playCardFromHand(LightningRod, 'attach', 2)
 
 					yield* changeActiveHermit(game, 1)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GoldenAxe, 'single_use')
+					await test.playCardFromHand(GoldenAxe, 'single_use')
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					yield* pick(
 						game,

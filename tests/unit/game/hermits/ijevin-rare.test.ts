@@ -11,17 +11,17 @@ describe('Test iJevin Peace Out', () => {
 			{
 				playerOneDeck: [IJevinRare],
 				playerTwoDeck: [EthosLabCommon, FarmerBeefCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, IJevinRare, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(IJevinRare, 'hermit', 0)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 2)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 2)
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toHaveLength(1)
 

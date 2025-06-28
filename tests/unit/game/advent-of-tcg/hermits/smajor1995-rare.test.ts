@@ -25,19 +25,19 @@ describe('Test Scott "To Dye For"', () => {
 				...Array(3).fill(BuilderDoubleItem),
 			],
 			playerTwoDeck: [EthosLabCommon, ...Array(3).fill(BalancedItem)],
-			saga: function* (game) {
-				yield* playCardFromHand(game, Smajor1995Rare, 'hermit', 0)
-				yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-				yield* playCardFromHand(game, BuilderDoubleItem, 'item', 0, 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(Smajor1995Rare, 'hermit', 0)
+				await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+				await test.playCardFromHand(BuilderDoubleItem, 'item', 0, 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
-				yield* attack(game, 'primary')
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(BalancedItem, 'item', 0, 0)
+				await test.attack('primary')
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, BuilderDoubleItem, 'item', 0, 1)
-				yield* attack(game, 'secondary')
+				await test.playCardFromHand(BuilderDoubleItem, 'item', 0, 1)
+				await test.attack('secondary')
 				yield* pick(
 					game,
 					query.slot.currentPlayer,
@@ -56,26 +56,26 @@ describe('Test Scott "To Dye For"', () => {
 				).not.toBe(null)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, BalancedItem, 'item', 0, 1)
-				yield* attack(game, 'primary')
+				await test.playCardFromHand(BalancedItem, 'item', 0, 1)
+				await test.attack('primary')
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, BuilderDoubleItem, 'item', 1, 1)
-				yield* attack(game, 'secondary')
+				await test.playCardFromHand(BuilderDoubleItem, 'item', 1, 1)
+				await test.attack('secondary')
 				expect(game.state.pickRequests).toHaveLength(0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, BalancedItem, 'item', 0, 2)
-				yield* attack(game, 'secondary')
+				await test.playCardFromHand(BalancedItem, 'item', 0, 2)
+				await test.attack('secondary')
 				yield* endTurn(game)
 
 				yield* endTurn(game)
 
-				yield* attack(game, 'secondary')
+				await test.attack('secondary')
 				yield* endTurn(game)
 
 				yield* changeActiveHermit(game, 1)
-				yield* attack(game, 'secondary')
+				await test.attack('secondary')
 				expect(
 					game.components.find(
 						StatusEffectComponent,

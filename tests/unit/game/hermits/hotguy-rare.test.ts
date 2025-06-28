@@ -15,15 +15,15 @@ describe('Test Hotguy Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HotguyRare, Bow],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, HotguyRare, 'hermit', 0)
-					yield* playCardFromHand(game, Bow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(HotguyRare, 'hermit', 0)
+					await test.playCardFromHand(Bow, 'single_use')
+					await test.attack('secondary')
 
 					yield* pick(
 						game,
@@ -72,16 +72,16 @@ describe('Test Hotguy Rare', () => {
 					ThornsIII,
 				],
 				playerTwoDeck: [HotguyRare, Crossbow],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, ThornsIII, 'attach', 2)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(ThornsIII, 'attach', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, HotguyRare, 'hermit', 0)
-					yield* playCardFromHand(game, Crossbow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(HotguyRare, 'hermit', 0)
+					await test.playCardFromHand(Crossbow, 'single_use')
+					await test.attack('secondary')
 
 					yield* pick(
 						game,
@@ -139,16 +139,16 @@ describe('Test Hotguy Rare', () => {
 			{
 				playerOneDeck: [RendogRare, RendogRare, RendogRare],
 				playerTwoDeck: [HotguyRare, Crossbow],
-				saga: function* (game) {
+				saga: async (test, game) => {
 					/** This tests the bug found in https://discord.com/channels/1073763159187390584/1341987170180796487/1352075972245192805 */
-					yield* playCardFromHand(game, RendogRare, 'hermit', 0)
-					yield* playCardFromHand(game, RendogRare, 'hermit', 1)
-					yield* playCardFromHand(game, RendogRare, 'hermit', 2)
+					await test.playCardFromHand(RendogRare, 'hermit', 0)
+					await test.playCardFromHand(RendogRare, 'hermit', 1)
+					await test.playCardFromHand(RendogRare, 'hermit', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, HotguyRare, 'hermit', 0)
-					yield* playCardFromHand(game, Crossbow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(HotguyRare, 'hermit', 0)
+					await test.playCardFromHand(Crossbow, 'single_use')
+					await test.attack('secondary')
 
 					yield* pick(
 						game,

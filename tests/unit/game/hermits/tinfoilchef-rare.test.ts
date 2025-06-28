@@ -11,18 +11,18 @@ describe('Test TFC Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [TinFoilChefRare, ...new Array(16).fill(BalancedItem)],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
 					// Draw One Card
-					yield* playCardFromHand(game, TinFoilChefRare, 'hermit', 0)
+					await test.playCardFromHand(TinFoilChefRare, 'hermit', 0)
 					// Draw one card (Deck size goes to 9)
 					yield* endTurn(game)
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					// Draw two cards (Deck size goes to 7).
 					yield* endTurn(game)
 
@@ -44,20 +44,20 @@ describe('Test TFC Rare', () => {
 			{
 				playerOneDeck: [OriginalXBRare],
 				playerTwoDeck: [TinFoilChefRare, ...new Array(16).fill(BalancedItem)],
-				saga: function* (game) {
-					yield* playCardFromHand(game, OriginalXBRare, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(OriginalXBRare, 'hermit', 0)
 					yield* endTurn(game)
 
 					// Draw One Card
-					yield* playCardFromHand(game, TinFoilChefRare, 'hermit', 0)
+					await test.playCardFromHand(TinFoilChefRare, 'hermit', 0)
 					// Draw one card (Deck size goes to 9)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.currentPlayer.getDrawPile()?.length).toBe(9)
 					// Draw three cards (Deck size goes to 6).
 					yield* endTurn(game)

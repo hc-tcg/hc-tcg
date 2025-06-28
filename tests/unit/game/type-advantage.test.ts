@@ -37,12 +37,12 @@ function createTypeAdvantageTest(
 			{
 				playerOneDeck: [defender],
 				playerTwoDeck: [attacker],
-				saga: function* (game) {
-					yield* playCardFromHand(game, defender, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(defender, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, attacker, 'hermit', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(attacker, 'hermit', 0)
+					await test.attack('primary')
 					yield* endTurn(game)
 
 					expect(

@@ -24,13 +24,13 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 			{
 				playerOneDeck: [EthosLabCommon, ChainmailArmor, ChainmailArmor],
 				playerTwoDeck: [TinFoilChefUltraRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -42,10 +42,10 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -72,15 +72,15 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					Ladder,
 				],
 				playerTwoDeck: [TinFoilChefUltraRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -92,7 +92,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Ladder, 'single_use')
+					await test.playCardFromHand(Ladder, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -101,7 +101,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -128,14 +128,14 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					ChainmailArmor,
 				],
 				playerTwoDeck: [TinFoilChefUltraRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -149,16 +149,16 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 1)
-					yield* playCardFromHand(game, Chest, 'single_use')
+					await test.playCardFromHand(Chest, 'single_use')
 					yield* finishModalRequest(game, {
 						result: true,
 						cards: game.components.filterEntities(
@@ -169,12 +169,12 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 						),
 					})
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					yield* changeActiveHermit(game, 0)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -195,14 +195,14 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 			{
 				playerOneDeck: [EthosLabCommon, ChainmailArmor, ChainmailArmor],
 				playerTwoDeck: [TinFoilChefUltraRare, ArmorStand, Chest],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 0)
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 1)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
+					await test.playCardFromHand(ArmorStand, 'hermit', 1)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -213,21 +213,21 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					).toBe(ChainmailArmor)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 1)
-					yield* playCardFromHand(game, Chest, 'single_use')
+					await test.playCardFromHand(Chest, 'single_use')
 					yield* finishModalRequest(game, {
 						result: true,
 						cards: game.components.filterEntities(
@@ -238,14 +238,14 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 						),
 					})
 
-					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 0)
+					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
 					yield* changeActiveHermit(game, 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -266,14 +266,14 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 			{
 				playerOneDeck: [EthosLabCommon, ChainmailArmor, ChainmailArmor],
 				playerTwoDeck: [TinFoilChefUltraRare, TinFoilChefUltraRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 0)
-					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 1)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
+					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 1)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -284,7 +284,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					).toBe(ChainmailArmor)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 1)
@@ -292,7 +292,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -313,14 +313,14 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 			{
 				playerOneDeck: [RendogRare, ChainmailArmor, ChainmailArmor],
 				playerTwoDeck: [TinFoilChefUltraRare, ChainmailArmor, ChainmailArmor],
-				saga: function* (game) {
-					yield* playCardFromHand(game, RendogRare, 'hermit', 0)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(RendogRare, 'hermit', 0)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 0)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -331,8 +331,8 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					).toBe(ChainmailArmor)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -350,8 +350,8 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					).toBe(ChainmailArmor)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -363,7 +363,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					).not.toBe(null)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,

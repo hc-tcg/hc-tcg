@@ -11,13 +11,13 @@ describe('Test Goatfather Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [GoatfatherRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GoatfatherRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(GoatfatherRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(

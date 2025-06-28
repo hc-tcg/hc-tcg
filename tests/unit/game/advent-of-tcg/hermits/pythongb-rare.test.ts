@@ -7,12 +7,12 @@ import {GameModel} from 'common/models/game-model'
 import {attack, endTurn, playCardFromHand, testGame} from '../../utils'
 
 function* testOneHermit(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, PythonGBRare, 'hermit', 0)
-	yield* playCardFromHand(game, RendogCommon, 'hermit', 2)
-	yield* attack(game, 'secondary')
+	await test.playCardFromHand(PythonGBRare, 'hermit', 0)
+	await test.playCardFromHand(RendogCommon, 'hermit', 2)
+	await test.attack('secondary')
 	expect(game.opponentPlayer.activeRow?.health).toBe(
 		EthosLabCommon.health - PythonGBRare.secondary.damage,
 	)
@@ -20,8 +20,8 @@ function* testOneHermit(game: GameModel) {
 
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, RendogCommon, 'hermit', 1)
-	yield* attack(game, 'secondary')
+	await test.playCardFromHand(RendogCommon, 'hermit', 1)
+	await test.attack('secondary')
 	expect(game.opponentPlayer.activeRow?.health).toBe(
 		EthosLabCommon.health -
 			PythonGBRare.secondary.damage -
@@ -30,13 +30,13 @@ function* testOneHermit(game: GameModel) {
 }
 
 function* testManyHermits(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, PythonGBRare, 'hermit', 1)
-	yield* playCardFromHand(game, RendogCommon, 'hermit', 0)
-	yield* playCardFromHand(game, XisumavoidRare, 'hermit', 2)
-	yield* attack(game, 'secondary')
+	await test.playCardFromHand(PythonGBRare, 'hermit', 1)
+	await test.playCardFromHand(RendogCommon, 'hermit', 0)
+	await test.playCardFromHand(XisumavoidRare, 'hermit', 2)
+	await test.attack('secondary')
 	expect(game.opponentPlayer.activeRow?.health).toBe(
 		EthosLabCommon.health - PythonGBRare.secondary.damage * 2 * 2,
 	)

@@ -20,13 +20,13 @@ import {
 } from '../utils'
 
 function* testEvilXDisablesForOneTurn(game: GameModel) {
-	yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 0)
+	await test.playCardFromHand(EvilXisumaRare, 'hermit', 0)
 	yield* endTurn(game)
 
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 	yield* endTurn(game)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 	yield* finishModalRequest(game, {
 		pick: 'secondary',
 	})
@@ -75,12 +75,12 @@ describe('Test Evil X', () => {
 				playerOneDeck: [ArmorStand, EthosLabCommon],
 				playerTwoDeck: [EvilXisumaRare],
 				saga: function* (game: GameModel) {
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(ArmorStand, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(EvilXisumaRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					// We expect that there is no modal requests because Evil X found that the opponent has no attacks to disable.
 					expect(game.state.modalRequests).toStrictEqual([])
@@ -94,13 +94,13 @@ describe('Test Evil X', () => {
 			{
 				playerOneDeck: [ZombieCleoRare, EthosLabCommon],
 				playerTwoDeck: [EvilXisumaRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(EvilXisumaRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						(game.state.modalRequests[0].modal as CopyAttack.Data)
@@ -117,14 +117,14 @@ describe('Test Evil X', () => {
 			{
 				playerOneDeck: [JoeHillsRare],
 				playerTwoDeck: [JoeHillsRare, EvilXisumaRare, ChorusFruit],
-				saga: function* (game) {
-					yield* playCardFromHand(game, JoeHillsRare, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(JoeHillsRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, JoeHillsRare, 'hermit', 0)
-					yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 1)
-					yield* playCardFromHand(game, ChorusFruit, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(JoeHillsRare, 'hermit', 0)
+					await test.playCardFromHand(EvilXisumaRare, 'hermit', 1)
+					await test.playCardFromHand(ChorusFruit, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -135,7 +135,7 @@ describe('Test Evil X', () => {
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					yield* endTurn(game)
 

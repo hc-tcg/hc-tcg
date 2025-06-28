@@ -28,16 +28,16 @@ describe('Test Rare Hypnotizd', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HypnotizdRare, Bow, MinerDoubleItem],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, HypnotizdRare, 'hermit', 0)
-					yield* playCardFromHand(game, MinerDoubleItem, 'item', 0, 0)
-					yield* playCardFromHand(game, Bow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(HypnotizdRare, 'hermit', 0)
+					await test.playCardFromHand(MinerDoubleItem, 'item', 0, 0)
+					await test.playCardFromHand(Bow, 'single_use')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toHaveLength(2)
 
@@ -107,13 +107,13 @@ describe('Test Rare Hypnotizd', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HypnotizdRare, Efficiency],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, HypnotizdRare, 'hermit', 0)
-					yield* playCardFromHand(game, Efficiency, 'single_use')
+					await test.playCardFromHand(HypnotizdRare, 'hermit', 0)
+					await test.playCardFromHand(Efficiency, 'single_use')
 					yield* applyEffect(game)
 
 					expect(
@@ -124,7 +124,7 @@ describe('Test Rare Hypnotizd', () => {
 						),
 					).not.toBe(null)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -144,16 +144,16 @@ describe('Test Rare Hypnotizd', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HypnotizdRare, MinerDoubleItem, Crossbow],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, HypnotizdRare, 'hermit', 0)
-					yield* playCardFromHand(game, MinerDoubleItem, 'item', 0, 0)
-					yield* playCardFromHand(game, Crossbow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(HypnotizdRare, 'hermit', 0)
+					await test.playCardFromHand(MinerDoubleItem, 'item', 0, 0)
+					await test.playCardFromHand(Crossbow, 'single_use')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toHaveLength(2)
 
@@ -179,7 +179,7 @@ describe('Test Rare Hypnotizd', () => {
 						query.slot.index(0),
 					)
 					yield* removeEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,

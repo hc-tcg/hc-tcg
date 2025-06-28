@@ -30,13 +30,13 @@ describe('Test Free & Steel Achievement', () => {
 				],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 3)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 4)
-					yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
-					yield* playCardFromHand(game, FlintAndSteel, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 3)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 4)
+					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
+					await test.playCardFromHand(FlintAndSteel, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 					yield* forfeit(game.currentPlayer.entity)
@@ -62,8 +62,8 @@ describe('Test Free & Steel Achievement', () => {
 				],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, FlintAndSteel, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(FlintAndSteel, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 					yield* forfeit(game.currentPlayer.entity)

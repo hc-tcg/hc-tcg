@@ -63,12 +63,12 @@ describe('Test Slimeball', () => {
 				FireCharge,
 				CurseOfVanishing,
 			],
-			saga: function* (game) {
-				yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(FarmerBeefCommon, 'hermit', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, Slimeball, 'attach', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(Slimeball, 'attach', 0)
 				yield* playCardFromHand(
 					game,
 					Slimeball,
@@ -76,14 +76,14 @@ describe('Test Slimeball', () => {
 					0,
 					game.opponentPlayerEntity,
 				)
-				yield* playCardFromHand(game, FireCharge, 'single_use')
+				await test.playCardFromHand(FireCharge, 'single_use')
 				yield* pick(
 					game,
 					query.slot.currentPlayer,
 					query.slot.attach,
 					query.slot.rowIndex(0),
 				)
-				yield* playCardFromHand(game, CurseOfVanishing, 'single_use')
+				await test.playCardFromHand(CurseOfVanishing, 'single_use')
 				yield* applyEffect(game)
 
 				expect(
@@ -125,25 +125,25 @@ describe('Test Slimeball', () => {
 				Piston,
 				Lead,
 			],
-			saga: function* (game) {
-				yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 0)
-				yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
-				yield* playCardFromHand(game, Slimeball, 'attach', 0)
-				yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(FarmerBeefCommon, 'hermit', 0)
+				await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
+				await test.playCardFromHand(Slimeball, 'attach', 0)
+				await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 				expect(game.getPickableSlots(Piston.attachCondition)).toStrictEqual([])
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				expect(game.getPickableSlots(Lead.attachCondition)).toStrictEqual([])
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-				yield* playCardFromHand(game, Slimeball, 'attach', 1)
-				yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
-				yield* playCardFromHand(game, Piston, 'single_use')
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+				await test.playCardFromHand(Slimeball, 'attach', 1)
+				await test.playCardFromHand(BalancedItem, 'item', 0, 0)
+				await test.playCardFromHand(Piston, 'single_use')
 				yield* removeEffect(game)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, BalancedItem, 'item', 1, 0)
-				yield* playCardFromHand(game, Piston, 'single_use')
+				await test.playCardFromHand(BalancedItem, 'item', 1, 0)
+				await test.playCardFromHand(Piston, 'single_use')
 				yield* pick(
 					game,
 					query.slot.currentPlayer,
@@ -158,7 +158,7 @@ describe('Test Slimeball', () => {
 					query.slot.rowIndex(0),
 					query.slot.index(1),
 				)
-				yield* playCardFromHand(game, Lead, 'single_use')
+				await test.playCardFromHand(Lead, 'single_use')
 				yield* pick(
 					game,
 					query.slot.opponent,
@@ -181,15 +181,15 @@ describe('Test Slimeball', () => {
 		testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Slimeball, Ladder],
 			playerTwoDeck: [FarmerBeefCommon],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-				yield* playCardFromHand(game, Slimeball, 'attach', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+				await test.playCardFromHand(Slimeball, 'attach', 0)
 				expect(game.getPickableSlots(Ladder.attachCondition)).toStrictEqual([])
 				yield* changeActiveHermit(game, 1)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 0)
+				await test.playCardFromHand(FarmerBeefCommon, 'hermit', 0)
 				yield* endTurn(game)
 
 				expect(game.getPickableSlots(Ladder.attachCondition)).toStrictEqual([])
@@ -207,20 +207,20 @@ describe('Test Slimeball', () => {
 					EnderPearl,
 					InstantHealthII,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, LDShadowLadyRare, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(LDShadowLadyRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PoePoeSkizzRare, 'hermit', 0)
-					yield* playCardFromHand(game, Slimeball, 'attach', 0)
+					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
+					await test.playCardFromHand(Slimeball, 'attach', 0)
 					expect(
 						game.getPickableSlots(EnderPearl.attachCondition),
 					).toStrictEqual([])
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.state.pickRequests).toStrictEqual([])
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.state.pickRequests).toStrictEqual([])
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						PoePoeSkizzRare.health -
@@ -229,7 +229,7 @@ describe('Test Slimeball', () => {
 					)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, InstantHealthII, 'single_use')
+					await test.playCardFromHand(InstantHealthII, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -244,8 +244,8 @@ describe('Test Slimeball', () => {
 					)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GoldenAxe, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(GoldenAxe, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -271,11 +271,11 @@ describe('Test Slimeball', () => {
 		testGame({
 			playerOneDeck: [FarmerBeefCommon, WaterBucket, FireCharge],
 			playerTwoDeck: [EthosLabCommon, Slimeball, String],
-			saga: function* (game) {
-				yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(FarmerBeefCommon, 'hermit', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* playCardFromHand(
 					game,
 					Slimeball,
@@ -293,7 +293,7 @@ describe('Test Slimeball', () => {
 				)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, FireCharge, 'single_use')
+				await test.playCardFromHand(FireCharge, 'single_use')
 				expect(
 					game.components.filter(
 						SlotComponent,
@@ -308,7 +308,7 @@ describe('Test Slimeball', () => {
 					),
 				)
 				yield* removeEffect(game)
-				yield* playCardFromHand(game, WaterBucket, 'single_use')
+				await test.playCardFromHand(WaterBucket, 'single_use')
 				yield* pick(
 					game,
 					query.slot.currentPlayer,
@@ -334,22 +334,22 @@ describe('Test Slimeball', () => {
 					MinerItem,
 				],
 				playerTwoDeck: [MonkeyfarmRare, KingJoelRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, DungeonTangoRare, 'hermit', 0)
-					yield* playCardFromHand(game, HypnotizdRare, 'hermit', 1)
-					yield* playCardFromHand(game, Slimeball, 'attach', 0)
-					yield* playCardFromHand(game, Slimeball, 'attach', 1)
-					yield* playCardFromHand(game, MinerItem, 'item', 1, 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(DungeonTangoRare, 'hermit', 0)
+					await test.playCardFromHand(HypnotizdRare, 'hermit', 1)
+					await test.playCardFromHand(Slimeball, 'attach', 0)
+					await test.playCardFromHand(Slimeball, 'attach', 1)
+					await test.playCardFromHand(MinerItem, 'item', 1, 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, MonkeyfarmRare, 'hermit', 0)
-					yield* playCardFromHand(game, KingJoelRare, 'hermit', 1)
-					yield* attack(game, 'secondary') // Test "Monkeystep"
+					await test.playCardFromHand(MonkeyfarmRare, 'hermit', 0)
+					await test.playCardFromHand(KingJoelRare, 'hermit', 1)
+					await test.attack('secondary') // Test "Monkeystep"
 					expect(game.state.pickRequests).toHaveLength(0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, MinerItem, 'item', 0, 0)
-					yield* attack(game, 'primary') // Test "Lackey"
+					await test.playCardFromHand(MinerItem, 'item', 0, 0)
+					await test.attack('primary') // Test "Lackey"
 					expect(game.state.pickRequests).toHaveLength(0)
 					yield* endTurn(game)
 
@@ -359,11 +359,11 @@ describe('Test Slimeball', () => {
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary') // Test "Steal"
+					await test.attack('secondary') // Test "Steal"
 					expect(game.state.pickRequests).toHaveLength(0)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary') // Test "Got 'Em"
+					await test.attack('secondary') // Test "Got 'Em"
 					expect(game.state.pickRequests).toHaveLength(0)
 				},
 			},
@@ -376,19 +376,19 @@ describe('Test Slimeball', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Slimeball, BalancedItem],
 				playerTwoDeck: [GeminiTayRare, GoldenAxe, Looting],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Slimeball, 'attach', 0)
-					yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Slimeball, 'attach', 0)
+					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 0)
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
 					expect(game.getPickableSlots(Looting.attachCondition)).toStrictEqual(
 						[],
 					)
-					yield* playCardFromHand(game, GoldenAxe, 'single_use')
-					yield* attack(game, 'secondary')
-					yield* playCardFromHand(game, Looting, 'single_use')
+					await test.playCardFromHand(GoldenAxe, 'single_use')
+					await test.attack('secondary')
+					await test.playCardFromHand(Looting, 'single_use')
 					yield* applyEffect(game)
 					yield* pick(
 						game,
@@ -416,17 +416,17 @@ describe('Test Slimeball', () => {
 					BalancedItem,
 				],
 				playerTwoDeck: [GeminiTayRare, GoldenAxe, Lead],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Slimeball, 'attach', 0)
-					yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(Slimeball, 'attach', 0)
+					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 0)
-					yield* playCardFromHand(game, GoldenAxe, 'single_use')
-					yield* attack(game, 'secondary')
-					yield* playCardFromHand(game, Lead, 'single_use')
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
+					await test.playCardFromHand(GoldenAxe, 'single_use')
+					await test.attack('secondary')
+					await test.playCardFromHand(Lead, 'single_use')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -462,13 +462,13 @@ describe('Test Slimeball', () => {
 		testBossFight(
 			{
 				playerDeck: [EthosLabCommon, Slimeball, BalancedItem],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Slimeball, 'attach', 0)
-					yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Slimeball, 'attach', 0)
+					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
+					await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
 					yield* bossAttack(game, '50DMG', 'HEAL150', 'ITEMCARD')
 					expect(game.state.pickRequests).toHaveLength(0)
 					expect(
@@ -521,28 +521,28 @@ describe('Test Slimeball', () => {
 					GoldenAxe,
 					GoldenAxe,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Slimeball, 'attach', 0)
-					yield* playCardFromHand(game, BalancedItem, 'item', 1, 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(GrianchRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(Slimeball, 'attach', 0)
+					await test.playCardFromHand(BalancedItem, 'item', 1, 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
-					yield* playCardFromHand(game, DwarfImpulseRare, 'hermit', 1)
-					yield* playCardFromHand(game, MonkeyfarmRare, 'hermit', 2)
-					yield* playCardFromHand(game, KingJoelRare, 'hermit', 3)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
+					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
+					await test.playCardFromHand(DwarfImpulseRare, 'hermit', 1)
+					await test.playCardFromHand(MonkeyfarmRare, 'hermit', 2)
+					await test.playCardFromHand(KingJoelRare, 'hermit', 3)
+					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, BalancedItem, 'item', 1, 1)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(BalancedItem, 'item', 1, 1)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					// Attack with "Can I Axe You A Question?"
-					yield* playCardFromHand(game, GoldenAxe, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(GoldenAxe, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -557,7 +557,7 @@ describe('Test Slimeball', () => {
 						query.slot.rowIndex(1),
 					)
 					// Attack with "Monkeystep"
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -582,12 +582,12 @@ describe('Test Slimeball', () => {
 					).not.toBe(null)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					// Attack with "Can I Axe You A Question?"
-					yield* playCardFromHand(game, GoldenAxe, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(GoldenAxe, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -602,7 +602,7 @@ describe('Test Slimeball', () => {
 						query.slot.rowIndex(1),
 					)
 					// Attack with "Steal"
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,

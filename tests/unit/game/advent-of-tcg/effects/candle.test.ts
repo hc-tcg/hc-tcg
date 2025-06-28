@@ -26,9 +26,9 @@ describe('Test Candle Single Use', () => {
 					EthosLabCommon,
 				],
 				playerTwoDeck: [EthosLabCommon, Candle, ...Array(6).fill(BalancedItem)],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Candle, 'single_use')
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Candle, 'single_use')
 					yield* applyEffect(game)
 					const cardEntities = (
 						game.state.modalRequests[0] as SelectCards.Request
@@ -76,9 +76,9 @@ describe('Test Candle Single Use', () => {
 					...Array(10).fill(BalancedItem),
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Candle, 'single_use')
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Candle, 'single_use')
 					yield* applyEffect(game)
 					expect(
 						game.components.filter(
@@ -132,9 +132,9 @@ describe('Test Candle Single Use', () => {
 					Candle,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Candle, 'single_use')
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Candle, 'single_use')
 					yield* applyEffect(game)
 					expect(game.state.modalRequests[0]?.modal).toMatchObject({
 						type: 'selectCards',

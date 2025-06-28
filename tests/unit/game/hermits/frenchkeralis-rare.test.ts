@@ -11,12 +11,12 @@ describe('Test Frenchralis Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [FrenchralisRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, FrenchralisRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(FrenchralisRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -35,13 +35,13 @@ describe('Test Frenchralis Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [FrenchralisRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
 					game.currentPlayer.lives = 2
-					yield* playCardFromHand(game, FrenchralisRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(FrenchralisRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -60,13 +60,13 @@ describe('Test Frenchralis Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [FrenchralisRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
 					game.currentPlayer.lives = 1
-					yield* playCardFromHand(game, FrenchralisRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(FrenchralisRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(

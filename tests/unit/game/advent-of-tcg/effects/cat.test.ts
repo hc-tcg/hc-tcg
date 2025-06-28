@@ -32,14 +32,14 @@ describe('Test Cat Effect Card', () => {
 				...Array(7).fill(BalancedItem),
 				IronSword,
 			],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, Cat, 'attach', 0)
-				yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
-				yield* attack(game, 'primary')
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(Cat, 'attach', 0)
+				await test.playCardFromHand(BalancedItem, 'item', 0, 0)
+				await test.attack('primary')
 				expect(
 					game.components.get(
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
@@ -56,8 +56,8 @@ describe('Test Cat Effect Card', () => {
 
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, IronSword, 'single_use')
-				yield* attack(game, 'single-use')
+				await test.playCardFromHand(IronSword, 'single_use')
+				await test.attack('single-use')
 				expect(game.state.modalRequests).toHaveLength(0)
 			},
 		})
@@ -74,23 +74,23 @@ describe('Test Cat Effect Card', () => {
 				IronSword,
 				...Array(4).fill(BalancedDoubleItem),
 			],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-				yield* playCardFromHand(game, Thorns, 'attach', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+				await test.playCardFromHand(Thorns, 'attach', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				// Manually set Etho health to trigger zone
 				game.components.find(
 					RowComponent,
 					query.row.currentPlayer,
 					query.row.index(0),
 				)!.health = 10
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-				yield* playCardFromHand(game, Cat, 'attach', 0)
-				yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
-				yield* attack(game, 'primary')
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+				await test.playCardFromHand(Cat, 'attach', 0)
+				await test.playCardFromHand(BalancedItem, 'item', 0, 0)
+				await test.attack('primary')
 				expect(
 					game.components.get(
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
@@ -124,26 +124,26 @@ describe('Test Cat Effect Card', () => {
 				...Array(4).fill(BalancedItem),
 				IronSword,
 			],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-				yield* playCardFromHand(game, Thorns, 'attach', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+				await test.playCardFromHand(Thorns, 'attach', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				// Manually set Etho health to trigger zone
 				game.components.find(
 					RowComponent,
 					query.row.currentPlayer,
 					query.row.index(0),
 				)!.health = 10
-				yield* playCardFromHand(game, Cat, 'attach', 0)
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-				yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
+				await test.playCardFromHand(Cat, 'attach', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+				await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 				expect(
 					game.currentPlayer.getDrawPile().map((card) => card.props),
 				).toStrictEqual([IronSword])
-				yield* attack(game, 'primary')
+				await test.attack('primary')
 				expect(game.state.modalRequests).toHaveLength(0)
 			},
 		})
@@ -163,21 +163,21 @@ describe('Test Cat Effect Card', () => {
 					MinerItem,
 					IronSword,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, OriginalXBRare, 'hermit', 0)
-					yield* playCardFromHand(game, MinerDoubleItem, 'item', 0, 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(OriginalXBRare, 'hermit', 0)
+					await test.playCardFromHand(MinerDoubleItem, 'item', 0, 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, TinFoilChefRare, 'hermit', 0)
-					yield* playCardFromHand(game, Cat, 'attach', 0)
-					yield* playCardFromHand(game, MinerDoubleItem, 'item', 0, 0)
+					await test.playCardFromHand(TinFoilChefRare, 'hermit', 0)
+					await test.playCardFromHand(Cat, 'attach', 0)
+					await test.playCardFromHand(MinerDoubleItem, 'item', 0, 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, MinerItem, 'item', 0, 1)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(MinerItem, 'item', 0, 1)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.get(
 							(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
@@ -204,13 +204,13 @@ describe('Test Cat Effect Card', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Cat, Cat],
 				playerTwoDeck: [GrianRare, ...Array(10).fill(BalancedItem)],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Cat, 'attach', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Cat, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GrianRare, 'hermit', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(GrianRare, 'hermit', 0)
+					await test.attack('primary')
 					yield* finishModalRequest(game, {result: true, cards: null})
 					expect(
 						game.components.find(
@@ -222,10 +222,10 @@ describe('Test Cat Effect Card', () => {
 					).not.toBe(null)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Cat, 'attach', 0)
+					await test.playCardFromHand(Cat, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					expect(game.state.modalRequests).toHaveLength(2)
 					yield* finishModalRequest(game, {result: false, cards: null})
 					yield* finishModalRequest(game, {result: true, cards: null})

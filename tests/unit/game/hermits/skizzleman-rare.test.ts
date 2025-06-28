@@ -23,15 +23,15 @@ describe('Test Skizzleman Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [SkizzlemanRare, Anvil],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 0)
+					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					// Use Anvil to trigger Skizz's bonus damage.
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(
@@ -65,16 +65,16 @@ describe('Test Skizzleman Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns],
 				playerTwoDeck: [SkizzlemanRare, Anvil],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Thorns, 'attach', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(Thorns, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 0)
+					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					// Use Anvil to trigger Skizz's bonus damage.
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(
@@ -94,16 +94,16 @@ describe('Test Skizzleman Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, GoldArmor],
 				playerTwoDeck: [SkizzlemanRare, Anvil],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, GoldArmor, 'attach', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(GoldArmor, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 0)
+					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					// Use anvil to trigger attack the afk hermit for zero damage
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(
@@ -130,23 +130,23 @@ describe('Test Skizzleman Rare', () => {
 					Totem,
 				],
 				playerTwoDeck: [SkizzlemanRare, LavaBucket, LavaBucket, Anvil],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, Totem, 'attach', 0)
-					yield* playCardFromHand(game, Totem, 'attach', 2)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(Totem, 'attach', 0)
+					await test.playCardFromHand(Totem, 'attach', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 1)
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
+					await test.playCardFromHand(SkizzlemanRare, 'hermit', 1)
+					await test.playCardFromHand(LavaBucket, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
+					await test.playCardFromHand(LavaBucket, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
@@ -166,8 +166,8 @@ describe('Test Skizzleman Rare', () => {
 						query.row.index(2),
 					)!.health = 30
 
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(

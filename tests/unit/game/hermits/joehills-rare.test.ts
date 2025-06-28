@@ -18,13 +18,13 @@ describe('Test Joe Time Skip', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, BadOmen],
 				playerTwoDeck: [JoeHillsRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, JoeHillsRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(JoeHillsRare, 'hermit', 0)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 1)
@@ -33,20 +33,20 @@ describe('Test Joe Time Skip', () => {
 					expect(game.state.turn.availableActions).not.toContain(
 						'SECONDARY_ATTACK',
 					)
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, BadOmen, 'single_use')
+					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 0)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
@@ -58,13 +58,13 @@ describe('Test Joe Time Skip', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [JoeHillsRare, Clock],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, JoeHillsRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(JoeHillsRare, 'hermit', 0)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 1)
@@ -74,21 +74,21 @@ describe('Test Joe Time Skip', () => {
 					expect(game.state.turn.availableActions).not.toContain(
 						'SECONDARY_ATTACK',
 					)
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Clock, 'single_use')
+					await test.playCardFromHand(Clock, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},

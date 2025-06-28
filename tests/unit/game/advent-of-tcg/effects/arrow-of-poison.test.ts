@@ -33,15 +33,15 @@ describe('Test Arrow of Poison', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [GoatfatherRare, ArrowOfPoison],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GoatfatherRare, 'hermit', 0)
-					yield* playCardFromHand(game, ArrowOfPoison, 'single_use')
+					await test.playCardFromHand(GoatfatherRare, 'hermit', 0)
+					await test.playCardFromHand(ArrowOfPoison, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							StatusEffectComponent,
@@ -63,15 +63,15 @@ describe('Test Arrow of Poison', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [RenbobRare, ArrowOfPoison],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, RenbobRare, 'hermit', 1)
-					yield* playCardFromHand(game, ArrowOfPoison, 'single_use')
+					await test.playCardFromHand(RenbobRare, 'hermit', 1)
+					await test.playCardFromHand(ArrowOfPoison, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							StatusEffectComponent,
@@ -93,16 +93,16 @@ describe('Test Arrow of Poison', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [SpookyStressRare, WaterBucket, ArrowOfPoison],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SpookyStressRare, 'hermit', 0)
-					yield* playCardFromHand(game, WaterBucket, 'attach', 0)
-					yield* playCardFromHand(game, ArrowOfPoison, 'single_use')
+					await test.playCardFromHand(SpookyStressRare, 'hermit', 0)
+					await test.playCardFromHand(WaterBucket, 'attach', 0)
+					await test.playCardFromHand(ArrowOfPoison, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							StatusEffectComponent,
@@ -124,16 +124,16 @@ describe('Test Arrow of Poison', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [EthosLabCommon, ArrowOfPoison],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, LightningRod, 'attach', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(LightningRod, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ArrowOfPoison, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(ArrowOfPoison, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					expect(
 						game.components.find(
 							StatusEffectComponent,
@@ -155,16 +155,16 @@ describe('Test Arrow of Poison', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Trapdoor],
 				playerTwoDeck: [EthosLabCommon, ArrowOfPoison],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Trapdoor, 'attach', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(Trapdoor, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ArrowOfPoison, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(ArrowOfPoison, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					expect(
 						game.components.find(
 							StatusEffectComponent,
@@ -186,16 +186,16 @@ describe('Test Arrow of Poison', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon, ArrowOfPoison, Egg],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ArrowOfPoison, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(ArrowOfPoison, 'single_use')
 					yield* applyEffect(game)
-					yield* playCardFromHand(game, Egg, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Egg, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -227,19 +227,19 @@ describe('Test Arrow of Poison', () => {
 			{
 				playerOneDeck: [EthosLabCommon, ArrowOfPoison, Bow],
 				playerTwoDeck: [HelsknightRare, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, HelsknightRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(HelsknightRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ArrowOfPoison, 'single_use')
+					await test.playCardFromHand(ArrowOfPoison, 'single_use')
 					yield* applyEffect(game)
-					yield* playCardFromHand(game, Bow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Bow, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -273,17 +273,17 @@ describe('Test Arrow of Poison', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, MilkBucket],
 				playerTwoDeck: [EthosLabCommon, ArrowOfPoison, Bow],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, MilkBucket, 'attach', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(MilkBucket, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ArrowOfPoison, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(ArrowOfPoison, 'single_use')
 					yield* applyEffect(game)
-					yield* playCardFromHand(game, Bow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Bow, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,

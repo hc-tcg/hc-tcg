@@ -19,15 +19,15 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 				playerOneDeck: [ImpulseSVCommon, CurseOfBinding],
 				playerTwoDeck: [ImpulseSVCommon, ImpulseSVCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
+					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
+					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, CurseOfBinding, 'single_use')
+					await test.playCardFromHand(CurseOfBinding, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(PoePoeEnforcer.getProgress(achievement.goals)).toBeFalsy()
@@ -43,19 +43,19 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 				playerOneDeck: [ImpulseSVCommon, CurseOfBinding],
 				playerTwoDeck: [JoeHillsCommon, ImpulseSVCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
+					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, JoeHillsCommon, 'hermit', 0)
+					await test.playCardFromHand(JoeHillsCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, CurseOfBinding, 'single_use')
+					await test.playCardFromHand(CurseOfBinding, 'single_use')
 					yield* applyEffect(game)
 
 					yield* endTurn(game)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(PoePoeEnforcer.getProgress(achievement.goals)).toBe(1)
@@ -71,13 +71,13 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 				playerOneDeck: [ImpulseSVCommon, CurseOfBinding],
 				playerTwoDeck: [ImpulseSVCommon, ImpulseSVCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
+					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
+					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, CurseOfBinding, 'single_use')
+					await test.playCardFromHand(CurseOfBinding, 'single_use')
 					yield* applyEffect(game)
 
 					yield* endTurn(game)
@@ -86,7 +86,7 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 					yield* endTurn(game)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(PoePoeEnforcer.getProgress(achievement.goals)).toBeFalsy()

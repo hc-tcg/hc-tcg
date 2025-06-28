@@ -27,10 +27,10 @@ function postMasterTest(pearls: number, results: boolean[]) {
 		testGame({
 			playerOneDeck: deck,
 			playerTwoDeck: deck,
-			saga: function* (game) {
+			saga: async (test, game) => {
 				let drawnCard: Card | undefined = EthosLabCommon
 				for (let i = 0; i < pearls; i++) {
-					yield* playCardFromHand(game, PostmasterPearlRare, 'hermit', i)
+					await test.playCardFromHand(PostmasterPearlRare, 'hermit', i)
 				}
 				yield* endTurn(game)
 				for (let i = 0; i < results.length; i++) {

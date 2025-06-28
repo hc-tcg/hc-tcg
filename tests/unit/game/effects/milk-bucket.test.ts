@@ -15,18 +15,18 @@ describe('Test Milk Bucket', () => {
 		testGame({
 			playerOneDeck: [FarmerBeefCommon, MilkBucket],
 			playerTwoDeck: [EthosLabCommon, BadOmen, SplashPotionOfPoison],
-			saga: function* (game) {
-				yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 0)
+			saga: async (test, game) => {
+				await test.playCardFromHand(FarmerBeefCommon, 'hermit', 0)
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, SplashPotionOfPoison, 'single_use')
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
 				yield* applyEffect(game)
 				yield* endTurn(game)
 
 				yield* endTurn(game)
 
-				yield* playCardFromHand(game, BadOmen, 'single_use')
+				await test.playCardFromHand(BadOmen, 'single_use')
 				yield* applyEffect(game)
 				yield* endTurn(game)
 
@@ -45,7 +45,7 @@ describe('Test Milk Bucket', () => {
 					),
 				).not.toBe(null)
 
-				yield* playCardFromHand(game, MilkBucket, 'single_use')
+				await test.playCardFromHand(MilkBucket, 'single_use')
 				yield* pick(
 					game,
 					query.slot.currentPlayer,

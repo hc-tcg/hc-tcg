@@ -21,24 +21,24 @@ describe('Test Sculk Catalyst', () => {
 					TangoTekCommon,
 					SculkCatalyst,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, ImpulseSVRare, 'hermit', 0)
-					yield* playCardFromHand(game, TangoTekCommon, 'hermit', 1)
-					yield* playCardFromHand(game, TangoTekCommon, 'hermit', 2)
+				saga: async (test, game) => {
+					await test.playCardFromHand(ImpulseSVRare, 'hermit', 0)
+					await test.playCardFromHand(TangoTekCommon, 'hermit', 1)
+					await test.playCardFromHand(TangoTekCommon, 'hermit', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
+					await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
 					yield* bossAttack(game, '50DMG')
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SculkCatalyst, 'attach', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(SculkCatalyst, 'attach', 0)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* bossAttack(game, '70DMG')
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.opponentPlayer.lives).toBe(2)
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						ImpulseSVRare.health - 70,

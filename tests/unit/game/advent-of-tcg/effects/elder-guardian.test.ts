@@ -24,13 +24,13 @@ describe('Test Elder Guardian', () => {
 			{
 				playerOneDeck: [EthosLabCommon, ElderGuardian],
 				playerTwoDeck: [GeminiTayCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ElderGuardian, 'attach', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(ElderGuardian, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
+					await test.attack('primary')
 
 					expect(
 						game.components.find(
@@ -90,14 +90,14 @@ describe('Test Elder Guardian', () => {
 					BalancedDoubleItem,
 					BalancedItem,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ElderGuardian, 'attach', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(ElderGuardian, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
+					await test.attack('primary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
@@ -105,9 +105,9 @@ describe('Test Elder Guardian', () => {
 					expect(game.state.turn.availableActions).not.toContain(
 						'PRIMARY_ATTACK',
 					)
-					yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 1)
+					await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 1)
 					expect(game.state.turn.availableActions).toContain('PRIMARY_ATTACK')
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
@@ -115,7 +115,7 @@ describe('Test Elder Guardian', () => {
 					expect(game.state.turn.availableActions).not.toContain(
 						'SECONDARY_ATTACK',
 					)
-					yield* playCardFromHand(game, BalancedItem, 'item', 0, 2)
+					await test.playCardFromHand(BalancedItem, 'item', 0, 2)
 					expect(game.state.turn.availableActions).toContain('SECONDARY_ATTACK')
 					yield* endTurn(game)
 				},
@@ -129,15 +129,15 @@ describe('Test Elder Guardian', () => {
 			{
 				playerOneDeck: [EthosLabCommon, ElderGuardian],
 				playerTwoDeck: [EthosLabCommon, Efficiency, Efficiency],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ElderGuardian, 'attach', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(ElderGuardian, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Efficiency, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Efficiency, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
@@ -148,7 +148,7 @@ describe('Test Elder Guardian', () => {
 					expect(game.state.turn.availableActions).not.toContain(
 						'SECONDARY_ATTACK',
 					)
-					yield* playCardFromHand(game, Efficiency, 'single_use')
+					await test.playCardFromHand(Efficiency, 'single_use')
 					yield* applyEffect(game)
 					expect(game.state.turn.availableActions).toContain('PRIMARY_ATTACK')
 					expect(game.state.turn.availableActions).toContain('SECONDARY_ATTACK')
@@ -168,16 +168,16 @@ describe('Test Elder Guardian', () => {
 					ElderGuardian,
 				],
 				playerTwoDeck: [GrianchRare, Anvil],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, ElderGuardian, 'attach', 0)
-					yield* playCardFromHand(game, ElderGuardian, 'attach', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(ElderGuardian, 'attach', 0)
+					await test.playCardFromHand(ElderGuardian, 'attach', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(GrianchRare, 'hermit', 0)
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
 					expect(
 						game.components.filter(
 							StatusEffectComponent,
@@ -185,7 +185,7 @@ describe('Test Elder Guardian', () => {
 							query.effect.targetIsCardAnd(query.card.currentPlayer),
 						).length,
 					).toBe(1)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.filter(
 							StatusEffectComponent,

@@ -28,17 +28,17 @@ describe('Test Ethogirl achievement', () => {
 				playerTwoDeck: [ShadEECommon],
 				playGame: function* (game) {
 					// Identical cards should be counted the same
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, ShadeEERare, 'hermit', 2)
-					yield* playCardFromHand(game, EthosLabUltraRare, 'hermit', 3)
-					yield* playCardFromHand(game, EthosLabRare, 'hermit', 4)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(ShadeEERare, 'hermit', 2)
+					await test.playCardFromHand(EthosLabUltraRare, 'hermit', 3)
+					await test.playCardFromHand(EthosLabRare, 'hermit', 4)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ShadEECommon, 'hermit', 0)
+					await test.playCardFromHand(ShadEECommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Ethogirl.getProgress(achievement.goals)).toEqual(4)
@@ -60,14 +60,14 @@ describe('Test Ethogirl achievement', () => {
 				],
 				playerTwoDeck: [ShadEECommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, ShadeEERare, 'hermit', 2)
-					yield* playCardFromHand(game, EthosLabUltraRare, 'hermit', 3)
-					yield* playCardFromHand(game, EthosLabRare, 'hermit', 4)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(ShadeEERare, 'hermit', 2)
+					await test.playCardFromHand(EthosLabUltraRare, 'hermit', 3)
+					await test.playCardFromHand(EthosLabRare, 'hermit', 4)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ShadEECommon, 'hermit', 0)
+					await test.playCardFromHand(ShadEECommon, 'hermit', 0)
 					yield* endTurn(game)
 
 					yield* forfeit(game.currentPlayer.entity)

@@ -27,14 +27,14 @@ describe('Test Beetlejhost Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(
@@ -47,7 +47,7 @@ describe('Test Beetlejhost Rare', () => {
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(
@@ -62,7 +62,7 @@ describe('Test Beetlejhost Rare', () => {
 					yield* changeActiveHermit(game, 2)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(
@@ -84,12 +84,12 @@ describe('Test Beetlejhost Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -102,7 +102,7 @@ describe('Test Beetlejhost Rare', () => {
 					yield* endTurn(game)
 					yield* endTurn(game)
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					expect(
 						game.components.find(
 							StatusEffectComponent,
@@ -120,13 +120,13 @@ describe('Test Beetlejhost Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare, GeminiTayCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
-					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 1)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.playCardFromHand(GeminiTayCommon, 'hermit', 1)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -152,7 +152,7 @@ describe('Test Beetlejhost Rare', () => {
 					yield* endTurn(game)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -171,12 +171,12 @@ describe('Test Beetlejhost Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					yield* endTurn(game)
 					yield* endTurn(game)
@@ -202,16 +202,16 @@ describe('Test Beetlejhost Rare', () => {
 			{
 				playerOneDeck: [GeminiTayCommon, InvisibilityPotion],
 				playerTwoDeck: [BeetlejhostRare, BadOmen],
-				saga: function* (game) {
-					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						GeminiTayCommon.health - BeetlejhostRare.secondary.damage,
@@ -219,12 +219,12 @@ describe('Test Beetlejhost Rare', () => {
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						GeminiTayCommon.health -
@@ -241,14 +241,14 @@ describe('Test Beetlejhost Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare, EnderPearl, IronSword],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(
@@ -261,14 +261,14 @@ describe('Test Beetlejhost Rare', () => {
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EnderPearl, 'single_use')
+					await test.playCardFromHand(EnderPearl, 'single_use')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(
@@ -283,8 +283,8 @@ describe('Test Beetlejhost Rare', () => {
 					yield* changeActiveHermit(game, 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, IronSword, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(IronSword, 'single_use')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(
@@ -313,15 +313,15 @@ describe('Test Beetlejhost Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare, PotionOfWeakness, PotionOfWeakness],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(
@@ -343,9 +343,9 @@ describe('Test Beetlejhost Rare', () => {
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(

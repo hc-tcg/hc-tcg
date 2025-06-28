@@ -28,13 +28,13 @@ describe('Test Jimmy "The Law"', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [SolidaritygamingRare, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SolidaritygamingRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.attack('primary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -53,7 +53,7 @@ describe('Test Jimmy "The Law"', () => {
 					).not.toBe(null)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -66,7 +66,7 @@ describe('Test Jimmy "The Law"', () => {
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -106,15 +106,15 @@ describe('Test Jimmy "The Law"', () => {
 					ArmorStand,
 					ChorusFruit,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, SolidaritygamingRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SolidaritygamingRare, 'hermit', 0)
-					yield* playCardFromHand(game, SolidaritygamingRare, 'hermit', 1)
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 2)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
+					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 1)
+					await test.playCardFromHand(ArmorStand, 'hermit', 2)
+					await test.attack('primary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -133,7 +133,7 @@ describe('Test Jimmy "The Law"', () => {
 					).not.toBe(null)
 					yield* endTurn(game)
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -162,8 +162,8 @@ describe('Test Jimmy "The Law"', () => {
 							),
 						),
 					).not.toBe(null)
-					yield* playCardFromHand(game, ChorusFruit, 'single_use')
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(ChorusFruit, 'single_use')
+					await test.attack('primary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -198,7 +198,7 @@ describe('Test Jimmy "The Law"', () => {
 					)
 					yield* endTurn(game)
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -218,7 +218,7 @@ describe('Test Jimmy "The Law"', () => {
 							),
 						),
 					).not.toBe(null)
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -256,13 +256,13 @@ describe('Test Jimmy "The Law"', () => {
 			{
 				playerOneDeck: [EthosLabCommon, SolidaritygamingRare],
 				playerTwoDeck: [SkizzlemanRare, LavaBucket, Egg],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, SolidaritygamingRare, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 0)
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
+					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
+					await test.playCardFromHand(LavaBucket, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
@@ -271,7 +271,7 @@ describe('Test Jimmy "The Law"', () => {
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -280,8 +280,8 @@ describe('Test Jimmy "The Law"', () => {
 					)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Egg, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Egg, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -305,13 +305,13 @@ describe('Test Jimmy "The Law"', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Knockback],
 				playerTwoDeck: [SolidaritygamingRare, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SolidaritygamingRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.attack('primary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -320,8 +320,8 @@ describe('Test Jimmy "The Law"', () => {
 					)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Knockback, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Knockback, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -359,14 +359,14 @@ describe('Test Jimmy "The Law"', () => {
 			{
 				playerOneDeck: [EthosLabCommon, Knockback],
 				playerTwoDeck: [SolidaritygamingRare, EthosLabCommon, ChorusFruit],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SolidaritygamingRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, ChorusFruit, 'single_use')
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(ChorusFruit, 'single_use')
+					await test.attack('primary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -388,8 +388,8 @@ describe('Test Jimmy "The Law"', () => {
 					).not.toBe(null)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Knockback, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Knockback, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -416,21 +416,21 @@ describe('Test Jimmy "The Law"', () => {
 			{
 				playerOneDeck: [SolidaritygamingRare, EthosLabCommon],
 				playerTwoDeck: [TangoTekRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, SolidaritygamingRare, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.attack('primary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -439,7 +439,7 @@ describe('Test Jimmy "The Law"', () => {
 					)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -450,7 +450,7 @@ describe('Test Jimmy "The Law"', () => {
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
@@ -474,13 +474,13 @@ describe('Test Jimmy "The Law"', () => {
 			{
 				playerOneDeck: [IJevinRare, Egg, Egg],
 				playerTwoDeck: [SolidaritygamingRare, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, IJevinRare, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(IJevinRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SolidaritygamingRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.attack('primary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -496,8 +496,8 @@ describe('Test Jimmy "The Law"', () => {
 					).not.toBe(null)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Egg, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Egg, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,
@@ -522,8 +522,8 @@ describe('Test Jimmy "The Law"', () => {
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Egg, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Egg, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,

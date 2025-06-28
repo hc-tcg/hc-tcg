@@ -21,16 +21,16 @@ describe('Test Tango Extra Flee', () => {
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon],
 				playerTwoDeck: [TangoTekRare, FarmerBeefRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefRare, 'hermit', 1)
+					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefRare, 'hermit', 1)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toHaveLength(2)
 
@@ -61,14 +61,14 @@ describe('Test Tango Extra Flee', () => {
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [TangoTekRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
+					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toStrictEqual([])
 				},
@@ -82,20 +82,20 @@ describe('Test Tango Extra Flee', () => {
 			{
 				playerOneDeck: [TangoTekRare, FarmerBeefRare],
 				playerTwoDeck: [EthosLabCommon, CurseOfBinding],
-				saga: function* (game) {
-					yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefRare, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefRare, 'hermit', 1)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, CurseOfBinding, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(CurseOfBinding, 'single_use')
 
 					yield* applyEffect(game)
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toStrictEqual([])
 				},
@@ -109,19 +109,19 @@ describe('Test Tango Extra Flee', () => {
 			{
 				playerOneDeck: [TangoTekRare, FarmerBeefRare],
 				playerTwoDeck: [HumanCleoRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefRare, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefRare, 'hermit', 1)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 0)
+					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					// First request should be for Betrayal target
 					expect(game.state.pickRequests).toHaveLength(1)

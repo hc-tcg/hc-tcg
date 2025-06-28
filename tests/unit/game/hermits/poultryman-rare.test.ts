@@ -21,15 +21,15 @@ describe('Test Poutry Man Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [PoultryManRare, Egg, GoldenAxe],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PoultryManRare, 'hermit', 0)
-					yield* playCardFromHand(game, Egg, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(PoultryManRare, 'hermit', 0)
+					await test.playCardFromHand(Egg, 'single_use')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toHaveLength(1)
 
@@ -48,8 +48,8 @@ describe('Test Poutry Man Rare', () => {
 					yield* endTurn(game)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, GoldenAxe, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(GoldenAxe, 'single_use')
+					await test.attack('secondary')
 
 					// Hand should only contain Egg.
 					expect(game.currentPlayer.getHand()?.length).toBe(1)
@@ -64,21 +64,21 @@ describe('Test Poutry Man Rare', () => {
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, BadOmen],
 				playerTwoDeck: [PoultryManRare, Egg],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PoultryManRare, 'hermit', 0)
+					await test.playCardFromHand(PoultryManRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, BadOmen, 'single_use')
+					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Egg, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Egg, 'single_use')
+					await test.attack('secondary')
 
 					yield* pick(
 						game,
@@ -102,17 +102,17 @@ describe('Test Poutry Man Rare', () => {
 			{
 				playerOneDeck: [PoultryManRare, Egg],
 				playerTwoDeck: [HelsknightRare, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, PoultryManRare, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(PoultryManRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, HelsknightRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(HelsknightRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Egg, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Egg, 'single_use')
+					await test.attack('secondary')
 					yield* pick(
 						game,
 						query.slot.opponent,

@@ -13,13 +13,13 @@ describe('Test Hermits and Crafting achievement', () => {
 				playerOneDeck: STARTER_DECKS[1].cards,
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, SmallishbeansCommon, 'hermit', 0)
+					await test.playCardFromHand(SmallishbeansCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, outcome) {
 					expect(outcome.type).toBe('player-won')
@@ -40,13 +40,13 @@ describe('Test Hermits and Crafting achievement', () => {
 				playerOneDeck: [SmallishbeansCommon],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, SmallishbeansCommon, 'hermit', 0)
+					await test.playCardFromHand(SmallishbeansCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, outcome) {
 					expect(outcome.type).toBe('player-won')

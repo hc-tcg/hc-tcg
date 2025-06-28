@@ -31,9 +31,9 @@ describe('Test Lantern Single Use', () => {
 					Feather,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Lantern, 'single_use')
+				saga: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Lantern, 'single_use')
 					yield* applyEffect(game)
 					expect(
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards.map(

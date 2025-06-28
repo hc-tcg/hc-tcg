@@ -22,12 +22,12 @@ describe('Test Weakness', () => {
 			{
 				playerOneDeck: [VintageBeefCommon],
 				playerTwoDeck: [VintageBeefCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.attack('primary')
 					yield* endTurn(game)
 
 					expect(
@@ -48,14 +48,14 @@ describe('Test Weakness', () => {
 			{
 				playerOneDeck: [VintageBeefCommon],
 				playerTwoDeck: [VintageBeefCommon, PotionOfWeakness],
-				saga: function* (game) {
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* endTurn(game)
 
 					expect(
@@ -68,7 +68,7 @@ describe('Test Weakness', () => {
 						VintageBeefCommon.health - VintageBeefCommon.primary.damage - 20,
 					)
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* endTurn(game)
 
 					expect(
@@ -96,22 +96,22 @@ describe('Test Weakness', () => {
 					PotionOfWeakness,
 					ChorusFruit,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ChorusFruit, 'single_use')
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(ChorusFruit, 'single_use')
+					await test.attack('primary')
 					yield* pick(
 						game,
 						query.slot.currentPlayer,
@@ -130,7 +130,7 @@ describe('Test Weakness', () => {
 						VintageBeefCommon.health - VintageBeefCommon.primary.damage - 20,
 					)
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* endTurn(game)
 
 					expect(
@@ -153,20 +153,20 @@ describe('Test Weakness', () => {
 			{
 				playerOneDeck: [VintageBeefCommon, ImpulseSVCommon],
 				playerTwoDeck: [VintageBeefCommon, PotionOfWeakness],
-				saga: function* (game) {
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 1)
+				saga: async (test, game) => {
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 1)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* endTurn(game)
 
 					expect(
@@ -177,7 +177,7 @@ describe('Test Weakness', () => {
 						)?.health,
 					).toBe(ImpulseSVCommon.health - VintageBeefCommon.primary.damage)
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* endTurn(game)
 
 					expect(
@@ -198,20 +198,20 @@ describe('Test Weakness', () => {
 			{
 				playerOneDeck: [VintageBeefCommon],
 				playerTwoDeck: [VintageBeefCommon, PotionOfWeakness, PotionOfWeakness],
-				saga: function* (game) {
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* endTurn(game)
 
 					expect(
@@ -234,14 +234,14 @@ describe('Test Weakness', () => {
 			{
 				playerOneDeck: [SmallishbeansRare],
 				playerTwoDeck: [ImpulseSVCommon, PotionOfWeakness],
-				saga: function* (game) {
-					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 0)
+				saga: async (test, game) => {
+					await test.playCardFromHand(SmallishbeansRare, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 0)
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* endTurn(game)
 
 					expect(
@@ -267,35 +267,35 @@ describe('Test Weakness', () => {
 					SmallishbeansRare,
 					PotionOfWeakness,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 0)
-					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 1)
-					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 2)
+				saga: async (test, game) => {
+					await test.playCardFromHand(SmallishbeansRare, 'hermit', 0)
+					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 1)
+					await test.playCardFromHand(SmallishbeansRare, 'hermit', 2)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 0)
-					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 1)
-					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 2)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(SmallishbeansRare, 'hermit', 0)
+					await test.playCardFromHand(SmallishbeansRare, 'hermit', 1)
+					await test.playCardFromHand(SmallishbeansRare, 'hermit', 2)
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
 					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					yield* endTurn(game)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					yield* endTurn(game)
 
 					expect(game.currentPlayer.activeRow).toBe(null)
 					yield* changeActiveHermit(game, 1)
 					yield* endTurn(game)
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* endTurn(game)
 
 					expect(
@@ -309,7 +309,7 @@ describe('Test Weakness', () => {
 					yield* changeActiveHermit(game, 2)
 					yield* endTurn(game)
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					yield* endTurn(game)
 
 					expect(

@@ -33,8 +33,8 @@ describe('Test Go Fish Achievement', () => {
 				],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, FishingRod, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(FishingRod, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 					yield* forfeit(game.currentPlayer.entity)
@@ -65,15 +65,15 @@ describe('Test Go Fish Achievement', () => {
 				],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, IronArmor, 'attach', 0)
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(IronArmor, 'attach', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* endTurn(game)
 
-					yield* playCardFromHand(game, Mending, 'single_use')
+					await test.playCardFromHand(Mending, 'single_use')
 
 					yield* pick(
 						game,
@@ -81,9 +81,9 @@ describe('Test Go Fish Achievement', () => {
 						query.slot.currentPlayer,
 						query.slot.rowIndex(1),
 					)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
-					yield* playCardFromHand(game, FishingRod, 'single_use')
+					await test.playCardFromHand(FishingRod, 'single_use')
 					yield* applyEffect(game)
 					yield* endTurn(game)
 
