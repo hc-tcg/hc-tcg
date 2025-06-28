@@ -14,7 +14,7 @@ import {
 } from '../utils'
 
 describe('Test Poe Poe Skizz Rare', () => {
-	test('Jumpscare.', () => {
+	test('Jumpscare.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [PoePoeSkizzRare],
@@ -55,7 +55,7 @@ describe('Test Poe Poe Skizz Rare', () => {
 		)
 	})
 
-	test('Canceling Jumpscare', () => {
+	test('Canceling Jumpscare', async () => {
 		await testGame(
 			{
 				playerOneDeck: [PoePoeSkizzRare, ...Array(4).fill(EthosLabCommon), Bow],

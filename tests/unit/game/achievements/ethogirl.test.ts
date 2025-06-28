@@ -14,7 +14,7 @@ import {
 } from '../utils'
 
 describe('Test Ethogirl achievement', () => {
-	test('Ethogirl progress only counts unique Etho variants on one side of the board', () => {
+	test('Ethogirl progress only counts unique Etho variants on one side of the board', async () => {
 		testAchivement(
 			{
 				achievement: Ethogirl,
@@ -47,7 +47,7 @@ describe('Test Ethogirl achievement', () => {
 			{noItemRequirements: true, oneShotMode: true},
 		)
 	})
-	test('progress does not increase on loss', () => {
+	test('progress does not increase on loss', async () => {
 		testAchivement(
 			{
 				achievement: Ethogirl,

@@ -11,7 +11,7 @@ import query from 'common/components/query'
 import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test Ladder', () => {
-	test('Basic Functionality', () => {
+	test('Basic Functionality', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -117,7 +117,7 @@ describe('Test Ladder', () => {
 		)
 	})
 
-	test('Ladder allows row to have more health than hermit max', () => {
+	test('Ladder allows row to have more health than hermit max', async () => {
 		// Test is dependent on these inequalities
 		expect(FalseSymmetryRare.health).toBeLessThan(GrianCommon.health)
 		expect(EthosLabCommon.primary.damage).toBeLessThan(

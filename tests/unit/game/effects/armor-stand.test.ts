@@ -27,7 +27,7 @@ describe('Test Armor Stand', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Armor stand disables correct slots', () => {
+	test('Armor stand disables correct slots', async () => {
 		await testGame(
 			{
 				playerOneDeck: [ArmorStand],

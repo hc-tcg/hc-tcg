@@ -12,7 +12,7 @@ import {
 } from '../utils'
 
 describe('Test Poe Poe Enforcer Achievement', () => {
-	test('Test achievement is not gained when knocking out active hermit whle opponent has curse of binding', () => {
+	test('Test achievement is not gained when knocking out active hermit whle opponent has curse of binding', async () => {
 		testAchivement(
 			{
 				achievement: PoePoeEnforcer,
@@ -36,7 +36,7 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 			{noItemRequirements: true, startWithAllCards: false, oneShotMode: true},
 		)
 	})
-	test('Test achievement is gained when knocking out active hermit the round after opponent has curse of binding', () => {
+	test('Test achievement is gained when knocking out active hermit the round after opponent has curse of binding', async () => {
 		testAchivement(
 			{
 				achievement: PoePoeEnforcer,
@@ -64,7 +64,7 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 			{noItemRequirements: true, startWithAllCards: false, oneShotMode: true},
 		)
 	})
-	test('Test achievement is not gained after two rounds', () => {
+	test('Test achievement is not gained after two rounds', async () => {
 		testAchivement(
 			{
 				achievement: PoePoeEnforcer,

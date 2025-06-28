@@ -7,7 +7,7 @@ import query from 'common/components/query'
 import {forfeit, pick, playCardFromHand, testAchivement} from '../utils'
 
 describe('Test SUStainable achivement', () => {
-	test('Test SUStainable achivement', () => {
+	test('Test SUStainable achivement', async () => {
 		testAchivement(
 			{
 				achievement: SUStainable,

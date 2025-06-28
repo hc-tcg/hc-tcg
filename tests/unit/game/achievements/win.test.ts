@@ -10,7 +10,7 @@ import {
 } from '../utils'
 
 describe('Test win achivement', () => {
-	test('Test win achivement', () => {
+	test('Test win achivement', async () => {
 		testAchivement(
 			{
 				achievement: Win,
@@ -32,7 +32,7 @@ describe('Test win achivement', () => {
 			{oneShotMode: true, noItemRequirements: true},
 		)
 	})
-	test('Test win achivement does not count wrong player wins', () => {
+	test('Test win achivement does not count wrong player wins', async () => {
 		testAchivement(
 			{
 				achievement: Win,
@@ -51,7 +51,7 @@ describe('Test win achivement', () => {
 			{oneShotMode: true, noItemRequirements: true},
 		)
 	})
-	test('Test forfeit wins count', () => {
+	test('Test forfeit wins count', async () => {
 		testAchivement(
 			{
 				achievement: Win,

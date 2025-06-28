@@ -8,7 +8,7 @@ import query from 'common/components/query'
 import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test rare welsknight', () => {
-	test('Vengance functionality', () => {
+	test('Vengance functionality', async () => {
 		await testGame(
 			{
 				playerOneDeck: [GeminiTayCommon, GoldArmor, InstantHealthII],

@@ -14,7 +14,7 @@ import {
 } from '../utils'
 
 describe('Test Useless Machine Achievement', () => {
-	test('Test achievement is gained when drawing two duplicates', () => {
+	test('Test achievement is gained when drawing two duplicates', async () => {
 		testAchivement(
 			{
 				achievement: UselessMachine,
@@ -54,7 +54,7 @@ describe('Test Useless Machine Achievement', () => {
 			{noItemRequirements: true, startWithAllCards: false},
 		)
 	})
-	test('Test one duplicate card', () => {
+	test('Test one duplicate card', async () => {
 		testAchivement(
 			{
 				achievement: UselessMachine,
@@ -94,7 +94,7 @@ describe('Test Useless Machine Achievement', () => {
 			{noItemRequirements: true, startWithAllCards: false},
 		)
 	})
-	test('Test zero duplicate cards', () => {
+	test('Test zero duplicate cards', async () => {
 		testAchivement(
 			{
 				achievement: UselessMachine,

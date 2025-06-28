@@ -53,7 +53,7 @@ import FireCharge from 'common/cards/single-use/fire-charge'
 import Piston from 'common/cards/single-use/piston'
 
 describe('Test Slimeball', () => {
-	test('Slimeball can be placed on and removed from both players', () => {
+	test('Slimeball can be placed on and removed from both players', async () => {
 		await testGame({
 			playerOneDeck: [FarmerBeefCommon],
 			playerTwoDeck: [
@@ -105,7 +105,7 @@ describe('Test Slimeball', () => {
 		})
 	})
 
-	test('Slimeball prevents Lead and Piston removing items', () => {
+	test('Slimeball prevents Lead and Piston removing items', async () => {
 		await testGame({
 			playerOneDeck: [
 				FarmerBeefCommon,
@@ -172,7 +172,7 @@ describe('Test Slimeball', () => {
 		})
 	})
 
-	test('Slimeball prevents Ladder swapping Hermits', () => {
+	test('Slimeball prevents Ladder swapping Hermits', async () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Slimeball, Ladder],
 			playerTwoDeck: [FarmerBeefCommon],
@@ -192,7 +192,7 @@ describe('Test Slimeball', () => {
 		})
 	})
 
-	test('Slimeball prevents moving the entire row, unless disabled by Golden Axe', () => {
+	test('Slimeball prevents moving the entire row, unless disabled by Golden Axe', async () => {
 		await testGame(
 			{
 				playerOneDeck: [LDShadowLadyRare, GoldenAxe],
@@ -260,7 +260,7 @@ describe('Test Slimeball', () => {
 		)
 	})
 
-	test('Slimeball prevents Fire Charge and Water Bucket removing items', () => {
+	test('Slimeball prevents Fire Charge and Water Bucket removing items', async () => {
 		await testGame({
 			playerOneDeck: [FarmerBeefCommon, WaterBucket, FireCharge],
 			playerTwoDeck: [EthosLabCommon, Slimeball, String],
@@ -314,7 +314,7 @@ describe('Test Slimeball', () => {
 		})
 	})
 
-	test('Slimeball prevents Hermits from removing items', () => {
+	test('Slimeball prevents Hermits from removing items', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -363,7 +363,7 @@ describe('Test Slimeball', () => {
 		)
 	})
 
-	test('Slimeball prevents Looting removing items, unless disabled by Golden Axe', () => {
+	test('Slimeball prevents Looting removing items, unless disabled by Golden Axe', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Slimeball, BalancedItem],
@@ -397,7 +397,7 @@ describe('Test Slimeball', () => {
 		)
 	})
 
-	test('Golden Axe + Lead can remove an item card from a row with Slimeball', () => {
+	test('Golden Axe + Lead can remove an item card from a row with Slimeball', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -447,7 +447,7 @@ describe('Test Slimeball', () => {
 		)
 	})
 
-	test('Slimeball prevents Evil Xisuma boss discarding an item card, unless EX uses NINEATTACHED', () => {
+	test('Slimeball prevents Evil Xisuma boss discarding an item card, unless EX uses NINEATTACHED', async () => {
 		testBossFight(
 			{
 				playerDeck: [EthosLabCommon, Slimeball, BalancedItem],
@@ -491,7 +491,7 @@ describe('Test Slimeball', () => {
 	})
 
 	// Test interactions with Grianch which allows two attacks in one turn
-	test('King Joel and Monkeyfarm can remove an item card from a row with Slimeball when disabled by D. Impulse secondary', () => {
+	test('King Joel and Monkeyfarm can remove an item card from a row with Slimeball when disabled by D. Impulse secondary', async () => {
 		await testGame(
 			{
 				playerOneDeck: [

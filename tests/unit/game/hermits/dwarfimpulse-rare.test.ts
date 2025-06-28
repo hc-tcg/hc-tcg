@@ -20,7 +20,7 @@ import {
 } from '../utils'
 
 describe('Test Dwarf Impulse Rare', () => {
-	test('Test Dwarf Impulse with golden axe.', () => {
+	test('Test Dwarf Impulse with golden axe.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [DwarfImpulseRare, GoldenAxe],
@@ -74,7 +74,7 @@ describe('Test Dwarf Impulse Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test Dwarf Impulse works with lightning rod.', () => {
+	test('Test Dwarf Impulse works with lightning rod.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [DwarfImpulseRare, GoldenAxe],

@@ -17,7 +17,7 @@ import {
 } from '../utils'
 
 describe('Test Go Fish Achievement', () => {
-	test('Test achievement is gained after mending is drawn', () => {
+	test('Test achievement is gained after mending is drawn', async () => {
 		testAchivement(
 			{
 				achievement: GoFish,
@@ -46,7 +46,7 @@ describe('Test Go Fish Achievement', () => {
 			{noItemRequirements: true, startWithAllCards: false},
 		)
 	})
-	test('Test achievement works properly with Gem', () => {
+	test('Test achievement works properly with Gem', async () => {
 		testAchivement(
 			{
 				achievement: GoFish,

@@ -33,7 +33,7 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 }
 
 describe('Test Loyalty', () => {
-	test('Test Loyalty only returns item cards from attached hermit.', () => {
+	test('Test Loyalty only returns item cards from attached hermit.', async () => {
 		await testGame(
 			{
 				saga: testLoyaltyHelperSaga,

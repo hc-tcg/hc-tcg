@@ -6,7 +6,7 @@ import BalancedItem from 'common/cards/items/balanced-common'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test TFC Rare', () => {
-	test('TFC draws exactly one card.', () => {
+	test('TFC draws exactly one card.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -39,7 +39,7 @@ describe('Test TFC Rare', () => {
 		)
 	})
 
-	test('TFC + Original XB draws two additional cards at end of turn', () => {
+	test('TFC + Original XB draws two additional cards at end of turn', async () => {
 		await testGame(
 			{
 				playerOneDeck: [OriginalXBRare],

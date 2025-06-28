@@ -16,7 +16,7 @@ import {
 } from '../utils'
 
 describe('Test Docm77 World Eater', () => {
-	test('Test World Eater with Invisibility (both tails)', () => {
+	test('Test World Eater with Invisibility (both tails)', async () => {
 		await testGame(
 			{
 				playerOneDeck: [GeminiTayRare, BadOmen, InvisibilityPotion],

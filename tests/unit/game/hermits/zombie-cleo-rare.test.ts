@@ -380,7 +380,7 @@ function* testPuppetingTimeSkip(game: GameModel) {
 }
 
 describe('Test Zombie Cleo', () => {
-	test('Test Zombie Cleo Primary Does Not Crash Server', () => {
+	test('Test Zombie Cleo Primary Does Not Crash Server', async () => {
 		await testGame(
 			{
 				saga: testPrimaryDoesNotCrash,
@@ -391,7 +391,7 @@ describe('Test Zombie Cleo', () => {
 		)
 	})
 
-	test('Test Puppetry is Disabled by Amnesia', () => {
+	test('Test Puppetry is Disabled by Amnesia', async () => {
 		await testGame(
 			{
 				saga: testAmnesiaDisablesPuppetry,
@@ -402,7 +402,7 @@ describe('Test Zombie Cleo', () => {
 		)
 	})
 
-	test('Test Amnesia Blocks Mocking Attack with Puppetry', () => {
+	test('Test Amnesia Blocks Mocking Attack with Puppetry', async () => {
 		await testGame(
 			{
 				saga: testAmnesiaBlocksPuppetryMock,
@@ -413,7 +413,7 @@ describe('Test Zombie Cleo', () => {
 		)
 	})
 
-	test('Test Puppetry After Canceling', () => {
+	test('Test Puppetry After Canceling', async () => {
 		await testGame(
 			{
 				saga: testPuppetryCanceling,
@@ -424,7 +424,7 @@ describe('Test Zombie Cleo', () => {
 		)
 	})
 
-	test('Test using Puppetry on Jopacity', () => {
+	test('Test using Puppetry on Jopacity', async () => {
 		await testGame(
 			{
 				saga: testPuppetingJopacity,
@@ -435,7 +435,7 @@ describe('Test Zombie Cleo', () => {
 		)
 	})
 
-	test('Test Puppeting an attack that requites an item to be discarded', () => {
+	test('Test Puppeting an attack that requites an item to be discarded', async () => {
 		await testGame(
 			{
 				saga: testPuppetryDiscardingItem,
@@ -446,7 +446,7 @@ describe('Test Zombie Cleo', () => {
 		)
 	})
 
-	test('Test using Puppetry on Total Anonymity', () => {
+	test('Test using Puppetry on Total Anonymity', async () => {
 		await testGame(
 			{
 				saga: testPuppetingTotalAnonymity,
@@ -494,7 +494,7 @@ describe('Test Zombie Cleo', () => {
 		)
 	})
 
-	test('Test using Puppetry on Time Skip', () => {
+	test('Test using Puppetry on Time Skip', async () => {
 		await testGame(
 			{
 				saga: testPuppetingTimeSkip,

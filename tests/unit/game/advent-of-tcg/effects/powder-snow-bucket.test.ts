@@ -24,7 +24,7 @@ import {
 } from '../../utils'
 
 describe('Test Powder Snow Bucket', () => {
-	test('Frozen effect prevents attack damage and activating row', () => {
+	test('Frozen effect prevents attack damage and activating row', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, PowderSnowBucket],
@@ -126,7 +126,7 @@ describe('Test Powder Snow Bucket', () => {
 		)
 	})
 
-	test('Frozen hermits still take status effect damage', () => {
+	test('Frozen hermits still take status effect damage', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -210,7 +210,7 @@ describe('Test Powder Snow Bucket', () => {
 		)
 	})
 
-	test('Frozen Berry Bush cannot be damaged, but still removes its health each turn', () => {
+	test('Frozen Berry Bush cannot be damaged, but still removes its health each turn', async () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [EthosLabCommon, BerryBush, PowderSnowBucket, Bow],
@@ -264,7 +264,7 @@ describe('Test Powder Snow Bucket', () => {
 		})
 	})
 
-	test('Extra Flee does not switch Hermits while AFK Hermits are Frozen', () => {
+	test('Extra Flee does not switch Hermits while AFK Hermits are Frozen', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, PowderSnowBucket],

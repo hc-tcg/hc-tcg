@@ -59,7 +59,7 @@ function* testEvilXDisablesForOneTurn(game: GameModel) {
 }
 
 describe('Test Evil X', () => {
-	test('Test Evil X disables attack for one turn', () => {
+	test('Test Evil X disables attack for one turn', async () => {
 		await testGame(
 			{
 				saga: testEvilXDisablesForOneTurn,
@@ -69,7 +69,7 @@ describe('Test Evil X', () => {
 			{startWithAllCards: true, forceCoinFlip: true, noItemRequirements: true},
 		)
 	})
-	test('Test Evil X secondary does not open popup if there are no opponent active hermits', () => {
+	test('Test Evil X secondary does not open popup if there are no opponent active hermits', async () => {
 		await testGame(
 			{
 				playerOneDeck: [ArmorStand, EthosLabCommon],
@@ -89,7 +89,7 @@ describe('Test Evil X', () => {
 			{noItemRequirements: true, startWithAllCards: true, forceCoinFlip: true},
 		)
 	})
-	test('Test Evil X secondary with no afk hermits can disable Puppetry', () => {
+	test('Test Evil X secondary with no afk hermits can disable Puppetry', async () => {
 		await testGame(
 			{
 				playerOneDeck: [ZombieCleoRare, EthosLabCommon],
@@ -112,7 +112,7 @@ describe('Test Evil X', () => {
 			{noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('Test Evil X secondary can disable opponent Time Skip after flipping heads to skip a turn', () => {
+	test('Test Evil X secondary can disable opponent Time Skip after flipping heads to skip a turn', async () => {
 		await testGame(
 			{
 				playerOneDeck: [JoeHillsRare],

@@ -15,7 +15,7 @@ import {
 } from '../utils'
 
 describe('Test Cant Touch This achievement', () => {
-	test('"Cant Touch This" counts Anvil Drop miss as only one progress', () => {
+	test('"Cant Touch This" counts Anvil Drop miss as only one progress', async () => {
 		testAchivement(
 			{
 				achievement: CantTouchThis,
@@ -48,7 +48,7 @@ describe('Test Cant Touch This achievement', () => {
 		)
 	})
 
-	test('"Cant Touch This" streak progress is not broken by Thorns', () => {
+	test('"Cant Touch This" streak progress is not broken by Thorns', async () => {
 		testAchivement(
 			{
 				achievement: CantTouchThis,
@@ -83,7 +83,7 @@ describe('Test Cant Touch This achievement', () => {
 		)
 	})
 
-	test('"Cant Touch This" counts reflected damage from Sheep Stare as one progress', () => {
+	test('"Cant Touch This" counts reflected damage from Sheep Stare as one progress', async () => {
 		testAchivement(
 			{
 				achievement: CantTouchThis,

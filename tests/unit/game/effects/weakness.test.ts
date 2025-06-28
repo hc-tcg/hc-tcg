@@ -17,7 +17,7 @@ import {
 } from '../utils'
 
 describe('Test Weakness', () => {
-	test('Weakness Damage Negative Control', () => {
+	test('Weakness Damage Negative Control', async () => {
 		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon],
@@ -43,7 +43,7 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Works Both Ways', () => {
+	test('Weakness Works Both Ways', async () => {
 		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon],
@@ -86,7 +86,7 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Works Through Switches', () => {
+	test('Weakness Works Through Switches', async () => {
 		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon, VintageBeefCommon],
@@ -147,7 +147,7 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Does Not Work on Wrong Types', () => {
+	test('Weakness Does Not Work on Wrong Types', async () => {
 		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon, ImpulseSVCommon],
@@ -192,7 +192,7 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Does Not Stack Self', () => {
+	test('Weakness Does Not Stack Self', async () => {
 		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon],
@@ -228,7 +228,7 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Does Not Stack With Type Chart', () => {
+	test('Weakness Does Not Stack With Type Chart', async () => {
 		await testGame(
 			{
 				playerOneDeck: [SmallishbeansRare],
@@ -256,7 +256,7 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Works Through KOs', () => {
+	test('Weakness Works Through KOs', async () => {
 		await testGame(
 			{
 				playerOneDeck: [SmallishbeansRare, ImpulseSVCommon, SmallishbeansRare],

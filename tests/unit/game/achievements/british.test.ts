@@ -12,7 +12,7 @@ import {
 } from '../utils'
 
 describe('Test British achievement', () => {
-	test('"British" achievement does not progress if only Cup of Tea is used', () => {
+	test('"British" achievement does not progress if only Cup of Tea is used', async () => {
 		testAchivement(
 			{
 				achievement: British,
@@ -46,7 +46,7 @@ describe('Test British achievement', () => {
 		)
 	})
 
-	test('"British" achievement makes progress if both secondaries are used', () => {
+	test('"British" achievement makes progress if both secondaries are used', async () => {
 		testAchivement(
 			{
 				achievement: British,

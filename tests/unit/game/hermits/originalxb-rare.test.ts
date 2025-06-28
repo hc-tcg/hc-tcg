@@ -5,7 +5,7 @@ import BalancedItem from 'common/cards/items/balanced-common'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Original Xb Rare', () => {
-	test('Original Xb draws exactly one card.', () => {
+	test('Original Xb draws exactly one card.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [OriginalXBRare],

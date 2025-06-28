@@ -16,7 +16,7 @@ import {
 } from '../utils'
 
 describe('Test Pesky Bird Achievement', () => {
-	test('Test achievement progress increases after forcing opponnet to discard card', () => {
+	test('Test achievement progress increases after forcing opponnet to discard card', async () => {
 		testAchivement(
 			{
 				achievement: PeskyBird,
@@ -52,7 +52,7 @@ describe('Test Pesky Bird Achievement', () => {
 			{noItemRequirements: true, startWithAllCards: false, forceCoinFlip: true},
 		)
 	})
-	test('Test achievement progress stays the same when you discard your own card', () => {
+	test('Test achievement progress stays the same when you discard your own card', async () => {
 		testAchivement(
 			{
 				achievement: PeskyBird,

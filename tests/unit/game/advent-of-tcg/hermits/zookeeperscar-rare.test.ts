@@ -27,7 +27,7 @@ import {
 } from '../../utils'
 
 describe('Test Zookeeper Scar', () => {
-	test('Effect not duplicated when attached to Zookeeper Scar', () => {
+	test('Effect not duplicated when attached to Zookeeper Scar', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -50,7 +50,7 @@ describe('Test Zookeeper Scar', () => {
 		)
 	})
 
-	test('Effect doubles and detaches', () => {
+	test('Effect doubles and detaches', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ZookeeperScarRare, Wolf],
@@ -82,7 +82,7 @@ describe('Test Zookeeper Scar', () => {
 		)
 	})
 
-	test('Lasso can stack Cat functionality', () => {
+	test('Lasso can stack Cat functionality', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -125,7 +125,7 @@ describe('Test Zookeeper Scar', () => {
 		)
 	})
 
-	test('Lasso + Elder Guardian functionality', () => {
+	test('Lasso + Elder Guardian functionality', async () => {
 		await testGame(
 			{
 				playerOneDeck: [ZookeeperScarRare, EthosLabCommon, ElderGuardian],
@@ -152,7 +152,7 @@ describe('Test Zookeeper Scar', () => {
 		)
 	})
 
-	test('Mending Cat from active Zookeeper Scar', () => {
+	test('Mending Cat from active Zookeeper Scar', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -199,7 +199,7 @@ describe('Test Zookeeper Scar', () => {
 		)
 	})
 
-	test('Moving Zookeeper Scar from Cat using Ladder', () => {
+	test('Moving Zookeeper Scar from Cat using Ladder', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -246,7 +246,7 @@ describe('Test Zookeeper Scar', () => {
 		)
 	})
 
-	test('Rendog cannot mock Lasso with Roleplay', () => {
+	test('Rendog cannot mock Lasso with Roleplay', async () => {
 		await testGame(
 			{
 				playerOneDeck: [ZookeeperScarRare],
@@ -282,7 +282,7 @@ describe('Test Zookeeper Scar', () => {
 		)
 	})
 
-	test('Evil Xisuma cannot attempt to disable Lasso with Derpcoin', () => {
+	test('Evil Xisuma cannot attempt to disable Lasso with Derpcoin', async () => {
 		await testGame(
 			{
 				playerOneDeck: [ZookeeperScarRare],
@@ -306,7 +306,7 @@ describe('Test Zookeeper Scar', () => {
 		)
 	})
 
-	test('Golden Axe disables Wolf + Lasso when Wolf is attached to active', () => {
+	test('Golden Axe disables Wolf + Lasso when Wolf is attached to active', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ZookeeperScarRare, Wolf],

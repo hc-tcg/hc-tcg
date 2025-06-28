@@ -18,7 +18,7 @@ import {
 } from '../../utils'
 
 describe('Test Shelby Parallel World', () => {
-	test('Parallel World Functionality', () => {
+	test('Parallel World Functionality', async () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [
@@ -57,7 +57,7 @@ describe('Test Shelby Parallel World', () => {
 		})
 	})
 
-	test('Parallel World shows correct card when Shelby is knocked-out by Thorns', () => {
+	test('Parallel World shows correct card when Shelby is knocked-out by Thorns', async () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns],
 			playerTwoDeck: [
@@ -99,7 +99,7 @@ describe('Test Shelby Parallel World', () => {
 		})
 	})
 
-	test('Parallel World removes modal when Shelby is knocked-out by Thorns and gives away last card as prize', () => {
+	test('Parallel World removes modal when Shelby is knocked-out by Thorns and gives away last card as prize', async () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns],
 			playerTwoDeck: [
@@ -132,7 +132,7 @@ describe('Test Shelby Parallel World', () => {
 		})
 	})
 
-	test('Parallel World + Cat', () => {
+	test('Parallel World + Cat', async () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [

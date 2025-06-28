@@ -6,7 +6,7 @@ import BalancedItem from 'common/cards/items/balanced-common'
 import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
 
 describe('Test Jack of All Cards achivement', () => {
-	test('Test Jack of All Cards increments progress on win for only default cards', () => {
+	test('Test Jack of All Cards increments progress on win for only default cards', async () => {
 		testAchivement(
 			{
 				achievement: AllCards,
@@ -28,7 +28,7 @@ describe('Test Jack of All Cards achivement', () => {
 			{oneShotMode: true, noItemRequirements: true},
 		)
 	})
-	test('Test Jack of All Cards does not increment progress on loss', () => {
+	test('Test Jack of All Cards does not increment progress on loss', async () => {
 		testAchivement(
 			{
 				achievement: AllCards,

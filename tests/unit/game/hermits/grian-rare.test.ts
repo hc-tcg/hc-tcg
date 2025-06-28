@@ -18,7 +18,7 @@ import {
 } from '../utils'
 
 describe('Test Grian Rare', () => {
-	test('Test Borrow steals Loyalty after knock out', () => {
+	test('Test Borrow steals Loyalty after knock out', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Loyalty, BalancedItem],
@@ -64,7 +64,7 @@ describe('Test Grian Rare', () => {
 			},
 		)
 	})
-	test('Test Borrow steals Shield after blocking damage', () => {
+	test('Test Borrow steals Shield after blocking damage', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Shield],
@@ -108,7 +108,7 @@ describe('Test Grian Rare', () => {
 		)
 	})
 
-	test('Test Borrow cannot steal Totem that revives hermit', () => {
+	test('Test Borrow cannot steal Totem that revives hermit', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Totem],
@@ -218,7 +218,7 @@ describe('Test Grian Rare', () => {
 		)
 	})
 
-	test('Test Borrow cannot attach card when Grian is knocked-out by Thorns', () => {
+	test('Test Borrow cannot attach card when Grian is knocked-out by Thorns', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Thorns],

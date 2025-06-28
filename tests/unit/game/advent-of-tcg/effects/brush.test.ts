@@ -16,7 +16,7 @@ import {
 } from '../../utils'
 
 describe('Test Brush Single Use', () => {
-	test('Leaving both cards on top', () => {
+	test('Leaving both cards on top', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -64,7 +64,7 @@ describe('Test Brush Single Use', () => {
 		)
 	})
 
-	test('Moving both cards to bottom', () => {
+	test('Moving both cards to bottom', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -112,7 +112,7 @@ describe('Test Brush Single Use', () => {
 		)
 	})
 
-	test('Moving 1 card to bottom and leaving 1 on top', () => {
+	test('Moving 1 card to bottom and leaving 1 on top', async () => {
 		await testGame(
 			{
 				playerOneDeck: [

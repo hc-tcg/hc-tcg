@@ -17,7 +17,7 @@ import {
 } from '../utils'
 
 describe('Test Lightning Rod', () => {
-	test('Test redirecting multiple attacks at once', () => {
+	test('Test redirecting multiple attacks at once', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -75,7 +75,7 @@ describe('Test Lightning Rod', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Lightning Rod is not discarded when overridden', () => {
+	test('Lightning Rod is not discarded when overridden', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
@@ -108,7 +108,7 @@ describe('Test Lightning Rod', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Lightning Rod is not discarded from missed attacks', () => {
+	test('Lightning Rod is not discarded from missed attacks', async () => {
 		// Practically includes 0-damage atttacks.
 		await testGame(
 			{
@@ -151,7 +151,7 @@ describe('Test Lightning Rod', () => {
 			},
 		)
 	})
-	test('Rod discards from 0 damage due to Royal Protection', () => {
+	test('Rod discards from 0 damage due to Royal Protection', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],

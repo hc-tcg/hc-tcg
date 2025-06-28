@@ -6,7 +6,7 @@ import query from 'common/components/query'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Frenchralis Rare', () => {
-	test('Test Zero Lives Lost', () => {
+	test('Test Zero Lives Lost', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -30,7 +30,7 @@ describe('Test Frenchralis Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test One Life Lost', () => {
+	test('Test One Life Lost', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -55,7 +55,7 @@ describe('Test Frenchralis Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('Test Two Lives Lost', () => {
+	test('Test Two Lives Lost', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],

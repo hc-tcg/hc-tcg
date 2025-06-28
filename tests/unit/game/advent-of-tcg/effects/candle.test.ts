@@ -14,7 +14,7 @@ import {
 } from '../../utils'
 
 describe('Test Candle Single Use', () => {
-	test('Candle functionality', () => {
+	test('Candle functionality', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -67,7 +67,7 @@ describe('Test Candle Single Use', () => {
 		)
 	})
 
-	test('Selecting a card with more than 2 copies', () => {
+	test('Selecting a card with more than 2 copies', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -121,7 +121,7 @@ describe('Test Candle Single Use', () => {
 		)
 	})
 
-	test('If deck has only unique cards, only shuffle', () => {
+	test('If deck has only unique cards, only shuffle', async () => {
 		await testGame(
 			{
 				playerOneDeck: [

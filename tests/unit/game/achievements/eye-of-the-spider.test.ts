@@ -21,7 +21,7 @@ import {
 } from '../utils'
 
 describe('Test Eye of the Spider achievement', () => {
-	test('"Eye of the Spider" counts multiple attacks as one progress', () => {
+	test('"Eye of the Spider" counts multiple attacks as one progress', async () => {
 		testAchivement(
 			{
 				achievement: EyeOfTheSpider,
@@ -72,7 +72,7 @@ describe('Test Eye of the Spider achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('Test Eye of the Spider achievement does not increase when active hermit is knocked out', () => {
+	test('Test Eye of the Spider achievement does not increase when active hermit is knocked out', async () => {
 		testAchivement(
 			{
 				achievement: EyeOfTheSpider,
@@ -105,7 +105,7 @@ describe('Test Eye of the Spider achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('Test Eye of the Spider achievement does not increase when any AFK is knocked out', () => {
+	test('Test Eye of the Spider achievement does not increase when any AFK is knocked out', async () => {
 		testAchivement(
 			{
 				achievement: EyeOfTheSpider,
@@ -150,7 +150,7 @@ describe('Test Eye of the Spider achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('Test Eye of the Spider achievement does not increase when poison is removed with milk', () => {
+	test('Test Eye of the Spider achievement does not increase when poison is removed with milk', async () => {
 		testAchivement(
 			{
 				achievement: EyeOfTheSpider,

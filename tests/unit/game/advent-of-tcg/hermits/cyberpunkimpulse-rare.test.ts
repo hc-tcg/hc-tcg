@@ -25,7 +25,7 @@ import {
 } from '../../utils'
 
 describe('Test Cyberpunk Impulse', () => {
-	test('Energy transferred', () => {
+	test('Energy transferred', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -66,7 +66,7 @@ describe('Test Cyberpunk Impulse', () => {
 		)
 	})
 
-	test('Betrayed uses the correct amount of transferred energy available', () => {
+	test('Betrayed uses the correct amount of transferred energy available', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -105,7 +105,7 @@ describe('Test Cyberpunk Impulse', () => {
 		)
 	})
 
-	test('Hypno can discard a Farm item from Cyberpunk Impulse', () => {
+	test('Hypno can discard a Farm item from Cyberpunk Impulse', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
@@ -126,7 +126,7 @@ describe('Test Cyberpunk Impulse', () => {
 		)
 	})
 
-	test('Stratos Joel counts items attached to Cyberpunk Impulse', () => {
+	test('Stratos Joel counts items attached to Cyberpunk Impulse', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -154,7 +154,7 @@ describe('Test Cyberpunk Impulse', () => {
 		)
 	})
 
-	test('Brewing Stand does not include items attached to adjacent Cyberpunk Impulse', () => {
+	test('Brewing Stand does not include items attached to adjacent Cyberpunk Impulse', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -211,7 +211,7 @@ describe('Test Cyberpunk Impulse', () => {
 		)
 	})
 
-	test('Furnace does not include items attached to adjacent Cyberpunk Impulse', () => {
+	test('Furnace does not include items attached to adjacent Cyberpunk Impulse', async () => {
 		await testGame({
 			playerOneDeck: [
 				EthosLabCommon,

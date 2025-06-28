@@ -13,7 +13,7 @@ import {
 } from '../utils'
 
 describe('Test Joe Time Skip', () => {
-	test('Time Skip functionality', () => {
+	test('Time Skip functionality', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, BadOmen],
@@ -53,7 +53,7 @@ describe('Test Joe Time Skip', () => {
 		)
 	})
 
-	test('Time Skip and Clock cannot skip consecutive turns', () => {
+	test('Time Skip and Clock cannot skip consecutive turns', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],

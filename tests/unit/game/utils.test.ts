@@ -11,7 +11,7 @@ import {
 } from './utils'
 
 describe('Test Game Utils', () => {
-	test('Test fails if game ends', () => {
+	test('Test fails if game ends', async () => {
 		expect(() =>
 			await testGame(
 				{
@@ -31,7 +31,7 @@ describe('Test Game Utils', () => {
 			),
 		).toThrow()
 	})
-	test('Test achievment tests run', () => {
+	test('Test achievment tests run', async () => {
 		let playedGame = false
 		let checkedAchievment = false
 		testAchivement(

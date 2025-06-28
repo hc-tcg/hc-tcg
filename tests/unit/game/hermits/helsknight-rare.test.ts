@@ -8,7 +8,7 @@ import TNT from 'common/cards/single-use/tnt'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Hels Trap Hole', () => {
-	test('Test Trap Hole with TNT', () => {
+	test('Test Trap Hole with TNT', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, TNT],
@@ -37,7 +37,7 @@ describe('Test Hels Trap Hole', () => {
 		)
 	})
 
-	test('Test Trap Hole when Anvil misses', () => {
+	test('Test Trap Hole when Anvil misses', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Anvil],
@@ -62,7 +62,7 @@ describe('Test Hels Trap Hole', () => {
 		)
 	})
 
-	test('Test Trap Hole against Geminislay', () => {
+	test('Test Trap Hole against Geminislay', async () => {
 		await testGame(
 			{
 				playerOneDeck: [GeminiTayRare, IronSword, IronSword],

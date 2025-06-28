@@ -5,7 +5,7 @@ import SmallishbeansRare from 'common/cards/hermits/smallishbeans-rare'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Smallishbeans Rare', () => {
-	test('Test "Obsess"', () => {
+	test('Test "Obsess"', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],

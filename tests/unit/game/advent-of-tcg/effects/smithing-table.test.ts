@@ -25,7 +25,7 @@ import {
 } from '../../utils'
 
 describe('Test Smithing Table', () => {
-	test('Using Smithing Table on Water Bucket', () => {
+	test('Using Smithing Table on Water Bucket', async () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon, SmithingTable, WaterBucket],
 			playerTwoDeck: [EthosLabCommon],
@@ -58,7 +58,7 @@ describe('Test Smithing Table', () => {
 		})
 	})
 
-	test('Using Smithing Table on Shield', () => {
+	test('Using Smithing Table on Shield', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, SmithingTable, Shield],
@@ -97,7 +97,7 @@ describe('Test Smithing Table', () => {
 		)
 	})
 
-	test('Reinforced Slimeball protects against Evil X Boss discarding from row', () => {
+	test('Reinforced Slimeball protects against Evil X Boss discarding from row', async () => {
 		testBossFight({
 			playerDeck: [EthosLabCommon, SmithingTable, Slimeball, BalancedItem],
 			saga: async (test, game) => {

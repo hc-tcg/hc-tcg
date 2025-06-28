@@ -23,7 +23,7 @@ import {
 } from '../utils'
 
 describe('Test Rare Hypnotizd', () => {
-	test('Secondary attack and bow can select different targets', () => {
+	test('Secondary attack and bow can select different targets', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
@@ -99,7 +99,7 @@ describe('Test Rare Hypnotizd', () => {
 		)
 	})
 
-	test('Secondary attack can not select AFK target without item card', () => {
+	test('Secondary attack can not select AFK target without item card', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
@@ -136,7 +136,7 @@ describe('Test Rare Hypnotizd', () => {
 		)
 	})
 
-	test('Secondary attack can be canceled to change target', () => {
+	test('Secondary attack can be canceled to change target', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],

@@ -10,7 +10,7 @@ import query from 'common/components/query'
 import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test Hotguy Rare', () => {
-	test('Test Hotguy with Bow', () => {
+	test('Test Hotguy with Bow', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
@@ -59,7 +59,7 @@ describe('Test Hotguy Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test Hotguy with Crossbow', () => {
+	test('Test Hotguy with Crossbow', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -130,7 +130,7 @@ describe('Test Hotguy Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test Hotguy with type advantage', () => {
+	test('Test Hotguy with type advantage', async () => {
 		await testGame(
 			{
 				playerOneDeck: [RendogRare, RendogRare, RendogRare],

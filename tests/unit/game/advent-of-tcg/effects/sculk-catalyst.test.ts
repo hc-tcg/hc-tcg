@@ -12,7 +12,7 @@ import {
 } from '../../utils'
 
 describe('Test Sculk Catalyst', () => {
-	test('Sculk Catalyst triggers when Evil X boss loses a life', () => {
+	test('Sculk Catalyst triggers when Evil X boss loses a life', async () => {
 		testBossFight(
 			{
 				playerDeck: [

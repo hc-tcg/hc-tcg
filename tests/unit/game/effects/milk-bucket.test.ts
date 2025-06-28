@@ -11,7 +11,7 @@ import PoisonEffect from 'common/status-effects/poison'
 import {applyEffect, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test Milk Bucket', () => {
-	test('Single Use Functionality', () => {
+	test('Single Use Functionality', async () => {
 		await testGame({
 			playerOneDeck: [FarmerBeefCommon, MilkBucket],
 			playerTwoDeck: [EthosLabCommon, BadOmen, SplashPotionOfPoison],

@@ -12,7 +12,7 @@ import {IgnoreAttachSlotEffect} from 'common/status-effects/ignore-attach'
 import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test xB', () => {
-	test('Test "Noice!" functions with type advantage and single use attacks', () => {
+	test('Test "Noice!" functions with type advantage and single use attacks', async () => {
 		await testGame(
 			{
 				playerOneDeck: [GeminiTayCommon, DiamondArmor],
@@ -57,7 +57,7 @@ describe('Test xB', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test "Noice!" ignores Lightning Rod.', () => {
+	test('Test "Noice!" ignores Lightning Rod.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
@@ -91,7 +91,7 @@ describe('Test xB', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test "Noice!" ignores Lightning Rod when using single use.', () => {
+	test('Test "Noice!" ignores Lightning Rod when using single use.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
@@ -130,7 +130,7 @@ describe('Test xB', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test "Noice!" ignores attachables with Target Block.', () => {
+	test('Test "Noice!" ignores attachables with Target Block.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, IronArmor],

@@ -12,7 +12,7 @@ import {
 } from '../utils'
 
 describe('Test Immortality Bed', () => {
-	test('Immortality Bed returns attached hermit to hand on knock-out without losing a life or giving a prize card', () => {
+	test('Immortality Bed returns attached hermit to hand on knock-out without losing a life or giving a prize card', async () => {
 		await testGame(
 			{
 				playerOneDeck: [

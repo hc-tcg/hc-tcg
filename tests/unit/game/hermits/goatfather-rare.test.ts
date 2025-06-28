@@ -6,7 +6,7 @@ import query from 'common/components/query'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Goatfather Rare', () => {
-	test('Test anvil drop does the proper amount of damage', () => {
+	test('Test anvil drop does the proper amount of damage', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],

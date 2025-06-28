@@ -27,7 +27,7 @@ import {
 } from '../../utils'
 
 describe('Test BigB Soulmate', () => {
-	test('Soulmate functionality', () => {
+	test('Soulmate functionality', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, ChorusFruit],
@@ -86,7 +86,7 @@ describe('Test BigB Soulmate', () => {
 		)
 	})
 
-	test('Soulmate does not deal extra damage when revived by Totem', () => {
+	test('Soulmate does not deal extra damage when revived by Totem', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -121,7 +121,7 @@ describe('Test BigB Soulmate', () => {
 		)
 	})
 
-	test('Disabled Totem does not prevent extra Soulmate damage', () => {
+	test('Disabled Totem does not prevent extra Soulmate damage', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, GoldenAxe],
@@ -162,7 +162,7 @@ describe('Test BigB Soulmate', () => {
 		)
 	})
 
-	test('Soulmate + Thorns does not knock-out hermit as it is revived', () => {
+	test('Soulmate + Thorns does not knock-out hermit as it is revived', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Totem],
@@ -205,7 +205,7 @@ describe('Test BigB Soulmate', () => {
 		)
 	})
 
-	test('Soulmate extra damage is not blocked by "Royal Protection"', () => {
+	test('Soulmate extra damage is not blocked by "Royal Protection"', async () => {
 		await testGame(
 			{
 				playerOneDeck: [BigBSt4tzRare, EthosLabCommon],
@@ -258,7 +258,7 @@ describe('Test BigB Soulmate', () => {
 		)
 	})
 
-	test('Soulmate causing double knock-out when triggered by Burn', () => {
+	test('Soulmate causing double knock-out when triggered by Burn', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LavaBucket],
@@ -313,7 +313,7 @@ describe('Test BigB Soulmate', () => {
 	})
 
 	// Test interactions with Grianch which allows two attacks in one turn
-	test('Soulmate does not deal extra damage when revived by Deathloop', () => {
+	test('Soulmate does not deal extra damage when revived by Deathloop', async () => {
 		await testGame(
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon],

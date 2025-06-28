@@ -18,7 +18,7 @@ import {
 } from '../utils'
 
 describe('Test Skizzleman Rare', () => {
-	test('Gaslight works as intended', () => {
+	test('Gaslight works as intended', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
@@ -60,7 +60,7 @@ describe('Test Skizzleman Rare', () => {
 		)
 	})
 
-	test('Gaslight only triggers Thorns once', () => {
+	test('Gaslight only triggers Thorns once', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns],
@@ -119,7 +119,7 @@ describe('Test Skizzleman Rare', () => {
 		)
 	})
 
-	test('Totem keeps hermits alive when damaged by Gaslight and Burn at end of turn', () => {
+	test('Totem keeps hermits alive when damaged by Gaslight and Burn at end of turn', async () => {
 		await testGame(
 			{
 				playerOneDeck: [

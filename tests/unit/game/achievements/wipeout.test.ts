@@ -16,7 +16,7 @@ import {
 } from '../utils'
 
 describe('Test "Wipeout" achievement', () => {
-	test('Works when game ends when all Hermits are knocked out and game ends', () => {
+	test('Works when game ends when all Hermits are knocked out and game ends', async () => {
 		testAchivement(
 			{
 				achievement: Wipeout,
@@ -45,7 +45,7 @@ describe('Test "Wipeout" achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('Works when some hermits live', () => {
+	test('Works when some hermits live', async () => {
 		testAchivement(
 			{
 				achievement: Wipeout,
@@ -76,7 +76,7 @@ describe('Test "Wipeout" achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('Works when killed by Lava Bucket', () => {
+	test('Works when killed by Lava Bucket', async () => {
 		testAchivement(
 			{
 				achievement: Wipeout,
@@ -112,7 +112,7 @@ describe('Test "Wipeout" achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('Only counts the highest number of knock-outs in one round', () => {
+	test('Only counts the highest number of knock-outs in one round', async () => {
 		testAchivement(
 			{
 				achievement: Wipeout,

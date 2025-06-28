@@ -18,7 +18,7 @@ import {
 } from '../utils'
 
 describe('Test Boomer Bdubs Watch This', () => {
-	test('Watch This adds 20hp damage per heads', () => {
+	test('Watch This adds 20hp damage per heads', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
@@ -67,7 +67,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 		)
 	})
 
-	test('Watch This deals 0hp damage after flipping tails', () => {
+	test('Watch This deals 0hp damage after flipping tails', async () => {
 		await testGame(
 			{
 				playerOneDeck: [BoomerBdubsRare],
@@ -95,7 +95,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 		)
 	})
 
-	test('Fortune only applies to first coinflip for Watch This', () => {
+	test('Fortune only applies to first coinflip for Watch This', async () => {
 		await testGame(
 			{
 				playerOneDeck: [BoomerBdubsRare, Fortune],
@@ -126,7 +126,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 		)
 	})
 
-	test('Watch This can only be canceled if it has not flipped a coin', () => {
+	test('Watch This can only be canceled if it has not flipped a coin', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],

@@ -7,7 +7,7 @@ import query from 'common/components/query'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Diamond Armor', () => {
-	test('Diamond Armor prevents damage', () => {
+	test('Diamond Armor prevents damage', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, DiamondArmor],
@@ -31,7 +31,7 @@ describe('Test Diamond Armor', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Diamond Armor prevents effect damage', () => {
+	test('Diamond Armor prevents effect damage', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, DiamondArmor],

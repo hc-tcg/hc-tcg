@@ -16,7 +16,7 @@ import {
 } from '../utils'
 
 describe('Test Loyalty III Achievement', () => {
-	test('Test achievement is gained after three uses', () => {
+	test('Test achievement is gained after three uses', async () => {
 		testAchivement(
 			{
 				achievement: LoyaltyIII,
@@ -56,7 +56,7 @@ describe('Test Loyalty III Achievement', () => {
 			{noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('Test steps is one if using different tridents', () => {
+	test('Test steps is one if using different tridents', async () => {
 		testAchivement(
 			{
 				achievement: LoyaltyIII,
@@ -96,7 +96,7 @@ describe('Test Loyalty III Achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('Test streak is broken after waiting a turn', () => {
+	test('Test streak is broken after waiting a turn', async () => {
 		testAchivement(
 			{
 				achievement: LoyaltyIII,

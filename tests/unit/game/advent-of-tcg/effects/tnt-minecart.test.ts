@@ -11,7 +11,7 @@ import {
 } from '../../utils'
 
 describe('Test TNT Minecart', () => {
-	test('TNT Minecart heads deals 100hp to opponent', () => {
+	test('TNT Minecart heads deals 100hp to opponent', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -36,7 +36,7 @@ describe('Test TNT Minecart', () => {
 		)
 	})
 
-	test('TNT Minecart tails deals 40hp backlash', () => {
+	test('TNT Minecart tails deals 40hp backlash', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, MinecartWithTNT],

@@ -20,7 +20,7 @@ import {
 import Piston from 'common/cards/single-use/piston'
 
 describe('Test DM Tango Lackey', () => {
-	test('Lackey functionality', () => {
+	test('Lackey functionality', async () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [
@@ -53,7 +53,7 @@ describe('Test DM Tango Lackey', () => {
 		})
 	})
 
-	test('Canceling Lackey attack and using Efficiency', () => {
+	test('Canceling Lackey attack and using Efficiency', async () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [
@@ -111,7 +111,7 @@ describe('Test DM Tango Lackey', () => {
 		})
 	})
 
-	test('Failing to find a Hermit card', () => {
+	test('Failing to find a Hermit card', async () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [DungeonTangoRare, ...Array(10).fill(MinerItem)],

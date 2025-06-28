@@ -28,7 +28,7 @@ import {
 } from '../../utils'
 
 describe('Test Arrow of Poison', () => {
-	test('Anvil Drop triggers Arrow of Poison', () => {
+	test('Anvil Drop triggers Arrow of Poison', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
@@ -58,7 +58,7 @@ describe('Test Arrow of Poison', () => {
 		)
 	})
 
-	test('Hyperspace triggers Arrow of Poison', () => {
+	test('Hyperspace triggers Arrow of Poison', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
@@ -119,7 +119,7 @@ describe('Test Arrow of Poison', () => {
 		)
 	})
 
-	test('Lightning Rod triggers Arrow of Poison', () => {
+	test('Lightning Rod triggers Arrow of Poison', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
@@ -150,7 +150,7 @@ describe('Test Arrow of Poison', () => {
 		)
 	})
 
-	test('Trapdoor triggers Arrow of Poison', () => {
+	test('Trapdoor triggers Arrow of Poison', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Trapdoor],
@@ -181,7 +181,7 @@ describe('Test Arrow of Poison', () => {
 		)
 	})
 
-	test('Egg does not trigger Arrow of Poison', () => {
+	test('Egg does not trigger Arrow of Poison', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
@@ -221,7 +221,7 @@ describe('Test Arrow of Poison', () => {
 		)
 	})
 
-	test('Arrow of Poison works when stolen by Traphole', () => {
+	test('Arrow of Poison works when stolen by Traphole', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ArrowOfPoison, Bow],
@@ -266,7 +266,7 @@ describe('Test Arrow of Poison', () => {
 		)
 	})
 
-	test('Attached Milk Bucket prevents Arrow of Poison effect', () => {
+	test('Attached Milk Bucket prevents Arrow of Poison effect', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, MilkBucket],

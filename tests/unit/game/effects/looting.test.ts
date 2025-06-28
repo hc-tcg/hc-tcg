@@ -5,7 +5,7 @@ import Looting from 'common/cards/single-use/looting'
 import {applyEffect, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Looting.', () => {
-	test('Test looting works as expected', () => {
+	test('Test looting works as expected', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, BalancedItem],

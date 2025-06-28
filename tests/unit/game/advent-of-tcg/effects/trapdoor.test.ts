@@ -37,7 +37,7 @@ import {
 } from '../../utils'
 
 describe('Test Trapdoor', () => {
-	test('Trapdoor functionality', () => {
+	test('Trapdoor functionality', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Trapdoor],
@@ -96,7 +96,7 @@ describe('Test Trapdoor', () => {
 		)
 	})
 
-	test('Anvil attacks rows in order', () => {
+	test('Anvil attacks rows in order', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -153,7 +153,7 @@ describe('Test Trapdoor', () => {
 		)
 	})
 
-	test('Spooky Stress attacks rows in order', () => {
+	test('Spooky Stress attacks rows in order', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -223,7 +223,7 @@ describe('Test Trapdoor', () => {
 		)
 	})
 
-	test('Anvil Drop attacks rows in order', () => {
+	test('Anvil Drop attacks rows in order', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -298,7 +298,7 @@ describe('Test Trapdoor', () => {
 		)
 	})
 
-	test('Splash Harming attacks rows in order', () => {
+	test('Splash Harming attacks rows in order', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -357,7 +357,7 @@ describe('Test Trapdoor', () => {
 		)
 	})
 
-	test('Trapdoor priority vs Lightning Rod/Target Block', () => {
+	test('Trapdoor priority vs Lightning Rod/Target Block', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Trapdoor, LightningRod],
@@ -420,7 +420,7 @@ describe('Test Trapdoor', () => {
 		)
 	})
 
-	test('Multiple Trapdoors at once', () => {
+	test('Multiple Trapdoors at once', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -476,7 +476,7 @@ describe('Test Trapdoor', () => {
 		)
 	})
 
-	test('Wolf triggers when Trapdoor redirects all damage', () => {
+	test('Wolf triggers when Trapdoor redirects all damage', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Wolf, Trapdoor],
@@ -509,7 +509,7 @@ describe('Test Trapdoor', () => {
 		)
 	})
 
-	test('Thorns does not trigger when Trapdoor redirects all damage', () => {
+	test('Thorns does not trigger when Trapdoor redirects all damage', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns, Trapdoor],
@@ -542,7 +542,7 @@ describe('Test Trapdoor', () => {
 		)
 	})
 
-	test('Thorns triggers from Weakness damage when Trapdoor + Royal Protection blocks hermit damage', () => {
+	test('Thorns triggers from Weakness damage when Trapdoor + Royal Protection blocks hermit damage', async () => {
 		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon, PotionOfWeakness],
@@ -589,7 +589,7 @@ describe('Test Trapdoor', () => {
 		)
 	})
 
-	test('Thorns triggers from Weakness damage when Trapdoor + Royal Protection blocks hermit damage', () => {
+	test('Thorns triggers from Weakness damage when Trapdoor + Royal Protection blocks hermit damage', async () => {
 		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon, PotionOfWeakness],
@@ -636,7 +636,7 @@ describe('Test Trapdoor', () => {
 		)
 	})
 
-	test('Trapdoor does not redirect when Renbob "Hyperspace" attacks an empty row', () => {
+	test('Trapdoor does not redirect when Renbob "Hyperspace" attacks an empty row', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Trapdoor],
@@ -659,7 +659,7 @@ describe('Test Trapdoor', () => {
 		)
 	})
 
-	test('Trapdoor only redirects 40hp of Poe Poe Skizz "Jumpscare"', () => {
+	test('Trapdoor only redirects 40hp of Poe Poe Skizz "Jumpscare"', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -713,7 +713,7 @@ describe('Test Trapdoor', () => {
 		)
 	})
 
-	test('Trapdoor does not redirect "Gas Light" bonus damage at end of turn', () => {
+	test('Trapdoor does not redirect "Gas Light" bonus damage at end of turn', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -803,7 +803,7 @@ describe('Test Trapdoor', () => {
 		)
 	})
 
-	test('Invisibility Tails does not multiply damage intercepted by Trapdoor', () => {
+	test('Invisibility Tails does not multiply damage intercepted by Trapdoor', async () => {
 		await testGame(
 			{
 				playerOneDeck: [

@@ -19,7 +19,7 @@ import {
 } from '../utils'
 
 describe('Test Ultra Rare TFC "Take It Easy"', () => {
-	test('Can not discard two attach effects from the same hermit', () => {
+	test('Can not discard two attach effects from the same hermit', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ChainmailArmor, ChainmailArmor],
@@ -61,7 +61,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 		)
 	})
 
-	test('Can not discard twice after hermit swaps rows with Ladder', () => {
+	test('Can not discard twice after hermit swaps rows with Ladder', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -116,7 +116,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 		)
 	})
 
-	test('Can discard from the same hermit after they are knocked-out', () => {
+	test('Can discard from the same hermit after they are knocked-out', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -189,7 +189,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 		)
 	})
 
-	test('Can discard from the same hermit after TFC is knocked-out', () => {
+	test('Can discard from the same hermit after TFC is knocked-out', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ChainmailArmor, ChainmailArmor],
@@ -260,7 +260,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 		)
 	})
 
-	test('Different TFC can discard from the same hermit', () => {
+	test('Different TFC can discard from the same hermit', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ChainmailArmor, ChainmailArmor],
@@ -307,7 +307,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 		)
 	})
 
-	test('Can not discard twice when used by/facing Role Play', () => {
+	test('Can not discard twice when used by/facing Role Play', async () => {
 		await testGame(
 			{
 				playerOneDeck: [RendogRare, ChainmailArmor, ChainmailArmor],

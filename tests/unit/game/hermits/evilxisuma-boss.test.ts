@@ -289,7 +289,7 @@ function* testChallengerVictory(game: GameModel) {
 }
 
 describe('Test Evil X Boss Fight', () => {
-	test('Test Boss versus consecutive Amnesia', () => {
+	test('Test Boss versus consecutive Amnesia', async () => {
 		testBossFight(
 			{
 				saga: testConsecutiveAmnesia,
@@ -299,7 +299,7 @@ describe('Test Evil X Boss Fight', () => {
 		)
 	})
 
-	test('Test Boss versus rare Rendog', () => {
+	test('Test Boss versus rare Rendog', async () => {
 		testBossFight(
 			{
 				saga: testVersusRendogRare,
@@ -309,7 +309,7 @@ describe('Test Evil X Boss Fight', () => {
 		)
 	})
 
-	test('Test Boss is "directly opposite" opponent active hermit', () => {
+	test('Test Boss is "directly opposite" opponent active hermit', async () => {
 		testBossFight(
 			{
 				saga: testDirectlyOpposite,
@@ -319,7 +319,7 @@ describe('Test Evil X Boss Fight', () => {
 		)
 	})
 
-	test('Test "NINEATTACHED" discards all cards from active', () => {
+	test('Test "NINEATTACHED" discards all cards from active', async () => {
 		testBossFight(
 			{
 				saga: testNineAttached,
@@ -337,7 +337,7 @@ describe('Test Evil X Boss Fight', () => {
 		)
 	})
 
-	test('Test challenger victory against boss', () => {
+	test('Test challenger victory against boss', async () => {
 		testBossFight(
 			{
 				playerDeck: [
@@ -357,7 +357,7 @@ describe('Test Evil X Boss Fight', () => {
 		)
 	})
 
-	test('Test boss victory against challenger', () => {
+	test('Test boss victory against challenger', async () => {
 		testBossFight(
 			{
 				playerDeck: [EthosLabCommon],

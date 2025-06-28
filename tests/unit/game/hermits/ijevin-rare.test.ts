@@ -6,7 +6,7 @@ import {printBoardState} from 'server/utils'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test iJevin Peace Out', () => {
-	test('Test Peace Out when opponent times out request', () => {
+	test('Test Peace Out when opponent times out request', async () => {
 		await testGame(
 			{
 				playerOneDeck: [IJevinRare],

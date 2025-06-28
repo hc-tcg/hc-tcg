@@ -20,7 +20,7 @@ import {
 } from '../utils'
 
 describe('Test Rendog Role Play', () => {
-	test('Using Role Play on Puppetry', () => {
+	test('Using Role Play on Puppetry', async () => {
 		await testGame(
 			{
 				playerOneDeck: [ZombieCleoRare, EthosLabCommon],
@@ -78,7 +78,7 @@ describe('Test Rendog Role Play', () => {
 		)
 	})
 
-	test('Using Puppetry on Role Play', () => {
+	test('Using Puppetry on Role Play', async () => {
 		await testGame(
 			{
 				playerOneDeck: [ArmorStand, ArmorStand, EthosLabCommon],
@@ -149,7 +149,7 @@ describe('Test Rendog Role Play', () => {
 		)
 	})
 
-	test('Using Role Play on Time Skip', () => {
+	test('Using Role Play on Time Skip', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, JoeHillsRare],
@@ -198,7 +198,7 @@ describe('Test Rendog Role Play', () => {
 		)
 	})
 
-	test('Role Play is disabled when opponent has no Hermit cards', () => {
+	test('Role Play is disabled when opponent has no Hermit cards', async () => {
 		await testGame(
 			{
 				playerOneDeck: [RendogRare],

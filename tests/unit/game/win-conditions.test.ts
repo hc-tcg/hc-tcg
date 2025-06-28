@@ -10,7 +10,7 @@ import {
 } from './utils'
 
 describe('Test Game Win Conditions', () => {
-	test('Killing all hermits results in victory.', () => {
+	test('Killing all hermits results in victory.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -30,7 +30,7 @@ describe('Test Game Win Conditions', () => {
 			{noItemRequirements: true, oneShotMode: true},
 		)
 	})
-	test('Decked out results in victory.', () => {
+	test('Decked out results in victory.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -47,7 +47,7 @@ describe('Test Game Win Conditions', () => {
 			{noItemRequirements: true, disableDeckOut: false},
 		)
 	})
-	test('Forfeit results in victory (current player)', () => {
+	test('Forfeit results in victory (current player)', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -63,7 +63,7 @@ describe('Test Game Win Conditions', () => {
 			{noItemRequirements: true, disableDeckOut: true},
 		)
 	})
-	test('Forfeit results in victory (opponent player)', () => {
+	test('Forfeit results in victory (opponent player)', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],

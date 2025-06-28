@@ -10,7 +10,7 @@ import query from 'common/components/query'
 import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test rare King Joel Steal', () => {
-	test('Test regular Steal behavior', () => {
+	test('Test regular Steal behavior', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, BalancedItem],
@@ -57,7 +57,7 @@ describe('Test rare King Joel Steal', () => {
 		)
 	})
 
-	test('Test Steal pick request runs before Egg pick request.', () => {
+	test('Test Steal pick request runs before Egg pick request.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, BalancedItem],

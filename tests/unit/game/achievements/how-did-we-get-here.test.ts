@@ -16,7 +16,7 @@ import {
 } from '../utils'
 
 describe('Test How Did We Get Here achievement', () => {
-	test('"How Did We Get Here" counts system and damage statuses', () => {
+	test('"How Did We Get Here" counts system and damage statuses', async () => {
 		testAchivement(
 			{
 				achievement: HowDidWeGetHere,

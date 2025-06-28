@@ -9,7 +9,7 @@ import VintageBeefCommon from 'common/cards/hermits/vintagebeef-common'
 import {endTurn, forfeit, playCardFromHand, testAchivement} from '../utils'
 
 describe('Test New Team Canada achievement', () => {
-	test('New Team Canada only triggers when containing all members and no other hermits', () => {
+	test('New Team Canada only triggers when containing all members and no other hermits', async () => {
 		testAchivement(
 			{
 				achievement: NewTeamCanada,
@@ -32,7 +32,7 @@ describe('Test New Team Canada achievement', () => {
 			{noItemRequirements: true, oneShotMode: true},
 		)
 	})
-	test('New Team Canada does not trigger when missing member', () => {
+	test('New Team Canada does not trigger when missing member', async () => {
 		testAchivement(
 			{
 				achievement: NewTeamCanada,
@@ -50,7 +50,7 @@ describe('Test New Team Canada achievement', () => {
 			{noItemRequirements: true, oneShotMode: true},
 		)
 	})
-	test('New Team Canada does not trigger when containing others', () => {
+	test('New Team Canada does not trigger when containing others', async () => {
 		testAchivement(
 			{
 				achievement: NewTeamCanada,

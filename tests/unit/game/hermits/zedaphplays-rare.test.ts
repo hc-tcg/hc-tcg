@@ -15,7 +15,7 @@ import {
 } from '../utils'
 
 describe('Test Zedaph Sheep Stare', () => {
-	test('Sheep Stare functionality', () => {
+	test('Sheep Stare functionality', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, TNT],
@@ -48,7 +48,7 @@ describe('Test Zedaph Sheep Stare', () => {
 		)
 	})
 
-	test('Sheep Stare does not redirect Anvil Drop AFK damage', () => {
+	test('Sheep Stare does not redirect Anvil Drop AFK damage', async () => {
 		await testGame(
 			{
 				playerOneDeck: [GoatfatherRare],
@@ -88,7 +88,7 @@ describe('Test Zedaph Sheep Stare', () => {
 		)
 	})
 
-	test('Sheep Stare does not flip for weakness', () => {
+	test('Sheep Stare does not flip for weakness', async () => {
 		await testGame(
 			{
 				playerOneDeck: [ZedaphPlaysRare],

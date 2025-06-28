@@ -6,7 +6,7 @@ import query from 'common/components/query'
 import {testGame} from '../../utils'
 
 describe('Test Fletching Table', () => {
-	test('Each Fletching Table in the starting deck adds a Feather', () => {
+	test('Each Fletching Table in the starting deck adds a Feather', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FletchingTable],

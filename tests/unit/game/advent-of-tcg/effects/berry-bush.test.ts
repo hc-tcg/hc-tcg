@@ -18,7 +18,7 @@ import {
 } from '../../utils'
 
 describe('Test Berry Bush Attach', () => {
-	test('Berry Bush functionality', () => {
+	test('Berry Bush functionality', async () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon, BerryBush, BerryBush, Bow],
 			playerTwoDeck: [EthosLabCommon],
@@ -108,7 +108,7 @@ describe('Test Berry Bush Attach', () => {
 		})
 	})
 
-	test('Berry Bush cannot be moved by Ladder', () => {
+	test('Berry Bush cannot be moved by Ladder', async () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Ladder],
 			playerTwoDeck: [EthosLabCommon, BerryBush],
@@ -153,7 +153,7 @@ describe('Test Berry Bush Attach', () => {
 		})
 	})
 
-	test('Berry Bush can be placed face down by Total Anonymity', () => {
+	test('Berry Bush can be placed face down by Total Anonymity', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],

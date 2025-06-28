@@ -23,7 +23,7 @@ import {
 } from '../../utils'
 
 describe('Test Cat Effect Card', () => {
-	test('Basic functionality', () => {
+	test('Basic functionality', async () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [
@@ -63,7 +63,7 @@ describe('Test Cat Effect Card', () => {
 		})
 	})
 
-	test('Cat shows correct card when attacker is knocked-out by Thorns', () => {
+	test('Cat shows correct card when attacker is knocked-out by Thorns', async () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns],
 			playerTwoDeck: [
@@ -114,7 +114,7 @@ describe('Test Cat Effect Card', () => {
 		})
 	})
 
-	test('Cat removes modal when attacker is knocked-out by Thorns and gives away last card as prize', () => {
+	test('Cat removes modal when attacker is knocked-out by Thorns and gives away last card as prize', async () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns],
 			playerTwoDeck: [
@@ -199,7 +199,7 @@ describe('Test Cat Effect Card', () => {
 		)
 	})
 
-	test('Test Borrow does not trigger Cat when attached after flipping heads', () => {
+	test('Test Borrow does not trigger Cat when attached after flipping heads', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Cat, Cat],

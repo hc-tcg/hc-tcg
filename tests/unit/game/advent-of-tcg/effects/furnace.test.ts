@@ -30,7 +30,7 @@ function sortRowItems(a: CardComponent, b: CardComponent): number {
 }
 
 describe('Test Furnace Attach Effect', () => {
-	test('Basic functionality', () => {
+	test('Basic functionality', async () => {
 		await testGame({
 			playerOneDeck: [
 				EthosLabCommon,
@@ -112,7 +112,7 @@ describe('Test Furnace Attach Effect', () => {
 		})
 	})
 
-	test('Smelting counter is reset by Emerald', () => {
+	test('Smelting counter is reset by Emerald', async () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon, Furnace, Emerald, Emerald],
 			playerTwoDeck: [EthosLabCommon],
@@ -186,7 +186,7 @@ describe('Test Furnace Attach Effect', () => {
 		})
 	})
 
-	test('Smelting is not interupted by Mending or Ladder', () => {
+	test('Smelting is not interupted by Mending or Ladder', async () => {
 		await testGame({
 			playerOneDeck: [
 				EthosLabCommon,

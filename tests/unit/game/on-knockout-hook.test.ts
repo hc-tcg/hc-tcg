@@ -6,7 +6,7 @@ import query from 'common/components/query'
 import {attack, endTurn, playCardFromHand, testGame} from './utils'
 
 describe('Test `row.hooks.onKnockOut` hook', () => {
-	test('Test `row.hooks.onKnockOut` hook', () => {
+	test('Test `row.hooks.onKnockOut` hook', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],

@@ -16,7 +16,7 @@ import {
 } from '../../utils'
 
 describe('Test Glowstone Single Use', () => {
-	test('Glowstone functionality', () => {
+	test('Glowstone functionality', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Glowstone],

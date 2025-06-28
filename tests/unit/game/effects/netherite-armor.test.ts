@@ -9,7 +9,7 @@ import query from 'common/components/query'
 import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test Netherite Armor', () => {
-	test('Netherite Armor prevents damage', () => {
+	test('Netherite Armor prevents damage', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, NetheriteArmor],
@@ -33,7 +33,7 @@ describe('Test Netherite Armor', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Netherite Armor prevents knockback', () => {
+	test('Netherite Armor prevents knockback', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, NetheriteArmor],
@@ -59,7 +59,7 @@ describe('Test Netherite Armor', () => {
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('Netherite Armor prevents damage from effects', () => {
+	test('Netherite Armor prevents damage from effects', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, NetheriteArmor],
@@ -85,7 +85,7 @@ describe('Test Netherite Armor', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Netherite Armor does not protect against redirects', () => {
+	test('Netherite Armor does not protect against redirects', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, NetheriteArmor],

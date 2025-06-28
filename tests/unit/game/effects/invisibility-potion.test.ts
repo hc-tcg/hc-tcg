@@ -21,7 +21,7 @@ import {
 } from '../utils'
 
 describe('Test Invisiblity Potion.', () => {
-	test('Invisibility Potion blocks damage on heads.', () => {
+	test('Invisibility Potion blocks damage on heads.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, InvisibilityPotion],
@@ -64,7 +64,7 @@ describe('Test Invisiblity Potion.', () => {
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('Invisibility Potion doubles damage on tails.', () => {
+	test('Invisibility Potion doubles damage on tails.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, InvisibilityPotion],
@@ -111,7 +111,7 @@ describe('Test Invisiblity Potion.', () => {
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('Invisibility Potion blocks Skizzleman Rare damage on heads.', () => {
+	test('Invisibility Potion blocks Skizzleman Rare damage on heads.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, InvisibilityPotion],
@@ -148,7 +148,7 @@ describe('Test Invisiblity Potion.', () => {
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('Invisibility Potion blocks Poe Poe Skizz Rare damage on heads.', () => {
+	test('Invisibility Potion blocks Poe Poe Skizz Rare damage on heads.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, InvisibilityPotion],
@@ -188,7 +188,7 @@ describe('Test Invisiblity Potion.', () => {
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('Invisibility Potion blocks Spooky Stress damage on heads.', () => {
+	test('Invisibility Potion blocks Spooky Stress damage on heads.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, InvisibilityPotion],

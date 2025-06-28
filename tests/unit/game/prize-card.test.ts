@@ -6,7 +6,7 @@ import query from 'common/components/query'
 import {attack, endTurn, playCardFromHand, testGame} from './utils'
 
 describe('Test prize card.', () => {
-	test('Test prize card is gained after knockout', () => {
+	test('Test prize card is gained after knockout', async () => {
 		await testGame(
 			{
 				playerOneDeck: [

@@ -6,7 +6,7 @@ import EthosLabRare from 'common/cards/hermits/ethoslab-rare'
 import {forfeit, testAchivement} from '../utils'
 
 describe('Test "...is Great" achievement', () => {
-	test('Check should be valid', () => {
+	test('Check should be valid', async () => {
 		testAchivement(
 			{
 				achievement: IsGreat,
@@ -22,7 +22,7 @@ describe('Test "...is Great" achievement', () => {
 			{noItemRequirements: true, oneShotMode: true},
 		)
 	})
-	test('Check invalid (two costs are in deck)', () => {
+	test('Check invalid (two costs are in deck)', async () => {
 		testAchivement(
 			{
 				achievement: IsGreat,

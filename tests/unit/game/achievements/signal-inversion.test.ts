@@ -14,7 +14,7 @@ import {
 } from '../utils'
 
 describe('Test "Signal Inversion" achievement', () => {
-	test('"Signal Inversion" increments', () => {
+	test('"Signal Inversion" increments', async () => {
 		testAchivement(
 			{
 				achievement: SignalInversion,
@@ -43,7 +43,7 @@ describe('Test "Signal Inversion" achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('does not increment if there is no coin flip', () => {
+	test('does not increment if there is no coin flip', async () => {
 		testAchivement(
 			{
 				achievement: SignalInversion,
@@ -72,7 +72,7 @@ describe('Test "Signal Inversion" achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('does not increment if there is no bad omen', () => {
+	test('does not increment if there is no bad omen', async () => {
 		testAchivement(
 			{
 				achievement: SignalInversion,
@@ -99,7 +99,7 @@ describe('Test "Signal Inversion" achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('does not increment if there is no Fortune', () => {
+	test('does not increment if there is no Fortune', async () => {
 		testAchivement(
 			{
 				achievement: SignalInversion,

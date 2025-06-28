@@ -21,7 +21,7 @@ import {
 } from '../utils'
 
 describe('Test Gemini Tay', () => {
-	test('Test Axe Functions Until End Of Turn', () => {
+	test('Test Axe Functions Until End Of Turn', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, IronArmor],
@@ -70,7 +70,7 @@ describe('Test Gemini Tay', () => {
 		)
 	})
 
-	test('Test Totem against Lava Bucket then Axe', () => {
+	test('Test Totem against Lava Bucket then Axe', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Totem],
@@ -112,7 +112,7 @@ describe('Test Gemini Tay', () => {
 		)
 	})
 
-	test('Test Totem against Axe then Lava Bucket', () => {
+	test('Test Totem against Axe then Lava Bucket', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Totem],
@@ -152,7 +152,7 @@ describe('Test Gemini Tay', () => {
 		)
 	})
 
-	test('Test Chorus Fruit with Gemini Slay', () => {
+	test('Test Chorus Fruit with Gemini Slay', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],

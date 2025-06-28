@@ -20,7 +20,7 @@ import {
 } from '../utils'
 
 describe('Test Server Lag achievement', () => {
-	test('Test "Server Lag" knock-out-win with secondary Succeeds', () => {
+	test('Test "Server Lag" knock-out-win with secondary Succeeds', async () => {
 		testAchivement(
 			{
 				achievement: ServerLag,
@@ -69,7 +69,7 @@ describe('Test Server Lag achievement', () => {
 		)
 	})
 
-	test('Test "Server Lag" knock-out-tie with secondary Succeeds', () => {
+	test('Test "Server Lag" knock-out-tie with secondary Succeeds', async () => {
 		testAchivement(
 			{
 				achievement: ServerLag,
@@ -115,7 +115,7 @@ describe('Test Server Lag achievement', () => {
 		)
 	})
 
-	test('Test "Server Lag" knock-out-loss with secondary Succeeds', () => {
+	test('Test "Server Lag" knock-out-loss with secondary Succeeds', async () => {
 		testAchivement(
 			{
 				achievement: ServerLag,
@@ -170,7 +170,7 @@ describe('Test Server Lag achievement', () => {
 		)
 	})
 
-	test('Test "Server Lag" deck-out-loss with secondary Succeeds', () => {
+	test('Test "Server Lag" deck-out-loss with secondary Succeeds', async () => {
 		testAchivement(
 			{
 				achievement: ServerLag,
@@ -229,7 +229,7 @@ describe('Test Server Lag achievement', () => {
 		)
 	})
 
-	test('Test "Server Lag" knock-out-win with Burn Succeeds', () => {
+	test('Test "Server Lag" knock-out-win with Burn Succeeds', async () => {
 		testAchivement(
 			{
 				achievement: ServerLag,
@@ -286,7 +286,7 @@ describe('Test Server Lag achievement', () => {
 		)
 	})
 
-	test('Test "Server Lag" knock-out-win with secondary + sword Succeeds', () => {
+	test('Test "Server Lag" knock-out-win with secondary + sword Succeeds', async () => {
 		testAchivement(
 			{
 				achievement: ServerLag,
@@ -340,7 +340,7 @@ describe('Test Server Lag achievement', () => {
 		)
 	})
 
-	test('Test "Server Lag" forfeit-win before turn end Succeeds', () => {
+	test('Test "Server Lag" forfeit-win before turn end Succeeds', async () => {
 		testAchivement(
 			{
 				achievement: ServerLag,
@@ -392,7 +392,7 @@ describe('Test Server Lag achievement', () => {
 		)
 	})
 
-	test('Test "Server Lag" forfeit-loss Fails', () => {
+	test('Test "Server Lag" forfeit-loss Fails', async () => {
 		testAchivement(
 			{
 				achievement: ServerLag,

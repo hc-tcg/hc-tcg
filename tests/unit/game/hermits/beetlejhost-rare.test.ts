@@ -22,7 +22,7 @@ import {
 } from '../utils'
 
 describe('Test Beetlejhost Rare', () => {
-	test('Test Jopacity damage is reduced', () => {
+	test('Test Jopacity damage is reduced', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
@@ -79,7 +79,7 @@ describe('Test Beetlejhost Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Attacking with primary removes Chroma Keyed', () => {
+	test('Attacking with primary removes Chroma Keyed', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -115,7 +115,7 @@ describe('Test Beetlejhost Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Attacking with other hermit removes Chroma Keyed', () => {
+	test('Attacking with other hermit removes Chroma Keyed', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -166,7 +166,7 @@ describe('Test Beetlejhost Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Chroma Keyed is removed when doing nothing', () => {
+	test('Chroma Keyed is removed when doing nothing', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -197,7 +197,7 @@ describe('Test Beetlejhost Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test Jopacity with Invisibility tails', () => {
+	test('Test Jopacity with Invisibility tails', async () => {
 		await testGame(
 			{
 				playerOneDeck: [GeminiTayCommon, InvisibilityPotion],
@@ -236,7 +236,7 @@ describe('Test Beetlejhost Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('Chroma Keyed is not removed by single use damage', () => {
+	test('Chroma Keyed is not removed by single use damage', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
@@ -307,7 +307,7 @@ describe('Test Beetlejhost Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Chroma Keyed is not removed by weakness damage', () => {
+	test('Chroma Keyed is not removed by weakness damage', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],

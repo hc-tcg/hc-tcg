@@ -40,7 +40,7 @@ function* testClockHelperSaga(game: GameModel) {
 }
 
 describe('Test Clock', () => {
-	test('Test Clock', () => {
+	test('Test Clock', async () => {
 		await testGame(
 			{
 				saga: testClockHelperSaga,

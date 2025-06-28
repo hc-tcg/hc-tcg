@@ -5,7 +5,7 @@ import query from 'common/components/query'
 import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
 
 describe('Test Jingler Rare', () => {
-	test('Test Jingler forces opponent to discard one card', () => {
+	test('Test Jingler forces opponent to discard one card', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],

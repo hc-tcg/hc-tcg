@@ -41,7 +41,7 @@ function* testManyHermits(game: GameModel) {
 }
 
 describe('Test Impulse Test', () => {
-	test('Test Impulse Is Triggered By Bdubs', () => {
+	test('Test Impulse Is Triggered By Bdubs', async () => {
 		await testGame(
 			{
 				saga: testOneHermit,
@@ -51,7 +51,7 @@ describe('Test Impulse Test', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test Impulse Is Triggered By Multiple Hermits', () => {
+	test('Test Impulse Is Triggered By Multiple Hermits', async () => {
 		await testGame(
 			{
 				saga: testManyHermits,

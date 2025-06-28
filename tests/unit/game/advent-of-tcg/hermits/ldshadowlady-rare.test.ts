@@ -15,7 +15,7 @@ import {
 } from '../../utils'
 
 describe('Test Lizzie Evict', () => {
-	test('Evict moves opponent active row', () => {
+	test('Evict moves opponent active row', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -41,7 +41,7 @@ describe('Test Lizzie Evict', () => {
 		)
 	})
 
-	test('Slimeball triggers Evict damage', () => {
+	test('Slimeball triggers Evict damage', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -69,7 +69,7 @@ describe('Test Lizzie Evict', () => {
 		)
 	})
 
-	test('Canceling Evict then dealing bonus damage for full board', () => {
+	test('Canceling Evict then dealing bonus damage for full board', async () => {
 		await testGame(
 			{
 				playerOneDeck: Array(4).fill(EthosLabCommon),

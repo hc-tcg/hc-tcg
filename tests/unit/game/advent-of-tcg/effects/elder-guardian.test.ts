@@ -19,7 +19,7 @@ import {
 } from '../../utils'
 
 describe('Test Elder Guardian', () => {
-	test('Test mining fatigue is applied', () => {
+	test('Test mining fatigue is applied', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ElderGuardian],
@@ -80,7 +80,7 @@ describe('Test Elder Guardian', () => {
 		)
 	})
 
-	test('Mining Fatigue functionality', () => {
+	test('Mining Fatigue functionality', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ElderGuardian],
@@ -124,7 +124,7 @@ describe('Test Elder Guardian', () => {
 		)
 	})
 
-	test('Efficiency works against Mining Fatigue', () => {
+	test('Efficiency works against Mining Fatigue', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ElderGuardian],
@@ -158,7 +158,7 @@ describe('Test Elder Guardian', () => {
 		)
 	})
 
-	test('Mining Fatigue is not stacked by multiple attacks', () => {
+	test('Mining Fatigue is not stacked by multiple attacks', async () => {
 		await testGame(
 			{
 				playerOneDeck: [

@@ -43,7 +43,7 @@ function* testManyHermits(game: GameModel) {
 }
 
 describe('Test PythonGB Logfellas', () => {
-	test('Test Python Is Triggered By Adjacent Rendog', () => {
+	test('Test Python Is Triggered By Adjacent Rendog', async () => {
 		await testGame(
 			{
 				saga: testOneHermit,
@@ -53,7 +53,7 @@ describe('Test PythonGB Logfellas', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test Python Is Triggered By Multiple Hermits', () => {
+	test('Test Python Is Triggered By Multiple Hermits', async () => {
 		await testGame(
 			{
 				saga: testManyHermits,

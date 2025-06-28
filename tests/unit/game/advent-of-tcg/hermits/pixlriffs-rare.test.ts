@@ -24,7 +24,7 @@ import {
 } from '../../utils'
 
 describe('Test Pixl World Build', () => {
-	test('World Build Functionality', () => {
+	test('World Build Functionality', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
@@ -89,7 +89,7 @@ describe('Test Pixl World Build', () => {
 		)
 	})
 
-	test('Does not deal extra damage if hermit was activated by backlash KO', () => {
+	test('Does not deal extra damage if hermit was activated by backlash KO', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -128,7 +128,7 @@ describe('Test Pixl World Build', () => {
 	})
 
 	// Test interactions with Grianch which allows two attacks in one turn
-	test('Deals extra damage when swapped with Ladder and activated by backlash KO', () => {
+	test('Deals extra damage when swapped with Ladder and activated by backlash KO', async () => {
 		await testGame(
 			{
 				playerOneDeck: [GrianchRare, Thorns],
@@ -182,7 +182,7 @@ describe('Test Pixl World Build', () => {
 		)
 	})
 
-	test('Deals extra damage when hermit moves and returns to same row using two Ladders', () => {
+	test('Deals extra damage when hermit moves and returns to same row using two Ladders', async () => {
 		await testGame(
 			{
 				playerOneDeck: [GrianchRare, PixlriffsRare, GeminiTayRare],
@@ -256,7 +256,7 @@ describe('Test Pixl World Build', () => {
 		)
 	})
 
-	test('Deals extra damage when hermit moves and returns to same row using two Ender Pearls', () => {
+	test('Deals extra damage when hermit moves and returns to same row using two Ender Pearls', async () => {
 		await testGame(
 			{
 				playerOneDeck: [GrianchRare, PixlriffsRare, GeminiTayRare],
@@ -329,7 +329,7 @@ describe('Test Pixl World Build', () => {
 		)
 	})
 
-	test('Deals extra damage when hermit moves and returns to same row using Ender Pearl + Jumpscare', () => {
+	test('Deals extra damage when hermit moves and returns to same row using Ender Pearl + Jumpscare', async () => {
 		await testGame(
 			{
 				playerOneDeck: [GrianchRare, PixlriffsRare, PoePoeSkizzRare],

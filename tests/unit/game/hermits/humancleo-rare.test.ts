@@ -23,7 +23,7 @@ import {
 } from '../utils'
 
 describe('Test Human Cleo Betrayal', () => {
-	test('Test Betrayal with canceling to Ender Pearl knock-out', () => {
+	test('Test Betrayal with canceling to Ender Pearl knock-out', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -79,7 +79,7 @@ describe('Test Human Cleo Betrayal', () => {
 		)
 	})
 
-	test('Test Betrayal knocking-out opponent active hermit', () => {
+	test('Test Betrayal knocking-out opponent active hermit', async () => {
 		await testGame(
 			{
 				playerOneDeck: [ArmorStand, EthosLabCommon, VintageBeefCommon],
@@ -116,7 +116,7 @@ describe('Test Human Cleo Betrayal', () => {
 		)
 	})
 
-	test('Test Betrayal + Clock', () => {
+	test('Test Betrayal + Clock', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
@@ -140,7 +140,7 @@ describe('Test Human Cleo Betrayal', () => {
 		)
 	})
 
-	test('Test Betrayal works when opponent has Command Block', () => {
+	test('Test Betrayal works when opponent has Command Block', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -179,7 +179,7 @@ describe('Test Human Cleo Betrayal', () => {
 		)
 	})
 
-	test('Test Betrayal works when opponent uses Efficiency', () => {
+	test('Test Betrayal works when opponent uses Efficiency', async () => {
 		await testGame(
 			{
 				playerOneDeck: [HumanCleoRare, EthosLabCommon, Efficiency],
@@ -213,7 +213,7 @@ describe('Test Human Cleo Betrayal', () => {
 		)
 	})
 
-	test('Test Betrayed allows ending turn when opponent switches from row with no items', () => {
+	test('Test Betrayed allows ending turn when opponent switches from row with no items', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, BalancedDoubleItem],

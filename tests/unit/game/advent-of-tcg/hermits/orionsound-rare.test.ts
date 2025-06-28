@@ -16,7 +16,7 @@ import {
 } from '../../utils'
 
 describe('Test Oli Melody', () => {
-	test('Melody functionality', () => {
+	test('Melody functionality', async () => {
 		await testGame(
 			{
 				playerOneDeck: [

@@ -23,7 +23,7 @@ import {
 } from '../../utils'
 
 describe('Test Jimmy "The Law"', () => {
-	test('The Law functionality', () => {
+	test('The Law functionality', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],

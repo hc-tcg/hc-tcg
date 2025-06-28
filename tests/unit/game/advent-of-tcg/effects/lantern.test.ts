@@ -17,7 +17,7 @@ import {
 } from '../../utils'
 
 describe('Test Lantern Single Use', () => {
-	test('Lantern functionality', () => {
+	test('Lantern functionality', async () => {
 		await testGame(
 			{
 				playerOneDeck: [

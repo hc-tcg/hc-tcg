@@ -12,7 +12,7 @@ import {
 } from '../utils'
 
 describe('Test Gotta Screep achivement', () => {
-	test('increments when opponent is knocked out', () => {
+	test('increments when opponent is knocked out', async () => {
 		testAchivement(
 			{
 				achievement: GottaSchreep,
@@ -40,7 +40,7 @@ describe('Test Gotta Screep achivement', () => {
 			{oneShotMode: true, noItemRequirements: true},
 		)
 	})
-	test('does not increment when you are awake', () => {
+	test('does not increment when you are awake', async () => {
 		testAchivement(
 			{
 				achievement: GottaSchreep,

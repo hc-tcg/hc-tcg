@@ -14,7 +14,7 @@ import {
 } from '../utils'
 
 describe('Test Channeling achievement', () => {
-	test('"Channeling" increases properly', () => {
+	test('"Channeling" increases properly', async () => {
 		testAchivement(
 			{
 				achievement: Channeling,
@@ -40,7 +40,7 @@ describe('Test Channeling achievement', () => {
 			{noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('"Channeling" does not increase if the lightning rod didn\'t redirect damage from active Hermit', () => {
+	test('"Channeling" does not increase if the lightning rod didn\'t redirect damage from active Hermit', async () => {
 		testAchivement(
 			{
 				achievement: Channeling,
@@ -66,7 +66,7 @@ describe('Test Channeling achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('"Channeling" does not increase if the active Hermit has at least 100hp', () => {
+	test('"Channeling" does not increase if the active Hermit has at least 100hp', async () => {
 		testAchivement(
 			{
 				achievement: Channeling,
@@ -92,7 +92,7 @@ describe('Test Channeling achievement', () => {
 			{noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('"Channeling" does not increase when Lightning Rod on active row', () => {
+	test('"Channeling" does not increase when Lightning Rod on active row', async () => {
 		testAchivement(
 			{
 				achievement: Channeling,

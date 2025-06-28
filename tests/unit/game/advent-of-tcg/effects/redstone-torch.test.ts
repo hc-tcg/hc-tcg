@@ -16,7 +16,7 @@ import {
 } from '../../utils'
 
 describe('Test Redstone Torch', () => {
-	test('Detonate 3 TNT', () => {
+	test('Detonate 3 TNT', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -70,7 +70,7 @@ describe('Test Redstone Torch', () => {
 		)
 	})
 
-	test('Detonate 1 TNT Minecart', () => {
+	test('Detonate 1 TNT Minecart', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -105,7 +105,7 @@ describe('Test Redstone Torch', () => {
 		)
 	})
 
-	test('Redstone Torch can not be used with 0 cards in deck or opponent has no active Hermit', () => {
+	test('Redstone Torch can not be used with 0 cards in deck or opponent has no active Hermit', async () => {
 		await testGame(
 			{
 				playerOneDeck: [

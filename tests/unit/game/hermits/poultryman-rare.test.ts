@@ -16,7 +16,7 @@ import {
 } from '../utils'
 
 describe('Test Poutry Man Rare', () => {
-	test('Poultry Man only recycles Egg.', () => {
+	test('Poultry Man only recycles Egg.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
@@ -58,7 +58,7 @@ describe('Test Poutry Man Rare', () => {
 		)
 	})
 
-	test('Poultry Man recycles Egg on tails.', () => {
+	test('Poultry Man recycles Egg on tails.', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, BadOmen],
@@ -95,7 +95,7 @@ describe('Test Poutry Man Rare', () => {
 		)
 	})
 
-	test('Poultry Man does not recycle Egg when Trap Hole flips heads', () => {
+	test('Poultry Man does not recycle Egg when Trap Hole flips heads', async () => {
 		await testGame(
 			{
 				playerOneDeck: [PoultryManRare, Egg],

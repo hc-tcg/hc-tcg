@@ -33,7 +33,7 @@ import {
 } from '../utils'
 
 describe('Test Turtle Shell', () => {
-	test('Turtle Shell applies to next turn', () => {
+	test('Turtle Shell applies to next turn', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
@@ -69,7 +69,7 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test('Turtle Shell protects against Gas Light and Egg, but not status-effect damage', () => {
+	test('Turtle Shell protects against Gas Light and Egg, but not status-effect damage', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
@@ -117,7 +117,7 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test('Turtle Shell is not discarded when row is activated by Knockback', () => {
+	test('Turtle Shell is not discarded when row is activated by Knockback', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
@@ -230,7 +230,7 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test('Ladder deactivates Turtle Shell after active moves', () => {
+	test('Ladder deactivates Turtle Shell after active moves', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -285,7 +285,7 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test('Mending deactivates moved Turtle Shell', () => {
+	test('Mending deactivates moved Turtle Shell', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -340,7 +340,7 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test('Turtle Shell is still discarded when row is deactivated by Knockback', () => {
+	test('Turtle Shell is still discarded when row is deactivated by Knockback', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
@@ -379,7 +379,7 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test('Correct Turtle Shell is discarded after defending against Peace Out + Egg', () => {
+	test('Correct Turtle Shell is discarded after defending against Peace Out + Egg', async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -743,7 +743,7 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test('Loose Shell effect is removed when Turtle Shell or attached hermit is moved', () => {
+	test('Loose Shell effect is removed when Turtle Shell or attached hermit is moved', async () => {
 		await testGame(
 			{
 				playerOneDeck: [

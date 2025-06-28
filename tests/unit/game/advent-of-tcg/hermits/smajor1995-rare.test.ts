@@ -17,7 +17,7 @@ import {
 } from '../../utils'
 
 describe('Test Scott "To Dye For"', () => {
-	test('"To Dye For" functionality', () => {
+	test('"To Dye For" functionality', async () => {
 		await testGame({
 			playerOneDeck: [
 				Smajor1995Rare,

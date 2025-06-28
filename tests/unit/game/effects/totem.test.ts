@@ -28,7 +28,7 @@ import {
 } from '../utils'
 
 describe('Test Totem of Undying', () => {
-	test('Test Totem with TNT', () => {
+	test('Test Totem with TNT', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -74,7 +74,7 @@ describe('Test Totem of Undying', () => {
 		)
 	})
 
-	test('Test Totem with Thorns', () => {
+	test('Test Totem with Thorns', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Thorns],
@@ -120,7 +120,7 @@ describe('Test Totem of Undying', () => {
 		)
 	})
 
-	test('Test Totem with Deathloop', () => {
+	test('Test Totem with Deathloop', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Thorns],
@@ -200,7 +200,7 @@ describe('Test Totem of Undying', () => {
 		)
 	})
 
-	test('Test Totem with AFK Thorns', () => {
+	test('Test Totem with AFK Thorns', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, Thorns, Thorns],
@@ -257,7 +257,7 @@ describe('Test Totem of Undying', () => {
 		)
 	})
 
-	test('Test Totem with Burn', () => {
+	test('Test Totem with Burn', async () => {
 		await testGame(
 			{
 				playerOneDeck: [PearlescentMoonCommon, WelsknightCommon, Totem],
@@ -321,7 +321,7 @@ describe('Test Totem of Undying', () => {
 		)
 	})
 
-	test('Test Totem revives rows before `afterAttack` requests are created', () => {
+	test('Test Totem revives rows before `afterAttack` requests are created', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, Totem],

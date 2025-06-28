@@ -4,7 +4,7 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
 
 describe('Test type win achivements', () => {
-	test('Test win counts when you 7 hermits of type', () => {
+	test('Test win counts when you 7 hermits of type', async () => {
 		testAchivement(
 			{
 				achievement: BalancedWins,
@@ -35,7 +35,7 @@ describe('Test type win achivements', () => {
 			{oneShotMode: true, noItemRequirements: true},
 		)
 	})
-	test('Test win does not count when you 7 hermits of type but do not win', () => {
+	test('Test win does not count when you 7 hermits of type but do not win', async () => {
 		testAchivement(
 			{
 				achievement: BalancedWins,
@@ -63,7 +63,7 @@ describe('Test type win achivements', () => {
 			{oneShotMode: true, noItemRequirements: true},
 		)
 	})
-	test('Test win does not count when you have less than 7 hermits', () => {
+	test('Test win does not count when you have less than 7 hermits', async () => {
 		testAchivement(
 			{
 				achievement: BalancedWins,
