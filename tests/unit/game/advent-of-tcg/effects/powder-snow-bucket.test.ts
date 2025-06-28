@@ -13,15 +13,7 @@ import LavaBucket from 'common/cards/single-use/lava-bucket'
 import SplashPotionOfPoison from 'common/cards/single-use/splash-potion-of-poison'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Powder Snow Bucket', () => {
 	test('Frozen effect prevents attack damage and activating row', async () => {
@@ -152,7 +144,7 @@ describe('Test Powder Snow Bucket', () => {
 					await test.applyEffect()
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
@@ -165,7 +157,7 @@ describe('Test Powder Snow Bucket', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					await test.changeActiveHermit( 2)
+					await test.changeActiveHermit(2)
 					await test.endTurn()
 
 					await test.playCardFromHand(PowderSnowBucket, 'single_use')
@@ -219,8 +211,7 @@ describe('Test Powder Snow Bucket', () => {
 				await test.endTurn()
 
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(
-					game,
+				await test.playCardFromHand(
 					BerryBush,
 					'hermit',
 					1,
