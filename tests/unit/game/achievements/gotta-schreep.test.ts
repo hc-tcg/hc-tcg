@@ -3,13 +3,7 @@ import GottaSchreep from 'common/achievements/gotta-schreep'
 import BdoubleO100Rare from 'common/cards/hermits/bdoubleo100-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {DiamondSword} from 'common/cards/single-use/sword'
-import {
-	attack,
-	changeActiveHermit,
-	endTurn,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Gotta Screep achivement', () => {
 	test('increments when opponent is knocked out', async () => {

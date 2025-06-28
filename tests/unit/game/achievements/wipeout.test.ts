@@ -5,15 +5,7 @@ import Anvil from 'common/cards/single-use/anvil'
 import LavaBucket from 'common/cards/single-use/lava-bucket'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	forfeit,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test "Wipeout" achievement', () => {
 	test('Works when game ends when all Hermits are knocked out and game ends', async () => {

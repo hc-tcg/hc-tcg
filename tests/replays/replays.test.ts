@@ -35,13 +35,8 @@ import {
 } from '../../server/src/utils/compression'
 import {
 	applyEffect,
-	attack,
-	changeActiveHermit,
 	endTurn,
 	finishModalRequest,
-	forfeit,
-	pick,
-	playCardFromHand,
 	testReplayGame,
 } from '../unit/game/utils'
 

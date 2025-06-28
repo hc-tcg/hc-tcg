@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import OriginalXBRare from 'common/cards/hermits/originalxb-rare'
 import BalancedItem from 'common/cards/items/balanced-common'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Original Xb Rare', () => {
 	test('Original Xb draws exactly one card.', async () => {

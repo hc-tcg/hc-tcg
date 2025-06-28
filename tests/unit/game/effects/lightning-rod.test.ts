@@ -7,14 +7,7 @@ import InvisibilityPotion from 'common/cards/single-use/invisibility-potion'
 import TargetBlock from 'common/cards/single-use/target-block'
 import {CardComponent, RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Lightning Rod', () => {
 	test('Test redirecting multiple attacks at once', async () => {

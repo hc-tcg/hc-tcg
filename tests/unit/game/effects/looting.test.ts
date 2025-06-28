@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import BalancedItem from 'common/cards/items/balanced-common'
 import Looting from 'common/cards/single-use/looting'
-import {applyEffect, endTurn, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Looting.', () => {
 	test('Test looting works as expected', async () => {

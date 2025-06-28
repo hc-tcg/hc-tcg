@@ -4,14 +4,7 @@ import PoePoeSkizzRare from 'common/cards/hermits/poepoeskizz-rare'
 import Bow from 'common/cards/single-use/bow'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Poe Poe Skizz Rare', () => {
 	test('Jumpscare.', async () => {

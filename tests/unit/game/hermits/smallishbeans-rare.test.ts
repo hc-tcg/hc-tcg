@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
 import SmallishbeansRare from 'common/cards/hermits/smallishbeans-rare'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Smallishbeans Rare', () => {
 	test('Test "Obsess"', async () => {

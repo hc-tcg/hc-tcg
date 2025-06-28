@@ -11,15 +11,7 @@ import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {WEAKNESS_DAMAGE} from 'common/const/damage'
 import ChromaKeyedEffect from 'common/status-effects/chroma-keyed'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Beetlejhost Rare', () => {
 	test('Test Jopacity damage is reduced', async () => {

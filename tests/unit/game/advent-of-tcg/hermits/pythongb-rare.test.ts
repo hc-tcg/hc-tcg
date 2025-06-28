@@ -4,7 +4,7 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import RendogCommon from 'common/cards/hermits/rendog-common'
 import XisumavoidRare from 'common/cards/hermits/xisumavoid-rare'
 import {GameModel} from 'common/models/game-model'
-import {attack, endTurn, playCardFromHand, testGame} from '../../utils'
+import {testGame} from '../../utils'
 
 async function testOneHermit(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)

@@ -10,7 +10,7 @@ import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import {SecondaryAttackDisabledEffect} from 'common/status-effects/singleturn-attack-disabled'
 import {CopyAttack} from 'common/types/modal-requests'
-import {testGame, TestGameFixture} from '../utils'
+import {TestGameFixture, testGame} from '../utils'
 
 async function testEvilXDisablesForOneTurn(
 	test: TestGameFixture,

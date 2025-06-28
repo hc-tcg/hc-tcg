@@ -5,13 +5,7 @@ import EthosLabRare from 'common/cards/hermits/ethoslab-rare'
 import EthosLabUltraRare from 'common/cards/hermits/ethoslab-ultra-rare'
 import ShadEECommon from 'common/cards/hermits/shadee-common'
 import ShadeEERare from 'common/cards/hermits/shadeee-rare'
-import {
-	attack,
-	endTurn,
-	forfeit,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Ethogirl achievement', () => {
 	test('Ethogirl progress only counts unique Etho variants on one side of the board', async () => {

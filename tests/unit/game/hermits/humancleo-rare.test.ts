@@ -11,16 +11,7 @@ import Efficiency from 'common/cards/single-use/efficiency'
 import EnderPearl from 'common/cards/single-use/ender-pearl'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Human Cleo Betrayal', () => {
 	test('Test Betrayal with canceling to Ender Pearl knock-out', async () => {

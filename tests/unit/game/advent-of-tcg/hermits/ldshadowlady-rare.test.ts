@@ -5,14 +5,7 @@ import LDShadowLadyRare from 'common/cards/advent-of-tcg/hermits/ldshadowlady-ra
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import Crossbow from 'common/cards/single-use/crossbow'
 import query from 'common/components/query'
-import {
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Lizzie Evict', () => {
 	test('Evict moves opponent active row', async () => {

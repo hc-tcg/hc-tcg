@@ -20,16 +20,7 @@ import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {WEAKNESS_DAMAGE} from 'common/const/damage'
 import {soulmateEffectDamage} from 'common/status-effects/soulmate'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Pharaoh Xibalba', () => {
 	test('Xibalba Functionality', async () => {

@@ -12,15 +12,7 @@ import {
 } from 'common/components'
 import query from 'common/components/query'
 import EfficiencyEffect from 'common/status-effects/efficiency'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Rare Hypnotizd', () => {
 	test('Secondary attack and bow can select different targets', async () => {

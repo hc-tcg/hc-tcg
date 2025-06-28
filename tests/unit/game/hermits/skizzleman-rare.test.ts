@@ -8,14 +8,7 @@ import Anvil from 'common/cards/single-use/anvil'
 import LavaBucket from 'common/cards/single-use/lava-bucket'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Skizzleman Rare', () => {
 	test('Gaslight works as intended', async () => {

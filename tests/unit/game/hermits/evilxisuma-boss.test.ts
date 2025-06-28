@@ -20,7 +20,7 @@ import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 } from 'common/status-effects/singleturn-attack-disabled'
-import {testBossFight, BossGameTestFixture} from '../utils'
+import {BossGameTestFixture, testBossFight} from '../utils'
 
 async function testConsecutiveAmnesia(
 	test: BossGameTestFixture,

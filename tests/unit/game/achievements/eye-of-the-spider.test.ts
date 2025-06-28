@@ -9,16 +9,7 @@ import LavaBucket from 'common/cards/single-use/lava-bucket'
 import SplashPotionOfPoison from 'common/cards/single-use/splash-potion-of-poison'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	forfeit,
-	pick,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Eye of the Spider achievement', () => {
 	test('"Eye of the Spider" counts multiple attacks as one progress', async () => {

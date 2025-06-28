@@ -7,7 +7,7 @@ import Bow from 'common/cards/single-use/bow'
 import Crossbow from 'common/cards/single-use/crossbow'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Hotguy Rare', () => {
 	test('Test Hotguy with Bow', async () => {

@@ -3,14 +3,7 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import JoeHillsRare from 'common/cards/hermits/joehills-rare'
 import BadOmen from 'common/cards/single-use/bad-omen'
 import Clock from 'common/cards/single-use/clock'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Joe Time Skip', () => {
 	test('Time Skip functionality', async () => {

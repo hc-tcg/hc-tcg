@@ -9,13 +9,7 @@ import BalancedItem from 'common/cards/items/balanced-common'
 import {CardComponent} from 'common/components'
 import query from 'common/components/query'
 import {SelectCards} from 'common/types/modal-requests'
-import {
-	attack,
-	endTurn,
-	finishModalRequest,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Grian Rare', () => {
 	test('Test Borrow steals Loyalty after knock out', async () => {

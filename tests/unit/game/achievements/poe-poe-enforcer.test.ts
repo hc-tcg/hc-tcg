@@ -3,13 +3,7 @@ import PoePoeEnforcer from 'common/achievements/poe-poe-enforcer'
 import ImpulseSVCommon from 'common/cards/hermits/impulsesv-common'
 import JoeHillsCommon from 'common/cards/hermits/joehills-common'
 import CurseOfBinding from 'common/cards/single-use/curse-of-binding'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Poe Poe Enforcer Achievement', () => {
 	test('Test achievement is not gained when knocking out active hermit whle opponent has curse of binding', async () => {

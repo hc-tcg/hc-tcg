@@ -56,7 +56,7 @@ const defaultGameSettings = {
  * Test a saga against a game. The game is created with default settings similar to what would be found in production.
  * Note that decks are not shuffled in test games.
  */
-export async function await testGame(options: {
+export async function testGame(options: {
 	playerOne: {
 		deck: Array<Card>
 		AI: VirtualAI

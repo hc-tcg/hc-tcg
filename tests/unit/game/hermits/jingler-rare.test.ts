@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import JinglerRare from 'common/cards/hermits/jingler-rare'
 import query from 'common/components/query'
-import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Jingler Rare', () => {
 	test('Test Jingler forces opponent to discard one card', async () => {

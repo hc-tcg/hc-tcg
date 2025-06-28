@@ -6,7 +6,7 @@ import {DiamondSword} from 'common/cards/single-use/sword'
 import TargetBlock from 'common/cards/single-use/target-block'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Netherite Armor', () => {
 	test('Netherite Armor prevents damage', async () => {

@@ -23,17 +23,7 @@ import {GameModel} from 'common/models/game-model'
 import ChromaKeyedEffect from 'common/status-effects/chroma-keyed'
 import {SecondaryAttackDisabledEffect} from 'common/status-effects/singleturn-attack-disabled'
 import {CopyAttack} from 'common/types/modal-requests'
-import {
-	attack,
-	changeActiveHermit,
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testGame,
-	TestGameFixture,
-} from '../utils'
+import {TestGameFixture, testGame} from '../utils'
 
 async function testPrimaryDoesNotCrash(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)

@@ -34,19 +34,7 @@ import query from 'common/components/query'
 import ExBossNineEffect, {
 	supplyNineSpecial,
 } from 'common/status-effects/exboss-nine'
-import {
-	applyEffect,
-	attack,
-	bossAttack,
-	changeActiveHermit,
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testBossFight,
-	testGame,
-} from '../../utils'
+import {testBossFight, testGame} from '../../utils'
 
 // Circular imports must be included last
 import FireCharge from 'common/cards/single-use/fire-charge'
@@ -180,7 +168,7 @@ describe('Test Slimeball', () => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 				await test.playCardFromHand(Slimeball, 'attach', 0)
 				expect(game.getPickableSlots(Ladder.attachCondition)).toStrictEqual([])
-				await test.changeActiveHermit( 1)
+				await test.changeActiveHermit(1)
 				await test.endTurn()
 
 				await test.playCardFromHand(FarmerBeefCommon, 'hermit', 0)
@@ -342,10 +330,10 @@ describe('Test Slimeball', () => {
 					expect(game.state.pickRequests).toHaveLength(0)
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
-					await test.changeActiveHermit( 1)
+					await test.changeActiveHermit(1)
 					await test.endTurn()
 
 					await test.attack('secondary') // Test "Steal"
@@ -534,7 +522,7 @@ describe('Test Slimeball', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					await test.finishModalRequest( {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
@@ -547,7 +535,7 @@ describe('Test Slimeball', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					await test.finishModalRequest( {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.pick(
 						query.slot.opponent,
 						query.slot.item,
@@ -575,7 +563,7 @@ describe('Test Slimeball', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					await test.finishModalRequest( {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
@@ -588,7 +576,7 @@ describe('Test Slimeball', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(3),
 					)
-					await test.finishModalRequest( {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.pick(
 						query.slot.opponent,
 						query.slot.item,

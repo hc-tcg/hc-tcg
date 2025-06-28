@@ -3,7 +3,7 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
 import {CardComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
+import {testGame} from './utils'
 
 describe('Test prize card.', () => {
 	test('Test prize card is gained after knockout', async () => {

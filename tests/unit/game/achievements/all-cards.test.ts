@@ -3,7 +3,7 @@ import AllCards from 'common/achievements/jack-of-all-cards'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import ShadEECommon from 'common/cards/hermits/shadee-common'
 import BalancedItem from 'common/cards/items/balanced-common'
-import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Jack of All Cards achivement', () => {
 	test('Test Jack of All Cards increments progress on win for only default cards', async () => {

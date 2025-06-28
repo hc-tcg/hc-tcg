@@ -9,7 +9,7 @@ import TargetBlock from 'common/cards/single-use/target-block'
 import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {IgnoreAttachSlotEffect} from 'common/status-effects/ignore-attach'
-import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test xB', () => {
 	test('Test "Noice!" functions with type advantage and single use attacks', async () => {

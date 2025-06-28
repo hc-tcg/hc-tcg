@@ -1,8 +1,10 @@
+import assert from 'assert'
 import {
 	RecievedClientMessage,
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {LocalMessage, localMessages} from 'messages'
+import {getGame} from 'selectors'
 import {put, select, takeEvery} from 'typed-redux-saga'
 import {safeCall} from 'utils'
 import {
@@ -40,9 +42,6 @@ import {
 	updateMinecraftNameSaga,
 	updateUsernameSaga,
 } from './player'
-import {getPublicGameCount} from 'api/games'
-import {getGame} from 'selectors'
-import assert from 'assert'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {

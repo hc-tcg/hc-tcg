@@ -11,14 +11,7 @@ import InvisibilityPotion from 'common/cards/single-use/invisibility-potion'
 import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {InvisibilityPotionHeadsEffect} from 'common/status-effects/invisibility-potion'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Invisiblity Potion.', () => {
 	test('Invisibility Potion blocks damage on heads.', async () => {

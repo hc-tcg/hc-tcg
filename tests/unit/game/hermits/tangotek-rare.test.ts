@@ -6,14 +6,7 @@ import HumanCleoRare from 'common/cards/hermits/humancleo-rare'
 import TangoTekRare from 'common/cards/hermits/tangotek-rare'
 import CurseOfBinding from 'common/cards/single-use/curse-of-binding'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Tango Extra Flee', () => {
 	test('Both players change active hermits', async () => {

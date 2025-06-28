@@ -12,15 +12,7 @@ import LavaBucket from 'common/cards/single-use/lava-bucket'
 import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import ProtectedEffect from 'common/status-effects/protected'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Jimmy "The Law"', () => {
 	test('The Law functionality', async () => {

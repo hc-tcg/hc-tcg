@@ -7,13 +7,7 @@ import BuilderItem from 'common/cards/items/builder-common'
 import MinerItem from 'common/cards/items/miner-common'
 import {CardComponent} from 'common/components'
 import {SelectCards} from 'common/types/modal-requests'
-import {
-	applyEffect,
-	endTurn,
-	finishModalRequest,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Glowstone Single Use', () => {
 	test('Glowstone functionality', async () => {

@@ -4,7 +4,7 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {IronSword} from 'common/cards/single-use/sword'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 let thornsMap = {
 	Thorns: {

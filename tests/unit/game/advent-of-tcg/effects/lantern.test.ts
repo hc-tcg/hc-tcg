@@ -8,13 +8,7 @@ import MinerItem from 'common/cards/items/miner-common'
 import TerraformItem from 'common/cards/items/terraform-common'
 import {CardComponent} from 'common/components'
 import {SelectCards} from 'common/types/modal-requests'
-import {
-	applyEffect,
-	endTurn,
-	finishModalRequest,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Lantern Single Use', () => {
 	test('Lantern functionality', async () => {

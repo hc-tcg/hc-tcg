@@ -5,14 +5,7 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GoatfatherRare from 'common/cards/hermits/goatfather-rare'
 import ZedaphPlaysRare from 'common/cards/hermits/zedaphplays-rare'
 import InvisibilityPotion from 'common/cards/single-use/invisibility-potion'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	forfeit,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Cant Touch This achievement', () => {
 	test('"Cant Touch This" counts Anvil Drop miss as only one progress', async () => {

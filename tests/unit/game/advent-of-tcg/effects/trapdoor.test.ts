@@ -26,15 +26,7 @@ import TargetBlock from 'common/cards/single-use/target-block'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {WEAKNESS_DAMAGE} from 'common/const/damage'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Trapdoor', () => {
 	test('Trapdoor functionality', async () => {

@@ -6,15 +6,7 @@ import ChorusFruit from 'common/cards/single-use/chorus-fruit'
 import PotionOfWeakness from 'common/cards/single-use/potion-of-weakness'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Weakness', () => {
 	test('Weakness Damage Negative Control', async () => {

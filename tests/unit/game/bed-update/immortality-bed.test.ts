@@ -3,13 +3,7 @@ import ImmortalityBed from 'common/cards/bed-update/attach/immortality-bed'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import BalancedItem from 'common/cards/items/balanced-common'
 import {CardComponent} from 'common/components'
-import {
-	attack,
-	changeActiveHermit,
-	endTurn,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Immortality Bed', () => {
 	test('Immortality Bed returns attached hermit to hand on knock-out without losing a life or giving a prize card', async () => {

@@ -18,14 +18,7 @@ import {
 import query from 'common/components/query'
 import {RevivedByDeathloopEffect} from 'common/status-effects/death-loop'
 import FireEffect from 'common/status-effects/fire'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Totem of Undying', () => {
 	test('Test Totem with TNT', async () => {

@@ -15,16 +15,7 @@ import {IronSword} from 'common/cards/single-use/sword'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {soulmateEffectDamage} from 'common/status-effects/soulmate'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test BigB Soulmate', () => {
 	test('Soulmate functionality', async () => {

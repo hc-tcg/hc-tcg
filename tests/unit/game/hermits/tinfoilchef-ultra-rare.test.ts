@@ -8,15 +8,7 @@ import Chest from 'common/cards/single-use/chest'
 import Ladder from 'common/cards/single-use/ladder'
 import {CardComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	attack,
-	changeActiveHermit,
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Ultra Rare TFC "Take It Easy"', () => {
 	test('Can not discard two attach effects from the same hermit', async () => {

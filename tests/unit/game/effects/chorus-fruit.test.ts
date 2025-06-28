@@ -5,14 +5,7 @@ import HumanCleoRare from 'common/cards/hermits/humancleo-rare'
 import ChorusFruit from 'common/cards/single-use/chorus-fruit'
 import CurseOfBinding from 'common/cards/single-use/curse-of-binding'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Chorus Fruit', () => {
 	test('Basic functionality', async () => {

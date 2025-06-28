@@ -19,17 +19,7 @@ import {IronSword} from 'common/cards/single-use/sword'
 import Trident from 'common/cards/single-use/trident'
 import {CardComponent, RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Biffa Secondary', () => {
 	test("Biffa's Museum functionality", async () => {

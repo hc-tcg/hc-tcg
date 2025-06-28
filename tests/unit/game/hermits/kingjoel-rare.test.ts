@@ -7,7 +7,7 @@ import BalancedItem from 'common/cards/items/balanced-common'
 import Egg from 'common/cards/single-use/egg'
 import {CardComponent, RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test rare King Joel Steal', () => {
 	test('Test regular Steal behavior', async () => {

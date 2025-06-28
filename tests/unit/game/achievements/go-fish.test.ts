@@ -6,15 +6,7 @@ import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
 import FishingRod from 'common/cards/single-use/fishing-rod'
 import Mending from 'common/cards/single-use/mending'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	forfeit,
-	pick,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Go Fish Achievement', () => {
 	test('Test achievement is gained after mending is drawn', async () => {

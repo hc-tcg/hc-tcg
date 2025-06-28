@@ -18,14 +18,7 @@ import {
 } from 'common/components'
 import query from 'common/components/query'
 import PoisonEffect from 'common/status-effects/poison'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Arrow of Poison', () => {
 	test('Anvil Drop triggers Arrow of Poison', async () => {

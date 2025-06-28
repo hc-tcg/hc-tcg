@@ -3,7 +3,7 @@ import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {ObserverComponent, RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
+import {testGame} from './utils'
 
 describe('Test `row.hooks.onKnockOut` hook', () => {
 	test('Test `row.hooks.onKnockOut` hook', async () => {

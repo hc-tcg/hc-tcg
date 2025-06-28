@@ -17,9 +17,9 @@ import {
 } from 'common/socket-messages/server-messages'
 import {CurrentCoinFlip, Message} from 'common/types/game-state'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
+import {TurnActionAndPlayer} from 'routines/game'
 import {broadcast} from './utils/comm'
 import {getLocalGameState} from './utils/state-gen'
-import {TurnActionAndPlayer} from 'routines/game'
 
 export type GameControllerProps = {
 	gameCode?: string

@@ -11,14 +11,7 @@ import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import FireEffect from 'common/status-effects/fire'
 import {IgnoreAttachSlotEffect} from 'common/status-effects/ignore-attach'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Gemini Tay', () => {
 	test('Test Axe Functions Until End Of Turn', async () => {

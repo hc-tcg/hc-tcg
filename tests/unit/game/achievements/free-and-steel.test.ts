@@ -3,13 +3,7 @@ import FreeAndSteel from 'common/achievements/free-and-steel'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import BalancedItem from 'common/cards/items/balanced-common'
 import FlintAndSteel from 'common/cards/single-use/flint-and-steel'
-import {
-	applyEffect,
-	endTurn,
-	forfeit,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Free & Steel Achievement', () => {
 	test('Test achievement is when hand only contains flint and steel', async () => {

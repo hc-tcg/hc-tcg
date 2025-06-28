@@ -14,14 +14,7 @@ import Mending from 'common/cards/single-use/mending'
 import {CardComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import SmeltingEffect from 'common/status-effects/smelting'
-import {
-	applyEffect,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 function sortRowItems(a: CardComponent, b: CardComponent): number {
 	assert(a.slot.inRow() && a.slot.index !== null)

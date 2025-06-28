@@ -21,16 +21,7 @@ import {CardComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import LooseShellEffect from 'common/status-effects/loose-shell'
 import {SelectCards} from 'common/types/modal-requests'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Turtle Shell', () => {
 	test('Turtle Shell applies to next turn', async () => {

@@ -3,13 +3,7 @@ import Loyalty from 'common/cards/attach/loyalty'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import BalancedItem from 'common/cards/items/balanced-common'
 import {GameModel} from 'common/models/game-model'
-import {
-	attack,
-	endTurn,
-	playCardFromHand,
-	testGame,
-	TestGameFixture,
-} from '../utils'
+import {TestGameFixture, testGame} from '../utils'
 
 async function testLoyaltyHelperSaga(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)

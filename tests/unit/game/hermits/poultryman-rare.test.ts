@@ -6,14 +6,7 @@ import BadOmen from 'common/cards/single-use/bad-omen'
 import Egg from 'common/cards/single-use/egg'
 import GoldenAxe from 'common/cards/single-use/golden-axe'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Poutry Man Rare', () => {
 	test('Poultry Man only recycles Egg.', async () => {

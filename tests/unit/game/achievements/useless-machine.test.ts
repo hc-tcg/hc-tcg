@@ -5,13 +5,7 @@ import BalancedItem from 'common/cards/items/balanced-common'
 import Composter from 'common/cards/single-use/composter'
 import FlintAndSteel from 'common/cards/single-use/flint-and-steel'
 import query from 'common/components/query'
-import {
-	endTurn,
-	forfeit,
-	pick,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Useless Machine Achievement', () => {
 	test('Test achievement is gained when drawing two duplicates', async () => {

@@ -6,13 +6,7 @@ import PotionOfWeakness from 'common/cards/single-use/potion-of-weakness'
 import TNT from 'common/cards/single-use/tnt'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Zedaph Sheep Stare', () => {
 	test('Sheep Stare functionality', async () => {

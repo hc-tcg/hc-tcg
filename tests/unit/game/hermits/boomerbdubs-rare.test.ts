@@ -5,17 +5,7 @@ import BadOmen from 'common/cards/single-use/bad-omen'
 import Crossbow from 'common/cards/single-use/crossbow'
 import Fortune from 'common/cards/single-use/fortune'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Boomer Bdubs Watch This', () => {
 	test('Watch This adds 20hp damage per heads', async () => {

@@ -3,7 +3,7 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import FrenchralisRare from 'common/cards/hermits/frenchralis-rare'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Frenchralis Rare', () => {
 	test('Test Zero Lives Lost', async () => {

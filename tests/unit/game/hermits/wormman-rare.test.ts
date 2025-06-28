@@ -12,14 +12,7 @@ import {CardComponent, RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {WEAKNESS_DAMAGE} from 'common/const/damage'
 import {TurnAction} from 'common/types/game-state'
-import {
-	attack,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Rare Worm Man', () => {
 	test('Total Anonymity functionality', async () => {

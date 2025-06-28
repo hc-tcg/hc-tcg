@@ -5,7 +5,7 @@ import HelsknightRare from 'common/cards/hermits/helsknight-rare'
 import Anvil from 'common/cards/single-use/anvil'
 import {IronSword} from 'common/cards/single-use/sword'
 import TNT from 'common/cards/single-use/tnt'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Hels Trap Hole', () => {
 	test('Test Trap Hole with TNT', async () => {

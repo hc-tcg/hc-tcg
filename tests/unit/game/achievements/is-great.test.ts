@@ -3,7 +3,7 @@ import IsGreat from 'common/achievements/is-great'
 import BdoubleO100Rare from 'common/cards/hermits/bdoubleo100-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import EthosLabRare from 'common/cards/hermits/ethoslab-rare'
-import {forfeit, testAchivement} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test "...is Great" achievement', () => {
 	test('Check should be valid', async () => {

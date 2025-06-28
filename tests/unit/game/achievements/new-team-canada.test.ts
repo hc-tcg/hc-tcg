@@ -6,7 +6,7 @@ import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
 import ShadEECommon from 'common/cards/hermits/shadee-common'
 import TangoTekRare from 'common/cards/hermits/tangotek-rare'
 import VintageBeefCommon from 'common/cards/hermits/vintagebeef-common'
-import {endTurn, forfeit, playCardFromHand, testAchivement} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test New Team Canada achievement', () => {
 	test('New Team Canada only triggers when containing all members and no other hermits', async () => {

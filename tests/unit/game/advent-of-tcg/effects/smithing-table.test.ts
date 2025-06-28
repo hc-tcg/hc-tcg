@@ -13,15 +13,7 @@ import ExBossNineEffect, {
 	supplyNineSpecial,
 } from 'common/status-effects/exboss-nine'
 import SmithingTableEffect from 'common/status-effects/smithing-table'
-import {
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testBossFight,
-	testGame,
-} from '../../utils'
+import {testBossFight, testGame} from '../../utils'
 
 describe('Test Smithing Table', () => {
 	test('Using Smithing Table on Water Bucket', async () => {

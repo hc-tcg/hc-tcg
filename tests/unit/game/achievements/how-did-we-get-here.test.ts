@@ -6,14 +6,7 @@ import BadOmen from 'common/cards/single-use/bad-omen'
 import Clock from 'common/cards/single-use/clock'
 import InvisibilityPotion from 'common/cards/single-use/invisibility-potion'
 import SplashPotionOfPoison from 'common/cards/single-use/splash-potion-of-poison'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	forfeit,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test How Did We Get Here achievement', () => {
 	test('"How Did We Get Here" counts system and damage statuses', async () => {

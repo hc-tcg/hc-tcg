@@ -7,14 +7,7 @@ import BuilderDoubleItem from 'common/cards/items/builder-rare'
 import {StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import DyedEffect from 'common/status-effects/dyed'
-import {
-	attack,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Scott "To Dye For"', () => {
 	test('"To Dye For" functionality', async () => {

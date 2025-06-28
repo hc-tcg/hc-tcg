@@ -5,7 +5,7 @@ import WelsknightRare from 'common/cards/hermits/welsknight-rare'
 import {InstantHealthII} from 'common/cards/single-use/instant-health'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test rare welsknight', () => {
 	test('Vengance functionality', async () => {

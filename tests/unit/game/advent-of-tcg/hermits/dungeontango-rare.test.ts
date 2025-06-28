@@ -6,15 +6,7 @@ import Crossbow from 'common/cards/single-use/crossbow'
 import Efficiency from 'common/cards/single-use/efficiency'
 import {CardComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 // Circular imports must be included last
 import Piston from 'common/cards/single-use/piston'

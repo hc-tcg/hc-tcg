@@ -9,13 +9,7 @@ import {IronSword} from 'common/cards/single-use/sword'
 import {CardComponent, RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {SelectCards} from 'common/types/modal-requests'
-import {
-	attack,
-	endTurn,
-	finishModalRequest,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Shelby Parallel World', () => {
 	test('Parallel World Functionality', async () => {

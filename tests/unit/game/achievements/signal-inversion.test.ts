@@ -4,14 +4,7 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import EthosLabUltraRare from 'common/cards/hermits/ethoslab-ultra-rare'
 import BadOmen from 'common/cards/single-use/bad-omen'
 import Fortune from 'common/cards/single-use/fortune'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	forfeit,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test "Signal Inversion" achievement', () => {
 	test('"Signal Inversion" increments', async () => {

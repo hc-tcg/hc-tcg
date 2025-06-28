@@ -10,7 +10,7 @@ import {
 	AussiePingEffect,
 	AussiePingImmuneEffect,
 } from 'common/status-effects/aussie-ping'
-import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Pearlescent Moon Rare', () => {
 	test('Aussie Ping', async () => {

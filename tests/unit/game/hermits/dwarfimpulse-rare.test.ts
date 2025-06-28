@@ -10,15 +10,7 @@ import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import {IgnoreAttachSlotEffect} from 'common/status-effects/ignore-attach'
-import {
-	attack,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-	TestGameFixture,
-} from '../utils'
+import {TestGameFixture, testGame} from '../utils'
 
 describe('Test Dwarf Impulse Rare', () => {
 	test('Test Dwarf Impulse with golden axe.', async () => {

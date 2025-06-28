@@ -3,13 +3,7 @@ import British from 'common/achievements/british'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import SpookyStressRare from 'common/cards/hermits/spookystress-rare'
 import XisumavoidRare from 'common/cards/hermits/xisumavoid-rare'
-import {
-	attack,
-	changeActiveHermit,
-	endTurn,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test British achievement', () => {
 	test('"British" achievement does not progress if only Cup of Tea is used', async () => {

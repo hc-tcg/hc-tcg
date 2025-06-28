@@ -2,13 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 import MinecartWithTNT from 'common/cards/advent-of-tcg/single-use/tnt-minecart'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import BadOmen from 'common/cards/single-use/bad-omen'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test TNT Minecart', () => {
 	test('TNT Minecart heads deals 100hp to opponent', async () => {

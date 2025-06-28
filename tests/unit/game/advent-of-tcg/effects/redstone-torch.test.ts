@@ -7,13 +7,7 @@ import TNT from 'common/cards/single-use/tnt'
 import {CardComponent} from 'common/components'
 import query from 'common/components/query'
 import {SelectCards} from 'common/types/modal-requests'
-import {
-	applyEffect,
-	endTurn,
-	finishModalRequest,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Redstone Torch', () => {
 	test('Detonate 3 TNT', async () => {

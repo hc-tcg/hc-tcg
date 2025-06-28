@@ -5,15 +5,7 @@ import BadOmen from 'common/cards/single-use/bad-omen'
 import {InstantHealthII} from 'common/cards/single-use/instant-health'
 import Trident from 'common/cards/single-use/trident'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	forfeit,
-	pick,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Loyalty III Achievement', () => {
 	test('Test achievement is gained after three uses', async () => {

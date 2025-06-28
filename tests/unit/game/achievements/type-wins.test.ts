@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import {BalancedWins} from 'common/achievements/type-wins'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test type win achivements', () => {
 	test('Test win counts when you 7 hermits of type', async () => {

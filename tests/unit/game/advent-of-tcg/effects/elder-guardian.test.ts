@@ -10,13 +10,7 @@ import Efficiency from 'common/cards/single-use/efficiency'
 import {CardComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {SingleTurnMiningFatigueEffect} from 'common/status-effects/mining-fatigue'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Elder Guardian', () => {
 	test('Test mining fatigue is applied', async () => {

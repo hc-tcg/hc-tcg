@@ -7,13 +7,7 @@ import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import BadOmenEffect from 'common/status-effects/badomen'
 import {InvisibilityPotionTailsEffect} from 'common/status-effects/invisibility-potion'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Docm77 World Eater', () => {
 	test('Test World Eater with Invisibility (both tails)', async () => {

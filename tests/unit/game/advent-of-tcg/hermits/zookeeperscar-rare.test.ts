@@ -15,16 +15,7 @@ import {CardComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {SingleTurnMiningFatigueEffect} from 'common/status-effects/mining-fatigue'
 import {CopyAttack} from 'common/types/modal-requests'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Zookeeper Scar', () => {
 	test('Effect not duplicated when attached to Zookeeper Scar', async () => {

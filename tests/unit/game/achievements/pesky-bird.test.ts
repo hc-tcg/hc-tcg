@@ -6,14 +6,7 @@ import BalancedItem from 'common/cards/items/balanced-common'
 import Composter from 'common/cards/single-use/composter'
 import {SlotComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	attack,
-	endTurn,
-	forfeit,
-	pick,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Pesky Bird Achievement', () => {
 	test('Test achievement progress increases after forcing opponnet to discard card', async () => {

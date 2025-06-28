@@ -8,16 +8,7 @@ import Crossbow from 'common/cards/single-use/crossbow'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {CopyAttack} from 'common/types/modal-requests'
-import {
-	attack,
-	changeActiveHermit,
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Rendog Role Play', () => {
 	test('Using Role Play on Puppetry', async () => {

@@ -4,15 +4,7 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import RendogRare from 'common/cards/hermits/rendog-rare'
 import ZombieCleoRare from 'common/cards/hermits/zombiecleo-rare'
 import query from 'common/components/query'
-import {
-	attack,
-	endTurn,
-	finishModalRequest,
-	forfeit,
-	pick,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Master of Puppets Achievement', () => {
 	test('Test achievement is gained after using both Ren and Cleo to mimic attack', async () => {

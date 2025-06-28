@@ -7,12 +7,7 @@ import ShadeEERare from 'common/cards/hermits/shadeee-rare'
 import {Card} from 'common/cards/types'
 import {CardComponent} from 'common/components'
 import {SelectCards} from 'common/types/modal-requests'
-import {
-	endTurn,
-	finishModalRequest,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 const deck = [
 	...Array(7).fill(PostmasterPearlRare),

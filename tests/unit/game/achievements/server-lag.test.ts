@@ -9,15 +9,7 @@ import ZedaphPlaysRare from 'common/cards/hermits/zedaphplays-rare'
 import BalancedItem from 'common/cards/items/balanced-common'
 import LavaBucket from 'common/cards/single-use/lava-bucket'
 import {IronSword} from 'common/cards/single-use/sword'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	forfeit,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Server Lag achievement', () => {
 	test('Test "Server Lag" knock-out-win with secondary Succeeds', async () => {

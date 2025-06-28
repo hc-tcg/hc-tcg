@@ -9,16 +9,10 @@ import Composter from 'common/cards/single-use/composter'
 import {Card} from 'common/cards/types'
 import {CardComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 function testAllayRetrieval(card: Card, canRetrieve: boolean) {
-	test(`Allay ${canRetrieve ? 'can' : 'can not'} retrieve ${card.name}`, () => {
+	test(`Allay ${canRetrieve ? 'can' : 'can not'} retrieve ${card.name}`, async () => {
 		await testGame({
 			playerOneDeck: [
 				EthosLabCommon,
@@ -59,7 +53,7 @@ function testAllayRetrieval(card: Card, canRetrieve: boolean) {
 						query.slot.hand,
 						query.slot.has(card),
 					)
-					await test.finishModalRequest( {result: false, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 					expect(
 						game.currentPlayer
 							.getHand()

@@ -3,7 +3,7 @@ import HermitsAndCrafting from 'common/achievements/hermits-and-crafting'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import SmallishbeansCommon from 'common/cards/hermits/smallishbeans-common'
 import {STARTER_DECKS} from 'common/cards/starter-decks'
-import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Hermits and Crafting achievement', () => {
 	test('Test "Hermits and Crafting" does not progress after winning with a Starter Deck', async () => {
