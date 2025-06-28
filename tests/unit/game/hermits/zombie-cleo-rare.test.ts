@@ -37,11 +37,11 @@ import {
 function* testPrimaryDoesNotCrash(game: GameModel) {
 	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.attack('primary')
 
@@ -58,7 +58,7 @@ function* testPrimaryDoesNotCrash(game: GameModel) {
 function* testAmnesiaDisablesPuppetry(game: GameModel) {
 	await test.playCardFromHand(ArchitectFalseRare, 'hermit', 0)
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -74,7 +74,7 @@ function* testAmnesiaDisablesPuppetry(game: GameModel) {
 
 	yield* finishModalRequest(game, {pick: 'primary'})
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.attack('secondary')
 
@@ -92,7 +92,7 @@ function* testAmnesiaDisablesPuppetry(game: GameModel) {
 
 function* testAmnesiaBlocksPuppetryMock(game: GameModel) {
 	await test.playCardFromHand(ArchitectFalseRare, 'hermit', 0)
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 	await test.playCardFromHand(ZombieCleoRare, 'hermit', 1)
@@ -104,7 +104,7 @@ function* testAmnesiaBlocksPuppetryMock(game: GameModel) {
 		query.slot.hermit,
 		query.slot.rowIndex(1),
 	)
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.attack('secondary')
 	expect(
@@ -117,7 +117,7 @@ function* testAmnesiaBlocksPuppetryMock(game: GameModel) {
 			),
 		),
 	).not.toBe(null)
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.attack('secondary')
 	yield* pick(
@@ -135,7 +135,7 @@ function* testAmnesiaBlocksPuppetryMock(game: GameModel) {
 function* testPuppetryCanceling(game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 	await test.playCardFromHand(ZombieCleoRare, 'hermit', 1)
@@ -203,7 +203,7 @@ function* testPuppetryCanceling(game: GameModel) {
 function* testPuppetingJopacity(game: GameModel) {
 	await test.playCardFromHand(SmallishbeansCommon, 'hermit', 0)
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 	await test.playCardFromHand(BeetlejhostRare, 'hermit', 1)
@@ -218,8 +218,8 @@ function* testPuppetingJopacity(game: GameModel) {
 	)
 	yield* finishModalRequest(game, {pick: 'secondary'})
 
-	yield* endTurn(game)
-	yield* endTurn(game)
+	await test.endTurn()
+	await test.endTurn()
 
 	await test.attack('secondary')
 	yield* pick(
@@ -236,8 +236,8 @@ function* testPuppetingJopacity(game: GameModel) {
 			(BeetlejhostRare.secondary.damage - 10),
 	)
 
-	yield* endTurn(game)
-	yield* endTurn(game)
+	await test.endTurn()
+	await test.endTurn()
 
 	await test.attack('secondary')
 	yield* pick(
@@ -267,7 +267,7 @@ function* testPuppetingJopacity(game: GameModel) {
 function* testPuppetryDiscardingItem(game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 	await test.playCardFromHand(PvPItem, 'item', 0, 0)
@@ -311,7 +311,7 @@ function* testPuppetryDiscardingItem(game: GameModel) {
 
 function* testPuppetingTotalAnonymity(game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 	await test.playCardFromHand(WormManRare, 'hermit', 1)
@@ -331,17 +331,17 @@ function* testPuppetingTotalAnonymity(game: GameModel) {
 			query.card.slot(query.slot.rowIndex(2)),
 		)?.turnedOver,
 	).toBe(true)
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.attack('secondary')
-	yield* endTurn(game)
+	await test.endTurn()
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.attack('secondary')
-	yield* endTurn(game)
+	await test.endTurn()
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.attack('secondary')
 	expect(
@@ -356,7 +356,7 @@ function* testPuppetingTotalAnonymity(game: GameModel) {
 function* testPuppetingTimeSkip(game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 	await test.playCardFromHand(JoeHillsRare, 'hermit', 1)
@@ -368,10 +368,10 @@ function* testPuppetingTimeSkip(game: GameModel) {
 		query.slot.rowIndex(1),
 	)
 	yield* finishModalRequest(game, {pick: 'secondary'})
-	yield* endTurn(game)
+	await test.endTurn()
 
 	yield* changeActiveHermit(game, 1)
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(Bow, 'single_use')
 	await test.attack('secondary')
@@ -481,7 +481,7 @@ describe('Test Zombie Cleo', () => {
 				playerTwoDeck: [ZombieCleoRare, Cubfan135Rare, ChorusFruit],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(Cubfan135Rare, 'hermit', 1)

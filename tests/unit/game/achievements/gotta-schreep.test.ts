@@ -20,15 +20,15 @@ describe('Test Gotta Screep achivement', () => {
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playGame: function* (game) {
 					await test.playCardFromHand(BdoubleO100Rare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(DiamondSword, 'single_use')
 					await test.attack('single-use')
@@ -48,9 +48,9 @@ describe('Test Gotta Screep achivement', () => {
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
 					await test.playCardFromHand(BdoubleO100Rare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {

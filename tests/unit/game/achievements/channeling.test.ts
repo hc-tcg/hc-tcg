@@ -24,7 +24,7 @@ describe('Test Channeling achievement', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GoatfatherRare, 'hermit', 0)
 					await test.playCardFromHand(Anvil, 'single_use')
@@ -50,7 +50,7 @@ describe('Test Channeling achievement', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(BdoubleO100Rare, 'hermit', 1)
 					await test.playCardFromHand(Anvil, 'single_use')
@@ -76,7 +76,7 @@ describe('Test Channeling achievement', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GoatfatherRare, 'hermit', 1)
 					await test.playCardFromHand(Anvil, 'single_use')
@@ -102,7 +102,7 @@ describe('Test Channeling achievement', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					game.opponentPlayer.activeRow!.health = 10

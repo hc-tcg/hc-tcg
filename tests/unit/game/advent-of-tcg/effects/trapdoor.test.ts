@@ -46,7 +46,7 @@ describe('Test Trapdoor', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 0)
 					await test.attack('secondary')
@@ -66,9 +66,9 @@ describe('Test Trapdoor', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health - 40)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(NetheriteSword, 'single_use')
 					await test.attack('single-use')
@@ -121,7 +121,7 @@ describe('Test Trapdoor', () => {
 					)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.playCardFromHand(Anvil, 'single_use')
@@ -181,7 +181,7 @@ describe('Test Trapdoor', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 3)
 					await test.playCardFromHand(Trapdoor, 'attach', 3)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SpookyStressRare, 'hermit', 3)
 					await test.playCardFromHand(WaterBucket, 'attach', 3)
@@ -252,7 +252,7 @@ describe('Test Trapdoor', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 3)
 					await test.playCardFromHand(Trapdoor, 'attach', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GoatfatherRare, 'hermit', 3)
 					await test.playCardFromHand(Anvil, 'single_use')
@@ -326,7 +326,7 @@ describe('Test Trapdoor', () => {
 					)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(SplashPotionOfHarming, 'single_use')
@@ -371,7 +371,7 @@ describe('Test Trapdoor', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 0)
 					await test.attack('primary')
@@ -389,9 +389,9 @@ describe('Test Trapdoor', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health - 40)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(TargetBlock, 'single_use')
 					yield* pick(
@@ -441,7 +441,7 @@ describe('Test Trapdoor', () => {
 					await test.playCardFromHand(Trapdoor, 'attach', 0)
 					await test.playCardFromHand(Trapdoor, 'attach', 2)
 					await test.playCardFromHand(Trapdoor, 'attach', 3)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.attack('secondary')
@@ -491,7 +491,7 @@ describe('Test Trapdoor', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Wolf, 'attach', 0)
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.attack('primary')
@@ -524,7 +524,7 @@ describe('Test Trapdoor', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Thorns, 'attach', 0)
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.attack('primary')
@@ -554,7 +554,7 @@ describe('Test Trapdoor', () => {
 				playerTwoDeck: [PrincessGemRare, EthosLabCommon, Wolf, Trapdoor],
 				saga: async (test, game) => {
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PrincessGemRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -567,7 +567,7 @@ describe('Test Trapdoor', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')
 					yield* applyEffect(game)
@@ -602,7 +602,7 @@ describe('Test Trapdoor', () => {
 				playerTwoDeck: [PrincessGemRare, EthosLabCommon, Thorns, Trapdoor],
 				saga: async (test, game) => {
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PrincessGemRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -615,7 +615,7 @@ describe('Test Trapdoor', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')
 					yield* applyEffect(game)
@@ -651,11 +651,11 @@ describe('Test Trapdoor', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(RenbobRare, 'hermit', 0)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
@@ -681,7 +681,7 @@ describe('Test Trapdoor', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
 					await test.attack('secondary')
@@ -738,19 +738,19 @@ describe('Test Trapdoor', () => {
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
 					await test.playCardFromHand(Trapdoor, 'attach', 3)
 					await test.playCardFromHand(Trapdoor, 'attach', 4)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 2)
 					await test.playCardFromHand(LavaBucket, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Anvil, 'single_use')
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -825,16 +825,16 @@ describe('Test Trapdoor', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					expect(

@@ -29,7 +29,7 @@ describe('Test Rare Worm Man', () => {
 				playerTwoDeck: [WormManRare, PoultrymanCommon, PoultrymanCommon],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(WormManRare, 'hermit', 0)
 					await test.attack('secondary')
@@ -44,10 +44,10 @@ describe('Test Rare Worm Man', () => {
 					expect(game.state.turn.availableActions).not.toContain(
 						'PLAY_HERMIT_CARD' satisfies TurnAction,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					await test.playCardFromHand(PoultrymanCommon, 'hermit', 2)
@@ -58,10 +58,10 @@ describe('Test Rare Worm Man', () => {
 							query.card.slot(query.slot.rowIndex(2)),
 						)?.turnedOver,
 					).toBe(true)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
 					expect(
@@ -71,7 +71,7 @@ describe('Test Rare Worm Man', () => {
 							query.card.slot(query.slot.rowIndex(1)),
 						)?.turnedOver,
 					).toBe(false)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(TargetBlock, 'single_use')
 					yield* pick(
@@ -107,18 +107,18 @@ describe('Test Rare Worm Man', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(WormManRare, 'hermit', 0)
 					await test.playCardFromHand(ArmorStand, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ThornsIII, 'attach', 0)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* changeActiveHermit(game, 1)
@@ -146,7 +146,7 @@ describe('Test Rare Worm Man', () => {
 				playerTwoDeck: [WormManRare, ArmorStand],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(WormManRare, 'hermit', 0)
 					await test.attack('secondary')
@@ -171,12 +171,12 @@ describe('Test Rare Worm Man', () => {
 				playerTwoDeck: [WormManRare, PoultrymanCommon, ThornsIII],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(WormManRare, 'hermit', 0)
 					await test.attack('secondary')
 					await test.playCardFromHand(PoultrymanCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Anvil, 'single_use')
 					await test.attack('single-use')
@@ -187,7 +187,7 @@ describe('Test Rare Worm Man', () => {
 							query.card.slot(query.slot.hermit, query.slot.rowIndex(1)),
 						)?.turnedOver,
 					).toBe(true)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ThornsIII, 'attach', 1)
 					expect(
@@ -197,7 +197,7 @@ describe('Test Rare Worm Man', () => {
 							query.card.slot(query.slot.hermit, query.slot.rowIndex(1)),
 						)?.turnedOver,
 					).toBe(true)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Bow, 'single_use')
 					await test.attack('single-use')
@@ -227,11 +227,11 @@ describe('Test Rare Worm Man', () => {
 				playerTwoDeck: [HumanCleoRare],
 				saga: async (test, game) => {
 					await test.playCardFromHand(WormManRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
@@ -249,10 +249,10 @@ describe('Test Rare Worm Man', () => {
 						)?.turnedOver,
 					).toBe(true)
 					expect(game.state.turn.availableActions).toContain('END_TURN')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -280,7 +280,7 @@ describe('Test Rare Worm Man', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health - WormManRare.secondary.damage)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},

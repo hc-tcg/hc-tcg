@@ -11,7 +11,7 @@ import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 function* testOneHermit(game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(ImpulseSVRare, 'hermit', 0)
 	await test.playCardFromHand(BdoubleO100Common, 'hermit', 1)
@@ -26,7 +26,7 @@ function* testOneHermit(game: GameModel) {
 function* testManyHermits(game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(ImpulseSVRare, 'hermit', 0)
 	await test.playCardFromHand(BdoubleO100Common, 'hermit', 1)

@@ -38,7 +38,7 @@ describe('Test Zookeeper Scar', () => {
 				],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZookeeperScarRare, 'hermit', 0)
 					await test.playCardFromHand(Cat, 'attach', 0)
@@ -59,16 +59,16 @@ describe('Test Zookeeper Scar', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Wolf, 'attach', 0)
 					await test.playCardFromHand(ZookeeperScarRare, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.attack('primary')
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - 2 * 20,
 					) // Wolf attached to Etho & Wolf attached to
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Emerald, 'single_use')
 					yield* applyEffect(game)
@@ -96,7 +96,7 @@ describe('Test Zookeeper Scar', () => {
 				],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZookeeperScarRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -118,7 +118,7 @@ describe('Test Zookeeper Scar', () => {
 							.at(0)?.props,
 					).toStrictEqual(EthosLabCommon)
 					yield* finishModalRequest(game, {result: false, cards: null})
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false, noItemRequirements: true},
@@ -134,7 +134,7 @@ describe('Test Zookeeper Scar', () => {
 					await test.playCardFromHand(ZookeeperScarRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(ElderGuardian, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.attack('primary')
@@ -145,7 +145,7 @@ describe('Test Zookeeper Scar', () => {
 							query.effect.targetIsCardAnd(query.card.currentPlayer),
 						).length,
 					).toBe(1)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{noItemRequirements: true},
@@ -166,7 +166,7 @@ describe('Test Zookeeper Scar', () => {
 				],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZookeeperScarRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -193,7 +193,7 @@ describe('Test Zookeeper Scar', () => {
 							.sort(CardComponent.compareOrder)
 							.at(0)?.props,
 					).toStrictEqual(Cat)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false, noItemRequirements: true},
@@ -214,7 +214,7 @@ describe('Test Zookeeper Scar', () => {
 				],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZookeeperScarRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -241,7 +241,7 @@ describe('Test Zookeeper Scar', () => {
 							.sort(CardComponent.compareOrder)
 							.at(0)?.props,
 					).toStrictEqual(Cat)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false, noItemRequirements: true},
@@ -260,7 +260,7 @@ describe('Test Zookeeper Scar', () => {
 				],
 				saga: async (test, game) => {
 					await test.playCardFromHand(ZookeeperScarRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(RendogRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -278,7 +278,7 @@ describe('Test Zookeeper Scar', () => {
 					).not.toContain('primary')
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					expect(game.state.modalRequests).toStrictEqual([])
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{noItemRequirements: true},
@@ -292,7 +292,7 @@ describe('Test Zookeeper Scar', () => {
 				playerTwoDeck: [EvilXisumaRare],
 				saga: async (test, game) => {
 					await test.playCardFromHand(ZookeeperScarRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EvilXisumaRare, 'hermit', 0)
 					await test.attack('secondary')
@@ -302,7 +302,7 @@ describe('Test Zookeeper Scar', () => {
 					).not.toContain('primary')
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					expect(game.state.modalRequests).toStrictEqual([])
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{noItemRequirements: true, forceCoinFlip: true},
@@ -319,7 +319,7 @@ describe('Test Zookeeper Scar', () => {
 					await test.playCardFromHand(Wolf, 'attach', 0)
 					await test.playCardFromHand(ZookeeperScarRare, 'hermit', 1)
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(GoldenAxe, 'single_use')
@@ -327,10 +327,10 @@ describe('Test Zookeeper Scar', () => {
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - 2 * 20,
 					) // Wolf attached to Etho & Wolf "attached" to Scar
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GoldenAxe, 'single_use')
 					await test.attack('single-use')

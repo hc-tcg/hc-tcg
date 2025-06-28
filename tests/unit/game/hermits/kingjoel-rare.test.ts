@@ -20,7 +20,7 @@ describe('Test rare King Joel Steal', () => {
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(BalancedItem, 'item', 1, 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(KingJoelRare, 'hermit', 0)
 					await test.playCardFromHand(WelsknightCommon, 'hermit', 1)
@@ -69,7 +69,7 @@ describe('Test rare King Joel Steal', () => {
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(BalancedItem, 'item', 1, 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(KingJoelRare, 'hermit', 0)
 					await test.playCardFromHand(WelsknightCommon, 'hermit', 1)

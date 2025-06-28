@@ -17,7 +17,7 @@ describe('Test Netherite Armor', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(NetheriteArmor, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.attack('primary')
@@ -42,7 +42,7 @@ describe('Test Netherite Armor', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(NetheriteArmor, 'attach', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Egg, 'single_use')
@@ -68,7 +68,7 @@ describe('Test Netherite Armor', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(NetheriteArmor, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(DiamondSword, 'single_use')
@@ -95,7 +95,7 @@ describe('Test Netherite Armor', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(NetheriteArmor, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(TargetBlock, 'single_use')

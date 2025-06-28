@@ -22,7 +22,7 @@ describe('Test New Team Canada achievement', () => {
 				playerTwoDeck: [ShadEECommon],
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 					yield* forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
@@ -40,7 +40,7 @@ describe('Test New Team Canada achievement', () => {
 				playerTwoDeck: [ShadEECommon],
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 					yield* forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
@@ -63,7 +63,7 @@ describe('Test New Team Canada achievement', () => {
 				playerTwoDeck: [ShadEECommon],
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 					yield* forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {

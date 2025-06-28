@@ -21,7 +21,7 @@ describe('Test xB', () => {
 					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
 					await test.playCardFromHand(DiamondArmor, 'attach', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(XBCraftedRare, 'hermit', 0)
 					await test.playCardFromHand(IronSword, 'single_use')
@@ -42,7 +42,7 @@ describe('Test xB', () => {
 							20 /* Iron Sword*/,
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// We expect that the diamond armor attached to Gem to no longer be disabled.
 					expect(
@@ -66,11 +66,11 @@ describe('Test xB', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(XBCraftedRare, 'hermit', 0)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -100,12 +100,12 @@ describe('Test xB', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(XBCraftedRare, 'hermit', 0)
 					await test.playCardFromHand(IronSword, 'single_use')
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -139,7 +139,7 @@ describe('Test xB', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(IronArmor, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(XBCraftedRare, 'hermit', 0)
 					await test.playCardFromHand(TargetBlock, 'single_use')
@@ -150,7 +150,7 @@ describe('Test xB', () => {
 						query.slot.hermit,
 					)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(

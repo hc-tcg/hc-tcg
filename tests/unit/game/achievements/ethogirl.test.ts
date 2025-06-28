@@ -33,10 +33,10 @@ describe('Test Ethogirl achievement', () => {
 					await test.playCardFromHand(ShadeEERare, 'hermit', 2)
 					await test.playCardFromHand(EthosLabUltraRare, 'hermit', 3)
 					await test.playCardFromHand(EthosLabRare, 'hermit', 4)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ShadEECommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 				},
@@ -65,10 +65,10 @@ describe('Test Ethogirl achievement', () => {
 					await test.playCardFromHand(ShadeEERare, 'hermit', 2)
 					await test.playCardFromHand(EthosLabUltraRare, 'hermit', 3)
 					await test.playCardFromHand(EthosLabRare, 'hermit', 4)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ShadEECommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* forfeit(game.currentPlayer.entity)
 				},

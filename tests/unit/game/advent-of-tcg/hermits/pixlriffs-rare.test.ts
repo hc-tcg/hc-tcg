@@ -33,7 +33,7 @@ describe('Test Pixl World Build', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PixlriffsRare, 'hermit', 0)
 					await test.playCardFromHand(PixlriffsRare, 'hermit', 1)
@@ -45,10 +45,10 @@ describe('Test Pixl World Build', () => {
 							query.row.index(0),
 						)?.health,
 					).toBe(EthosLabCommon.health - PixlriffsRare.secondary.damage)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EnderPearl, 'single_use')
 					yield* pick(
@@ -65,10 +65,10 @@ describe('Test Pixl World Build', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health - PixlriffsRare.secondary.damage - 40)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Ladder, 'single_use')
 					yield* pick(
@@ -98,7 +98,7 @@ describe('Test Pixl World Build', () => {
 				playerTwoDeck: [PixlriffsRare, PixlriffsRare, EnderPearl],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PixlriffsRare, 'hermit', 0)
 					await test.playCardFromHand(PixlriffsRare, 'hermit', 1)
@@ -139,16 +139,16 @@ describe('Test Pixl World Build', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(Thorns, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(PixlriffsRare, 'hermit', 1)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Ladder, 'single_use')
 					yield* pick(
@@ -195,16 +195,16 @@ describe('Test Pixl World Build', () => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(PixlriffsRare, 'hermit', 1)
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(RendogRare, 'hermit', 0)
 					await test.playCardFromHand(RendogRare, 'hermit', 1)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Ladder, 'single_use')
 					yield* pick(
@@ -273,15 +273,15 @@ describe('Test Pixl World Build', () => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(PixlriffsRare, 'hermit', 1)
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(RendogRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EnderPearl, 'single_use')
 					yield* pick(
@@ -350,15 +350,15 @@ describe('Test Pixl World Build', () => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(PixlriffsRare, 'hermit', 1)
 					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(RendogRare, 'hermit', 1)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EnderPearl, 'single_use')
 					yield* pick(

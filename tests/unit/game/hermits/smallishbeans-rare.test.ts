@@ -12,7 +12,7 @@ describe('Test Smallishbeans Rare', () => {
 				playerTwoDeck: [SmallishbeansRare, EthosLabCommon, GeminiTayRare],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SmallishbeansRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)

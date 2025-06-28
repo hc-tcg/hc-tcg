@@ -36,11 +36,11 @@ describe('Test Human Cleo Betrayal', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					game.components.find(
 						RowComponent,
@@ -74,7 +74,7 @@ describe('Test Human Cleo Betrayal', () => {
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						HumanCleoRare.health - VintageBeefCommon.secondary.damage,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
@@ -90,11 +90,11 @@ describe('Test Human Cleo Betrayal', () => {
 					await test.playCardFromHand(ArmorStand, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
 					expect(game.state.turn.availableActions).not.toContain('END_TURN')
@@ -112,7 +112,7 @@ describe('Test Human Cleo Betrayal', () => {
 							query.row.index(2),
 						)?.health,
 					).toBe(VintageBeefCommon.health - EthosLabCommon.primary.damage)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
@@ -127,16 +127,16 @@ describe('Test Human Cleo Betrayal', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.playCardFromHand(Clock, 'single_use')
 					yield* applyEffect(game)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
@@ -157,13 +157,13 @@ describe('Test Human Cleo Betrayal', () => {
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.playCardFromHand(CommandBlock, 'attach', 0)
 					await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.state.turn.availableActions).toContain('END_TURN')
 					await test.playCardFromHand(CommandBlock, 'attach', 0)
@@ -176,7 +176,7 @@ describe('Test Human Cleo Betrayal', () => {
 						query.slot.rowIndex(1),
 					)
 					expect(game.state.turn.availableActions).toContain('END_TURN')
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{noItemRequirements: false, forceCoinFlip: true},
@@ -191,13 +191,13 @@ describe('Test Human Cleo Betrayal', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.playCardFromHand(Efficiency, 'single_use')
 					yield* applyEffect(game)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.state.turn.availableActions).toContain('END_TURN')
 					await test.playCardFromHand(Efficiency, 'single_use')
@@ -211,7 +211,7 @@ describe('Test Human Cleo Betrayal', () => {
 						query.slot.rowIndex(1),
 					)
 					expect(game.state.turn.availableActions).toContain('END_TURN')
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{noItemRequirements: false, forceCoinFlip: true},
@@ -227,17 +227,17 @@ describe('Test Human Cleo Betrayal', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(BalancedDoubleItem, 'item', 1, 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.playCardFromHand(Efficiency, 'single_use')
 					yield* applyEffect(game)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
 					expect(game.state.turn.availableActions).toContain('END_TURN')
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{noItemRequirements: false, forceCoinFlip: true},

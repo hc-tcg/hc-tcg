@@ -30,10 +30,10 @@ describe('Test Pesky Bird Achievement', () => {
 				],
 				playGame: function* (game) {
 					await test.playCardFromHand(JinglerRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -42,7 +42,7 @@ describe('Test Pesky Bird Achievement', () => {
 						query.slot.opponent,
 						query.not(query.slot.empty),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* forfeit(game.currentPlayer.entity)
 				},

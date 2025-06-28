@@ -45,7 +45,7 @@ describe('Test Useless Machine Achievement', () => {
 						query.slot.currentPlayer,
 						query.slot.order(3),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* forfeit(game.currentPlayer.entity)
 				},
@@ -87,7 +87,7 @@ describe('Test Useless Machine Achievement', () => {
 						query.slot.currentPlayer,
 						query.slot.order(3),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* forfeit(game.currentPlayer.entity)
 				},
@@ -129,7 +129,7 @@ describe('Test Useless Machine Achievement', () => {
 						query.slot.currentPlayer,
 						query.slot.order(3),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* forfeit(game.currentPlayer.entity)
 				},

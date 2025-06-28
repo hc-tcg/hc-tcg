@@ -20,21 +20,21 @@ describe('Test British achievement', () => {
 				playerTwoDeck: [SpookyStressRare],
 				playGame: function* (game) {
 					await test.playCardFromHand(XisumavoidRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SpookyStressRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 				},
@@ -55,25 +55,25 @@ describe('Test British achievement', () => {
 				playGame: function* (game) {
 					await test.playCardFromHand(XisumavoidRare, 'hermit', 0)
 					await test.playCardFromHand(SpookyStressRare, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 				},

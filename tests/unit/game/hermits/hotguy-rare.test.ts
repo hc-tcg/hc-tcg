@@ -19,7 +19,7 @@ describe('Test Hotguy Rare', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HotguyRare, 'hermit', 0)
 					await test.playCardFromHand(Bow, 'single_use')
@@ -77,7 +77,7 @@ describe('Test Hotguy Rare', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					await test.playCardFromHand(ThornsIII, 'attach', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HotguyRare, 'hermit', 0)
 					await test.playCardFromHand(Crossbow, 'single_use')
@@ -144,7 +144,7 @@ describe('Test Hotguy Rare', () => {
 					await test.playCardFromHand(RendogRare, 'hermit', 0)
 					await test.playCardFromHand(RendogRare, 'hermit', 1)
 					await test.playCardFromHand(RendogRare, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HotguyRare, 'hermit', 0)
 					await test.playCardFromHand(Crossbow, 'single_use')

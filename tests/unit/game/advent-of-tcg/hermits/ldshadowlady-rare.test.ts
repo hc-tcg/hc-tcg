@@ -22,7 +22,7 @@ describe('Test Lizzie Evict', () => {
 				playerTwoDeck: [LDShadowLadyRare],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(LDShadowLadyRare, 'hermit', 0)
 					await test.attack('secondary')
@@ -49,7 +49,7 @@ describe('Test Lizzie Evict', () => {
 				playerTwoDeck: [LDShadowLadyRare, Slimeball],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(LDShadowLadyRare, 'hermit', 0)
 					yield* playCardFromHand(
@@ -80,7 +80,7 @@ describe('Test Lizzie Evict', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 3)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(LDShadowLadyRare, 'hermit', 0)
 					await test.playCardFromHand(Crossbow, 'single_use')

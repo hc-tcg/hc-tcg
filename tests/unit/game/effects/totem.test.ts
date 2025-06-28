@@ -36,7 +36,7 @@ describe('Test Totem of Undying', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PearlescentMoonCommon, 'hermit', 0)
 					await test.playCardFromHand(WelsknightCommon, 'hermit', 1)
@@ -83,7 +83,7 @@ describe('Test Totem of Undying', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Thorns, 'attach', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PearlescentMoonCommon, 'hermit', 0)
 					await test.playCardFromHand(WelsknightCommon, 'hermit', 1)
@@ -129,7 +129,7 @@ describe('Test Totem of Undying', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Thorns, 'attach', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GoodTimesWithScarRare, 'hermit', 0)
 					await test.playCardFromHand(WelsknightCommon, 'hermit', 1)
@@ -168,7 +168,7 @@ describe('Test Totem of Undying', () => {
 						),
 					).toBeTruthy()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 
@@ -212,7 +212,7 @@ describe('Test Totem of Undying', () => {
 					await test.playCardFromHand(Thorns, 'attach', 0)
 					await test.playCardFromHand(Thorns, 'attach', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PearlescentMoonCommon, 'hermit', 0)
 					await test.playCardFromHand(WelsknightCommon, 'hermit', 1)
@@ -276,7 +276,7 @@ describe('Test Totem of Undying', () => {
 						query.row.active,
 					)!.health = 10
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(LavaBucket, 'single_use')
@@ -291,7 +291,7 @@ describe('Test Totem of Undying', () => {
 						),
 					).toBeTruthy()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// We expect that the Totem attached to Pearl to be discarded after reviving to 10hp.
 					expect(
@@ -331,7 +331,7 @@ describe('Test Totem of Undying', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(Totem, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Manually set Iskall health to trigger zone
 					game.components.find(

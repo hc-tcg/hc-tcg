@@ -30,13 +30,13 @@ describe('Test Invisiblity Potion.', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 					// Verify effect lasts for multiple turns.
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
 					await test.attack('secondary')
 
@@ -49,7 +49,7 @@ describe('Test Invisiblity Potion.', () => {
 						)?.health,
 					).toBe(EthosLabCommon.health)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Verify effect timed out.
 					expect(
@@ -71,20 +71,20 @@ describe('Test Invisiblity Potion.', () => {
 				playerTwoDeck: [EthosLabCommon, BadOmen],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Verify effect lasts for multiple turns.
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 
@@ -97,7 +97,7 @@ describe('Test Invisiblity Potion.', () => {
 						)?.health,
 					).toBe(EthosLabCommon.health - EthosLabCommon.secondary.damage * 2)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -121,7 +121,7 @@ describe('Test Invisiblity Potion.', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					await test.playCardFromHand(Anvil, 'single_use')
@@ -135,7 +135,7 @@ describe('Test Invisiblity Potion.', () => {
 							query.row.opponentPlayer,
 						)?.health,
 					).toBe(EthosLabCommon.health - 30 /* Anvil */)
-					yield* endTurn(game)
+					await test.endTurn()
 					expect(
 						game.components.find(
 							RowComponent,
@@ -158,7 +158,7 @@ describe('Test Invisiblity Potion.', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
 					await test.attack('secondary')
@@ -199,7 +199,7 @@ describe('Test Invisiblity Potion.', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SpookyStressRare, 'hermit', 0)
 					await test.playCardFromHand(WaterBucket, 'attach', 0)

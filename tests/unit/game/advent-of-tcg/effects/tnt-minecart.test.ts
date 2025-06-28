@@ -18,7 +18,7 @@ describe('Test TNT Minecart', () => {
 				playerTwoDeck: [EthosLabCommon, MinecartWithTNT],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(MinecartWithTNT, 'single_use')
@@ -29,7 +29,7 @@ describe('Test TNT Minecart', () => {
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - 100,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{forceCoinFlip: true},
@@ -43,12 +43,12 @@ describe('Test TNT Minecart', () => {
 				playerTwoDeck: [EthosLabCommon, BadOmen],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(MinecartWithTNT, 'single_use')
 					await test.attack('single-use')
@@ -58,7 +58,7 @@ describe('Test TNT Minecart', () => {
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{forceCoinFlip: true},

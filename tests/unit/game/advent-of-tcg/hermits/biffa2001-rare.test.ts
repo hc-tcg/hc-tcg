@@ -40,7 +40,7 @@ describe('Test Biffa Secondary', () => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(Biffa2001Rare, 'hermit', 0)
 				await test.playCardFromHand(MinerDoubleItem, 'item', 0, 0)
@@ -50,19 +50,19 @@ describe('Test Biffa Secondary', () => {
 						Biffa2001Rare.secondary.damage -
 						20 * 2 /** placed 1 Hermit and 1 Item card */,
 				)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				yield* changeActiveHermit(game, 1)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.attack('secondary')
 				expect(game.opponentPlayer.activeRow?.health).toBe(
 					EthosLabCommon.health - Biffa2001Rare.secondary.damage,
 				)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				yield* changeActiveHermit(game, 2)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(IronArmor, 'attach', 0)
 				await test.playCardFromHand(InstantHealth, 'single_use')
@@ -80,7 +80,7 @@ describe('Test Biffa Secondary', () => {
 						Biffa2001Rare.secondary.damage -
 						20 * 2 /** placed 1 Attach and used 1 Single Use card */,
 				)
-				yield* endTurn(game)
+				await test.endTurn()
 			},
 		})
 	})
@@ -100,7 +100,7 @@ describe('Test Biffa Secondary', () => {
 						query.row.currentPlayer,
 						query.row.index(0),
 					)!.health = 10
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Biffa2001Rare, 'hermit', 1)
 					await test.playCardFromHand(Knockback, 'single_use')
@@ -125,7 +125,7 @@ describe('Test Biffa Secondary', () => {
 				playerTwoDeck: [Biffa2001Rare, PotionOfSlowness],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Biffa2001Rare, 'hermit', 1)
 					await test.playCardFromHand(PotionOfSlowness, 'single_use')
@@ -139,7 +139,7 @@ describe('Test Biffa Secondary', () => {
 							Biffa2001Rare.secondary.damage -
 							20 /** placed 1 Hermit card, did not apply the Single Use */,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.opponentPlayer.getHand().map((card) => card.props),
@@ -159,11 +159,11 @@ describe('Test Biffa Secondary', () => {
 					await test.playCardFromHand(Biffa2001Rare, 'hermit', 0)
 					await test.playCardFromHand(ArmorStand, 'hermit', 1)
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 0)
 					await test.playCardFromHand(Chest, 'single_use')
@@ -203,10 +203,10 @@ describe('Test Biffa Secondary', () => {
 						.sort(CardComponent.compareOrder)
 						.slice(2)
 						.forEach((card) => card.discard())
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(FlintAndSteel, 'single_use')
 					yield* applyEffect(game)
@@ -232,11 +232,11 @@ describe('Test Biffa Secondary', () => {
 					await test.playCardFromHand(Biffa2001Rare, 'hermit', 0)
 					await test.playCardFromHand(ArmorStand, 'hermit', 1)
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 0)
 					await test.playCardFromHand(Allay, 'single_use')
@@ -268,15 +268,15 @@ describe('Test Biffa Secondary', () => {
 				playerTwoDeck: [Biffa2001Rare, BadOmen, IronSword],
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Biffa2001Rare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(IronSword, 'single_use')
 					await test.attack('secondary')
@@ -314,16 +314,16 @@ describe('Test Biffa Secondary', () => {
 				],
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(WormManRare, 'hermit', 1)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Trident, 'single_use')
 					await test.attack('secondary')

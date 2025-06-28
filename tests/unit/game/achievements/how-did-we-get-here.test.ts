@@ -24,19 +24,19 @@ describe('Test How Did We Get Here achievement', () => {
 				playerTwoDeck: [PearlescentMoonRare, SplashPotionOfPoison, BadOmen],
 				playGame: function* (game) {
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PearlescentMoonRare, 'hermit', 0)
 					await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)

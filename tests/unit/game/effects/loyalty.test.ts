@@ -10,20 +10,20 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 	await test.playCardFromHand(Loyalty, 'attach', 0)
 	await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 	await test.playCardFromHand(BalancedItem, 'item', 1, 0)
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.attack('primary')
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	// The player should only have one balanced item that they got returned to their hand
 	// by loyalty.

@@ -53,7 +53,7 @@ describe('Test Glowstone Single Use', () => {
 					expect(
 						game.opponentPlayer.getDiscarded().map((card) => card.props),
 					).toStrictEqual([BuilderItem])
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false},

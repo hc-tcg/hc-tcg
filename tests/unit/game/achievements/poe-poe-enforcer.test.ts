@@ -20,10 +20,10 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 				playerTwoDeck: [ImpulseSVCommon, ImpulseSVCommon],
 				playGame: function* (game) {
 					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(CurseOfBinding, 'single_use')
 					yield* applyEffect(game)
@@ -44,16 +44,16 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 				playerTwoDeck: [JoeHillsCommon, ImpulseSVCommon],
 				playGame: function* (game) {
 					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(JoeHillsCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(CurseOfBinding, 'single_use')
 					yield* applyEffect(game)
 
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
 					await test.attack('secondary')
 				},
@@ -72,19 +72,19 @@ describe('Test Poe Poe Enforcer Achievement', () => {
 				playerTwoDeck: [ImpulseSVCommon, ImpulseSVCommon],
 				playGame: function* (game) {
 					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(CurseOfBinding, 'single_use')
 					yield* applyEffect(game)
 
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
 					await test.attack('secondary')
 				},

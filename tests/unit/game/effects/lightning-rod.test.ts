@@ -32,7 +32,7 @@ describe('Test Lightning Rod', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 					await test.playCardFromHand(LightningRod, 'attach', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Bow, 'single_use')
@@ -85,7 +85,7 @@ describe('Test Lightning Rod', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(TargetBlock, 'single_use')
@@ -129,12 +129,12 @@ describe('Test Lightning Rod', () => {
 
 					yield* applyEffect(game)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.attack('primary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -161,7 +161,7 @@ describe('Test Lightning Rod', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PrincessGemRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -176,11 +176,11 @@ describe('Test Lightning Rod', () => {
 						query.slot.rowIndex(1),
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('primary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(

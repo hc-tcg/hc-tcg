@@ -22,7 +22,7 @@ describe('Test Chorus Fruit', () => {
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, ChorusFruit],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -50,13 +50,13 @@ describe('Test Chorus Fruit', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 
 					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ChorusFruit, 'single_use')
 					await test.attack('secondary')
@@ -95,13 +95,13 @@ describe('Test Chorus Fruit', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(CurseOfBinding, 'single_use')
 					yield* applyEffect(game)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.getPickableSlots(ChorusFruit.attachCondition),
@@ -124,7 +124,7 @@ describe('Test Chorus Fruit', () => {
 				],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(BdoubleO100Rare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -132,9 +132,9 @@ describe('Test Chorus Fruit', () => {
 					await test.attack('secondary')
 					expect(game.currentPlayer.singleUseCardUsed).toBe(true)
 					expect(game.state.pickRequests).toHaveLength(0)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.getPickableSlots(ChorusFruit.attachCondition),

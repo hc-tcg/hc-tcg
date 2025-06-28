@@ -20,7 +20,7 @@ describe('Test Pearlescent Moon Rare', () => {
 				playerTwoDeck: [PearlescentMoonRare],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PearlescentMoonRare, 'hermit', 0)
 					await test.attack('secondary')
@@ -32,7 +32,7 @@ describe('Test Pearlescent Moon Rare', () => {
 						),
 					).not.toBe(null)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					expect(
@@ -43,7 +43,7 @@ describe('Test Pearlescent Moon Rare', () => {
 						)?.health,
 					).toBe(PearlescentMoonRare.health)
 
-					yield* endTurn(game)
+					await test.endTurn()
 					expect(
 						game.components.find(
 							StatusEffectComponent,
@@ -74,19 +74,19 @@ describe('Test Pearlescent Moon Rare', () => {
 				playerTwoDeck: [PearlescentMoonRare, EthosLabCommon],
 				saga: async (test, game) => {
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PearlescentMoonRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
 					// Give Skizzleman Rare the Aussie Ping effect.
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Use Anvil to trigger Skizz's bonus damage.
 					await test.playCardFromHand(Anvil, 'single_use')
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -115,14 +115,14 @@ describe('Test Pearlescent Moon Rare', () => {
 				playerTwoDeck: [PearlescentMoonRare, EthosLabCommon],
 				saga: async (test, game) => {
 					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PearlescentMoonRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
 					// Give Poe Poe Skizz the Aussie Ping effect.
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -131,7 +131,7 @@ describe('Test Pearlescent Moon Rare', () => {
 						query.slot.hermit,
 						query.slot.currentPlayer,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(

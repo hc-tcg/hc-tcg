@@ -14,12 +14,12 @@ describe('Test iJevin Peace Out', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(IJevinRare, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 2)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 

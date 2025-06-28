@@ -27,7 +27,7 @@ describe('Test Elder Guardian', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ElderGuardian, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
 					await test.attack('primary')
@@ -39,8 +39,8 @@ describe('Test Elder Guardian', () => {
 							query.not(query.effect.targetEntity(null)),
 						),
 					).not.toBeNull()
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
 					expect(
 						game.components
@@ -53,8 +53,8 @@ describe('Test Elder Guardian', () => {
 							?.getAttackCost('secondary'),
 					).toStrictEqual(['builder', 'builder', 'builder', 'builder'])
 
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -93,14 +93,14 @@ describe('Test Elder Guardian', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ElderGuardian, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 					await test.attack('primary')
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.state.turn.availableActions).not.toContain(
 						'PRIMARY_ATTACK',
@@ -108,16 +108,16 @@ describe('Test Elder Guardian', () => {
 					await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 1)
 					expect(game.state.turn.availableActions).toContain('PRIMARY_ATTACK')
 					await test.attack('primary')
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.state.turn.availableActions).not.toContain(
 						'SECONDARY_ATTACK',
 					)
 					await test.playCardFromHand(BalancedItem, 'item', 0, 2)
 					expect(game.state.turn.availableActions).toContain('SECONDARY_ATTACK')
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: false},
@@ -132,15 +132,15 @@ describe('Test Elder Guardian', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ElderGuardian, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Efficiency, 'single_use')
 					yield* applyEffect(game)
 					await test.attack('primary')
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.state.turn.availableActions).not.toContain(
 						'PRIMARY_ATTACK',
@@ -173,7 +173,7 @@ describe('Test Elder Guardian', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(ElderGuardian, 'attach', 0)
 					await test.playCardFromHand(ElderGuardian, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(Anvil, 'single_use')
@@ -193,7 +193,7 @@ describe('Test Elder Guardian', () => {
 							query.effect.targetIsCardAnd(query.card.currentPlayer),
 						).length,
 					).toBe(1)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},

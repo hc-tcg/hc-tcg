@@ -28,12 +28,12 @@ describe('Test Dwarf Impulse Rare', () => {
 				saga: function* (game: GameModel) {
 					await test.playCardFromHand(DwarfImpulseRare, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FiveAMPearlRare, 'hermit', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GoldenAxe, 'single_use')
 
@@ -61,7 +61,7 @@ describe('Test Dwarf Impulse Rare', () => {
 						)!.health,
 					).toBe(FiveAMPearlRare.health - 40)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.filter(
@@ -89,7 +89,7 @@ describe('Test Dwarf Impulse Rare', () => {
 				saga: function* (game: GameModel) {
 					await test.playCardFromHand(DwarfImpulseRare, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(FiveAMPearlRare, 'hermit', 0)
 					await test.playCardFromHand(TangoTekCommon, 'hermit', 1)
@@ -100,7 +100,7 @@ describe('Test Dwarf Impulse Rare', () => {
 
 					yield* changeActiveHermit(game, 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GoldenAxe, 'single_use')
 

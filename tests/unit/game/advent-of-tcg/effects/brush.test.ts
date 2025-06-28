@@ -57,7 +57,7 @@ describe('Test Brush Single Use', () => {
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
 					).toStrictEqual([BalancedItem, BuilderItem, MinerItem, Feather])
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false},
@@ -105,7 +105,7 @@ describe('Test Brush Single Use', () => {
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
 					).toStrictEqual([MinerItem, Feather, BalancedItem, BuilderItem])
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false},
@@ -153,7 +153,7 @@ describe('Test Brush Single Use', () => {
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
 					).toStrictEqual([BuilderItem, MinerItem, Feather, BalancedItem])
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false},

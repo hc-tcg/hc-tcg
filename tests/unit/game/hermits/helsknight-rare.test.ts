@@ -16,13 +16,13 @@ describe('Test Hels Trap Hole', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HelsknightRare, 'hermit', 0)
 
 					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(TNT, 'single_use')
 
@@ -44,11 +44,11 @@ describe('Test Hels Trap Hole', () => {
 				playerTwoDeck: [HelsknightRare],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HelsknightRare, 'hermit', 0)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Anvil, 'single_use')
 					expect(Anvil.attackPreview?.(game)).toBe('$A0$')
@@ -69,11 +69,11 @@ describe('Test Hels Trap Hole', () => {
 				playerTwoDeck: [HelsknightRare],
 				saga: async (test, game) => {
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HelsknightRare, 'hermit', 0)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(IronSword, 'single_use')
 					await test.attack('secondary')

@@ -24,14 +24,14 @@ describe('Test Loyalty III Achievement', () => {
 				playerTwoDeck: [EthosLabCommon, InstantHealthII],
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Trident, 'single_use')
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(InstantHealthII, 'single_use')
 					yield* pick(
@@ -40,12 +40,12 @@ describe('Test Loyalty III Achievement', () => {
 						query.slot.currentPlayer,
 						query.slot.hermit,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Trident, 'single_use')
 					await test.attack('secondary')
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
 					await test.playCardFromHand(Trident, 'single_use')
 					await test.attack('secondary')
@@ -65,16 +65,16 @@ describe('Test Loyalty III Achievement', () => {
 				playerTwoDeck: [EthosLabCommon, BadOmen, InstantHealthII],
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Trident, 'single_use')
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(InstantHealthII, 'single_use')
 					yield* pick(
@@ -83,11 +83,11 @@ describe('Test Loyalty III Achievement', () => {
 						query.slot.currentPlayer,
 						query.slot.hermit,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Trident, 'single_use')
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* forfeit(game.currentPlayerEntity)
 				},
@@ -106,19 +106,19 @@ describe('Test Loyalty III Achievement', () => {
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Trident, 'single_use')
 					await test.attack('secondary')
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
 					// Rest for a turn
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
 					await test.playCardFromHand(Trident, 'single_use')
 					await test.attack('secondary')

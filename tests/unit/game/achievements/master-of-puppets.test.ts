@@ -24,9 +24,9 @@ describe('Test Master of Puppets Achievement', () => {
 				playGame: function* (game) {
 					await test.playCardFromHand(RendogRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -62,9 +62,9 @@ describe('Test Master of Puppets Achievement', () => {
 				playGame: function* (game) {
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(

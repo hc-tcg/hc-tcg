@@ -36,7 +36,7 @@ describe('Test Arrow of Poison', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GoatfatherRare, 'hermit', 0)
 					await test.playCardFromHand(ArrowOfPoison, 'single_use')
@@ -66,7 +66,7 @@ describe('Test Arrow of Poison', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(RenbobRare, 'hermit', 1)
 					await test.playCardFromHand(ArrowOfPoison, 'single_use')
@@ -96,7 +96,7 @@ describe('Test Arrow of Poison', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SpookyStressRare, 'hermit', 0)
 					await test.playCardFromHand(WaterBucket, 'attach', 0)
@@ -128,7 +128,7 @@ describe('Test Arrow of Poison', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(LightningRod, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ArrowOfPoison, 'single_use')
@@ -159,7 +159,7 @@ describe('Test Arrow of Poison', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Trapdoor, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ArrowOfPoison, 'single_use')
@@ -189,7 +189,7 @@ describe('Test Arrow of Poison', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ArrowOfPoison, 'single_use')
@@ -229,12 +229,12 @@ describe('Test Arrow of Poison', () => {
 				playerTwoDeck: [HelsknightRare, EthosLabCommon],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HelsknightRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ArrowOfPoison, 'single_use')
 					yield* applyEffect(game)
@@ -277,7 +277,7 @@ describe('Test Arrow of Poison', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(MilkBucket, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ArrowOfPoison, 'single_use')

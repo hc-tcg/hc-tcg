@@ -66,7 +66,7 @@ describe('Test Lantern Single Use', () => {
 							.map((card) => card.props),
 					).toStrictEqual([BuilderItem, MinerItem, Feather])
 					yield* finishModalRequest(game, {result: false, cards: null})
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false},

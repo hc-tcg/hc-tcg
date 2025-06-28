@@ -11,13 +11,13 @@ import {applyEffect, endTurn, playCardFromHand, testGame} from '../utils'
 function* testClockHelperSaga(game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 	// Clock can not be played on turn one.
-	yield* endTurn(game)
-	yield* endTurn(game)
+	await test.endTurn()
+	await test.endTurn()
 
 	await test.playCardFromHand(Clock, 'single_use')
 

@@ -38,7 +38,7 @@ describe('Test prize card.', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					/** Play two hermits to prevent the game from finishing before the tests finish */
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
 					await test.attack('secondary')

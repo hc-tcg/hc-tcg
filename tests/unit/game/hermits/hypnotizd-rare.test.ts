@@ -32,7 +32,7 @@ describe('Test Rare Hypnotizd', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HypnotizdRare, 'hermit', 0)
 					await test.playCardFromHand(MinerDoubleItem, 'item', 0, 0)
@@ -110,7 +110,7 @@ describe('Test Rare Hypnotizd', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HypnotizdRare, 'hermit', 0)
 					await test.playCardFromHand(Efficiency, 'single_use')
@@ -148,7 +148,7 @@ describe('Test Rare Hypnotizd', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HypnotizdRare, 'hermit', 0)
 					await test.playCardFromHand(MinerDoubleItem, 'item', 0, 0)

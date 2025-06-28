@@ -28,7 +28,7 @@ describe('Test Rendog Role Play', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(RendogRare, 'hermit', 0)
 					await test.playCardFromHand(Crossbow, 'single_use')
@@ -66,7 +66,7 @@ describe('Test Rendog Role Play', () => {
 						query.slot.rowIndex(1),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -89,7 +89,7 @@ describe('Test Rendog Role Play', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(ArmorStand, 'hermit', 0)
 					await test.playCardFromHand(ArmorStand, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(RendogRare, 'hermit', 1)
@@ -115,12 +115,12 @@ describe('Test Rendog Role Play', () => {
 						query.slot.rowIndex(1),
 					)
 					yield* finishModalRequest(game, {pick: 'primary'})
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					yield* changeActiveHermit(game, 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -141,7 +141,7 @@ describe('Test Rendog Role Play', () => {
 						query.slot.rowIndex(0),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -164,7 +164,7 @@ describe('Test Rendog Role Play', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(JoeHillsRare, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(RendogRare, 'hermit', 0)
 					await test.attack('secondary')
@@ -175,10 +175,10 @@ describe('Test Rendog Role Play', () => {
 						query.slot.rowIndex(1),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Crossbow, 'single_use')
 					await test.attack('secondary')
@@ -215,10 +215,10 @@ describe('Test Rendog Role Play', () => {
 				playerTwoDeck: [ArmorStand],
 				saga: async (test, game) => {
 					await test.playCardFromHand(RendogRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ArmorStand, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.state.turn.availableActions).not.toContain(
 						'SECONDARY_ATTACK',

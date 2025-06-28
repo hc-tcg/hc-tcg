@@ -30,7 +30,7 @@ describe('Test Gemini Tay', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(IronArmor, 'attach', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
 					await test.playCardFromHand(GoldenAxe, 'single_use')
@@ -54,7 +54,7 @@ describe('Test Gemini Tay', () => {
 							20 /* Iron Sword*/,
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// We expect that the iron armor attached to etho to no longer be disabled.
 					expect(
@@ -80,7 +80,7 @@ describe('Test Gemini Tay', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Totem, 'attach', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Manually set Etho (1) health to trigger zone
 					game.opponentPlayer.activeRow!.health = 140
@@ -103,7 +103,7 @@ describe('Test Gemini Tay', () => {
 					await test.playCardFromHand(GoldenAxe, 'single_use')
 					await test.attack('single-use')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.index).toBeUndefined()
 				},
@@ -122,7 +122,7 @@ describe('Test Gemini Tay', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(Totem, 'attach', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Manually set Etho (1) health to trigger zone
 					game.opponentPlayer.activeRow!.health = 140
@@ -143,7 +143,7 @@ describe('Test Gemini Tay', () => {
 						),
 					).not.toBe(null)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.index).toBeUndefined()
 				},
@@ -159,7 +159,7 @@ describe('Test Gemini Tay', () => {
 				playerTwoDeck: [GeminiTayRare, EthosLabCommon, ChorusFruit],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)

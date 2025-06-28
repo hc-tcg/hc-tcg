@@ -27,7 +27,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(BoomerBdubsRare, 'hermit', 0)
 					await test.attack('secondary')
@@ -36,10 +36,10 @@ describe('Test Boomer Bdubs Watch This', () => {
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - BoomerBdubsRare.secondary.damage,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					// Flip 1 heads
@@ -48,10 +48,10 @@ describe('Test Boomer Bdubs Watch This', () => {
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - (BoomerBdubsRare.secondary.damage + 20),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					// Flip 2 heads
@@ -74,12 +74,12 @@ describe('Test Boomer Bdubs Watch This', () => {
 				playerTwoDeck: [EthosLabCommon, BadOmen],
 				saga: async (test, game) => {
 					await test.playCardFromHand(BoomerBdubsRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					// Flip tails
@@ -88,7 +88,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
@@ -102,12 +102,12 @@ describe('Test Boomer Bdubs Watch This', () => {
 				playerTwoDeck: [EthosLabCommon, BadOmen],
 				saga: async (test, game) => {
 					await test.playCardFromHand(BoomerBdubsRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Fortune, 'single_use')
 					yield* applyEffect(game)
@@ -119,7 +119,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
@@ -133,7 +133,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 				playerTwoDeck: [BoomerBdubsRare, Crossbow],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(BoomerBdubsRare, 'hermit', 0)
 					await test.playCardFromHand(Crossbow, 'single_use')
@@ -160,7 +160,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 							(BoomerBdubsRare.secondary.damage + 20) -
 							20 /** Crossbow */,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},

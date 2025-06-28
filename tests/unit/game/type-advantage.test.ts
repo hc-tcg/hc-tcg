@@ -39,11 +39,11 @@ function createTypeAdvantageTest(
 				playerTwoDeck: [attacker],
 				saga: async (test, game) => {
 					await test.playCardFromHand(defender, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(attacker, 'hermit', 0)
 					await test.attack('primary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(

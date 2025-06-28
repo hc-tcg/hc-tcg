@@ -27,7 +27,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
 					await test.attack('secondary')
@@ -40,10 +40,10 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 						)?.props,
 					).toBe(ChainmailArmor)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 
@@ -77,7 +77,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					await test.playCardFromHand(ChainmailArmor, 'attach', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
 					await test.attack('secondary')
@@ -90,7 +90,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 						)?.props,
 					).toBe(ChainmailArmor)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Ladder, 'single_use')
 					yield* pick(
@@ -99,7 +99,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 
@@ -132,7 +132,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
 					await test.attack('secondary')
@@ -145,17 +145,17 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 						)?.props,
 					).toBe(ChainmailArmor)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
-
-					await test.attack('secondary')
-					yield* endTurn(game)
-
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
+
+					await test.endTurn()
+
+					await test.attack('secondary')
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
 					await test.playCardFromHand(Chest, 'single_use')
@@ -172,7 +172,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					yield* changeActiveHermit(game, 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 
@@ -198,7 +198,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
 					await test.playCardFromHand(ArmorStand, 'hermit', 1)
@@ -211,20 +211,20 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 							query.card.slot(query.slot.discardPile),
 						)?.props,
 					).toBe(ChainmailArmor)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
-
-					await test.attack('secondary')
-					yield* endTurn(game)
-
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
+
+					await test.endTurn()
+
+					await test.attack('secondary')
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
 					await test.playCardFromHand(Chest, 'single_use')
@@ -240,10 +240,10 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 
 					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
 					yield* changeActiveHermit(game, 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 
@@ -269,7 +269,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
 					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 1)
@@ -282,15 +282,15 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 							query.card.slot(query.slot.discardPile),
 						)?.props,
 					).toBe(ChainmailArmor)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 
@@ -316,7 +316,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(RendogRare, 'hermit', 0)
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
@@ -329,7 +329,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 							query.card.slot(query.slot.discardPile),
 						)?.props,
 					).toBe(ChainmailArmor)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					await test.attack('secondary')
@@ -348,7 +348,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 							query.card.slot(query.slot.discardPile),
 						)?.props,
 					).toBe(ChainmailArmor)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
 					await test.attack('secondary')
@@ -361,7 +361,7 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 							query.card.slot(query.slot.attach),
 						),
 					).not.toBe(null)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(

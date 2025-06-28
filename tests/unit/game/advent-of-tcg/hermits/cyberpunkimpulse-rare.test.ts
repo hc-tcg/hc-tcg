@@ -40,7 +40,7 @@ describe('Test Cyberpunk Impulse', () => {
 					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
 					await test.playCardFromHand(WildItem, 'item', 1, 0)
 					expect(getAvailableEnergy(game)).toStrictEqual([])
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
@@ -55,7 +55,7 @@ describe('Test Cyberpunk Impulse', () => {
 					)
 
 					expect(getAvailableEnergy(game)).toStrictEqual(['any'])
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(RedstoneItem, 'item', 1, 1)
 					expect(getAvailableEnergy(game)).toStrictEqual([])
@@ -80,13 +80,13 @@ describe('Test Cyberpunk Impulse', () => {
 					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 0)
 					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
 					await test.playCardFromHand(FarmItem, 'item', 1, 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.playCardFromHand(Efficiency, 'single_use')
 					yield* applyEffect(game)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.currentPlayer.getActiveHermit()?.getAttackCost('secondary'),
@@ -113,7 +113,7 @@ describe('Test Cyberpunk Impulse', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HypnotizdRare, 'hermit', 0)
 					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
@@ -137,7 +137,7 @@ describe('Test Cyberpunk Impulse', () => {
 				],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SmallishbeansAdventRare, 'hermit', 0)
 					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
@@ -170,18 +170,18 @@ describe('Test Cyberpunk Impulse', () => {
 					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
 					await test.playCardFromHand(BrewingStand, 'attach', 0)
 					await test.playCardFromHand(FarmItem, 'item', 1, 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.coinFlips).toStrictEqual([])
 					expect(game.state.pickRequests).toStrictEqual([])
 					await test.playCardFromHand(FarmItem, 'item', 0, 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.coinFlips).toHaveLength(1)
 					expect(
@@ -227,20 +227,20 @@ describe('Test Cyberpunk Impulse', () => {
 				await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
 				await test.playCardFromHand(Furnace, 'attach', 0)
 				await test.playCardFromHand(FarmItem, 'item', 1, 0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(FarmItem, 'item', 0, 0)
-				yield* endTurn(game)
-				yield* endTurn(game)
+				await test.endTurn()
+				await test.endTurn()
 
-				yield* endTurn(game)
-				yield* endTurn(game)
+				await test.endTurn()
+				await test.endTurn()
 
-				yield* endTurn(game)
-				yield* endTurn(game)
+				await test.endTurn()
+				await test.endTurn()
 
 				expect(
 					game.components.find(

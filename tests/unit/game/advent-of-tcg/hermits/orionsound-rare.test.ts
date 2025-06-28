@@ -28,7 +28,7 @@ describe('Test Oli Melody', () => {
 				playerTwoDeck: [OrionSoundRare, EthosLabCommon],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(OrionSoundRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -39,7 +39,7 @@ describe('Test Oli Melody', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Bow, 'single_use')
 					await test.attack('secondary')
@@ -63,7 +63,7 @@ describe('Test Oli Melody', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health - 40)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -90,7 +90,7 @@ describe('Test Oli Melody', () => {
 							OrionSoundRare.primary.damage -
 							OrionSoundRare.primary.damage,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -106,7 +106,7 @@ describe('Test Oli Melody', () => {
 					)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -122,7 +122,7 @@ describe('Test Oli Melody', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -150,7 +150,7 @@ describe('Test Oli Melody', () => {
 							EthosLabCommon.secondary.damage -
 							EthosLabCommon.secondary.damage,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -166,7 +166,7 @@ describe('Test Oli Melody', () => {
 					)
 					await test.attack('primary')
 					expect(game.state.pickRequests).toHaveLength(0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(

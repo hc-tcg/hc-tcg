@@ -56,7 +56,7 @@ describe('Test Candle Single Use', () => {
 							query.card.is(BalancedItem),
 						).length,
 					).toBe(1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.getPickableSlots(Candle.attachCondition)).toStrictEqual(
 						[],
@@ -114,7 +114,7 @@ describe('Test Candle Single Use', () => {
 							query.card.is(BalancedItem),
 						).length,
 					).toBe(1)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false},
@@ -148,7 +148,7 @@ describe('Test Candle Single Use', () => {
 					expect(
 						game.currentPlayer.getHand().map((card) => card.props),
 					).toStrictEqual([...Array(5).fill(BalancedItem)])
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false},

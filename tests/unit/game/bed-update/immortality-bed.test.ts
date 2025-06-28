@@ -26,7 +26,7 @@ describe('Test Immortality Bed', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(ImmortalityBed, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.attack('secondary')
@@ -44,7 +44,7 @@ describe('Test Immortality Bed', () => {
 					expect(
 						game.currentPlayer.getHand().map((card) => card.props),
 					).toStrictEqual([])
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.state.turn.availableActions).toStrictEqual([
 						'CHANGE_ACTIVE_HERMIT',

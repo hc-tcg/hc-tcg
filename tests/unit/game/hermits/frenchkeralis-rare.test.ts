@@ -13,7 +13,7 @@ describe('Test Frenchralis Rare', () => {
 				playerTwoDeck: [FrenchralisRare],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(FrenchralisRare, 'hermit', 0)
 					await test.attack('secondary')
@@ -37,7 +37,7 @@ describe('Test Frenchralis Rare', () => {
 				playerTwoDeck: [FrenchralisRare],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					game.currentPlayer.lives = 2
 					await test.playCardFromHand(FrenchralisRare, 'hermit', 0)
@@ -62,7 +62,7 @@ describe('Test Frenchralis Rare', () => {
 				playerTwoDeck: [FrenchralisRare],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					game.currentPlayer.lives = 1
 					await test.playCardFromHand(FrenchralisRare, 'hermit', 0)

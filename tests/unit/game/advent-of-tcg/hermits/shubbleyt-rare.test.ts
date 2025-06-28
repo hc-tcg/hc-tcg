@@ -29,7 +29,7 @@ describe('Test Shelby Parallel World', () => {
 			],
 			saga: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(ShubbleYTRare, 'hermit', 0)
 				await test.playCardFromHand(TerraformDoubleItem, 'item', 0, 0)
@@ -46,7 +46,7 @@ describe('Test Shelby Parallel World', () => {
 						.sort(CardComponent.compareOrder)
 						.at(-1)?.props,
 				).toStrictEqual(IronSword)
-				yield* endTurn(game)
+				await test.endTurn()
 				expect(
 					game.opponentPlayer
 						.getHand()
@@ -71,7 +71,7 @@ describe('Test Shelby Parallel World', () => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 				await test.playCardFromHand(Thorns, 'attach', 0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(ShubbleYTRare, 'hermit', 0)
 				// Manually set Shelby health to trigger zone
@@ -112,7 +112,7 @@ describe('Test Shelby Parallel World', () => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 				await test.playCardFromHand(Thorns, 'attach', 0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(ShubbleYTRare, 'hermit', 0)
 				// Manually set Shelby health to trigger zone
@@ -144,7 +144,7 @@ describe('Test Shelby Parallel World', () => {
 			],
 			saga: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(ShubbleYTRare, 'hermit', 0)
 				await test.playCardFromHand(Cat, 'attach', 0)
@@ -174,7 +174,7 @@ describe('Test Shelby Parallel World', () => {
 						.sort(CardComponent.compareOrder)
 						.at(0)?.props,
 				).toStrictEqual(IronSword)
-				yield* endTurn(game)
+				await test.endTurn()
 				expect(
 					game.opponentPlayer
 						.getHand()

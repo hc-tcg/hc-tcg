@@ -11,7 +11,7 @@ test("Test Hurtin' Hermits achivement", () => {
 			playerTwoDeck: [EthosLabCommon],
 			playGame: function* (game) {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.endTurn()
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.attack('secondary')
 			},

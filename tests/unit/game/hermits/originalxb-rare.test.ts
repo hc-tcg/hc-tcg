@@ -12,25 +12,25 @@ describe('Test Original Xb Rare', () => {
 				playerTwoDeck: [EthosLabCommon, ...new Array(16).fill(BalancedItem)],
 				saga: async (test, game) => {
 					await test.playCardFromHand(OriginalXBRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Draw One Card
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					// Draw one card (Deck size goes to 9)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Draw two cards (Deck size goes to 7).
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.opponentPlayer.getDrawPile()?.length).toBe(7)
 
-					yield* endTurn(game)
+					await test.endTurn()
 					// Draw one card(Deck size goes to 6).
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.opponentPlayer.getDrawPile()?.length).toBe(6)
 				},

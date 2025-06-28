@@ -34,7 +34,7 @@ describe('Test Redstone Torch', () => {
 				],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(RedstoneTorch, 'single_use')
@@ -63,7 +63,7 @@ describe('Test Redstone Torch', () => {
 							.sort(CardComponent.compareOrder)
 							.map((card) => deckEntities.indexOf(card.entity)),
 					).toStrictEqual([0, 1, 2, 3, 4, 6, 7])
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false},
@@ -83,7 +83,7 @@ describe('Test Redstone Torch', () => {
 				],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(RedstoneTorch, 'single_use')
@@ -120,14 +120,14 @@ describe('Test Redstone Torch', () => {
 					expect(
 						game.getPickableSlots(RedstoneTorch.attachCondition),
 					).toStrictEqual([])
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					expect(game.currentPlayer.getDrawPile().length).toBe(0)
 					expect(
 						game.getPickableSlots(RedstoneTorch.attachCondition),
 					).toStrictEqual([])
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.getDrawPile().length).toBe(1)
 					await test.playCardFromHand(RedstoneTorch, 'single_use')
@@ -139,7 +139,7 @@ describe('Test Redstone Torch', () => {
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false},

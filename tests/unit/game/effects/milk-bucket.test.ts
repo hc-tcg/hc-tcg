@@ -17,18 +17,18 @@ describe('Test Milk Bucket', () => {
 			playerTwoDeck: [EthosLabCommon, BadOmen, SplashPotionOfPoison],
 			saga: async (test, game) => {
 				await test.playCardFromHand(FarmerBeefCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
 				yield* applyEffect(game)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(BadOmen, 'single_use')
 				yield* applyEffect(game)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(
 					game.components.find(

@@ -21,17 +21,17 @@ import {
 
 function* testEvilXDisablesForOneTurn(game: GameModel) {
 	await test.playCardFromHand(EvilXisumaRare, 'hermit', 0)
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.attack('secondary')
 	yield* finishModalRequest(game, {
 		pick: 'secondary',
 	})
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	expect(game.getAllBlockedActions()).toContain('SECONDARY_ATTACK')
 	expect(
@@ -42,8 +42,8 @@ function* testEvilXDisablesForOneTurn(game: GameModel) {
 		),
 	).toBeTruthy()
 
-	yield* endTurn(game)
-	yield* endTurn(game)
+	await test.endTurn()
+	await test.endTurn()
 
 	// The status should now be timed out.
 	expect(game.getAllBlockedActions()).not.toContain('SECONDARY_ATTACK')
@@ -55,7 +55,7 @@ function* testEvilXDisablesForOneTurn(game: GameModel) {
 		),
 	).toBeFalsy()
 
-	yield* endTurn(game)
+	await test.endTurn()
 }
 
 describe('Test Evil X', () => {
@@ -77,7 +77,7 @@ describe('Test Evil X', () => {
 				saga: function* (game: GameModel) {
 					await test.playCardFromHand(ArmorStand, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EvilXisumaRare, 'hermit', 0)
 					await test.attack('secondary')
@@ -97,7 +97,7 @@ describe('Test Evil X', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EvilXisumaRare, 'hermit', 0)
 					await test.attack('secondary')
@@ -119,7 +119,7 @@ describe('Test Evil X', () => {
 				playerTwoDeck: [JoeHillsRare, EvilXisumaRare, ChorusFruit],
 				saga: async (test, game) => {
 					await test.playCardFromHand(JoeHillsRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(JoeHillsRare, 'hermit', 0)
 					await test.playCardFromHand(EvilXisumaRare, 'hermit', 1)
@@ -131,13 +131,13 @@ describe('Test Evil X', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.getAllBlockedActions()).toContain('SECONDARY_ATTACK')
 					expect(

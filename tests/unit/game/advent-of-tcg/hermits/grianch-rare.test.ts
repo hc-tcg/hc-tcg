@@ -66,17 +66,17 @@ describe('Test The Grianch Naughty', () => {
 				],
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GrianchRare, 'hermit', 1)
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 2)
@@ -124,17 +124,17 @@ describe('Test The Grianch Naughty', () => {
 				playerTwoDeck: [BoomerBdubsRare, BadOmen, Fortune],
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(BoomerBdubsRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Fortune, 'single_use')
 					yield* applyEffect(game)
@@ -160,12 +160,12 @@ describe('Test The Grianch Naughty', () => {
 				playerTwoDeck: [PearlescentMoonRare, BadOmen],
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PearlescentMoonRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
@@ -173,11 +173,11 @@ describe('Test The Grianch Naughty', () => {
 							GrianchRare.secondary.damage -
 							WEAKNESS_DAMAGE /** Builder -> Terraform */,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Fortune, 'single_use')
 					yield* applyEffect(game)
@@ -198,7 +198,7 @@ describe('Test The Grianch Naughty', () => {
 							GrianchRare.secondary.damage -
 							WEAKNESS_DAMAGE /** Builder -> Terraform */,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
@@ -220,7 +220,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
@@ -233,12 +233,12 @@ describe('Test The Grianch Naughty', () => {
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - GrianchRare.secondary.damage,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
@@ -271,21 +271,21 @@ describe('Test The Grianch Naughty', () => {
 						query.row.currentPlayer,
 						query.row.index(1),
 					)!.health = 20
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Use Anvil to trigger Skizz's bonus damage.
 					await test.playCardFromHand(Anvil, 'single_use')
 					await test.attack('secondary')
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -322,21 +322,21 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Use Anvil to trigger Skizz's bonus damage.
 					await test.playCardFromHand(Anvil, 'single_use')
 					await test.attack('secondary')
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -372,23 +372,23 @@ describe('Test The Grianch Naughty', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Use Anvil to trigger Skizz's bonus damage.
 					await test.playCardFromHand(Anvil, 'single_use')
 					await test.attack('secondary')
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -427,21 +427,21 @@ describe('Test The Grianch Naughty', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Use Anvil to trigger Skizz's bonus damage.
 					await test.playCardFromHand(Anvil, 'single_use')
 					await test.attack('single-use')
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -482,7 +482,7 @@ describe('Test The Grianch Naughty', () => {
 				],
 				saga: async (test, game) => {
 					await test.playCardFromHand(RendogRare, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 2)
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
@@ -490,7 +490,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 3)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
@@ -502,7 +502,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.rowIndex(0),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -520,7 +520,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.rowIndex(1),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Use Anvil to trigger Skizz's bonus damage.
 					await test.playCardFromHand(Anvil, 'single_use')
@@ -548,7 +548,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.rowIndex(3),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -590,7 +590,7 @@ describe('Test The Grianch Naughty', () => {
 				],
 				saga: async (test, game) => {
 					await test.playCardFromHand(RendogRare, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 2)
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
@@ -598,7 +598,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 3)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
@@ -610,7 +610,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.rowIndex(0),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -628,7 +628,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.rowIndex(1),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Use Anvil to trigger Skizz's bonus damage.
 					await test.playCardFromHand(Anvil, 'single_use')
@@ -656,7 +656,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.rowIndex(3),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -693,21 +693,21 @@ describe('Test The Grianch Naughty', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					expect(game.currentPlayer.coinFlips).toHaveLength(1)
 					await test.attack('secondary')
 					expect(game.currentPlayer.coinFlips).toHaveLength(0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Fortune, 'single_use')
 					yield* applyEffect(game)
@@ -730,7 +730,7 @@ describe('Test The Grianch Naughty', () => {
 							GrianchRare.secondary.damage -
 							GrianchRare.secondary.damage,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
@@ -759,7 +759,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(BuilderItem, 'item', 0, 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 1)
@@ -767,13 +767,13 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(PvPDoubleItem, 'item', 0, 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PvPDoubleItem, 'item', 0, 1)
 					await test.playCardFromHand(Efficiency, 'single_use')
 					yield* applyEffect(game)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PvPDoubleItem, 'item', 0, 1)
 					await test.attack('secondary')
@@ -793,13 +793,13 @@ describe('Test The Grianch Naughty', () => {
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
 					yield* finishModalRequest(game, {pick: 'primary'})
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.state.turn.availableActions).toContain(
 						'CHANGE_ACTIVE_HERMIT',
 					)
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, forceCoinFlip: true},
@@ -819,7 +819,7 @@ describe('Test The Grianch Naughty', () => {
 				],
 				saga: async (test, game) => {
 					await test.playCardFromHand(RendogRare, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 2)
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
@@ -827,7 +827,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.playCardFromHand(WormManRare, 'hermit', 3)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
@@ -839,7 +839,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.rowIndex(0),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -865,7 +865,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.rowIndex(1),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -893,7 +893,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.rowIndex(0),
 					)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 4)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -933,17 +933,17 @@ describe('Test The Grianch Naughty', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(WormManRare, 'hermit', 1)
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 2)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -980,21 +980,21 @@ describe('Test The Grianch Naughty', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('primary')
 					expect(game.currentPlayer.coinFlips).toHaveLength(1)
 					await test.attack('primary')
 					expect(game.currentPlayer.coinFlips).toHaveLength(0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Fortune, 'single_use')
 					yield* applyEffect(game)
@@ -1047,17 +1047,17 @@ describe('Test The Grianch Naughty', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 1)
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 2)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -1075,7 +1075,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.rowIndex(2),
 					)
 					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						GrianchRare.health -
@@ -1104,7 +1104,7 @@ describe('Test The Grianch Naughty', () => {
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						ZombieCleoRare.health - GrianchRare.secondary.damage,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
@@ -1119,15 +1119,15 @@ describe('Test The Grianch Naughty', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PoultryManRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('primary')
@@ -1138,7 +1138,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.rowIndex(1),
 					)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 					expect(
 						game.opponentPlayer.getDiscarded().map((card) => card.props),
 					).toContain(Egg)
@@ -1162,17 +1162,17 @@ describe('Test The Grianch Naughty', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 1)
 					await test.playCardFromHand(PoultryManRare, 'hermit', 2)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -1213,19 +1213,19 @@ describe('Test The Grianch Naughty', () => {
 				playerTwoDeck: [HelsknightRare, BadOmen],
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HelsknightRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Fortune, 'single_use')
 					yield* applyEffect(game)
@@ -1247,18 +1247,18 @@ describe('Test The Grianch Naughty', () => {
 				playerTwoDeck: [ArchitectFalseRare, BadOmen],
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ArchitectFalseRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Fortune, 'single_use')
 					yield* applyEffect(game)
 					await test.attack('secondary')
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					await test.attack('secondary')
@@ -1282,12 +1282,12 @@ describe('Test The Grianch Naughty', () => {
 				playerTwoDeck: [GrianchRare, GrianchRare, ChorusFruit],
 				saga: async (test, game) => {
 					await test.playCardFromHand(ArchitectFalseRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.attack('secondary')
 					await test.attack('primary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					expect(
@@ -1304,13 +1304,13 @@ describe('Test The Grianch Naughty', () => {
 							query.effect.targetIsCardAnd(query.card.opponentPlayer),
 						),
 					).not.toBe(null)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ArchitectFalseRare, 'hermit', 1)
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GrianchRare, 'hermit', 1)
 					await test.playCardFromHand(ChorusFruit, 'single_use')
@@ -1322,7 +1322,7 @@ describe('Test The Grianch Naughty', () => {
 						query.slot.rowIndex(1),
 					)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					expect(
@@ -1345,7 +1345,7 @@ describe('Test The Grianch Naughty', () => {
 							),
 						),
 					).not.toBe(null)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
@@ -1360,12 +1360,12 @@ describe('Test The Grianch Naughty', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 1)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
@@ -1373,7 +1373,7 @@ describe('Test The Grianch Naughty', () => {
 							GrianchRare.secondary.damage -
 							WEAKNESS_DAMAGE /** Builder -> Terraform */,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Anvil, 'single_use')
 					await test.attack('secondary')
@@ -1381,7 +1381,7 @@ describe('Test The Grianch Naughty', () => {
 					await test.attack('secondary')
 					await test.playCardFromHand(Anvil, 'single_use')
 					await test.attack('single-use')
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
@@ -1395,15 +1395,15 @@ describe('Test The Grianch Naughty', () => {
 				playerTwoDeck: [BeetlejhostRare, BadOmen, Anvil],
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(BeetlejhostRare, 'hermit', 1)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					await test.attack('secondary')
@@ -1412,10 +1412,10 @@ describe('Test The Grianch Naughty', () => {
 							BeetlejhostRare.secondary.damage -
 							(BeetlejhostRare.secondary.damage - 10),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -1447,16 +1447,16 @@ describe('Test The Grianch Naughty', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(BeetlejhostRare, 'hermit', 1)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -1477,7 +1477,7 @@ describe('Test The Grianch Naughty', () => {
 							.getActiveHermit()
 							?.getStatusEffect(ChromaKeyedEffect),
 					).toBe(null)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						GrianchRare.health -
@@ -1504,17 +1504,17 @@ describe('Test The Grianch Naughty', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 1)
 					await test.playCardFromHand(BeetlejhostRare, 'hermit', 2)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Anvil, 'single_use')
 					await test.attack('secondary')
@@ -1538,7 +1538,7 @@ describe('Test The Grianch Naughty', () => {
 							.getActiveHermit()
 							?.getStatusEffect(ChromaKeyedEffect)?.counter,
 					).toBe(1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.opponentPlayer
@@ -1559,15 +1559,15 @@ describe('Test The Grianch Naughty', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(GrianchRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(DwarfImpulseRare, 'hermit', 0)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GoldenAxe, 'single_use')
 					await test.attack('secondary')
@@ -1597,7 +1597,7 @@ describe('Test The Grianch Naughty', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health - 40 /** Golden Axe */)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},

@@ -34,7 +34,7 @@ describe('Test Cat Effect Card', () => {
 			],
 			saga: async (test, game) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(Cat, 'attach', 0)
@@ -52,9 +52,9 @@ describe('Test Cat Effect Card', () => {
 						.sort(CardComponent.compareOrder)
 						.at(0)?.props,
 				).toStrictEqual(IronSword)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(IronSword, 'single_use')
 				await test.attack('single-use')
@@ -78,7 +78,7 @@ describe('Test Cat Effect Card', () => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 				await test.playCardFromHand(Thorns, 'attach', 0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				// Manually set Etho health to trigger zone
@@ -104,7 +104,7 @@ describe('Test Cat Effect Card', () => {
 						.at(0)?.props,
 				).toStrictEqual(BalancedDoubleItem)
 				yield* changeActiveHermit(game, 1)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(
 					game.opponentPlayer.getHand().sort(CardComponent.compareOrder).at(-1)
@@ -128,7 +128,7 @@ describe('Test Cat Effect Card', () => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 				await test.playCardFromHand(Thorns, 'attach', 0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				// Manually set Etho health to trigger zone
@@ -166,16 +166,16 @@ describe('Test Cat Effect Card', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(OriginalXBRare, 'hermit', 0)
 					await test.playCardFromHand(MinerDoubleItem, 'item', 0, 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(TinFoilChefRare, 'hermit', 0)
 					await test.playCardFromHand(Cat, 'attach', 0)
 					await test.playCardFromHand(MinerDoubleItem, 'item', 0, 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(MinerItem, 'item', 0, 1)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					expect(
@@ -184,7 +184,7 @@ describe('Test Cat Effect Card', () => {
 						)?.props,
 					).toStrictEqual(Cat)
 					yield* finishModalRequest(game, {result: true, cards: null})
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.opponentPlayer
@@ -207,7 +207,7 @@ describe('Test Cat Effect Card', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Cat, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GrianRare, 'hermit', 0)
 					await test.attack('primary')
@@ -220,16 +220,16 @@ describe('Test Cat Effect Card', () => {
 							query.card.active,
 						),
 					).not.toBe(null)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Cat, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('primary')
 					expect(game.state.modalRequests).toHaveLength(2)
 					yield* finishModalRequest(game, {result: false, cards: null})
 					yield* finishModalRequest(game, {result: true, cards: null})
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{noItemRequirements: true, forceCoinFlip: true},

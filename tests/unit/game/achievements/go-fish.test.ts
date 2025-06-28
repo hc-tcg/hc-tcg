@@ -36,7 +36,7 @@ describe('Test Go Fish Achievement', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FishingRod, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 					yield* forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
@@ -68,10 +68,10 @@ describe('Test Go Fish Achievement', () => {
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(IronArmor, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Mending, 'single_use')
 
@@ -85,7 +85,7 @@ describe('Test Go Fish Achievement', () => {
 
 					await test.playCardFromHand(FishingRod, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* forfeit(game.currentPlayer.entity)
 				},

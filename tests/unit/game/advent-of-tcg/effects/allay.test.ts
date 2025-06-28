@@ -43,7 +43,7 @@ function testAllayRetrieval(card: Card, canRetrieve: boolean) {
 					query.slot.currentPlayer,
 					query.slot.has(card),
 				)
-				yield* endTurn(game)
+				await test.endTurn()
 				expect(
 					game.opponentPlayer
 						.getHand()
@@ -52,7 +52,7 @@ function testAllayRetrieval(card: Card, canRetrieve: boolean) {
 				).toStrictEqual([card, Allay, Allay])
 
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				if (canRetrieve) {
 					await test.playCardFromHand(Allay, 'single_use')

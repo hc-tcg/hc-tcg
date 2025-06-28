@@ -41,14 +41,14 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(PharaohRare, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Knockback, 'single_use')
 					await test.attack('secondary')
@@ -58,7 +58,7 @@ describe('Test Pharaoh Xibalba', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -78,10 +78,10 @@ describe('Test Pharaoh Xibalba', () => {
 							EthosLabCommon.secondary.damage +
 							PharaohRare.secondary.damage,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(DiamondArmor, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -115,7 +115,7 @@ describe('Test Pharaoh Xibalba', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(PharaohRare, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(DiamondArmor, 'attach', 0)
@@ -127,7 +127,7 @@ describe('Test Pharaoh Xibalba', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PotionOfWeakness, 'single_use')
 					yield* applyEffect(game)
@@ -174,18 +174,18 @@ describe('Test Pharaoh Xibalba', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(PharaohRare, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
@@ -204,11 +204,11 @@ describe('Test Pharaoh Xibalba', () => {
 							query.row.index(0),
 						)?.health,
 					).toBe(EthosLabCommon.health - EthosLabCommon.secondary.damage)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -249,7 +249,7 @@ describe('Test Pharaoh Xibalba', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(PharaohRare, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -262,7 +262,7 @@ describe('Test Pharaoh Xibalba', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -300,7 +300,7 @@ describe('Test Pharaoh Xibalba', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(PharaohRare, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -319,7 +319,7 @@ describe('Test Pharaoh Xibalba', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -353,18 +353,18 @@ describe('Test Pharaoh Xibalba', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(PharaohRare, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(TNT, 'single_use')
 					await test.attack('secondary')
@@ -406,7 +406,7 @@ describe('Test Pharaoh Xibalba', () => {
 							EthosLabCommon.secondary.damage +
 							80 /** total TNT damage */,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
@@ -428,7 +428,7 @@ describe('Test Pharaoh Xibalba', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(PharaohRare, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -437,13 +437,13 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.playCardFromHand(Thorns, 'attach', 1)
 					await test.playCardFromHand(TurtleShell, 'attach', 2)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Bow, 'single_use')
 					await test.attack('secondary')
@@ -505,7 +505,7 @@ describe('Test Pharaoh Xibalba', () => {
 							EthosLabCommon.secondary.damage +
 							40 /** Xibalba healing from Bow only */,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
@@ -520,7 +520,7 @@ describe('Test Pharaoh Xibalba', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(PharaohRare, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(BigBSt4tzRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -539,7 +539,7 @@ describe('Test Pharaoh Xibalba', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					expect(
@@ -600,14 +600,14 @@ describe('Test Pharaoh Xibalba', () => {
 					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 					yield* applyEffect(game)
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(BigBSt4tzRare, 'hermit', 0)
 					await test.playCardFromHand(ZombieCleoRare, 'hermit', 1)
 					await test.playCardFromHand(PharaohRare, 'hermit', 2)
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Knockback, 'single_use')
 					await test.attack('secondary')
@@ -617,7 +617,7 @@ describe('Test Pharaoh Xibalba', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(

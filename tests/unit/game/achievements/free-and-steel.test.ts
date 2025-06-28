@@ -38,7 +38,7 @@ describe('Test Free & Steel Achievement', () => {
 					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 					await test.playCardFromHand(FlintAndSteel, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 					yield* forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
@@ -65,7 +65,7 @@ describe('Test Free & Steel Achievement', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FlintAndSteel, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 					yield* forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {

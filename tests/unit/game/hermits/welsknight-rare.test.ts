@@ -15,11 +15,11 @@ describe('Test rare welsknight', () => {
 				playerTwoDeck: [WelsknightRare],
 				saga: async (test, game) => {
 					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(WelsknightRare, 'hermit', 0)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -30,10 +30,10 @@ describe('Test rare welsknight', () => {
 					).toBe(GeminiTayCommon.health - WelsknightRare.secondary.damage)
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -58,10 +58,10 @@ describe('Test rare welsknight', () => {
 					)
 					await test.playCardFromHand(GoldArmor, 'attach', 0)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(

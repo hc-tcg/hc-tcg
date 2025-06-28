@@ -14,7 +14,7 @@ describe('Test Goatfather Rare', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GoatfatherRare, 'hermit', 0)
 					await test.attack('secondary')

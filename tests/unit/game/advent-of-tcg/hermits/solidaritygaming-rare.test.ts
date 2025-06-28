@@ -30,7 +30,7 @@ describe('Test Jimmy "The Law"', () => {
 				playerTwoDeck: [SolidaritygamingRare, EthosLabCommon],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -51,7 +51,7 @@ describe('Test Jimmy "The Law"', () => {
 							),
 						),
 					).not.toBe(null)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					expect(
@@ -61,10 +61,10 @@ describe('Test Jimmy "The Law"', () => {
 							query.row.index(0),
 						)?.health,
 					).toBe(SolidaritygamingRare.health - EthosLabCommon.secondary.damage)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					expect(
@@ -81,7 +81,7 @@ describe('Test Jimmy "The Law"', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -109,7 +109,7 @@ describe('Test Jimmy "The Law"', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
 					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 1)
@@ -131,7 +131,7 @@ describe('Test Jimmy "The Law"', () => {
 							),
 						),
 					).not.toBe(null)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('primary')
 					yield* pick(
@@ -150,7 +150,7 @@ describe('Test Jimmy "The Law"', () => {
 							),
 						),
 					).not.toBe(null)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -196,7 +196,7 @@ describe('Test Jimmy "The Law"', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('primary')
 					yield* pick(
@@ -205,7 +205,7 @@ describe('Test Jimmy "The Law"', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
 					expect(
@@ -259,17 +259,17 @@ describe('Test Jimmy "The Law"', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					await test.playCardFromHand(LavaBucket, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('primary')
 					yield* pick(
@@ -278,7 +278,7 @@ describe('Test Jimmy "The Law"', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('secondary')
@@ -288,7 +288,7 @@ describe('Test Jimmy "The Law"', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.index).toBe(0)
 					expect(game.currentPlayer.activeRow?.health).toBe(
@@ -307,7 +307,7 @@ describe('Test Jimmy "The Law"', () => {
 				playerTwoDeck: [SolidaritygamingRare, EthosLabCommon],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -318,7 +318,7 @@ describe('Test Jimmy "The Law"', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Knockback, 'single_use')
 					await test.attack('secondary')
@@ -328,7 +328,7 @@ describe('Test Jimmy "The Law"', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -338,9 +338,9 @@ describe('Test Jimmy "The Law"', () => {
 						),
 					).not.toBe(null)
 					yield* changeActiveHermit(game, 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 					expect(
 						game.components.find(
 							StatusEffectComponent,
@@ -361,7 +361,7 @@ describe('Test Jimmy "The Law"', () => {
 				playerTwoDeck: [SolidaritygamingRare, EthosLabCommon, ChorusFruit],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -386,7 +386,7 @@ describe('Test Jimmy "The Law"', () => {
 							query.effect.targetIsCardAnd(query.card.currentPlayer),
 						),
 					).not.toBe(null)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Knockback, 'single_use')
 					await test.attack('secondary')
@@ -396,7 +396,7 @@ describe('Test Jimmy "The Law"', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -418,16 +418,16 @@ describe('Test Jimmy "The Law"', () => {
 				playerTwoDeck: [TangoTekRare],
 				saga: async (test, game) => {
 					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.attack('primary')
@@ -437,7 +437,7 @@ describe('Test Jimmy "The Law"', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -446,12 +446,12 @@ describe('Test Jimmy "The Law"', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
@@ -476,7 +476,7 @@ describe('Test Jimmy "The Law"', () => {
 				playerTwoDeck: [SolidaritygamingRare, EthosLabCommon],
 				saga: async (test, game) => {
 					await test.playCardFromHand(IJevinRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SolidaritygamingRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
@@ -494,7 +494,7 @@ describe('Test Jimmy "The Law"', () => {
 							query.effect.targetIsCardAnd(query.card.currentPlayer),
 						),
 					).not.toBe(null)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('secondary')
@@ -510,7 +510,7 @@ describe('Test Jimmy "The Law"', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -520,7 +520,7 @@ describe('Test Jimmy "The Law"', () => {
 						),
 					).not.toBe(null)
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('secondary')
@@ -536,7 +536,7 @@ describe('Test Jimmy "The Law"', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(

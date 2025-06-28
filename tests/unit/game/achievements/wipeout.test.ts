@@ -24,11 +24,11 @@ describe('Test "Wipeout" achievement', () => {
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					game.components
 						.filter(RowComponent, query.row.hasHermit)
@@ -53,19 +53,19 @@ describe('Test "Wipeout" achievement', () => {
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					game.components
 						.filter(RowComponent, query.row.hasHermit)
 						.forEach((row) => (row.health = 10))
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Anvil, 'single_use')
 					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* forfeit(game.currentPlayer.entity)
 				},
@@ -84,24 +84,24 @@ describe('Test "Wipeout" achievement', () => {
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(LavaBucket, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					game.components
 						.filter(RowComponent, query.row.hasHermit)
 						.forEach((row) => (row.health = 10))
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* forfeit(game.currentPlayer.entity)
 				},
@@ -120,21 +120,21 @@ describe('Test "Wipeout" achievement', () => {
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					game.components
 						.filter(RowComponent, query.row.hasHermit)
 						.forEach((row) => (row.health = 10))
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Anvil, 'single_use')
 					await test.attack('secondary')

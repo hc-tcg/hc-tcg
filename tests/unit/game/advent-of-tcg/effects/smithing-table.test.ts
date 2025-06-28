@@ -38,10 +38,10 @@ describe('Test Smithing Table', () => {
 					query.slot.hand,
 					query.slot.has(WaterBucket),
 				)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(WaterBucket, 'single_use')
 				yield* removeEffect(game)
@@ -74,7 +74,7 @@ describe('Test Smithing Table', () => {
 						query.slot.has(Shield),
 					)
 					await test.playCardFromHand(Shield, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					expect(
@@ -113,7 +113,7 @@ describe('Test Smithing Table', () => {
 				)
 				await test.playCardFromHand(Slimeball, 'attach', 0)
 				await test.playCardFromHand(BalancedItem, 'item', 0, 0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
 				yield* bossAttack(game, '50DMG', 'HEAL150', 'EFFECTCARD')
@@ -126,10 +126,10 @@ describe('Test Smithing Table', () => {
 						query.card.is(Slimeball),
 					),
 				).not.toBe(null)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				while (game.state.turn.turnNumber < 18) {
-					yield* endTurn(game)
+					await test.endTurn()
 				}
 
 				supplyNineSpecial(
@@ -139,7 +139,7 @@ describe('Test Smithing Table', () => {
 					)!,
 					'NINEATTACHED',
 				)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(
 					game.currentPlayer.getDiscarded().map((card) => card.props),

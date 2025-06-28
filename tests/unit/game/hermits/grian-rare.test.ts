@@ -28,7 +28,7 @@ describe('Test Grian Rare', () => {
 					await test.playCardFromHand(Loyalty, 'attach', 0)
 					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GrianRare, 'hermit', 0)
 					await test.attack('primary')
@@ -73,7 +73,7 @@ describe('Test Grian Rare', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Shield, 'attach', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GrianRare, 'hermit', 0)
 					await test.attack('primary')
@@ -117,7 +117,7 @@ describe('Test Grian Rare', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Totem, 'attach', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GrianRare, 'hermit', 0)
 					await test.attack('primary')
@@ -153,7 +153,7 @@ describe('Test Grian Rare', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Loyalty, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GrianRare, 'hermit', 0)
 					await test.attack('primary')
@@ -186,7 +186,7 @@ describe('Test Grian Rare', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Loyalty, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GrianRare, 'hermit', 0)
 					await test.playCardFromHand(Shield, 'attach', 0)
@@ -226,7 +226,7 @@ describe('Test Grian Rare', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(Thorns, 'attach', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(GrianRare, 'hermit', 0)
 					// Manually set Grian's health to knock-out range

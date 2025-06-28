@@ -25,7 +25,7 @@ describe('Test Poutry Man Rare', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PoultryManRare, 'hermit', 0)
 					await test.playCardFromHand(Egg, 'single_use')
@@ -45,8 +45,8 @@ describe('Test Poutry Man Rare', () => {
 					// Hand should contain Egg and Golden Axe.
 					expect(game.currentPlayer.getHand()?.length).toBe(2)
 
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
 					await test.playCardFromHand(GoldenAxe, 'single_use')
 					await test.attack('secondary')
@@ -68,14 +68,14 @@ describe('Test Poutry Man Rare', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PoultryManRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('secondary')
@@ -104,12 +104,12 @@ describe('Test Poutry Man Rare', () => {
 				playerTwoDeck: [HelsknightRare, EthosLabCommon],
 				saga: async (test, game) => {
 					await test.playCardFromHand(PoultryManRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HelsknightRare, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Egg, 'single_use')
 					await test.attack('secondary')

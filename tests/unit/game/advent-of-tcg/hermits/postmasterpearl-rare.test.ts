@@ -32,7 +32,7 @@ function postMasterTest(pearls: number, results: boolean[]) {
 				for (let i = 0; i < pearls; i++) {
 					await test.playCardFromHand(PostmasterPearlRare, 'hermit', i)
 				}
-				yield* endTurn(game)
+				await test.endTurn()
 				for (let i = 0; i < results.length; i++) {
 					expect(game.state.modalRequests).toHaveLength(1)
 					expect(

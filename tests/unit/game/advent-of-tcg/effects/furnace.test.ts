@@ -54,20 +54,20 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(4)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(WildItem, 'item', 0, 1)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(RedstoneItem, 'item', 0, 2)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(
 					game.components.find(
@@ -92,9 +92,9 @@ describe('Test Furnace Attach Effect', () => {
 						.sort(sortRowItems)
 						.map((card) => card.props),
 				).toStrictEqual([BalancedItem, WildItem, RedstoneItem])
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* endTurn(game)
+				await test.endTurn()
 				expect(
 					game.currentPlayer.getDiscarded().map((card) => card.props),
 				).toStrictEqual([Furnace])
@@ -129,10 +129,10 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(4)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(
 					game.components.find(
@@ -156,7 +156,7 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(4)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(
 					game.components.find(
@@ -168,7 +168,7 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(3)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(Emerald, 'single_use')
 				yield* applyEffect(game)
@@ -214,10 +214,10 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(4)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(
 					game.components.find(
@@ -249,9 +249,9 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(3)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(
 					game.components.find(
@@ -282,11 +282,11 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(2)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* endTurn(game)
-				yield* endTurn(game)
-				yield* endTurn(game)
+				await test.endTurn()
+				await test.endTurn()
+				await test.endTurn()
 
 				expect(
 					game.currentPlayer.getDiscarded().map((card) => card.props),

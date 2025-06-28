@@ -25,7 +25,7 @@ describe('Test Tango Extra Flee', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
 					await test.playCardFromHand(FarmerBeefRare, 'hermit', 1)
@@ -64,7 +64,7 @@ describe('Test Tango Extra Flee', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
 
@@ -86,14 +86,14 @@ describe('Test Tango Extra Flee', () => {
 					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
 					await test.playCardFromHand(FarmerBeefRare, 'hermit', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(CurseOfBinding, 'single_use')
 
 					yield* applyEffect(game)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 
@@ -113,13 +113,13 @@ describe('Test Tango Extra Flee', () => {
 					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
 					await test.playCardFromHand(FarmerBeefRare, 'hermit', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 
 					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 

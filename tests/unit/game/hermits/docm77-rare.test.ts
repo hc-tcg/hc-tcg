@@ -24,14 +24,14 @@ describe('Test Docm77 World Eater', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Docm77Rare, 'hermit', 0)
 
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(BadOmen, 'single_use')
 					yield* applyEffect(game)
@@ -49,7 +49,7 @@ describe('Test Docm77 World Eater', () => {
 						),
 					).toBeTruthy()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Ensure World Eater will flip tails to halve damage
 					expect(

@@ -25,18 +25,18 @@ describe('Test Sculk Catalyst', () => {
 					await test.playCardFromHand(ImpulseSVRare, 'hermit', 0)
 					await test.playCardFromHand(TangoTekCommon, 'hermit', 1)
 					await test.playCardFromHand(TangoTekCommon, 'hermit', 2)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
 					yield* bossAttack(game, '50DMG')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SculkCatalyst, 'attach', 0)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* bossAttack(game, '70DMG')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					expect(game.opponentPlayer.lives).toBe(2)

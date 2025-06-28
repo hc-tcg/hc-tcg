@@ -28,7 +28,7 @@ describe('Test Stratos Joel', () => {
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(SmallishbeansAdventRare, 'hermit', 0)
 					await test.playCardFromHand(WildItem, 'item', 0, 0)
@@ -40,7 +40,7 @@ describe('Test Stratos Joel', () => {
 							SmallishbeansAdventRare.secondary.damage -
 							20 /** 1 attached Wild Item */,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					yield* playCardFromHand(
 						game,
@@ -51,7 +51,7 @@ describe('Test Stratos Joel', () => {
 						game.opponentPlayerEntity,
 					)
 					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(PvPDoubleItem, 'item', 0, 2)
 					await test.attack('secondary')

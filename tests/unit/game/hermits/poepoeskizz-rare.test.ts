@@ -21,11 +21,11 @@ describe('Test Poe Poe Skizz Rare', () => {
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon],
 				saga: async (test, game) => {
 					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('secondary')
 					yield* pick(
@@ -34,7 +34,7 @@ describe('Test Poe Poe Skizz Rare', () => {
 						query.slot.hermit,
 						query.slot.currentPlayer,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -63,11 +63,11 @@ describe('Test Poe Poe Skizz Rare', () => {
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon],
 				saga: async (test, game) => {
 					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(Bow, 'single_use')
 					await test.attack('secondary')
@@ -83,7 +83,7 @@ describe('Test Poe Poe Skizz Rare', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 3)
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 4)
 					await test.attack('secondary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(

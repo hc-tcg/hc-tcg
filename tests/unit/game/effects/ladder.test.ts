@@ -26,11 +26,11 @@ describe('Test Ladder', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(SmallishbeansCommon, 'hermit', 1)
 					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.attack('primary')
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(IronArmor, 'attach', 0)
 					await test.playCardFromHand(Ladder, 'single_use')
@@ -131,7 +131,7 @@ describe('Test Ladder', () => {
 				playerTwoDeck: [FalseSymmetryRare, GrianCommon, Ladder],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(FalseSymmetryRare, 'hermit', 1)
 					await test.playCardFromHand(GrianCommon, 'hermit', 0)
@@ -145,13 +145,13 @@ describe('Test Ladder', () => {
 					expect(game.currentPlayer.activeRow?.health).toBe(GrianCommon.health)
 					await test.attack('secondary')
 					expect(game.currentPlayer.activeRow?.health).toBe(GrianCommon.health)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.attack('primary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						GrianCommon.health - EthosLabCommon.primary.damage,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},

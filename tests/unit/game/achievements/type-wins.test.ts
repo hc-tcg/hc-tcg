@@ -21,9 +21,9 @@ describe('Test type win achivements', () => {
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
@@ -52,7 +52,7 @@ describe('Test type win achivements', () => {
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.attack('secondary')
 				},
@@ -71,7 +71,7 @@ describe('Test type win achivements', () => {
 				playerTwoDeck: [EthosLabCommon],
 				playGame: function* (game) {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.attack('secondary')
 				},

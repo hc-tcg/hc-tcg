@@ -8,7 +8,7 @@ import {attack, endTurn, playCardFromHand, testGame} from '../../utils'
 
 function* testOneHermit(game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(PythonGBRare, 'hermit', 0)
 	await test.playCardFromHand(RendogCommon, 'hermit', 2)
@@ -16,9 +16,9 @@ function* testOneHermit(game: GameModel) {
 	expect(game.opponentPlayer.activeRow?.health).toBe(
 		EthosLabCommon.health - PythonGBRare.secondary.damage,
 	)
-	yield* endTurn(game)
+	await test.endTurn()
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(RendogCommon, 'hermit', 1)
 	await test.attack('secondary')
@@ -31,7 +31,7 @@ function* testOneHermit(game: GameModel) {
 
 function* testManyHermits(game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-	yield* endTurn(game)
+	await test.endTurn()
 
 	await test.playCardFromHand(PythonGBRare, 'hermit', 1)
 	await test.playCardFromHand(RendogCommon, 'hermit', 0)

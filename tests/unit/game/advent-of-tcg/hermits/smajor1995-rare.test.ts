@@ -29,12 +29,12 @@ describe('Test Scott "To Dye For"', () => {
 				await test.playCardFromHand(Smajor1995Rare, 'hermit', 0)
 				await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
 				await test.playCardFromHand(BuilderDoubleItem, 'item', 0, 0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 				await test.attack('primary')
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(BuilderDoubleItem, 'item', 0, 1)
 				await test.attack('secondary')
@@ -54,25 +54,25 @@ describe('Test Scott "To Dye For"', () => {
 						),
 					),
 				).not.toBe(null)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(BalancedItem, 'item', 0, 1)
 				await test.attack('primary')
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(BuilderDoubleItem, 'item', 1, 1)
 				await test.attack('secondary')
 				expect(game.state.pickRequests).toHaveLength(0)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.playCardFromHand(BalancedItem, 'item', 0, 2)
 				await test.attack('secondary')
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* endTurn(game)
+				await test.endTurn()
 
 				await test.attack('secondary')
-				yield* endTurn(game)
+				await test.endTurn()
 
 				yield* changeActiveHermit(game, 1)
 				await test.attack('secondary')

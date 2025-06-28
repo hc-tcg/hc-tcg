@@ -19,12 +19,12 @@ describe('Test Game Utils', () => {
 					playerTwoDeck: [EthosLabCommon],
 					saga: async (test, game) => {
 						await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-						yield* endTurn(game)
+						await test.endTurn()
 
 						await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 						await test.attack('secondary')
 						// The game should never reach this point
-						yield* endTurn(game)
+						await test.endTurn()
 					},
 				},
 				{oneShotMode: true},

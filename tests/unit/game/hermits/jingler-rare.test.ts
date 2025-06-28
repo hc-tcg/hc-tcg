@@ -12,7 +12,7 @@ describe('Test Jingler Rare', () => {
 				playerTwoDeck: [JinglerRare],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(JinglerRare, 'hermit', 0)
 					await test.attack('secondary')
@@ -35,7 +35,7 @@ describe('Test Jingler Rare', () => {
 				playerTwoDeck: [JinglerRare],
 				saga: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					await test.playCardFromHand(JinglerRare, 'hermit', 0)
 					await test.attack('secondary')
