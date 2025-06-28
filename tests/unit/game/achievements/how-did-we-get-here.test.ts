@@ -43,7 +43,7 @@ describe('Test How Did We Get Here achievement', () => {
 					await test.attack('secondary')
 					await test.playCardFromHand(Clock, 'single_use')
 					await test.applyEffect()
-					yield* forfeit(game.currentPlayerEntity)
+					await test.forfeit(game.currentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(HowDidWeGetHere.getProgress(achievement.goals)).toBe(5)

@@ -53,7 +53,7 @@ describe('Test Game Win Conditions', () => {
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
 				saga: async (test, game) => {
-					yield* forfeit(game.currentPlayerEntity)
+					await test.forfeit(game.currentPlayerEntity)
 				},
 				then: (game, outcome) => {
 					expect(getWinner(game)?.playerName).toBe('playerTwo')
@@ -69,7 +69,7 @@ describe('Test Game Win Conditions', () => {
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
 				saga: async (test, game) => {
-					yield* forfeit(game.opponentPlayerEntity)
+					await test.forfeit(game.opponentPlayerEntity)
 				},
 				then: (game, outcome) => {
 					expect(getWinner(game)?.playerName).toBe('playerOne')

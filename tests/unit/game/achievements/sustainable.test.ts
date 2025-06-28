@@ -33,7 +33,7 @@ describe('Test SUStainable achivement', () => {
 					await test.pick(query.slot.entity(cards[0]))
 					await test.pick(query.slot.entity(cards[1]))
 
-					yield* forfeit(game.currentPlayerEntity)
+					await test.forfeit(game.currentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(SUStainable.getProgress(achievement.goals)).toBe(2)

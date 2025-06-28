@@ -13,7 +13,7 @@ describe('Test "...is Great" achievement', () => {
 				playerOneDeck: [BdoubleO100Rare, BdoubleO100Rare, BdoubleO100Rare],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: async (test, game) => {
-					yield* forfeit(game.opponentPlayer.entity)
+					await test.forfeit(game.opponentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(IsGreat.getProgress(achievement.goals)).toEqual(1)
@@ -29,7 +29,7 @@ describe('Test "...is Great" achievement', () => {
 				playerOneDeck: [BdoubleO100Rare, EthosLabRare],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: async (test, game) => {
-					yield* forfeit(game.opponentPlayer.entity)
+					await test.forfeit(game.opponentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(IsGreat.getProgress(achievement.goals)).toBeUndefined()

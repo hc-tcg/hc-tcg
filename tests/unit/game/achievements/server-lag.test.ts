@@ -375,7 +375,7 @@ describe('Test Server Lag achievement', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* forfeit(game.opponentPlayerEntity)
+					await test.forfeit(game.opponentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, outcome) {
 					expect(outcome.type).toBe('player-won')
@@ -427,7 +427,7 @@ describe('Test Server Lag achievement', () => {
 					await test.endTurn()
 
 					await test.attack('secondary')
-					yield* forfeit(game.currentPlayerEntity)
+					await test.forfeit(game.currentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, outcome) {
 					expect(outcome.type).toBe('player-won')

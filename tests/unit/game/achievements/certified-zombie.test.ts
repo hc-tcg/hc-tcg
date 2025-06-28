@@ -19,7 +19,7 @@ test('Test Use Like a Hermit achievement', async () => {
 				await test.endTurn()
 				await test.endTurn()
 
-				yield* forfeit(game.currentPlayer.entity)
+				await test.forfeit(game.currentPlayer.entity)
 			},
 			checkAchivement(_game, achievement, _outcome) {
 				expect(CertifiedZombie.getProgress(achievement.goals)).toEqual(2)

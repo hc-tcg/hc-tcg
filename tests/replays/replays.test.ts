@@ -85,7 +85,7 @@ describe('Test Replays', () => {
 				await test.endTurn()
 
 				await test.attack('primary')
-				yield* forfeit(game.currentPlayer.entity)
+				await test.forfeit(game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})
@@ -115,7 +115,7 @@ describe('Test Replays', () => {
 				await test.attack('secondary')
 				await test.endTurn()
 
-				yield* forfeit(game.currentPlayer.entity)
+				await test.forfeit(game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})
@@ -148,7 +148,7 @@ describe('Test Replays', () => {
 					rightCards: [cardEntities[1]],
 				})
 				yield* endTurn(con.game)
-				yield* forfeit(con.game.currentPlayer.entity)
+				await test.forfeit(con.game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})
@@ -189,7 +189,7 @@ describe('Test Replays', () => {
 					cards: [discardedCard],
 				})
 				await test.endTurn()
-				yield* forfeit(game.currentPlayer.entity)
+				await test.forfeit(game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})
@@ -233,7 +233,7 @@ describe('Test Replays', () => {
 					query.slot.rowIndex(1),
 				)
 
-				yield* forfeit(con.game.currentPlayer.entity)
+				await test.forfeit(con.game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})
@@ -284,7 +284,7 @@ describe('Test Replays', () => {
 				)
 				await test.endTurn()
 
-				yield* forfeit(game.currentPlayer.entity)
+				await test.forfeit(game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})
@@ -321,7 +321,7 @@ describe('Test Replays', () => {
 				await test.attack('primary')
 				await test.endTurn()
 
-				yield* forfeit(con.game.currentPlayer.entity)
+				await test.forfeit(con.game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})
@@ -343,7 +343,7 @@ describe('Test Replays', () => {
 
 				await test.changeActiveHermit( 1)
 
-				yield* forfeit(con.game.currentPlayer.entity)
+				await test.forfeit(con.game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})

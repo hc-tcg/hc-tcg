@@ -87,7 +87,7 @@ describe('Test Loyalty III Achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* forfeit(game.currentPlayerEntity)
+					await test.forfeit(game.currentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(LoyaltyIII.getProgress(achievement.goals)).toBe(1)

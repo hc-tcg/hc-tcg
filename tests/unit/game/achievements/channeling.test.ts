@@ -31,7 +31,7 @@ describe('Test Channeling achievement', () => {
 					game.opponentPlayer.activeRow!.health = 90
 					await test.attack('secondary')
 
-					yield* forfeit(game.opponentPlayer.entity)
+					await test.forfeit(game.opponentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Channeling.getProgress(achievement.goals)).toEqual(1)
@@ -57,7 +57,7 @@ describe('Test Channeling achievement', () => {
 					game.opponentPlayer.activeRow!.health = 90
 					await test.attack('secondary')
 
-					yield* forfeit(game.opponentPlayer.entity)
+					await test.forfeit(game.opponentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Channeling.getProgress(achievement.goals)).toBeFalsy()
@@ -83,7 +83,7 @@ describe('Test Channeling achievement', () => {
 					game.opponentPlayer.activeRow!.health = 100
 					await test.attack('secondary')
 
-					yield* forfeit(game.opponentPlayer.entity)
+					await test.forfeit(game.opponentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Channeling.getProgress(achievement.goals)).toBeFalsy()
@@ -108,7 +108,7 @@ describe('Test Channeling achievement', () => {
 					game.opponentPlayer.activeRow!.health = 10
 					await test.attack('secondary')
 
-					yield* forfeit(game.opponentPlayer.entity)
+					await test.forfeit(game.opponentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Channeling.getProgress(achievement.goals)).toBeFalsy()

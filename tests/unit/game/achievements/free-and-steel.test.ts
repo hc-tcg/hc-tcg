@@ -39,7 +39,7 @@ describe('Test Free & Steel Achievement', () => {
 					await test.playCardFromHand(FlintAndSteel, 'single_use')
 					await test.applyEffect()
 					await test.endTurn()
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(FreeAndSteel.getProgress(achievement.goals)).toBe(1)
@@ -66,7 +66,7 @@ describe('Test Free & Steel Achievement', () => {
 					await test.playCardFromHand(FlintAndSteel, 'single_use')
 					await test.applyEffect()
 					await test.endTurn()
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(FreeAndSteel.getProgress(achievement.goals)).toBeFalsy()

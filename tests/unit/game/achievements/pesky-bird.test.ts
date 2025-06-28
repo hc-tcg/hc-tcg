@@ -43,7 +43,7 @@ describe('Test Pesky Bird Achievement', () => {
 					)
 					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(PeskyBird.getProgress(achievement.goals)).toBe(1)
@@ -78,7 +78,7 @@ describe('Test Pesky Bird Achievement', () => {
 					await test.pick(query.slot.entity(cards[0]))
 					await test.pick(query.slot.entity(cards[1]))
 
-					yield* forfeit(game.currentPlayerEntity)
+					await test.forfeit(game.currentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(PeskyBird.getProgress(achievement.goals)).toBeFalsy()

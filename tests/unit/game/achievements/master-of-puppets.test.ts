@@ -42,7 +42,7 @@ describe('Test Master of Puppets Achievement', () => {
 					)
 					await test.finishModalRequest( {pick: 'primary'})
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(MasterOfPuppets.getProgress(achievement.goals)).toBe(1)
@@ -78,7 +78,7 @@ describe('Test Master of Puppets Achievement', () => {
 					)
 					await test.finishModalRequest( {pick: 'primary'})
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(MasterOfPuppets.getProgress(achievement.goals)).toBeFalsy()

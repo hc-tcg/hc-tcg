@@ -38,7 +38,7 @@ describe('Test Cant Touch This achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* forfeit(game.currentPlayerEntity)
+					await test.forfeit(game.currentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(CantTouchThis.getProgress(achievement.goals)).toBe(1)
@@ -73,7 +73,7 @@ describe('Test Cant Touch This achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* forfeit(game.currentPlayerEntity)
+					await test.forfeit(game.currentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(CantTouchThis.getProgress(achievement.goals)).toBe(2)
@@ -102,7 +102,7 @@ describe('Test Cant Touch This achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* forfeit(game.currentPlayerEntity)
+					await test.forfeit(game.currentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(CantTouchThis.getProgress(achievement.goals)).toBe(1)

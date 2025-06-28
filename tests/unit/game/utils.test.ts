@@ -42,7 +42,7 @@ describe('Test Game Utils', () => {
 				playerTwoDeck: [EthosLabCommon],
 				playGame: async (test, game) => {
 					playedGame = true
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, _achievement, _outcome) {
 					checkedAchievment = true

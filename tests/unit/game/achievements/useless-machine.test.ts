@@ -45,7 +45,7 @@ describe('Test Useless Machine Achievement', () => {
 					)
 					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(UselessMachine.getProgress(achievement.goals)).toBe(2)
@@ -85,7 +85,7 @@ describe('Test Useless Machine Achievement', () => {
 					)
 					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(UselessMachine.getProgress(achievement.goals)).toBe(1)
@@ -125,7 +125,7 @@ describe('Test Useless Machine Achievement', () => {
 					)
 					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(UselessMachine.getProgress(achievement.goals)).toBeFalsy()

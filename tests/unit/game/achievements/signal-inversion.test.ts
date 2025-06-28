@@ -34,7 +34,7 @@ describe('Test "Signal Inversion" achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(SignalInversion.getProgress(achievement.goals)).toBe(1)
@@ -63,7 +63,7 @@ describe('Test "Signal Inversion" achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(SignalInversion.getProgress(achievement.goals)).toBeFalsy()
@@ -90,7 +90,7 @@ describe('Test "Signal Inversion" achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(SignalInversion.getProgress(achievement.goals)).toBeFalsy()
@@ -117,7 +117,7 @@ describe('Test "Signal Inversion" achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(SignalInversion.getProgress(achievement.goals)).toBeFalsy()

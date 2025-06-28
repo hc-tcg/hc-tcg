@@ -23,7 +23,7 @@ describe('Test New Team Canada achievement', () => {
 				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(NewTeamCanada.getProgress(achievement.goals)).toEqual(1)
@@ -41,7 +41,7 @@ describe('Test New Team Canada achievement', () => {
 				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(NewTeamCanada.getProgress(achievement.goals)).toBeFalsy()
@@ -64,7 +64,7 @@ describe('Test New Team Canada achievement', () => {
 				playGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.endTurn()
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(NewTeamCanada.getProgress(achievement.goals)).toBeFalsy()

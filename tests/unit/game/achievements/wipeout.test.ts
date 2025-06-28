@@ -36,7 +36,7 @@ describe('Test "Wipeout" achievement', () => {
 					await test.playCardFromHand(Anvil, 'single_use')
 					await test.attack('secondary')
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Wipeout.getProgress(achievement.goals)).toEqual(3)
@@ -67,7 +67,7 @@ describe('Test "Wipeout" achievement', () => {
 
 					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Wipeout.getProgress(achievement.goals)).toEqual(2)
@@ -103,7 +103,7 @@ describe('Test "Wipeout" achievement', () => {
 					await test.attack('secondary')
 					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Wipeout.getProgress(achievement.goals)).toEqual(2)
@@ -139,7 +139,7 @@ describe('Test "Wipeout" achievement', () => {
 					await test.playCardFromHand(Anvil, 'single_use')
 					await test.attack('secondary')
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Wipeout.getProgress(achievement.goals)).toEqual(2)

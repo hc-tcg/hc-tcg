@@ -70,7 +70,7 @@ describe('Test Ethogirl achievement', () => {
 					await test.playCardFromHand(ShadEECommon, 'hermit', 0)
 					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Ethogirl.getProgress(achievement.goals)).toBeUndefined()
