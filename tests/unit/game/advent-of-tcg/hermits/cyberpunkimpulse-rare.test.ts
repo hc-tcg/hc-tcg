@@ -15,14 +15,7 @@ import Efficiency from 'common/cards/single-use/efficiency'
 import {SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {getAvailableEnergy} from 'server/routines/game'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Cyberpunk Impulse', () => {
 	test('Energy transferred', async () => {
@@ -45,8 +38,7 @@ describe('Test Cyberpunk Impulse', () => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
 					await test.playCardFromHand(FarmItem, 'item', 1, 0)
-					yield* playCardFromHand(
-						game,
+					await test.playCardFromHand(
 						String,
 						'item',
 						1,
