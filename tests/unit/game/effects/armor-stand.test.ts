@@ -6,7 +6,7 @@ import query from 'common/components/query'
 import {attack, endTurn, playCardFromHand, testGame} from '../utils'
 
 describe('Test Armor Stand', () => {
-	test("Armor stand doesn't give a prize card", () => {
+	test("Armor stand doesn't give a prize card", async () => {
 		await testGame(
 			{
 				playerOneDeck: [ArmorStand, EthosLabCommon],

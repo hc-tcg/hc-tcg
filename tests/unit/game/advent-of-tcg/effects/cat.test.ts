@@ -149,7 +149,7 @@ describe('Test Cat Effect Card', () => {
 		})
 	})
 
-	test("Cat + TFC's Branch Mine and Original xB's Get Good", () => {
+	test("Cat + TFC's Branch Mine and Original xB's Get Good", async () => {
 		await testGame(
 			{
 				playerOneDeck: [OriginalXBRare, MinerDoubleItem, MinerItem],

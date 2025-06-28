@@ -457,7 +457,7 @@ describe('Test Zombie Cleo', () => {
 		)
 	})
 
-	test("Test using Puppetry on Let's Go with Chorus Fruit", () => {
+	test("Test using Puppetry on Let's Go with Chorus Fruit", async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],

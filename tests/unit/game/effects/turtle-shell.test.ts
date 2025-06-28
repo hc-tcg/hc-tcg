@@ -155,7 +155,7 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test("Turtle Shell works with Ladder only on hermit's first turn active", () => {
+	test("Turtle Shell works with Ladder only on hermit's first turn active", async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -453,7 +453,7 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test("Turtle Shell works after previous active was KO'd by Extra Flee", () => {
+	test("Turtle Shell works after previous active was KO'd by Extra Flee", async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
@@ -498,7 +498,7 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test("Turtle Shells borrowed by Grian only work on Grian's first turn", () => {
+	test("Turtle Shells borrowed by Grian only work on Grian's first turn", async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -575,7 +575,7 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test("Turtle Shells taken by Emerald only work on destination hermit's first turn", () => {
+	test("Turtle Shells taken by Emerald only work on destination hermit's first turn", async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -652,7 +652,7 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test("Turtle Shells given by Emerald only work on destination hermit's first turn", () => {
+	test("Turtle Shells given by Emerald only work on destination hermit's first turn", async () => {
 		await testGame(
 			{
 				playerOneDeck: [

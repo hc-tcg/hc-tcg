@@ -27,7 +27,7 @@ describe('Test Jingler Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test("Test Jingler does nothing when opponent's hand is empty", () => {
+	test("Test Jingler does nothing when opponent's hand is empty", async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],

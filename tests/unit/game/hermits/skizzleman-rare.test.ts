@@ -89,7 +89,7 @@ describe('Test Skizzleman Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test("Gaslight doesn't trigger if the hermit takes no damage", () => {
+	test("Gaslight doesn't trigger if the hermit takes no damage", async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, GoldArmor],

@@ -32,7 +32,7 @@ import {
 } from '../../utils'
 
 describe('Test Biffa Secondary', () => {
-	test("Biffa's Museum functionality", () => {
+	test("Biffa's Museum functionality", async () => {
 		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 			playerTwoDeck: [Biffa2001Rare, MinerDoubleItem, IronArmor, InstantHealth],
@@ -84,7 +84,7 @@ describe('Test Biffa Secondary', () => {
 		})
 	})
 
-	test("Biffa's Museum + Knockback does not knock-out hermit as it is revived", () => {
+	test("Biffa's Museum + Knockback does not knock-out hermit as it is revived", async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Totem],
@@ -117,7 +117,7 @@ describe('Test Biffa Secondary', () => {
 		)
 	})
 
-	test("Biffa's Museum works when a Single Use requires confirmation", () => {
+	test("Biffa's Museum works when a Single Use requires confirmation", async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
@@ -149,7 +149,7 @@ describe('Test Biffa Secondary', () => {
 		)
 	})
 
-	test("Biffa's Museum counts playing a card after using Chest", () => {
+	test("Biffa's Museum counts playing a card after using Chest", async () => {
 		await testGame(
 			{
 				playerOneDeck: [Biffa2001Rare, ArmorStand, Chest],
@@ -186,7 +186,7 @@ describe('Test Biffa Secondary', () => {
 		)
 	})
 
-	test("Biffa's Museum counts playing a card after using Flint & Steel", () => {
+	test("Biffa's Museum counts playing a card after using Flint & Steel", async () => {
 		await testGame(
 			{
 				playerOneDeck: [
@@ -222,7 +222,7 @@ describe('Test Biffa Secondary', () => {
 		)
 	})
 
-	test("Biffa's Museum counts playing a card after using Allay", () => {
+	test("Biffa's Museum counts playing a card after using Allay", async () => {
 		await testGame(
 			{
 				playerOneDeck: [Biffa2001Rare, ArmorStand, ArmorStand, Allay],
@@ -259,7 +259,7 @@ describe('Test Biffa Secondary', () => {
 	})
 
 	// Test interactions with Grianch which allows two attacks in one turn
-	test("Biffa's Museum uses running total against Grianch", () => {
+	test("Biffa's Museum uses running total against Grianch", async () => {
 		await testGame(
 			{
 				playerOneDeck: [GrianchRare],
@@ -299,7 +299,7 @@ describe('Test Biffa Secondary', () => {
 		)
 	})
 
-	test("Biffa's Museum counts playing a card face down with Total Anonymity after Trident flips heads", () => {
+	test("Biffa's Museum counts playing a card face down with Total Anonymity after Trident flips heads", async () => {
 		await testGame(
 			{
 				playerOneDeck: [GrianchRare],

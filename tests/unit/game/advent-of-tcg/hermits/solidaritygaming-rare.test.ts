@@ -95,7 +95,7 @@ describe('Test Jimmy "The Law"', () => {
 		)
 	})
 
-	test("Sheriff's Protection can only protect one hermit per side", () => {
+	test("Sheriff's Protection can only protect one hermit per side", async () => {
 		await testGame(
 			{
 				playerOneDeck: [SolidaritygamingRare, EthosLabCommon],
@@ -244,7 +244,7 @@ describe('Test Jimmy "The Law"', () => {
 		)
 	})
 
-	test("Sheriff's Protection protects against Fire + Egg + Gas Light", () => {
+	test("Sheriff's Protection protects against Fire + Egg + Gas Light", async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, SolidaritygamingRare],
@@ -291,7 +291,7 @@ describe('Test Jimmy "The Law"', () => {
 		)
 	})
 
-	test("Sheriff's Protection does not expire when row is activated by Knockback", () => {
+	test("Sheriff's Protection does not expire when row is activated by Knockback", async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Knockback],
@@ -343,7 +343,7 @@ describe('Test Jimmy "The Law"', () => {
 		)
 	})
 
-	test("Sheriff's Protection still expires when row is deactivated by Knockback", () => {
+	test("Sheriff's Protection still expires when row is deactivated by Knockback", async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Knockback],
@@ -397,7 +397,7 @@ describe('Test Jimmy "The Law"', () => {
 		)
 	})
 
-	test("Sheriff's Protection works after previous active was KO'd by Extra Flee", () => {
+	test("Sheriff's Protection works after previous active was KO'd by Extra Flee", async () => {
 		await testGame(
 			{
 				playerOneDeck: [SolidaritygamingRare, EthosLabCommon],
@@ -453,7 +453,7 @@ describe('Test Jimmy "The Law"', () => {
 		)
 	})
 
-	test("Sheriff's Protection expires correctly after defending against Peace Out + Egg", () => {
+	test("Sheriff's Protection expires correctly after defending against Peace Out + Egg", async () => {
 		await testGame(
 			{
 				playerOneDeck: [IJevinRare, Egg, Egg],

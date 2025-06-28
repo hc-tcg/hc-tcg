@@ -3,7 +3,7 @@ import HurtinHermits from 'common/achievements/hurtin-hermits'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
 
-test("Test Hurtin' Hermits achivement", () => {
+test("Test Hurtin' Hermits achivement", async () => {
 	testAchivement(
 		{
 			achievement: HurtinHermits,

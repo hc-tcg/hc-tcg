@@ -66,7 +66,7 @@ describe('Test Powder Snow Bucket', () => {
 		)
 	})
 
-	test("Knockback and Egg can not be used when opponent's AFK Hermits are Frozen", () => {
+	test("Knockback and Egg can not be used when opponent's AFK Hermits are Frozen", async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, PowderSnowBucket],
@@ -93,7 +93,7 @@ describe('Test Powder Snow Bucket', () => {
 		)
 	})
 
-	test("Powder Snow disables switching for Peace Out, Chorus Fruit and Let's Go", () => {
+	test("Powder Snow disables switching for Peace Out, Chorus Fruit and Let's Go", async () => {
 		await testGame(
 			{
 				playerOneDeck: [Cubfan135Rare, EthosLabCommon, ChorusFruit],

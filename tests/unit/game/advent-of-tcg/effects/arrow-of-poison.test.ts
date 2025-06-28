@@ -88,7 +88,7 @@ describe('Test Arrow of Poison', () => {
 		)
 	})
 
-	test("Wa'a triggers Arrow of Poison", () => {
+	test("Wa'a triggers Arrow of Poison", async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],

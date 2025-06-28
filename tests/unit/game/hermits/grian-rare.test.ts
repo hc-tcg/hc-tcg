@@ -145,7 +145,7 @@ describe('Test Grian Rare', () => {
 		)
 	})
 
-	test("Test Borrow discards to Grian's discard pile", () => {
+	test("Test Borrow discards to Grian's discard pile", async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Loyalty],
@@ -178,7 +178,7 @@ describe('Test Grian Rare', () => {
 		)
 	})
 
-	test("Test Borrow cannot replace card in Grian's attach slot", () => {
+	test("Test Borrow cannot replace card in Grian's attach slot", async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Loyalty],
