@@ -32,9 +32,10 @@ import {
 	playCardFromHand,
 	removeEffect,
 	testGame,
+	TestGameFixture,
 } from '../utils'
 
-function* testPrimaryDoesNotCrash(game: GameModel) {
+async function testPrimaryDoesNotCrash(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
 
 	await test.endTurn()
@@ -55,7 +56,10 @@ function* testPrimaryDoesNotCrash(game: GameModel) {
 	).not.toEqual(EthosLabCommon.health)
 }
 
-function* testAmnesiaDisablesPuppetry(game: GameModel) {
+async function testAmnesiaDisablesPuppetry(
+	test: TestGameFixture,
+	game: GameModel,
+) {
 	await test.playCardFromHand(ArchitectFalseRare, 'hermit', 0)
 
 	await test.endTurn()
@@ -71,7 +75,7 @@ function* testAmnesiaDisablesPuppetry(game: GameModel) {
 		query.slot.rowIndex(1),
 	)
 
-	await test.finishModalRequest( {pick: 'primary'})
+	await test.finishModalRequest({pick: 'primary'})
 
 	await test.endTurn()
 
@@ -89,7 +93,10 @@ function* testAmnesiaDisablesPuppetry(game: GameModel) {
 	).not.toBe(null)
 }
 
-function* testAmnesiaBlocksPuppetryMock(game: GameModel) {
+async function testAmnesiaBlocksPuppetryMock(
+	test: TestGameFixture,
+	game: GameModel,
+) {
 	await test.playCardFromHand(ArchitectFalseRare, 'hermit', 0)
 	await test.endTurn()
 
@@ -126,10 +133,10 @@ function* testAmnesiaBlocksPuppetryMock(game: GameModel) {
 	expect(
 		(game.state.modalRequests[0].modal as CopyAttack.Data).availableAttacks,
 	).not.toContain('secondary')
-	await test.finishModalRequest( {pick: 'primary'})
+	await test.finishModalRequest({pick: 'primary'})
 }
 
-function* testPuppetryCanceling(game: GameModel) {
+async function testPuppetryCanceling(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 	await test.endTurn()
@@ -146,7 +153,7 @@ function* testPuppetryCanceling(game: GameModel) {
 		query.slot.rowIndex(1),
 	)
 
-	await test.finishModalRequest( {pick: 'secondary'})
+	await test.finishModalRequest({pick: 'secondary'})
 
 	expect(game.state.pickRequests).toHaveLength(1)
 	await test.pick(
@@ -155,7 +162,7 @@ function* testPuppetryCanceling(game: GameModel) {
 		query.slot.rowIndex(2),
 	)
 
-	await test.finishModalRequest( {cancel: true})
+	await test.finishModalRequest({cancel: true})
 
 	await test.attack('secondary')
 
@@ -166,7 +173,7 @@ function* testPuppetryCanceling(game: GameModel) {
 		query.slot.rowIndex(1),
 	)
 
-	await test.finishModalRequest( {pick: 'secondary'})
+	await test.finishModalRequest({pick: 'secondary'})
 
 	expect(game.state.pickRequests).toHaveLength(1)
 	await test.pick(
@@ -175,10 +182,10 @@ function* testPuppetryCanceling(game: GameModel) {
 		query.slot.rowIndex(2),
 	)
 
-	await test.finishModalRequest( {pick: 'secondary'})
+	await test.finishModalRequest({pick: 'secondary'})
 	// Flip one coin for "Watch This"
-	await test.finishModalRequest( {result: true, cards: null})
-	await test.finishModalRequest( {result: false, cards: null})
+	await test.finishModalRequest({result: true, cards: null})
+	await test.finishModalRequest({result: false, cards: null})
 
 	expect(
 		game.components.find(
@@ -193,7 +200,7 @@ function* testPuppetryCanceling(game: GameModel) {
 	)
 }
 
-function* testPuppetingJopacity(game: GameModel) {
+async function testPuppetingJopacity(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(SmallishbeansCommon, 'hermit', 0)
 
 	await test.endTurn()
@@ -208,7 +215,7 @@ function* testPuppetingJopacity(game: GameModel) {
 		query.slot.hermit,
 		query.slot.rowIndex(1),
 	)
-	await test.finishModalRequest( {pick: 'secondary'})
+	await test.finishModalRequest({pick: 'secondary'})
 
 	await test.endTurn()
 	await test.endTurn()
@@ -219,7 +226,7 @@ function* testPuppetingJopacity(game: GameModel) {
 		query.slot.hermit,
 		query.slot.rowIndex(1),
 	)
-	await test.finishModalRequest( {pick: 'secondary'})
+	await test.finishModalRequest({pick: 'secondary'})
 
 	expect(game.opponentPlayer.activeRow?.health).toBe(
 		SmallishbeansCommon.health -
@@ -236,7 +243,7 @@ function* testPuppetingJopacity(game: GameModel) {
 		query.slot.hermit,
 		query.slot.rowIndex(2),
 	)
-	await test.finishModalRequest( {pick: 'secondary'})
+	await test.finishModalRequest({pick: 'secondary'})
 
 	expect(game.opponentPlayer.activeRow?.health).toBe(
 		SmallishbeansCommon.health -
@@ -254,7 +261,10 @@ function* testPuppetingJopacity(game: GameModel) {
 	).toBe(null)
 }
 
-function* testPuppetryDiscardingItem(game: GameModel) {
+async function testPuppetryDiscardingItem(
+	test: TestGameFixture,
+	game: GameModel,
+) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 	await test.endTurn()
@@ -270,7 +280,7 @@ function* testPuppetryDiscardingItem(game: GameModel) {
 		query.slot.rowIndex(1),
 	)
 
-	await test.finishModalRequest( {pick: 'secondary'})
+	await test.finishModalRequest({pick: 'secondary'})
 
 	await test.pick(
 		query.slot.opponent,
@@ -296,7 +306,10 @@ function* testPuppetryDiscardingItem(game: GameModel) {
 	).toBe(null)
 }
 
-function* testPuppetingTotalAnonymity(game: GameModel) {
+async function testPuppetingTotalAnonymity(
+	test: TestGameFixture,
+	game: GameModel,
+) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 	await test.endTurn()
 
@@ -308,7 +321,7 @@ function* testPuppetingTotalAnonymity(game: GameModel) {
 		query.slot.hermit,
 		query.slot.rowIndex(1),
 	)
-	await test.finishModalRequest( {pick: 'secondary'})
+	await test.finishModalRequest({pick: 'secondary'})
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 	expect(
 		game.components.find(
@@ -339,7 +352,7 @@ function* testPuppetingTotalAnonymity(game: GameModel) {
 	).toBe(false)
 }
 
-function* testPuppetingTimeSkip(game: GameModel) {
+async function testPuppetingTimeSkip(test: TestGameFixture, game: GameModel) {
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 	await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 	await test.endTurn()
@@ -352,10 +365,10 @@ function* testPuppetingTimeSkip(game: GameModel) {
 		query.slot.hermit,
 		query.slot.rowIndex(1),
 	)
-	await test.finishModalRequest( {pick: 'secondary'})
+	await test.finishModalRequest({pick: 'secondary'})
 	await test.endTurn()
 
-	await test.changeActiveHermit( 1)
+	await test.changeActiveHermit(1)
 	await test.endTurn()
 
 	await test.playCardFromHand(Bow, 'single_use')
@@ -368,7 +381,7 @@ function* testPuppetingTimeSkip(game: GameModel) {
 	expect(
 		(game.state.modalRequests[0].modal as CopyAttack.Data).availableAttacks,
 	).not.toContain('secondary')
-	await test.finishModalRequest( {pick: 'primary'})
+	await test.finishModalRequest({pick: 'primary'})
 	await test.removeEffect()
 	await test.attack('secondary')
 	await test.pick(
@@ -376,7 +389,7 @@ function* testPuppetingTimeSkip(game: GameModel) {
 		query.slot.hermit,
 		query.slot.rowIndex(1),
 	)
-	await test.finishModalRequest( {pick: 'primary'})
+	await test.finishModalRequest({pick: 'primary'})
 }
 
 describe('Test Zombie Cleo', () => {
@@ -475,7 +488,7 @@ describe('Test Zombie Cleo', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					await test.finishModalRequest( {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,

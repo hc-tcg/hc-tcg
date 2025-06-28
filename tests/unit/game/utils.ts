@@ -250,7 +250,7 @@ function testSagas(rootSaga: any, testingSaga: any) {
 	}
 }
 
-class TestGameFixture {
+export class TestGameFixture {
 	con: GameController
 	game: GameModel
 
