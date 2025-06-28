@@ -416,6 +416,29 @@ export class TestGameFixture {
 	}
 }
 
+export class BossGameTestFixture extends TestGameFixture {
+	async bossAttack(...attack: BOSS_ATTACK) {
+		const bossCard = this.game.components.find(
+			CardComponent,
+			query.card.is(EvilXisumaBoss),
+			query.card.currentPlayer,
+		)
+		const attackType = this.game.state.turn.availableActions.find(
+			(action) => action === 'PRIMARY_ATTACK' || action === 'SECONDARY_ATTACK',
+		)
+		if (bossCard === null) throw new Error('Boss card not found to attack with')
+		if (attackType === undefined)
+			throw new Error('Boss can not attack right now')
+		supplyBossAttack(bossCard, attack)
+		await this.con.sendTurnAction({
+			playerEntity: this.game.currentPlayerEntity,
+			action: {
+				type: attackType,
+			},
+		})
+	}
+}
+
 const defaultGameSettings = {
 	maxTurnTime: 90 * 1000,
 	extraActionTime: 30 * 1000,
@@ -503,7 +526,7 @@ export function testBossFight(
 		 * }
 		 * ```
 		 */
-		saga: (game: GameModel) => any
+		saga: (test: BossGameTestFixture, game: GameModel) => any
 		// This is the place to check the state of the game after it ends.
 		then?: (game: GameModel) => any
 		playerDeck: Array<Card>
@@ -604,7 +627,7 @@ export async function testAchivement(
 	let achievementComponent: AchievementComponent
 	let player: PlayerComponent
 
-	let saga = function* (game: GameModel) {
+	let achievementTest = async (test: TestGameFixture, game: GameModel) => {
 		player = game.currentPlayer
 		let achievementProgress: Record<number, number> = {}
 
@@ -626,7 +649,7 @@ export async function testAchivement(
 			achievementObserver,
 		)
 
-		yield* options.playGame(game)
+		await options.playGame(test, game)
 	}
 
 	let then = function (game: GameModel, gameOutcome: GameOutcome) {
@@ -641,34 +664,13 @@ export async function testAchivement(
 
 	await testGame(
 		{
-			saga,
+			saga: achievementTest,
 			then,
 			playerOneDeck: options.playerOneDeck,
 			playerTwoDeck: options.playerTwoDeck,
 		},
 		settings,
 	)
-}
-
-export function* bossAttack(game: GameModel, ...attack: BOSS_ATTACK) {
-	const bossCard = game.components.find(
-		CardComponent,
-		query.card.is(EvilXisumaBoss),
-		query.card.currentPlayer,
-	)
-	const attackType = game.state.turn.availableActions.find(
-		(action) => action === 'PRIMARY_ATTACK' || action === 'SECONDARY_ATTACK',
-	)
-	if (bossCard === null) throw new Error('Boss card not found to attack with')
-	if (attackType === undefined) throw new Error('Boss can not attack right now')
-	supplyBossAttack(bossCard, attack)
-	yield* put({
-		type: 'GAME_TURN_ACTION',
-		playerEntity: game.currentPlayerEntity,
-		action: {
-			type: attackType,
-		},
-	})
 }
 
 export function testReplayGame(options: {

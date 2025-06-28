@@ -456,7 +456,7 @@ describe('Test Slimeball', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
-					yield* bossAttack(game, '50DMG', 'HEAL150', 'ITEMCARD')
+					await test.bossAttack(game, '50DMG', 'HEAL150', 'ITEMCARD')
 					expect(game.state.pickRequests).toHaveLength(0)
 					expect(
 						game.components.find(CardComponent, query.card.is(BalancedItem))

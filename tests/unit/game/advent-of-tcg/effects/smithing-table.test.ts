@@ -15,7 +15,6 @@ import ExBossNineEffect, {
 import SmithingTableEffect from 'common/status-effects/smithing-table'
 import {
 	attack,
-	bossAttack,
 	endTurn,
 	pick,
 	playCardFromHand,
@@ -113,7 +112,7 @@ describe('Test Smithing Table', () => {
 				await test.endTurn()
 
 				await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
-				yield* bossAttack(game, '50DMG', 'HEAL150', 'EFFECTCARD')
+				await test.bossAttack('50DMG', 'HEAL150', 'EFFECTCARD')
 				expect(
 					game.components.find(
 						CardComponent,
