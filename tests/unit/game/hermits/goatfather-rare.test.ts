@@ -3,21 +3,21 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GoatfatherRare from 'common/cards/hermits/goatfather-rare'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Goatfather Rare', () => {
-	test('Test anvil drop does the proper amount of damage', () => {
-		testGame(
+	test('Test anvil drop does the proper amount of damage', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [GoatfatherRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, GoatfatherRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(GoatfatherRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(

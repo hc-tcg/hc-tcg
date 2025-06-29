@@ -1,18 +1,18 @@
 import {AIComponent} from 'common/components/ai-component'
-import {delay, put} from 'typed-redux-saga'
 import {GameController} from '../../game-controller'
-import {LocalMessage, localMessages} from '../../messages'
+import {TurnActionAndPlayer} from '../../routines/game'
 
-export default function* virtualPlayerActionSaga(
+export default async function handleVirtualPlayerAction(
 	con: GameController,
 	component: AIComponent,
-) {
+): Promise<TurnActionAndPlayer> {
 	const coinFlips = con.game.currentPlayer.coinFlips
-	yield* delay(con.getRandomDelayForAI(coinFlips))
+	await new Promise((resolve: any) =>
+		setTimeout(resolve, con.getRandomDelayForAI(coinFlips)),
+	)
 	const action = component.getNextTurnAction()
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
+	return {
 		action: action,
 		playerEntity: component.playerEntity,
-	})
+	}
 }

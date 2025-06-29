@@ -11,34 +11,27 @@ import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import FireEffect from 'common/status-effects/fire'
 import {IgnoreAttachSlotEffect} from 'common/status-effects/ignore-attach'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Gemini Tay', () => {
-	test('Test Axe Functions Until End Of Turn', () => {
-		testGame(
+	test('Test Axe Functions Until End Of Turn', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, IronArmor],
 				playerTwoDeck: [GeminiTayRare, GoldenAxe, IronSword],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, IronArmor, 'attach', 0)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(IronArmor, 'attach', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 0)
-					yield* playCardFromHand(game, GoldenAxe, 'single_use')
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
+					await test.playCardFromHand(GoldenAxe, 'single_use')
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
-					yield* playCardFromHand(game, IronSword, 'single_use')
-					yield* attack(game, 'single-use')
+					await test.playCardFromHand(IronSword, 'single_use')
+					await test.attack('single-use')
 
 					// We expect that the iron armor attached to etho did not block any damage.
 					expect(
@@ -54,7 +47,7 @@ describe('Test Gemini Tay', () => {
 							20 /* Iron Sword*/,
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// We expect that the iron armor attached to etho to no longer be disabled.
 					expect(
@@ -70,27 +63,27 @@ describe('Test Gemini Tay', () => {
 		)
 	})
 
-	test('Test Totem against Lava Bucket then Axe', () => {
-		testGame(
+	test('Test Totem against Lava Bucket then Axe', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Totem],
 				playerTwoDeck: [GeminiTayRare, LavaBucket, GoldenAxe],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Totem, 'attach', 0)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(Totem, 'attach', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Manually set Etho (1) health to trigger zone
 					game.opponentPlayer.activeRow!.health = 140
 
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 0)
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
 
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(LavaBucket, 'single_use')
+					await test.applyEffect()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -100,10 +93,10 @@ describe('Test Gemini Tay', () => {
 						),
 					).not.toBe(null)
 
-					yield* playCardFromHand(game, GoldenAxe, 'single_use')
-					yield* attack(game, 'single-use')
+					await test.playCardFromHand(GoldenAxe, 'single_use')
+					await test.attack('single-use')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.index).toBeUndefined()
 				},
@@ -112,28 +105,28 @@ describe('Test Gemini Tay', () => {
 		)
 	})
 
-	test('Test Totem against Axe then Lava Bucket', () => {
-		testGame(
+	test('Test Totem against Axe then Lava Bucket', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Totem],
 				playerTwoDeck: [GeminiTayRare, LavaBucket, GoldenAxe],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Totem, 'attach', 0)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(Totem, 'attach', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Manually set Etho (1) health to trigger zone
 					game.opponentPlayer.activeRow!.health = 140
 
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 0)
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
 
-					yield* playCardFromHand(game, GoldenAxe, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(GoldenAxe, 'single_use')
+					await test.attack('secondary')
 
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(LavaBucket, 'single_use')
+					await test.applyEffect()
 
 					expect(
 						game.components.find(
@@ -143,7 +136,7 @@ describe('Test Gemini Tay', () => {
 						),
 					).not.toBe(null)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.index).toBeUndefined()
 				},
@@ -152,26 +145,25 @@ describe('Test Gemini Tay', () => {
 		)
 	})
 
-	test('Test Chorus Fruit with Gemini Slay', () => {
-		testGame(
+	test('Test Chorus Fruit with Gemini Slay', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [GeminiTayRare, EthosLabCommon, ChorusFruit],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
-					yield* playCardFromHand(game, ChorusFruit, 'single_use')
+					await test.playCardFromHand(ChorusFruit, 'single_use')
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toHaveLength(1)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

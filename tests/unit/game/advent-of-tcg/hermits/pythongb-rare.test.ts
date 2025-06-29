@@ -4,24 +4,24 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import RendogCommon from 'common/cards/hermits/rendog-common'
 import XisumavoidRare from 'common/cards/hermits/xisumavoid-rare'
 import {GameModel} from 'common/models/game-model'
-import {attack, endTurn, playCardFromHand, testGame} from '../../utils'
+import {testGame} from '../../utils'
 
-function* testOneHermit(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-	yield* endTurn(game)
+async function testOneHermit(test: TestGameFixture, game: GameModel) {
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+	await test.endTurn()
 
-	yield* playCardFromHand(game, PythonGBRare, 'hermit', 0)
-	yield* playCardFromHand(game, RendogCommon, 'hermit', 2)
-	yield* attack(game, 'secondary')
+	await test.playCardFromHand(PythonGBRare, 'hermit', 0)
+	await test.playCardFromHand(RendogCommon, 'hermit', 2)
+	await test.attack('secondary')
 	expect(game.opponentPlayer.activeRow?.health).toBe(
 		EthosLabCommon.health - PythonGBRare.secondary.damage,
 	)
-	yield* endTurn(game)
+	await test.endTurn()
 
-	yield* endTurn(game)
+	await test.endTurn()
 
-	yield* playCardFromHand(game, RendogCommon, 'hermit', 1)
-	yield* attack(game, 'secondary')
+	await test.playCardFromHand(RendogCommon, 'hermit', 1)
+	await test.attack('secondary')
 	expect(game.opponentPlayer.activeRow?.health).toBe(
 		EthosLabCommon.health -
 			PythonGBRare.secondary.damage -
@@ -29,34 +29,34 @@ function* testOneHermit(game: GameModel) {
 	)
 }
 
-function* testManyHermits(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-	yield* endTurn(game)
+async function testManyHermits(test: TestGameFixture, game: GameModel) {
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+	await test.endTurn()
 
-	yield* playCardFromHand(game, PythonGBRare, 'hermit', 1)
-	yield* playCardFromHand(game, RendogCommon, 'hermit', 0)
-	yield* playCardFromHand(game, XisumavoidRare, 'hermit', 2)
-	yield* attack(game, 'secondary')
+	await test.playCardFromHand(PythonGBRare, 'hermit', 1)
+	await test.playCardFromHand(RendogCommon, 'hermit', 0)
+	await test.playCardFromHand(XisumavoidRare, 'hermit', 2)
+	await test.attack('secondary')
 	expect(game.opponentPlayer.activeRow?.health).toBe(
 		EthosLabCommon.health - PythonGBRare.secondary.damage * 2 * 2,
 	)
 }
 
 describe('Test PythonGB Logfellas', () => {
-	test('Test Python Is Triggered By Adjacent Rendog', () => {
-		testGame(
+	test('Test Python Is Triggered By Adjacent Rendog', async () => {
+		await testGame(
 			{
-				saga: testOneHermit,
+				testGame: testOneHermit,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [PythonGBRare, RendogCommon, RendogCommon],
 			},
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test Python Is Triggered By Multiple Hermits', () => {
-		testGame(
+	test('Test Python Is Triggered By Multiple Hermits', async () => {
+		await testGame(
 			{
-				saga: testManyHermits,
+				testGame: testManyHermits,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [PythonGBRare, RendogCommon, XisumavoidRare],
 			},

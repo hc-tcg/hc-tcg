@@ -6,29 +6,21 @@ import ChorusFruit from 'common/cards/single-use/chorus-fruit'
 import PotionOfWeakness from 'common/cards/single-use/potion-of-weakness'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Weakness', () => {
-	test('Weakness Damage Negative Control', () => {
-		testGame(
+	test('Weakness Damage Negative Control', async () => {
+		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon],
 				playerTwoDeck: [VintageBeefCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* attack(game, 'primary')
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.attack('primary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -43,20 +35,20 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Works Both Ways', () => {
-		testGame(
+	test('Weakness Works Both Ways', async () => {
+		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon],
 				playerTwoDeck: [VintageBeefCommon, PotionOfWeakness],
-				saga: function* (game) {
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'primary')
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
+					await test.applyEffect()
+					await test.attack('primary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -68,8 +60,8 @@ describe('Test Weakness', () => {
 						VintageBeefCommon.health - VintageBeefCommon.primary.damage - 20,
 					)
 
-					yield* attack(game, 'primary')
-					yield* endTurn(game)
+					await test.attack('primary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -86,8 +78,8 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Works Through Switches', () => {
-		testGame(
+	test('Weakness Works Through Switches', async () => {
+		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon, VintageBeefCommon],
 				playerTwoDeck: [
@@ -96,29 +88,28 @@ describe('Test Weakness', () => {
 					PotionOfWeakness,
 					ChorusFruit,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ChorusFruit, 'single_use')
-					yield* attack(game, 'primary')
-					yield* pick(
-						game,
+					await test.playCardFromHand(ChorusFruit, 'single_use')
+					await test.attack('primary')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -130,8 +121,8 @@ describe('Test Weakness', () => {
 						VintageBeefCommon.health - VintageBeefCommon.primary.damage - 20,
 					)
 
-					yield* attack(game, 'primary')
-					yield* endTurn(game)
+					await test.attack('primary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -148,26 +139,26 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Does Not Work on Wrong Types', () => {
-		testGame(
+	test('Weakness Does Not Work on Wrong Types', async () => {
+		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon, ImpulseSVCommon],
 				playerTwoDeck: [VintageBeefCommon, PotionOfWeakness],
-				saga: function* (game) {
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* attack(game, 'primary')
-					yield* endTurn(game)
+					await test.attack('primary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -177,8 +168,8 @@ describe('Test Weakness', () => {
 						)?.health,
 					).toBe(ImpulseSVCommon.health - VintageBeefCommon.primary.damage)
 
-					yield* attack(game, 'primary')
-					yield* endTurn(game)
+					await test.attack('primary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -193,26 +184,26 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Does Not Stack Self', () => {
-		testGame(
+	test('Weakness Does Not Stack Self', async () => {
+		await testGame(
 			{
 				playerOneDeck: [VintageBeefCommon],
 				playerTwoDeck: [VintageBeefCommon, PotionOfWeakness, PotionOfWeakness],
-				saga: function* (game) {
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'primary')
-					yield* endTurn(game)
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
+					await test.applyEffect()
+					await test.attack('primary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -229,20 +220,20 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Does Not Stack With Type Chart', () => {
-		testGame(
+	test('Weakness Does Not Stack With Type Chart', async () => {
+		await testGame(
 			{
 				playerOneDeck: [SmallishbeansRare],
 				playerTwoDeck: [ImpulseSVCommon, PotionOfWeakness],
-				saga: function* (game) {
-					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(SmallishbeansRare, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 0)
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'primary')
-					yield* endTurn(game)
+					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 0)
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
+					await test.applyEffect()
+					await test.attack('primary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -257,8 +248,8 @@ describe('Test Weakness', () => {
 		)
 	})
 
-	test('Weakness Works Through KOs', () => {
-		testGame(
+	test('Weakness Works Through KOs', async () => {
+		await testGame(
 			{
 				playerOneDeck: [SmallishbeansRare, ImpulseSVCommon, SmallishbeansRare],
 				playerTwoDeck: [
@@ -267,36 +258,36 @@ describe('Test Weakness', () => {
 					SmallishbeansRare,
 					PotionOfWeakness,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 0)
-					yield* playCardFromHand(game, ImpulseSVCommon, 'hermit', 1)
-					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 2)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(SmallishbeansRare, 'hermit', 0)
+					await test.playCardFromHand(ImpulseSVCommon, 'hermit', 1)
+					await test.playCardFromHand(SmallishbeansRare, 'hermit', 2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 0)
-					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 1)
-					yield* playCardFromHand(game, SmallishbeansRare, 'hermit', 2)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(SmallishbeansRare, 'hermit', 0)
+					await test.playCardFromHand(SmallishbeansRare, 'hermit', 1)
+					await test.playCardFromHand(SmallishbeansRare, 'hermit', 2)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
+					await test.applyEffect()
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow).toBe(null)
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* attack(game, 'primary')
-					yield* endTurn(game)
+					await test.attack('primary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -306,11 +297,11 @@ describe('Test Weakness', () => {
 						)?.health,
 					).toBe(ImpulseSVCommon.health - SmallishbeansRare.primary.damage)
 
-					yield* changeActiveHermit(game, 2)
-					yield* endTurn(game)
+					await test.changeActiveHermit(2)
+					await test.endTurn()
 
-					yield* attack(game, 'primary')
-					yield* endTurn(game)
+					await test.attack('primary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(

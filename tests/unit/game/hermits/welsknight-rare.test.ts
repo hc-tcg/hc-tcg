@@ -5,21 +5,21 @@ import WelsknightRare from 'common/cards/hermits/welsknight-rare'
 import {InstantHealthII} from 'common/cards/single-use/instant-health'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test rare welsknight', () => {
-	test('Vengance functionality', () => {
-		testGame(
+	test('Vengance functionality', async () => {
+		await testGame(
 			{
 				playerOneDeck: [GeminiTayCommon, GoldArmor, InstantHealthII],
 				playerTwoDeck: [WelsknightRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, WelsknightRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(WelsknightRare, 'hermit', 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -29,11 +29,11 @@ describe('Test rare welsknight', () => {
 						)?.health,
 					).toBe(GeminiTayCommon.health - WelsknightRare.secondary.damage)
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -49,19 +49,18 @@ describe('Test rare welsknight', () => {
 					)
 
 					//make it possible to survive 140 damage
-					yield* playCardFromHand(game, InstantHealthII, 'single_use')
-					yield* pick(
-						game,
+					await test.playCardFromHand(InstantHealthII, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* playCardFromHand(game, GoldArmor, 'attach', 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(GoldArmor, 'attach', 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(

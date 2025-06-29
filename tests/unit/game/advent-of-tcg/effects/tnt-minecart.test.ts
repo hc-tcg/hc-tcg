@@ -2,63 +2,57 @@ import {describe, expect, test} from '@jest/globals'
 import MinecartWithTNT from 'common/cards/advent-of-tcg/single-use/tnt-minecart'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import BadOmen from 'common/cards/single-use/bad-omen'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test TNT Minecart', () => {
-	test('TNT Minecart heads deals 100hp to opponent', () => {
-		testGame(
+	test('TNT Minecart heads deals 100hp to opponent', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon, MinecartWithTNT],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, MinecartWithTNT, 'single_use')
-					yield* attack(game, 'single-use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(MinecartWithTNT, 'single_use')
+					await test.attack('single-use')
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
 					)
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - 100,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{forceCoinFlip: true},
 		)
 	})
 
-	test('TNT Minecart tails deals 40hp backlash', () => {
-		testGame(
+	test('TNT Minecart tails deals 40hp backlash', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, MinecartWithTNT],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(BadOmen, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* playCardFromHand(game, MinecartWithTNT, 'single_use')
-					yield* attack(game, 'single-use')
+					await test.playCardFromHand(MinecartWithTNT, 'single_use')
+					await test.attack('single-use')
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - 40,
 					)
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{forceCoinFlip: true},

@@ -10,7 +10,7 @@ import TinFoilChefCommon from 'common/cards/hermits/tinfoilchef-common'
 import XBCraftedCommon from 'common/cards/hermits/xbcrafted-common'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
+import {testGame} from './utils'
 
 let typeToHermitMap = {
 	Prankster: PoultrymanCommon,
@@ -30,20 +30,20 @@ function createTypeAdvantageTest(
 	attackingType: HermitType,
 	defendingType: HermitType,
 ) {
-	test(attackingType + ' v ' + defendingType, () => {
+	test(attackingType + ' v ' + defendingType, async () => {
 		const attacker = typeToHermitMap[attackingType]
 		const defender = typeToHermitMap[defendingType]
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [defender],
 				playerTwoDeck: [attacker],
-				saga: function* (game) {
-					yield* playCardFromHand(game, defender, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(defender, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, attacker, 'hermit', 0)
-					yield* attack(game, 'primary')
-					yield* endTurn(game)
+					await test.playCardFromHand(attacker, 'hermit', 0)
+					await test.attack('primary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(

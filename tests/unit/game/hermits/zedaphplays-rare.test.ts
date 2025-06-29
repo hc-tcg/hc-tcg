@@ -6,30 +6,24 @@ import PotionOfWeakness from 'common/cards/single-use/potion-of-weakness'
 import TNT from 'common/cards/single-use/tnt'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Zedaph Sheep Stare', () => {
-	test('Sheep Stare functionality', () => {
-		testGame(
+	test('Sheep Stare functionality', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, TNT],
 				playerTwoDeck: [ZedaphPlaysRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ZedaphPlaysRare, 'hermit', 0)
-					yield* attack(game, 'primary')
-					yield* endTurn(game)
+					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 0)
+					await test.attack('primary')
+					await test.endTurn()
 
-					yield* playCardFromHand(game, TNT, 'single_use')
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(TNT, 'single_use')
+					await test.attack('primary')
 					expect(
 						game.currentPlayer.coinFlips.filter((flip) => flip.opponentFlip),
 					).toHaveLength(1)
@@ -48,21 +42,21 @@ describe('Test Zedaph Sheep Stare', () => {
 		)
 	})
 
-	test('Sheep Stare does not redirect Anvil Drop AFK damage', () => {
-		testGame(
+	test('Sheep Stare does not redirect Anvil Drop AFK damage', async () => {
+		await testGame(
 			{
 				playerOneDeck: [GoatfatherRare],
 				playerTwoDeck: [ZedaphPlaysRare, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, GoatfatherRare, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(GoatfatherRare, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ZedaphPlaysRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* attack(game, 'primary')
-					yield* endTurn(game)
+					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.attack('primary')
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.currentPlayer.coinFlips.filter((flip) => flip.opponentFlip),
 					).toHaveLength(1)
@@ -88,22 +82,22 @@ describe('Test Zedaph Sheep Stare', () => {
 		)
 	})
 
-	test('Sheep Stare does not flip for weakness', () => {
-		testGame(
+	test('Sheep Stare does not flip for weakness', async () => {
+		await testGame(
 			{
 				playerOneDeck: [ZedaphPlaysRare],
 				playerTwoDeck: [ZedaphPlaysRare, PotionOfWeakness],
-				saga: function* (game) {
-					yield* playCardFromHand(game, ZedaphPlaysRare, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ZedaphPlaysRare, 'hermit', 0)
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'primary')
-					yield* endTurn(game)
+					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 0)
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
+					await test.applyEffect()
+					await test.attack('primary')
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.currentPlayer.coinFlips.filter((flip) => flip.opponentFlip),
 					).toHaveLength(1)

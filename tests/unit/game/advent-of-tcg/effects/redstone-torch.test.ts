@@ -7,17 +7,11 @@ import TNT from 'common/cards/single-use/tnt'
 import {CardComponent} from 'common/components'
 import query from 'common/components/query'
 import {SelectCards} from 'common/types/modal-requests'
-import {
-	applyEffect,
-	endTurn,
-	finishModalRequest,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Redstone Torch', () => {
-	test('Detonate 3 TNT', () => {
-		testGame(
+	test('Detonate 3 TNT', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [
@@ -32,13 +26,13 @@ describe('Test Redstone Torch', () => {
 					...Array(3).fill(BalancedItem),
 					TNT,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, RedstoneTorch, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(RedstoneTorch, 'single_use')
+					await test.applyEffect()
 					expect(game.state.modalRequests[0]?.modal).toMatchObject({
 						type: 'selectCards',
 						selectionSize: 0,
@@ -53,7 +47,7 @@ describe('Test Redstone Torch', () => {
 							game.state.modalRequests[0] as SelectCards.Request
 						).modal.cards.map((entity) => deckEntities.indexOf(entity)),
 					).toStrictEqual([0, 1, 2, 3, 4, 6, 7])
-					yield* finishModalRequest(game, {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - 40 * 3,
 					)
@@ -63,15 +57,15 @@ describe('Test Redstone Torch', () => {
 							.sort(CardComponent.compareOrder)
 							.map((card) => deckEntities.indexOf(card.entity)),
 					).toStrictEqual([0, 1, 2, 3, 4, 6, 7])
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false},
 		)
 	})
 
-	test('Detonate 1 TNT Minecart', () => {
-		testGame(
+	test('Detonate 1 TNT Minecart', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [
@@ -81,13 +75,13 @@ describe('Test Redstone Torch', () => {
 					MinecartWithTNT,
 					MinecartWithTNT,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, RedstoneTorch, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(RedstoneTorch, 'single_use')
+					await test.applyEffect()
 					expect(
 						(game.state.modalRequests[0] as SelectCards.Request).modal.cards,
 					).toStrictEqual([
@@ -98,15 +92,15 @@ describe('Test Redstone Torch', () => {
 							query.card.slot(query.slot.deck),
 						),
 					])
-					yield* finishModalRequest(game, {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 				},
 			},
 			{startWithAllCards: false},
 		)
 	})
 
-	test('Redstone Torch can not be used with 0 cards in deck or opponent has no active Hermit', () => {
-		testGame(
+	test('Redstone Torch can not be used with 0 cards in deck or opponent has no active Hermit', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -114,32 +108,32 @@ describe('Test Redstone Torch', () => {
 					...Array(7).fill(BalancedItem),
 				],
 				playerTwoDeck: [EthosLabCommon, RedstoneTorch],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					expect(game.currentPlayer.getDrawPile().length).toBe(2)
 					expect(
 						game.getPickableSlots(RedstoneTorch.attachCondition),
 					).toStrictEqual([])
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					expect(game.currentPlayer.getDrawPile().length).toBe(0)
 					expect(
 						game.getPickableSlots(RedstoneTorch.attachCondition),
 					).toStrictEqual([])
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.getDrawPile().length).toBe(1)
-					yield* playCardFromHand(game, RedstoneTorch, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(RedstoneTorch, 'single_use')
+					await test.applyEffect()
 					expect(
 						(game.state.modalRequests[0] as SelectCards.Request).modal.cards,
 					).toStrictEqual([])
-					yield* finishModalRequest(game, {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false},

@@ -8,27 +8,27 @@ import {StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import BadOmenEffect from 'common/status-effects/badomen'
 import PoisonEffect from 'common/status-effects/poison'
-import {applyEffect, endTurn, pick, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Milk Bucket', () => {
-	test('Single Use Functionality', () => {
-		testGame({
+	test('Single Use Functionality', async () => {
+		await testGame({
 			playerOneDeck: [FarmerBeefCommon, MilkBucket],
 			playerTwoDeck: [EthosLabCommon, BadOmen, SplashPotionOfPoison],
-			saga: function* (game) {
-				yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 0)
-				yield* endTurn(game)
+			testGame: async (test, game) => {
+				await test.playCardFromHand(FarmerBeefCommon, 'hermit', 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, SplashPotionOfPoison, 'single_use')
-				yield* applyEffect(game)
-				yield* endTurn(game)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
+				await test.applyEffect()
+				await test.endTurn()
 
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, BadOmen, 'single_use')
-				yield* applyEffect(game)
-				yield* endTurn(game)
+				await test.playCardFromHand(BadOmen, 'single_use')
+				await test.applyEffect()
+				await test.endTurn()
 
 				expect(
 					game.components.find(
@@ -45,9 +45,8 @@ describe('Test Milk Bucket', () => {
 					),
 				).not.toBe(null)
 
-				yield* playCardFromHand(game, MilkBucket, 'single_use')
-				yield* pick(
-					game,
+				await test.playCardFromHand(MilkBucket, 'single_use')
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.hermit,
 					query.slot.rowIndex(0),

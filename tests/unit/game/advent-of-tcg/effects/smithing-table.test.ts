@@ -13,39 +13,29 @@ import ExBossNineEffect, {
 	supplyNineSpecial,
 } from 'common/status-effects/exboss-nine'
 import SmithingTableEffect from 'common/status-effects/smithing-table'
-import {
-	attack,
-	bossAttack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testBossFight,
-	testGame,
-} from '../../utils'
+import {testBossFight, testGame} from '../../utils'
 
 describe('Test Smithing Table', () => {
-	test('Using Smithing Table on Water Bucket', () => {
-		testGame({
+	test('Using Smithing Table on Water Bucket', async () => {
+		await testGame({
 			playerOneDeck: [EthosLabCommon, SmithingTable, WaterBucket],
 			playerTwoDeck: [EthosLabCommon],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, SmithingTable, 'single_use')
-				yield* pick(
-					game,
+			testGame: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(SmithingTable, 'single_use')
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.hand,
 					query.slot.has(WaterBucket),
 				)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, WaterBucket, 'single_use')
-				yield* removeEffect(game)
-				yield* playCardFromHand(game, WaterBucket, 'attach', 0)
+				await test.playCardFromHand(WaterBucket, 'single_use')
+				await test.removeEffect()
+				await test.playCardFromHand(WaterBucket, 'attach', 0)
 				expect(
 					game.components.find(
 						CardComponent,
@@ -59,28 +49,27 @@ describe('Test Smithing Table', () => {
 		})
 	})
 
-	test('Using Smithing Table on Shield', () => {
-		testGame(
+	test('Using Smithing Table on Shield', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, SmithingTable, Shield],
 				playerTwoDeck: [EthosLabCommon, CurseOfVanishing],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, SmithingTable, 'single_use')
-					yield* pick(
-						game,
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(SmithingTable, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hand,
 						query.slot.has(Shield),
 					)
-					yield* playCardFromHand(game, Shield, 'attach', 0)
-					yield* endTurn(game)
+					await test.playCardFromHand(Shield, 'attach', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					expect(
 						game.getPickableSlots(CurseOfVanishing.attachCondition),
 					).toStrictEqual([])
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					expect(
 						game.components.find(
 							CardComponent,
@@ -99,24 +88,23 @@ describe('Test Smithing Table', () => {
 		)
 	})
 
-	test('Reinforced Slimeball protects against Evil X Boss discarding from row', () => {
+	test('Reinforced Slimeball protects against Evil X Boss discarding from row', async () => {
 		testBossFight({
 			playerDeck: [EthosLabCommon, SmithingTable, Slimeball, BalancedItem],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, SmithingTable, 'single_use')
-				yield* pick(
-					game,
+			testGame: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(SmithingTable, 'single_use')
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.hand,
 					query.slot.has(Slimeball),
 				)
-				yield* playCardFromHand(game, Slimeball, 'attach', 0)
-				yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
-				yield* endTurn(game)
+				await test.playCardFromHand(Slimeball, 'attach', 0)
+				await test.playCardFromHand(BalancedItem, 'item', 0, 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
-				yield* bossAttack(game, '50DMG', 'HEAL150', 'EFFECTCARD')
+				await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
+				await test.bossAttack('50DMG', 'HEAL150', 'EFFECTCARD')
 				expect(
 					game.components.find(
 						CardComponent,
@@ -126,10 +114,10 @@ describe('Test Smithing Table', () => {
 						query.card.is(Slimeball),
 					),
 				).not.toBe(null)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				while (game.state.turn.turnNumber < 18) {
-					yield* endTurn(game)
+					await test.endTurn()
 				}
 
 				supplyNineSpecial(
@@ -139,7 +127,7 @@ describe('Test Smithing Table', () => {
 					)!,
 					'NINEATTACHED',
 				)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(
 					game.currentPlayer.getDiscarded().map((card) => card.props),

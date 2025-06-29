@@ -10,20 +10,20 @@ import {
 	AussiePingEffect,
 	AussiePingImmuneEffect,
 } from 'common/status-effects/aussie-ping'
-import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Pearlescent Moon Rare', () => {
-	test('Aussie Ping', () => {
-		testGame(
+	test('Aussie Ping', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [PearlescentMoonRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, PearlescentMoonRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(PearlescentMoonRare, 'hermit', 0)
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							StatusEffectComponent,
@@ -32,9 +32,9 @@ describe('Test Pearlescent Moon Rare', () => {
 						),
 					).not.toBe(null)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -43,7 +43,7 @@ describe('Test Pearlescent Moon Rare', () => {
 						)?.health,
 					).toBe(PearlescentMoonRare.health)
 
-					yield* endTurn(game)
+					await test.endTurn()
 					expect(
 						game.components.find(
 							StatusEffectComponent,
@@ -51,7 +51,7 @@ describe('Test Pearlescent Moon Rare', () => {
 							query.effect.targetEntity(game.opponentPlayer.entity),
 						),
 					).not.toBe(null)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					// Aussie Ping should be blocked by the AussiePingImmune effect.
 					expect(
@@ -67,26 +67,26 @@ describe('Test Pearlescent Moon Rare', () => {
 		)
 	})
 
-	test('Aussie Ping blocks Skizzleman Rare extra damage.', () => {
-		testGame(
+	test('Aussie Ping blocks Skizzleman Rare extra damage.', async () => {
+		await testGame(
 			{
 				playerOneDeck: [SkizzlemanRare, Anvil],
 				playerTwoDeck: [PearlescentMoonRare, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, PearlescentMoonRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(PearlescentMoonRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
 					// Give Skizzleman Rare the Aussie Ping effect.
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					// Use Anvil to trigger Skizz's bonus damage.
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -108,30 +108,29 @@ describe('Test Pearlescent Moon Rare', () => {
 		)
 	})
 
-	test('Aussie Ping blocks Poe Poe Skizz Rare extra damage.', () => {
-		testGame(
+	test('Aussie Ping blocks Poe Poe Skizz Rare extra damage.', async () => {
+		await testGame(
 			{
 				playerOneDeck: [PoePoeSkizzRare],
 				playerTwoDeck: [PearlescentMoonRare, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, PoePoeSkizzRare, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, PearlescentMoonRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(PearlescentMoonRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
 					// Give Poe Poe Skizz the Aussie Ping effect.
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.rowIndex(1),
 						query.slot.hermit,
 						query.slot.currentPlayer,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(

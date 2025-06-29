@@ -7,39 +7,31 @@ import BuilderDoubleItem from 'common/cards/items/builder-rare'
 import {StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import DyedEffect from 'common/status-effects/dyed'
-import {
-	attack,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Scott "To Dye For"', () => {
-	test('"To Dye For" functionality', () => {
-		testGame({
+	test('"To Dye For" functionality', async () => {
+		await testGame({
 			playerOneDeck: [
 				Smajor1995Rare,
 				VintageBeefCommon,
 				...Array(3).fill(BuilderDoubleItem),
 			],
 			playerTwoDeck: [EthosLabCommon, ...Array(3).fill(BalancedItem)],
-			saga: function* (game) {
-				yield* playCardFromHand(game, Smajor1995Rare, 'hermit', 0)
-				yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-				yield* playCardFromHand(game, BuilderDoubleItem, 'item', 0, 0)
-				yield* endTurn(game)
+			testGame: async (test, game) => {
+				await test.playCardFromHand(Smajor1995Rare, 'hermit', 0)
+				await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+				await test.playCardFromHand(BuilderDoubleItem, 'item', 0, 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
-				yield* attack(game, 'primary')
-				yield* endTurn(game)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(BalancedItem, 'item', 0, 0)
+				await test.attack('primary')
+				await test.endTurn()
 
-				yield* playCardFromHand(game, BuilderDoubleItem, 'item', 0, 1)
-				yield* attack(game, 'secondary')
-				yield* pick(
-					game,
+				await test.playCardFromHand(BuilderDoubleItem, 'item', 0, 1)
+				await test.attack('secondary')
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.hermit,
 					query.slot.rowIndex(1),
@@ -54,28 +46,28 @@ describe('Test Scott "To Dye For"', () => {
 						),
 					),
 				).not.toBe(null)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, BalancedItem, 'item', 0, 1)
-				yield* attack(game, 'primary')
-				yield* endTurn(game)
+				await test.playCardFromHand(BalancedItem, 'item', 0, 1)
+				await test.attack('primary')
+				await test.endTurn()
 
-				yield* playCardFromHand(game, BuilderDoubleItem, 'item', 1, 1)
-				yield* attack(game, 'secondary')
+				await test.playCardFromHand(BuilderDoubleItem, 'item', 1, 1)
+				await test.attack('secondary')
 				expect(game.state.pickRequests).toHaveLength(0)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, BalancedItem, 'item', 0, 2)
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
+				await test.playCardFromHand(BalancedItem, 'item', 0, 2)
+				await test.attack('secondary')
+				await test.endTurn()
 
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
+				await test.attack('secondary')
+				await test.endTurn()
 
-				yield* changeActiveHermit(game, 1)
-				yield* attack(game, 'secondary')
+				await test.changeActiveHermit(1)
+				await test.attack('secondary')
 				expect(
 					game.components.find(
 						StatusEffectComponent,

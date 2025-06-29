@@ -7,38 +7,36 @@ import BalancedItem from 'common/cards/items/balanced-common'
 import Egg from 'common/cards/single-use/egg'
 import {CardComponent, RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test rare King Joel Steal', () => {
-	test('Test regular Steal behavior', () => {
-		testGame(
+	test('Test regular Steal behavior', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, BalancedItem],
 				playerTwoDeck: [KingJoelRare, WelsknightCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
-					yield* playCardFromHand(game, BalancedItem, 'item', 1, 0)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
+					await test.playCardFromHand(BalancedItem, 'item', 1, 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, KingJoelRare, 'hermit', 0)
-					yield* playCardFromHand(game, WelsknightCommon, 'hermit', 1)
+					await test.playCardFromHand(KingJoelRare, 'hermit', 0)
+					await test.playCardFromHand(WelsknightCommon, 'hermit', 1)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toHaveLength(2)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.item,
 						query.slot.rowIndex(1),
 						query.slot.index(0),
 					)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.item,
 						query.slot.rowIndex(1),
@@ -59,36 +57,34 @@ describe('Test rare King Joel Steal', () => {
 		)
 	})
 
-	test('Test Steal pick request runs before Egg pick request.', () => {
-		testGame(
+	test('Test Steal pick request runs before Egg pick request.', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, BalancedItem],
 				playerTwoDeck: [KingJoelRare, WelsknightCommon, Egg],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
-					yield* playCardFromHand(game, BalancedItem, 'item', 1, 0)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
+					await test.playCardFromHand(BalancedItem, 'item', 1, 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, KingJoelRare, 'hermit', 0)
-					yield* playCardFromHand(game, WelsknightCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Egg, 'single_use')
+					await test.playCardFromHand(KingJoelRare, 'hermit', 0)
+					await test.playCardFromHand(WelsknightCommon, 'hermit', 1)
+					await test.playCardFromHand(Egg, 'single_use')
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toHaveLength(3)
 
 					// Steal requests
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.item,
 						query.slot.rowIndex(1),
 						query.slot.index(0),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.item,
 						query.slot.rowIndex(1),
@@ -105,8 +101,7 @@ describe('Test rare King Joel Steal', () => {
 					).toBeTruthy()
 
 					// Egg request
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

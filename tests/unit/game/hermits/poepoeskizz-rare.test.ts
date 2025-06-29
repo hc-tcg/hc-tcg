@@ -4,37 +4,29 @@ import PoePoeSkizzRare from 'common/cards/hermits/poepoeskizz-rare'
 import Bow from 'common/cards/single-use/bow'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Poe Poe Skizz Rare', () => {
-	test('Jumpscare.', () => {
-		testGame(
+	test('Jumpscare.', async () => {
+		await testGame(
 			{
 				playerOneDeck: [PoePoeSkizzRare],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, PoePoeSkizzRare, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.rowIndex(1),
 						query.slot.hermit,
 						query.slot.currentPlayer,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -56,34 +48,33 @@ describe('Test Poe Poe Skizz Rare', () => {
 		)
 	})
 
-	test('Canceling Jumpscare', () => {
-		testGame(
+	test('Canceling Jumpscare', async () => {
+		await testGame(
 			{
 				playerOneDeck: [PoePoeSkizzRare, ...Array(4).fill(EthosLabCommon), Bow],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, PoePoeSkizzRare, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, Bow, 'single_use')
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.playCardFromHand(Bow, 'single_use')
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.rowIndex(1),
 						query.slot.hermit,
 						query.slot.currentPlayer,
 					)
-					yield* removeEffect(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 3)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 4)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.removeEffect()
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 3)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 4)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(

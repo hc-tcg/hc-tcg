@@ -3,27 +3,27 @@ import Loyalty from 'common/cards/attach/loyalty'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import BalancedItem from 'common/cards/items/balanced-common'
 import {GameModel} from 'common/models/game-model'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {TestGameFixture, testGame} from '../utils'
 
-function* testLoyaltyHelperSaga(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-	yield* playCardFromHand(game, Loyalty, 'attach', 0)
-	yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
+async function testLoyaltyHelperSaga(test: TestGameFixture, game: GameModel) {
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+	await test.playCardFromHand(Loyalty, 'attach', 0)
+	await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 
-	yield* endTurn(game)
+	await test.endTurn()
 
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-	yield* endTurn(game)
+	await test.endTurn()
 
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-	yield* playCardFromHand(game, BalancedItem, 'item', 1, 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+	await test.playCardFromHand(BalancedItem, 'item', 1, 0)
 
-	yield* endTurn(game)
+	await test.endTurn()
 
-	yield* attack(game, 'primary')
+	await test.attack('primary')
 
-	yield* endTurn(game)
+	await test.endTurn()
 
 	// The player should only have one balanced item that they got returned to their hand
 	// by loyalty.
@@ -33,10 +33,10 @@ function* testLoyaltyHelperSaga(game: GameModel) {
 }
 
 describe('Test Loyalty', () => {
-	test('Test Loyalty only returns item cards from attached hermit.', () => {
-		testGame(
+	test('Test Loyalty only returns item cards from attached hermit.', async () => {
+		await testGame(
 			{
-				saga: testLoyaltyHelperSaga,
+				testGame: testLoyaltyHelperSaga,
 				playerOneDeck: [
 					EthosLabCommon,
 					EthosLabCommon,

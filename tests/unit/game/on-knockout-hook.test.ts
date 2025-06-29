@@ -3,15 +3,15 @@ import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {ObserverComponent, RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from './utils'
+import {testGame} from './utils'
 
 describe('Test `row.hooks.onKnockOut` hook', () => {
-	test('Test `row.hooks.onKnockOut` hook', () => {
-		testGame(
+	test('Test `row.hooks.onKnockOut` hook', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
+				testGame: async (test, game) => {
 					let hookHasBeenCalled = false
 
 					let observer = game.components.new(
@@ -30,13 +30,13 @@ describe('Test `row.hooks.onKnockOut` hook', () => {
 						hookHasBeenCalled = true
 					})
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					/** Play two hermits to prevent the game from finishing before the tests finish */
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
-					yield* endTurn(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.endTurn()
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(hookHasBeenCalled).toBeTruthy()
 				},

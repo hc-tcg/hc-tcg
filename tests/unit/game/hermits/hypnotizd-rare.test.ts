@@ -12,51 +12,40 @@ import {
 } from 'common/components'
 import query from 'common/components/query'
 import EfficiencyEffect from 'common/status-effects/efficiency'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Rare Hypnotizd', () => {
-	test('Secondary attack and bow can select different targets', () => {
-		testGame(
+	test('Secondary attack and bow can select different targets', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HypnotizdRare, Bow, MinerDoubleItem],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HypnotizdRare, 'hermit', 0)
-					yield* playCardFromHand(game, MinerDoubleItem, 'item', 0, 0)
-					yield* playCardFromHand(game, Bow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(HypnotizdRare, 'hermit', 0)
+					await test.playCardFromHand(MinerDoubleItem, 'item', 0, 0)
+					await test.playCardFromHand(Bow, 'single_use')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toHaveLength(2)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.item,
 						query.slot.rowIndex(0),
@@ -102,19 +91,19 @@ describe('Test Rare Hypnotizd', () => {
 		)
 	})
 
-	test('Secondary attack can not select AFK target without item card', () => {
-		testGame(
+	test('Secondary attack can not select AFK target without item card', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HypnotizdRare, Efficiency],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HypnotizdRare, 'hermit', 0)
-					yield* playCardFromHand(game, Efficiency, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(HypnotizdRare, 'hermit', 0)
+					await test.playCardFromHand(Efficiency, 'single_use')
+					await test.applyEffect()
 
 					expect(
 						game.components.find(
@@ -124,7 +113,7 @@ describe('Test Rare Hypnotizd', () => {
 						),
 					).not.toBe(null)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -139,49 +128,45 @@ describe('Test Rare Hypnotizd', () => {
 		)
 	})
 
-	test('Secondary attack can be canceled to change target', () => {
-		testGame(
+	test('Secondary attack can be canceled to change target', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HypnotizdRare, MinerDoubleItem, Crossbow],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HypnotizdRare, 'hermit', 0)
-					yield* playCardFromHand(game, MinerDoubleItem, 'item', 0, 0)
-					yield* playCardFromHand(game, Crossbow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(HypnotizdRare, 'hermit', 0)
+					await test.playCardFromHand(MinerDoubleItem, 'item', 0, 0)
+					await test.playCardFromHand(Crossbow, 'single_use')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toHaveLength(2)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.item,
 						query.slot.rowIndex(0),
 						query.slot.index(0),
 					)
-					yield* removeEffect(game)
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.removeEffect()
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),

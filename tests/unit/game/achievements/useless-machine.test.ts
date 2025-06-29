@@ -5,17 +5,11 @@ import BalancedItem from 'common/cards/items/balanced-common'
 import Composter from 'common/cards/single-use/composter'
 import FlintAndSteel from 'common/cards/single-use/flint-and-steel'
 import query from 'common/components/query'
-import {
-	endTurn,
-	forfeit,
-	pick,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Useless Machine Achievement', () => {
-	test('Test achievement is gained when drawing two duplicates', () => {
-		testAchivement(
+	test('Test achievement is gained when drawing two duplicates', async () => {
+		await testAchivement(
 			{
 				achievement: UselessMachine,
 				playerOneDeck: [
@@ -30,24 +24,22 @@ describe('Test Useless Machine Achievement', () => {
 					BalancedItem,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Composter, 'single_use')
-					yield* pick(
-						game,
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Composter, 'single_use')
+					await test.pick(
 						query.slot.hand,
 						query.slot.currentPlayer,
 						query.slot.order(2),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.hand,
 						query.slot.currentPlayer,
 						query.slot.order(3),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(UselessMachine.getProgress(achievement.goals)).toBe(2)
@@ -56,8 +48,8 @@ describe('Test Useless Machine Achievement', () => {
 			{noItemRequirements: true, startWithAllCards: false},
 		)
 	})
-	test('Test one duplicate card', () => {
-		testAchivement(
+	test('Test one duplicate card', async () => {
+		await testAchivement(
 			{
 				achievement: UselessMachine,
 				playerOneDeck: [
@@ -72,24 +64,22 @@ describe('Test Useless Machine Achievement', () => {
 					FlintAndSteel,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Composter, 'single_use')
-					yield* pick(
-						game,
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Composter, 'single_use')
+					await test.pick(
 						query.slot.hand,
 						query.slot.currentPlayer,
 						query.slot.order(2),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.hand,
 						query.slot.currentPlayer,
 						query.slot.order(3),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(UselessMachine.getProgress(achievement.goals)).toBe(1)
@@ -98,8 +88,8 @@ describe('Test Useless Machine Achievement', () => {
 			{noItemRequirements: true, startWithAllCards: false},
 		)
 	})
-	test('Test zero duplicate cards', () => {
-		testAchivement(
+	test('Test zero duplicate cards', async () => {
+		await testAchivement(
 			{
 				achievement: UselessMachine,
 				playerOneDeck: [
@@ -114,24 +104,22 @@ describe('Test Useless Machine Achievement', () => {
 					FlintAndSteel,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Composter, 'single_use')
-					yield* pick(
-						game,
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Composter, 'single_use')
+					await test.pick(
 						query.slot.hand,
 						query.slot.currentPlayer,
 						query.slot.order(2),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.hand,
 						query.slot.currentPlayer,
 						query.slot.order(3),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(UselessMachine.getProgress(achievement.goals)).toBeFalsy()

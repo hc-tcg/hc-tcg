@@ -15,18 +15,11 @@ import Efficiency from 'common/cards/single-use/efficiency'
 import {SlotComponent} from 'common/components'
 import query from 'common/components/query'
 import {getAvailableEnergy} from 'server/routines/game'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Cyberpunk Impulse', () => {
-	test('Energy transferred', () => {
-		testGame(
+	test('Energy transferred', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -35,18 +28,17 @@ describe('Test Cyberpunk Impulse', () => {
 					RedstoneItem,
 				],
 				playerTwoDeck: [EthosLabCommon, CyberpunkImpulseRare, FarmItem, String],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, CyberpunkImpulseRare, 'hermit', 1)
-					yield* playCardFromHand(game, WildItem, 'item', 1, 0)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
+					await test.playCardFromHand(WildItem, 'item', 1, 0)
 					expect(getAvailableEnergy(game)).toStrictEqual([])
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, CyberpunkImpulseRare, 'hermit', 1)
-					yield* playCardFromHand(game, FarmItem, 'item', 1, 0)
-					yield* playCardFromHand(
-						game,
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
+					await test.playCardFromHand(FarmItem, 'item', 1, 0)
+					await test.playCardFromHand(
 						String,
 						'item',
 						1,
@@ -55,9 +47,9 @@ describe('Test Cyberpunk Impulse', () => {
 					)
 
 					expect(getAvailableEnergy(game)).toStrictEqual(['any'])
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, RedstoneItem, 'item', 1, 1)
+					await test.playCardFromHand(RedstoneItem, 'item', 1, 1)
 					expect(getAvailableEnergy(game)).toStrictEqual([])
 					expect(game.currentPlayer.activeRow?.getItems()).toStrictEqual([])
 				},
@@ -66,8 +58,8 @@ describe('Test Cyberpunk Impulse', () => {
 		)
 	})
 
-	test('Betrayed uses the correct amount of transferred energy available', () => {
-		testGame(
+	test('Betrayed uses the correct amount of transferred energy available', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					CyberpunkImpulseRare,
@@ -76,17 +68,17 @@ describe('Test Cyberpunk Impulse', () => {
 					FarmItem,
 				],
 				playerTwoDeck: [HumanCleoRare, Efficiency],
-				saga: function* (game) {
-					yield* playCardFromHand(game, CyberpunkImpulseRare, 'hermit', 0)
-					yield* playCardFromHand(game, CyberpunkImpulseRare, 'hermit', 1)
-					yield* playCardFromHand(game, FarmItem, 'item', 1, 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 0)
+					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
+					await test.playCardFromHand(FarmItem, 'item', 1, 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 0)
-					yield* playCardFromHand(game, Efficiency, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
+					await test.playCardFromHand(Efficiency, 'single_use')
+					await test.applyEffect()
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.currentPlayer.getActiveHermit()?.getAttackCost('secondary'),
@@ -96,7 +88,7 @@ describe('Test Cyberpunk Impulse', () => {
 						'SECONDARY_ATTACK',
 					)
 					expect(game.state.turn.availableActions).toContain('END_TURN')
-					yield* playCardFromHand(game, FarmItem, 'item', 1, 1)
+					await test.playCardFromHand(FarmItem, 'item', 1, 1)
 					expect(game.state.turn.availableActions).toContain('SECONDARY_ATTACK')
 					expect(game.state.turn.availableActions).not.toContain('END_TURN')
 				},
@@ -105,20 +97,20 @@ describe('Test Cyberpunk Impulse', () => {
 		)
 	})
 
-	test('Hypno can discard a Farm item from Cyberpunk Impulse', () => {
-		testGame(
+	test('Hypno can discard a Farm item from Cyberpunk Impulse', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HypnotizdRare, CyberpunkImpulseRare, FarmItem],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HypnotizdRare, 'hermit', 0)
-					yield* playCardFromHand(game, CyberpunkImpulseRare, 'hermit', 1)
-					yield* playCardFromHand(game, FarmItem, 'item', 1, 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(HypnotizdRare, 'hermit', 0)
+					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
+					await test.playCardFromHand(FarmItem, 'item', 1, 0)
+					await test.attack('secondary')
 					expect(game.state.pickRequests).toHaveLength(1)
 				},
 			},
@@ -126,8 +118,8 @@ describe('Test Cyberpunk Impulse', () => {
 		)
 	})
 
-	test('Stratos Joel counts items attached to Cyberpunk Impulse', () => {
-		testGame(
+	test('Stratos Joel counts items attached to Cyberpunk Impulse', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [
@@ -135,14 +127,14 @@ describe('Test Cyberpunk Impulse', () => {
 					CyberpunkImpulseRare,
 					FarmItem,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, SmallishbeansAdventRare, 'hermit', 0)
-					yield* playCardFromHand(game, CyberpunkImpulseRare, 'hermit', 1)
-					yield* playCardFromHand(game, FarmItem, 'item', 1, 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(SmallishbeansAdventRare, 'hermit', 0)
+					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
+					await test.playCardFromHand(FarmItem, 'item', 1, 0)
+					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health -
 							(SmallishbeansAdventRare.secondary.damage +
@@ -154,8 +146,8 @@ describe('Test Cyberpunk Impulse', () => {
 		)
 	})
 
-	test('Brewing Stand does not include items attached to adjacent Cyberpunk Impulse', () => {
-		testGame(
+	test('Brewing Stand does not include items attached to adjacent Cyberpunk Impulse', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -165,23 +157,23 @@ describe('Test Cyberpunk Impulse', () => {
 					FarmItem,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, CyberpunkImpulseRare, 'hermit', 1)
-					yield* playCardFromHand(game, BrewingStand, 'attach', 0)
-					yield* playCardFromHand(game, FarmItem, 'item', 1, 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
+					await test.playCardFromHand(BrewingStand, 'attach', 0)
+					await test.playCardFromHand(FarmItem, 'item', 1, 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(game.currentPlayer.coinFlips).toStrictEqual([])
 					expect(game.state.pickRequests).toStrictEqual([])
-					yield* playCardFromHand(game, FarmItem, 'item', 0, 0)
-					yield* endTurn(game)
+					await test.playCardFromHand(FarmItem, 'item', 0, 0)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.coinFlips).toHaveLength(1)
 					expect(
@@ -193,8 +185,7 @@ describe('Test Cyberpunk Impulse', () => {
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - EthosLabCommon.secondary.damage,
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.item,
 						query.slot.rowIndex(0),
@@ -212,8 +203,8 @@ describe('Test Cyberpunk Impulse', () => {
 		)
 	})
 
-	test('Furnace does not include items attached to adjacent Cyberpunk Impulse', () => {
-		testGame({
+	test('Furnace does not include items attached to adjacent Cyberpunk Impulse', async () => {
+		await testGame({
 			playerOneDeck: [
 				EthosLabCommon,
 				CyberpunkImpulseRare,
@@ -222,25 +213,25 @@ describe('Test Cyberpunk Impulse', () => {
 				FarmItem,
 			],
 			playerTwoDeck: [EthosLabCommon],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, CyberpunkImpulseRare, 'hermit', 1)
-				yield* playCardFromHand(game, Furnace, 'attach', 0)
-				yield* playCardFromHand(game, FarmItem, 'item', 1, 0)
-				yield* endTurn(game)
+			testGame: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(CyberpunkImpulseRare, 'hermit', 1)
+				await test.playCardFromHand(Furnace, 'attach', 0)
+				await test.playCardFromHand(FarmItem, 'item', 1, 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, FarmItem, 'item', 0, 0)
-				yield* endTurn(game)
-				yield* endTurn(game)
+				await test.playCardFromHand(FarmItem, 'item', 0, 0)
+				await test.endTurn()
+				await test.endTurn()
 
-				yield* endTurn(game)
-				yield* endTurn(game)
+				await test.endTurn()
+				await test.endTurn()
 
-				yield* endTurn(game)
-				yield* endTurn(game)
+				await test.endTurn()
+				await test.endTurn()
 
 				expect(
 					game.components.find(

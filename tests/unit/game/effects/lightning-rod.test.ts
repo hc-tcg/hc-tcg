@@ -7,18 +7,11 @@ import InvisibilityPotion from 'common/cards/single-use/invisibility-potion'
 import TargetBlock from 'common/cards/single-use/target-block'
 import {CardComponent, RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Lightning Rod', () => {
-	test('Test redirecting multiple attacks at once', () => {
-		testGame(
+	test('Test redirecting multiple attacks at once', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -27,18 +20,17 @@ describe('Test Lightning Rod', () => {
 					LightningRod,
 				],
 				playerTwoDeck: [EthosLabCommon, Bow],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, LightningRod, 'attach', 2)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(LightningRod, 'attach', 2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Bow, 'single_use')
-					yield* attack(game, 'primary')
-					yield* pick(
-						game,
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Bow, 'single_use')
+					await test.attack('primary')
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -76,26 +68,25 @@ describe('Test Lightning Rod', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Lightning Rod is not discarded when overridden', () => {
-		testGame(
+	test('Lightning Rod is not discarded when overridden', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LightningRod],
 				playerTwoDeck: [EthosLabCommon, TargetBlock],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, LightningRod, 'attach', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(LightningRod, 'attach', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, TargetBlock, 'single_use')
-					yield* pick(
-						game,
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(TargetBlock, 'single_use')
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 
 					expect(
 						game.components.find(
@@ -110,9 +101,9 @@ describe('Test Lightning Rod', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Lightning Rod is not discarded from missed attacks', () => {
+	test('Lightning Rod is not discarded from missed attacks', async () => {
 		// Practically includes 0-damage atttacks.
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -121,20 +112,20 @@ describe('Test Lightning Rod', () => {
 					InvisibilityPotion,
 				],
 				playerTwoDeck: [EthosLabCommon, TargetBlock],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, LightningRod, 'attach', 1)
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(LightningRod, 'attach', 1)
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
 
-					yield* applyEffect(game)
+					await test.applyEffect()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.attack('primary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -153,34 +144,33 @@ describe('Test Lightning Rod', () => {
 			},
 		)
 	})
-	test('Rod discards from 0 damage due to Royal Protection', () => {
-		testGame(
+	test('Rod discards from 0 damage due to Royal Protection', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon, PrincessGemRare, LightningRod],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, PrincessGemRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, LightningRod, 'attach', 1)
+					await test.playCardFromHand(PrincessGemRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(LightningRod, 'attach', 1)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(

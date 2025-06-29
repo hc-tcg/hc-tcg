@@ -14,14 +14,7 @@ import Mending from 'common/cards/single-use/mending'
 import {CardComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import SmeltingEffect from 'common/status-effects/smelting'
-import {
-	applyEffect,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 function sortRowItems(a: CardComponent, b: CardComponent): number {
 	assert(a.slot.inRow() && a.slot.index !== null)
@@ -30,8 +23,8 @@ function sortRowItems(a: CardComponent, b: CardComponent): number {
 }
 
 describe('Test Furnace Attach Effect', () => {
-	test('Basic functionality', () => {
-		testGame({
+	test('Basic functionality', async () => {
+		await testGame({
 			playerOneDeck: [
 				EthosLabCommon,
 				Furnace,
@@ -40,10 +33,10 @@ describe('Test Furnace Attach Effect', () => {
 				RedstoneItem,
 			],
 			playerTwoDeck: [EthosLabCommon],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
-				yield* playCardFromHand(game, Furnace, 'attach', 0)
+			testGame: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(BalancedItem, 'item', 0, 0)
+				await test.playCardFromHand(Furnace, 'attach', 0)
 				expect(
 					game.components.find(
 						StatusEffectComponent,
@@ -54,20 +47,20 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(4)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, WildItem, 'item', 0, 1)
-				yield* endTurn(game)
+				await test.playCardFromHand(WildItem, 'item', 0, 1)
+				await test.endTurn()
 
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, RedstoneItem, 'item', 0, 2)
-				yield* endTurn(game)
+				await test.playCardFromHand(RedstoneItem, 'item', 0, 2)
+				await test.endTurn()
 
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(
 					game.components.find(
@@ -92,9 +85,9 @@ describe('Test Furnace Attach Effect', () => {
 						.sort(sortRowItems)
 						.map((card) => card.props),
 				).toStrictEqual([BalancedItem, WildItem, RedstoneItem])
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* endTurn(game)
+				await test.endTurn()
 				expect(
 					game.currentPlayer.getDiscarded().map((card) => card.props),
 				).toStrictEqual([Furnace])
@@ -112,13 +105,13 @@ describe('Test Furnace Attach Effect', () => {
 		})
 	})
 
-	test('Smelting counter is reset by Emerald', () => {
-		testGame({
+	test('Smelting counter is reset by Emerald', async () => {
+		await testGame({
 			playerOneDeck: [EthosLabCommon, Furnace, Emerald, Emerald],
 			playerTwoDeck: [EthosLabCommon],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, Furnace, 'attach', 0)
+			testGame: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(Furnace, 'attach', 0)
 				expect(
 					game.components.find(
 						StatusEffectComponent,
@@ -129,10 +122,10 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(4)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.endTurn()
 
 				expect(
 					game.components.find(
@@ -144,8 +137,8 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(3)
-				yield* playCardFromHand(game, Emerald, 'single_use')
-				yield* applyEffect(game)
+				await test.playCardFromHand(Emerald, 'single_use')
+				await test.applyEffect()
 				expect(
 					game.components.find(
 						StatusEffectComponent,
@@ -156,7 +149,7 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(4)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(
 					game.components.find(
@@ -168,10 +161,10 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(3)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, Emerald, 'single_use')
-				yield* applyEffect(game)
+				await test.playCardFromHand(Emerald, 'single_use')
+				await test.applyEffect()
 				expect(
 					game.components.find(
 						StatusEffectComponent,
@@ -186,8 +179,8 @@ describe('Test Furnace Attach Effect', () => {
 		})
 	})
 
-	test('Smelting is not interupted by Mending or Ladder', () => {
-		testGame({
+	test('Smelting is not interupted by Mending or Ladder', async () => {
+		await testGame({
 			playerOneDeck: [
 				EthosLabCommon,
 				Furnace,
@@ -200,10 +193,10 @@ describe('Test Furnace Attach Effect', () => {
 				Ladder,
 			],
 			playerTwoDeck: [EthosLabCommon],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, Furnace, 'attach', 0)
-				yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
+			testGame: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(Furnace, 'attach', 0)
+				await test.playCardFromHand(BalancedItem, 'item', 0, 0)
 				expect(
 					game.components.find(
 						StatusEffectComponent,
@@ -214,10 +207,10 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(4)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.endTurn()
 
 				expect(
 					game.components.find(
@@ -229,16 +222,15 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(3)
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-				yield* playCardFromHand(game, BalancedItem, 'item', 1, 0)
-				yield* playCardFromHand(game, Mending, 'single_use')
-				yield* pick(
-					game,
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+				await test.playCardFromHand(BalancedItem, 'item', 1, 0)
+				await test.playCardFromHand(Mending, 'single_use')
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.attach,
 					query.slot.rowIndex(1),
 				)
-				yield* changeActiveHermit(game, 1)
+				await test.changeActiveHermit(1)
 				expect(
 					game.components.find(
 						StatusEffectComponent,
@@ -249,9 +241,9 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(3)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(
 					game.components.find(
@@ -263,11 +255,10 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(2)
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-				yield* playCardFromHand(game, BalancedItem, 'item', 2, 0)
-				yield* playCardFromHand(game, Ladder, 'single_use')
-				yield* pick(
-					game,
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+				await test.playCardFromHand(BalancedItem, 'item', 2, 0)
+				await test.playCardFromHand(Ladder, 'single_use')
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.hermit,
 					query.slot.rowIndex(2),
@@ -282,11 +273,11 @@ describe('Test Furnace Attach Effect', () => {
 						),
 					)?.counter,
 				).toBe(2)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* endTurn(game)
-				yield* endTurn(game)
-				yield* endTurn(game)
+				await test.endTurn()
+				await test.endTurn()
+				await test.endTurn()
 
 				expect(
 					game.currentPlayer.getDiscarded().map((card) => card.props),

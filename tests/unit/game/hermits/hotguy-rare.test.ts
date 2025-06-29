@@ -7,26 +7,25 @@ import Bow from 'common/cards/single-use/bow'
 import Crossbow from 'common/cards/single-use/crossbow'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Hotguy Rare', () => {
-	test('Test Hotguy with Bow', () => {
-		testGame(
+	test('Test Hotguy with Bow', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HotguyRare, Bow],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HotguyRare, 'hermit', 0)
-					yield* playCardFromHand(game, Bow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(HotguyRare, 'hermit', 0)
+					await test.playCardFromHand(Bow, 'single_use')
+					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -60,8 +59,8 @@ describe('Test Hotguy Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test Hotguy with Crossbow', () => {
-		testGame(
+	test('Test Hotguy with Crossbow', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -72,31 +71,28 @@ describe('Test Hotguy Rare', () => {
 					ThornsIII,
 				],
 				playerTwoDeck: [HotguyRare, Crossbow],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, ThornsIII, 'attach', 2)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(ThornsIII, 'attach', 2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HotguyRare, 'hermit', 0)
-					yield* playCardFromHand(game, Crossbow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(HotguyRare, 'hermit', 0)
+					await test.playCardFromHand(Crossbow, 'single_use')
+					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -134,36 +130,33 @@ describe('Test Hotguy Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test Hotguy with type advantage', () => {
-		testGame(
+	test('Test Hotguy with type advantage', async () => {
+		await testGame(
 			{
 				playerOneDeck: [RendogRare, RendogRare, RendogRare],
 				playerTwoDeck: [HotguyRare, Crossbow],
-				saga: function* (game) {
+				testGame: async (test, game) => {
 					/** This tests the bug found in https://discord.com/channels/1073763159187390584/1341987170180796487/1352075972245192805 */
-					yield* playCardFromHand(game, RendogRare, 'hermit', 0)
-					yield* playCardFromHand(game, RendogRare, 'hermit', 1)
-					yield* playCardFromHand(game, RendogRare, 'hermit', 2)
-					yield* endTurn(game)
+					await test.playCardFromHand(RendogRare, 'hermit', 0)
+					await test.playCardFromHand(RendogRare, 'hermit', 1)
+					await test.playCardFromHand(RendogRare, 'hermit', 2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HotguyRare, 'hermit', 0)
-					yield* playCardFromHand(game, Crossbow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(HotguyRare, 'hermit', 0)
+					await test.playCardFromHand(Crossbow, 'single_use')
+					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(2),

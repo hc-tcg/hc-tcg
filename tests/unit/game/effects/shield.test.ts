@@ -3,21 +3,21 @@ import Shield from 'common/cards/attach/shield'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {RowComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Shield', () => {
-	test('Base Functionality', () => {
-		testGame(
+	test('Base Functionality', async () => {
+		await await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Shield],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Shield, 'attach', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Shield, 'attach', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(

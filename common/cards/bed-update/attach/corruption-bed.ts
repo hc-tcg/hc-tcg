@@ -28,14 +28,12 @@ const CorruptionBed: Attach = {
 			if (hermit.props.rarity !== 'common') return
 			const new_id = hermit.props.id.replace('common', 'rare')
 			const new_card = CARDS[new_id]
-			console.log(new_card)
 			if (!new_card) return
 			const items = component.slot.row
 				.getItems()
 				.map((card) => card.props.id)
 				.join(' ')
 			if (!items.includes((new_card as Hermit).type)) return
-			console.log('Replacing!')
 			game.components.new(
 				CardComponent,
 				new_card,

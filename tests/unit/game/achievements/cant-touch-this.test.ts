@@ -5,18 +5,11 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GoatfatherRare from 'common/cards/hermits/goatfather-rare'
 import ZedaphPlaysRare from 'common/cards/hermits/zedaphplays-rare'
 import InvisibilityPotion from 'common/cards/single-use/invisibility-potion'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	forfeit,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Cant Touch This achievement', () => {
-	test('"Cant Touch This" counts Anvil Drop miss as only one progress', () => {
-		testAchivement(
+	test('"Cant Touch This" counts Anvil Drop miss as only one progress', async () => {
+		await testAchivement(
 			{
 				achievement: CantTouchThis,
 				playerOneDeck: [
@@ -26,19 +19,19 @@ describe('Test Cant Touch This achievement', () => {
 					InvisibilityPotion,
 				],
 				playerTwoDeck: [GoatfatherRare],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* playCardFromHand(game, GoatfatherRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(GoatfatherRare, 'hermit', 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* forfeit(game.currentPlayerEntity)
+					await test.forfeit(game.currentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(CantTouchThis.getProgress(achievement.goals)).toBe(1)
@@ -48,32 +41,32 @@ describe('Test Cant Touch This achievement', () => {
 		)
 	})
 
-	test('"Cant Touch This" streak progress is not broken by Thorns', () => {
-		testAchivement(
+	test('"Cant Touch This" streak progress is not broken by Thorns', async () => {
+		await testAchivement(
 			{
 				achievement: CantTouchThis,
 				playerOneDeck: [EthosLabCommon, InvisibilityPotion, InvisibilityPotion],
 				playerTwoDeck: [EthosLabCommon, Thorns],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Thorns, 'attach', 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Thorns, 'attach', 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
+					await test.applyEffect()
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* forfeit(game.currentPlayerEntity)
+					await test.forfeit(game.currentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(CantTouchThis.getProgress(achievement.goals)).toBe(2)
@@ -83,26 +76,26 @@ describe('Test Cant Touch This achievement', () => {
 		)
 	})
 
-	test('"Cant Touch This" counts reflected damage from Sheep Stare as one progress', () => {
-		testAchivement(
+	test('"Cant Touch This" counts reflected damage from Sheep Stare as one progress', async () => {
+		await testAchivement(
 			{
 				achievement: CantTouchThis,
 				playerOneDeck: [ZedaphPlaysRare],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, ZedaphPlaysRare, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* attack(game, 'primary')
-					yield* endTurn(game)
+					await test.attack('primary')
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* forfeit(game.currentPlayerEntity)
+					await test.forfeit(game.currentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(CantTouchThis.getProgress(achievement.goals)).toBe(1)

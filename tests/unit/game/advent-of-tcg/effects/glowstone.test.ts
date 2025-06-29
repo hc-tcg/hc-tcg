@@ -7,17 +7,11 @@ import BuilderItem from 'common/cards/items/builder-common'
 import MinerItem from 'common/cards/items/miner-common'
 import {CardComponent} from 'common/components'
 import {SelectCards} from 'common/types/modal-requests'
-import {
-	applyEffect,
-	endTurn,
-	finishModalRequest,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Glowstone Single Use', () => {
-	test('Glowstone functionality', () => {
-		testGame(
+	test('Glowstone functionality', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Glowstone],
 				playerTwoDeck: [
@@ -28,10 +22,10 @@ describe('Test Glowstone Single Use', () => {
 					MinerItem,
 					Feather,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Glowstone, 'single_use')
-					yield* applyEffect(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Glowstone, 'single_use')
+					await test.applyEffect()
 					expect(
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards.map(
 							(entity) => game.components.get(entity)?.props,
@@ -40,7 +34,7 @@ describe('Test Glowstone Single Use', () => {
 					const cardEntities = (
 						game.state.modalRequests[0].modal as SelectCards.Data
 					).cards
-					yield* finishModalRequest(game, {
+					await test.finishModalRequest({
 						result: true,
 						cards: [cardEntities[1]],
 					})
@@ -53,7 +47,7 @@ describe('Test Glowstone Single Use', () => {
 					expect(
 						game.opponentPlayer.getDiscarded().map((card) => card.props),
 					).toStrictEqual([BuilderItem])
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false},

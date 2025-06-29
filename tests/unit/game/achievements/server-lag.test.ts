@@ -9,19 +9,11 @@ import ZedaphPlaysRare from 'common/cards/hermits/zedaphplays-rare'
 import BalancedItem from 'common/cards/items/balanced-common'
 import LavaBucket from 'common/cards/single-use/lava-bucket'
 import {IronSword} from 'common/cards/single-use/sword'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	forfeit,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Server Lag achievement', () => {
-	test('Test "Server Lag" knock-out-win with secondary Succeeds', () => {
-		testAchivement(
+	test('Test "Server Lag" knock-out-win with secondary Succeeds', async () => {
+		await testAchivement(
 			{
 				achievement: ServerLag,
 				playerOneDeck: [EthosLabCommon, ...Array(9).fill(BalancedItem)],
@@ -32,27 +24,27 @@ describe('Test Server Lag achievement', () => {
 					VintageBeefCommon,
 					BalancedItem,
 				],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, _game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, outcome) {
 					expect(outcome.type).toBe('player-won')
@@ -69,8 +61,8 @@ describe('Test Server Lag achievement', () => {
 		)
 	})
 
-	test('Test "Server Lag" knock-out-tie with secondary Succeeds', () => {
-		testAchivement(
+	test('Test "Server Lag" knock-out-tie with secondary Succeeds', async () => {
+		await testAchivement(
 			{
 				achievement: ServerLag,
 				playerOneDeck: [EthosLabCommon, ...Array(9).fill(BalancedItem)],
@@ -81,28 +73,28 @@ describe('Test Server Lag achievement', () => {
 					StressMonster101Rare,
 					BalancedItem,
 				],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, _game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, StressMonster101Rare, 'hermit', 1)
-					yield* endTurn(game)
+					await test.playCardFromHand(StressMonster101Rare, 'hermit', 1)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* attack(game, 'secondary')
+					await test.changeActiveHermit(1)
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, outcome) {
 					expect(outcome.type).toBe('tie')
@@ -115,8 +107,8 @@ describe('Test Server Lag achievement', () => {
 		)
 	})
 
-	test('Test "Server Lag" knock-out-loss with secondary Succeeds', () => {
-		testAchivement(
+	test('Test "Server Lag" knock-out-loss with secondary Succeeds', async () => {
+		await testAchivement(
 			{
 				achievement: ServerLag,
 				playerOneDeck: [EthosLabCommon, ...Array(9).fill(BalancedItem)],
@@ -127,28 +119,28 @@ describe('Test Server Lag achievement', () => {
 					VintageBeefCommon,
 					BalancedItem,
 				],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, _game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ZedaphPlaysRare, 'hermit', 1)
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(ZedaphPlaysRare, 'hermit', 1)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* attack(game, 'primary')
-					yield* endTurn(game)
+					await test.attack('primary')
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* attack(game, 'secondary')
+					await test.changeActiveHermit(1)
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, outcome) {
 					expect(outcome.type).toBe('player-won')
@@ -170,8 +162,8 @@ describe('Test Server Lag achievement', () => {
 		)
 	})
 
-	test('Test "Server Lag" deck-out-loss with secondary Succeeds', () => {
-		testAchivement(
+	test('Test "Server Lag" deck-out-loss with secondary Succeeds', async () => {
+		await testAchivement(
 			{
 				achievement: ServerLag,
 				playerOneDeck: [EthosLabCommon, ...Array(9).fill(BalancedItem)],
@@ -183,31 +175,31 @@ describe('Test Server Lag achievement', () => {
 					VintageBeefCommon,
 					...Array(3).fill(BalancedItem),
 				],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 2)
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 2)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.opponentPlayer.getDrawPile().length).not.toBe(0)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.currentPlayer.getDrawPile().length).toBe(0)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 				checkAchivement(_game, achievement, outcome) {
 					expect(outcome.type).toBe('player-won')
@@ -229,8 +221,8 @@ describe('Test Server Lag achievement', () => {
 		)
 	})
 
-	test('Test "Server Lag" knock-out-win with Burn Succeeds', () => {
-		testAchivement(
+	test('Test "Server Lag" knock-out-win with Burn Succeeds', async () => {
+		await testAchivement(
 			{
 				achievement: ServerLag,
 				playerOneDeck: [
@@ -245,31 +237,31 @@ describe('Test Server Lag achievement', () => {
 					...Array(5).fill(BalancedItem),
 					GeminiTayRare,
 				],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, _game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Totem, 'attach', 1)
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.playCardFromHand(Totem, 'attach', 1)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 1)
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 1)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.playCardFromHand(LavaBucket, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 				},
 				checkAchivement(_game, achievement, outcome) {
 					expect(outcome.type).toBe('player-won')
@@ -286,8 +278,8 @@ describe('Test Server Lag achievement', () => {
 		)
 	})
 
-	test('Test "Server Lag" knock-out-win with secondary + sword Succeeds', () => {
-		testAchivement(
+	test('Test "Server Lag" knock-out-win with secondary + sword Succeeds', async () => {
+		await testAchivement(
 			{
 				achievement: ServerLag,
 				playerOneDeck: [
@@ -302,28 +294,28 @@ describe('Test Server Lag achievement', () => {
 					VintageBeefCommon,
 					BalancedItem,
 				],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, _game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, IronSword, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(IronSword, 'single_use')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, outcome) {
 					expect(outcome.type).toBe('player-won')
@@ -340,8 +332,8 @@ describe('Test Server Lag achievement', () => {
 		)
 	})
 
-	test('Test "Server Lag" forfeit-win before turn end Succeeds', () => {
-		testAchivement(
+	test('Test "Server Lag" forfeit-win before turn end Succeeds', async () => {
+		await testAchivement(
 			{
 				achievement: ServerLag,
 				playerOneDeck: [EthosLabCommon, ...Array(9).fill(BalancedItem)],
@@ -353,29 +345,29 @@ describe('Test Server Lag achievement', () => {
 					VintageBeefCommon,
 					...Array(3).fill(BalancedItem),
 				],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 2)
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 2)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* forfeit(game.opponentPlayerEntity)
+					await test.attack('secondary')
+					await test.forfeit(game.opponentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, outcome) {
 					expect(outcome.type).toBe('player-won')
@@ -392,8 +384,8 @@ describe('Test Server Lag achievement', () => {
 		)
 	})
 
-	test('Test "Server Lag" forfeit-loss Fails', () => {
-		testAchivement(
+	test('Test "Server Lag" forfeit-loss Fails', async () => {
+		await testAchivement(
 			{
 				achievement: ServerLag,
 				playerOneDeck: [EthosLabCommon, ...Array(9).fill(BalancedItem)],
@@ -405,29 +397,29 @@ describe('Test Server Lag achievement', () => {
 					VintageBeefCommon,
 					...Array(3).fill(BalancedItem),
 				],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 0)
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 2)
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 2)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* forfeit(game.currentPlayerEntity)
+					await test.attack('secondary')
+					await test.forfeit(game.currentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, outcome) {
 					expect(outcome.type).toBe('player-won')

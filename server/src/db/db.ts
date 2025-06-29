@@ -30,7 +30,6 @@ import {GameOutcome, Message} from 'common/types/game-state'
 import {NumberOrNull, generateDatabaseCode} from 'common/utils/database-codes'
 import {newRandomNumberGenerator} from 'common/utils/random'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
-import {call} from 'typed-redux-saga'
 import {huffmanCompress, huffmanDecompress} from '../../src/utils/compression'
 import {
 	ReplayActionData,
@@ -1039,8 +1038,7 @@ export class Database {
 	}
 
 	/**Get the replay information of a game */
-	public *getGameReplay(gameId: number): Generator<
-		any,
+	public async getGameReplay(gameId: number): Promise<
 		DatabaseResult<{
 			player1Defs: PlayerSetupDefs
 			player2Defs: PlayerSetupDefs
@@ -1050,8 +1048,7 @@ export class Database {
 		}>
 	> {
 		try {
-			const gamesResult: any = yield* call(
-				[this.pool, this.pool.query],
+			const gamesResult: any = await this.pool.query(
 				`
 				WITH game AS (
 					SELECT * FROM games
@@ -1149,7 +1146,7 @@ export class Database {
 
 			const turnActionCompressor = new TurnActionCompressor()
 
-			const replayActions = yield* turnActionCompressor.bufferToTurnActions(
+			const replayActions = await turnActionCompressor.bufferToTurnActions(
 				player1Defs,
 				player2Defs,
 				seed,
@@ -1158,7 +1155,7 @@ export class Database {
 				gameId.toString(),
 			)
 
-			if ('invalid' in replayActions) {
+			if (replayActions.invalid) {
 				return {
 					type: 'failure',
 					reason: `There was a problem decoding the replay of game ${gameId}.'`,

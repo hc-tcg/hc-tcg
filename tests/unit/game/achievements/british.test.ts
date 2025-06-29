@@ -3,40 +3,34 @@ import British from 'common/achievements/british'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import SpookyStressRare from 'common/cards/hermits/spookystress-rare'
 import XisumavoidRare from 'common/cards/hermits/xisumavoid-rare'
-import {
-	attack,
-	changeActiveHermit,
-	endTurn,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test British achievement', () => {
-	test('"British" achievement does not progress if only Cup of Tea is used', () => {
-		testAchivement(
+	test('"British" achievement does not progress if only Cup of Tea is used', async () => {
+		await testAchivement(
 			{
 				achievement: British,
 				playerOneDeck: [XisumavoidRare],
 				playerTwoDeck: [SpookyStressRare],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, XisumavoidRare, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, _game) => {
+					await test.playCardFromHand(XisumavoidRare, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, SpookyStressRare, 'hermit', 0)
-					yield* endTurn(game)
+					await test.playCardFromHand(SpookyStressRare, 'hermit', 0)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(British.getProgress(achievement.goals)).toBeFalsy()
@@ -46,36 +40,36 @@ describe('Test British achievement', () => {
 		)
 	})
 
-	test('"British" achievement makes progress if both secondaries are used', () => {
-		testAchivement(
+	test('"British" achievement makes progress if both secondaries are used', async () => {
+		await testAchivement(
 			{
 				achievement: British,
 				playerOneDeck: [XisumavoidRare, SpookyStressRare],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, XisumavoidRare, 'hermit', 0)
-					yield* playCardFromHand(game, SpookyStressRare, 'hermit', 1)
-					yield* endTurn(game)
+				playGame: async (test, _game) => {
+					await test.playCardFromHand(XisumavoidRare, 'hermit', 0)
+					await test.playCardFromHand(SpookyStressRare, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(British.getProgress(achievement.goals)).toBe(1)

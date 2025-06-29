@@ -11,20 +11,11 @@ import Efficiency from 'common/cards/single-use/efficiency'
 import EnderPearl from 'common/cards/single-use/ender-pearl'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Human Cleo Betrayal', () => {
-	test('Test Betrayal with canceling to Ender Pearl knock-out', () => {
-		testGame(
+	test('Test Betrayal with canceling to Ender Pearl knock-out', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -33,14 +24,14 @@ describe('Test Human Cleo Betrayal', () => {
 					EnderPearl,
 				],
 				playerTwoDeck: [HumanCleoRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					game.components.find(
 						RowComponent,
@@ -48,59 +39,56 @@ describe('Test Human Cleo Betrayal', () => {
 						query.row.active,
 					)!.health = 10 // Prepare active row to be knocked-out after using Ender Pearl
 					expect(game.state.turn.availableActions).not.toContain('END_TURN')
-					yield* playCardFromHand(game, Crossbow, 'single_use')
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.playCardFromHand(Crossbow, 'single_use')
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* removeEffect(game)
+					await test.removeEffect()
 
-					yield* playCardFromHand(game, EnderPearl, 'single_use')
-					yield* pick(
-						game,
+					await test.playCardFromHand(EnderPearl, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
 
-					yield* changeActiveHermit(game, 1)
-					yield* attack(game, 'secondary')
+					await test.changeActiveHermit(1)
+					await test.attack('secondary')
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						VintageBeefCommon.health,
 					)
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						HumanCleoRare.health - VintageBeefCommon.secondary.damage,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 
-	test('Test Betrayal knocking-out opponent active hermit', () => {
-		testGame(
+	test('Test Betrayal knocking-out opponent active hermit', async () => {
+		await testGame(
 			{
 				playerOneDeck: [ArmorStand, EthosLabCommon, VintageBeefCommon],
 				playerTwoDeck: [HumanCleoRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, VintageBeefCommon, 'hermit', 2)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(ArmorStand, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(VintageBeefCommon, 'hermit', 2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 					expect(game.state.turn.availableActions).not.toContain('END_TURN')
-					yield* attack(game, 'primary')
-					yield* pick(
-						game,
+					await test.attack('primary')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
@@ -112,39 +100,39 @@ describe('Test Human Cleo Betrayal', () => {
 							query.row.index(2),
 						)?.health,
 					).toBe(VintageBeefCommon.health - EthosLabCommon.primary.damage)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 
-	test('Test Betrayal + Clock', () => {
-		testGame(
+	test('Test Betrayal + Clock', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [HumanCleoRare, Clock],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, _game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 0)
-					yield* playCardFromHand(game, Clock, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
+					await test.playCardFromHand(Clock, 'single_use')
+					await test.applyEffect()
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 
-	test('Test Betrayal works when opponent has Command Block', () => {
-		testGame(
+	test('Test Betrayal works when opponent has Command Block', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					HumanCleoRare,
@@ -153,91 +141,89 @@ describe('Test Human Cleo Betrayal', () => {
 					BalancedDoubleItem,
 				],
 				playerTwoDeck: [HumanCleoRare, CommandBlock, BalancedDoubleItem],
-				saga: function* (game) {
-					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 0)
-					yield* playCardFromHand(game, CommandBlock, 'attach', 0)
-					yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
+					await test.playCardFromHand(CommandBlock, 'attach', 0)
+					await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(game.state.turn.availableActions).toContain('END_TURN')
-					yield* playCardFromHand(game, CommandBlock, 'attach', 0)
+					await test.playCardFromHand(CommandBlock, 'attach', 0)
 					expect(game.state.turn.availableActions).not.toContain('END_TURN')
-					yield* attack(game, 'primary')
-					yield* pick(
-						game,
+					await test.attack('primary')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 					expect(game.state.turn.availableActions).toContain('END_TURN')
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{noItemRequirements: false, forceCoinFlip: true},
 		)
 	})
 
-	test('Test Betrayal works when opponent uses Efficiency', () => {
-		testGame(
+	test('Test Betrayal works when opponent uses Efficiency', async () => {
+		await testGame(
 			{
 				playerOneDeck: [HumanCleoRare, EthosLabCommon, Efficiency],
 				playerTwoDeck: [HumanCleoRare, Efficiency],
-				saga: function* (game) {
-					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 0)
-					yield* playCardFromHand(game, Efficiency, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
+					await test.playCardFromHand(Efficiency, 'single_use')
+					await test.applyEffect()
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(game.state.turn.availableActions).toContain('END_TURN')
-					yield* playCardFromHand(game, Efficiency, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(Efficiency, 'single_use')
+					await test.applyEffect()
 					expect(game.state.turn.availableActions).not.toContain('END_TURN')
-					yield* attack(game, 'primary')
-					yield* pick(
-						game,
+					await test.attack('primary')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 					expect(game.state.turn.availableActions).toContain('END_TURN')
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{noItemRequirements: false, forceCoinFlip: true},
 		)
 	})
 
-	test('Test Betrayed allows ending turn when opponent switches from row with no items', () => {
-		testGame(
+	test('Test Betrayed allows ending turn when opponent switches from row with no items', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, BalancedDoubleItem],
 				playerTwoDeck: [HumanCleoRare, Efficiency],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, BalancedDoubleItem, 'item', 1, 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(BalancedDoubleItem, 'item', 1, 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 0)
-					yield* playCardFromHand(game, Efficiency, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
+					await test.playCardFromHand(Efficiency, 'single_use')
+					await test.applyEffect()
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 					expect(game.state.turn.availableActions).toContain('END_TURN')
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{noItemRequirements: false, forceCoinFlip: true},

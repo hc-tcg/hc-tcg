@@ -5,31 +5,23 @@ import HumanCleoRare from 'common/cards/hermits/humancleo-rare'
 import ChorusFruit from 'common/cards/single-use/chorus-fruit'
 import CurseOfBinding from 'common/cards/single-use/curse-of-binding'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Chorus Fruit', () => {
-	test('Basic functionality', () => {
-		testGame(
+	test('Basic functionality', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, ChorusFruit],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, ChorusFruit, 'single_use')
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(ChorusFruit, 'single_use')
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -41,30 +33,29 @@ describe('Test Chorus Fruit', () => {
 		)
 	})
 
-	test('Chorus Fruit can be used to swap after attacking for Betrayed', () => {
-		testGame(
+	test('Chorus Fruit can be used to swap after attacking for Betrayed', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, ChorusFruit],
 				playerTwoDeck: [HumanCleoRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 0)
+					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ChorusFruit, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(ChorusFruit, 'single_use')
+					await test.attack('secondary')
 
 					// First request should be for Betrayal target
 					expect(game.state.pickRequests).toHaveLength(1)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -72,8 +63,7 @@ describe('Test Chorus Fruit', () => {
 
 					// Second request should be to switch active row
 					expect(game.state.pickRequests).toHaveLength(1)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -86,22 +76,22 @@ describe('Test Chorus Fruit', () => {
 		)
 	})
 
-	test('Curse of Binding prevents using Chorus Fruit', () => {
-		testGame(
+	test('Curse of Binding prevents using Chorus Fruit', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, ChorusFruit],
 				playerTwoDeck: [EthosLabCommon, CurseOfBinding],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, CurseOfBinding, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(CurseOfBinding, 'single_use')
+					await test.applyEffect()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.getPickableSlots(ChorusFruit.attachCondition),
@@ -112,8 +102,8 @@ describe('Test Chorus Fruit', () => {
 		)
 	})
 
-	test('Shreep prevents using Chorus Fruit', () => {
-		testGame(
+	test('Shreep prevents using Chorus Fruit', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [
@@ -122,19 +112,19 @@ describe('Test Chorus Fruit', () => {
 					ChorusFruit,
 					ChorusFruit,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, BdoubleO100Rare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, ChorusFruit, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(BdoubleO100Rare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(ChorusFruit, 'single_use')
+					await test.attack('secondary')
 					expect(game.currentPlayer.singleUseCardUsed).toBe(true)
 					expect(game.state.pickRequests).toHaveLength(0)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.getPickableSlots(ChorusFruit.attachCondition),

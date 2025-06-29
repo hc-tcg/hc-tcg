@@ -13,44 +13,34 @@ import LavaBucket from 'common/cards/single-use/lava-bucket'
 import SplashPotionOfPoison from 'common/cards/single-use/splash-potion-of-poison'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Powder Snow Bucket', () => {
-	test('Frozen effect prevents attack damage and activating row', () => {
-		testGame(
+	test('Frozen effect prevents attack damage and activating row', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, PowderSnowBucket],
 				playerTwoDeck: [EthosLabCommon, Bow],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, PowderSnowBucket, 'single_use')
-					yield* pick(
-						game,
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(PowderSnowBucket, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Bow, 'single_use')
-					yield* attack(game, 'single-use')
-					yield* pick(
-						game,
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Bow, 'single_use')
+					await test.attack('single-use')
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -68,24 +58,23 @@ describe('Test Powder Snow Bucket', () => {
 		)
 	})
 
-	test("Knockback and Egg can not be used when opponent's AFK Hermits are Frozen", () => {
-		testGame(
+	test("Knockback and Egg can not be used when opponent's AFK Hermits are Frozen", async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, PowderSnowBucket],
 				playerTwoDeck: [EthosLabCommon, Knockback, Egg],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, PowderSnowBucket, 'single_use')
-					yield* pick(
-						game,
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(PowderSnowBucket, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 					expect(
 						game.getPickableSlots(Knockback.attachCondition),
 					).toStrictEqual([])
@@ -96,42 +85,41 @@ describe('Test Powder Snow Bucket', () => {
 		)
 	})
 
-	test("Powder Snow disables switching for Peace Out, Chorus Fruit and Let's Go", () => {
-		testGame(
+	test("Powder Snow disables switching for Peace Out, Chorus Fruit and Let's Go", async () => {
+		await testGame(
 			{
 				playerOneDeck: [Cubfan135Rare, EthosLabCommon, ChorusFruit],
 				playerTwoDeck: [IJevinRare, PowderSnowBucket],
-				saga: function* (game) {
-					yield* playCardFromHand(game, Cubfan135Rare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(Cubfan135Rare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, IJevinRare, 'hermit', 0)
-					yield* playCardFromHand(game, PowderSnowBucket, 'single_use')
-					yield* pick(
-						game,
+					await test.playCardFromHand(IJevinRare, 'hermit', 0)
+					await test.playCardFromHand(PowderSnowBucket, 'single_use')
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.state.pickRequests).toStrictEqual([])
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.getPickableSlots(ChorusFruit.attachCondition),
 					).toStrictEqual([])
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.state.pickRequests).toStrictEqual([])
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
 
-	test('Frozen hermits still take status effect damage', () => {
-		testGame(
+	test('Frozen hermits still take status effect damage', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -145,37 +133,35 @@ describe('Test Powder Snow Bucket', () => {
 					SplashPotionOfPoison,
 					PowderSnowBucket,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(LavaBucket, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, SplashPotionOfPoison, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* playCardFromHand(game, PowderSnowBucket, 'single_use')
-					yield* pick(
-						game,
+					await test.playCardFromHand(PowderSnowBucket, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* changeActiveHermit(game, 2)
-					yield* endTurn(game)
+					await test.changeActiveHermit(2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, PowderSnowBucket, 'single_use')
-					yield* pick(
-						game,
+					await test.playCardFromHand(PowderSnowBucket, 'single_use')
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -194,7 +180,7 @@ describe('Test Powder Snow Bucket', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health - 20 /** Poison */)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -216,30 +202,28 @@ describe('Test Powder Snow Bucket', () => {
 		)
 	})
 
-	test('Frozen Berry Bush cannot be damaged, but still removes its health each turn', () => {
-		testGame({
+	test('Frozen Berry Bush cannot be damaged, but still removes its health each turn', async () => {
+		await testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [EthosLabCommon, BerryBush, PowderSnowBucket, Bow],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+			testGame: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(
-					game,
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(
 					BerryBush,
 					'hermit',
 					1,
 					game.opponentPlayerEntity,
 				)
-				yield* playCardFromHand(game, PowderSnowBucket, 'single_use')
-				yield* pick(
-					game,
+				await test.playCardFromHand(PowderSnowBucket, 'single_use')
+				await test.pick(
 					query.slot.opponent,
 					query.slot.hermit,
 					query.slot.rowIndex(1),
 				)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(
 					game.components.find(
@@ -248,18 +232,17 @@ describe('Test Powder Snow Bucket', () => {
 						query.row.index(1),
 					)?.health,
 				).toBe(BerryBush.health - 10)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, Bow, 'single_use')
-				yield* attack(game, 'single-use')
-				yield* pick(
-					game,
+				await test.playCardFromHand(Bow, 'single_use')
+				await test.attack('single-use')
+				await test.pick(
 					query.slot.opponent,
 					query.slot.hermit,
 					query.slot.rowIndex(1),
 				)
 				expect(game.currentPlayer.getHand()).toStrictEqual([])
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(
 					game.components.find(
@@ -272,61 +255,58 @@ describe('Test Powder Snow Bucket', () => {
 		})
 	})
 
-	test('Extra Flee does not switch Hermits while AFK Hermits are Frozen', () => {
-		testGame(
+	test('Extra Flee does not switch Hermits while AFK Hermits are Frozen', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, PowderSnowBucket],
 				playerTwoDeck: [TangoTekRare, EthosLabCommon, PowderSnowBucket],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, PowderSnowBucket, 'single_use')
-					yield* pick(
-						game,
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(PowderSnowBucket, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, PowderSnowBucket, 'single_use')
-					yield* pick(
-						game,
+					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(PowderSnowBucket, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.state.pickRequests).toStrictEqual([])
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.state.pickRequests).toStrictEqual([])
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.opponentPlayer.lives).toBe(2)
 					expect(game.opponentPlayer.activeRow).toBe(null)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.state.pickRequests).toStrictEqual([])
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},

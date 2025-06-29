@@ -9,29 +9,23 @@ import BalancedItem from 'common/cards/items/balanced-common'
 import {CardComponent} from 'common/components'
 import query from 'common/components/query'
 import {SelectCards} from 'common/types/modal-requests'
-import {
-	attack,
-	endTurn,
-	finishModalRequest,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Grian Rare', () => {
-	test('Test Borrow steals Loyalty after knock out', () => {
-		testGame(
+	test('Test Borrow steals Loyalty after knock out', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Loyalty, BalancedItem],
 				playerTwoDeck: [GrianRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Loyalty, 'attach', 0)
-					yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Loyalty, 'attach', 0)
+					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, GrianRare, 'hermit', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(GrianRare, 'hermit', 0)
+					await test.attack('primary')
 
 					// Check Loyalty worked
 					expect(
@@ -44,7 +38,7 @@ describe('Test Grian Rare', () => {
 							.primaryButton,
 					).toBeTruthy()
 
-					yield* finishModalRequest(game, {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 
 					expect(
 						game.components.find(
@@ -64,19 +58,19 @@ describe('Test Grian Rare', () => {
 			},
 		)
 	})
-	test('Test Borrow steals Shield after blocking damage', () => {
-		testGame(
+	test('Test Borrow steals Shield after blocking damage', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Shield],
 				playerTwoDeck: [GrianRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Shield, 'attach', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Shield, 'attach', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, GrianRare, 'hermit', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(GrianRare, 'hermit', 0)
+					await test.attack('primary')
 
 					// Check Shield blocked Borrow damage
 					expect(game.opponentPlayer.activeRow?.health).toBe(
@@ -88,7 +82,7 @@ describe('Test Grian Rare', () => {
 							.primaryButton,
 					).toBeTruthy()
 
-					yield* finishModalRequest(game, {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 
 					expect(
 						game.components.find(
@@ -108,19 +102,19 @@ describe('Test Grian Rare', () => {
 		)
 	})
 
-	test('Test Borrow cannot steal Totem that revives hermit', () => {
-		testGame(
+	test('Test Borrow cannot steal Totem that revives hermit', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Totem],
 				playerTwoDeck: [GrianRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Totem, 'attach', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Totem, 'attach', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, GrianRare, 'hermit', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(GrianRare, 'hermit', 0)
+					await test.attack('primary')
 
 					// Check for Totem reviving hermit and discarding itself
 					expect(game.opponentPlayer.activeRow?.health).toBe(10)
@@ -145,20 +139,20 @@ describe('Test Grian Rare', () => {
 		)
 	})
 
-	test("Test Borrow discards to Grian's discard pile", () => {
-		testGame(
+	test("Test Borrow discards to Grian's discard pile", async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Loyalty],
 				playerTwoDeck: [GrianRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Loyalty, 'attach', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Loyalty, 'attach', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, GrianRare, 'hermit', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(GrianRare, 'hermit', 0)
+					await test.attack('primary')
 
-					yield* finishModalRequest(game, {result: false, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 
 					expect(
 						game.components.find(
@@ -178,19 +172,19 @@ describe('Test Grian Rare', () => {
 		)
 	})
 
-	test("Test Borrow cannot replace card in Grian's attach slot", () => {
-		testGame(
+	test("Test Borrow cannot replace card in Grian's attach slot", async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Loyalty],
 				playerTwoDeck: [GrianRare, Shield],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Loyalty, 'attach', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Loyalty, 'attach', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, GrianRare, 'hermit', 0)
-					yield* playCardFromHand(game, Shield, 'attach', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(GrianRare, 'hermit', 0)
+					await test.playCardFromHand(Shield, 'attach', 0)
+					await test.attack('primary')
 
 					// Check Grian added a modal request that does not allow attaching
 					expect(
@@ -198,7 +192,7 @@ describe('Test Grian Rare', () => {
 							.primaryButton,
 					).toBe(null)
 
-					yield* finishModalRequest(game, {result: false, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 
 					expect(
 						game.components.find(
@@ -218,22 +212,22 @@ describe('Test Grian Rare', () => {
 		)
 	})
 
-	test('Test Borrow cannot attach card when Grian is knocked-out by Thorns', () => {
-		testGame(
+	test('Test Borrow cannot attach card when Grian is knocked-out by Thorns', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Thorns],
 				playerTwoDeck: [GrianRare, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Thorns, 'attach', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Thorns, 'attach', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, GrianRare, 'hermit', 0)
+					await test.playCardFromHand(GrianRare, 'hermit', 0)
 					// Manually set Grian's health to knock-out range
 					game.currentPlayer.activeRow!.health = 10
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.attack('primary')
 
 					// Check Grian added a modal request that does not allow attaching
 					expect(
@@ -241,7 +235,7 @@ describe('Test Grian Rare', () => {
 							.primaryButton,
 					).toBe(null)
 
-					yield* finishModalRequest(game, {result: false, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 
 					expect(
 						game.components.find(

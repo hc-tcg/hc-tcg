@@ -6,19 +6,11 @@ import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
 import FishingRod from 'common/cards/single-use/fishing-rod'
 import Mending from 'common/cards/single-use/mending'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	forfeit,
-	pick,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Go Fish Achievement', () => {
-	test('Test achievement is gained after mending is drawn', () => {
-		testAchivement(
+	test('Test achievement is gained after mending is drawn', async () => {
+		await testAchivement(
 			{
 				achievement: GoFish,
 				playerOneDeck: [
@@ -32,12 +24,12 @@ describe('Test Go Fish Achievement', () => {
 					Mending,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, FishingRod, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
-					yield* forfeit(game.currentPlayer.entity)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(FishingRod, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(GoFish.getProgress(achievement.goals)).toBe(1)
@@ -46,8 +38,8 @@ describe('Test Go Fish Achievement', () => {
 			{noItemRequirements: true, startWithAllCards: false},
 		)
 	})
-	test('Test achievement works properly with Gem', () => {
-		testAchivement(
+	test('Test achievement works properly with Gem', async () => {
+		await testAchivement(
 			{
 				achievement: GoFish,
 				playerOneDeck: [
@@ -64,30 +56,29 @@ describe('Test Go Fish Achievement', () => {
 					Mending,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, IronArmor, 'attach', 0)
-					yield* endTurn(game)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(IronArmor, 'attach', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, Mending, 'single_use')
+					await test.playCardFromHand(Mending, 'single_use')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.attach,
 						query.slot.currentPlayer,
 						query.slot.rowIndex(1),
 					)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
-					yield* playCardFromHand(game, FishingRod, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(FishingRod, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(GoFish.getProgress(achievement.goals)).toBe(1)

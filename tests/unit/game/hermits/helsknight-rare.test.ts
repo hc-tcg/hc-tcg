@@ -5,28 +5,28 @@ import HelsknightRare from 'common/cards/hermits/helsknight-rare'
 import Anvil from 'common/cards/single-use/anvil'
 import {IronSword} from 'common/cards/single-use/sword'
 import TNT from 'common/cards/single-use/tnt'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Hels Trap Hole', () => {
-	test('Test Trap Hole with TNT', () => {
-		testGame(
+	test('Test Trap Hole with TNT', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, TNT],
 				playerTwoDeck: [HelsknightRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HelsknightRare, 'hermit', 0)
+					await test.playCardFromHand(HelsknightRare, 'hermit', 0)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, TNT, 'single_use')
+					await test.playCardFromHand(TNT, 'single_use')
 
-					yield* attack(game, 'single-use')
+					await test.attack('single-use')
 
 					expect(
 						game.opponentPlayer.getHand().map((card) => card.props),
@@ -37,22 +37,22 @@ describe('Test Hels Trap Hole', () => {
 		)
 	})
 
-	test('Test Trap Hole when Anvil misses', () => {
-		testGame(
+	test('Test Trap Hole when Anvil misses', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Anvil],
 				playerTwoDeck: [HelsknightRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HelsknightRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(HelsknightRare, 'hermit', 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* playCardFromHand(game, Anvil, 'single_use')
+					await test.playCardFromHand(Anvil, 'single_use')
 					expect(Anvil.attackPreview?.(game)).toBe('$A0$')
-					yield* attack(game, 'single-use')
+					await test.attack('single-use')
 					expect(
 						game.opponentPlayer.getHand().map((card) => card.props),
 					).toStrictEqual([Anvil])
@@ -62,29 +62,29 @@ describe('Test Hels Trap Hole', () => {
 		)
 	})
 
-	test('Test Trap Hole against Geminislay', () => {
-		testGame(
+	test('Test Trap Hole against Geminislay', async () => {
+		await testGame(
 			{
 				playerOneDeck: [GeminiTayRare, IronSword, IronSword],
 				playerTwoDeck: [HelsknightRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HelsknightRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(HelsknightRare, 'hermit', 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* playCardFromHand(game, IronSword, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(IronSword, 'single_use')
+					await test.attack('secondary')
 					expect(
 						game.currentPlayer.coinFlips.filter((flip) => flip.opponentFlip),
 					).toHaveLength(1)
 					expect(
 						game.opponentPlayer.getHand().map((card) => card.props),
 					).toStrictEqual([IronSword])
-					yield* playCardFromHand(game, IronSword, 'single_use')
-					yield* attack(game, 'single-use')
+					await test.playCardFromHand(IronSword, 'single_use')
+					await test.attack('single-use')
 					expect(
 						game.currentPlayer.coinFlips.filter((flip) => flip.opponentFlip),
 					).toHaveLength(1)

@@ -3,16 +3,10 @@ import SculkCatalyst from 'common/cards/advent-of-tcg/attach/sculk-catalyst'
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
 import ImpulseSVRare from 'common/cards/hermits/impulsesv-rare'
 import TangoTekCommon from 'common/cards/hermits/tangotek-common'
-import {
-	attack,
-	bossAttack,
-	endTurn,
-	playCardFromHand,
-	testBossFight,
-} from '../../utils'
+import {testBossFight} from '../../utils'
 
 describe('Test Sculk Catalyst', () => {
-	test('Sculk Catalyst triggers when Evil X boss loses a life', () => {
+	test('Sculk Catalyst triggers when Evil X boss loses a life', async () => {
 		testBossFight(
 			{
 				playerDeck: [
@@ -21,24 +15,24 @@ describe('Test Sculk Catalyst', () => {
 					TangoTekCommon,
 					SculkCatalyst,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, ImpulseSVRare, 'hermit', 0)
-					yield* playCardFromHand(game, TangoTekCommon, 'hermit', 1)
-					yield* playCardFromHand(game, TangoTekCommon, 'hermit', 2)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(ImpulseSVRare, 'hermit', 0)
+					await test.playCardFromHand(TangoTekCommon, 'hermit', 1)
+					await test.playCardFromHand(TangoTekCommon, 'hermit', 2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
-					yield* bossAttack(game, '50DMG')
-					yield* endTurn(game)
+					await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
+					await test.bossAttack('50DMG')
+					await test.endTurn()
 
-					yield* playCardFromHand(game, SculkCatalyst, 'attach', 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(SculkCatalyst, 'attach', 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* bossAttack(game, '70DMG')
-					yield* endTurn(game)
+					await test.bossAttack('70DMG')
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.opponentPlayer.lives).toBe(2)
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						ImpulseSVRare.health - 70,

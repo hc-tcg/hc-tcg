@@ -13,7 +13,7 @@ async function performFuzzTest(seed: string, debug: boolean) {
 
 	let gameSeed = randomNumberGenerator().toString().slice(16)
 
-	await testGame({
+	await await testGame({
 		playerOne,
 		playerTwo,
 		seed: gameSeed,
@@ -134,3 +134,6 @@ async function main() {
 }
 
 await main()
+
+/* The process doesn't exit when I want it to, so I'm forcing it to exit */
+process.exit(0)

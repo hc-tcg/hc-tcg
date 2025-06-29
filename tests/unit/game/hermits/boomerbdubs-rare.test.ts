@@ -5,59 +5,49 @@ import BadOmen from 'common/cards/single-use/bad-omen'
 import Crossbow from 'common/cards/single-use/crossbow'
 import Fortune from 'common/cards/single-use/fortune'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Boomer Bdubs Watch This', () => {
-	test('Watch This adds 20hp damage per heads', () => {
-		testGame(
+	test('Watch This adds 20hp damage per heads', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [BoomerBdubsRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, BoomerBdubsRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(BoomerBdubsRare, 'hermit', 0)
+					await test.attack('secondary')
 					// Flip 0 coins
-					yield* finishModalRequest(game, {result: false, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - BoomerBdubsRare.secondary.damage,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					// Flip 1 heads
-					yield* finishModalRequest(game, {result: true, cards: null})
-					yield* finishModalRequest(game, {result: false, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - (BoomerBdubsRare.secondary.damage + 20),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 2)
-					yield* endTurn(game)
+					await test.changeActiveHermit(2)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					// Flip 2 heads
-					yield* finishModalRequest(game, {result: true, cards: null})
-					yield* finishModalRequest(game, {result: true, cards: null})
-					yield* finishModalRequest(game, {result: false, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - (BoomerBdubsRare.secondary.damage + 40),
 					)
@@ -67,90 +57,89 @@ describe('Test Boomer Bdubs Watch This', () => {
 		)
 	})
 
-	test('Watch This deals 0hp damage after flipping tails', () => {
-		testGame(
+	test('Watch This deals 0hp damage after flipping tails', async () => {
+		await testGame(
 			{
 				playerOneDeck: [BoomerBdubsRare],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
-				saga: function* (game) {
-					yield* playCardFromHand(game, BoomerBdubsRare, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(BoomerBdubsRare, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(BadOmen, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					// Flip tails
-					yield* finishModalRequest(game, {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 					expect(game.state.modalRequests).toHaveLength(0)
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 
-	test('Fortune only applies to first coinflip for Watch This', () => {
-		testGame(
+	test('Fortune only applies to first coinflip for Watch This', async () => {
+		await testGame(
 			{
 				playerOneDeck: [BoomerBdubsRare, Fortune],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
-				saga: function* (game) {
-					yield* playCardFromHand(game, BoomerBdubsRare, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(BoomerBdubsRare, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(BadOmen, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* playCardFromHand(game, Fortune, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Fortune, 'single_use')
+					await test.applyEffect()
+					await test.attack('secondary')
 					// Flip heads then tails
-					yield* finishModalRequest(game, {result: true, cards: null})
-					yield* finishModalRequest(game, {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 					expect(game.state.modalRequests).toHaveLength(0)
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
 
-	test('Watch This can only be canceled if it has not flipped a coin', () => {
-		testGame(
+	test('Watch This can only be canceled if it has not flipped a coin', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [BoomerBdubsRare, Crossbow],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, BoomerBdubsRare, 'hermit', 0)
-					yield* playCardFromHand(game, Crossbow, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(BoomerBdubsRare, 'hermit', 0)
+					await test.playCardFromHand(Crossbow, 'single_use')
+					await test.attack('secondary')
 					// Flip 0 coins and cancel
-					yield* finishModalRequest(game, {result: false, cards: null})
-					yield* removeEffect(game)
+					await test.finishModalRequest({result: false, cards: null})
+					await test.removeEffect()
 					// Flip a coin and finish attack
-					yield* playCardFromHand(game, Crossbow, 'single_use')
-					yield* attack(game, 'secondary')
-					yield* finishModalRequest(game, {result: true, cards: null})
-					yield* finishModalRequest(game, {result: false, cards: null})
+					await test.playCardFromHand(Crossbow, 'single_use')
+					await test.attack('secondary')
+					await test.finishModalRequest({result: true, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 					expect(game.state.turn.availableActions).not.toContain(
 						'REMOVE_EFFECT',
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.active,
@@ -160,7 +149,7 @@ describe('Test Boomer Bdubs Watch This', () => {
 							(BoomerBdubsRare.secondary.damage + 20) -
 							20 /** Crossbow */,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},

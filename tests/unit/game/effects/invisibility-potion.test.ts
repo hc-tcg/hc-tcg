@@ -11,34 +11,27 @@ import InvisibilityPotion from 'common/cards/single-use/invisibility-potion'
 import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {InvisibilityPotionHeadsEffect} from 'common/status-effects/invisibility-potion'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Invisiblity Potion.', () => {
-	test('Invisibility Potion blocks damage on heads.', () => {
-		testGame(
+	test('Invisibility Potion blocks damage on heads.', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 					// Verify effect lasts for multiple turns.
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					// Invisibility potion should block damage.
 					expect(
@@ -49,7 +42,7 @@ describe('Test Invisiblity Potion.', () => {
 						)?.health,
 					).toBe(EthosLabCommon.health)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Verify effect timed out.
 					expect(
@@ -64,29 +57,29 @@ describe('Test Invisiblity Potion.', () => {
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('Invisibility Potion doubles damage on tails.', () => {
-		testGame(
+	test('Invisibility Potion doubles damage on tails.', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(BadOmen, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
 					// Verify effect lasts for multiple turns.
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					// Invisibility potion should double incoming damage.
 					expect(
@@ -97,7 +90,7 @@ describe('Test Invisiblity Potion.', () => {
 						)?.health,
 					).toBe(EthosLabCommon.health - EthosLabCommon.secondary.damage * 2)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -111,21 +104,21 @@ describe('Test Invisiblity Potion.', () => {
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('Invisibility Potion blocks Skizzleman Rare damage on heads.', () => {
-		testGame(
+	test('Invisibility Potion blocks Skizzleman Rare damage on heads.', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [SkizzlemanRare, Anvil],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 0)
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
 
 					// Invisibility potion should block both of Skizzlman's attacks.
 					expect(
@@ -135,7 +128,7 @@ describe('Test Invisiblity Potion.', () => {
 							query.row.opponentPlayer,
 						)?.health,
 					).toBe(EthosLabCommon.health - 30 /* Anvil */)
-					yield* endTurn(game)
+					await test.endTurn()
 					expect(
 						game.components.find(
 							RowComponent,
@@ -148,22 +141,21 @@ describe('Test Invisiblity Potion.', () => {
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('Invisibility Potion blocks Poe Poe Skizz Rare damage on heads.', () => {
-		testGame(
+	test('Invisibility Potion blocks Poe Poe Skizz Rare damage on heads.', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [PoePoeSkizzRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* playCardFromHand(game, PoePoeSkizzRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.playCardFromHand(PoePoeSkizzRare, 'hermit', 0)
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.rowIndex(1),
 						query.slot.hermit,
 						query.slot.currentPlayer,
@@ -189,21 +181,21 @@ describe('Test Invisiblity Potion.', () => {
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('Invisibility Potion blocks Spooky Stress damage on heads.', () => {
-		testGame(
+	test('Invisibility Potion blocks Spooky Stress damage on heads.', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, InvisibilityPotion],
 				playerTwoDeck: [SpookyStressRare, WaterBucket],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* playCardFromHand(game, SpookyStressRare, 'hermit', 0)
-					yield* playCardFromHand(game, WaterBucket, 'attach', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(SpookyStressRare, 'hermit', 0)
+					await test.playCardFromHand(WaterBucket, 'attach', 0)
+					await test.attack('secondary')
 
 					// Invisibility potion should block all damage because it was all created by Spooky Stress.
 					expect(

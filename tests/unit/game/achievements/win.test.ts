@@ -1,27 +1,21 @@
 import {describe, expect, test} from '@jest/globals'
 import Win from 'common/achievements/wins'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import {
-	attack,
-	endTurn,
-	forfeit,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test win achivement', () => {
-	test('Test win achivement', () => {
-		testAchivement(
+	test('Test win achivement', async () => {
+		await testAchivement(
 			{
 				achievement: Win,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
-					yield* attack(game, 'secondary')
+				playGame: async (test, _game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Win.getProgress(achievement.goals)).toBeGreaterThanOrEqual(
@@ -32,17 +26,17 @@ describe('Test win achivement', () => {
 			{oneShotMode: true, noItemRequirements: true},
 		)
 	})
-	test('Test win achivement does not count wrong player wins', () => {
-		testAchivement(
+	test('Test win achivement does not count wrong player wins', async () => {
+		await testAchivement(
 			{
 				achievement: Win,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
+				playGame: async (test, _game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Win.getProgress(achievement.goals)).toBeFalsy()
@@ -51,14 +45,14 @@ describe('Test win achivement', () => {
 			{oneShotMode: true, noItemRequirements: true},
 		)
 	})
-	test('Test forfeit wins count', () => {
-		testAchivement(
+	test('Test forfeit wins count', async () => {
+		await testAchivement(
 			{
 				achievement: Win,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
-					yield forfeit(game.opponentPlayer.entity)
+				playGame: async (test, game) => {
+					await test.forfeit(game.opponentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Win.getProgress(achievement.goals)).toBe(1)

@@ -3,25 +3,25 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import FarmerBeefCommon from 'common/cards/hermits/farmerbeef-common'
 import IJevinRare from 'common/cards/hermits/ijevin-rare'
 import {printBoardState} from 'server/utils'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test iJevin Peace Out', () => {
-	test('Test Peace Out when opponent times out request', () => {
-		testGame(
+	test('Test Peace Out when opponent times out request', async () => {
+		await testGame(
 			{
 				playerOneDeck: [IJevinRare],
 				playerTwoDeck: [EthosLabCommon, FarmerBeefCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, IJevinRare, 'hermit', 0)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(IJevinRare, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 2)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 2)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toHaveLength(1)
 

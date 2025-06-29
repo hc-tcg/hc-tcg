@@ -6,11 +6,11 @@ import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
 import ShadEECommon from 'common/cards/hermits/shadee-common'
 import TangoTekRare from 'common/cards/hermits/tangotek-rare'
 import VintageBeefCommon from 'common/cards/hermits/vintagebeef-common'
-import {endTurn, forfeit, playCardFromHand, testAchivement} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test New Team Canada achievement', () => {
-	test('New Team Canada only triggers when containing all members and no other hermits', () => {
-		testAchivement(
+	test('New Team Canada only triggers when containing all members and no other hermits', async () => {
+		await testAchivement(
 			{
 				achievement: NewTeamCanada,
 				playerOneDeck: [
@@ -20,10 +20,10 @@ describe('Test New Team Canada achievement', () => {
 					ArmorStand,
 				],
 				playerTwoDeck: [ShadEECommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
-					yield* forfeit(game.currentPlayer.entity)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(NewTeamCanada.getProgress(achievement.goals)).toEqual(1)
@@ -32,16 +32,16 @@ describe('Test New Team Canada achievement', () => {
 			{noItemRequirements: true, oneShotMode: true},
 		)
 	})
-	test('New Team Canada does not trigger when missing member', () => {
-		testAchivement(
+	test('New Team Canada does not trigger when missing member', async () => {
+		await testAchivement(
 			{
 				achievement: NewTeamCanada,
 				playerOneDeck: [EthosLabCommon, VintageBeefCommon],
 				playerTwoDeck: [ShadEECommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
-					yield* forfeit(game.currentPlayer.entity)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(NewTeamCanada.getProgress(achievement.goals)).toBeFalsy()
@@ -50,8 +50,8 @@ describe('Test New Team Canada achievement', () => {
 			{noItemRequirements: true, oneShotMode: true},
 		)
 	})
-	test('New Team Canada does not trigger when containing others', () => {
-		testAchivement(
+	test('New Team Canada does not trigger when containing others', async () => {
+		await testAchivement(
 			{
 				achievement: NewTeamCanada,
 				playerOneDeck: [
@@ -61,10 +61,10 @@ describe('Test New Team Canada achievement', () => {
 					TangoTekRare,
 				],
 				playerTwoDeck: [ShadEECommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
-					yield* forfeit(game.currentPlayer.entity)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(NewTeamCanada.getProgress(achievement.goals)).toBeFalsy()

@@ -3,20 +3,20 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import FrenchralisRare from 'common/cards/hermits/frenchralis-rare'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Frenchralis Rare', () => {
-	test('Test Zero Lives Lost', () => {
-		testGame(
+	test('Test Zero Lives Lost', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [FrenchralisRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, FrenchralisRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(FrenchralisRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -30,18 +30,18 @@ describe('Test Frenchralis Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test One Life Lost', () => {
-		testGame(
+	test('Test One Life Lost', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [FrenchralisRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
 					game.currentPlayer.lives = 2
-					yield* playCardFromHand(game, FrenchralisRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(FrenchralisRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -55,18 +55,18 @@ describe('Test Frenchralis Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('Test Two Lives Lost', () => {
-		testGame(
+	test('Test Two Lives Lost', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [FrenchralisRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
 					game.currentPlayer.lives = 1
-					yield* playCardFromHand(game, FrenchralisRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(FrenchralisRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(

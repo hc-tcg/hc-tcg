@@ -6,21 +6,21 @@ import {IronSword} from 'common/cards/single-use/sword'
 import {DiamondSword} from 'common/cards/single-use/sword'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Diamond Armor', () => {
-	test('Diamond Armor prevents damage', () => {
-		testGame(
+	test('Diamond Armor prevents damage', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, DiamondArmor],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, DiamondArmor, 'attach', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(DiamondArmor, 'attach', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.attack('primary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -33,19 +33,19 @@ describe('Test Diamond Armor', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Diamond Armor prevents effect damage', () => {
-		testGame(
+	test('Diamond Armor prevents effect damage', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, DiamondArmor],
 				playerTwoDeck: [EthosLabCommon, DiamondSword],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, DiamondArmor, 'attach', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(DiamondArmor, 'attach', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, DiamondSword, 'single_use')
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(DiamondSword, 'single_use')
+					await test.attack('primary')
 					expect(
 						game.components.find(
 							RowComponent,
