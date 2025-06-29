@@ -1,6 +1,5 @@
 import assert from 'assert'
 import serverConfig from 'common/config/server-config'
-import {cancel, delay, put, spawn} from 'typed-redux-saga'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -724,9 +723,9 @@ export class TurnActionCompressor {
 		return Buffer.concat([headerBuffer, timeBuffer])
 	}
 
-	public *turnActionsToBuffer(
+	public async turnActionsToBuffer(
 		controller: GameController,
-	): Generator<any, Buffer> {
+	): Promise<Buffer> {
 		const originalGame = controller.game as GameModel
 
 		const firstPlayerSetupDefs: PlayerSetupDefs = controller.player1Defs
@@ -749,7 +748,7 @@ export class TurnActionCompressor {
 		const buffers: Array<Buffer> = []
 
 		try {
-			newGameController.task = yield* spawn(runGame, newGameController)
+			newGameController.task = runGame(newGameController)
 
 			for (let i = 0; i < originalGame.turnActions.length; i++) {
 				const action = originalGame.turnActions[i]
@@ -762,8 +761,7 @@ export class TurnActionCompressor {
 						action.millisecondsSinceLastAction,
 					),
 				)
-				yield* put<LocalMessage>({
-					type: localMessages.GAME_TURN_ACTION,
+				await newGameController.sendTurnAction({
 					playerEntity: action.player,
 					action: action.action,
 				})
@@ -773,7 +771,8 @@ export class TurnActionCompressor {
 			Buffer.from([INVALID_REPLAY])
 		}
 
-		yield* cancel(newGameController.task)
+		// @todo cancel promise
+		newGameController.task
 
 		this.currentAction = null
 
@@ -783,15 +782,14 @@ export class TurnActionCompressor {
 		])
 	}
 
-	public *bufferToTurnActions(
+	public async bufferToTurnActions(
 		firstPlayerSetupDefs: PlayerSetupDefs,
 		secondPlayerSetupDefs: PlayerSetupDefs,
 		seed: string,
 		props: GameControllerProps,
 		actionsBuffer: Buffer,
 		gameId: string,
-	): Generator<
-		any,
+	): Promise<
 		| {invalid: true}
 		| {
 				replay: Array<ReplayActionData>
@@ -808,7 +806,7 @@ export class TurnActionCompressor {
 				gameId: gameId,
 			},
 		)
-		con.task = yield* spawn(runGame, con)
+		con.task = runGame(con)
 
 		let cursor = 0
 
@@ -872,22 +870,22 @@ export class TurnActionCompressor {
 				})
 			}
 
-			yield* put<LocalMessage>({
-				type: localMessages.GAME_TURN_ACTION,
+			con.sendTurnAction({
 				playerEntity: con.game.currentPlayer.entity,
 				action: turnAction,
 			})
 
 			// I don't know why this works, but we're going with it
 			if (turnAction.type === 'END_TURN') {
-				yield* delay(1)
+				await new Promise((resolve) => setTimeout(resolve, 100))
 			}
 		}
 
 		this.currentAction = null
 
 		if (!con.game.outcome) {
-			if (con.task) yield* cancel(con.task)
+			// @todo cancel promise
+			if (con.task) con.task
 			return {invalid: true}
 		}
 

@@ -74,7 +74,7 @@ export class GameController {
 	apiSecret: string | null
 	game: GameModel
 	chat: Array<Message>
-	task: any
+	task: Promise<any>
 	viewers: Array<GameViewer>
 
 	readonly props: GameControllerProps
