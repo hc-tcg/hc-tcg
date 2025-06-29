@@ -52,7 +52,7 @@ describe('Test win achivement', () => {
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
 				playGame: async (test, game) => {
-					test.forfeit(game.opponentPlayer.entity)
+					await test.forfeit(game.opponentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Win.getProgress(achievement.goals)).toBe(1)
