@@ -63,7 +63,7 @@ describe('Test Replays', () => {
 		await testReplayGame({
 			playerOneDeck: [BalancedDoubleItem, EthosLabCommon],
 			playerTwoDeck: [EthosLabCommon, BalancedDoubleItem],
-			gameSaga: async (test, con) => {
+			runGame: async (test, con) => {
 				const game = con.game
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
@@ -90,7 +90,7 @@ describe('Test Replays', () => {
 				DiamondArmor,
 			],
 			playerTwoDeck: [EthosLabCommon, BalancedDoubleItem],
-			gameSaga: async (test, con) => {
+			runGame: async (test, con) => {
 				const game = con.game
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
@@ -123,7 +123,7 @@ describe('Test Replays', () => {
 				Feather,
 			],
 			playerTwoDeck: [EthosLabCommon],
-			gameSaga: async (test, con) => {
+			runGame: async (test, con) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(Brush, 'single_use')
 				await applyEffect(con.game)
@@ -155,7 +155,7 @@ describe('Test Replays', () => {
 				Feather,
 			],
 			playerTwoDeck: [EthosLabCommon],
-			gameSaga: async (test, con) => {
+			runGame: async (test, con) => {
 				const game = con.game
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.endTurn()
@@ -192,7 +192,7 @@ describe('Test Replays', () => {
 				FarmDoubleItem,
 				FarmDoubleItem,
 			],
-			gameSaga: async (test, con) => {
+			runGame: async (test, con) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(GeminiTayCommon, 'hermit', 1)
 
@@ -242,7 +242,7 @@ describe('Test Replays', () => {
 				JinglerRare,
 				...Array(40).fill(SpeedrunnerItem),
 			],
-			gameSaga: async (test, con) => {
+			runGame: async (test, con) => {
 				const game = con.game
 				await test.playCardFromHand(TinFoilChefRare, 'hermit', 2)
 				await test.playCardFromHand(MinerItem, 'item', 2, 0)
@@ -281,7 +281,7 @@ describe('Test Replays', () => {
 		await testReplayGame({
 			playerOneDeck: [FarmerBeefRare, FarmDoubleItem],
 			playerTwoDeck: [EvilXisumaRare, BalancedDoubleItem],
-			gameSaga: async (test, con) => {
+			runGame: async (test, con) => {
 				await test.playCardFromHand(FarmerBeefRare, 'hermit', 0)
 				await test.playCardFromHand(FarmDoubleItem, 'item', 0, 0)
 				await test.endTurn()
@@ -316,7 +316,7 @@ describe('Test Replays', () => {
 		await testReplayGame({
 			playerOneDeck: [VintageBeefRare, FalseSymmetryRare],
 			playerTwoDeck: [RendogCommon],
-			gameSaga: async (test, con) => {
+			runGame: async (test, con) => {
 				await test.playCardFromHand(VintageBeefRare, 'hermit', 0)
 				await test.playCardFromHand(FalseSymmetryRare, 'hermit', 1)
 				await test.endTurn()
