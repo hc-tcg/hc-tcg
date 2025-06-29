@@ -277,7 +277,10 @@ function* gameManager(con: GameController) {
 		const turnActionCompressor = new TurnActionCompressor()
 		const turnActionsBuffer = con.game.state.isEvilXBossGame
 			? null
-			: yield* call(turnActionCompressor.turnActionsToBuffer, con)
+			: yield* call(
+					[turnActionCompressor, turnActionCompressor.turnActionsToBuffer],
+					con,
+				)
 
 		if (
 			root.db.connected &&
