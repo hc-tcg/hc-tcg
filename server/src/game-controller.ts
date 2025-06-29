@@ -17,7 +17,7 @@ import {
 } from 'common/socket-messages/server-messages'
 import {CurrentCoinFlip, Message} from 'common/types/game-state'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
-import {TurnActionAndPlayer} from 'routines/game'
+import {TurnActionAndPlayer} from './routines/game'
 import {broadcast} from './utils/comm'
 import {getLocalGameState} from './utils/state-gen'
 
@@ -74,7 +74,7 @@ export class GameController {
 	apiSecret: string | null
 	game: GameModel
 	chat: Array<Message>
-	task: Promise<any>
+	task: Promise<any> | null
 	viewers: Array<GameViewer>
 
 	readonly props: GameControllerProps

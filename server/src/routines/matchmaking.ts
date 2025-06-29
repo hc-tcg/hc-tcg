@@ -183,7 +183,6 @@ function* gameManager(con: GameController) {
 		if (!outcome) return
 
 		const gameEndTime = new Date()
-		if (con.task) yield* cancel(con.task)
 		con.game.hooks.afterGameEnd.call()
 
 		const newAchievements: Record<string, Array<EarnedAchievement>> = {}
@@ -1091,7 +1090,7 @@ export function* createReplayGame(
 		broadcast([player], {type: serverMessages.CREATE_PRIVATE_GAME_FAILURE})
 		return
 	}
-	const replay = yield* getGameReplay(msg.payload.id)
+	const replay = yield* call(getGameReplay, msg.payload.id)
 	if (!replay) {
 		broadcast([root.players[playerId]], {
 			type: serverMessages.INVALID_REPLAY,
