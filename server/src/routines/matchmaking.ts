@@ -39,7 +39,7 @@ import {safeCall} from 'utils'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
-import gameSaga, {getTimerForSeconds} from './game'
+import runGame, {getTimerForSeconds} from './game'
 import {TurnActionCompressor} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
 
@@ -114,7 +114,7 @@ function* gameManager(con: GameController) {
 
 		// Kill game on timeout or when user leaves for long time + cleanup after game
 		const result = yield* race({
-			outcome: call(gameSaga, con),
+			outcome: call(runGame, con),
 			waitForTurnAction: call(function* () {
 				while (true) {
 					const action: any = yield* take(

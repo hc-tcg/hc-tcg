@@ -32,7 +32,7 @@ import {
 import {PlayerSetupDefs} from '../../../common/utils/state-gen'
 import {GameController, GameControllerProps} from '../game-controller'
 import {LocalMessage, localMessages} from '../messages'
-import gameSaga from './game'
+import runGame from './game'
 
 const VARIABLE_BYTE_MAX = 1 // 0xFF
 const INVALID_REPLAY = 0x00
@@ -749,7 +749,7 @@ export class TurnActionCompressor {
 		const buffers: Array<Buffer> = []
 
 		try {
-			newGameController.task = yield* spawn(gameSaga, newGameController)
+			newGameController.task = yield* spawn(runGame, newGameController)
 
 			for (let i = 0; i < originalGame.turnActions.length; i++) {
 				const action = originalGame.turnActions[i]
@@ -808,7 +808,7 @@ export class TurnActionCompressor {
 				gameId: gameId,
 			},
 		)
-		con.task = yield* spawn(gameSaga, con)
+		con.task = yield* spawn(runGame, con)
 
 		let cursor = 0
 

@@ -790,7 +790,7 @@ function checkDeckedOut(game: GameModel) {
 	)
 }
 
-async function gameSaga(con: GameController) {
+async function runGame(con: GameController) {
 	if (con.game.settings.verboseLogging)
 		console.info(
 			`${con.game.logHeader} ${con.game.opponentPlayer.playerName} was decided to be the first player.`,
@@ -851,4 +851,4 @@ async function gameSaga(con: GameController) {
 	return con.game.outcome
 }
 
-export default gameSaga
+export default runGame

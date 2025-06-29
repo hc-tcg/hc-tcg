@@ -28,7 +28,7 @@ import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware, {SagaMiddleware} from 'redux-saga'
 import {GameController} from 'server/game-controller'
-import gameSaga from 'server/routines/game'
+import runGame from 'server/routines/game'
 import {getLocalCard} from 'server/utils/state-gen'
 import {call, fork, race} from 'typed-redux-saga'
 
@@ -311,7 +311,7 @@ export async function testGame(
 	let testEnded = false
 
 	await Promise.race([
-		gameSaga(controller),
+		runGame(controller),
 		(async () => {
 			await options.testGame(new TestGameFixture(controller), controller.game)
 			testEnded = true
@@ -410,7 +410,7 @@ export async function testBossFight(
 	let testEnded = false
 
 	await Promise.race([
-		gameSaga(controller),
+		runGame(controller),
 		(async () => {
 			await options.testGame(
 				new BossGameTestFixture(controller),
@@ -492,7 +492,7 @@ export async function testAchivement(
 }
 
 export async function testReplayGame(options: {
-	gameSaga: (test: TestGameFixture, con: GameController) => any
+	runGame: (test: TestGameFixture, con: GameController) => any
 	afterGame: (con: GameController) => any
 	playerOneDeck: Array<Card>
 	playerTwoDeck: Array<Card>
@@ -518,9 +518,9 @@ export async function testReplayGame(options: {
 	)
 
 	await Promise.race([
-		gameSaga(controller),
+		runGame(controller),
 		(async () => {
-			await options.gameSaga(
+			await options.runGame(
 				new BossGameTestFixture(controller),
 				controller.game,
 			)
