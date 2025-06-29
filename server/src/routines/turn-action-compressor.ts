@@ -30,7 +30,6 @@ import {
 } from '../../../common/types/turn-action-data'
 import {PlayerSetupDefs} from '../../../common/utils/state-gen'
 import {GameController, GameControllerProps} from '../game-controller'
-import {LocalMessage, localMessages} from '../messages'
 import runGame from './game'
 
 const VARIABLE_BYTE_MAX = 1 // 0xFF
