@@ -365,7 +365,7 @@ export async function testBossFight(
 		{
 			randomizeOrder: false,
 			randomSeed: 'Boss fight seed',
-			settings: {...defaultGameSettings, ...settings, disableRewardCards: true},
+		settings: {...defaultGameSettings, ...settings, disableRewardCards: true},
 		},
 	)
 
