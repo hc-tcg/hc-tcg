@@ -265,6 +265,8 @@ export class GameController {
 		this.turnActionListener = null
 	}
 
+	// Wait until the game is ready to accept a turn action. This is used in unit tests to make sure all actions are
+	// processed before sending a new one.
 	public async waitForWaitingForTurnAction() {
 		if (this.turnActionListener) return
 		return await new Promise((resolve) => {
