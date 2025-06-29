@@ -792,6 +792,7 @@ export class TurnActionCompressor {
 	): Promise<
 		| {invalid: true}
 		| {
+				invalid: false
 				replay: Array<ReplayActionData>
 				battleLog: Array<Message>
 		  }
@@ -890,6 +891,7 @@ export class TurnActionCompressor {
 		}
 
 		return {
+			invalid: false,
 			replay: replayActions,
 			battleLog: con.chat,
 		}

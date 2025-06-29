@@ -521,10 +521,7 @@ export async function testReplayGame(options: {
 	await Promise.race([
 		runGame(controller),
 		(async () => {
-			await options.runGame(
-				new BossGameTestFixture(controller),
-				controller.game,
-			)
+			await options.runGame(new BossGameTestFixture(controller), controller)
 		})(),
 	])
 

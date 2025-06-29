@@ -35,12 +35,12 @@ import {
 } from '../../server/src/utils/compression'
 import {testReplayGame} from '../unit/game/utils'
 
-function* afterGame(con: GameController) {
+async function afterGame(con: GameController) {
 	const turnActionCompressor = new TurnActionCompressor()
 
-	const turnActionsBuffer = yield* turnActionCompressor.turnActionsToBuffer(con)
+	const turnActionsBuffer = await turnActionCompressor.turnActionsToBuffer(con)
 
-	const turnActions = yield* turnActionCompressor.bufferToTurnActions(
+	const turnActions = await turnActionCompressor.bufferToTurnActions(
 		con.player1Defs,
 		con.player2Defs,
 		con.game.rngSeed,
@@ -48,6 +48,10 @@ function* afterGame(con: GameController) {
 		turnActionsBuffer,
 		con.game.id,
 	)
+
+	if (turnActions.invalid) {
+		throw new Error('Turn actions were invalid')
+	}
 
 	expect(con.game.turnActions.map((action) => action.action)).toStrictEqual(
 		turnActions.replay.map((action) => action.action),
@@ -126,16 +130,16 @@ describe('Test Replays', () => {
 			runGame: async (test, con) => {
 				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				await test.playCardFromHand(Brush, 'single_use')
-				await applyEffect(con.game)
+				await test.applyEffect()
 				const cardEntities = (
 					con.game.state.modalRequests[0].modal as DragCards.Data
 				).rightCards
-				await finishModalRequest(con.game, {
+				await test.finishModalRequest({
 					result: true,
 					leftCards: [cardEntities[0]],
 					rightCards: [cardEntities[1]],
 				})
-				await endTurn(con.game)
+				await test.endTurn()
 				await test.forfeit(con.game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
