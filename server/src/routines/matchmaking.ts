@@ -34,7 +34,7 @@ import {
 } from 'db/db-reciever'
 import {GameController} from 'game-controller'
 import {LocalMessageTable, localMessages} from 'messages'
-import {all, call, cancel, delay, fork, put, race, take} from 'typed-redux-saga'
+import {all, call, delay, fork, put, race, take} from 'typed-redux-saga'
 import {safeCall} from 'utils'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
@@ -277,7 +277,7 @@ function* gameManager(con: GameController) {
 		const turnActionCompressor = new TurnActionCompressor()
 		const turnActionsBuffer = con.game.state.isEvilXBossGame
 			? null
-			: yield* turnActionCompressor.turnActionsToBuffer(con)
+			: yield* call(turnActionCompressor.turnActionsToBuffer, con)
 
 		if (
 			root.db.connected &&
