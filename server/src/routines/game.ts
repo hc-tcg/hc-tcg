@@ -586,7 +586,10 @@ async function turnActionsSaga(con: GameController) {
 					resolve({turnAction: action})
 				}),
 				new Promise((resolve) =>
-					setTimeout(() => resolve({timeout: null}), graceTime + remainingTime),
+					setTimeout(
+						() => resolve({timeout: null}),
+						graceTime + remainingTime,
+					).unref(),
 				),
 			])
 		}
@@ -844,7 +847,7 @@ async function runGame(con: GameController) {
 					resolve(null)
 				},
 				1000 * 60 * 60 * 2,
-			),
+			).unref(),
 		),
 	])
 

@@ -31,6 +31,7 @@ import {GameController} from 'server/game-controller'
 import runGame from 'server/routines/game'
 import {getLocalCard} from 'server/utils/state-gen'
 import {call, fork, race} from 'typed-redux-saga'
+import {jest} from '@jest/globals'
 
 function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 	return {
