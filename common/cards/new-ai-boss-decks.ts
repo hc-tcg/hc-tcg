@@ -51,10 +51,10 @@ import SkizzlemanRare from './hermits/skizzleman-rare'
 import SmallishbeansCommon from './hermits/smallishbeans-common'
 import SpookyStressCommon from './hermits/spookystress-common'
 import SteampunkTangoCommon from './hermits/steampunktango-common'
+import SteampunkTangoRare from './hermits/steampunktango-rare'
 import StressMonster101Common from './hermits/stressmonster101-common'
 import StressMonster101Rare from './hermits/stressmonster101-rare'
 import TangoTekCommon from './hermits/tangotek-common'
-import TangoTekRare from './hermits/tangotek-rare'
 import VintageBeefCommon from './hermits/vintagebeef-common'
 import VintageBeefRare from './hermits/vintagebeef-rare'
 import WelsknightRare from './hermits/welsknight-rare'
@@ -115,8 +115,8 @@ export type StarterDeck = {
 
 export const NEW_BOSS_AI_DECKS: Array<StarterDeck> = [
 	{
-		name: 'Farm Deck #1',
-		icon: 'farm',
+		name: 'Terraform Deck #1',
+		icon: 'terraform',
 		cards: [
 			PotatoBoyCommon,
 			PotatoBoyCommon,
@@ -124,8 +124,8 @@ export const NEW_BOSS_AI_DECKS: Array<StarterDeck> = [
 			WormManCommon,
 			GeminiTayRare,
 			GeminiTayRare,
-			TangoTekRare,
-			TangoTekRare,
+			SteampunkTangoRare,
+			SteampunkTangoRare,
 			PearlescentMoonRare,
 			PearlescentMoonRare,
 			Loyalty,
@@ -137,14 +137,17 @@ export const NEW_BOSS_AI_DECKS: Array<StarterDeck> = [
 			DiamondSword,
 			CurseOfBinding,
 			CurseOfBinding,
-			Trident,
 			Emerald,
-			FishingRod,
+			Egg,
 			FishingRod,
 			GoldenAxe,
 			InstantHealthII,
 			TNT,
 			Trident,
+			Trident,
+			TerraformItem,
+			TerraformItem,
+			TerraformItem,
 			TerraformItem,
 			TerraformItem,
 			TerraformItem,
@@ -157,9 +160,6 @@ export const NEW_BOSS_AI_DECKS: Array<StarterDeck> = [
 			TerraformItem,
 			TerraformDoubleItem,
 			TerraformDoubleItem,
-			WildItem,
-			WildItem,
-			WildItem,
 		],
 	},
 	{
