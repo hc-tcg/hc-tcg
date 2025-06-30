@@ -4,9 +4,6 @@
 	"private": true,
 	"type": "module",
 	"main": "server/dist/index.ts",
-	"engines": {
-		"node": ">=16 <19"
-	},
 	"dependencies": {
 		"@floating-ui/react": "^0.19.1",
 		"@msgpack/msgpack": "^3.1.1",
@@ -40,7 +37,7 @@
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.8.3",
+		"@biomejs/biome": "1.9.4",
 		"@playwright/experimental-ct-react": "^1.47.2",
 		"@playwright/test": "^1.47.2",
 		"@types/express": "^5.0.0",
@@ -108,5 +105,13 @@
 			"last 1 firefox version",
 			"last 1 safari version"
 		]
-	}
+	},
+	"engines": {
+		"node": ">=20"
+	},
+	"volta": {
+		"node": "24.3.0",
+		"npm": "11.4.2"
+	},
+	"packageManager": "npm@11.4.2"
 }
