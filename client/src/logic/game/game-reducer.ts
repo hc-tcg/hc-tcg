@@ -90,7 +90,7 @@ const gameReducer = (
 				opponentConnected: true,
 				spectatorCode:
 					action.type === localMessages.GAME_START
-						? action.spectatorCode ?? null
+						? (action.spectatorCode ?? null)
 						: null,
 			}
 
