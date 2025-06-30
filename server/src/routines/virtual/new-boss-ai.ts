@@ -14,7 +14,7 @@ import {
 	AttackActionData,
 } from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
-import {getLocalCard} from 'utils/state-gen'
+import {getLocalCard} from '../../utils/state-gen'
 
 /** Sorts `BoardSlotComponent`s by active row first then descending row health */
 const compareBoardSlots = (
