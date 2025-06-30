@@ -9,7 +9,7 @@ import {
 } from 'common/types/server-requests'
 import {CSSTransition, TransitionGroup} from 'react-transition-group'
 import StatusEffectContainer from '../../app/game/board/board-status-effects'
-import {Ref, RefObject, useState} from 'react'
+import {Ref, RefObject, useEffect, useState} from 'react'
 import {select} from 'redux-saga/effects'
 
 type DesktopCardListOptions = {
@@ -33,8 +33,6 @@ function DesktopHand({
 	left,
 	height,
 }: DesktopCardListOptions) {
-	if (!parent) return
-
 	const cardSize = height * (7 / 9)
 
 	let [hovered, setHovered] = useState(-1)
