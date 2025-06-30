@@ -37,6 +37,18 @@ function DesktopHand({
 
 	let [hovered, setHovered] = useState(-1)
 
+	let mouseNotOnSelected = false
+
+	cards.map((card, i) => {
+		const isSelected = selected
+			? selected.some((selectedCard) => card.entity === selectedCard?.entity)
+			: false
+		if (isSelected && hovered == -1) {
+			hovered = i
+			mouseNotOnSelected = true
+		}
+	})
+
 	const cardsOutput = cards.map((card, i) => {
 		const isSelected = selected
 			? selected.some((selectedCard) => card.entity === selectedCard?.entity)
@@ -45,26 +57,27 @@ function DesktopHand({
 			(findCard) => findCard.entity === card.entity,
 		)
 
-		let centerCard = cards.length / 2
+		let centerCard = (cards.length - 1) / 2
 
-		let myLeft = left - cardSize / 2 + (centerCard - i) * ((cardSize * 6) / 7)
-		let myTop = top - cardSize / 2 + Math.abs(centerCard - i) * 2
-		let myRotation = (centerCard - i) * 0.5
-		let myWidth = cardSize
+		let myLeft = left - cardSize / 2 - (centerCard - i) * ((cardSize * 8) / 9)
+		let myTop = top - cardSize / 2
+		let myScale = 1
+
+		if (isSelected) {
+			myScale = 1.05
+		}
 
 		if (hovered != -1) {
-			if (hovered > i) {
+			if (hovered < i) {
 				myLeft += cardSize / 6
 			}
-			if (hovered < i) {
+			if (hovered > i) {
 				myLeft -= cardSize / 6
 			}
-			if (hovered == i) {
-				myWidth *= 1.1
-				myLeft -= cardSize * 0.05
-				myTop -= cardSize * 0.05
+			if (hovered == i && !mouseNotOnSelected) {
+				myScale = 1.1
 			}
-			myLeft -= (cards.length / 2 - hovered) * cardSize * 0.01
+			myLeft -= (cards.length / 2 - hovered) * cardSize * 0.03
 		}
 
 		let cardComponent = (
@@ -73,10 +86,10 @@ function DesktopHand({
 					position: 'absolute',
 					top: myTop,
 					left: myLeft,
-					transform: `rotate(${myRotation}deg)`,
-					width: myWidth,
-					transition: 'all 0.1s ease-in-out',
-					zIndex: hovered == i ? 10 : 11,
+					transform: `scale(${myScale}, ${myScale})`,
+					width: cardSize,
+					transition: 'all 0.1s ease-in',
+					zIndex: hovered == i ? 11 : 10,
 				}}
 			>
 				<CardComponent
