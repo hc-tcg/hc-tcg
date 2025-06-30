@@ -1,6 +1,6 @@
 #syntax=docker/dockerfile:1.7-labs
 
-FROM node:18.20-bookworm
+FROM node:24-bookworm
 
 ARG APP_VERSION
 ENV APP_VERSION $APP_VERSION
