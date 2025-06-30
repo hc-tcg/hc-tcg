@@ -25,10 +25,20 @@ interface CardReactProps
 	unpickable?: boolean
 	tooltipAboveModal?: boolean
 	onClick?: () => void
+	onHover?: () => void
+	onUnhover?: () => void
 }
 
 const Card = (props: CardReactProps) => {
-	const {onClick, selected, picked, unpickable, displayTokenCost} = props
+	const {
+		onClick,
+		onHover,
+		onUnhover,
+		selected,
+		picked,
+		unpickable,
+		displayTokenCost,
+	} = props
 
 	let cardProps = CARDS[props.card]
 	const {category} = cardProps
@@ -82,6 +92,8 @@ const Card = (props: CardReactProps) => {
 					},
 				)}
 				onClick={unpickable ? () => {} : onClick}
+				onMouseEnter={() => onHover && onHover()}
+				onMouseLeave={() => onUnhover && onUnhover()}
 			>
 				{debugConfig.renderCardsDynamically ? (
 					<div className={cn(css.noPointerEvents, css.card)}>{card}</div>
