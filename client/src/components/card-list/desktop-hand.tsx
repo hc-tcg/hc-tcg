@@ -59,7 +59,7 @@ function DesktopHand({
 
 		let centerCard = (cards.length - 1) / 2
 
-		let myLeft = left - cardSize / 2 - (centerCard - i) * ((cardSize * 8) / 9)
+		let myLeft = left - cardSize / 2 - (centerCard - i) * cardSize
 		let myTop = top - cardSize / 2
 		let myScale = 1
 
@@ -69,10 +69,10 @@ function DesktopHand({
 
 		if (hovered != -1) {
 			if (hovered < i) {
-				myLeft += cardSize / 6
+				myLeft += cardSize * 0.07
 			}
 			if (hovered > i) {
-				myLeft -= cardSize / 6
+				myLeft -= cardSize * 0.07
 			}
 			if (hovered == i && !mouseNotOnSelected) {
 				myScale = 1.1
