@@ -1,6 +1,6 @@
 # HC-TCG
 
-An online implementation of [Vintage Beef's](https://www.youtube.com/@VintageBeef) Hermitcraft TCG!
+An unofficial implementation of [Vintage Beef's](https://www.youtube.com/@VintageBeef) Hermitcraft TCG!
 
 ## Node.js
 
