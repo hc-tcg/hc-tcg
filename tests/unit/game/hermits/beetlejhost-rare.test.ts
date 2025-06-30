@@ -361,41 +361,36 @@ describe('Test Beetlejhost Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Jopacity reduction is not shared between hermits', () => {
-		testGame(
+	test('Jopacity reduction is not shared between hermits', async () => {
+		await testGame(
 			{
 				playerOneDeck: [BeetlejhostRare, Knockback],
 				playerTwoDeck: [BeetlejhostRare, BeetlejhostRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
-					yield* endTurn(game)
-
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 1)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
-
-					yield* playCardFromHand(game, Knockback, 'single_use')
-					yield* attack(game, 'secondary')
+				testGame: async (test, game) => {
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.endTurn()
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 1)
+					await test.attack('secondary')
+					await test.endTurn()
+					await test.playCardFromHand(Knockback, 'single_use')
+					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						BeetlejhostRare.health - BeetlejhostRare.secondary.damage,
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
-
-					yield* attack(game, 'secondary')
+					await test.endTurn()
+					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						BeetlejhostRare.health -
 							BeetlejhostRare.secondary.damage -
 							BeetlejhostRare.secondary.damage,
 					)
-					yield* endTurn(game)
-
+					await test.endTurn()
 					expect(
 						game.opponentPlayer
 							.getActiveHermit()
