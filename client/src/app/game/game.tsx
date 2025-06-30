@@ -2,7 +2,12 @@ import cn from 'classnames'
 import {CARDS} from 'common/cards'
 import {DEBUG_CONFIG} from 'common/config'
 import {PlayerEntity} from 'common/entities'
-import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
+import CardComponent from 'components/card'
+import {
+	LocalCardInstance,
+	LocalStatusEffectInstance,
+	SlotInfo,
+} from 'common/types/server-requests'
 import {equalCard} from 'common/utils/cards'
 import CardList from 'components/card-list'
 import {
@@ -37,6 +42,8 @@ import Chat from './chat'
 import EndGameOverlay from './end-game-overlay'
 import css from './game.module.scss'
 import Toolbar from './toolbar'
+import StatusEffectContainer from './board/board-status-effects'
+import DesktopHand from 'components/card-list/desktop-hand'
 
 const renderModal = (
 	openedModal: {id: ModalVariant; info: any} | null,
@@ -248,6 +255,32 @@ function Hand({gameOver}: {gameOver: boolean}) {
 				unpickableCards.push(card)
 		}
 	}
+
+	return (
+		<div className={cn(css.hand, {[css.noHover]: gameOver})} ref={handRef}>
+			{Filter()}
+			<DesktopHand
+				cards={filteredCards}
+				onClick={
+					!isReplayer || !gameOver
+						? (card: LocalCardInstance) => selectCard(card)
+						: undefined
+				}
+				selected={[selectedCard]}
+				unpickable={unpickableCards}
+				statusEffects={gameState.statusEffects}
+				top={
+					(handRef.current?.offsetTop || 0) +
+					(handRef.current?.offsetHeight || 0) / 2
+				}
+				left={
+					(handRef.current?.offsetLeft || 0) +
+					(handRef.current?.offsetWidth || 0) / 2
+				}
+				height={handRef.current?.scrollHeight || 0}
+			/>
+		</div>
+	)
 
 	return (
 		<div className={cn(css.hand, {[css.noHover]: gameOver})} ref={handRef}>
