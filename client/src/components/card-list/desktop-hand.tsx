@@ -77,7 +77,7 @@ function DesktopHand({
 			if (hovered == i && !mouseNotOnSelected) {
 				myScale = 1.1
 			}
-			myLeft -= (cards.length / 2 - hovered) * cardSize * 0.03
+			myLeft += (cards.length / 2 - hovered) * cardSize * 0.03
 		}
 
 		let cardComponent = (
@@ -88,7 +88,7 @@ function DesktopHand({
 					left: myLeft,
 					transform: `scale(${myScale}, ${myScale})`,
 					width: cardSize,
-					transition: 'all 0.1s ease-in',
+					transition: 'all 0.05s ease-in',
 					zIndex: hovered == i ? 11 : 10,
 				}}
 			>
