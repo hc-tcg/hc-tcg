@@ -1127,8 +1127,7 @@ export function* createReplayGame(
 		localGameState: gameState,
 	})
 
-	// @todo
-	// con.task = yield* spawn(gameSaga, con)
+	con.task = runGame(con)
 
 	console.info(
 		`${con.game.logHeader}`,
@@ -1150,8 +1149,8 @@ export function* createReplayGame(
 		console.log(action.player)
 
 		yield* delay(action.millisecondsSinceLastAction)
-		yield* put({
-			type: localMessages.GAME_TURN_ACTION,
+		console.log(action.action)
+		yield call([con, con.sendTurnAction], {
 			action: action.action,
 			playerEntity: action.player,
 		})
