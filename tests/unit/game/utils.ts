@@ -74,14 +74,13 @@ export class TestGameFixture {
 
 	/** End the current player's turn. */
 	async endTurn() {
-		await this.con.waitForWaitingForTurnAction()
 		await this.con.sendTurnAction({
 			playerEntity: this.game.currentPlayer.entity,
 			action: {
 				type: 'END_TURN',
 			},
 		})
-		await this.con.waitForWaitingForTurnAction()
+		await this.con.waitForTurnActionReady()
 	}
 
 	/** Play a card from your hand to a row on the game board */
@@ -106,7 +105,6 @@ export class TestGameFixture {
 		indexOrPlayer?: number | PlayerEntity,
 		itemSlotPlayer?: PlayerEntity,
 	) {
-		await this.con.waitForWaitingForTurnAction()
 		let cardComponent = findCardInHand(this.game.currentPlayer, card)
 		const player =
 			itemSlotPlayer ||
@@ -134,48 +132,44 @@ export class TestGameFixture {
 				slot: slot.entity,
 			},
 		})
-		await this.con.waitForWaitingForTurnAction()
+		await this.con.waitForTurnActionReady()
 	}
 
 	/** Apply the effect card in the single use slot. This should be used to apply status effects that use the "should apply" modal. */
 	async applyEffect() {
-		await this.con.waitForWaitingForTurnAction()
 		await this.con.sendTurnAction({
 			playerEntity: this.game.currentPlayer.entity,
 			action: {
 				type: 'APPLY_EFFECT',
 			},
 		})
-		await this.con.waitForWaitingForTurnAction()
+		await this.con.waitForTurnActionReady()
 	}
 
 	/** Removes the effect card in the single use slot. This should be used to cancel effects that use the "should apply" modal or cancel an attack with pick requests. */
 	async removeEffect() {
-		await this.con.waitForWaitingForTurnAction()
 		await this.con.sendTurnAction({
 			playerEntity: this.game.currentPlayer.entity,
 			action: {
 				type: 'REMOVE_EFFECT',
 			},
 		})
-		await this.con.waitForWaitingForTurnAction()
+		await this.con.waitForTurnActionReady()
 	}
 
 	/** Attack with the current player. */
 	async attack(attack: 'primary' | 'secondary' | 'single-use') {
-		await this.con.waitForWaitingForTurnAction()
 		await this.con.sendTurnAction({
 			playerEntity: this.game.currentPlayer.entity,
 			action: {
 				type: attackToAttackAction[attack],
 			},
 		})
-		await this.con.waitForWaitingForTurnAction()
+		await this.con.waitForTurnActionReady()
 	}
 
 	/** Change the active hermit row for the current player. */
 	async changeActiveHermit(index: number) {
-		await this.con.waitForWaitingForTurnAction()
 		await this.con.sendTurnAction({
 			playerEntity: this.game.currentPlayer.entity,
 			action: {
@@ -187,12 +181,11 @@ export class TestGameFixture {
 				)!,
 			},
 		})
-		await this.con.waitForWaitingForTurnAction()
+		await this.con.waitForTurnActionReady()
 	}
 
 	/** Pick a slot for a pick request */
 	async pick(...slot: Array<ComponentQuery<SlotComponent>>) {
-		await this.con.waitForWaitingForTurnAction()
 		await this.con.sendTurnAction({
 			playerEntity: this.game.state.pickRequests[0].player,
 			action: {
@@ -200,12 +193,11 @@ export class TestGameFixture {
 				entity: this.game.components.find(SlotComponent, ...slot)!.entity,
 			},
 		})
-		await this.con.waitForWaitingForTurnAction()
+		await this.con.waitForTurnActionReady()
 	}
 
 	/** Respond to a modal request. */
 	async finishModalRequest(modalResult: LocalModalResult) {
-		await this.con.waitForWaitingForTurnAction()
 		await this.con.sendTurnAction({
 			playerEntity: this.game.state.modalRequests[0].player,
 			action: {
@@ -213,11 +205,10 @@ export class TestGameFixture {
 				modalResult,
 			},
 		})
-		await this.con.waitForWaitingForTurnAction()
+		await this.con.waitForTurnActionReady()
 	}
 
 	async forfeit(player: PlayerEntity) {
-		await this.con.waitForWaitingForTurnAction()
 		await this.con.sendTurnAction({
 			playerEntity: player,
 			action: {
@@ -225,13 +216,13 @@ export class TestGameFixture {
 				player,
 			},
 		})
-		await this.con.waitForWaitingForTurnAction()
+		await this.con.waitForTurnActionReady()
 	}
 }
 
 export class BossGameTestFixture extends TestGameFixture {
 	async bossAttack(...attack: BOSS_ATTACK) {
-		await this.con.waitForWaitingForTurnAction()
+		await this.con.waitForTurnActionReady()
 		const bossCard = this.game.components.find(
 			CardComponent,
 			query.card.is(EvilXisumaBoss),
@@ -250,7 +241,7 @@ export class BossGameTestFixture extends TestGameFixture {
 				type: attackType,
 			},
 		})
-		await this.con.waitForWaitingForTurnAction()
+		await this.con.waitForTurnActionReady()
 	}
 }
 

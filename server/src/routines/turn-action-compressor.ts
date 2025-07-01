@@ -870,22 +870,17 @@ export class TurnActionCompressor {
 				})
 			}
 
-			con.sendTurnAction({
+			await con.sendTurnAction({
 				playerEntity: con.game.currentPlayer.entity,
 				action: turnAction,
 			})
-
-			// I don't know why this works, but we're going with it
-			if (turnAction.type === 'END_TURN') {
-				await new Promise((resolve) => setTimeout(resolve, 100))
-			}
 		}
 
 		this.currentAction = null
 
 		await Promise.race([
 			con.task,
-			await new Promise((resolve) => setTimeout(resolve, 100)),
+			await new Promise((resolve) => setTimeout(resolve, 100).unref()),
 		])
 
 		if (!con.game.outcome) {

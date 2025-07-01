@@ -237,7 +237,9 @@ export class GameController {
 		)
 	}
 
+	/* Wait until the game is ready to accept a turn action then send one */
 	public async sendTurnAction(action: TurnActionAndPlayer) {
+		await this.waitForTurnActionReady()
 		if (this.turnActionListener) {
 			await this.turnActionListener(action)
 			this.turnActionListener = null
@@ -267,7 +269,7 @@ export class GameController {
 
 	// Wait until the game is ready to accept a turn action. This is used in unit tests to make sure all actions are
 	// processed before sending a new one.
-	public async waitForWaitingForTurnAction() {
+	public async waitForTurnActionReady() {
 		if (this.turnActionListener) return
 		return await new Promise((resolve) => {
 			this.waitingForTurnActionList.push(() => {
