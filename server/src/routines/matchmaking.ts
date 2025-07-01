@@ -1146,8 +1146,6 @@ export function* createReplayGame(
 
 		const action = replayActions[i]
 
-		console.log(action.player)
-
 		yield* delay(action.millisecondsSinceLastAction)
 		console.log(action.action)
 		yield call([con, con.sendTurnAction], {
