@@ -878,10 +878,7 @@ export class TurnActionCompressor {
 
 		this.currentAction = null
 
-		await Promise.race([
-			con.task,
-			await new Promise((resolve) => setTimeout(resolve, 100).unref()),
-		])
+		await con.task
 
 		if (!con.game.outcome) {
 			return {invalid: true}
