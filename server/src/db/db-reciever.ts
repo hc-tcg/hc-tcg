@@ -516,7 +516,10 @@ export function* getOverview(
 	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 	const player = root.players[action.playerId]
 
-	const replay = yield* call(root.db.getGameReplay, action.payload.id)
+	const replay = yield* call(
+		[root.db, root.db.getGameReplay],
+		action.payload.id,
+	)
 
 	if (replay.type === 'failure') {
 		broadcast([player], {
