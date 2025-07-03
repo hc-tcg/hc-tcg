@@ -277,7 +277,8 @@ function EditDeck({
 					cards: [],
 					code: generateDatabaseCode(),
 					tags: [],
-					public: false,
+				public: false,
+					elo: 1500,
 				},
 	)
 	const [validDeckName, setValidDeckName] = useState<boolean>(true)

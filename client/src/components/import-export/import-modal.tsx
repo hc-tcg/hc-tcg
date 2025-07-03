@@ -90,6 +90,7 @@ export const ImportModal = ({
 			code: generateDatabaseCode(),
 			tags: [],
 			public: false,
+			elo: 1500,
 		})
 
 		fullOnClose()
@@ -175,6 +176,7 @@ export const ImportModal = ({
 					code: generateDatabaseCode(),
 					tags: [],
 					public: false,
+					elo: 1500,
 				})
 			})
 

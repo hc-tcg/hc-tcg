@@ -46,6 +46,31 @@
 	letter-spacing: 0;
 }
 
+.elo {
+	display: flex;
+	flex-direction: row;
+	flex-shrink: 0;
+	text-align: center;
+	background: var(--gray-600);
+	padding: 0.4rem 0.6rem;
+	border-radius: 6px;
+	font-family: Minecraft, Unifont;
+	color: var(--rare);
+}
+
+.listElo {
+	display: flex;
+	flex-direction: row;
+	flex-shrink: 0;
+	text-align: center;
+	background: var(--gray-600);
+	padding: 0.2rem 0.4rem;
+	border-radius: 12px;
+	font-family: Minecraft, Unifont;
+	color: var(--rare);
+	opacity: 0.9;
+}
+
 .deckName {
 	font-weight: 700;
 	font-size: 1.2rem;
