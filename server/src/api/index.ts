@@ -40,9 +40,9 @@ import {requestUrlRoot} from './utils'
 
 export function addApi(app: Express) {
 	app.get('/api/auth/', async (req, res) => {
-		const userId = req.get('userId')
+		const playerUuid = req.get('userId')
 		const secret = req.get('secret')
-		let ret = await authenticateUser(userId, secret)
+		let ret = await authenticateUser(playerUuid, secret)
 		res.statusCode = ret[0]
 		res.send(ret[1])
 	})
