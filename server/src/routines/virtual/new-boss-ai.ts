@@ -75,6 +75,7 @@ function getNextTurnAction(
 
 	// Check if we have no active hermit but have AFK hermits
 	// This could happen if our active hermit was just knocked out
+	// SMART: Switch to most turns alive vs. current hermit (/+damage SU conditional) / quickest KO, has enough energy to attack / [variants] key hermits.
 	if (!activeHermit && hermitsOnBoard.length > 0) {
 		console.log(
 			'New Boss AI - No active hermit found, switching to hermit with most health',
@@ -160,6 +161,7 @@ function getNextTurnAction(
 		if (!pickRequest) return []
 
 		// Find a valid slot to pick based on the pick request's canPick query
+		// SMART: Check what request it is and respond accordingly.
 		const validSlot = game.components.find(SlotComponent, pickRequest.canPick)
 
 		if (validSlot) {
@@ -204,6 +206,7 @@ function getNextTurnAction(
 		if (modalRequest.modal.type === 'copyAttack') {
 			console.log('New Boss AI - Handling copyAttack modal')
 			// Randomly choose between primary and secondary attack
+			// SMART: Evaluate positions.
 			const availableAttacks = modalRequest.modal.availableAttacks
 			if (availableAttacks.length > 0) {
 				const randomIndex = Math.floor(Math.random() * availableAttacks.length)
@@ -232,6 +235,7 @@ function getNextTurnAction(
 			const selectionSize = modalRequest.modal.selectionSize
 
 			// If no selection needed, just confirm
+			// SMART: At least make it handle spyglass(simplest: token cost), chest, HHH, and say yes for Grian - Borrow.
 			if (selectionSize === 0) {
 				console.log('New Boss AI - No selection needed, confirming')
 				return [
@@ -295,6 +299,7 @@ function getNextTurnAction(
 			console.log('New Boss AI - Handling dragCards modal')
 			// For drag cards, we'll just return the cards as they are
 			// This is a simple approach that should work for most cases
+			// SMART: I think there's just Brush rn and it's gonna be a lot of work for one specific case.
 			return [
 				{
 					type: 'MODAL_REQUEST',
@@ -322,6 +327,7 @@ function getNextTurnAction(
 		console.log('New Boss AI - Attempting to change active hermit')
 
 		// Check if current active hermit has low health (less than 90)
+		// SMART: Detect 1HKO instead of hp. (/+SU conditional)
 		const activeHermit = game.components.find(
 			CardComponent,
 			query.card.currentPlayer,
@@ -334,6 +340,8 @@ function getNextTurnAction(
 			console.log('New Boss AI - Current active hermit health:', activeHealth)
 
 			// If active hermit has less than 90 health, try to switch to a healthier one
+			// SMART: DON'T, THERE ARE ONLY SELECT CASES WHERE YOU WANT TO DO THIS OUTSIDE OF LAST LIFE.
+			// Q: Cant' we combine the functions with the previous one?
 			if (
 				activeHealth < 90 &&
 				activeHermit.slot.row.effectSlotEntity !== 'Totem'
@@ -398,6 +406,7 @@ function getNextTurnAction(
 
 		if (hermitCards.length > 0) {
 			// Find all empty hermit slots where we can place hermits
+			// SMART: Look for AFK damage possibilities (i.e. Hotguy's on the oppoenet's board and it's not in our deck / Bow or corssbow played before.)
 			const emptyHermitSlots = game.components.filter(
 				BoardSlotComponent,
 				query.slot.player(player.entity),
@@ -412,6 +421,7 @@ function getNextTurnAction(
 				)
 
 				// Randomly select an empty slot
+				// SMART: (Variant only) If we have armor, try to space the key the key hermits. If Piston/Ladder, place them adjacently or according to preplanned formation.
 				const randomIndex = Math.floor(game.rng() * emptyHermitSlots.length)
 				const targetSlot = emptyHermitSlots[randomIndex]
 
@@ -450,6 +460,7 @@ function getNextTurnAction(
 				(_game, slot) => slot.type === 'single_use',
 			)
 
+			//SMART: If critical situaltion, draw. If it will make you KO, play. If playing they will make you last extra turns, play. If you're not low on cards, draw.
 			if (singleUseSlot) {
 				console.log(
 					'New Boss AI - Playing single use card:',
@@ -497,6 +508,8 @@ function getNextTurnAction(
 	}
 
 	// Try to play effect cards
+	// SMART: Prioritize better effects for key hermits for variants, attach Water to burned hermits if there are no other effects to play / Milk etc, Chainmail et al for anti-snipe, [advanced] TFC removal sacrifice.
+	//        TLDR: Evaluate for major situations. (There's a lot)
 	if (game.state.turn.availableActions.includes('PLAY_EFFECT_CARD')) {
 		const effectCard = game.components.find(
 			CardComponent,
@@ -640,6 +653,7 @@ function getNextTurnAction(
 			query.card.slot(query.slot.hand),
 		)
 
+		// SMART: Make basic item card checks before playing SU.
 		if (itemCard) {
 			console.log('New Boss AI - Found item card to play:', itemCard.props.id)
 
@@ -701,6 +715,7 @@ function getNextTurnAction(
 			}
 
 			// Only skip playing items if there are no empty item slots at all
+			// SMART: NO, WHEN ALL HERMITS HAVE SUFFICIENT ITEMS. [advanced] Lead/Hypno/Elder Guardian-related deep plays.
 			if (hermitsWithEmptySlots === 0) {
 				console.log(
 					'New Boss AI - No empty item slots available, skipping item card play',
@@ -860,6 +875,7 @@ function getNextTurnAction(
 					console.log('New Boss AI - No suitable non-active hermits found')
 
 					// Fallback: Find any empty item slot that belongs to a row with a hermit
+					// SMART: NOOO, JUST DON'T PLAY IT.
 					const allEmptyItemSlots = game.components.filter(
 						BoardSlotComponent,
 						query.slot.player(player.entity),
@@ -943,6 +959,7 @@ function getNextTurnAction(
 	}
 
 	// Attack only after we've played all possible cards - lowest priority
+	// SMART: Don't attack if it makes you lose.
 	const attackType = game.state.turn.availableActions.find(
 		(action) => action === 'PRIMARY_ATTACK' || action === 'SECONDARY_ATTACK',
 	)
@@ -970,6 +987,7 @@ function getNextTurnAction(
 		}
 
 		// Check if both attack types are available and prioritize secondary attack
+		// SMART: Consider cases of H!Cleo, Jopacity, Sheep Stare and Amnesia.
 		let selectedAttackType = attackType
 		if (game.state.turn.availableActions.includes('SECONDARY_ATTACK')) {
 			console.log(
@@ -1068,6 +1086,7 @@ function getNextTurnAction(
 		)
 
 		// If we have no active hermit but have AFK hermits, prioritize switching to one
+		// SMART: Run through switching evaluation.
 		if (
 			!activeHermit &&
 			afkHermits.length > 0 &&
@@ -1118,6 +1137,7 @@ function getNextTurnAction(
 			// Handle special cases for different action types
 			if (randomAction === 'CHANGE_ACTIVE_HERMIT') {
 				// Find a random hermit to switch to
+				// SMART: Anything but random.
 				const hermitSlots = game.components.filter(
 					BoardSlotComponent,
 					query.slot.player(player.entity),
@@ -1189,6 +1209,7 @@ function getNextTurnAction(
 					return []
 				}
 			}
+			// SMART: YOU CAN ALSO PLAY A SU WITH GEM
 
 			// For other actions, just return the action type
 			return [{type: randomAction as any}]
