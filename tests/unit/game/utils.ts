@@ -218,6 +218,17 @@ export class TestGameFixture {
 		})
 		await this.con.waitForTurnActionReady()
 	}
+
+	async disconnect(player: PlayerEntity) {
+		await this.con.sendTurnAction({
+			playerEntity: player,
+			action: {
+				type: 'DISCONNECT',
+				player,
+			},
+		})
+		await this.con.waitForTurnActionReady()
+	}
 }
 
 export class BossGameTestFixture extends TestGameFixture {

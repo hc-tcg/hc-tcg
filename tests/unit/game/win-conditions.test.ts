@@ -72,4 +72,36 @@ describe('Test Game Win Conditions', () => {
 			{noItemRequirements: true, disableDeckOut: true},
 		)
 	})
+	test('Disconnect results in victory (current player)', async () => {
+		await testGame(
+			{
+				playerOneDeck: [EthosLabCommon],
+				playerTwoDeck: [EthosLabCommon],
+				testGame: async (test, game) => {
+					await test.disconnect(game.currentPlayerEntity)
+				},
+				then: (game, outcome) => {
+					expect(getWinner(game)?.playerName).toBe('playerTwo')
+					expect(outcome).toHaveProperty('victoryReason', 'disconnect')
+				},
+			},
+			{noItemRequirements: true, disableDeckOut: true},
+		)
+	})
+	test('Disconnect results in victory (opponent player)', async () => {
+		await testGame(
+			{
+				playerOneDeck: [EthosLabCommon],
+				playerTwoDeck: [EthosLabCommon],
+				testGame: async (test, game) => {
+					await test.disconnect(game.opponentPlayerEntity)
+				},
+				then: (game, outcome) => {
+					expect(getWinner(game)?.playerName).toBe('playerOne')
+					expect(outcome).toHaveProperty('victoryReason', 'disconnect')
+				},
+			},
+			{noItemRequirements: true, disableDeckOut: true},
+		)
+	})
 })
