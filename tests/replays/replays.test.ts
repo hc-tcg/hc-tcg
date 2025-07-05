@@ -336,6 +336,26 @@ describe('Test Replays', () => {
 		})
 	})
 
+	test('Test disconnect action', async () => {
+		await testReplayGame({
+			playerOneDeck: [VintageBeefRare, FalseSymmetryRare],
+			playerTwoDeck: [RendogCommon],
+			runGame: async (test, con) => {
+				await test.playCardFromHand(VintageBeefRare, 'hermit', 0)
+				await test.playCardFromHand(FalseSymmetryRare, 'hermit', 1)
+				await test.endTurn()
+
+				await test.playCardFromHand(RendogCommon, 'hermit', 0)
+				await test.endTurn()
+
+				await test.changeActiveHermit(1)
+
+				await test.disconnect(con.game.currentPlayer.entity)
+			},
+			afterGame: afterGame,
+		})
+	})
+
 	test('Huffman Tree Compression Algorithm', () => {
 		// Generated from replay data
 		let hexString = `
