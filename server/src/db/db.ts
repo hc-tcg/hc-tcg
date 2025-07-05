@@ -476,6 +476,7 @@ export class Database {
 					{name: row['tag_name'], color: row['tag_color'], key: row['tag_id']},
 				]
 			}, [])
+			const elo = showAllInfo ? deck[0]['elo'] : null
 
 			return {
 				type: 'success',
@@ -486,6 +487,7 @@ export class Database {
 					iconType,
 					cards: cards.map((card) => card.id),
 					tags,
+					elo,
 				},
 			}
 		} catch (e) {
@@ -538,6 +540,7 @@ export class Database {
 					{name: row['tag_name'], color: row['tag_color'], key: row['tag_id']},
 				]
 			}, [])
+			const elo = deck[0]['elo']
 
 			return {
 				type: 'success',
@@ -549,6 +552,7 @@ export class Database {
 					cards: cards.map((card) => toLocalCardInstance(card)),
 					tags,
 					public: showInfo,
+					elo,
 				},
 			}
 		} catch (e) {
@@ -1553,7 +1557,7 @@ export class Database {
 								),
 							]
 						: []
-
+				const elo: number = row['elo']
 				const winrate: string = row['winrate']
 				const wins: string = row['wins']
 				const losses: string = row['losses']
@@ -1569,6 +1573,7 @@ export class Database {
 							iconType,
 							tags: [],
 							cards: cardId !== null ? cards.map((card) => card.id) : [],
+							elo,
 						},
 						winrate: winrate ? Number(winrate) : null,
 						wins: Number(wins),
