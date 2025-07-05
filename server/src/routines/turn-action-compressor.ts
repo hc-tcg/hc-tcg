@@ -498,6 +498,24 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 			}
 		},
 	},
+	DISCONNECT: {
+		value: 0x11,
+		bytes: 2,
+		compress(game, compressor, turnAction: ForfeitAction) {
+			if (game.currentPlayer.entity === turnAction.player)
+				return compressor.writeUIntToBuffer(0, 1)
+			return compressor.writeUIntToBuffer(1, 1)
+		},
+		decompress(game, _compressor, buffer) {
+			return {
+				type: 'DISCONNECT',
+				player:
+					buffer.readUInt8(0) === 0
+						? game.currentPlayer.entity
+						: game.opponentPlayer.entity,
+			}
+		},
+	},
 }
 
 const replayActionsFromValues = Object.entries(replayActions).reduce(
