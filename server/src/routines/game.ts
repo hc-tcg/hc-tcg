@@ -828,10 +828,28 @@ async function runGame(con: GameController) {
 					query.player.entity(con.game.outcome.winner),
 				)
 				const winningPlayerName = winningPlayer?.playerName
-				con.game.battleLog.addEntry(
-					con.game.outcome.winner,
-					`$p{You|${winningPlayerName}}$ won the game`,
+				const losingPlayer = con.game.components.find(
+					PlayerComponent,
+					query.not(query.player.entity(con.game.outcome.winner)),
 				)
+				assert(losingPlayer, 'All games should have a losing player')
+				const losingPlayerName = losingPlayer?.playerName
+				if (con.game.outcome.victoryReason == 'disconnect') {
+					con.game.battleLog.addEntry(
+						losingPlayer.entity,
+						`$p{You|${losingPlayerName}}$ {were|was} disconnected`,
+					)
+				} else if (con.game.outcome.victoryReason == 'forfeit') {
+					con.game.battleLog.addEntry(
+						losingPlayer.entity,
+						`$p{You|${losingPlayerName}}$ forfeit the game`,
+					)
+				} else {
+					con.game.battleLog.addEntry(
+						con.game.outcome.winner,
+						`$p{You|${winningPlayerName}}$ won the game`,
+					)
+				}
 			} else if (con.game.outcome && con.game.outcome.type === 'tie') {
 				con.game.battleLog.addEntry(
 					con.game.currentPlayer.entity,
