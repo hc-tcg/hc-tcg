@@ -28,6 +28,7 @@ export type Deck = {
 	cards: Array<LocalCardInstance>
 	tags: Array<Tag>
 	public: boolean
+	elo: number
 } & (DeckIconItem | DeckIconHermit | DeckIconEffect)
 
 export type ApiDeck = {
@@ -37,6 +38,7 @@ export type ApiDeck = {
 	code: string
 	cards: Array<string>
 	tags: Array<Tag>
+	elo: number | null
 }
 
 // This type is used to ensure saving and loading compatibility with older versions of hc-tcg
