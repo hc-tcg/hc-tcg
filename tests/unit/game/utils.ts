@@ -235,7 +235,6 @@ export class TestGameFixture {
 
 export class BossGameTestFixture extends TestGameFixture {
 	async bossAttack(...attack: BOSS_ATTACK) {
-		await this.con.waitForTurnActionReady()
 		const bossCard = this.game.components.find(
 			CardComponent,
 			query.card.is(EvilXisumaBoss),
