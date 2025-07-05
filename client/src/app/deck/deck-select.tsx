@@ -316,7 +316,8 @@ function SelectDeck({
 			return [...tags, ...decks.tags]
 		}, []).length > 0
 
-	const deckList = filteredDecks.map((deck: Deck, i: number) => { //TARGET Hover Selection
+	const deckList = filteredDecks.map((deck: Deck, i: number) => {
+		//TARGET Hover Selection
 		return (
 			<li
 				className={classNames(
@@ -353,9 +354,7 @@ function SelectDeck({
 				</div>
 				{deck.name}
 				<div className={css.dynamicSpace}></div>
-				<div className={classNames(css.listElo)}>
-					{loadedDeck.elo}
-				</div>
+				<div className={classNames(css.listElo)}>{loadedDeck.elo}</div>
 			</li>
 		)
 	})
@@ -580,7 +579,8 @@ function SelectDeck({
 								</span>
 								<span className={css.mobileDeckNamePadding}></span>
 								<div className={classNames(css.elo)}>
-									{'Elo: '}{loadedDeck.elo}
+									{'Elo: '}
+									{loadedDeck.elo}
 								</div>
 								<button
 									className={css.dropdownButton}
