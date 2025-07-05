@@ -173,7 +173,7 @@ describe('Test Something', () => {
 				{
 					playerOneDeck: [EthosLabCommon],
 					playerTwoDeck: [EthosLabCommon],
-					saga: async (test, game) => {
+					testGame: async (test, game) => {
 						// Place your tests here
 					},
 				},
@@ -323,7 +323,7 @@ describe('Test Something', () => {
 				{
 					playerOneDeck: [EthosLabCommon],
 					playerTwoDeck: [EthosLabCommon],
-					saga: async (test, game) => {
+					testGame: async (test, game) => {
 						// Place your tests here
 					},
 				},
