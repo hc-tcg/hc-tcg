@@ -112,8 +112,7 @@ function* gameManager(con: GameController) {
 
 		root.hooks.newGame.call(con)
 
-		// Kill game on timeout or when user leaves for long time + cleanup after game
-		const result = yield* race({
+		yield* race({
 			outcome: call(runGame, con),
 			waitForTurnAction: call(function* () {
 				while (true) {
@@ -128,35 +127,37 @@ function* gameManager(con: GameController) {
 					})
 				}
 			}),
-			// kill game when a player is disconnected for too long
-			playerRemoved: take<
-				LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
-			>(
-				(action: any) =>
-					action.type === localMessages.PLAYER_REMOVED &&
-					playerIds.includes(
-						(action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED])
-							.player.id,
-					),
-			),
-		})
+			playerDisconnect: call(function* () {
+				while (true) {
+					const playerRemoved = yield* take<
+						LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
+					>(
+						(action: any) =>
+							action.type === localMessages.PLAYER_REMOVED &&
+							playerIds.includes(
+								(
+									action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
+								).player.id,
+							),
+					)
 
-		if (result.playerRemoved) {
-			let playerThatLeft = con.viewers.find(
-				(v) => v.player.id === result.playerRemoved?.player.id,
-			)?.playerOnLeft.entity
-			let remainingPlayer = con.game.components.find(
-				PlayerComponent,
-				(_g, c) => c.entity !== playerThatLeft,
-			)?.entity
-			assert(remainingPlayer, 'There is no way there is no remaining player.')
-			// @todo It would be best if the actual game runner did not know about disconnects.
-			con.game.outcome = {
-				type: 'player-won',
-				victoryReason: 'disconnect',
-				winner: remainingPlayer,
-			}
-		}
+					const playerEntity = con.viewers.find(
+						(v) =>
+							v.spectator == false && v.player.id == playerRemoved.player.id,
+					)?.playerOnLeftEntity
+
+					assert(playerEntity)
+
+					con.sendTurnAction({
+						action: {
+							type: 'DISCONNECT',
+							player: playerEntity,
+						},
+						playerEntity: playerEntity,
+					})
+				}
+			}),
+		})
 
 		for (const viewer of con.viewers) {
 			const gameState = getLocalGameState(con.game, viewer)

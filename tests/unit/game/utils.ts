@@ -511,6 +511,4 @@ export async function testReplayGame(options: {
 			await options.runGame(new BossGameTestFixture(controller), controller)
 		})(),
 	])
-
-	// @todo
 }

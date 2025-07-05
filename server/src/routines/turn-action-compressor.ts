@@ -770,9 +770,6 @@ export class TurnActionCompressor {
 			Buffer.from([INVALID_REPLAY])
 		}
 
-		// @todo cancel promise
-		newGameController.task
-
 		this.currentAction = null
 
 		return Buffer.concat([

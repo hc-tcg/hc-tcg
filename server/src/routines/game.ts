@@ -381,6 +381,7 @@ export function handleSingleTurnAction(
 
 	let endTurn = false
 	let forfeit = false
+	let disconnect = false
 
 	const availableActions =
 		turnAction.playerEntity === con.game.currentPlayer.entity
@@ -450,6 +451,10 @@ export function handleSingleTurnAction(
 				forfeit = true
 				con.game.endInfo.deadPlayerEntities = [turnAction.action.player]
 				break
+			case 'DISCONNECT':
+				disconnect = true
+				con.game.endInfo.deadPlayerEntities = [turnAction.action.player]
+				break
 			default:
 				// Unknown action type, ignore it completely
 				throw new Error(
@@ -478,6 +483,10 @@ export function handleSingleTurnAction(
 	// Handle returning from forfeit here because everything else doesn't need to be run
 	if (forfeit) {
 		return 'FORFEIT'
+	}
+	// Same for disconnect
+	if (disconnect) {
+		return 'DISCONNECT'
 	}
 
 	// We log endTurn at the start of the turn so the state updates properly.
@@ -671,6 +680,9 @@ async function turnActionsSaga(con: GameController) {
 			break
 		} else if (result === 'FORFEIT') {
 			con.game.endInfo.victoryReason = 'forfeit'
+			return 'GAME_END'
+		} else if (result === 'DISCONNECT') {
+			con.game.endInfo.victoryReason = 'disconnect'
 			return 'GAME_END'
 		}
 	}
