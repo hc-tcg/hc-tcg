@@ -208,6 +208,7 @@ export class TestGameFixture {
 		await this.con.waitForTurnActionReady()
 	}
 
+	/* Have `player` forfeit from the game. */
 	async forfeit(player: PlayerEntity) {
 		await this.con.sendTurnAction({
 			playerEntity: player,
@@ -219,6 +220,7 @@ export class TestGameFixture {
 		await this.con.waitForTurnActionReady()
 	}
 
+	/* Disconnect `player` from the game. */
 	async disconnect(player: PlayerEntity) {
 		await this.con.sendTurnAction({
 			playerEntity: player,
