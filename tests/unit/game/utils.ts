@@ -25,13 +25,9 @@ import {
 	slotToPlayCardAction,
 } from 'common/types/turn-action-data'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
-import {applyMiddleware, createStore} from 'redux'
-import createSagaMiddleware, {SagaMiddleware} from 'redux-saga'
 import {GameController} from 'server/game-controller'
-import {LocalMessage, localMessages} from 'server/messages'
-import gameSaga, {figureOutGameResult} from 'server/routines/game'
+import runGame from 'server/routines/game'
 import {getLocalCard} from 'server/utils/state-gen'
-import {call, put, race} from 'typed-redux-saga'
 
 function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 	return {
@@ -55,169 +51,6 @@ export function findCardInHand(player: PlayerComponent, card: Card) {
 	return cardInHand
 }
 
-/** End the current player's turn. */
-export function* endTurn(game: GameModel) {
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayer.entity,
-		action: {
-			type: 'END_TURN',
-		},
-	})
-}
-
-/** Play a card from your hand to a row on the game board */
-export function playCardFromHand(
-	game: GameModel,
-	card: Card,
-	slotType: 'single_use',
-): any
-export function playCardFromHand(
-	game: GameModel,
-	card: Card,
-	slotType: 'hermit' | 'attach',
-	row: number,
-	player?: PlayerEntity,
-): any
-export function playCardFromHand(
-	game: GameModel,
-	card: Card,
-	slotType: 'item',
-	row: number,
-	index: number,
-	player?: PlayerEntity,
-): any
-export function* playCardFromHand(
-	game: GameModel,
-	card: Card,
-	slotType: SlotTypeT,
-	row?: number,
-	indexOrPlayer?: number | PlayerEntity,
-	itemSlotPlayer?: PlayerEntity,
-) {
-	let cardComponent = findCardInHand(game.currentPlayer, card)
-	const player =
-		itemSlotPlayer ||
-		(typeof indexOrPlayer === 'string'
-			? indexOrPlayer
-			: game.currentPlayerEntity)
-	const index = typeof indexOrPlayer === 'number' ? indexOrPlayer : undefined
-
-	const slot = game.components.find(
-		SlotComponent,
-		query.slot.player(player),
-		(_game, slot) =>
-			(!slot.inRow() && index === undefined) ||
-			(slot.inRow() && slot.row.index === row),
-		(_game, slot) =>
-			index === undefined || (slot.inRow() && slot.index === index),
-		(_game, slot) => slot.type === slotType,
-	)!
-
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayer.entity,
-		action: {
-			type: slotToPlayCardAction[cardComponent.props.category],
-			card: getLocalCard(game, cardComponent),
-			slot: slot.entity,
-		},
-	})
-}
-
-/** Apply the effect card in the single use slot. This should be used to apply status effects that use the "should apply" modal. */
-export function* applyEffect(game: GameModel) {
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayer.entity,
-		action: {
-			type: 'APPLY_EFFECT',
-		},
-	})
-}
-
-/** Removes the effect card in the single use slot. This should be used to cancel effects that use the "should apply" modal or cancel an attack with pick requests. */
-export function* removeEffect(game: GameModel) {
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayer.entity,
-		action: {
-			type: 'REMOVE_EFFECT',
-		},
-	})
-}
-
-/** Attack with the current player. */
-export function* attack(
-	game: GameModel,
-	attack: 'primary' | 'secondary' | 'single-use',
-) {
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayer.entity,
-		action: {
-			type: attackToAttackAction[attack],
-		},
-	})
-}
-
-/** Change the active hermit row for the current player. */
-export function* changeActiveHermit(game: GameModel, index: number) {
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayer.entity,
-		action: {
-			type: 'CHANGE_ACTIVE_HERMIT',
-			entity: game.components.findEntity(
-				SlotComponent,
-				query.slot.currentPlayer,
-				query.slot.rowIndex(index),
-			)!,
-		},
-	})
-}
-
-/** Pick a slot for a pick request */
-export function* pick(
-	game: GameModel,
-	...slot: Array<ComponentQuery<SlotComponent>>
-) {
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.state.pickRequests[0].player,
-		action: {
-			type: 'PICK_REQUEST',
-			entity: game.components.find(SlotComponent, ...slot)!.entity,
-		},
-	})
-}
-
-/** Respond to a modal request. */
-export function* finishModalRequest(
-	game: GameModel,
-	modalResult: LocalModalResult,
-) {
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.state.modalRequests[0].player,
-		action: {
-			type: 'MODAL_REQUEST',
-			modalResult,
-		},
-	})
-}
-
-export function* forfeit(player: PlayerEntity) {
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: player,
-		action: {
-			type: 'FORFEIT',
-			player,
-		},
-	})
-}
-
 export function getWinner(game: GameModel): PlayerComponent | null {
 	if (game.outcome === undefined) return null
 	if (game.outcome.type === 'tie') return null
@@ -230,24 +63,197 @@ export function getWinner(game: GameModel): PlayerComponent | null {
 	)
 }
 
-function getSagaMiddleware(): SagaMiddleware<object> {
-	const sagaMiddleware = createSagaMiddleware({
-		// Prevent default behavior where redux saga logs errors to stderr. This is not useful to tests.
-		onError: (_err, {sagaStack: _}) => {},
-	})
-	createStore(() => {}, applyMiddleware(sagaMiddleware))
-	return sagaMiddleware
+export class TestGameFixture {
+	con: GameController
+	game: GameModel
+
+	constructor(con: GameController) {
+		this.con = con
+		this.game = con.game
+	}
+
+	/** End the current player's turn. */
+	async endTurn() {
+		await this.con.sendTurnAction({
+			playerEntity: this.game.currentPlayer.entity,
+			action: {
+				type: 'END_TURN',
+			},
+		})
+		await this.con.waitForTurnActionReady()
+	}
+
+	/** Play a card from your hand to a row on the game board */
+	async playCardFromHand(card: Card, slotType: 'single_use'): Promise<any>
+	async playCardFromHand(
+		card: Card,
+		slotType: 'hermit' | 'attach',
+		row: number,
+		player?: PlayerEntity,
+	): Promise<any>
+	async playCardFromHand(
+		card: Card,
+		slotType: 'item',
+		row: number,
+		index: number,
+		player?: PlayerEntity,
+	): Promise<any>
+	async playCardFromHand(
+		card: Card,
+		slotType: SlotTypeT,
+		row?: number,
+		indexOrPlayer?: number | PlayerEntity,
+		itemSlotPlayer?: PlayerEntity,
+	) {
+		let cardComponent = findCardInHand(this.game.currentPlayer, card)
+		const player =
+			itemSlotPlayer ||
+			(typeof indexOrPlayer === 'string'
+				? indexOrPlayer
+				: this.game.currentPlayerEntity)
+		const index = typeof indexOrPlayer === 'number' ? indexOrPlayer : undefined
+
+		const slot = this.game.components.find(
+			SlotComponent,
+			query.slot.player(player),
+			(_game, slot) =>
+				(!slot.inRow() && index === undefined) ||
+				(slot.inRow() && slot.row.index === row),
+			(_game, slot) =>
+				index === undefined || (slot.inRow() && slot.index === index),
+			(_game, slot) => slot.type === slotType,
+		)!
+
+		await this.con.sendTurnAction({
+			playerEntity: this.game.currentPlayer.entity,
+			action: {
+				type: slotToPlayCardAction[cardComponent.props.category],
+				card: getLocalCard(this.game, cardComponent),
+				slot: slot.entity,
+			},
+		})
+		await this.con.waitForTurnActionReady()
+	}
+
+	/** Apply the effect card in the single use slot. This should be used to apply status effects that use the "should apply" modal. */
+	async applyEffect() {
+		await this.con.sendTurnAction({
+			playerEntity: this.game.currentPlayer.entity,
+			action: {
+				type: 'APPLY_EFFECT',
+			},
+		})
+		await this.con.waitForTurnActionReady()
+	}
+
+	/** Removes the effect card in the single use slot. This should be used to cancel effects that use the "should apply" modal or cancel an attack with pick requests. */
+	async removeEffect() {
+		await this.con.sendTurnAction({
+			playerEntity: this.game.currentPlayer.entity,
+			action: {
+				type: 'REMOVE_EFFECT',
+			},
+		})
+		await this.con.waitForTurnActionReady()
+	}
+
+	/** Attack with the current player. */
+	async attack(attack: 'primary' | 'secondary' | 'single-use') {
+		await this.con.sendTurnAction({
+			playerEntity: this.game.currentPlayer.entity,
+			action: {
+				type: attackToAttackAction[attack],
+			},
+		})
+		await this.con.waitForTurnActionReady()
+	}
+
+	/** Change the active hermit row for the current player. */
+	async changeActiveHermit(index: number) {
+		await this.con.sendTurnAction({
+			playerEntity: this.game.currentPlayer.entity,
+			action: {
+				type: 'CHANGE_ACTIVE_HERMIT',
+				entity: this.game.components.findEntity(
+					SlotComponent,
+					query.slot.currentPlayer,
+					query.slot.rowIndex(index),
+				)!,
+			},
+		})
+		await this.con.waitForTurnActionReady()
+	}
+
+	/** Pick a slot for a pick request */
+	async pick(...slot: Array<ComponentQuery<SlotComponent>>) {
+		await this.con.sendTurnAction({
+			playerEntity: this.game.state.pickRequests[0].player,
+			action: {
+				type: 'PICK_REQUEST',
+				entity: this.game.components.find(SlotComponent, ...slot)!.entity,
+			},
+		})
+		await this.con.waitForTurnActionReady()
+	}
+
+	/** Respond to a modal request. */
+	async finishModalRequest(modalResult: LocalModalResult) {
+		await this.con.sendTurnAction({
+			playerEntity: this.game.state.modalRequests[0].player,
+			action: {
+				type: 'MODAL_REQUEST',
+				modalResult,
+			},
+		})
+		await this.con.waitForTurnActionReady()
+	}
+
+	/* Have `player` forfeit from the game. */
+	async forfeit(player: PlayerEntity) {
+		await this.con.sendTurnAction({
+			playerEntity: player,
+			action: {
+				type: 'FORFEIT',
+				player,
+			},
+		})
+		await this.con.waitForTurnActionReady()
+	}
+
+	/* Disconnect `player` from the game. */
+	async disconnect(player: PlayerEntity) {
+		await this.con.sendTurnAction({
+			playerEntity: player,
+			action: {
+				type: 'DISCONNECT',
+				player,
+			},
+		})
+		await this.con.waitForTurnActionReady()
+	}
 }
 
-function testSagas(rootSaga: any, testingSaga: any) {
-	const sagaMiddleware = getSagaMiddleware()
-
-	let saga = sagaMiddleware.run(function* () {
-		yield* race([rootSaga, testingSaga])
-	})
-
-	if (saga.error()) {
-		throw saga.error()
+export class BossGameTestFixture extends TestGameFixture {
+	async bossAttack(...attack: BOSS_ATTACK) {
+		const bossCard = this.game.components.find(
+			CardComponent,
+			query.card.is(EvilXisumaBoss),
+			query.card.currentPlayer,
+		)
+		const attackType = this.game.state.turn.availableActions.find(
+			(action) => action === 'PRIMARY_ATTACK' || action === 'SECONDARY_ATTACK',
+		)
+		if (bossCard === null) throw new Error('Boss card not found to attack with')
+		if (attackType === undefined)
+			throw new Error('Boss can not attack right now')
+		supplyBossAttack(bossCard, attack)
+		await this.con.sendTurnAction({
+			playerEntity: this.game.currentPlayerEntity,
+			action: {
+				type: attackType,
+			},
+		})
+		await this.con.waitForTurnActionReady()
 	}
 }
 
@@ -279,9 +285,9 @@ const defaultGameSettings = {
  * Test a saga against a game. The game is created with default settings similar to what would be found in production.
  * Note that decks are not shuffled in test games.
  */
-export function testGame(
+export async function testGame(
 	options: {
-		saga: (game: GameModel) => any
+		testGame: (test: TestGameFixture, game: GameModel) => any
 		// This is the place to check the state of the game after it ends.
 		then?: (game: GameModel, outcome: GameOutcome) => any
 		playerOneDeck: Array<Card>
@@ -304,44 +310,41 @@ export function testGame(
 
 	let testEnded = false
 
-	testSagas(
-		call(function* () {
-			yield* call(gameSaga, controller)
-		}),
-		call(function* () {
-			yield* call(options.saga, controller.game)
+	await Promise.race([
+		runGame(controller),
+		(async () => {
+			await options.testGame(new TestGameFixture(controller), controller.game)
 			testEnded = true
-		}),
-	)
+		})(),
+	])
 
 	if (!options.then && !testEnded) {
 		throw new Error('Game was ended before the test finished running.')
 	}
 
 	if (options.then) {
-		const result = figureOutGameResult(controller.game)
-		options.then(controller.game, result)
+		options.then(controller.game, controller.game.outcome!)
 	}
 }
 
 /**
  * Works similarly to `testGame`, but for testing the Evil X boss fight
  */
-export function testBossFight(
+export async function testBossFight(
 	options: {
 		/**
 		 * ```ts
-		 * saga: function* (game) {
+		 * testGame: async (test, game) => {
 		 * 	...
-		 * 	yield* endTurn(game)
+		 * 	await test.endTurn()
 		 * 	// Boss' first turn
-		 * 	yield* playCardFromHand(game, EvilXisumaBoss, 'hermit', 0)
-		 * 	yield* bossAttack(game, '50DMG')
+		 * 	await test.playCardFromHand(EvilXisumaBoss, 'hermit', 0)
+		 * 	await test.bossAttack( '50DMG')
 		 * 	...
 		 * }
 		 * ```
 		 */
-		saga: (game: GameModel) => any
+		testGame: (test: BossGameTestFixture, game: GameModel) => any
 		// This is the place to check the state of the game after it ends.
 		then?: (game: GameModel) => any
 		playerDeck: Array<Card>
@@ -406,15 +409,16 @@ export function testBossFight(
 
 	let testEnded = false
 
-	testSagas(
-		call(function* () {
-			yield* call(gameSaga, controller)
-		}),
-		call(function* () {
-			yield* call(options.saga, controller.game)
+	await Promise.race([
+		runGame(controller),
+		(async () => {
+			await options.testGame(
+				new BossGameTestFixture(controller),
+				controller.game,
+			)
 			testEnded = true
-		}),
-	)
+		})(),
+	])
 
 	if (!options.then && !testEnded) {
 		throw new Error('Game was ended before the test finished running.')
@@ -424,10 +428,10 @@ export function testBossFight(
 }
 
 /** Test an achievement for player one in a game */
-export function testAchivement(
+export async function testAchivement(
 	options: {
 		achievement: Achievement
-		playGame: (game: GameModel) => any
+		playGame: (test: TestGameFixture, game: GameModel) => any
 		checkAchivement: (
 			game: GameModel,
 			achievement: AchievementComponent,
@@ -441,7 +445,7 @@ export function testAchivement(
 	let achievementComponent: AchievementComponent
 	let player: PlayerComponent
 
-	let saga = function* (game: GameModel) {
+	let achievementTest = async (test: TestGameFixture, game: GameModel) => {
 		player = game.currentPlayer
 		let achievementProgress: Record<number, number> = {}
 
@@ -463,7 +467,7 @@ export function testAchivement(
 			achievementObserver,
 		)
 
-		yield* options.playGame(game)
+		await options.playGame(test, game)
 	}
 
 	let then = function (game: GameModel, gameOutcome: GameOutcome) {
@@ -476,9 +480,9 @@ export function testAchivement(
 		options.checkAchivement(game, achievementComponent, gameOutcome)
 	}
 
-	testGame(
+	await testGame(
 		{
-			saga,
+			testGame: achievementTest,
 			then,
 			playerOneDeck: options.playerOneDeck,
 			playerTwoDeck: options.playerTwoDeck,
@@ -487,29 +491,8 @@ export function testAchivement(
 	)
 }
 
-export function* bossAttack(game: GameModel, ...attack: BOSS_ATTACK) {
-	const bossCard = game.components.find(
-		CardComponent,
-		query.card.is(EvilXisumaBoss),
-		query.card.currentPlayer,
-	)
-	const attackType = game.state.turn.availableActions.find(
-		(action) => action === 'PRIMARY_ATTACK' || action === 'SECONDARY_ATTACK',
-	)
-	if (bossCard === null) throw new Error('Boss card not found to attack with')
-	if (attackType === undefined) throw new Error('Boss can not attack right now')
-	supplyBossAttack(bossCard, attack)
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_TURN_ACTION,
-		playerEntity: game.currentPlayerEntity,
-		action: {
-			type: attackType,
-		},
-	})
-}
-
-export function testReplayGame(options: {
-	gameSaga: (con: GameController) => any
+export async function testReplayGame(options: {
+	runGame: (test: TestGameFixture, con: GameController) => any
 	afterGame: (con: GameController) => any
 	playerOneDeck: Array<Card>
 	playerTwoDeck: Array<Card>
@@ -534,22 +517,10 @@ export function testReplayGame(options: {
 		},
 	)
 
-	testSagas(
-		call(function* () {
-			yield* call(gameSaga, controller)
-		}),
-		call(function* () {
-			yield* call(options.gameSaga, controller)
-		}),
-	)
-
-	const sagaMiddleware = getSagaMiddleware()
-
-	const saga = sagaMiddleware.run(function* () {
-		yield* call(options.afterGame, controller)
-	})
-
-	if (saga.error()) {
-		throw saga.error()
-	}
+	await Promise.race([
+		runGame(controller),
+		(async () => {
+			await options.runGame(new BossGameTestFixture(controller), controller)
+		})(),
+	])
 }

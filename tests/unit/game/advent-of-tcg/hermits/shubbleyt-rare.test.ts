@@ -9,17 +9,11 @@ import {IronSword} from 'common/cards/single-use/sword'
 import {CardComponent, RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {SelectCards} from 'common/types/modal-requests'
-import {
-	attack,
-	endTurn,
-	finishModalRequest,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Shelby Parallel World', () => {
-	test('Parallel World Functionality', () => {
-		testGame({
+	test('Parallel World Functionality', async () => {
+		await testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [
 				ShubbleYTRare,
@@ -27,26 +21,26 @@ describe('Test Shelby Parallel World', () => {
 				IronSword,
 				...Array(4).fill(TerraformItem),
 			],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+			testGame: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, ShubbleYTRare, 'hermit', 0)
-				yield* playCardFromHand(game, TerraformDoubleItem, 'item', 0, 0)
-				yield* attack(game, 'secondary')
+				await test.playCardFromHand(ShubbleYTRare, 'hermit', 0)
+				await test.playCardFromHand(TerraformDoubleItem, 'item', 0, 0)
+				await test.attack('secondary')
 				expect(
 					game.components.get(
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
 					)?.props,
 				).toStrictEqual(IronSword)
-				yield* finishModalRequest(game, {result: true, cards: null})
+				await test.finishModalRequest({result: true, cards: null})
 				expect(
 					game.currentPlayer
 						.getDrawPile()
 						.sort(CardComponent.compareOrder)
 						.at(-1)?.props,
 				).toStrictEqual(IronSword)
-				yield* endTurn(game)
+				await test.endTurn()
 				expect(
 					game.opponentPlayer
 						.getHand()
@@ -57,8 +51,8 @@ describe('Test Shelby Parallel World', () => {
 		})
 	})
 
-	test('Parallel World shows correct card when Shelby is knocked-out by Thorns', () => {
-		testGame({
+	test('Parallel World shows correct card when Shelby is knocked-out by Thorns', async () => {
+		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns],
 			playerTwoDeck: [
 				ShubbleYTRare,
@@ -67,28 +61,28 @@ describe('Test Shelby Parallel World', () => {
 				IronSword,
 				...Array(4).fill(TerraformItem),
 			],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-				yield* playCardFromHand(game, Thorns, 'attach', 0)
-				yield* endTurn(game)
+			testGame: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+				await test.playCardFromHand(Thorns, 'attach', 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, ShubbleYTRare, 'hermit', 0)
+				await test.playCardFromHand(ShubbleYTRare, 'hermit', 0)
 				// Manually set Shelby health to trigger zone
 				game.components.find(
 					RowComponent,
 					query.row.currentPlayer,
 					query.row.index(0),
 				)!.health = 10
-				yield* playCardFromHand(game, ShubbleYTRare, 'hermit', 1)
-				yield* playCardFromHand(game, TerraformDoubleItem, 'item', 0, 0)
-				yield* attack(game, 'secondary')
+				await test.playCardFromHand(ShubbleYTRare, 'hermit', 1)
+				await test.playCardFromHand(TerraformDoubleItem, 'item', 0, 0)
+				await test.attack('secondary')
 				expect(
 					game.components.get(
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
 					)?.props,
 				).toStrictEqual(IronSword)
-				yield* finishModalRequest(game, {result: true, cards: null})
+				await test.finishModalRequest({result: true, cards: null})
 				expect(
 					game.currentPlayer
 						.getDrawPile()
@@ -99,8 +93,8 @@ describe('Test Shelby Parallel World', () => {
 		})
 	})
 
-	test('Parallel World removes modal when Shelby is knocked-out by Thorns and gives away last card as prize', () => {
-		testGame({
+	test('Parallel World removes modal when Shelby is knocked-out by Thorns and gives away last card as prize', async () => {
+		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns],
 			playerTwoDeck: [
 				ShubbleYTRare,
@@ -108,32 +102,32 @@ describe('Test Shelby Parallel World', () => {
 				...Array(5).fill(TerraformDoubleItem),
 				IronSword,
 			],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-				yield* playCardFromHand(game, Thorns, 'attach', 0)
-				yield* endTurn(game)
+			testGame: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+				await test.playCardFromHand(Thorns, 'attach', 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, ShubbleYTRare, 'hermit', 0)
+				await test.playCardFromHand(ShubbleYTRare, 'hermit', 0)
 				// Manually set Shelby health to trigger zone
 				game.components.find(
 					RowComponent,
 					query.row.currentPlayer,
 					query.row.index(0),
 				)!.health = 10
-				yield* playCardFromHand(game, ShubbleYTRare, 'hermit', 1)
-				yield* playCardFromHand(game, TerraformDoubleItem, 'item', 0, 0)
+				await test.playCardFromHand(ShubbleYTRare, 'hermit', 1)
+				await test.playCardFromHand(TerraformDoubleItem, 'item', 0, 0)
 				expect(
 					game.currentPlayer.getDrawPile().map((card) => card.props),
 				).toStrictEqual([IronSword])
-				yield* attack(game, 'secondary')
+				await test.attack('secondary')
 				expect(game.state.modalRequests).toHaveLength(0)
 			},
 		})
 	})
 
-	test('Parallel World + Cat', () => {
-		testGame({
+	test('Parallel World + Cat', async () => {
+		await testGame({
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [
 				ShubbleYTRare,
@@ -142,20 +136,20 @@ describe('Test Shelby Parallel World', () => {
 				IronSword,
 				...Array(4).fill(TerraformItem),
 			],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+			testGame: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, ShubbleYTRare, 'hermit', 0)
-				yield* playCardFromHand(game, Cat, 'attach', 0)
-				yield* playCardFromHand(game, TerraformDoubleItem, 'item', 0, 0)
-				yield* attack(game, 'secondary')
+				await test.playCardFromHand(ShubbleYTRare, 'hermit', 0)
+				await test.playCardFromHand(Cat, 'attach', 0)
+				await test.playCardFromHand(TerraformDoubleItem, 'item', 0, 0)
+				await test.attack('secondary')
 				expect(
 					game.components.get(
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
 					)?.props,
 				).toStrictEqual(IronSword)
-				yield* finishModalRequest(game, {result: true, cards: null})
+				await test.finishModalRequest({result: true, cards: null})
 				expect(
 					game.currentPlayer
 						.getDrawPile()
@@ -167,14 +161,14 @@ describe('Test Shelby Parallel World', () => {
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards[0],
 					)?.props,
 				).toStrictEqual(TerraformItem)
-				yield* finishModalRequest(game, {result: true, cards: null})
+				await test.finishModalRequest({result: true, cards: null})
 				expect(
 					game.currentPlayer
 						.getDrawPile()
 						.sort(CardComponent.compareOrder)
 						.at(0)?.props,
 				).toStrictEqual(IronSword)
-				yield* endTurn(game)
+				await test.endTurn()
 				expect(
 					game.opponentPlayer
 						.getHand()

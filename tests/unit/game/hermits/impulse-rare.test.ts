@@ -6,34 +6,34 @@ import TangoTekRare from 'common/cards/hermits/tangotek-rare'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
-function* testOneHermit(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+async function testOneHermit(test: TestGameFixture, game: GameModel) {
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-	yield* endTurn(game)
+	await test.endTurn()
 
-	yield* playCardFromHand(game, ImpulseSVRare, 'hermit', 0)
-	yield* playCardFromHand(game, BdoubleO100Common, 'hermit', 1)
+	await test.playCardFromHand(ImpulseSVRare, 'hermit', 0)
+	await test.playCardFromHand(BdoubleO100Common, 'hermit', 1)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 
 	expect(
 		game.components.find(RowComponent, query.row.active)?.health,
 	).toStrictEqual(260 - (70 + 40))
 }
 
-function* testManyHermits(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+async function testManyHermits(test: TestGameFixture, game: GameModel) {
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-	yield* endTurn(game)
+	await test.endTurn()
 
-	yield* playCardFromHand(game, ImpulseSVRare, 'hermit', 0)
-	yield* playCardFromHand(game, BdoubleO100Common, 'hermit', 1)
-	yield* playCardFromHand(game, BdoubleO100Common, 'hermit', 2)
-	yield* playCardFromHand(game, TangoTekRare, 'hermit', 3)
+	await test.playCardFromHand(ImpulseSVRare, 'hermit', 0)
+	await test.playCardFromHand(BdoubleO100Common, 'hermit', 1)
+	await test.playCardFromHand(BdoubleO100Common, 'hermit', 2)
+	await test.playCardFromHand(TangoTekRare, 'hermit', 3)
 
-	yield* attack(game, 'secondary')
+	await test.attack('secondary')
 
 	expect(
 		game.components.find(RowComponent, query.row.active)?.health,
@@ -41,20 +41,20 @@ function* testManyHermits(game: GameModel) {
 }
 
 describe('Test Impulse Test', () => {
-	test('Test Impulse Is Triggered By Bdubs', () => {
-		testGame(
+	test('Test Impulse Is Triggered By Bdubs', async () => {
+		await testGame(
 			{
-				saga: testOneHermit,
+				testGame: testOneHermit,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [ImpulseSVRare, BdoubleO100Common],
 			},
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test Impulse Is Triggered By Multiple Hermits', () => {
-		testGame(
+	test('Test Impulse Is Triggered By Multiple Hermits', async () => {
+		await testGame(
 			{
-				saga: testManyHermits,
+				testGame: testManyHermits,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [
 					ImpulseSVRare,

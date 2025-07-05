@@ -34,8 +34,9 @@ type Messages = [
 	{type: typeof localMessages.PLAYER_REMOVED; player: PlayerModel},
 	{
 		type: typeof localMessages.GAME_TURN_ACTION
-		action: AnyTurnActionData
 		playerEntity: PlayerEntity
+		action: AnyTurnActionData
+		game: string
 	},
 ]
 

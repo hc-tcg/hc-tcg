@@ -2,23 +2,22 @@ import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import JinglerRare from 'common/cards/hermits/jingler-rare'
 import query from 'common/components/query'
-import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Jingler Rare', () => {
-	test('Test Jingler forces opponent to discard one card', () => {
-		testGame(
+	test('Test Jingler forces opponent to discard one card', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [JinglerRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, _game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, JinglerRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(JinglerRare, 'hermit', 0)
+					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.hand,
 						query.slot.opponent,
 						query.not(query.slot.empty),
@@ -28,17 +27,17 @@ describe('Test Jingler Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test("Test Jingler does nothing when opponent's hand is empty", () => {
-		testGame(
+	test("Test Jingler does nothing when opponent's hand is empty", async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [JinglerRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, JinglerRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(JinglerRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toHaveLength(0)
 				},

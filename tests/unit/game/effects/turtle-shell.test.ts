@@ -21,36 +21,27 @@ import {CardComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import LooseShellEffect from 'common/status-effects/loose-shell'
 import {SelectCards} from 'common/types/modal-requests'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Turtle Shell', () => {
-	test('Turtle Shell applies to next turn', () => {
-		testGame(
+	test('Turtle Shell applies to next turn', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [ZombieCleoCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
-					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
+					await test.playCardFromHand(TurtleShell, 'attach', 1)
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ZombieCleoCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(ZombieCleoCommon, 'hermit', 0)
+					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						FarmerBeefCommon.health,
@@ -69,44 +60,43 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test('Turtle Shell protects against Gas Light and Egg, but not status-effect damage', () => {
-		testGame(
+	test('Turtle Shell protects against Gas Light and Egg, but not status-effect damage', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [SkizzlemanRare, LavaBucket, Egg],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 0)
+					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(LavaBucket, 'single_use')
+					await test.applyEffect()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
-					yield* playCardFromHand(game, TurtleShell, 'attach', 0)
+					await test.playCardFromHand(TurtleShell, 'attach', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, Egg, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Egg, 'single_use')
+					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.index).toBe(0)
 					expect(game.currentPlayer.activeRow?.health).toBe(
@@ -118,30 +108,29 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test('Turtle Shell is not discarded when row is activated by Knockback', () => {
-		testGame(
+	test('Turtle Shell is not discarded when row is activated by Knockback', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [ZombieCleoCommon, Knockback],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
-					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
+					await test.playCardFromHand(TurtleShell, 'attach', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ZombieCleoCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Knockback, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(ZombieCleoCommon, 'hermit', 0)
+					await test.playCardFromHand(Knockback, 'single_use')
+					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -157,8 +146,8 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test("Turtle Shell works with Ladder only on hermit's first turn active", () => {
-		testGame(
+	test("Turtle Shell works with Ladder only on hermit's first turn active", async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -169,25 +158,24 @@ describe('Test Turtle Shell', () => {
 					Ladder,
 				],
 				playerTwoDeck: [ZombieCleoCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(TurtleShell, 'attach', 1)
 
-					yield* playCardFromHand(game, Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.playCardFromHand(Ladder, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ZombieCleoCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(ZombieCleoCommon, 'hermit', 0)
+					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health,
@@ -201,21 +189,20 @@ describe('Test Turtle Shell', () => {
 						),
 					).not.toBe(null)
 
-					yield* playCardFromHand(game, TurtleShell, 'attach', 0)
+					await test.playCardFromHand(TurtleShell, 'attach', 0)
 
-					yield* playCardFromHand(game, Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.playCardFromHand(Ladder, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - ZombieCleoCommon.secondary.damage,
@@ -234,8 +221,8 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test('Ladder deactivates Turtle Shell after active moves', () => {
-		testGame(
+	test('Ladder deactivates Turtle Shell after active moves', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					ArmorStand,
@@ -245,33 +232,32 @@ describe('Test Turtle Shell', () => {
 					Ladder,
 				],
 				playerTwoDeck: [ZombieCleoCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(ArmorStand, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(TurtleShell, 'attach', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ZombieCleoCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(ZombieCleoCommon, 'hermit', 0)
+					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* playCardFromHand(game, Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.changeActiveHermit(1)
+					await test.playCardFromHand(Ladder, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - ZombieCleoCommon.secondary.damage,
@@ -290,8 +276,8 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test('Mending deactivates moved Turtle Shell', () => {
-		testGame(
+	test('Mending deactivates moved Turtle Shell', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					ArmorStand,
@@ -301,33 +287,32 @@ describe('Test Turtle Shell', () => {
 					Mending,
 				],
 				playerTwoDeck: [ZombieCleoCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 2)
-					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(ArmorStand, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 2)
+					await test.playCardFromHand(TurtleShell, 'attach', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ZombieCleoCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(ZombieCleoCommon, 'hermit', 0)
+					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* playCardFromHand(game, Mending, 'single_use')
-					yield* pick(
-						game,
+					await test.changeActiveHermit(1)
+					await test.playCardFromHand(Mending, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.attach,
 						query.slot.rowIndex(2),
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - ZombieCleoCommon.secondary.damage,
@@ -346,31 +331,30 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test('Turtle Shell is still discarded when row is deactivated by Knockback', () => {
-		testGame(
+	test('Turtle Shell is still discarded when row is deactivated by Knockback', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [ZombieCleoCommon, Knockback],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
-					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
-					yield* changeActiveHermit(game, 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
+					await test.playCardFromHand(TurtleShell, 'attach', 1)
+					await test.changeActiveHermit(1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ZombieCleoCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Knockback, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(ZombieCleoCommon, 'hermit', 0)
+					await test.playCardFromHand(Knockback, 'single_use')
+					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -386,8 +370,8 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test('Correct Turtle Shell is discarded after defending against Peace Out + Egg', () => {
-		testGame(
+	test('Correct Turtle Shell is discarded after defending against Peace Out + Egg', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					ArmorStand,
@@ -397,34 +381,32 @@ describe('Test Turtle Shell', () => {
 					TurtleShell,
 				],
 				playerTwoDeck: [IJevinRare, Egg],
-				saga: function* (game) {
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 2)
-					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
-					yield* playCardFromHand(game, TurtleShell, 'attach', 2)
-					yield* changeActiveHermit(game, 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(ArmorStand, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 2)
+					await test.playCardFromHand(TurtleShell, 'attach', 1)
+					await test.playCardFromHand(TurtleShell, 'attach', 2)
+					await test.changeActiveHermit(1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, IJevinRare, 'hermit', 0)
-					yield* playCardFromHand(game, Egg, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(IJevinRare, 'hermit', 0)
+					await test.playCardFromHand(Egg, 'single_use')
+					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -446,8 +428,8 @@ describe('Test Turtle Shell', () => {
 						EthosLabCommon.health,
 					)
 
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 					expect(
 						game.components.find(
 							CardComponent,
@@ -462,41 +444,40 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test("Turtle Shell works after previous active was KO'd by Extra Flee", () => {
-		testGame(
+	test("Turtle Shell works after previous active was KO'd by Extra Flee", async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, TurtleShell],
 				playerTwoDeck: [TangoTekRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
-					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
-					yield* endTurn(game)
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
+					await test.playCardFromHand(TurtleShell, 'attach', 1)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						FarmerBeefCommon.health,
@@ -508,8 +489,8 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test("Turtle Shells borrowed by Grian only work on Grian's first turn", () => {
-		testGame(
+	test("Turtle Shells borrowed by Grian only work on Grian's first turn", async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -519,36 +500,35 @@ describe('Test Turtle Shell', () => {
 					ChorusFruit,
 				],
 				playerTwoDeck: [GrianRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
-					yield* changeActiveHermit(game, 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(TurtleShell, 'attach', 1)
+					await test.changeActiveHermit(1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, GrianRare, 'hermit', 0)
-					yield* attack(game, 'primary')
+					await test.playCardFromHand(GrianRare, 'hermit', 0)
+					await test.attack('primary')
 					expect(
 						(game.state.modalRequests[0].modal as SelectCards.Data)
 							.primaryButton,
 					).toBeTruthy()
 					// If `primaryButton` is null, Grian may not attach borrowed Turtle Shells
-					yield* finishModalRequest(game, {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, TurtleShell, 'attach', 0)
-					yield* playCardFromHand(game, ChorusFruit, 'single_use')
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.playCardFromHand(TurtleShell, 'attach', 0)
+					await test.playCardFromHand(ChorusFruit, 'single_use')
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -560,14 +540,14 @@ describe('Test Turtle Shell', () => {
 					).not.toBe(null)
 					expect(game.currentPlayer.activeRow?.health).toBe(GrianRare.health)
 
-					yield* attack(game, 'primary')
-					yield* finishModalRequest(game, {result: true, cards: null})
+					await test.attack('primary')
+					await test.finishModalRequest({result: true, cards: null})
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						GrianRare.health - EthosLabCommon.secondary.damage,
@@ -586,8 +566,8 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test("Turtle Shells taken by Emerald only work on destination hermit's first turn", () => {
-		testGame(
+	test("Turtle Shells taken by Emerald only work on destination hermit's first turn", async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -597,34 +577,33 @@ describe('Test Turtle Shell', () => {
 					ChorusFruit,
 				],
 				playerTwoDeck: [ZombieCleoCommon, Emerald, Emerald],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
-					yield* changeActiveHermit(game, 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(TurtleShell, 'attach', 1)
+					await test.changeActiveHermit(1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ZombieCleoCommon, 'hermit', 0)
+					await test.playCardFromHand(ZombieCleoCommon, 'hermit', 0)
 					expect(game.getPickableSlots(Emerald.attachCondition).at(0)).not.toBe(
 						undefined,
 					) // Check if Emerald can move Turtle Shells
-					yield* playCardFromHand(game, Emerald, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(Emerald, 'single_use')
+					await test.applyEffect()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, TurtleShell, 'attach', 0)
-					yield* playCardFromHand(game, ChorusFruit, 'single_use')
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.playCardFromHand(TurtleShell, 'attach', 0)
+					await test.playCardFromHand(ChorusFruit, 'single_use')
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -638,14 +617,14 @@ describe('Test Turtle Shell', () => {
 						ZombieCleoCommon.health,
 					)
 
-					yield* playCardFromHand(game, Emerald, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(Emerald, 'single_use')
+					await test.applyEffect()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						ZombieCleoCommon.health - EthosLabCommon.secondary.damage,
@@ -664,8 +643,8 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test("Turtle Shells given by Emerald only work on destination hermit's first turn", () => {
-		testGame(
+	test("Turtle Shells given by Emerald only work on destination hermit's first turn", async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					ArmorStand,
@@ -678,37 +657,36 @@ describe('Test Turtle Shell', () => {
 					Emerald,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
-					yield* playCardFromHand(game, Cubfan135Rare, 'hermit', 1)
-					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 2)
-					yield* playCardFromHand(game, Cubfan135Rare, 'hermit', 3)
-					yield* playCardFromHand(game, TurtleShell, 'attach', 3)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(ArmorStand, 'hermit', 0)
+					await test.playCardFromHand(Cubfan135Rare, 'hermit', 1)
+					await test.playCardFromHand(TurtleShell, 'attach', 1)
+					await test.playCardFromHand(ArmorStand, 'hermit', 2)
+					await test.playCardFromHand(Cubfan135Rare, 'hermit', 3)
+					await test.playCardFromHand(TurtleShell, 'attach', 3)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 					expect(game.getPickableSlots(Emerald.attachCondition).at(0)).not.toBe(
 						undefined,
 					) // Check if Emerald can move Turtle Shells
-					yield* playCardFromHand(game, Emerald, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(Emerald, 'single_use')
+					await test.applyEffect()
 
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -722,23 +700,22 @@ describe('Test Turtle Shell', () => {
 						EthosLabCommon.health,
 					)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 3)
-					yield* playCardFromHand(game, Emerald, 'single_use')
-					yield* applyEffect(game)
+					await test.changeActiveHermit(3)
+					await test.playCardFromHand(Emerald, 'single_use')
+					await test.applyEffect()
 
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(3),
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.currentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - Cubfan135Rare.secondary.damage,
@@ -757,8 +734,8 @@ describe('Test Turtle Shell', () => {
 		)
 	})
 
-	test('Loose Shell effect is removed when Turtle Shell or attached hermit is moved', () => {
-		testGame(
+	test('Loose Shell effect is removed when Turtle Shell or attached hermit is moved', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					GeminiTayRare,
@@ -771,20 +748,19 @@ describe('Test Turtle Shell', () => {
 					Ladder,
 				],
 				playerTwoDeck: [GrianRare, Emerald],
-				saga: function* (game) {
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 0)
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 1)
-					yield* playCardFromHand(game, TurtleShell, 'attach', 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 1)
+					await test.playCardFromHand(TurtleShell, 'attach', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, GrianRare, 'hermit', 0)
+					await test.playCardFromHand(GrianRare, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.playCardFromHand(Ladder, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -798,10 +774,9 @@ describe('Test Turtle Shell', () => {
 						),
 					).not.toBe(null)
 
-					yield* attack(game, 'secondary')
-					yield* playCardFromHand(game, Mending, 'single_use')
-					yield* pick(
-						game,
+					await test.attack('secondary')
+					await test.playCardFromHand(Mending, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.attach,
 						query.slot.rowIndex(0),
@@ -815,12 +790,11 @@ describe('Test Turtle Shell', () => {
 						),
 					).toBe(null)
 
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
-					yield* playCardFromHand(game, Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.playCardFromHand(Ladder, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -834,10 +808,9 @@ describe('Test Turtle Shell', () => {
 						),
 					).not.toBe(null)
 
-					yield* attack(game, 'secondary')
-					yield* playCardFromHand(game, Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.attack('secondary')
+					await test.playCardFromHand(Ladder, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -852,11 +825,10 @@ describe('Test Turtle Shell', () => {
 					).toBe(null)
 
 					// Test Borrow removes indicator
-					yield* endTurn(game)
-					yield* endTurn(game)
-					yield* playCardFromHand(game, Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.endTurn()
+					await test.endTurn()
+					await test.playCardFromHand(Ladder, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -870,15 +842,15 @@ describe('Test Turtle Shell', () => {
 
 					expect(oldEffect).not.toBe(null)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					expect(
 						(game.state.modalRequests[0].modal as SelectCards.Data)
 							.primaryButton,
 					).toBeTruthy()
 					// If `primaryButton` is null, Grian may not attach borrowed Turtle Shells
-					yield* finishModalRequest(game, {result: true, cards: null})
+					await test.finishModalRequest({result: true, cards: null})
 
 					expect(oldEffect?.targetEntity).toBe(null)
 
@@ -891,11 +863,11 @@ describe('Test Turtle Shell', () => {
 					)
 					expect(oldEffect).not.toBe(null)
 
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
-					yield* playCardFromHand(game, Emerald, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(Emerald, 'single_use')
+					await test.applyEffect()
 
 					expect(oldEffect?.targetEntity).toBe(null)
 
@@ -908,9 +880,9 @@ describe('Test Turtle Shell', () => {
 						),
 					).not.toBe(null)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 
 					expect(
 						game.components.find(

@@ -6,12 +6,12 @@ import query from 'common/components/query'
 import {testGame} from '../../utils'
 
 describe('Test Fletching Table', () => {
-	test('Each Fletching Table in the starting deck adds a Feather', () => {
-		testGame(
+	test('Each Fletching Table in the starting deck adds a Feather', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FletchingTable],
 				playerTwoDeck: [EthosLabCommon, ...Array(3).fill(FletchingTable)],
-				saga: function* (game) {
+				testGame: async (_test, game) => {
 					expect(
 						game.currentPlayer
 							.getHand()

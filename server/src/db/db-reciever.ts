@@ -455,10 +455,10 @@ export function* updateAchievements(
 	}
 }
 
-export function* getGameReplay(gameId: number) {
+export async function getGameReplay(gameId: number) {
 	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 
-	const replay = yield* root.db.getGameReplay(gameId)
+	const replay = await root.db.getGameReplay(gameId)
 
 	if (replay.type === 'failure') {
 		console.log(replay.reason)
@@ -516,7 +516,10 @@ export function* getOverview(
 	assert(root.db.connected, CONNECTION_ASSERTION_MSG)
 	const player = root.players[action.playerId]
 
-	const replay = yield* root.db.getGameReplay(action.payload.id)
+	const replay = yield* call(
+		[root.db, root.db.getGameReplay],
+		action.payload.id,
+	)
 
 	if (replay.type === 'failure') {
 		broadcast([player], {

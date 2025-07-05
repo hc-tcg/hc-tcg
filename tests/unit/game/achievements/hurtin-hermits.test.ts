@@ -1,19 +1,19 @@
 import {expect, test} from '@jest/globals'
 import HurtinHermits from 'common/achievements/hurtin-hermits'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
+import {testAchivement} from '../utils'
 
-test("Test Hurtin' Hermits achivement", () => {
-	testAchivement(
+test("Test Hurtin' Hermits achivement", async () => {
+	await testAchivement(
 		{
 			achievement: HurtinHermits,
 			playerOneDeck: [EthosLabCommon],
 			playerTwoDeck: [EthosLabCommon],
-			playGame: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* attack(game, 'secondary')
+			playGame: async (test, _game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.endTurn()
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.attack('secondary')
 			},
 			checkAchivement(_game, achievement, _outcome) {
 				expect(

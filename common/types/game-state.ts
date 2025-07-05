@@ -113,6 +113,7 @@ export type TurnAction =
 	| 'WAIT_FOR_OPPONENT_ACTION'
 	| 'DELAY'
 	| 'FORFEIT'
+	| 'DISCONNECT'
 
 export type GameRules = {
 	disableTimer: boolean

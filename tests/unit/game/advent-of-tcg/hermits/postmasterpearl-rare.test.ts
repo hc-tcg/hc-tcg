@@ -7,12 +7,7 @@ import ShadeEERare from 'common/cards/hermits/shadeee-rare'
 import {Card} from 'common/cards/types'
 import {CardComponent} from 'common/components'
 import {SelectCards} from 'common/types/modal-requests'
-import {
-	endTurn,
-	finishModalRequest,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 const deck = [
 	...Array(7).fill(PostmasterPearlRare),
@@ -23,16 +18,16 @@ const deck = [
 ]
 
 function postMasterTest(pearls: number, results: boolean[]) {
-	test(`Test ${pearls} pearl card(s) with ${results}`, () =>
-		testGame({
+	test(`Test ${pearls} pearl card(s) with ${results}`, async () =>
+		await testGame({
 			playerOneDeck: deck,
 			playerTwoDeck: deck,
-			saga: function* (game) {
+			testGame: async (test, game) => {
 				let drawnCard: Card | undefined = EthosLabCommon
 				for (let i = 0; i < pearls; i++) {
-					yield* playCardFromHand(game, PostmasterPearlRare, 'hermit', i)
+					await test.playCardFromHand(PostmasterPearlRare, 'hermit', i)
 				}
-				yield* endTurn(game)
+				await test.endTurn()
 				for (let i = 0; i < results.length; i++) {
 					expect(game.state.modalRequests).toHaveLength(1)
 					expect(
@@ -45,7 +40,7 @@ function postMasterTest(pearls: number, results: boolean[]) {
 							.getDrawPile()
 							.sort(CardComponent.compareOrder)
 							.at(0)?.props
-					yield* finishModalRequest(game, {result: results[i], cards: null})
+					await test.finishModalRequest({result: results[i], cards: null})
 				}
 				expect(game.state.modalRequests).toHaveLength(0)
 				expect(

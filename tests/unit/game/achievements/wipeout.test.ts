@@ -5,38 +5,30 @@ import Anvil from 'common/cards/single-use/anvil'
 import LavaBucket from 'common/cards/single-use/lava-bucket'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	forfeit,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test "Wipeout" achievement', () => {
-	test('Works when game ends when all Hermits are knocked out and game ends', () => {
-		testAchivement(
+	test('Works when game ends when all Hermits are knocked out and game ends', async () => {
+		await testAchivement(
 			{
 				achievement: Wipeout,
 				playerOneDeck: [EthosLabCommon, Anvil],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.endTurn()
 
 					game.components
 						.filter(RowComponent, query.row.hasHermit)
 						.forEach((row) => (row.health = 10))
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Wipeout.getProgress(achievement.goals)).toEqual(3)
@@ -45,29 +37,29 @@ describe('Test "Wipeout" achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('Works when some hermits live', () => {
-		testAchivement(
+	test('Works when some hermits live', async () => {
+		await testAchivement(
 			{
 				achievement: Wipeout,
 				playerOneDeck: [EthosLabCommon, Anvil],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					game.components
 						.filter(RowComponent, query.row.hasHermit)
 						.forEach((row) => (row.health = 10))
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Wipeout.getProgress(achievement.goals)).toEqual(2)
@@ -76,34 +68,34 @@ describe('Test "Wipeout" achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('Works when killed by Lava Bucket', () => {
-		testAchivement(
+	test('Works when killed by Lava Bucket', async () => {
+		await testAchivement(
 			{
 				achievement: Wipeout,
 				playerOneDeck: [EthosLabCommon, LavaBucket],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(LavaBucket, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
 					game.components
 						.filter(RowComponent, query.row.hasHermit)
 						.forEach((row) => (row.health = 10))
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Wipeout.getProgress(achievement.goals)).toEqual(2)
@@ -112,34 +104,34 @@ describe('Test "Wipeout" achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('Only counts the highest number of knock-outs in one round', () => {
-		testAchivement(
+	test('Only counts the highest number of knock-outs in one round', async () => {
+		await testAchivement(
 			{
 				achievement: Wipeout,
 				playerOneDeck: [EthosLabCommon, Anvil],
 				playerTwoDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.endTurn()
 
 					game.components
 						.filter(RowComponent, query.row.hasHermit)
 						.forEach((row) => (row.health = 10))
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Wipeout.getProgress(achievement.goals)).toEqual(2)

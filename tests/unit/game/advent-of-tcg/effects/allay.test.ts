@@ -9,17 +9,11 @@ import Composter from 'common/cards/single-use/composter'
 import {Card} from 'common/cards/types'
 import {CardComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 function testAllayRetrieval(card: Card, canRetrieve: boolean) {
-	test(`Allay ${canRetrieve ? 'can' : 'can not'} retrieve ${card.name}`, () => {
-		testGame({
+	test(`Allay ${canRetrieve ? 'can' : 'can not'} retrieve ${card.name}`, async () => {
+		await testGame({
 			playerOneDeck: [
 				EthosLabCommon,
 				Composter,
@@ -28,22 +22,20 @@ function testAllayRetrieval(card: Card, canRetrieve: boolean) {
 				Allay,
 			],
 			playerTwoDeck: [EthosLabCommon],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, Composter, 'single_use')
-				yield* pick(
-					game,
+			testGame: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(Composter, 'single_use')
+				await test.pick(
 					game.state.pickRequests[0].canPick,
 					query.slot.currentPlayer,
 					query.slot.has(card),
 				)
-				yield* pick(
-					game,
+				await test.pick(
 					game.state.pickRequests[0].canPick,
 					query.slot.currentPlayer,
 					query.slot.has(card),
 				)
-				yield* endTurn(game)
+				await test.endTurn()
 				expect(
 					game.opponentPlayer
 						.getHand()
@@ -51,18 +43,17 @@ function testAllayRetrieval(card: Card, canRetrieve: boolean) {
 						.map((card) => card.props),
 				).toStrictEqual([card, Allay, Allay])
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.endTurn()
 
 				if (canRetrieve) {
-					yield* playCardFromHand(game, Allay, 'single_use')
-					yield* pick(
-						game,
+					await test.playCardFromHand(Allay, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hand,
 						query.slot.has(card),
 					)
-					yield* finishModalRequest(game, {result: false, cards: null})
+					await test.finishModalRequest({result: false, cards: null})
 					expect(
 						game.currentPlayer
 							.getHand()

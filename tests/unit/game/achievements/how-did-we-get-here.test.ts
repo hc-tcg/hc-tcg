@@ -6,44 +6,37 @@ import BadOmen from 'common/cards/single-use/bad-omen'
 import Clock from 'common/cards/single-use/clock'
 import InvisibilityPotion from 'common/cards/single-use/invisibility-potion'
 import SplashPotionOfPoison from 'common/cards/single-use/splash-potion-of-poison'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	forfeit,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test How Did We Get Here achievement', () => {
-	test('"How Did We Get Here" counts system and damage statuses', () => {
-		testAchivement(
+	test('"How Did We Get Here" counts system and damage statuses', async () => {
+		await testAchivement(
 			{
 				achievement: HowDidWeGetHere,
 				playerOneDeck: [GeminiTayRare, InvisibilityPotion, Clock],
 				playerTwoDeck: [PearlescentMoonRare, SplashPotionOfPoison, BadOmen],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, PearlescentMoonRare, 'hermit', 0)
-					yield* playCardFromHand(game, SplashPotionOfPoison, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(PearlescentMoonRare, 'hermit', 0)
+					await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, BadOmen, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(BadOmen, 'single_use')
+					await test.applyEffect()
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
-					yield* playCardFromHand(game, Clock, 'single_use')
-					yield* applyEffect(game)
-					yield* forfeit(game.currentPlayerEntity)
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
+					await test.applyEffect()
+					await test.attack('secondary')
+					await test.playCardFromHand(Clock, 'single_use')
+					await test.applyEffect()
+					await test.forfeit(game.currentPlayerEntity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(HowDidWeGetHere.getProgress(achievement.goals)).toBe(5)

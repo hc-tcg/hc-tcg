@@ -8,11 +8,11 @@ import BalancedItem from 'common/cards/items/balanced-common'
 import Ladder from 'common/cards/single-use/ladder'
 import {RowComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, pick, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Ladder', () => {
-	test('Basic Functionality', () => {
-		testGame(
+	test('Basic Functionality', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -22,20 +22,19 @@ describe('Test Ladder', () => {
 					Ladder,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, SmallishbeansCommon, 'hermit', 1)
-					yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(SmallishbeansCommon, 'hermit', 1)
+					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* attack(game, 'primary')
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.attack('primary')
+					await test.endTurn()
 
-					yield* playCardFromHand(game, IronArmor, 'attach', 0)
-					yield* playCardFromHand(game, Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.playCardFromHand(IronArmor, 'attach', 0)
+					await test.playCardFromHand(Ladder, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -118,40 +117,39 @@ describe('Test Ladder', () => {
 		)
 	})
 
-	test('Ladder allows row to have more health than hermit max', () => {
+	test('Ladder allows row to have more health than hermit max', async () => {
 		// Test is dependent on these inequalities
 		expect(FalseSymmetryRare.health).toBeLessThan(GrianCommon.health)
 		expect(EthosLabCommon.primary.damage).toBeLessThan(
 			GrianCommon.health - FalseSymmetryRare.health,
 		)
 
-		testGame(
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [FalseSymmetryRare, GrianCommon, Ladder],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, FalseSymmetryRare, 'hermit', 1)
-					yield* playCardFromHand(game, GrianCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.playCardFromHand(FalseSymmetryRare, 'hermit', 1)
+					await test.playCardFromHand(GrianCommon, 'hermit', 0)
+					await test.playCardFromHand(Ladder, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
 					expect(game.currentPlayer.activeRow?.health).toBe(GrianCommon.health)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.currentPlayer.activeRow?.health).toBe(GrianCommon.health)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						GrianCommon.health - EthosLabCommon.primary.damage,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},

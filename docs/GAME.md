@@ -169,11 +169,11 @@ import {attack, endTurn, playCardFromHand, testGame} from './utils'
 describe('Test Something', () => {
 	test('Test Game', () => {
 		expect(() =>
-			testGame(
+			await testGame(
 				{
 					playerOneDeck: [EthosLabCommon],
 					playerTwoDeck: [EthosLabCommon],
-					saga: function* (game) {
+					testGame: async (test, game) => {
 						// Place your tests here
 					},
 				},
@@ -319,11 +319,11 @@ import {attack, endTurn, playCardFromHand, testGame} from './utils'
 describe('Test Something', () => {
 	test('Test Game', () => {
 		expect(() =>
-			testGame(
+			await testGame(
 				{
 					playerOneDeck: [EthosLabCommon],
 					playerTwoDeck: [EthosLabCommon],
-					saga: function* (game) {
+					testGame: async (test, game) => {
 						// Place your tests here
 					},
 				},

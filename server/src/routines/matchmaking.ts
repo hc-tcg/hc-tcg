@@ -34,22 +34,12 @@ import {
 } from 'db/db-reciever'
 import {GameController} from 'game-controller'
 import {LocalMessageTable, localMessages} from 'messages'
-import {
-	all,
-	cancel,
-	delay,
-	fork,
-	join,
-	put,
-	race,
-	spawn,
-	take,
-} from 'typed-redux-saga'
+import {all, call, delay, fork, race, take} from 'typed-redux-saga'
 import {safeCall} from 'utils'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 import {getLocalGameState} from '../utils/state-gen'
-import gameSaga, {getTimerForSeconds} from './game'
+import runGame, {getTimerForSeconds} from './game'
 import {TurnActionCompressor} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
 
@@ -119,47 +109,55 @@ function* gameManager(con: GameController) {
 			type: serverMessages.GAME_START,
 			spectatorCode: con.spectatorCode ?? undefined,
 		})
+
 		root.hooks.newGame.call(con)
-		con.task = yield* spawn(gameSaga, con)
 
-		// Kill game on timeout or when user leaves for long time + cleanup after game
-		const result = yield* race({
-			// game ended (or crashed -> catch)
-			gameEnd: join(con.task),
-			// kill a game after one hour
-			timeout: delay(1000 * 60 * 60),
-			// kill game when a player is disconnected for too long
-			playerRemoved: take<
-				LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
-			>(
-				(action: any) =>
-					action.type === localMessages.PLAYER_REMOVED &&
-					playerIds.includes(
-						(action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED])
-							.player.id,
-					),
-			),
+		yield* race({
+			outcome: call(runGame, con),
+			waitForTurnAction: call(function* () {
+				while (true) {
+					const action: any = yield* take(
+						(action: any) =>
+							action.type == localMessages.GAME_TURN_ACTION &&
+							action.game == con.id,
+					)
+					con.sendTurnAction({
+						action: action.action,
+						playerEntity: action.playerEntity,
+					})
+				}
+			}),
+			playerDisconnect: call(function* () {
+				while (true) {
+					const playerRemoved = yield* take<
+						LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
+					>(
+						(action: any) =>
+							action.type === localMessages.PLAYER_REMOVED &&
+							playerIds.includes(
+								(
+									action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
+								).player.id,
+							),
+					)
+
+					const playerEntity = con.viewers.find(
+						(v) =>
+							v.spectator == false && v.player.id == playerRemoved.player.id,
+					)?.playerOnLeftEntity
+
+					assert(playerEntity)
+
+					con.sendTurnAction({
+						action: {
+							type: 'DISCONNECT',
+							player: playerEntity,
+						},
+						playerEntity: playerEntity,
+					})
+				}
+			}),
 		})
-
-		if (result.timeout) {
-			con.game.outcome = {type: 'timeout'}
-		}
-
-		if (result.playerRemoved) {
-			let playerThatLeft = con.viewers.find(
-				(v) => v.player.id === result.playerRemoved?.player.id,
-			)?.playerOnLeft.entity
-			let remainingPlayer = con.game.components.find(
-				PlayerComponent,
-				(_g, c) => c.entity !== playerThatLeft,
-			)?.entity
-			assert(remainingPlayer, 'There is no way there is no remaining player.')
-			con.game.outcome = {
-				type: 'player-won',
-				victoryReason: 'disconnect',
-				winner: remainingPlayer,
-			}
-		}
 
 		for (const viewer of con.viewers) {
 			const gameState = getLocalGameState(con.game, viewer)
@@ -186,7 +184,6 @@ function* gameManager(con: GameController) {
 		if (!outcome) return
 
 		const gameEndTime = new Date()
-		if (con.task) yield* cancel(con.task)
 		con.game.hooks.afterGameEnd.call()
 
 		const newAchievements: Record<string, Array<EarnedAchievement>> = {}
@@ -281,7 +278,10 @@ function* gameManager(con: GameController) {
 		const turnActionCompressor = new TurnActionCompressor()
 		const turnActionsBuffer = con.game.state.isEvilXBossGame
 			? null
-			: yield* turnActionCompressor.turnActionsToBuffer(con)
+			: yield* call(
+					[turnActionCompressor, turnActionCompressor.turnActionsToBuffer],
+					con,
+				)
 
 		if (
 			root.db.connected &&
@@ -1094,7 +1094,7 @@ export function* createReplayGame(
 		broadcast([player], {type: serverMessages.CREATE_PRIVATE_GAME_FAILURE})
 		return
 	}
-	const replay = yield* getGameReplay(msg.payload.id)
+	const replay = yield* call(getGameReplay, msg.payload.id)
 	if (!replay) {
 		broadcast([root.players[playerId]], {
 			type: serverMessages.INVALID_REPLAY,
@@ -1128,7 +1128,7 @@ export function* createReplayGame(
 		localGameState: gameState,
 	})
 
-	con.task = yield* spawn(gameSaga, con)
+	con.task = runGame(con)
 
 	console.info(
 		`${con.game.logHeader}`,
@@ -1147,11 +1147,8 @@ export function* createReplayGame(
 
 		const action = replayActions[i]
 
-		console.log(action.player)
-
 		yield* delay(action.millisecondsSinceLastAction)
-		yield* put({
-			type: localMessages.GAME_TURN_ACTION,
+		yield call([con, con.sendTurnAction], {
 			action: action.action,
 			playerEntity: action.player,
 		})

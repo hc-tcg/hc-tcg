@@ -5,11 +5,8 @@ import {GameSettings} from 'common/models/game-model'
 import {CurrentCoinFlip} from 'common/types/game-state'
 import {VirtualAI} from 'common/types/virtual-ai'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
-import {applyMiddleware, createStore} from 'redux'
-import createSagaMiddleware from 'redux-saga'
 import {GameController} from 'server/game-controller'
-import gameSaga, {figureOutGameResult} from 'server/routines/game'
-import {call} from 'typed-redux-saga'
+import gameSaga from 'server/routines/game'
 
 class FuzzyGameController extends GameController {
 	public override getRandomDelayForAI(_flips: Array<CurrentCoinFlip>) {
@@ -29,21 +26,6 @@ function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 		deck,
 		score: 0,
 	}
-}
-
-async function testSaga(rootSaga: any) {
-	const sagaMiddleware = createSagaMiddleware({})
-	createStore(() => {}, applyMiddleware(sagaMiddleware))
-
-	let saga = sagaMiddleware.run(function* () {
-		yield* rootSaga
-	})
-
-	if (saga.error()) {
-		throw saga.error()
-	}
-
-	await saga.toPromise()
 }
 
 const defaultGameSettings = {
@@ -112,7 +94,7 @@ export async function testGame(options: {
 		options.playerTwo.AI,
 	)
 
-	await testSaga(call(gameSaga, controller))
+	await gameSaga(controller)
 
-	return figureOutGameResult(controller.game)
+	return controller.game.outcome!
 }

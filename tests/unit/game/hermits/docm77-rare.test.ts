@@ -7,39 +7,33 @@ import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import BadOmenEffect from 'common/status-effects/badomen'
 import {InvisibilityPotionTailsEffect} from 'common/status-effects/invisibility-potion'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Docm77 World Eater', () => {
-	test('Test World Eater with Invisibility (both tails)', () => {
-		testGame(
+	test('Test World Eater with Invisibility (both tails)', async () => {
+		await testGame(
 			{
 				playerOneDeck: [GeminiTayRare, BadOmen, InvisibilityPotion],
 				playerTwoDeck: [Docm77Rare, BadOmen],
-				saga: function* (game) {
-					yield* playCardFromHand(game, GeminiTayRare, 'hermit', 0)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, Docm77Rare, 'hermit', 0)
+					await test.playCardFromHand(Docm77Rare, 'hermit', 0)
 
-					yield* playCardFromHand(game, BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(BadOmen, 'single_use')
+					await test.applyEffect()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(BadOmen, 'single_use')
+					await test.applyEffect()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
+					await test.applyEffect()
 					// Ensure Invilibility flipped tails to double damage
 					expect(
 						game.components.find(
@@ -49,7 +43,7 @@ describe('Test Docm77 World Eater', () => {
 						),
 					).toBeTruthy()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// Ensure World Eater will flip tails to halve damage
 					expect(
@@ -60,7 +54,7 @@ describe('Test Docm77 World Eater', () => {
 						),
 					).toBeTruthy()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(

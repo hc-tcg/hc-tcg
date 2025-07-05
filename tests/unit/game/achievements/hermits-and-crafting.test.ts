@@ -3,23 +3,23 @@ import HermitsAndCrafting from 'common/achievements/hermits-and-crafting'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import SmallishbeansCommon from 'common/cards/hermits/smallishbeans-common'
 import {STARTER_DECKS} from 'common/cards/starter-decks'
-import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Hermits and Crafting achievement', () => {
-	test('Test "Hermits and Crafting" does not progress after winning with a Starter Deck', () => {
-		testAchivement(
+	test('Test "Hermits and Crafting" does not progress after winning with a Starter Deck', async () => {
+		await testAchivement(
 			{
 				achievement: HermitsAndCrafting,
 				playerOneDeck: STARTER_DECKS[1].cards,
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, SmallishbeansCommon, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, _game) => {
+					await test.playCardFromHand(SmallishbeansCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, outcome) {
 					expect(outcome.type).toBe('player-won')
@@ -33,20 +33,20 @@ describe('Test Hermits and Crafting achievement', () => {
 		)
 	})
 
-	test('Test "Hermits and Crafting" progresses after winning with a deck that is not a starter deck', () => {
-		testAchivement(
+	test('Test "Hermits and Crafting" progresses after winning with a deck that is not a starter deck', async () => {
+		await testAchivement(
 			{
 				achievement: HermitsAndCrafting,
 				playerOneDeck: [SmallishbeansCommon],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, SmallishbeansCommon, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, _game) => {
+					await test.playCardFromHand(SmallishbeansCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, outcome) {
 					expect(outcome.type).toBe('player-won')

@@ -7,17 +7,11 @@ import BuilderItem from 'common/cards/items/builder-common'
 import MinerItem from 'common/cards/items/miner-common'
 import {CardComponent} from 'common/components'
 import {DragCards} from 'common/types/modal-requests'
-import {
-	applyEffect,
-	endTurn,
-	finishModalRequest,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Brush Single Use', () => {
-	test('Leaving both cards on top', () => {
-		testGame(
+	test('Leaving both cards on top', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -29,10 +23,10 @@ describe('Test Brush Single Use', () => {
 					Feather,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Brush, 'single_use')
-					yield* applyEffect(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Brush, 'single_use')
+					await test.applyEffect()
 					expect(
 						(game.state.modalRequests[0].modal as DragCards.Data).leftCards.map(
 							(entity) => game.components.get(entity)?.props,
@@ -46,7 +40,7 @@ describe('Test Brush Single Use', () => {
 					const cardEntities = (
 						game.state.modalRequests[0].modal as DragCards.Data
 					).rightCards
-					yield* finishModalRequest(game, {
+					await test.finishModalRequest({
 						result: true,
 						leftCards: [],
 						rightCards: [cardEntities[0], cardEntities[1]],
@@ -57,15 +51,15 @@ describe('Test Brush Single Use', () => {
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
 					).toStrictEqual([BalancedItem, BuilderItem, MinerItem, Feather])
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false},
 		)
 	})
 
-	test('Moving both cards to bottom', () => {
-		testGame(
+	test('Moving both cards to bottom', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -77,10 +71,10 @@ describe('Test Brush Single Use', () => {
 					Feather,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Brush, 'single_use')
-					yield* applyEffect(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Brush, 'single_use')
+					await test.applyEffect()
 					expect(
 						(game.state.modalRequests[0].modal as DragCards.Data).leftCards.map(
 							(entity) => game.components.get(entity)?.props,
@@ -94,7 +88,7 @@ describe('Test Brush Single Use', () => {
 					const cardEntities = (
 						game.state.modalRequests[0].modal as DragCards.Data
 					).rightCards
-					yield* finishModalRequest(game, {
+					await test.finishModalRequest({
 						result: true,
 						leftCards: [cardEntities[0], cardEntities[1]],
 						rightCards: [],
@@ -105,15 +99,15 @@ describe('Test Brush Single Use', () => {
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
 					).toStrictEqual([MinerItem, Feather, BalancedItem, BuilderItem])
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false},
 		)
 	})
 
-	test('Moving 1 card to bottom and leaving 1 on top', () => {
-		testGame(
+	test('Moving 1 card to bottom and leaving 1 on top', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -125,10 +119,10 @@ describe('Test Brush Single Use', () => {
 					Feather,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Brush, 'single_use')
-					yield* applyEffect(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Brush, 'single_use')
+					await test.applyEffect()
 					expect(
 						(game.state.modalRequests[0].modal as DragCards.Data).leftCards.map(
 							(entity) => game.components.get(entity)?.props,
@@ -142,7 +136,7 @@ describe('Test Brush Single Use', () => {
 					const cardEntities = (
 						game.state.modalRequests[0].modal as DragCards.Data
 					).rightCards
-					yield* finishModalRequest(game, {
+					await test.finishModalRequest({
 						result: true,
 						leftCards: [cardEntities[0]],
 						rightCards: [cardEntities[1]],
@@ -153,7 +147,7 @@ describe('Test Brush Single Use', () => {
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
 					).toStrictEqual([BuilderItem, MinerItem, Feather, BalancedItem])
-					yield* endTurn(game)
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false},

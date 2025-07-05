@@ -17,6 +17,7 @@ import {
 } from 'common/socket-messages/server-messages'
 import {CurrentCoinFlip, Message} from 'common/types/game-state'
 import {PlayerSetupDefs} from 'common/utils/state-gen'
+import {TurnActionAndPlayer} from './routines/game'
 import {broadcast} from './utils/comm'
 import {getLocalGameState} from './utils/state-gen'
 
@@ -73,12 +74,15 @@ export class GameController {
 	apiSecret: string | null
 	game: GameModel
 	chat: Array<Message>
-	task: any
+	task: Promise<any> | null
 	viewers: Array<GameViewer>
 
 	readonly props: GameControllerProps
 	readonly player1Defs: PlayerSetupDefs
 	readonly player2Defs: PlayerSetupDefs
+
+	private turnActionListener: ((turnAction: TurnActionAndPlayer) => any) | null
+	private waitingForTurnActionList: Array<() => any>
 
 	constructor(
 		player1: PlayerSetupDefs,
@@ -108,6 +112,9 @@ export class GameController {
 		this.apiSecret = props.apiSecret || null
 		this.task = null
 		this.viewers = []
+
+		this.waitingForTurnActionList = []
+		this.turnActionListener = null
 
 		this.player1Defs = player1
 		this.player2Defs = player2
@@ -228,6 +235,47 @@ export class GameController {
 			},
 			{} as Record<PlayerId, PlayerModel>,
 		)
+	}
+
+	/* Wait until the game is ready to accept a turn action then send one */
+	public async sendTurnAction(action: TurnActionAndPlayer) {
+		await this.waitForTurnActionReady()
+		if (this.turnActionListener) {
+			await this.turnActionListener(action)
+			this.turnActionListener = null
+		}
+	}
+
+	public async waitForTurnAction(): Promise<TurnActionAndPlayer> {
+		for (const w of this.waitingForTurnActionList) {
+			w()
+		}
+		this.waitingForTurnActionList = []
+
+		const promise: Promise<TurnActionAndPlayer> = (await new Promise(
+			(resolve) => {
+				this.turnActionListener = (turnAction) => {
+					resolve(turnAction)
+				}
+			},
+		)) as any
+
+		return promise
+	}
+
+	public stopWaitingForAction() {
+		this.turnActionListener = null
+	}
+
+	// Wait until the game is ready to accept a turn action. This is used in unit tests to make sure all actions are
+	// processed before sending a new one.
+	public async waitForTurnActionReady() {
+		if (this.turnActionListener) return
+		return await new Promise((resolve) => {
+			this.waitingForTurnActionList.push(() => {
+				resolve(null)
+			})
+		})
 	}
 
 	private async publishBattleLog(logs: Array<Message>, timeout: number) {

@@ -6,18 +6,11 @@ import InvisibilityPotion from 'common/cards/single-use/invisibility-potion'
 import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import MelodyEffect from 'common/status-effects/melody'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Oli Melody', () => {
-	test('Melody functionality', () => {
-		testGame(
+	test('Melody functionality', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -26,25 +19,23 @@ describe('Test Oli Melody', () => {
 					InvisibilityPotion,
 				],
 				playerTwoDeck: [OrionSoundRare, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, OrionSoundRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* attack(game, 'primary')
-					yield* pick(
-						game,
+					await test.playCardFromHand(OrionSoundRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.attack('primary')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, Bow, 'single_use')
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.playCardFromHand(Bow, 'single_use')
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -63,7 +54,7 @@ describe('Test Oli Melody', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health - 40)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -72,9 +63,8 @@ describe('Test Oli Melody', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health - 40 + 10)
-					yield* attack(game, 'primary')
-					yield* pick(
-						game,
+					await test.attack('primary')
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
@@ -90,7 +80,7 @@ describe('Test Oli Melody', () => {
 							OrionSoundRare.primary.damage -
 							OrionSoundRare.primary.damage,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -104,9 +94,9 @@ describe('Test Oli Melody', () => {
 							OrionSoundRare.primary.damage +
 							10,
 					)
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -115,14 +105,13 @@ describe('Test Oli Melody', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health - 40 + 20)
-					yield* attack(game, 'primary')
-					yield* pick(
-						game,
+					await test.attack('primary')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -136,9 +125,9 @@ describe('Test Oli Melody', () => {
 							OrionSoundRare.primary.damage +
 							20,
 					)
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
+					await test.applyEffect()
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -150,7 +139,7 @@ describe('Test Oli Melody', () => {
 							EthosLabCommon.secondary.damage -
 							EthosLabCommon.secondary.damage,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -164,9 +153,9 @@ describe('Test Oli Melody', () => {
 							EthosLabCommon.secondary.damage +
 							10,
 					)
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					expect(game.state.pickRequests).toHaveLength(0)
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -180,7 +169,7 @@ describe('Test Oli Melody', () => {
 							OrionSoundRare.primary.damage +
 							30,
 					)
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow).toBe(null)
 					expect(
 						game.components.filter(

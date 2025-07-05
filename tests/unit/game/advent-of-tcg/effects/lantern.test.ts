@@ -8,17 +8,11 @@ import MinerItem from 'common/cards/items/miner-common'
 import TerraformItem from 'common/cards/items/terraform-common'
 import {CardComponent} from 'common/components'
 import {SelectCards} from 'common/types/modal-requests'
-import {
-	applyEffect,
-	endTurn,
-	finishModalRequest,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Lantern Single Use', () => {
-	test('Lantern functionality', () => {
-		testGame(
+	test('Lantern functionality', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -31,10 +25,10 @@ describe('Test Lantern Single Use', () => {
 					Feather,
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Lantern, 'single_use')
-					yield* applyEffect(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Lantern, 'single_use')
+					await test.applyEffect()
 					expect(
 						(game.state.modalRequests[0].modal as SelectCards.Data).cards.map(
 							(entity) => game.components.get(entity)?.props,
@@ -43,7 +37,7 @@ describe('Test Lantern Single Use', () => {
 					const cardEntities = (
 						game.state.modalRequests[0].modal as SelectCards.Data
 					).cards
-					yield* finishModalRequest(game, {
+					await test.finishModalRequest({
 						result: true,
 						cards: [cardEntities[0], cardEntities[3]],
 					})
@@ -65,8 +59,8 @@ describe('Test Lantern Single Use', () => {
 							.sort(CardComponent.compareOrder)
 							.map((card) => card.props),
 					).toStrictEqual([BuilderItem, MinerItem, Feather])
-					yield* finishModalRequest(game, {result: false, cards: null})
-					yield* endTurn(game)
+					await test.finishModalRequest({result: false, cards: null})
+					await test.endTurn()
 				},
 			},
 			{startWithAllCards: false},

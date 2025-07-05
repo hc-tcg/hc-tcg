@@ -18,31 +18,24 @@ import {
 import query from 'common/components/query'
 import {RevivedByDeathloopEffect} from 'common/status-effects/death-loop'
 import FireEffect from 'common/status-effects/fire'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Totem of Undying', () => {
-	test('Test Totem with TNT', () => {
-		testGame(
+	test('Test Totem with TNT', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [PearlescentMoonCommon, WelsknightCommon, Totem, TNT],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, PearlescentMoonCommon, 'hermit', 0)
-					yield* playCardFromHand(game, WelsknightCommon, 'hermit', 1)
+					await test.playCardFromHand(PearlescentMoonCommon, 'hermit', 0)
+					await test.playCardFromHand(WelsknightCommon, 'hermit', 1)
 
-					yield* playCardFromHand(game, Totem, 'attach', 0)
-					yield* playCardFromHand(game, TNT, 'single_use')
+					await test.playCardFromHand(Totem, 'attach', 0)
+					await test.playCardFromHand(TNT, 'single_use')
 
 					// Manually set Pearl health to trigger zone
 					game.components.find(
@@ -51,7 +44,7 @@ describe('Test Totem of Undying', () => {
 						query.row.active,
 					)!.health = 10
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 
 					// We expect that the Totem attached to Pearl to be discarded after reviving to 10hp.
 					expect(
@@ -74,21 +67,21 @@ describe('Test Totem of Undying', () => {
 		)
 	})
 
-	test('Test Totem with Thorns', () => {
-		testGame(
+	test('Test Totem with Thorns', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Thorns],
 				playerTwoDeck: [PearlescentMoonCommon, WelsknightCommon, Totem],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Thorns, 'attach', 0)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Thorns, 'attach', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, PearlescentMoonCommon, 'hermit', 0)
-					yield* playCardFromHand(game, WelsknightCommon, 'hermit', 1)
+					await test.playCardFromHand(PearlescentMoonCommon, 'hermit', 0)
+					await test.playCardFromHand(WelsknightCommon, 'hermit', 1)
 
-					yield* playCardFromHand(game, Totem, 'attach', 0)
+					await test.playCardFromHand(Totem, 'attach', 0)
 
 					// Manually set Pearl health to trigger zone
 					game.components.find(
@@ -97,7 +90,7 @@ describe('Test Totem of Undying', () => {
 						query.row.active,
 					)!.health = 10
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 
 					// We expect that the Totem attached to Pearl to be discarded after reviving to 10hp.
 					expect(
@@ -120,21 +113,21 @@ describe('Test Totem of Undying', () => {
 		)
 	})
 
-	test('Test Totem with Deathloop', () => {
-		testGame(
+	test('Test Totem with Deathloop', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Thorns],
 				playerTwoDeck: [GoodTimesWithScarRare, WelsknightCommon, Totem],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Thorns, 'attach', 0)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Thorns, 'attach', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, GoodTimesWithScarRare, 'hermit', 0)
-					yield* playCardFromHand(game, WelsknightCommon, 'hermit', 1)
+					await test.playCardFromHand(GoodTimesWithScarRare, 'hermit', 0)
+					await test.playCardFromHand(WelsknightCommon, 'hermit', 1)
 
-					yield* playCardFromHand(game, Totem, 'attach', 0)
+					await test.playCardFromHand(Totem, 'attach', 0)
 
 					// Manually set Scar health to trigger zone
 					game.components.find(
@@ -143,7 +136,7 @@ describe('Test Totem of Undying', () => {
 						query.row.active,
 					)!.health = 10
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					// We expect Deathloop to have revived Scar to 50hp instead of Totem
 					expect(
@@ -168,9 +161,9 @@ describe('Test Totem of Undying', () => {
 						),
 					).toBeTruthy()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					// We expect that the Totem attached to Scar to be discarded after reviving to 10hp.
 					expect(
@@ -200,25 +193,25 @@ describe('Test Totem of Undying', () => {
 		)
 	})
 
-	test('Test Totem with AFK Thorns', () => {
-		testGame(
+	test('Test Totem with AFK Thorns', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, Thorns, Thorns],
 				playerTwoDeck: [PearlescentMoonCommon, WelsknightCommon, Totem, Bow],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 
-					yield* playCardFromHand(game, Thorns, 'attach', 0)
-					yield* playCardFromHand(game, Thorns, 'attach', 1)
+					await test.playCardFromHand(Thorns, 'attach', 0)
+					await test.playCardFromHand(Thorns, 'attach', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, PearlescentMoonCommon, 'hermit', 0)
-					yield* playCardFromHand(game, WelsknightCommon, 'hermit', 1)
+					await test.playCardFromHand(PearlescentMoonCommon, 'hermit', 0)
+					await test.playCardFromHand(WelsknightCommon, 'hermit', 1)
 
-					yield* playCardFromHand(game, Totem, 'attach', 0)
-					yield* playCardFromHand(game, Bow, 'single_use')
+					await test.playCardFromHand(Totem, 'attach', 0)
+					await test.playCardFromHand(Bow, 'single_use')
 
 					// Manually set Scar health to trigger zone
 					game.components.find(
@@ -227,11 +220,10 @@ describe('Test Totem of Undying', () => {
 						query.row.active,
 					)!.health = 10
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 
 					// Bow request
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -258,16 +250,16 @@ describe('Test Totem of Undying', () => {
 		)
 	})
 
-	test('Test Totem with Burn', () => {
-		testGame(
+	test('Test Totem with Burn', async () => {
+		await testGame(
 			{
 				playerOneDeck: [PearlescentMoonCommon, WelsknightCommon, Totem],
 				playerTwoDeck: [EthosLabCommon, LavaBucket],
-				saga: function* (game) {
-					yield* playCardFromHand(game, PearlescentMoonCommon, 'hermit', 0)
-					yield* playCardFromHand(game, WelsknightCommon, 'hermit', 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(PearlescentMoonCommon, 'hermit', 0)
+					await test.playCardFromHand(WelsknightCommon, 'hermit', 1)
 
-					yield* playCardFromHand(game, Totem, 'attach', 0)
+					await test.playCardFromHand(Totem, 'attach', 0)
 
 					// Manually set Pearl health to trigger zone
 					game.components.find(
@@ -276,12 +268,12 @@ describe('Test Totem of Undying', () => {
 						query.row.active,
 					)!.health = 10
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(LavaBucket, 'single_use')
 
-					yield* applyEffect(game)
+					await test.applyEffect()
 
 					expect(
 						game.components.find(
@@ -291,7 +283,7 @@ describe('Test Totem of Undying', () => {
 						),
 					).toBeTruthy()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					// We expect that the Totem attached to Pearl to be discarded after reviving to 10hp.
 					expect(
@@ -322,16 +314,16 @@ describe('Test Totem of Undying', () => {
 		)
 	})
 
-	test('Test Totem revives rows before `afterAttack` requests are created', () => {
-		testGame(
+	test('Test Totem revives rows before `afterAttack` requests are created', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon, Totem],
 				playerTwoDeck: [IJevinRare, Bow],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Totem, 'attach', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
+					await test.playCardFromHand(Totem, 'attach', 1)
+					await test.endTurn()
 
 					// Manually set Iskall health to trigger zone
 					game.components.find(
@@ -340,11 +332,10 @@ describe('Test Totem of Undying', () => {
 						query.row.index(1),
 					)!.health = 10
 
-					yield* playCardFromHand(game, IJevinRare, 'hermit', 0)
-					yield* playCardFromHand(game, Bow, 'single_use')
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.playCardFromHand(IJevinRare, 'hermit', 0)
+					await test.playCardFromHand(Bow, 'single_use')
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

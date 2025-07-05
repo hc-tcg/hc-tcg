@@ -5,17 +5,11 @@ import EthosLabRare from 'common/cards/hermits/ethoslab-rare'
 import EthosLabUltraRare from 'common/cards/hermits/ethoslab-ultra-rare'
 import ShadEECommon from 'common/cards/hermits/shadee-common'
 import ShadeEERare from 'common/cards/hermits/shadeee-rare'
-import {
-	attack,
-	endTurn,
-	forfeit,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Ethogirl achievement', () => {
-	test('Ethogirl progress only counts unique Etho variants on one side of the board', () => {
-		testAchivement(
+	test('Ethogirl progress only counts unique Etho variants on one side of the board', async () => {
+		await testAchivement(
 			{
 				achievement: Ethogirl,
 				playerOneDeck: [
@@ -26,19 +20,19 @@ describe('Test Ethogirl achievement', () => {
 					EthosLabRare,
 				],
 				playerTwoDeck: [ShadEECommon],
-				playGame: function* (game) {
+				playGame: async (test, _game) => {
 					// Identical cards should be counted the same
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, ShadeEERare, 'hermit', 2)
-					yield* playCardFromHand(game, EthosLabUltraRare, 'hermit', 3)
-					yield* playCardFromHand(game, EthosLabRare, 'hermit', 4)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(ShadeEERare, 'hermit', 2)
+					await test.playCardFromHand(EthosLabUltraRare, 'hermit', 3)
+					await test.playCardFromHand(EthosLabRare, 'hermit', 4)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ShadEECommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.playCardFromHand(ShadEECommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Ethogirl.getProgress(achievement.goals)).toEqual(4)
@@ -47,8 +41,8 @@ describe('Test Ethogirl achievement', () => {
 			{noItemRequirements: true, oneShotMode: true},
 		)
 	})
-	test('progress does not increase on loss', () => {
-		testAchivement(
+	test('progress does not increase on loss', async () => {
+		await testAchivement(
 			{
 				achievement: Ethogirl,
 				playerOneDeck: [
@@ -59,18 +53,18 @@ describe('Test Ethogirl achievement', () => {
 					EthosLabRare,
 				],
 				playerTwoDeck: [ShadEECommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, ShadeEERare, 'hermit', 2)
-					yield* playCardFromHand(game, EthosLabUltraRare, 'hermit', 3)
-					yield* playCardFromHand(game, EthosLabRare, 'hermit', 4)
-					yield* endTurn(game)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(ShadeEERare, 'hermit', 2)
+					await test.playCardFromHand(EthosLabUltraRare, 'hermit', 3)
+					await test.playCardFromHand(EthosLabRare, 'hermit', 4)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ShadEECommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.playCardFromHand(ShadEECommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(Ethogirl.getProgress(achievement.goals)).toBeUndefined()

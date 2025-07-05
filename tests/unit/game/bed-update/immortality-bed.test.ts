@@ -3,17 +3,11 @@ import ImmortalityBed from 'common/cards/bed-update/attach/immortality-bed'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import BalancedItem from 'common/cards/items/balanced-common'
 import {CardComponent} from 'common/components'
-import {
-	attack,
-	changeActiveHermit,
-	endTurn,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Immortality Bed', () => {
-	test('Immortality Bed returns attached hermit to hand on knock-out without losing a life or giving a prize card', () => {
-		testGame(
+	test('Immortality Bed returns attached hermit to hand on knock-out without losing a life or giving a prize card', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -22,14 +16,14 @@ describe('Test Immortality Bed', () => {
 					...Array(7).fill(BalancedItem),
 				],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, ImmortalityBed, 'attach', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(ImmortalityBed, 'attach', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.attack('secondary')
 					expect(
 						game.opponentPlayer
 							.getHand()
@@ -44,12 +38,12 @@ describe('Test Immortality Bed', () => {
 					expect(
 						game.currentPlayer.getHand().map((card) => card.props),
 					).toStrictEqual([])
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.state.turn.availableActions).toStrictEqual([
 						'CHANGE_ACTIVE_HERMIT',
 					])
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 				},
 			},
 			{noItemRequirements: true, oneShotMode: true, startWithAllCards: false},
