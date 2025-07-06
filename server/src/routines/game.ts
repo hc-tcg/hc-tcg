@@ -805,6 +805,55 @@ function checkDeckedOut(game: GameModel) {
 	)
 }
 
+function sendGameOverBattleLog(con: GameController) {
+	if (con.game.outcome && con.game.outcome.type === 'player-won') {
+		const winningPlayer = con.game.components.find(
+			PlayerComponent,
+			query.player.entity(con.game.outcome.winner),
+		)
+		const winningPlayerName = winningPlayer?.playerName
+		const losingPlayer = con.game.components.find(
+			PlayerComponent,
+			query.not(query.player.entity(con.game.outcome.winner)),
+		)
+		assert(losingPlayer, 'All games should have a losing player')
+		const losingPlayerName = losingPlayer?.playerName
+		if (con.game.outcome.victoryReason == 'disconnect') {
+			con.game.battleLog.addEntry(
+				losingPlayer.entity,
+				`$p{You|${losingPlayerName}}$ {were|was} disconnected`,
+			)
+		} else if (con.game.outcome.victoryReason == 'forfeit') {
+			con.game.battleLog.addEntry(
+				losingPlayer.entity,
+				`$p{You|${losingPlayerName}}$ forfeit the game`,
+			)
+		} else {
+			con.game.battleLog.addEntry(
+				con.game.outcome.winner,
+				`$p{You|${winningPlayerName}}$ won the game`,
+			)
+		}
+	} else if (con.game.outcome && con.game.outcome.type === 'tie') {
+		con.game.battleLog.addEntry(
+			con.game.currentPlayer.entity,
+			'{$pYou$|$oYou$} tied your opponent',
+		)
+	} else if (con.game.outcome) {
+		con.game.battleLog.addEntry(
+			con.game.currentPlayer.entity,
+			'There was an error',
+		)
+	} else {
+		con.game.battleLog.addEntry(
+			con.game.currentPlayer.entity,
+			'The game ended before an outcome was decided',
+		)
+	}
+
+	con.game.battleLog.sendLogs()
+}
+
 async function runGame(con: GameController) {
 	if (con.game.settings.verboseLogging)
 		console.info(
@@ -822,53 +871,7 @@ async function runGame(con: GameController) {
 
 				con.game.outcome = figureOutGameResult(con.game)
 				con.game.hooks.onGameEnd.call(con.game.outcome)
-
-				if (con.game.outcome && con.game.outcome.type === 'player-won') {
-					const winningPlayer = con.game.components.find(
-						PlayerComponent,
-						query.player.entity(con.game.outcome.winner),
-					)
-					const winningPlayerName = winningPlayer?.playerName
-					const losingPlayer = con.game.components.find(
-						PlayerComponent,
-						query.not(query.player.entity(con.game.outcome.winner)),
-					)
-					assert(losingPlayer, 'All games should have a losing player')
-					const losingPlayerName = losingPlayer?.playerName
-					if (con.game.outcome.victoryReason == 'disconnect') {
-						con.game.battleLog.addEntry(
-							losingPlayer.entity,
-							`$p{You|${losingPlayerName}}$ {were|was} disconnected`,
-						)
-					} else if (con.game.outcome.victoryReason == 'forfeit') {
-						con.game.battleLog.addEntry(
-							losingPlayer.entity,
-							`$p{You|${losingPlayerName}}$ forfeit the game`,
-						)
-					} else {
-						con.game.battleLog.addEntry(
-							con.game.outcome.winner,
-							`$p{You|${winningPlayerName}}$ won the game`,
-						)
-					}
-				} else if (con.game.outcome && con.game.outcome.type === 'tie') {
-					con.game.battleLog.addEntry(
-						con.game.currentPlayer.entity,
-						'{$pYou$|$oYou$} tied your opponent',
-					)
-				} else if (con.game.outcome) {
-					con.game.battleLog.addEntry(
-						con.game.currentPlayer.entity,
-						'There was an error',
-					)
-				} else {
-					con.game.battleLog.addEntry(
-						con.game.currentPlayer.entity,
-						'The game ended before an outcome was decided',
-					)
-				}
-
-				con.game.battleLog.sendLogs()
+				sendGameOverBattleLog(con)
 			})(),
 			/* Timeout games after 2 hours */
 			new Promise((resolve) =>
