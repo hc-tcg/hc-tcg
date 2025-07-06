@@ -22,6 +22,7 @@ import {AchievementProgress, EarnedAchievement} from 'common/types/achievements'
 import {Deck} from 'common/types/deck'
 import {GameOutcome} from 'common/types/game-state'
 import {formatText} from 'common/utils/formatting'
+import {quickwitLog, quickwitLogGame} from 'common/utils/logging'
 import {OpponentDefs} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import {
@@ -97,12 +98,14 @@ function* gameManager(con: GameController) {
 		const gameType =
 			playerIds.length === 2 ? (con.gameCode ? 'Private' : 'Public') : 'PvE'
 
-		console.info(
-			`${con.game.logHeader}`,
-			`${gameType} game started.`,
-			`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
-			'Total games:',
-			root.getGameIds().length,
+		quickwitLogGame(
+			'info',
+			con.game,
+			`
+			${gameType} game started.
+			Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.
+			Total games: ${root.getGameIds().length}
+			`,
 		)
 
 		con.broadcastToViewers({
@@ -176,7 +179,7 @@ function* gameManager(con: GameController) {
 			}
 		}
 	} catch (err) {
-		console.info('Error: ', err)
+		quickwitLogGame('error', con.game, `${(err as Error).stack}`)
 		con.game.outcome = {type: 'game-crash', error: `${(err as Error).stack}`}
 	} finally {
 		const outcome = con.game.outcome
@@ -250,10 +253,7 @@ function* gameManager(con: GameController) {
 		}
 
 		const gameType = con.gameCode ? 'Private' : 'Public'
-		console.info(
-			`${gameType} game ended. Total games:`,
-			root.getGameIds().length - 1,
-		)
+		quickwitLogGame('info', con.game, `${gameType} game ended.`)
 
 		const gamePlayers = con.getPlayers()
 
@@ -268,8 +268,10 @@ function* gameManager(con: GameController) {
 		root.hooks.gameRemoved.call(con)
 
 		if (!winnerPlayerId && outcome.type === 'player-won') {
-			console.error(
-				`[Public Game] There was a winner, but no winner was found with ID ${winnerPlayerId}`,
+			quickwitLogGame(
+				'error',
+				con.game,
+				`There was a winner, but no winner was found with ID ${winnerPlayerId}`,
 			)
 			return
 		}
@@ -485,7 +487,7 @@ export function* joinPublicQueue(
 	yield* setupPlayerInfo(player, msg.payload)
 
 	if (!player) {
-		console.info('[Join queue] Player not found: ', playerId)
+		quickwitLog('error', 'public-queue', `Player not found: ${playerId}`)
 		return
 	}
 
@@ -493,17 +495,19 @@ export function* joinPublicQueue(
 		!player.deck ||
 		!validateDeck(player.deck.cards.map((card) => CARDS[card.id])).valid
 	) {
-		console.info(
-			'[Join queue] Player tried to join queue with an invalid deck:',
-			player.name,
+		quickwitLog(
+			'error',
+			'public-queue',
+			`Player tried to join queue with an invalid deck: ${playerId}`,
 		)
 		broadcast([player], {type: serverMessages.JOIN_PUBLIC_QUEUE_FAILURE})
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.info(
-			'[Join queue] Player is already in game or queue:',
-			player.name,
+		quickwitLog(
+			'error',
+			'public-queue',
+			`Player is already in game or queue:: ${playerId}`,
 		)
 		broadcast([player], {type: serverMessages.JOIN_PUBLIC_QUEUE_FAILURE})
 		return
@@ -512,7 +516,7 @@ export function* joinPublicQueue(
 	// Add them to the queue
 	root.queue.push(playerId)
 	broadcast([player], {type: serverMessages.JOIN_PUBLIC_QUEUE_SUCCESS})
-	console.info(`Joining queue: ${player.name}`)
+	quickwitLog('info', 'public-queue', `Joining queue: ${player.name}`)
 }
 
 export function* leavePublicQueue(
@@ -534,9 +538,10 @@ export function* leavePublicQueue(
 		console.info(`Left queue: ${player.name}`)
 	} else {
 		broadcast([player], {type: serverMessages.LEAVE_QUEUE_FAILURE})
-		console.info(
-			'[Leave queue]: Player tried to leave queue when not there:',
-			player.name,
+		quickwitLog(
+			'error',
+			'public-queue',
+			`Player tried to leave queue when not there: ${playerId}`,
 		)
 	}
 }
@@ -553,7 +558,7 @@ export function* joinPrivateGame(
 	yield* setupPlayerInfo(player, msg.payload)
 
 	if (!player) {
-		console.info('[Join private game] Player not found: ', playerId)
+		quickwitLog('error', 'private-queue', `Player not found: ${playerId}`)
 		return
 	}
 
@@ -561,18 +566,20 @@ export function* joinPrivateGame(
 		!player.deck ||
 		!validateDeck(player.deck.cards.map((card) => CARDS[card.id])).valid
 	) {
-		console.info(
-			'[Join private game] Player tried to join private game with an invalid deck: ',
-			playerId,
+		quickwitLog(
+			'error',
+			'private-queue',
+			`Player tried to join private game with an invalid deck: ${playerId}`,
 		)
 		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_FAILURE})
 		return
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.info(
-			'[Join private game] Player is already in game or queue:',
-			player.name,
+		quickwitLog(
+			'error',
+			'private-queue',
+			`Player is already in game or queue: ${playerId}`,
 		)
 		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_FAILURE})
 		return
@@ -596,9 +603,10 @@ export function* joinPrivateGame(
 		// Create new game for these 2 players
 		const existingPlayer = root.players[info.playerId]
 		if (!existingPlayer) {
-			console.info(
-				'[Join private game]: Player waiting in queue no longer exists! Code: ' +
-					code,
+			quickwitLog(
+				'error',
+				'private-queue',
+				`Player waiting in queue no longer exists! Code: ${code}`,
 			)
 			delete root.privateQueue[code]
 
@@ -607,9 +615,10 @@ export function* joinPrivateGame(
 		}
 
 		if (!existingPlayer.deck) {
-			console.info(
-				'[Join private game]: Player waiting in queue has no deck! Code: ' +
-					code,
+			quickwitLog(
+				'error',
+				'private-queue',
+				`Player waiting in queue has no deck! Code: ${code}`,
 			)
 			delete root.privateQueue[code]
 
@@ -657,7 +666,11 @@ export function* joinPrivateGame(
 			})
 		}
 
-		console.info(`Joining private game: ${player.name}.`, `Code: ${code}`)
+		quickwitLog(
+			'info',
+			'private-queue',
+			`Joining private game: ${player.name}. Code: ${code}`,
+		)
 
 		// Remove this game from the queue, it's started
 		let tmpQueue = root.privateQueue[code]
@@ -676,7 +689,11 @@ export function* joinPrivateGame(
 		root.privateQueue[code].playerId = playerId
 		broadcast([player], {type: serverMessages.JOIN_PRIVATE_GAME_SUCCESS})
 
-		console.info(`Joining empty private game: ${player.name}.`, `Code: ${code}`)
+		quickwitLog(
+			'info',
+			'private-queue',
+			`Joining empty private game: ${player.name}. Code: ${code}`,
+		)
 	}
 }
 
@@ -690,14 +707,15 @@ export function* spectatePrivateGame(
 	const player = root.players[playerId]
 
 	if (!player) {
-		console.info('[Spectate private game] Player not found: ', playerId)
+		quickwitLog('error', 'spectate-game', `Player not found: ${playerId}`)
 		return
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.info(
-			'[Spectate private game] Player is already in game or queue:',
-			player.name,
+		quickwitLog(
+			'error',
+			'spectate-game',
+			`Player is already in game or queue: ${playerId}`,
 		)
 		broadcast([player], {type: serverMessages.SPECTATE_PRIVATE_GAME_FAILURE})
 		return
@@ -716,7 +734,9 @@ export function* spectatePrivateGame(
 			replayer: false,
 		})
 
-		console.info(
+		quickwitLog(
+			'info',
+			'spectate-game',
 			`Spectator ${player.name} Joined private game. Code: ${spectatorGame.gameCode}`,
 		)
 
@@ -771,14 +791,15 @@ export function* createPrivateGame(
 	yield* setupPlayerInfo(player, msg.payload)
 
 	if (!player) {
-		console.info('[Create private game] Player not found: ', playerId)
+		quickwitLog('info', 'create-private-game', `Player not found: ${playerId}`)
 		return
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.info(
-			'[Create private game] Player is already in game or queue:',
-			player.name,
+		quickwitLog(
+			'error',
+			'create-private-game',
+			`Player is already in game or queue: ${playerId}`,
 		)
 		broadcast([player], {type: serverMessages.CREATE_PRIVATE_GAME_FAILURE})
 		return
@@ -794,10 +815,14 @@ export function* createPrivateGame(
 		spectatorCode: spectatorCode,
 	})
 
-	console.info(
-		`Private game created by ${player.name}.`,
-		`Code: ${gameCode}`,
-		`Spectator Code: ${spectatorCode}`,
+	quickwitLog(
+		'info',
+		'create-private-game',
+		`
+		Private game created by ${player.name}.
+		Code: ${gameCode}
+		Spectator Code: ${spectatorCode},
+		`,
 	)
 }
 
@@ -816,7 +841,12 @@ export function* cancelPrivateGame(
 
 			root.hooks.privateCancelled.call(code)
 			delete root.privateQueue[code]
-			console.info(`Private game cancelled. Code: ${code}`)
+
+			quickwitLog(
+				'info',
+				'cancel-private-game',
+				`Private game cancelled. Code: ${code}`,
+			)
 		}
 	}
 }
@@ -845,7 +875,11 @@ export function* leaveRematchGame(
 	msg: RecievedClientMessage<typeof clientMessages.LEAVE_REMATCH_GAME>,
 ) {
 	const player = root.players[msg.playerId]
-	console.info(`[Rematch] ${player.name} left the rematch game they started.`)
+	quickwitLog(
+		'info',
+		'rematch',
+		`${player.id} left the rematch game they started.`,
+	)
 	const {playerId} = msg
 	delete root.awaitingRematch[playerId]
 }
@@ -969,18 +1003,20 @@ export function* createRematchGame(
 		!player.deck ||
 		!validateDeck(player.deck.cards.map((card) => CARDS[card.id])).valid
 	) {
-		console.info(
-			'[Join rematch game] Player tried to join private game with an invalid deck: ',
-			playerId,
+		quickwitLog(
+			'error',
+			'rematch',
+			`Player tried to join private game with an invalid deck: ${playerId}`,
 		)
 		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
 		return
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.info(
-			'[Join private game] Player is already in game or queue:',
-			player.name,
+		quickwitLog(
+			'error',
+			'rematch',
+			`Player is already in game or queue: ${playerId}`,
 		)
 		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
 		return
@@ -999,8 +1035,10 @@ export function* createRematchGame(
 			spectatorsWaiting: [],
 		}
 		broadcast([player], {type: serverMessages.CREATE_REMATCH_SUCCESS})
-		console.info(
-			`[Rematch] ${player.name} requested a rematch from their last opponent`,
+		quickwitLog(
+			'info',
+			'rematch',
+			`${playerId} requested a rematch from their last opponent`,
 		)
 		broadcast([opponent], {
 			type: serverMessages.REMATCH_REQUESTED,
@@ -1014,7 +1052,11 @@ export function* createRematchGame(
 
 	// If we want to join our own game, that is an error
 	if (waitingInfo.playerId === player.id) {
-		console.info('[Rematch]: Player attempted to join their own rematch!')
+		quickwitLog(
+			'error',
+			'rematch',
+			`${playerId} attempted to join thier own rematch.`,
+		)
 		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
 		return
 	}
@@ -1022,13 +1064,13 @@ export function* createRematchGame(
 	// Create new game for these 2 players
 	const existingPlayer = root.players[opponentId]
 	if (!existingPlayer) {
-		console.info('[Rematch]: Player waiting in queue no longer exists!')
+		quickwitLog('error', 'rematch', `Player waiting in queue no longer exists.`)
 		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
 		return
 	}
 
 	if (!existingPlayer.deck) {
-		console.info('[Rematch]: Player waiting in queue has no deck!')
+		quickwitLog('error', 'rematch', `Player waiting in queue has no deck`)
 		broadcast([player], {type: serverMessages.CREATE_REMATCH_FAILURE})
 		return
 	}
@@ -1045,7 +1087,11 @@ export function* createRematchGame(
 	)
 	root.addGame(newGame)
 
-	console.info(`[Rematch] Joining rematch game: ${player.name}.`)
+	quickwitLog(
+		'info',
+		'rematch',
+		`[Rematch] Joining rematch game: ${player.name}.`,
+	)
 
 	broadcast([player], {type: serverMessages.CREATE_REMATCH_SUCCESS})
 

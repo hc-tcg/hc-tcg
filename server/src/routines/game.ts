@@ -23,6 +23,7 @@ import {hasEnoughEnergy} from 'common/utils/attacks'
 import {printBoardState, printHooksState} from '../utils'
 
 import assert from 'assert'
+import {quickwitLogGame} from 'common/utils/logging'
 import {GameController} from '../game-controller'
 import {
 	applyEffectAction,
@@ -439,8 +440,10 @@ export function handleSingleTurnAction(
 				endTurn = true
 				// Turn end actions are not in the battle log, so we log them to stdout manually.
 				if (con.game.settings.verboseLogging) {
-					console.info(
-						`${con.game.logHeader} ${con.game.currentPlayer.playerName} ended their turn.`,
+					quickwitLogGame(
+						'info',
+						con.game,
+						`${con.game.currentPlayer.playerName} ended their turn.`,
 					)
 				}
 				break
@@ -474,7 +477,7 @@ export function handleSingleTurnAction(
 		con.game.lastActionTime = currentTime
 	} catch (e) {
 		if (con.game.settings.logErrorsToStderr) {
-			console.error(`${con.game.logHeader} ${(e as Error).stack}`.trimStart())
+			quickwitLogGame('error', con.game, `${(e as Error).stack}`.trimStart())
 		} else {
 			throw e
 		}
@@ -807,8 +810,10 @@ function checkDeckedOut(game: GameModel) {
 
 async function runGame(con: GameController) {
 	if (con.game.settings.verboseLogging)
-		console.info(
-			`${con.game.logHeader} ${con.game.opponentPlayer.playerName} was decided to be the first player.`,
+		quickwitLogGame(
+			'info',
+			con.game,
+			`${con.game.opponentPlayer.playerName} was decided to be the first player.`,
 		)
 
 	await Promise.race([
