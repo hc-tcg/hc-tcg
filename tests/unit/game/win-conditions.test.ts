@@ -1,7 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {getWinner, testGame} from './utils'
-import assert from 'node:assert'
 
 describe('Test Game Win Conditions', () => {
 	test('Killing all hermits results in victory.', async () => {
