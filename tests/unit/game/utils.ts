@@ -260,6 +260,7 @@ export class BossGameTestFixture extends TestGameFixture {
 const defaultGameSettings = {
 	maxTurnTime: 90 * 1000,
 	extraActionTime: 30 * 1000,
+	gameTimeout: 5000,
 	showHooksState: {
 		enabled: false,
 		clearConsole: false,
