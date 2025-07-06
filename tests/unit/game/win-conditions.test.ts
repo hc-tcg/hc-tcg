@@ -126,7 +126,7 @@ describe('Test Game Win Conditions', () => {
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
 				testGame: async (_test, _game) => {
-					// This action is not available which should cause the game to crash
+					// The game should timeout before this promise resolves
 					await new Promise((resolve) => setTimeout(resolve, 1000).unref())
 				},
 				then: (_game, outcome) => {
