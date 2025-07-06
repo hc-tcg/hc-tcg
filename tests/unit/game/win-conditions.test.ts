@@ -1,6 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {getWinner, testGame} from './utils'
+import assert from 'node:assert'
 
 describe('Test Game Win Conditions', () => {
 	test('Killing all hermits results in victory.', async () => {
@@ -99,6 +100,22 @@ describe('Test Game Win Conditions', () => {
 				then: (game, outcome) => {
 					expect(getWinner(game)?.playerName).toBe('playerOne')
 					expect(outcome).toHaveProperty('victoryReason', 'disconnect')
+				},
+			},
+			{noItemRequirements: true, disableDeckOut: true},
+		)
+	})
+	test('Crash gives correct game outcome', async () => {
+		await testGame(
+			{
+				playerOneDeck: [EthosLabCommon],
+				playerTwoDeck: [EthosLabCommon],
+				testGame: async (test, _game) => {
+					// This action is not available which should cause the game to crash
+					await test.attack('primary')
+				},
+				then: (_game, outcome) => {
+					expect(outcome).toHaveProperty('type', 'game-crash')
 				},
 			},
 			{noItemRequirements: true, disableDeckOut: true},

@@ -811,75 +811,80 @@ async function runGame(con: GameController) {
 			`${con.game.logHeader} ${con.game.opponentPlayer.playerName} was decided to be the first player.`,
 		)
 
-	await Promise.race([
-		(async () => {
-			while (true) {
-				con.game.state.turn.turnNumber++
-				const result = await turnSaga(con)
-				if (result === 'GAME_END') break
-			}
+	try {
+		await Promise.race([
+			(async () => {
+				while (true) {
+					con.game.state.turn.turnNumber++
+					const result = await turnSaga(con)
+					if (result === 'GAME_END') break
+				}
 
-			con.game.outcome = figureOutGameResult(con.game)
-			con.game.hooks.onGameEnd.call(con.game.outcome)
+				con.game.outcome = figureOutGameResult(con.game)
+				con.game.hooks.onGameEnd.call(con.game.outcome)
 
-			if (con.game.outcome && con.game.outcome.type === 'player-won') {
-				const winningPlayer = con.game.components.find(
-					PlayerComponent,
-					query.player.entity(con.game.outcome.winner),
-				)
-				const winningPlayerName = winningPlayer?.playerName
-				const losingPlayer = con.game.components.find(
-					PlayerComponent,
-					query.not(query.player.entity(con.game.outcome.winner)),
-				)
-				assert(losingPlayer, 'All games should have a losing player')
-				const losingPlayerName = losingPlayer?.playerName
-				if (con.game.outcome.victoryReason == 'disconnect') {
-					con.game.battleLog.addEntry(
-						losingPlayer.entity,
-						`$p{You|${losingPlayerName}}$ {were|was} disconnected`,
+				if (con.game.outcome && con.game.outcome.type === 'player-won') {
+					const winningPlayer = con.game.components.find(
+						PlayerComponent,
+						query.player.entity(con.game.outcome.winner),
 					)
-				} else if (con.game.outcome.victoryReason == 'forfeit') {
+					const winningPlayerName = winningPlayer?.playerName
+					const losingPlayer = con.game.components.find(
+						PlayerComponent,
+						query.not(query.player.entity(con.game.outcome.winner)),
+					)
+					assert(losingPlayer, 'All games should have a losing player')
+					const losingPlayerName = losingPlayer?.playerName
+					if (con.game.outcome.victoryReason == 'disconnect') {
+						con.game.battleLog.addEntry(
+							losingPlayer.entity,
+							`$p{You|${losingPlayerName}}$ {were|was} disconnected`,
+						)
+					} else if (con.game.outcome.victoryReason == 'forfeit') {
+						con.game.battleLog.addEntry(
+							losingPlayer.entity,
+							`$p{You|${losingPlayerName}}$ forfeit the game`,
+						)
+					} else {
+						con.game.battleLog.addEntry(
+							con.game.outcome.winner,
+							`$p{You|${winningPlayerName}}$ won the game`,
+						)
+					}
+				} else if (con.game.outcome && con.game.outcome.type === 'tie') {
 					con.game.battleLog.addEntry(
-						losingPlayer.entity,
-						`$p{You|${losingPlayerName}}$ forfeit the game`,
+						con.game.currentPlayer.entity,
+						'{$pYou$|$oYou$} tied your opponent',
+					)
+				} else if (con.game.outcome) {
+					con.game.battleLog.addEntry(
+						con.game.currentPlayer.entity,
+						'There was an error',
 					)
 				} else {
 					con.game.battleLog.addEntry(
-						con.game.outcome.winner,
-						`$p{You|${winningPlayerName}}$ won the game`,
+						con.game.currentPlayer.entity,
+						'The game ended before an outcome was decided',
 					)
 				}
-			} else if (con.game.outcome && con.game.outcome.type === 'tie') {
-				con.game.battleLog.addEntry(
-					con.game.currentPlayer.entity,
-					'{$pYou$|$oYou$} tied your opponent',
-				)
-			} else if (con.game.outcome) {
-				con.game.battleLog.addEntry(
-					con.game.currentPlayer.entity,
-					'There was an error',
-				)
-			} else {
-				con.game.battleLog.addEntry(
-					con.game.currentPlayer.entity,
-					'The game ended before an outcome was decided',
-				)
-			}
 
-			con.game.battleLog.sendLogs()
-		})(),
-		/* Timeout games after 2 hours */
-		new Promise((resolve) =>
-			setTimeout(
-				() => {
-					con.game.outcome = {type: 'timeout'}
-					resolve(null)
-				},
-				1000 * 60 * 60 * 2,
-			).unref(),
-		),
-	])
+				con.game.battleLog.sendLogs()
+			})(),
+			/* Timeout games after 2 hours */
+			new Promise((resolve) =>
+				setTimeout(
+					() => {
+						con.game.outcome = {type: 'timeout'}
+						resolve(null)
+					},
+					1000 * 60 * 60 * 2,
+				).unref(),
+			),
+		])
+	} catch (err) {
+		console.info('Error: ', err)
+		con.game.outcome = {type: 'game-crash', error: `${(err as Error).stack}`}
+	}
 
 	return con.game.outcome
 }

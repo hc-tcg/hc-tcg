@@ -90,270 +90,257 @@ function setupGame(
 
 function* gameManager(con: GameController) {
 	// @TODO this one method needs cleanup still
-	try {
-		const viewers = con.viewers
-		const playerIds = viewers.map((viewer) => viewer.player.id)
+	const viewers = con.viewers
+	const playerIds = viewers.map((viewer) => viewer.player.id)
 
-		const gameType =
-			playerIds.length === 2 ? (con.gameCode ? 'Private' : 'Public') : 'PvE'
+	const gameType =
+		playerIds.length === 2 ? (con.gameCode ? 'Private' : 'Public') : 'PvE'
 
-		console.info(
-			`${con.game.logHeader}`,
-			`${gameType} game started.`,
-			`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
-			'Total games:',
-			root.getGameIds().length,
-		)
+	console.info(
+		`${con.game.logHeader}`,
+		`${gameType} game started.`,
+		`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
+		'Total games:',
+		root.getGameIds().length,
+	)
 
-		con.broadcastToViewers({
-			type: serverMessages.GAME_START,
-			spectatorCode: con.spectatorCode ?? undefined,
-		})
+	con.broadcastToViewers({
+		type: serverMessages.GAME_START,
+		spectatorCode: con.spectatorCode ?? undefined,
+	})
 
-		root.hooks.newGame.call(con)
+	root.hooks.newGame.call(con)
 
-		yield* race({
-			outcome: call(runGame, con),
-			waitForTurnAction: call(function* () {
-				while (true) {
-					const action: any = yield* take(
-						(action: any) =>
-							action.type == localMessages.GAME_TURN_ACTION &&
-							action.game == con.id,
-					)
-					con.sendTurnAction({
-						action: action.action,
-						playerEntity: action.playerEntity,
-					})
-				}
-			}),
-			playerDisconnect: call(function* () {
-				while (true) {
-					const playerRemoved = yield* take<
-						LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
-					>(
-						(action: any) =>
-							action.type === localMessages.PLAYER_REMOVED &&
-							playerIds.includes(
-								(
-									action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
-								).player.id,
-							),
-					)
-
-					const playerEntity = con.viewers.find(
-						(v) =>
-							v.spectator == false && v.player.id == playerRemoved.player.id,
-					)?.playerOnLeftEntity
-
-					assert(playerEntity)
-
-					con.sendTurnAction({
-						action: {
-							type: 'DISCONNECT',
-							player: playerEntity,
-						},
-						playerEntity: playerEntity,
-					})
-				}
-			}),
-		})
-
-		for (const viewer of con.viewers) {
-			const gameState = getLocalGameState(con.game, viewer)
-			if (gameState) {
-				gameState.timer.turnRemaining = 0
-				gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
-				if (!con.game.endInfo.victoryReason) {
-					// Remove coin flips from state if game was terminated before game end to prevent
-					// clients replaying animations after a forfeit, disconnect, or excessive game duration
-					con.game.components
-						.filter(PlayerComponent)
-						.forEach(
-							(player) => (gameState.players[player.entity].coinFlips = []),
-						)
-				}
+	yield* race({
+		outcome: call(runGame, con),
+		waitForTurnAction: call(function* () {
+			while (true) {
+				const action: any = yield* take(
+					(action: any) =>
+						action.type == localMessages.GAME_TURN_ACTION &&
+						action.game == con.id,
+				)
+				con.sendTurnAction({
+					action: action.action,
+					playerEntity: action.playerEntity,
+				})
 			}
-		}
-	} catch (err) {
-		console.info('Error: ', err)
-		con.game.outcome = {type: 'game-crash', error: `${(err as Error).stack}`}
-	} finally {
-		const outcome = con.game.outcome
-
-		if (!outcome) return
-
-		const gameEndTime = new Date()
-		con.game.hooks.afterGameEnd.call()
-
-		const newAchievements: Record<string, Array<EarnedAchievement>> = {}
-		for (let k = 0; k < con.viewers.length; k++) {
-			if (!root.db.connected) continue
-			const v = con.viewers[k]
-			if (v.spectator) continue
-			const playerEntity = v.playerOnLeftEntity
-			newAchievements[playerEntity] = []
-			const thisGameAchievements: AchievementProgress = {}
-
-			let player = con.game.components.get(playerEntity)
-			assert(
-				player,
-				"There should definitely be a player on the left if there is an entity, if there isn't, something went really wrong",
-			)
-
-			const achievements = con.game.components.filter(
-				AchievementComponent,
-				(_game, achievement) => achievement.player === playerEntity,
-			)
-
-			achievements.forEach((achievement) => {
-				achievement.props.onGameEnd(con.game, player, achievement, outcome)
-				thisGameAchievements[achievement.props.numericId] = {
-					goals: achievement.goals,
-					levels: [],
-				}
-			})
-
-			const achievementInfo = yield* updateAchievements(
-				v.player.uuid,
-				thisGameAchievements,
-				gameEndTime,
-			)
-			newAchievements[playerEntity] = achievementInfo.newAchievements
-			v.player.updateAchievementProgress(achievementInfo.newProgress)
-		}
-
-		for (const viewer of con.viewers) {
-			const gameState = getLocalGameState(con.game, viewer)
-			if (gameState) {
-				gameState.timer.turnRemaining = 0
-				gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
-				if (!con.game.endInfo.victoryReason) {
-					// Remove coin flips from state if game was terminated before game end to prevent
-					// clients replaying animations after a forfeit, disconnect, or excessive game duration
-					con.game.components
-						.filter(PlayerComponent)
-						.forEach(
-							(player) => (gameState.players[player.entity].coinFlips = []),
-						)
-				}
-			}
-			broadcast([viewer.player], {
-				type: serverMessages.GAME_END,
-				gameState,
-				outcome,
-				earnedAchievements: !viewer.spectator
-					? newAchievements[viewer.playerOnLeftEntity]
-					: [],
-				gameEndTime: Date.now(),
-			})
-		}
-
-		const gameType = con.gameCode ? 'Private' : 'Public'
-		console.info(
-			`${gameType} game ended. Total games:`,
-			root.getGameIds().length - 1,
-		)
-
-		const gamePlayers = con.getPlayers()
-
-		const winnerEntity = outcome.type === 'player-won' ? outcome.winner : null
-
-		const winnerPlayerId = con.viewers.find(
-			(viewer) =>
-				!viewer.spectator && viewer.playerOnLeftEntity === winnerEntity,
-		)?.player.id
-
-		delete root.games[con.id]
-		root.hooks.gameRemoved.call(con)
-
-		if (!winnerPlayerId && outcome.type === 'player-won') {
-			console.error(
-				`[Public Game] There was a winner, but no winner was found with ID ${winnerPlayerId}`,
-			)
-			return
-		}
-
-		const winner = winnerPlayerId ? root.players[winnerPlayerId] : null
-		const turnActionCompressor = new TurnActionCompressor()
-		const turnActionsBuffer = con.game.state.isEvilXBossGame
-			? null
-			: yield* call(
-					[turnActionCompressor, turnActionCompressor.turnActionsToBuffer],
-					con,
+		}),
+		playerDisconnect: call(function* () {
+			while (true) {
+				const playerRemoved = yield* take<
+					LocalMessageTable[typeof localMessages.PLAYER_REMOVED]
+				>(
+					(action: any) =>
+						action.type === localMessages.PLAYER_REMOVED &&
+						playerIds.includes(
+							(action as LocalMessageTable[typeof localMessages.PLAYER_REMOVED])
+								.player.id,
+						),
 				)
 
-		if (
-			root.db.connected &&
-			gamePlayers.length >= 2 &&
-			gamePlayers[0].uuid &&
-			gamePlayers[1].uuid &&
-			// Since you win and lose, this shouldn't count as a game, the count gets very messed up
-			gamePlayers[0].uuid !== gamePlayers[1].uuid
-		) {
-			yield* addGame(
-				gamePlayers[0],
-				gamePlayers[1],
-				outcome,
-				gameEndTime.getTime() - con.createdTime,
-				winner ? winner.uuid : null,
-				con.game.rngSeed,
-				con.game.state.turn.turnNumber,
-				turnActionsBuffer,
-				con.gameCode,
-			)
+				const playerEntity = con.viewers.find(
+					(v) => v.spectator == false && v.player.id == playerRemoved.player.id,
+				)?.playerOnLeftEntity
+
+				assert(playerEntity)
+
+				con.sendTurnAction({
+					action: {
+						type: 'DISCONNECT',
+						player: playerEntity,
+					},
+					playerEntity: playerEntity,
+				})
+			}
+		}),
+	})
+
+	for (const viewer of con.viewers) {
+		const gameState = getLocalGameState(con.game, viewer)
+		if (gameState) {
+			gameState.timer.turnRemaining = 0
+			gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
+			if (!con.game.endInfo.victoryReason) {
+				// Remove coin flips from state if game was terminated before game end to prevent
+				// clients replaying animations after a forfeit, disconnect, or excessive game duration
+				con.game.components
+					.filter(PlayerComponent)
+					.forEach(
+						(player) => (gameState.players[player.entity].coinFlips = []),
+					)
+			}
 		}
-		if (root.db.connected) yield* sendAfterGameInfo(gamePlayers)
+	}
 
-		const getGameScore = (
-			outcome: GameOutcome | undefined,
-			player: PlayerId,
-		) => {
-			assert(outcome, "A game can't end without an outcome.")
-			if (outcome.type === 'tie') return 0.5
-			if (outcome.type === 'player-won' && winnerPlayerId === player) return 1
-			return 0
-		}
+	const outcome = con.game.outcome
+	assert(outcome, 'Games can not end without an outcome')
 
-		if (
-			con.game.state.isEvilXBossGame ||
-			!gamePlayers[0].id ||
-			!gamePlayers[1].id
-		) {
-			return
-		}
+	const gameEndTime = new Date()
+	con.game.hooks.afterGameEnd.call()
 
-		const player1Score =
-			getGameScore(con.game.outcome, gamePlayers[0].id) + con.player1Defs.score
-		const player2Score =
-			getGameScore(con.game.outcome, gamePlayers[1].id) + con.player2Defs.score
+	const newAchievements: Record<string, Array<EarnedAchievement>> = {}
+	for (let k = 0; k < con.viewers.length; k++) {
+		if (!root.db.connected) continue
+		const v = con.viewers[k]
+		if (v.spectator) continue
+		const playerEntity = v.playerOnLeftEntity
+		newAchievements[playerEntity] = []
+		const thisGameAchievements: AchievementProgress = {}
 
-		broadcast([gamePlayers[0]], {
-			type: serverMessages.SEND_REMATCH,
-			rematch: {
-				opponentId: gamePlayers[1].id,
-				time: gameEndTime.getTime(),
-				spectatorCode: con.spectatorCode,
-				playerScore: player1Score,
-				opponentScore: player2Score,
-			},
+		let player = con.game.components.get(playerEntity)
+		assert(
+			player,
+			"There should definitely be a player on the left if there is an entity, if there isn't, something went really wrong",
+		)
+
+		const achievements = con.game.components.filter(
+			AchievementComponent,
+			(_game, achievement) => achievement.player === playerEntity,
+		)
+
+		achievements.forEach((achievement) => {
+			achievement.props.onGameEnd(con.game, player, achievement, outcome)
+			thisGameAchievements[achievement.props.numericId] = {
+				goals: achievement.goals,
+				levels: [],
+			}
 		})
-		broadcast([gamePlayers[1]], {
-			type: serverMessages.SEND_REMATCH,
-			rematch: {
-				opponentId: gamePlayers[0].id,
-				time: gameEndTime.getTime(),
-				spectatorCode: con.spectatorCode,
-				playerScore: player2Score,
-				opponentScore: player1Score,
-			},
-		})
-		yield* delay(serverConfig.limits.rematchTime)
-		broadcast(gamePlayers, {
-			type: serverMessages.SEND_REMATCH,
-			rematch: null,
+
+		const achievementInfo = yield* updateAchievements(
+			v.player.uuid,
+			thisGameAchievements,
+			gameEndTime,
+		)
+		newAchievements[playerEntity] = achievementInfo.newAchievements
+		v.player.updateAchievementProgress(achievementInfo.newProgress)
+	}
+
+	for (const viewer of con.viewers) {
+		const gameState = getLocalGameState(con.game, viewer)
+		if (gameState) {
+			gameState.timer.turnRemaining = 0
+			gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
+			if (!con.game.endInfo.victoryReason) {
+				// Remove coin flips from state if game was terminated before game end to prevent
+				// clients replaying animations after a forfeit, disconnect, or excessive game duration
+				con.game.components
+					.filter(PlayerComponent)
+					.forEach(
+						(player) => (gameState.players[player.entity].coinFlips = []),
+					)
+			}
+		}
+		broadcast([viewer.player], {
+			type: serverMessages.GAME_END,
+			gameState,
+			outcome,
+			earnedAchievements: !viewer.spectator
+				? newAchievements[viewer.playerOnLeftEntity]
+				: [],
+			gameEndTime: Date.now(),
 		})
 	}
+
+	console.info(
+		`${gameType} game ended. Total games:`,
+		root.getGameIds().length - 1,
+	)
+
+	const gamePlayers = con.getPlayers()
+
+	const winnerEntity = outcome.type === 'player-won' ? outcome.winner : null
+
+	const winnerPlayerId = con.viewers.find(
+		(viewer) => !viewer.spectator && viewer.playerOnLeftEntity === winnerEntity,
+	)?.player.id
+
+	delete root.games[con.id]
+	root.hooks.gameRemoved.call(con)
+
+	if (!winnerPlayerId && outcome.type === 'player-won') {
+		console.error(
+			`[Public Game] There was a winner, but no winner was found with ID ${winnerPlayerId}`,
+		)
+		return
+	}
+
+	const winner = winnerPlayerId ? root.players[winnerPlayerId] : null
+	const turnActionCompressor = new TurnActionCompressor()
+	const turnActionsBuffer = con.game.state.isEvilXBossGame
+		? null
+		: yield* call(
+				[turnActionCompressor, turnActionCompressor.turnActionsToBuffer],
+				con,
+			)
+
+	if (
+		root.db.connected &&
+		gamePlayers.length >= 2 &&
+		gamePlayers[0].uuid &&
+		gamePlayers[1].uuid &&
+		// Since you win and lose, this shouldn't count as a game, the count gets very messed up
+		gamePlayers[0].uuid !== gamePlayers[1].uuid
+	) {
+		yield* addGame(
+			gamePlayers[0],
+			gamePlayers[1],
+			outcome,
+			gameEndTime.getTime() - con.createdTime,
+			winner ? winner.uuid : null,
+			con.game.rngSeed,
+			con.game.state.turn.turnNumber,
+			turnActionsBuffer,
+			con.gameCode,
+		)
+	}
+	if (root.db.connected) yield* sendAfterGameInfo(gamePlayers)
+
+	const getGameScore = (outcome: GameOutcome | undefined, player: PlayerId) => {
+		assert(outcome, "A game can't end without an outcome.")
+		if (outcome.type === 'tie') return 0.5
+		if (outcome.type === 'player-won' && winnerPlayerId === player) return 1
+		return 0
+	}
+
+	if (
+		con.game.state.isEvilXBossGame ||
+		!gamePlayers[0].id ||
+		!gamePlayers[1].id
+	) {
+		return
+	}
+
+	const player1Score =
+		getGameScore(con.game.outcome, gamePlayers[0].id) + con.player1Defs.score
+	const player2Score =
+		getGameScore(con.game.outcome, gamePlayers[1].id) + con.player2Defs.score
+
+	broadcast([gamePlayers[0]], {
+		type: serverMessages.SEND_REMATCH,
+		rematch: {
+			opponentId: gamePlayers[1].id,
+			time: gameEndTime.getTime(),
+			spectatorCode: con.spectatorCode,
+			playerScore: player1Score,
+			opponentScore: player2Score,
+		},
+	})
+	broadcast([gamePlayers[1]], {
+		type: serverMessages.SEND_REMATCH,
+		rematch: {
+			opponentId: gamePlayers[0].id,
+			time: gameEndTime.getTime(),
+			spectatorCode: con.spectatorCode,
+			playerScore: player2Score,
+			opponentScore: player1Score,
+		},
+	})
+	yield* delay(serverConfig.limits.rematchTime)
+	broadcast(gamePlayers, {
+		type: serverMessages.SEND_REMATCH,
+		rematch: null,
+	})
 }
 
 export function inGame(playerId: PlayerId) {
