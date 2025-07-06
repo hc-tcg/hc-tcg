@@ -6,11 +6,9 @@ import EvilXisumaBoss, {
 import {Card} from 'common/cards/types'
 import {
 	AchievementComponent,
-	BoardSlotComponent,
 	CardComponent,
 	ObserverComponent,
 	PlayerComponent,
-	RowComponent,
 	SlotComponent,
 } from 'common/components'
 import query, {ComponentQuery} from 'common/components/query'
@@ -24,7 +22,7 @@ import {
 	attackToAttackAction,
 	slotToPlayCardAction,
 } from 'common/types/turn-action-data'
-import {PlayerSetupDefs} from 'common/utils/state-gen'
+import {PlayerSetupDefs, setupEvilXisumaBossBoard} from 'common/utils/state-gen'
 import {applyMiddleware, createStore} from 'redux'
 import createSagaMiddleware, {SagaMiddleware} from 'redux-saga'
 import {GameController} from 'server/game-controller'
@@ -371,38 +369,7 @@ export function testBossFight(
 
 	controller.game.state.isEvilXBossGame = true
 
-	function destroyRow(row: RowComponent) {
-		controller.game.components
-			.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
-			.forEach((slotEntity) => controller.game.components.delete(slotEntity))
-		controller.game.components.delete(row.entity)
-	}
-
-	// Remove challenger's rows other than indexes 0, 1, and 2
-	controller.game.components
-		.filter(
-			RowComponent,
-			query.row.opponentPlayer,
-			(_game, row) => row.index > 2,
-		)
-		.forEach(destroyRow)
-	// Remove boss' rows other than index 0
-	controller.game.components
-		.filter(
-			RowComponent,
-			query.row.currentPlayer,
-			query.not(query.row.index(0)),
-		)
-		.forEach(destroyRow)
-	// Remove boss' item slots
-	controller.game.components
-		.filter(RowComponent, query.row.currentPlayer)
-		.forEach((row) => {
-			row.itemsSlotEntities?.forEach((slotEntity) =>
-				controller.game.components.delete(slotEntity),
-			)
-			row.itemsSlotEntities = []
-		})
+	setupEvilXisumaBossBoard(controller.game.components)
 
 	let testEnded = false
 
