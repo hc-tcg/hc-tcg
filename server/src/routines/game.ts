@@ -875,13 +875,10 @@ async function runGame(con: GameController) {
 			})(),
 			/* Timeout games after 2 hours */
 			new Promise((resolve) =>
-				setTimeout(
-					() => {
-						con.game.outcome = {type: 'timeout'}
-						resolve(null)
-					},
-					1000 * 60 * 60 * 2,
-				).unref(),
+				setTimeout(() => {
+					con.game.outcome = {type: 'timeout'}
+					resolve(null)
+				}, con.game.settings.gameTimeout).unref(),
 			),
 		])
 	} catch (err) {
