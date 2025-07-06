@@ -111,7 +111,7 @@ function* gameManager(con: GameController) {
 
 	root.hooks.newGame.call(con)
 
-	yield* race({
+	const raceResult = yield* race({
 		outcome: call(runGame, con),
 		waitForTurnAction: call(function* () {
 			while (true) {
@@ -156,6 +156,9 @@ function* gameManager(con: GameController) {
 		}),
 	})
 
+	const outcome = raceResult.outcome
+	assert(outcome, 'Games can not end without an outcome')
+
 	for (const viewer of con.viewers) {
 		const gameState = getLocalGameState(con.game, viewer)
 		if (gameState) {
@@ -172,9 +175,6 @@ function* gameManager(con: GameController) {
 			}
 		}
 	}
-
-	const outcome = con.game.outcome
-	assert(outcome, 'Games can not end without an outcome')
 
 	const gameEndTime = new Date()
 	con.game.hooks.afterGameEnd.call()

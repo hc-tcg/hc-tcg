@@ -854,7 +854,7 @@ function sendGameOverBattleLog(con: GameController) {
 	con.game.battleLog.sendLogs()
 }
 
-async function runGame(con: GameController) {
+async function runGame(con: GameController): Promise<GameOutcome> {
 	if (con.game.settings.verboseLogging)
 		console.info(
 			`${con.game.logHeader} ${con.game.opponentPlayer.playerName} was decided to be the first player.`,
@@ -885,6 +885,8 @@ async function runGame(con: GameController) {
 		console.info('Error: ', err)
 		con.game.outcome = {type: 'game-crash', error: `${(err as Error).stack}`}
 	}
+
+	assert(con.game.outcome, 'Games can not end without an outcome')
 
 	return con.game.outcome
 }
