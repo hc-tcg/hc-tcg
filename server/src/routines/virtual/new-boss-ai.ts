@@ -26,7 +26,7 @@ const compareBoardSlots = (
 	if (a.inRow() && b.inRow()) {
 		const aIsActive = a.rowEntity === a.player.activeRowEntity
 		const bIsActive = b.player.activeRowEntity === b.rowEntity
-		if (aIsActive || bIsActive) return Number(aIsActive) - Number(bIsActive)
+		if (aIsActive || bIsActive) return Number(bIsActive) - Number(aIsActive)
 		return (b.row.health || 0) - (a.row.health || 0)
 	}
 	return 0
