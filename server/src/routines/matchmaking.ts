@@ -1,7 +1,7 @@
 import assert from 'assert'
 import {CARDS} from 'common/cards'
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
-import {NEW_BOSS_AI_DECKS} from 'common/cards/new-ai-boss-decks'
+import {getPharaohDeck} from 'common/cards/pharaoh-boss-decks'
 import {AchievementComponent, PlayerComponent} from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
@@ -276,7 +276,7 @@ function* gameManager(con: GameController) {
 
 		const winner = winnerPlayerId ? root.players[winnerPlayerId] : null
 		const turnActionCompressor = new TurnActionCompressor()
-		const turnActionsBuffer = con.game.state.isEvilXBossGame
+		const turnActionsBuffer = con.game.state.bossType
 			? null
 			: yield* turnActionCompressor.turnActionsToBuffer(con)
 
@@ -313,7 +313,7 @@ function* gameManager(con: GameController) {
 		}
 
 		if (
-			con.game.state.isEvilXBossGame ||
+			con.game.state.bossType ||
 			!gamePlayers[0] ||
 			!gamePlayers[1] ||
 			!gamePlayers[0].id ||
@@ -900,20 +900,18 @@ export function* createBossGame(
 	console.log('Server using boss type:', bossType)
 	let bossConfig: OpponentDefs
 
-	if (bossType === 'new') {
-		// Get a random new boss AI deck
-		const randomIndex = Math.floor(Math.random() * NEW_BOSS_AI_DECKS.length)
-		const bossDeck = NEW_BOSS_AI_DECKS[randomIndex]
-		console.log(`Selected new boss AI deck "${bossDeck.name}" for New Boss`)
+	if (bossType === 'pharaoh') {
+		// Get a random pharaoh deck
+		const bossDeck = getPharaohDeck()
+		console.log(`Selected pharaoh boss deck "${bossDeck.name}" for New Boss`)
 
 		bossConfig = {
 			uuid: '',
-			name: 'New Boss',
-			minecraftName: 'NewBoss',
-			censoredName: 'New Boss',
+			name: 'Pharaoh',
+			minecraftName: 'Cub_Cam',
+			censoredName: 'Pharaoh',
 			deck: bossDeck.cards,
 			virtualAI: NewBossAI,
-			disableDeckingOut: true as const,
 			appearance: {...defaultAppearance, coin: COINS['creeper']},
 		}
 	} else {

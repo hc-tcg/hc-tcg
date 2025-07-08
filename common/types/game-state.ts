@@ -87,8 +87,10 @@ export type GameState = {
 	}
 
 	isEvilXBossGame: boolean
-	bossType?: 'evilx' | 'new'
+	bossType?: BossType
 }
+
+export type BossType = 'evilx' | 'pharaoh'
 
 export type PlayCardAction =
 	| 'PLAY_HERMIT_CARD'
@@ -189,7 +191,7 @@ export type LocalGameState = {
 	}
 
 	isEvilXBossGame: boolean
-	bossType?: 'evilx' | 'new'
+	bossType?: BossType
 
 	voiceLineQueue: Array<string>
 }

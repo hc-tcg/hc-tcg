@@ -4,6 +4,7 @@ import {
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {Deck} from 'common/types/deck'
+import {BossType} from 'common/types/game-state'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import gameSaga from 'logic/game/game-saga'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
@@ -58,7 +59,7 @@ function* sendJoinQueueMessage(
 		| ClientMessageTable['CREATE_PRIVATE_GAME']['type']
 		| ClientMessageTable['JOIN_PUBLIC_QUEUE']['type'],
 	activeDeckResult: activeDeckSagaT,
-	bossType?: 'evilx' | 'new',
+	bossType?: BossType,
 ) {
 	if (!activeDeckResult) return
 	if (activeDeckResult.databaseConnected) {

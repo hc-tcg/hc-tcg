@@ -7,6 +7,7 @@ import {RematchData} from 'common/types/app'
 import {HermitAttackType} from 'common/types/attack'
 import {Deck, Tag} from 'common/types/deck'
 import {
+	BossType,
 	GameOutcome,
 	LocalCurrentCoinFlip,
 	LocalGameState,
@@ -172,7 +173,7 @@ type Messages = [
 	{type: typeof localMessages.MATCHMAKING_LEAVE},
 	{
 		type: typeof localMessages.MATCHMAKING_CREATE_BOSS_GAME
-		bossType: 'evilx' | 'new'
+		bossType: BossType
 	},
 	{
 		type: typeof localMessages.MATCHMAKING_REPLAY_GAME
