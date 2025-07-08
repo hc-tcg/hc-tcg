@@ -3,11 +3,11 @@ import {attach} from 'common/cards/defaults'
 import {
 	BoardSlotComponent,
 	CardComponent,
+	RowComponent,
 	SlotComponent,
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
-import {SlotEntity} from 'common/entities'
 import {GameModel} from 'common/models/game-model'
 import {
 	AnyTurnActionData,
@@ -32,10 +32,22 @@ const compareBoardSlots = (
 	return 0
 }
 
+const getAvailableEnergy = (row: RowComponent) => {
+	const {player} = row
+
+	let energy = row
+		.getItems()
+		.flatMap((card) => (card.isItem() ? card.props.energy : []))
+
+	const activeRowEntity = player.activeRowEntity
+	player.activeRowEntity = row.entity
+	energy = player.hooks.availableEnergy.call(energy)
+	player.activeRowEntity = activeRowEntity
+	return energy
+}
+
 const cardIsPlayable = (game: GameModel, card: CardComponent): boolean =>
 	game.components.exists(SlotComponent, card.props.attachCondition)
-
-// Helper function to check if we have enough energy for an attack
 
 function getNextTurnAction(
 	game: GameModel,
@@ -440,16 +452,7 @@ function getNextTurnAction(
 				effectCard.props.id,
 			)
 
-			// Find active hermit first
-			const activeHermit = game.components.find(
-				BoardSlotComponent,
-				query.slot.player(player.entity),
-				query.slot.hermit,
-				query.slot.active,
-				query.not(query.slot.empty),
-			)
-
-			let targetAttachSlot = game.components
+			const targetAttachSlot = game.components
 				.filter(
 					BoardSlotComponent,
 					effectCard.props.attachCondition,
@@ -457,90 +460,6 @@ function getNextTurnAction(
 				)
 				.sort(compareBoardSlots)
 				.at(0)?.entity
-
-			// First try to find an empty attach slot for the active hermit
-			if (activeHermit && activeHermit.inRow()) {
-				console.log(
-					'New Boss AI - Checking if active hermit has empty attach slots',
-				)
-
-				const attachSlot = game.components.find(
-					BoardSlotComponent,
-					query.slot.player(player.entity),
-					query.slot.attach,
-					query.slot.empty,
-					query.slot.active,
-				)
-
-				if (attachSlot) {
-					console.log('New Boss AI - Found empty attach slot for active hermit')
-					targetAttachSlot = attachSlot.entity
-				} else {
-					console.log('New Boss AI - Active hermit has no empty attach slots')
-				}
-			}
-
-			// If active hermit has no empty attach slots, find hermit with most health and free slots
-			if (!targetAttachSlot) {
-				console.log(
-					'New Boss AI - Looking for hermit with most health and free attach slots',
-				)
-
-				// Find all hermits on the board
-				const hermitSlots = game.components.filter(
-					BoardSlotComponent,
-					query.slot.player(player.entity),
-					query.slot.hermit,
-					query.not(query.slot.empty),
-				)
-
-				// Find the hermit with the most health that has empty attach slots
-				let bestHealth = -1
-
-				for (const hermitSlot of hermitSlots) {
-					// Skip if not in a row or health is null
-					if (!hermitSlot.inRow() || hermitSlot.row.health === null) {
-						continue
-					}
-
-					const health = hermitSlot.row.health || 0
-					const row = hermitSlot.row
-
-					// Check if this hermit's row has an empty attach slot
-					const attachSlot = game.components.find(
-						BoardSlotComponent,
-						query.slot.player(player.entity),
-						query.slot.attach,
-						query.slot.empty,
-						query.slot.rowIs(row.entity),
-					)
-
-					if (attachSlot && health > bestHealth) {
-						bestHealth = health
-						targetAttachSlot = attachSlot.entity
-					}
-				}
-
-				if (targetAttachSlot) {
-					console.log(
-						`New Boss AI - Found hermit with ${bestHealth} health and empty attach slot`,
-					)
-				} else {
-					console.log('New Boss AI - No hermits with empty attach slots found')
-
-					// Fallback to any empty attach slot if no hermit-specific slots are found
-					const anyAttachSlot = game.components.findEntity(
-						BoardSlotComponent,
-						query.slot.player(player.entity),
-						query.slot.attach,
-						query.slot.empty,
-					)
-
-					if (anyAttachSlot) {
-						targetAttachSlot = anyAttachSlot
-					}
-				}
-			}
 
 			if (targetAttachSlot) {
 				console.log('New Boss AI - Playing effect card on selected attach slot')
@@ -571,266 +490,41 @@ function getNextTurnAction(
 			console.log('New Boss AI - Found item card to play:', itemCard.props.id)
 
 			// Check if any hermits need items
-			let anyHermitNeedsItems = false
-			let hermitsWithEmptySlots = 0
 
 			// Check all hermits on the board
-			const allHermitSlots = game.components.filter(
-				BoardSlotComponent,
-				query.slot.player(player.entity),
-				query.slot.hermit,
-				query.not(query.slot.empty),
-			)
-
-			for (const hermitSlot of allHermitSlots) {
-				if (!hermitSlot.inRow() || hermitSlot.row.health === null) {
-					continue
-				}
-
-				const row = hermitSlot.row
-				const hermitCard = row.getHermit()
-
-				if (hermitCard && hermitCard.isHermit()) {
-					const currentItems = game.components.filter(
-						CardComponent,
-						query.card.slot(query.slot.item),
-						query.card.rowEntity(row.entity),
-					)
-					const currentEnergy = currentItems.flatMap(
-						(item) => (item.props as any).energy || [],
-					)
-					const requiredEnergy = hermitCard.getAttackCost('secondary')
-
-					// Check if this hermit needs items for secondary attack
+			const filteredItemSlots = game.components
+				.filter(RowComponent, query.row.player(player.entity))
+				.flatMap((row) => {
+					// Check if row has a Hermit
+					const hermit = row.getHermit()
+					if (!hermit?.isHermit()) return []
+					// Check if row has an empty item slot
+					const emptyItemSlot = row.itemSlots.find((slot) => !slot.cardEntity)
+					if (!emptyItemSlot) return []
+					// Check if hermit needs more energy to use their secondary attack
 					if (
-						!hasEnoughEnergy(
-							currentEnergy,
-							requiredEnergy,
+						hasEnoughEnergy(
+							getAvailableEnergy(row),
+							hermit.getAttackCost('secondary'),
 							game.settings.noItemRequirements,
 						)
-					) {
-						anyHermitNeedsItems = true
-					}
-
-					// Check if this hermit has empty item slots
-					const emptyItemSlots = game.components.filter(
-						BoardSlotComponent,
-						query.slot.player(player.entity),
-						query.slot.item,
-						query.slot.empty,
-						query.slot.rowIs(row.entity),
 					)
-
-					if (emptyItemSlots.length > 0) {
-						hermitsWithEmptySlots++
-					}
-				}
-			}
+						return []
+					return [emptyItemSlot]
+				})
 
 			// Only skip playing items if there are no empty item slots at all
 			// SMART: NO, WHEN ALL HERMITS HAVE SUFFICIENT ITEMS. [advanced] Lead/Hypno/Elder Guardian-related deep plays.
-			if (hermitsWithEmptySlots === 0) {
+			if (filteredItemSlots.length === 0) {
 				console.log(
 					'New Boss AI - No empty item slots available, skipping item card play',
 				)
 				break playItemCard
 			}
 
-			// Find active hermit first
-			let activeHermit: BoardSlotComponent | null = game.components.find(
-				BoardSlotComponent,
-				query.slot.player(player.entity),
-				query.slot.hermit,
-				query.slot.active,
-				query.not(query.slot.empty),
-			)
-
-			let targetItemSlot: SlotEntity | null = null
-			let activeHermitRowEntity: string | null = null
-
-			// Check if the active hermit needs items and has empty slots
-			if (activeHermit && activeHermit.inRow()) {
-				activeHermitRowEntity = activeHermit.rowEntity
-				console.log('New Boss AI - Checking if active hermit needs items')
-				const activeRow = activeHermit.row
-				const hermitCard = activeRow.getHermit()
-
-				if (hermitCard && hermitCard.isHermit()) {
-					const currentItems = game.components.filter(
-						CardComponent,
-						query.card.slot(query.slot.item),
-						query.card.rowEntity(activeRow.entity),
-					)
-					const currentEnergy = currentItems.flatMap(
-						(item) => (item.props as any).energy || [],
-					)
-					const requiredEnergy = hermitCard.getAttackCost('secondary')
-
-					if (
-						!hasEnoughEnergy(
-							currentEnergy,
-							requiredEnergy,
-							game.settings.noItemRequirements,
-						)
-					) {
-						console.log('New Boss AI - Active hermit needs items')
-
-						// Find an empty item slot for the active hermit
-						const activeHermitItemSlots = game.components.filter(
-							BoardSlotComponent,
-							query.slot.player(player.entity),
-							query.slot.item,
-							query.slot.empty,
-							query.slot.active,
-						)
-
-						if (activeHermitItemSlots.length > 0) {
-							console.log(
-								'New Boss AI - Found empty item slot for active hermit',
-							)
-							targetItemSlot = activeHermitItemSlots[0].entity
-						} else {
-							console.log(
-								'New Boss AI - Active hermit needs items but has no empty slots',
-							)
-						}
-					} else {
-						console.log(
-							'New Boss AI - Active hermit already has enough items for secondary attack',
-						)
-					}
-				} else {
-					// Active hermit card not found or not a hermit, treat as not needing items specifically
-					console.log(
-						'New Boss AI - Active hermit card not found or invalid type',
-					)
-				}
-			} else {
-				console.log(
-					'New Boss AI - No active hermit found or active hermit not in a row',
-				)
-			}
-
-			// If active hermit doesn't need items or has no slots, find another hermit
-			if (!targetItemSlot) {
-				console.log(
-					"New Boss AI - Looking for another hermit (non-active or active didn't need items/had no slots)",
-				)
-
-				// Find all non-active hermits on the board
-				const nonActiveHermitSlots = game.components.filter(
-					BoardSlotComponent,
-					query.slot.player(player.entity),
-					query.slot.hermit,
-					query.not(query.slot.empty),
-					query.not(query.slot.active), // Exclude the active hermit explicitly
-				)
-
-				let bestHermitSlot: BoardSlotComponent | null = null
-				let bestHealth = -1
-
-				for (const hermitSlot of nonActiveHermitSlots) {
-					if (!hermitSlot.inRow() || hermitSlot.row.health === null) {
-						continue
-					}
-
-					const health = hermitSlot.row.health || 0
-					const row = hermitSlot.row
-					const hermitCard = row.getHermit()
-
-					// Check if this hermit needs items
-					let needsItems = false
-					if (hermitCard && hermitCard.isHermit()) {
-						const currentItems = game.components.filter(
-							CardComponent,
-							query.card.slot(query.slot.item),
-							query.card.rowEntity(row.entity),
-						)
-						const currentEnergy = currentItems.flatMap(
-							(item) => (item.props as any).energy || [],
-						)
-						const requiredEnergy = hermitCard.getAttackCost('secondary')
-						if (
-							!hasEnoughEnergy(
-								currentEnergy,
-								requiredEnergy,
-								game.settings.noItemRequirements,
-							)
-						) {
-							needsItems = true
-						}
-					}
-
-					if (needsItems) {
-						// Check if this hermit's row has empty item slots
-						const itemSlots = game.components.filter(
-							BoardSlotComponent,
-							query.slot.player(player.entity),
-							query.slot.item,
-							query.slot.empty,
-							query.slot.rowIs(row.entity),
-						)
-
-						if (itemSlots.length > 0 && health > bestHealth) {
-							bestHealth = health
-							bestHermitSlot = hermitSlot
-							targetItemSlot = itemSlots[0].entity
-						}
-					}
-				}
-
-				if (targetItemSlot) {
-					console.log(
-						`New Boss AI - Found non-active hermit (${bestHermitSlot?.row?.getHermit()?.props.name ?? 'Unknown'}) with ${bestHealth} health needing items and having empty slots`,
-					)
-				} else {
-					console.log('New Boss AI - No suitable non-active hermits found')
-
-					// Fallback: Find any empty item slot that belongs to a row with a hermit
-					// SMART: NOOO, JUST DON'T PLAY IT.
-					const allEmptyItemSlots = game.components.filter(
-						BoardSlotComponent,
-						query.slot.player(player.entity),
-						query.slot.item,
-						query.slot.empty,
-					)
-
-					// Filter to only slots that belong to rows with hermits
-					const validEmptyItemSlots = allEmptyItemSlots.filter((slot) => {
-						if (!slot.inRow()) return false
-						const row = slot.row
-						return row && row.getHermit() && row.getHermit()?.isHermit()
-					})
-
-					if (validEmptyItemSlots.length > 0) {
-						// Try to find a slot not belonging to the original active hermit's row (if it existed and didn't need items)
-						let fallbackSlot = validEmptyItemSlots.find(
-							(slot) =>
-								!activeHermitRowEntity ||
-								!slot.inRow() ||
-								slot.rowEntity !== activeHermitRowEntity,
-						)
-
-						if (fallbackSlot) {
-							targetItemSlot = fallbackSlot.entity
-							console.log(
-								"New Boss AI - Fallback: Found empty item slot not on active hermit's row",
-							)
-						} else {
-							// If all empty slots are on the active hermit's row, just take the first one
-							targetItemSlot = validEmptyItemSlots[0].entity
-							console.log(
-								"New Boss AI - Fallback: Found empty item slot (only available on active hermit's row)",
-							)
-						}
-					} else {
-						console.log(
-							'New Boss AI - Fallback: No valid empty item slots found (no slots with hermits)',
-						)
-						break playItemCard // Don't play the item if there are no valid slots
-					}
-				}
-			}
+			const targetItemSlot = filteredItemSlots
+				.sort(compareBoardSlots)
+				.at(0)?.entity
 
 			if (targetItemSlot) {
 				console.log('New Boss AI - Playing item card on selected item slot')
