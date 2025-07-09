@@ -91,6 +91,7 @@ export function getLocalStorageDecks(): Array<Deck> {
 							return toLocalCardInstance(CARDS[card.cardId])
 						}),
 						public: false,
+						elo: 1500,
 					}
 					decks.push(newDeck)
 				} catch {

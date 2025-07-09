@@ -168,6 +168,7 @@ function SelectDeck({
 		code: generateDatabaseCode(),
 		tags: [],
 		public: false,
+		elo: 1500,
 	})
 	const [showDeleteDeckModal, setShowDeleteDeckModal] = useState<boolean>(false)
 	const [showDuplicateDeckModal, setShowDuplicateDeckModal] =
@@ -316,6 +317,7 @@ function SelectDeck({
 		}, []).length > 0
 
 	const deckList = filteredDecks.map((deck: Deck, i: number) => {
+		//TARGET Hover Selection
 		return (
 			<li
 				className={classNames(
@@ -351,6 +353,8 @@ function SelectDeck({
 					<img src={getIconPath(deck)} />
 				</div>
 				{deck.name}
+				<div className={css.dynamicSpace}></div>
+				<div className={classNames(css.listElo)}>{loadedDeck.elo}</div>
 			</li>
 		)
 	})
@@ -517,10 +521,13 @@ function SelectDeck({
 									})}
 								<div className={css.dynamicSpace}></div>
 
-								<p className={classNames(css.cardCount)}>
+								<p className={classNames(css.elo)}>
+									{'Elo: '} {loadedDeck.elo}
+								</p>
+								<div className={classNames(css.cardCount)}>
 									{loadedDeck.cards.length}/{CONFIG.limits.maxCards}{' '}
 									<span className={css.hideOnMobile}>cards</span>
-								</p>
+								</div>
 								<div className={css.cardCount}>
 									<p className={css.tokens}>
 										{getDeckCost(
@@ -571,6 +578,10 @@ function SelectDeck({
 									)}
 								</span>
 								<span className={css.mobileDeckNamePadding}></span>
+								<div className={classNames(css.elo)}>
+									{'Elo: '}
+									{loadedDeck.elo}
+								</div>
 								<button
 									className={css.dropdownButton}
 									onClick={() => setShowScreenshotModal(true)}
