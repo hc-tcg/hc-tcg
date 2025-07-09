@@ -14,12 +14,12 @@ import type {
 } from '../types/game-state'
 import {GameHook, PriorityHook, WaterfallHook} from '../types/hooks'
 import {afterApply, onCoinFlip, onTurnEnd} from '../types/priorities'
+import {PickRequest} from '../types/server-requests'
 import {CardComponent} from './card-component'
 import query from './query'
 import {RowComponent} from './row-component'
 import {SlotComponent} from './slot-component'
 import {StatusEffectComponent} from './status-effect-component'
-import {PickRequest} from '../types/server-requests'
 
 /** The minimal information that must be known about a player to start a game */
 export type PlayerDefs = {
