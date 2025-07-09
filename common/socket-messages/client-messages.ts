@@ -4,6 +4,7 @@ import {PlayerId} from '../models/player-model'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {RematchData} from '../types/app'
 import {Deck, Tag} from '../types/deck'
+import {BossType} from '../types/game-state'
 import {AnyTurnActionData} from '../types/turn-action-data'
 
 export const clientMessages = messages('clientMessages', {
@@ -78,13 +79,13 @@ export type ClientMessages = [
 		type: typeof clientMessages.CREATE_BOSS_GAME
 		databaseConnected: true
 		activeDeckCode: string
-		bossType?: 'evilx' | 'new'
+		bossType?: BossType
 	},
 	{
 		type: typeof clientMessages.CREATE_BOSS_GAME
 		databaseConnected: false
 		activeDeck: Deck
-		bossType?: 'evilx' | 'new'
+		bossType?: BossType
 	},
 	{
 		type: typeof clientMessages.CREATE_PRIVATE_GAME

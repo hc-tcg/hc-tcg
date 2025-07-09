@@ -1,3 +1,4 @@
+import {BossType} from 'common/types/game-state'
 import {LocalMessage, localMessages} from 'logic/messages'
 import {MatchmakingStatus} from './matchmaking-types'
 
@@ -5,7 +6,7 @@ type MatchmakingState = {
 	status: MatchmakingStatus
 	gameCode: string | null
 	spectatorCode: string | null
-	selectedBossType: 'evilx' | 'new' | undefined
+	selectedBossType: BossType | undefined
 }
 
 const defaultState: MatchmakingState = {

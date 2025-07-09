@@ -44,4 +44,10 @@ export class AIComponent {
 	public get player() {
 		return this.game.components.getOrError(this.playerEntity)
 	}
+
+	public get availableActions() {
+		if (this.game.currentPlayerEntity === this.playerEntity)
+			return this.game.state.turn.availableActions
+		else return this.game.state.turn.opponentAvailableActions
+	}
 }

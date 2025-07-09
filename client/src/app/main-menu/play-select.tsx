@@ -21,6 +21,7 @@ import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
 import {CardEntity} from 'common/entities'
 import {Deck} from 'common/types/deck'
+import {BossType} from 'common/types/game-state'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {sortDecks} from 'common/utils/decks'
 import {validateDeck} from 'common/utils/validation'
@@ -84,7 +85,7 @@ function PlaySelect({
 
 	// Store the selected boss type
 	const [selectedBossType, setSelectedBossType] = useState<
-		'evilx' | 'new' | undefined
+		BossType | undefined
 	>(undefined)
 
 	const getFirstActiveMenu = (section: string) => {
@@ -295,7 +296,7 @@ function PlaySelect({
 			break
 	}
 
-	const onBossConfirm = (bossType: 'evilx' | 'new') => {
+	const onBossConfirm = (bossType: BossType) => {
 		console.log('Dispatching with boss type:', bossType)
 		dispatch({type: localMessages.MATCHMAKING_CREATE_BOSS_GAME, bossType})
 	}
@@ -608,17 +609,15 @@ or create your own game to challenge someone else."
 										onClick() {
 											addMenuWithBack('bossChooseDeck')
 											setSelectedBossType('evilx')
-											onBossConfirm('evilx')
 										},
 										variant: 'primary',
 									},
 									{
-										text: 'Challenge New Boss',
+										text: 'Challenge Pharaoh',
 										onClick() {
 											console.log('Setting boss type to new')
 											addMenuWithBack('bossChooseDeck')
-											setSelectedBossType('new')
-											onBossConfirm('new')
+											setSelectedBossType('pharaoh')
 										},
 										variant: 'primary',
 									},

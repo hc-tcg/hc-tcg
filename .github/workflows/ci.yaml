@@ -4,11 +4,11 @@ on:
     push:
         branches:
             - master
-            - ux-rework
+            - optimize-ai
     pull_request:
         branches:
             - master
-            - ux-rework
+            - optimize-ai
 
 permissions:
     checks: write
