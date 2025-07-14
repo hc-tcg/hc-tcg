@@ -20,6 +20,7 @@ export default {
 		bannedCards: ['evilxisuma_boss', 'feather', 'item_any_rare'],
 		disabledCards: ['iskallman_common', 'iskallman_rare'],
 		rematchTime: 90 * 1000,
+		gameTimeout: 1000 * 60 * 60 * 2 /* 2 hours */,
 	},
 	replayVersion: 0x02,
 	logoSubText: '10k games since 1.0!',

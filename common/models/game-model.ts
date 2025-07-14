@@ -73,6 +73,7 @@ export type GameSettings = {
 	logErrorsToStderr: boolean
 	verboseLogging: boolean
 	disableRewardCards: boolean
+	gameTimeout: number
 }
 
 export function gameSettingsFromEnv(): GameSettings {
@@ -95,6 +96,7 @@ export function gameSettingsFromEnv(): GameSettings {
 		logErrorsToStderr: DEBUG_CONFIG.logErrorsToStderr,
 		verboseLogging: DEBUG_CONFIG.verboseLogging,
 		disableRewardCards: DEBUG_CONFIG.disableRewardCards,
+		gameTimeout: CONFIG.limits.gameTimeout,
 	}
 }
 
