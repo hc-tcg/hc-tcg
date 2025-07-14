@@ -14,6 +14,7 @@ import type {
 } from '../types/game-state'
 import {GameHook, PriorityHook, WaterfallHook} from '../types/hooks'
 import {afterApply, onCoinFlip, onTurnEnd} from '../types/priorities'
+import {PickRequest} from '../types/server-requests'
 import {CardComponent} from './card-component'
 import query from './query'
 import {RowComponent} from './row-component'
@@ -363,7 +364,7 @@ export class PlayerComponent {
 	/** Create a pick request for knockback. This function will return null if there is no
 	 * valid hermit to switch to or the player can not be knocked back.
 	 */
-	public getKnockbackPickRequest(component: CardComponent) {
+	public getKnockbackPickRequest(component: CardComponent): PickRequest | null {
 		const pickCondition = query.every(
 			query.slot.player(this.entity),
 			query.slot.hermit,
