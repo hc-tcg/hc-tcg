@@ -42,7 +42,7 @@ const BoomerBdubsRare: Hermit = {
 	},
 	data: {
 		extraDamage: 0,
-		flippedTalis: 0,
+		flippedTalis: false,
 	},
 	onAttach(
 		game: GameModel,
