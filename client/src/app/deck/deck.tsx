@@ -52,6 +52,7 @@ const DeckComponent = ({setMenuSection}: Props) => {
 					iconType: 'item',
 					icon: 'any',
 					public: false,
+					elo: 1500,
 				},
 	)
 	const [filteredDecks, setFilteredDecks] = useState<Array<Deck>>([])

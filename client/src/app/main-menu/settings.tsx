@@ -386,7 +386,11 @@ function Settings({setMenuSection}: Props) {
 									targetSetting="deckSortingMethod"
 									useSetting={true}
 									inverter={(side) =>
-										side === 'Alphabetical' ? 'First Tag' : 'Alphabetical'
+										side === 'Alphabetical'
+											? 'First Tag'
+											: side === 'First Tag'
+												? 'Elo'
+												: 'Alphabetical'
 									}
 								/>
 								<Button

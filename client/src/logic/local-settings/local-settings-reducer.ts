@@ -19,7 +19,7 @@ export type LocalSettings = {
 	panoramaEnabled: boolean
 	panorama: string
 	gameSide: string
-	deckSortingMethod: 'Alphabetical' | 'First Tag'
+	deckSortingMethod: 'Alphabetical' | 'First Tag' | 'Elo'
 	lastSelectedTag: string | null
 }
 

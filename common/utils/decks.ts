@@ -4,7 +4,7 @@ import {Deck} from '../types/deck'
 
 export function sortDecks(
 	decks: Array<Deck>,
-	sortingMethod: 'Alphabetical' | 'First Tag',
+	sortingMethod: 'Alphabetical' | 'First Tag' | 'Elo',
 	prioritizedDeckCode: string | null = null,
 ): Array<Deck> {
 	return decks.sort((a, b) => {
@@ -31,6 +31,15 @@ export function sortDecks(
 			const aFirstTag = a.tags![0].name
 			const bFirstTag = b.tags![0].name
 			return aFirstTag.localeCompare(bFirstTag)
+		}
+		if (sortingMethod === 'Elo') {
+			if (a.elo === b.elo) {
+				if (a.name === b.name) {
+					return a.code.localeCompare(b.code)
+				}
+				return a.name.localeCompare(b.name)
+			}
+			return a.elo.toString().localeCompare(b.elo.toString())
 		}
 		//Default case so something is always returned
 		return 0

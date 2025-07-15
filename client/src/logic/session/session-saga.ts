@@ -184,6 +184,7 @@ function* createUser(username: string): Generator<any, User> {
 				code: generateDatabaseCode(),
 				public: false,
 				tags: [],
+				elo: 1500,
 			}
 			user.decks.push(newDeck)
 			saveDeckToLocalStorage(newDeck)
