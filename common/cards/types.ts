@@ -29,6 +29,7 @@ export type Card = {
 	tokens: TokenCostT
 	attachCondition: ComponentQuery<SlotComponent>
 	sidebarDescriptions?: Array<{type: string; name: string}>
+	data: any
 	/** The battle log attached to this card */
 	/** Set to string when the card should generate a log when played or applied, and null otherwise */
 	log?: (values: PlayCardLog) => string

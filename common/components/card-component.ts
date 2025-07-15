@@ -44,6 +44,7 @@ export class CardComponent<CardType extends Card = Card> {
 
 	slotEntity: SlotEntity
 	observerEntity: ObserverEntity | null
+	data: any
 
 	turnedOver: boolean
 	prizeCard: boolean
@@ -85,6 +86,7 @@ export class CardComponent<CardType extends Card = Card> {
 
 		this.turnedOver = false
 		this.prizeCard = false
+		this.data = JSON.parse(JSON.stringify(this.props.data))
 
 		this.props.onCreate(this.game, this)
 
