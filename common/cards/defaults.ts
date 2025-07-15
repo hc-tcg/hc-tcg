@@ -30,6 +30,7 @@ export const card = {
 		if (!this.log) return ''
 		return this.log(values)
 	},
+	data: {},
 }
 
 export const item = {

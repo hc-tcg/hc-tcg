@@ -40,6 +40,10 @@ const BoomerBdubsRare: Hermit = {
 		power:
 			'Flip a coin as many times as you want.\nDo an additional 20hp damage for every heads, but if tails is flipped, this attack deals 0hp total damage.\nWhen this attack is used with Fortune, only the first coinflip will be affected.',
 	},
+	data: {
+		extraDamage: 0,
+		flippedTalis: 0,
+	},
 	onAttach(
 		game: GameModel,
 		component: CardComponent,
@@ -47,15 +51,12 @@ const BoomerBdubsRare: Hermit = {
 	): void {
 		const {player} = component
 
-		let extraDamage = 0
-		let flippedTails = false
-
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(_attack) => {
-				extraDamage = 0
-				flippedTails = false
+				component.data.extraDamage = 0
+				component.data.flippedTails = false
 			},
 		)
 
@@ -101,12 +102,12 @@ const BoomerBdubsRare: Hermit = {
 						const flip = flipCoin(game, player, activeHermit)[0]
 
 						if (flip === 'tails') {
-							flippedTails = true
+							component.data.flippedTails = true
 							fortune?.apply(player.entity)
 							return 'SUCCESS'
 						}
 
-						extraDamage += 20
+						component.data.extraDamage += 20
 
 						game.addModalRequest(followUpModal)
 					},
@@ -149,11 +150,11 @@ const BoomerBdubsRare: Hermit = {
 						)
 
 						if (flip === 'tails') {
-							flippedTails = true
+							component.data.flippedTails = true
 							return 'SUCCESS'
 						}
 
-						extraDamage += 20
+						component.data.extraDamage += 20
 
 						game.addModalRequest(followUpModal)
 
@@ -182,14 +183,14 @@ const BoomerBdubsRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 				observer.unsubscribe(player.hooks.blockedActions)
-				if (flippedTails === true) {
+				if (component.data.flippedTails === true) {
 					attack
 						.multiplyDamage(component.entity, 0)
 						.lockDamage(component.entity)
 					return
 				}
 
-				attack.addDamage(component.entity, extraDamage)
+				attack.addDamage(component.entity, component.data.extraDamage)
 			},
 		)
 	},
