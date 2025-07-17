@@ -27,6 +27,7 @@ import FrenchralisRare from './hermits/frenchralis-rare'
 import GeminiTayRare from './hermits/geminitay-rare'
 import GoatfatherRare from './hermits/goatfather-rare'
 import GrianCommon from './hermits/grian-common'
+import GrianRare from './hermits/grian-rare'
 import HelsknightRare from './hermits/helsknight-rare'
 import HotguyCommon from './hermits/hotguy-common'
 import HumanCleoCommon from './hermits/humancleo-common'
@@ -76,6 +77,7 @@ import Crossbow from './single-use/crossbow'
 import CurseOfBinding from './single-use/curse-of-binding'
 import CurseOfVanishing from './single-use/curse-of-vanishing'
 import Efficiency from './single-use/efficiency'
+import Egg from './single-use/egg'
 import Emerald from './single-use/emerald'
 import FishingRod from './single-use/fishing-rod'
 import FlintAndSteel from './single-use/flint-and-steel'
@@ -397,15 +399,22 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 		cards: [
 			MumboJumboRare,
 			MumboJumboRare,
-			MumboJumboRare,
+			GrianRare,
+			GrianRare,
 			StressMonster101Rare,
 			StressMonster101Rare,
 			BoomerBdubsCommon,
 			BoomerBdubsCommon,
-			BoomerBdubsCommon,
 			TargetBlock,
 			TargetBlock,
-			GoldArmor,
+			Chest,
+			PotionOfWeakness,
+			PotionOfWeakness,
+			Egg,
+			Egg,
+			InstantHealthII,
+			InstantHealthII,
+			InstantHealthII,
 			GoldArmor,
 			GoldArmor,
 			FishingRod,
@@ -429,14 +438,6 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			PranksterItem,
 			PranksterItem,
 			PranksterItem,
-			InstantHealthII,
-			InstantHealthII,
-			InstantHealthII,
-			PotionOfWeakness,
-			PotionOfWeakness,
-			PotionOfWeakness,
-			Knockback,
-			Knockback,
 		],
 	},
 	{

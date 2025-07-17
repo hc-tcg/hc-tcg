@@ -13,7 +13,7 @@ const MumboJumboRare: Hermit = {
 	name: 'Mumbo',
 	expansion: 'default',
 	rarity: 'rare',
-	tokens: 4,
+	tokens: 3,
 	type: 'prankster',
 	health: 290,
 	primary: {

@@ -28,8 +28,6 @@ describe('Test Mumbo Jumbo', () => {
 
 					await test.attack('secondary')
 
-					await test.endTurn()
-
 					expect(
 						game.components.find(
 							RowComponent,
@@ -40,11 +38,11 @@ describe('Test Mumbo Jumbo', () => {
 
 					await test.endTurn()
 
+					await test.endTurn()
+
 					await test.playCardFromHand(MumboJumboRare, 'hermit', 1)
 
 					await test.attack('secondary')
-
-					await test.endTurn()
 
 					expect(
 						game.components.find(
