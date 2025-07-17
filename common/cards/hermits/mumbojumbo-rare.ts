@@ -27,7 +27,7 @@ const MumboJumboRare: Hermit = {
 		cost: ['prankster', 'prankster'],
 		damage: 40,
 		power:
-			'Flip a coin twice.\nDo an additional 20hp damage for every heads. Total attack damage doubles if you have at least one AFK Prankster from the Base Set on the game board.',
+			'Flip a coin twice.\nDo an additional 20hp damage for every heads. Total attack damage doubles if you have at least one AFK Prankster from the Base Set expansion on the game board.',
 	},
 	onAttach(
 		game: GameModel,
