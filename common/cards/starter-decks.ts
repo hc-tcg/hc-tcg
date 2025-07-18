@@ -438,6 +438,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			PranksterItem,
 			PranksterItem,
 			PranksterItem,
+			PranksterItem,
 		],
 	},
 	{
