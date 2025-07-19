@@ -52,6 +52,7 @@ import {
 	SecondaryAttackDisabledEffect,
 } from './singleturn-attack-disabled'
 import SculkCatalystTriggeredEffect from './skulk-catalyst'
+import SingleUseBlockedEffect from './single-use-blocked'
 import SleepingEffect from './sleeping'
 import SlownessEffect from './slowness'
 import SmeltingEffect from './smelting'
@@ -121,6 +122,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	MelodyEffect,
 	LitFuseEffect,
 	OverhealEffect,
+	SingleUseBlockedEffect,
 	/* Hidden Status Effects */
 	TurnSkippedEffect,
 	GasLightEffect,
