@@ -25,7 +25,7 @@ _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary ch
 
 ## Running in your development environment
 
-Before you can run the game locally without using docker, you will need to create the debug config file. To do this, run `cp ./common/config/debug-config.example.js ./common/config/debug-config.js` on Linux, and `copy ./common/config/debug-config.example.js ./common/config/debug-config.js` on Windows.
+Before you can run the game, with or without docker, you will need to create the debug config file. To do this, run `cp ./common/config/debug-config.example.js ./common/config/debug-config.js` on Linux, and `copy ./common/config/debug-config.example.js ./common/config/debug-config.js` on Windows.
 
 ```sh
 npm ci               # install packages
