@@ -7,7 +7,7 @@ An unofficial implementation of [Vintage Beef](https://www.youtube.com/@VintageB
 Use Node.js 20+.
 If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh/nvm) or [asdf](https://asdf-vm.com/).
 
-## Set up dev environment
+## Set Up Dev Environment
 
 <details>
 <summary>Run project with docker (reccomended)</summary>
