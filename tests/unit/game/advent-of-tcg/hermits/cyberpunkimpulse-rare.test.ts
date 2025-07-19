@@ -14,8 +14,8 @@ import WildItem from 'common/cards/items/wild-common'
 import Efficiency from 'common/cards/single-use/efficiency'
 import {SlotComponent} from 'common/components'
 import query from 'common/components/query'
-import {testGame} from '../../utils'
 import {getAvailableEnergy} from 'common/game/run-game'
+import {testGame} from '../../utils'
 
 describe('Test Cyberpunk Impulse', () => {
 	test('Energy transferred', async () => {

@@ -12,7 +12,9 @@ import query from 'common/components/query'
 import serverConfig from 'common/config/server-config'
 import {COINS} from 'common/cosmetics/coins'
 import {defaultAppearance} from 'common/cosmetics/default'
+import ExBossAI from 'common/game//virtual/exboss-ai'
 import {getLocalGameState} from 'common/game/make-local-state'
+import runGame, {getTimerForSeconds} from 'common/game/run-game'
 import {OpponentDefs} from 'common/game/setup-game'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
@@ -36,12 +38,10 @@ import {
 import {LocalMessageTable, localMessages} from 'messages'
 import {ServerSideGameController} from 'serverside-game-controller'
 import {all, call, delay, fork, race, take} from 'typed-redux-saga'
-import {safeCall} from '../utils'
 import root from '../serverRoot'
+import {safeCall} from '../utils'
 import {broadcast} from '../utils/comm'
-import runGame, {getTimerForSeconds} from 'common/game/run-game'
 import {TurnActionCompressor} from './turn-action-compressor'
-import ExBossAI from 'common/game//virtual/exboss-ai'
 
 function setupGame(
 	player1: PlayerModel,

@@ -1,5 +1,8 @@
 import assert from 'assert'
 import serverConfig from 'common/config/server-config'
+import {GameControllerProps} from 'common/game/game-controller'
+import runGame from 'common/game/run-game'
+import {PlayerSetupDefs} from 'common/game/setup-game'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -28,10 +31,7 @@ import {
 	PlayCardActionData,
 	WaitActionData,
 } from '../../../common/types/turn-action-data'
-import {PlayerSetupDefs} from 'common/game/setup-game'
 import {ServerSideGameController} from '../serverside-game-controller'
-import runGame from 'common/game/run-game'
-import {GameControllerProps} from 'common/game/game-controller'
 
 const VARIABLE_BYTE_MAX = 1 // 0xFF
 const INVALID_REPLAY = 0x00

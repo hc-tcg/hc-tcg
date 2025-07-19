@@ -1,5 +1,6 @@
 import classNames from 'classnames'
 import {CARDS} from 'common/cards'
+import {getIconPath} from 'common/game/setup-game'
 import {ToastT} from 'common/types/app'
 import {Deck, Tag} from 'common/types/deck'
 import {sortCardInstances} from 'common/utils/cards'
@@ -40,7 +41,6 @@ import {cardGroupHeader} from './deck'
 import {iconDropdownOptions} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import {getIconPath} from 'common/game/setup-game'
 
 type Props = {
 	setMenuSection: (section: string) => void

@@ -2,6 +2,8 @@ import {ACHIEVEMENTS} from 'common/achievements'
 import {DEBUG_CONFIG} from 'common/config'
 import {COSMETICS} from 'common/cosmetics'
 import {Background, Border, Coin, Heart, Title} from 'common/cosmetics/types'
+import {GameController} from 'common/game/game-controller'
+import {getLocalGameState} from 'common/game/make-local-state'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
@@ -21,8 +23,6 @@ import {getGame} from 'selectors'
 import {delay, put, race, select, take} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
-import {GameController} from 'common/game/game-controller'
-import {getLocalGameState} from 'common/game/make-local-state'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 
