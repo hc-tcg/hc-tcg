@@ -16,7 +16,7 @@ const LavaBucket: SingleUse = {
 	name: 'Lava Bucket',
 	expansion: 'default',
 	rarity: 'rare',
-	tokens: 3,
+	tokens: 2,
 	description: "Burn your opponent's active Hermit.",
 	showConfirmationModal: true,
 	attachCondition: query.every(

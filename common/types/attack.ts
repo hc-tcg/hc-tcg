@@ -54,6 +54,7 @@ export type AttackDefs =
 			shouldIgnoreSlots?: Array<ComponentQuery<CardComponent>>
 			isBacklash?: boolean
 			createWeakness?: WeaknessType
+			trueDamage?: boolean
 			log?: (values: AttackLog) => string
 	  }
 	| {
@@ -63,6 +64,7 @@ export type AttackDefs =
 			shouldIgnoreSlots?: Array<ComponentQuery<CardComponent>>
 			isBacklash?: boolean
 			createWeakness?: WeaknessType
+			trueDamage?: boolean
 			log?: (values: AttackLog) => string
 	  }
 	| {
@@ -74,6 +76,7 @@ export type AttackDefs =
 			shouldIgnoreSlots?: Array<ComponentQuery<CardComponent>>
 			isBacklash?: boolean
 			createWeakness?: WeaknessType
+			trueDamage?: boolean
 			log?: (values: AttackLog) => string
 	  }
 

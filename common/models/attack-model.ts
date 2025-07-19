@@ -27,6 +27,8 @@ export class AttackModel {
 	private damageReduction: number = 0
 	/** Is the damage on this attack changeable? */
 	private damageLocked: boolean = false
+	/** Ignores damage reduction? (also cannot be partially redirected for how it currently works)*/
+	private trueDamage: boolean = false
 	/** The list of all changes made to this attack */
 	private history: Array<AttackHistory> = []
 
@@ -60,6 +62,7 @@ export class AttackModel {
 		this.game = game
 		this.type = defs.type
 		this.isBacklash = defs.isBacklash || false
+		this.trueDamage = defs.trueDamage || false
 
 		this.attackerEntity = defs.attacker || null
 		this.targetEntity = defs.target || null
@@ -127,7 +130,8 @@ export class AttackModel {
 	/** Calculates the damage for this attack */
 	public calculateDamage() {
 		return Math.max(
-			this.damage * this.damageMultiplier - this.damageReduction,
+			this.damage * this.damageMultiplier -
+				(this.trueDamage ? 0 : this.damageReduction),
 			0,
 		)
 	}
