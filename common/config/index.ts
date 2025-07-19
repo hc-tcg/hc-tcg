@@ -1,8 +1,4 @@
 import EXAMPLE_CONFIG from '../../config.example.js'
-try {
-	import REAL_CONFIG from '../../config.js'
-catch {}
-
 import profanitySeed from './profanity-seed.js'
 
 let config = null
