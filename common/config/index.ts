@@ -2,8 +2,11 @@ import EXAMPLE_CONFIG from '../../config.example.js'
 import profanitySeed from './profanity-seed.js'
 
 let config = null
+
 try {
-	config = await import('../../config.js')
+	// Prevent ts from preventing import
+	let m: string = '../../config.js'
+	config = await import(m)
 } catch {
 	config = await import('../../config.example.js')
 }
