@@ -24,6 +24,9 @@ jobs:
           npm install
           npx playwright install --with-deps firefox
 
+      - name: Create config file
+        run: cp ./config.example.js ./config.js
+
       - name: Build Cards
         run: npm run client:render-cards
 

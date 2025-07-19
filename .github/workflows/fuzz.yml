@@ -34,6 +34,9 @@ jobs:
         run: |
           npm install
 
+      - name: Create config file
+        run: cp ./config.example.js ./config.js
+
       - name: Run Fuzz Tests
         id: fuzz
         run: |
