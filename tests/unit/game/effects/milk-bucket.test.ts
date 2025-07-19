@@ -6,7 +6,7 @@ import BadOmen from 'common/cards/single-use/bad-omen'
 import SplashPotionOfPoison from 'common/cards/single-use/splash-potion-of-poison'
 import {StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
-import BadOmenEffect from 'common/status-effects/badomen'
+import BadOmenEffect from 'common/status-effects/bad-omen'
 import PoisonEffect from 'common/status-effects/poison'
 import {testGame} from '../utils'
 

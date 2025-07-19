@@ -4,42 +4,49 @@ An unofficial implementation of [Vintage Beef](https://www.youtube.com/@VintageB
 
 ## Node.js
 
-Use Node.js 16-18 (19+ is not supported).
+Use Node.js 20+.
+If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh/nvm) or [asdf](https://asdf-vm.com/).
 
-If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh/nvm).
+## Set Up Dev Environment
 
-## How to run Hermitcraft TCG
+<details>
+<summary>Run project with docker (reccomended)</summary>
+<br>
 
-```sh
-npm ci                      # install packages
-npm run build-dev           # build a developement build of the client
-npm run build-dev-windows   # build a developement build of the client on windows
-npm run server              # start the sever
+First you will need to create the debug config file.  To do this, run `cp ./config.example.js ./config.js` on Linux, and `copy ./config.example.js ./config.js` on Windows.
+
+You can then use the following command:
+```
+npm run docker-dev          # start the docker development image
 ```
 
-_Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
+By default, the client is hosted on port 3002.
+</details>
+
+
+<details>
+<summary>Run project without docker</summary>
+<br>
 
 ## Running in your development environment
 
-Before you can run the game locally, you will need to create the debug config file. To do this, run `cp ./config.example.js ./config.js` on Linux, and `copy ./config.example.js ./config.js` on Windows.
+First you will need to create the debug config file.  To do this, run `cp ./config.example.js ./config.js` on Linux, and `copy ./config.example.js ./config.js` on Windows.
+You can then use the following commands:
 
 ```sh
 npm ci               # install packages
 
+npm run dev          # start both the client and server
+
 npm run server:dev   # start the server and update automatically when you make changes
 npm run client:dev   # start the client and update automatically when you make changes
-
-npm run dev          # start both the client and server
-```
-
-If you need to test code that interacts with the database, you can use our development docker compose file:
-```
-# docker-compose -f docker-compose-dev.yml up
 ```
 
 _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
 
 By default, the client is hosted on port 3002.
+
+</details>
 
 ## How To & Architecture
 
@@ -80,9 +87,13 @@ npm run test:fuzz           # run fuzz tests (see tests/README.md for more detai
 # Building & Self Hosting
 
 To build you must run these commands:
+```sh
+npm ci                      # install packages
+npm run build-dev           # build a developement build of the client
+npm run build-dev-windows   # build a developement build of the client on windows
 ```
-npm run build
-```
+
+_Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
 
 To build the cards you must have `sh` and `imagemagick` installed along with the project dependencies.
 ```
@@ -104,3 +115,4 @@ docker-compose up -d
 ```
 
 By default, the server will listen to requests on port 9000.  The instance can be backed up by backing up the contents of /etc/hctcg (or whatever directory you specify).
+

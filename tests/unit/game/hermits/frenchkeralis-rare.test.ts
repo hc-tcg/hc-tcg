@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import FrenchralisRare from 'common/cards/hermits/frenchralis-rare'
+import FrenchralisRare from 'common/cards/hermits/frenchkeralis-rare'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {testGame} from '../utils'

@@ -27,6 +27,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    volumes:
+      - ./common:/app/common
+      - ./server:/app/server
+      - ./client:/app/client
+      - ./version.js:/app/version.js
+      - ./config.js:/app/config.js
     environment:
       - DATABASE_URL=postgresql://hctcg:hctcg@db:5432/hctcg
 

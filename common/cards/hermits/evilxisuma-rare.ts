@@ -11,7 +11,7 @@ import {
 	SecondaryAttackDisabledEffect,
 } from '../../status-effects/singleturn-attack-disabled'
 import {afterAttack} from '../../types/priorities'
-import {flipCoin} from '../../utils/coinFlips'
+import {flipCoin} from '../../utils/coin-flips'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 

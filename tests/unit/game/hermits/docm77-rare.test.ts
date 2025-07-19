@@ -5,7 +5,7 @@ import BadOmen from 'common/cards/single-use/bad-omen'
 import InvisibilityPotion from 'common/cards/single-use/invisibility-potion'
 import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
-import BadOmenEffect from 'common/status-effects/badomen'
+import BadOmenEffect from 'common/status-effects/bad-omen'
 import {InvisibilityPotionTailsEffect} from 'common/status-effects/invisibility-potion'
 import {testGame} from '../utils'
 

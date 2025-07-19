@@ -10,7 +10,7 @@ import FortuneEffect from '../../../status-effects/fortune'
 import NaughtyRegiftEffect from '../../../status-effects/naughty-regift'
 import SpentFortuneEffect from '../../../status-effects/spent-fortune'
 import {beforeAttack} from '../../../types/priorities'
-import {flipCoin} from '../../../utils/coinFlips'
+import {flipCoin} from '../../../utils/coin-flips'
 import {hermit} from '../../defaults'
 import {Hermit} from '../../types'
 

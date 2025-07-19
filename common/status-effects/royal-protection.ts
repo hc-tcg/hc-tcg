@@ -10,7 +10,7 @@ import {StatusEffect, statusEffect} from './status-effect'
 const RoyalProtectionEffect: StatusEffect<CardComponent> = {
 	...statusEffect,
 	id: 'royal-protection',
-	icon: 'royal_protection',
+	icon: 'royal-protection',
 	name: 'Royal Protection',
 	description:
 		'Any damage dealt to a Hermit under Royal Protection is prevented.',
