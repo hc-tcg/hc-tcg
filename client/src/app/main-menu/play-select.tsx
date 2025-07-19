@@ -17,7 +17,6 @@ import SplashPotionOfPoison from 'common/cards/single-use/splash-potion-of-poiso
 import Spyglass from 'common/cards/single-use/spyglass'
 import TargetBlock from 'common/cards/single-use/target-block'
 import {Card} from 'common/cards/types'
-import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
 import {CardEntity} from 'common/entities'
 import {Deck} from 'common/types/deck'
@@ -42,6 +41,7 @@ import {useEffect, useReducer, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CosmeticPreview} from './achievements'
 import css from './play-select.module.scss'
+import { CONFIG } from 'common/config'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -326,7 +326,7 @@ function PlaySelect({
 							mobileTop={mobileTop}
 							enableRematch={!!rematch && !rematch.spectatorCode}
 							timerStart={rematch?.time}
-							timerLength={serverConfig.limits.rematchTime}
+							timerLength={CONFIG.game.limits.rematchTime}
 							onRematchSelect={() => {
 								addMenuWithBack('rematchChooseDeck')
 								sortDecksByActive()
@@ -394,7 +394,7 @@ function PlaySelect({
 							mobileTop={mobileTop}
 							enableRematch={!!rematch && !!rematch.spectatorCode}
 							timerStart={rematch?.time}
-							timerLength={serverConfig.limits.rematchTime}
+							timerLength={CONFIG.game.limits.rematchTime}
 							onRematchSelect={() => {
 								addMenuWithBack('rematchChooseDeck')
 								sortDecksByActive()
@@ -720,7 +720,7 @@ during the battle."
 								disableBack={!!matchmaking}
 								mobileTop={mobileTop}
 								timerStart={rematch?.time || 0}
-								timerLength={serverConfig.limits.rematchTime}
+								timerLength={CONFIG.game.limits.rematchTime}
 								disabled={rematchDisabled}
 								enableRematch={false}
 							>

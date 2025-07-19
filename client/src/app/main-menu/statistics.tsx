@@ -3,8 +3,6 @@ import classNames from 'classnames'
 import {CARDS} from 'common/cards'
 import {getCardTypeIcon} from 'common/cards/card'
 import {Card as CardType} from 'common/cards/types'
-import debugConfig from 'common/config/debug-config'
-import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
 import {TypeT} from 'common/types/cards'
 import {GameHistory} from 'common/types/database'
@@ -29,10 +27,11 @@ import {Bar} from 'react-chartjs-2'
 import {useDispatch, useSelector} from 'react-redux'
 import {FilterComponent} from '../deck/deck-select'
 import css from './statistics.module.scss'
+import {CONFIG} from 'common/config'
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 
-const STATS_URL = `${debugConfig.statsUrl || window.location.origin}/api/stats`
+const STATS_URL = `${CONFIG.statsUrl || window.location.origin}/api/stats`
 
 defaults.font = {size: 16, family: 'Minecraft, Unifont'}
 defaults.color = '#f8faff'
@@ -386,8 +385,8 @@ function Statistics({setMenuSection}: Props) {
 					(card: string) =>
 						!(
 							EXPANSIONS[CARDS[card].expansion].disabled ||
-							serverConfig.limits.bannedCards.includes(card) ||
-							serverConfig.limits.disabledCards.includes(card)
+							CONFIG.game.limits.bannedCards.includes(card) ||
+							CONFIG.game.limits.disabledCards.includes(card)
 						),
 				),
 			)
@@ -453,8 +452,8 @@ function Statistics({setMenuSection}: Props) {
 				(card) =>
 					!(
 						EXPANSIONS[CARDS[card.id].expansion].disabled ||
-						serverConfig.limits.bannedCards.includes(card.id) ||
-						serverConfig.limits.disabledCards.includes(card.id)
+						CONFIG.game.limits.bannedCards.includes(card.id) ||
+						CONFIG.game.limits.disabledCards.includes(card.id)
 					),
 			)
 		}

@@ -3,8 +3,6 @@ import classNames from 'classnames'
 import {CARDS} from 'common/cards'
 import {getRenderedCardImage} from 'common/cards/card'
 import {Attach, Hermit, Item, SingleUse} from 'common/cards/types'
-import debugConfig from 'common/config/debug-config'
-import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
 import Tooltip from 'components/tooltip'
 import CardInstanceTooltip from './card-tooltip'
@@ -12,6 +10,7 @@ import css from './card.module.scss'
 import EffectCardModule from './effect-card-svg'
 import HermitCardModule from './hermit-card-svg'
 import ItemCardModule from './item-card-svg'
+import {CONFIG} from 'common/config'
 
 interface CardReactProps
 	extends React.DetailedHTMLProps<
@@ -59,7 +58,7 @@ const Card = (props: CardReactProps) => {
 
 	const disabled =
 		EXPANSIONS[cardProps.expansion].disabled === true ||
-		serverConfig.limits.disabledCards.includes(cardProps.id)
+		CONFIG.game.limits.disabledCards.includes(cardProps.id)
 			? 'disabled'
 			: 'enabled'
 
@@ -73,7 +72,7 @@ const Card = (props: CardReactProps) => {
 			<button
 				className={cn(
 					props.className,
-					!debugConfig.renderCardsDynamically && css.cardImage,
+					!CONFIG.game.renderCardsDynamically && css.cardImage,
 					{
 						[css.selected]: selected,
 						[css.picked]: picked,
@@ -83,7 +82,7 @@ const Card = (props: CardReactProps) => {
 				)}
 				onClick={unpickable ? () => {} : onClick}
 			>
-				{debugConfig.renderCardsDynamically ? (
+				{CONFIG.game.renderCardsDynamically ? (
 					<div className={cn(css.noPointerEvents, css.card)}>{card}</div>
 				) : (
 					<div

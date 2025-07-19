@@ -1,5 +1,4 @@
 import cn from 'classnames'
-import serverConfig from 'common/config/server-config'
 import {PlayerEntity} from 'common/entities'
 import {EarnedAchievement} from 'common/types/achievements'
 import {RematchData} from 'common/types/app'
@@ -8,6 +7,7 @@ import Button from 'components/button'
 import {Modal} from 'components/modal'
 import {useEffect, useReducer, useRef, useState} from 'react'
 import css from './end-game-overlay.module.scss'
+import {CONFIG} from 'common/config'
 
 type Props = {
 	outcome: GameOutcome
@@ -160,7 +160,7 @@ const ReplayTimer = ({
 		return <div className={css.rematchTimeRemaining}>0s</div>
 	}
 
-	const timerLength = serverConfig.limits.rematchTime
+	const timerLength = CONFIG.game.limits.rematchTime
 
 	const [replayTimeRemaining, setReplayTimeRemaining] = useState<number>(
 		Math.max(Math.floor((timerStart - Date.now() + timerLength) / 1000), 0),
@@ -201,7 +201,7 @@ const EndGameOverlay = ({
 	useEffect(() => {
 		const timeout = setTimeout(() => {
 			setDisableReplay(true)
-		}, rematchData?.time || serverConfig.limits.rematchTime)
+		}, rematchData?.time || CONFIG.game.limits.rematchTime)
 		return () => {
 			clearTimeout(timeout)
 		}
