@@ -9,7 +9,6 @@ import {
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
-import serverConfig from 'common/config/server-config'
 import {COINS} from 'common/cosmetics/coins'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
@@ -42,6 +41,7 @@ import {getLocalGameState} from '../utils/state-gen'
 import runGame, {getTimerForSeconds} from './game'
 import {TurnActionCompressor} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
+import {CONFIG} from 'common/config'
 
 function setupGame(
 	player1: PlayerModel,
@@ -336,7 +336,7 @@ function* gameManager(con: GameController) {
 			opponentScore: player1Score,
 		},
 	})
-	yield* delay(serverConfig.limits.rematchTime)
+	yield* delay(CONFIG.game.limits.rematchTime)
 	broadcast(gamePlayers, {
 		type: serverMessages.SEND_REMATCH,
 		rematch: null,

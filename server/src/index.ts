@@ -10,7 +10,7 @@ import {addApi} from './api'
 import {loadUpdates} from './load-updates'
 import startSocketIO from './sockets'
 
-const port = process.env.PORT || CONFIG.port || 9000
+const port = process.env.PORT || CONFIG.server.port || 9000
 
 const app = express()
 app.use(express.json())
@@ -23,7 +23,7 @@ const server = createServer(app)
 startSocketIO(server)
 
 app.use(express.json())
-app.use(cors({origin: CONFIG.cors}))
+app.use(cors({origin: CONFIG.server.cors}))
 
 // @TODO Hardcoded redirect to the new site, for now
 app.use((req, res, next) => {
