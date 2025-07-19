@@ -280,6 +280,7 @@ const defaultGameSettings = {
 	logErrorsToStderr: false,
 	verboseLogging: !!process.env.UNIT_VERBOSE,
 	disableRewardCards: false,
+	logAttackHistory: true,
 } satisfies GameSettings
 
 /**

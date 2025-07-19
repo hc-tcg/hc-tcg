@@ -1,5 +1,5 @@
 import {ACHIEVEMENTS} from 'common/achievements'
-import {DEBUG_CONFIG} from 'common/config'
+import {CONFIG} from 'common/config'
 import {COSMETICS} from 'common/cosmetics'
 import {Background, Border, Coin, Heart, Title} from 'common/cosmetics/types'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
@@ -197,7 +197,7 @@ export function* updateCosmeticSaga(
 				cosmetic.requires.level || 0
 			]
 	}
-	if (DEBUG_CONFIG.unlockAllCosmetics) isUnlocked = true
+	if (CONFIG.unlockAllCosmetics) isUnlocked = true
 	if (!cosmetic || !isUnlocked) {
 		broadcast([player], {type: serverMessages.COSMETICS_INVALID})
 	}

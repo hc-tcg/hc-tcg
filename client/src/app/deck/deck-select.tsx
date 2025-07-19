@@ -518,7 +518,7 @@ function SelectDeck({
 								<div className={css.dynamicSpace}></div>
 
 								<p className={classNames(css.cardCount)}>
-									{loadedDeck.cards.length}/{CONFIG.limits.maxCards}{' '}
+									{loadedDeck.cards.length}/{CONFIG.game.limits.maxCards}{' '}
 									<span className={css.hideOnMobile}>cards</span>
 								</p>
 								<div className={css.cardCount}>
@@ -526,7 +526,7 @@ function SelectDeck({
 										{getDeckCost(
 											loadedDeck.cards.map((card) => CARDS[card.id]),
 										)}
-										/{CONFIG.limits.maxDeckCost}{' '}
+										/{CONFIG.game.limits.maxDeckCost}{' '}
 										<span className={css.hideOnMobile}>tokens</span>
 									</p>
 								</div>
@@ -579,13 +579,13 @@ function SelectDeck({
 								</button>
 								<div className={css.mobileDeckStats}>
 									<div className={css.mobileDeckStat}>
-										{loadedDeck.cards.length}/{CONFIG.limits.maxCards}
+										{loadedDeck.cards.length}/{CONFIG.game.limits.maxCards}
 									</div>
 									<div className={classNames(css.mobileDeckStat, css.tokens)}>
 										{getDeckCost(
 											loadedDeck.cards.map((card) => CARDS[card.id]),
 										)}
-										/{CONFIG.limits.maxDeckCost}
+										/{CONFIG.game.limits.maxDeckCost}
 									</div>
 								</div>
 							</div>

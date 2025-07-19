@@ -115,8 +115,8 @@ const EXPANSION_NAMES = [
 				card.expansion === expansion &&
 				EXPANSIONS[expansion].disabled === false &&
 				!(
-					CONFIG.limits.bannedCards.includes(card.id) ||
-					CONFIG.limits.disabledCards.includes(card.id)
+					CONFIG.game.limits.bannedCards.includes(card.id) ||
+					CONFIG.game.limits.disabledCards.includes(card.id)
 				),
 		)
 	}),
@@ -235,8 +235,8 @@ const ALL_CARDS = sortCardInstances(
 			// Don't show disabled cards
 			EXPANSIONS[card.expansion].disabled === false &&
 			!(
-				CONFIG.limits.bannedCards.includes(card.id) ||
-				CONFIG.limits.disabledCards.includes(card.id)
+				CONFIG.game.limits.bannedCards.includes(card.id) ||
+				CONFIG.game.limits.disabledCards.includes(card.id)
 			),
 	).map(
 		(card): LocalCardInstance => ({
@@ -654,7 +654,7 @@ function EditDeck({
 							<div className={css.dynamicSpace} />
 							<div className={css.deckDetails}>
 								<p className={classNames(css.cardCount, css.dark)}>
-									{loadedDeck.cards.length}/{CONFIG.limits.maxCards}
+									{loadedDeck.cards.length}/{CONFIG.game.limits.maxCards}
 									<span className={css.hideOnMobile}>cards</span>
 								</p>
 								<p
@@ -689,7 +689,7 @@ function EditDeck({
 									className={classNames(css.cardCount, css.dark, css.tokens)}
 								>
 									{getDeckCost(loadedDeck.cards.map((card) => CARDS[card.id]))}/
-									{CONFIG.limits.maxDeckCost}{' '}
+									{CONFIG.game.limits.maxDeckCost}{' '}
 									<span className={css.hideOnMobile}>tokens</span>
 								</div>
 							</div>
