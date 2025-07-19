@@ -1,18 +1,5 @@
-import EXAMPLE_CONFIG from '../../config.example.js'
+import config from '../../config.js'
 import profanitySeed from './profanity-seed.js'
-
-let config = null
-
-async function importConfig(): Promise<typeof EXAMPLE_CONFIG> {
-	try {
-		// Prevent ts from preventing import
-		let m: string = '../../config.js'
-		config = await import(m)
-	} catch {
-		config = await import('../../config.example.js')
-	}
-	return config.default
-}
 
 // __APP_VERSION__ is defined in vite.config.js and esbuild.js.
 declare const __APP_VERSION__: string
@@ -36,6 +23,6 @@ export const VERSION = appVersion
 /** Set to 'true` if the server or client is being run in the development or CI environment. */
 export const DEBUG = debug
 
-export const CONFIG = await importConfig()
+export const CONFIG = config
 
 export const PROFANITY_SEED = profanitySeed
