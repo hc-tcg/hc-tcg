@@ -35,13 +35,13 @@ app.use((req, res, next) => {
 })
 
 app.use(
-	express.static(path.join(__dirname, '../..', CONFIG.clientPath), {
+	express.static(path.join(__dirname, '../..', CONFIG.server.clientPath), {
 		maxAge: 1000 * 60 * 60,
 	}),
 )
 
 app.get('/', (_req, res) => {
-	res.sendFile(path.join(__dirname, '../..', CONFIG.clientPath, 'index.html'))
+	res.sendFile(path.join(__dirname, '../..', CONFIG.server.clientPath, 'index.html'))
 })
 
 addApi(app)
