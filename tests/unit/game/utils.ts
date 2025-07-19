@@ -16,6 +16,10 @@ import {
 import query, {ComponentQuery} from 'common/components/query'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerEntity} from 'common/entities'
+import { GameController } from 'common/game/game-controller'
+import { getLocalCard } from 'common/game/make-local-state'
+import runGame from 'common/game/run-game'
+import { PlayerSetupDefs } from 'common/game/setup-game'
 import {GameModel, GameSettings} from 'common/models/game-model'
 import {SlotTypeT} from 'common/types/cards'
 import {GameOutcome} from 'common/types/game-state'
@@ -24,10 +28,6 @@ import {
 	attackToAttackAction,
 	slotToPlayCardAction,
 } from 'common/types/turn-action-data'
-import {PlayerSetupDefs} from 'common/utils/state-gen'
-import {GameController} from 'server/game-controller'
-import runGame from 'server/routines/game'
-import {getLocalCard} from 'server/utils/state-gen'
 
 function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 	return {

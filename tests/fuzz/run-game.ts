@@ -1,11 +1,11 @@
 import {Card} from 'common/cards/types'
 import {AIComponent} from 'common/components/ai-component'
 import {defaultAppearance} from 'common/cosmetics/default'
+import {GameController} from 'common/game/game-controller'
+import {PlayerSetupDefs} from 'common/game/setup-game'
 import {GameSettings} from 'common/models/game-model'
 import {CurrentCoinFlip} from 'common/types/game-state'
 import {VirtualAI} from 'common/types/virtual-ai'
-import {PlayerSetupDefs} from 'common/utils/state-gen'
-import {GameController} from 'server/game-controller'
 import gameSaga from 'server/routines/game'
 
 class FuzzyGameController extends GameController {
