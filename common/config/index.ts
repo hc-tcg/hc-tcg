@@ -1,5 +1,5 @@
 import profanitySeed from './profanity-seed.js'
-import CONFIG_T from '../../config.example.js'
+import EXAMPLE_CONFIG from '../../config.example.js'
 
 let config = null
 try {
@@ -30,6 +30,6 @@ export const VERSION = appVersion
 /** Set to 'true` if the server or client is being run in the development or CI environment. */
 export const DEBUG = debug
 
-export const CONFIG: typeof CONFIG_T = config.default
+export const CONFIG: typeof EXAMPLE_CONFIG = config.default
 
 export const PROFANITY_SEED = profanitySeed
