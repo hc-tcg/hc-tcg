@@ -104,6 +104,9 @@ describe('Test Netherite Armor', () => {
 						query.slot.rowIndex(1),
 					)
 
+					await test.endTurn()
+					await test.endTurn()
+
 					await test.attack('primary')
 
 					expect(

@@ -47,6 +47,7 @@ import PostInspectorEffect from './post-inspector'
 import ProtectedEffect from './protected'
 import RoyalProtectionEffect from './royal-protection'
 import SheepStareEffect from './sheep-stare'
+import SingleUseBlockedEffect from './single-use-blocked'
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
@@ -121,6 +122,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	MelodyEffect,
 	LitFuseEffect,
 	OverhealEffect,
+	SingleUseBlockedEffect,
 	/* Hidden Status Effects */
 	TurnSkippedEffect,
 	GasLightEffect,

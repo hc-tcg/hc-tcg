@@ -1,6 +1,11 @@
-import {CardComponent, ObserverComponent} from '../../components'
+import {
+	CardComponent,
+	ObserverComponent,
+	StatusEffectComponent,
+} from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
+import SingleUseBlockedEffect from '../../status-effects/single-use-blocked'
 import {afterAttack} from '../../types/priorities'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
@@ -42,6 +47,16 @@ const GeminiTayRare: Hermit = {
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
+
+				if (
+					game.components.exists(
+						StatusEffectComponent,
+						query.effect.is(SingleUseBlockedEffect),
+						query.effect.targetEntity(player.entity),
+					)
+				) {
+					return
+				}
 
 				// Discard the single-use card.
 				game.components

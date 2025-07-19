@@ -387,6 +387,10 @@ describe('Test Trapdoor', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
+
+					await test.endTurn()
+					await test.endTurn()
+
 					await test.attack('primary')
 					expect(
 						game.components.find(
