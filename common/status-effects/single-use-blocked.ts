@@ -26,7 +26,7 @@ const SingleUseBlockedEffect: StatusEffect<PlayerComponent> = {
 		effect: StatusEffectComponent,
 		target: PlayerComponent,
 		observer: ObserverComponent,
-	): void {
+	) {
 		const player = target
 		const startBlocking = game.addBlockedActions(
 			effect.entity,
