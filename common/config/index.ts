@@ -3,7 +3,7 @@ import profanitySeed from './profanity-seed.js'
 
 let config = null
 
-async function importConfig(): typeof EXAMPLE_CONFIG {
+async function importConfig(): Promise<typeof EXAMPLE_CONFIG> {
 	try {
 		// Prevent ts from preventing import
 		let m: string = '../../config.js'
