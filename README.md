@@ -12,6 +12,7 @@ If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh
 <details>
 <summary>Run Project With Docker (reccomended)</summary>
 <br>
+
 First you will need to create the debug config file. To do this, run `cp ./common/config/debug-config.example.js ./common/config/debug-config.js` on Linux, and `copy ./common/config/debug-config.example.js ./common/config/debug-config.js` on Windows.
 
 You can then use the following command:
@@ -28,6 +29,9 @@ By default, the client is hosted on port 3002.
 <br>
 
 ## Running in your development environment
+
+First you will need to create the debug config file. To do this, run `cp ./common/config/debug-config.example.js ./common/config/debug-config.js` on Linux, and `copy ./common/config/debug-config.example.js ./common/config/debug-config.js` on Windows.
+You can then use the following commands:
 
 ```sh
 npm ci               # install packages
