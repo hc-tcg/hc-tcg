@@ -17,7 +17,7 @@ export default defineConfig({
 		__ENV__: JSON.stringify(process.env.NODE_ENV),
 		__DEBUG_BUILD__: JSON.stringify(process.env.NODE_ENV !== 'production'),
 		__PORT__: JSON.stringify(CONFIG.server.port),
-		__LIMITS__: JSON.stringify(CONFIG.server.limits),
+		__LIMITS__: JSON.stringify(CONFIG.game.limits),
 		__LOGO_SUBTEXT__: JSON.stringify(CONFIG.logoSubText),
 		__APP_VERSION__: `'${getAppVersion()}'`,
 	},
