@@ -11,8 +11,12 @@ import SpentFortuneEffect from '../../status-effects/spent-fortune'
 import {SelectCards} from '../../types/modal-requests'
 import {afterAttack, beforeAttack} from '../../types/priorities'
 import {flipCoin} from '../../utils/coinFlips'
+import {InstancedValue} from '../card'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
+
+const flippedCoin = new InstancedValue<boolean>(() => false)
+const extraDamage = new InstancedValue<boolean>(() => 0)
 
 const BoomerBdubsRare: Hermit = {
 	...hermit,
