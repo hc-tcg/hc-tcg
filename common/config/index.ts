@@ -8,8 +8,6 @@ try {
 	config = await import('../../config.example.js')
 }
 
-console.log(config)
-
 // __APP_VERSION__ is defined in vite.config.js and esbuild.js.
 declare const __APP_VERSION__: string
 let appVersion
