@@ -16,7 +16,7 @@ const ImpulseSVRare: Hermit = {
 	name: 'Impulse',
 	expansion: 'default',
 	rarity: 'rare',
-	tokens: 4,
+	tokens: 3,
 	type: 'redstone',
 	health: 250,
 	primary: {
@@ -30,7 +30,7 @@ const ImpulseSVRare: Hermit = {
 		cost: ['redstone', 'any'],
 		damage: 70,
 		power:
-			'For each of your base set AFK Bdubs or Tangos on the game board, do an additional 40hp damage, up to a maximum of 80hp additional damage.',
+			'If you have a base set AFK Bdubs or Tangos on the game board, do an additional 40hp damage, or 80 additional damage if you have both.',
 	},
 	onAttach(
 		game: GameModel,
@@ -44,20 +44,21 @@ const ImpulseSVRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				const boomerAmount = game.components.filter(
+				const hasBdubs = game.components.exists(
 					CardComponent,
 					query.card.currentPlayer,
+					query.card.is(BdoubleO100Common, BdoubleO100Rare),
 					query.card.attached,
-					query.card.is(
-						BdoubleO100Common,
-						BdoubleO100Rare,
-						TangoTekCommon,
-						TangoTekRare,
-					),
-					query.not(query.card.active),
-				).length
+				)
+				const hasTango = game.components.exists(
+					CardComponent,
+					query.card.currentPlayer,
+					query.card.is(TangoTekCommon, TangoTekRare),
+					query.card.attached,
+				)
 
-				attack.addDamage(component.entity, Math.min(boomerAmount, 2) * 40)
+				if (hasBdubs) attack.addDamage(component.entity, 40)
+				if (hasTango) attack.addDamage(component.entity, 40)
 			},
 		)
 	},

@@ -21,6 +21,18 @@ async function testOneHermit(test: TestGameFixture, game: GameModel) {
 	expect(
 		game.components.find(RowComponent, query.row.active)?.health,
 	).toStrictEqual(260 - (70 + 40))
+
+	await test.endTurn()
+
+	await test.endTurn()
+
+	await test.playCardFromHand(BdoubleO100Common, 'hermit', 2)
+
+	await test.attack('secondary')
+
+	expect(
+		game.components.find(RowComponent, query.row.active)?.health,
+	).toStrictEqual(260 - (70 + 40) - (70 + 40))
 }
 
 async function testManyHermits(test: TestGameFixture, game: GameModel) {
@@ -41,12 +53,12 @@ async function testManyHermits(test: TestGameFixture, game: GameModel) {
 }
 
 describe('Test Impulse Test', () => {
-	test('Test Impulse Is Triggered By Bdubs', async () => {
+	test('Test Impulse Is Triggered By Bdubs Once', async () => {
 		await testGame(
 			{
 				testGame: testOneHermit,
 				playerOneDeck: [EthosLabCommon],
-				playerTwoDeck: [ImpulseSVRare, BdoubleO100Common],
+				playerTwoDeck: [ImpulseSVRare, BdoubleO100Common, BdoubleO100Common],
 			},
 			{startWithAllCards: true, noItemRequirements: true},
 		)
