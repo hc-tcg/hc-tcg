@@ -36,12 +36,12 @@ import {
 import {LocalMessageTable, localMessages} from 'messages'
 import {ServerSideGameController} from 'serverside-game-controller'
 import {all, call, delay, fork, race, take} from 'typed-redux-saga'
-import {safeCall} from 'utils'
+import {safeCall} from '../utils'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
-import runGame, {getTimerForSeconds} from './game'
+import runGame, {getTimerForSeconds} from 'common/game/run-game'
 import {TurnActionCompressor} from './turn-action-compressor'
-import ExBossAI from './virtual/exboss-ai'
+import ExBossAI from 'common/game//virtual/exboss-ai'
 
 function setupGame(
 	player1: PlayerModel,

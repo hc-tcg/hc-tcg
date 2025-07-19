@@ -7,7 +7,7 @@ import {
 } from 'common/socket-messages/server-messages'
 import {EarnedAchievement} from 'common/types/achievements'
 import {Message} from 'common/types/game-state'
-import {broadcast} from 'utils/comm'
+import {broadcast} from './utils/comm'
 
 export class ServerSideGameController extends GameController {
 	override broadcastState() {
@@ -46,7 +46,7 @@ export class ServerSideGameController extends GameController {
 		})
 	}
 
-	public onAchievementComplete(
+	override onAchievementComplete(
 		player: PlayerModel,
 		achievement: EarnedAchievement,
 	) {

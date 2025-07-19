@@ -47,7 +47,7 @@ import {
 	PlayerSetupDefs,
 	getGameState,
 	setupComponents,
-} from '../utils/state-gen'
+} from '../game/setup-game'
 import {AttackModel, ReadonlyAttackModel} from './attack-model'
 import {BattleLogModel} from './battle-log-model'
 

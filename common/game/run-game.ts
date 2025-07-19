@@ -19,11 +19,10 @@ import {
 	PickSlotActionData,
 	attackToAttackAction,
 } from '../types/turn-action-data'
-import {printBoardState, printHooksState} from '../utils'
+import {printBoardState, printHooksState} from '../utils/game'
 import {hasEnoughEnergy} from '../utils/attacks'
 
 import assert from 'assert'
-import {GameController} from '../game-controller'
 import {
 	applyEffectAction,
 	attackAction,
@@ -34,6 +33,7 @@ import {
 	removeEffectAction,
 } from './turn-actions'
 import {virtualPlayerActionSaga} from './virtual'
+import {GameController} from './game-controller'
 
 export type TurnActionAndPlayer = {
 	action: AnyTurnActionData

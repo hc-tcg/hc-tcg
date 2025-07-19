@@ -1,6 +1,6 @@
-import {AIComponent} from 'common/components/ai-component'
-import {GameController} from '../../game-controller'
-import {TurnActionAndPlayer} from '../../routines/game'
+import {AIComponent} from '../../components/ai-component'
+import {GameController} from '../game-controller'
+import {TurnActionAndPlayer} from '../run-game'
 
 export default async function handleVirtualPlayerAction(
 	con: GameController,

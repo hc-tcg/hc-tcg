@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {AI_DEFINITIONS} from '../../server/src/routines/virtual'
+import {AI_DEFINITIONS} from '../game/virtual'
 import type {AIEntity, PlayerEntity} from '../entities'
 import type {GameModel} from '../models/game-model'
 import type {AnyTurnActionData} from '../types/turn-action-data'

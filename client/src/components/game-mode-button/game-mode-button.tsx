@@ -3,7 +3,6 @@ import {CARDS} from 'common/cards'
 import {ButtonVariant} from 'common/types/buttons'
 import {Deck, Tag} from 'common/types/deck'
 import {getDeckTypes} from 'common/utils/decks'
-import {getIconPath} from 'common/utils/state-gen'
 import Button from 'components/button'
 import Spinner from 'components/spinner'
 import {CopyIcon} from 'components/svgs'
@@ -20,6 +19,7 @@ import {
 import {useSelector} from 'react-redux'
 import {FilterComponent} from '../../app/deck/deck-select'
 import css from './game-mode-button.module.scss'
+import {getIconPath} from 'common/game/setup-game'
 
 interface GameModeButtonProps {
 	image: string

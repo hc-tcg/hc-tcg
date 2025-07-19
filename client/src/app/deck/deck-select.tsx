@@ -6,7 +6,6 @@ import {sortCardInstances} from 'common/utils/cards'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {getDeckTypes, sortDecks} from 'common/utils/decks'
 import {getDeckCost} from 'common/utils/ranks'
-import {getIconPath} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
 import Button from 'components/button'
@@ -41,6 +40,7 @@ import {cardGroupHeader} from './deck'
 import {iconDropdownOptions} from './deck-edit'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import {getIconPath} from 'common/game/setup-game'
 
 type Props = {
 	setMenuSection: (section: string) => void

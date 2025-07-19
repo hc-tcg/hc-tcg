@@ -1,5 +1,4 @@
 import {getCardTypeIcon} from 'common/cards/card'
-import {getIconPath} from 'common/utils/state-gen'
 import Beef from 'components/beef'
 import Button from 'components/button'
 import {VersionLinks} from 'components/link-container'
@@ -11,6 +10,7 @@ import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import queryOptions from '../../query-params'
 import css from './main-menu.module.scss'
+import {getIconPath} from 'common/game/setup-game'
 
 type Props = {
 	setMenuSection: (section: string) => void

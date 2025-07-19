@@ -16,13 +16,13 @@ import {
 	setMinecraftName,
 	setUsername,
 } from 'db/db-reciever'
-import {GameController} from 'game-controller'
 import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
 import {getGame} from 'selectors'
 import {delay, put, race, select, take} from 'typed-redux-saga'
-import {getLocalGameState} from 'utils/state-gen'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
+import {GameController} from 'common/game/game-controller'
+import {getLocalGameState} from 'common/game/make-local-state'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 

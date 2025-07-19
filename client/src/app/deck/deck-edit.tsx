@@ -8,7 +8,6 @@ import {LocalCardInstance} from 'common/types/server-requests'
 import {sortCardInstances} from 'common/utils/cards'
 import {generateDatabaseCode} from 'common/utils/database-codes'
 import {getCardRank, getDeckCost} from 'common/utils/ranks'
-import {getIconPath} from 'common/utils/state-gen'
 import {validateDeck} from 'common/utils/validation'
 import Accordion from 'components/accordion'
 import Button from 'components/button'
@@ -28,6 +27,7 @@ import {CONFIG} from '../../../../common/config'
 import {cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
+import { getIconPath } from 'common/game/setup-game'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const ITEM_DECK_ICONS = [
