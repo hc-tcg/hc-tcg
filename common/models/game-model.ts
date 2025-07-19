@@ -74,6 +74,7 @@ export type GameSettings = {
 	verboseLogging: boolean
 	disableRewardCards: boolean
 	gameTimeout: number
+	logAttackHistory: boolean
 }
 
 export function gameSettingsFromEnv(): GameSettings {
@@ -97,6 +98,7 @@ export function gameSettingsFromEnv(): GameSettings {
 		verboseLogging: CONFIG.game.verboseLogging,
 		disableRewardCards: CONFIG.game.disableRewardCards,
 		gameTimeout: CONFIG.game.limits.gameTimeout,
+		logAttackHistory: CONFIG.game.logAttackHistory,
 	}
 }
 

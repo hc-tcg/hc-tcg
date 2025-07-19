@@ -13,9 +13,6 @@ const config = {
 	roots: ['tests/unit/', 'tests/db', 'tests/replays'],
 
 	moduleNameMapper: {
-		// Deal with config.ts not working properly in tests due to bug where jest does not allow
-		// top level await.
-		'config': '<rootDir>/tests/unit/testConfig.js',
 		'^client/(.*)$': '<rootDir>/client/src/$1',
 		// Deal with weird imports in the client.
 		'^components/(.*)$': '<rootDir>/client/src/components/$1',
