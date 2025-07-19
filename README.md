@@ -2,15 +2,19 @@
 
 An unofficial implementation of [Vintage Beef](https://www.youtube.com/@VintageBeef)'s Hermitcraft TCG!
 
+## Docker
+
+We recommend using docker for developement.
+
 ## Node.js
 
-Use Node.js 16-18 (19+ is not supported).
-
+Use Node.js 20+.
 If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh/nvm).
 
 ## How to run Hermitcraft TCG
 
 ```sh
+npm run docker-dev          # start the development docker file
 npm ci                      # install packages
 npm run build-dev           # build a developement build of the client
 npm run build-dev-windows   # build a developement build of the client on windows
@@ -21,7 +25,7 @@ _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary ch
 
 ## Running in your development environment
 
-Before you can run the game locally, you will need to create the debug config file. To do this, run `cp ./common/config/debug-config.example.js ./common/config/debug-config.js` on Linux, and `copy ./common/config/debug-config.example.js ./common/config/debug-config.js` on Windows.
+Before you can run the game locally without using docker, you will need to create the debug config file. To do this, run `cp ./common/config/debug-config.example.js ./common/config/debug-config.js` on Linux, and `copy ./common/config/debug-config.example.js ./common/config/debug-config.js` on Windows.
 
 ```sh
 npm ci               # install packages
@@ -31,12 +35,6 @@ npm run client:dev   # start the client and update automatically when you make c
 
 npm run dev          # start both the client and server
 ```
-
-If you need to test code that interacts with the database, you can use our development docker compose file:
-```
-# docker-compose -f docker-compose-dev.yml up
-```
-This docker image is set up to autoreload when you make changes to the source code.
 
 _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
 
