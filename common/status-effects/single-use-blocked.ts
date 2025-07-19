@@ -29,10 +29,7 @@ const SingleUseBlockedEffect: StatusEffect<PlayerComponent> = {
 	): void {
 		const player = target
 		const startBlocking = () => {
-			game.addBlockedActions(
-				effect.entity,
-				'PLAY_SINGLE_USE_CARD',
-			)
+			game.addBlockedActions(effect.entity, 'PLAY_SINGLE_USE_CARD')
 		}
 		if (game.currentPlayer.entity === player.entity) startBlocking
 		else observer.subscribeBefore(player.hooks.onTurnStart, startBlocking)
