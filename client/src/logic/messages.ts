@@ -212,7 +212,7 @@ type Messages = [
 	{
 		type: typeof localMessages.GAME_END_OVERLAY_SHOW
 		outcome: GameOutcome
-		earnedAchievements: Array<EarnedAchievement>
+		earnedAchievements: Array<EarnedAchievement> | null
 		gameEndTime: number
 	},
 	{

@@ -18,12 +18,13 @@ export class PlayerModel {
 	public socket: Socket
 	public uuid: string
 	public appearance: Appearance
-	readonly achievementProgress: AchievementProgress
+	public achievementProgress: AchievementProgress
 
 	constructor(
 		playerName: string,
 		minecraftName: string,
 		uuid: string,
+		appearance: Appearance,
 		achievementProgress: AchievementProgress,
 		socket: Socket,
 	) {
@@ -38,7 +39,7 @@ export class PlayerModel {
 		this.socket = socket
 		this.uuid = uuid
 		this.achievementProgress = achievementProgress
-		this.appearance = {...defaultAppearance}
+		this.appearance = {...defaultAppearance, ...appearance}
 	}
 
 	public get id() {
@@ -74,10 +75,7 @@ export class PlayerModel {
 		}
 	}
 
-	updateAchievementProgress(
-		achievementId: number,
-		goals: Record<number, number>,
-	) {
-		this.achievementProgress[achievementId].goals = goals
+	updateAchievementProgress(achievements: AchievementProgress) {
+		this.achievementProgress = {...this.achievementProgress, ...achievements}
 	}
 }

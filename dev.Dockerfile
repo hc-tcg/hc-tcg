@@ -1,4 +1,4 @@
-FROM node:22.9.0-bullseye
+FROM node:24-bookworm
 
 ARG APP_VERSION
 ENV APP_VERSION $APP_VERSION

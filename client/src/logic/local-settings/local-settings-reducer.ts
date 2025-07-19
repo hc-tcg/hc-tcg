@@ -59,7 +59,7 @@ const getSettings = (): LocalSettings => {
 
 	return settings.reduce((map, entry) => {
 		const key = entry[0].replace(/^settings:/, '')
-		if (!(key in Object.keys(defaultSettings))) return map
+		if (!Object.keys(defaultSettings).includes(key)) return map
 		const value = JSON.parse(entry[1])
 		// @ts-ignore
 		map[key] = value

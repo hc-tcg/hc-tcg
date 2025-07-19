@@ -7,40 +7,30 @@ import {InstantHealthII} from 'common/cards/single-use/instant-health'
 import Ladder from 'common/cards/single-use/ladder'
 import {CardComponent, RowComponent, SlotComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	attack,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	removeEffect,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Berry Bush Attach', () => {
-	test('Berry Bush functionality', () => {
-		testGame({
+	test('Berry Bush functionality', async () => {
+		await testGame({
 			playerOneDeck: [EthosLabCommon, BerryBush, BerryBush, Bow],
 			playerTwoDeck: [EthosLabCommon],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+			testGame: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 				expect(game.getPickableSlots(BerryBush.attachCondition)).toStrictEqual(
 					[],
 				)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(
-					game,
+				await test.playCardFromHand(
 					BerryBush,
 					'hermit',
 					1,
 					game.opponentPlayerEntity,
 				)
-				yield* playCardFromHand(
-					game,
+				await test.playCardFromHand(
 					BerryBush,
 					'hermit',
 					2,
@@ -60,10 +50,9 @@ describe('Test Berry Bush Attach', () => {
 						query.row.index(2),
 					)?.health,
 				).toBe(30)
-				yield* playCardFromHand(game, Bow, 'single_use')
-				yield* attack(game, 'single-use')
-				yield* pick(
-					game,
+				await test.playCardFromHand(Bow, 'single_use')
+				await test.attack('single-use')
+				await test.pick(
 					query.slot.opponent,
 					query.slot.hermit,
 					query.slot.rowIndex(1),
@@ -71,7 +60,7 @@ describe('Test Berry Bush Attach', () => {
 				expect(
 					game.currentPlayer.getHand().map((card) => card.props),
 				).toStrictEqual([InstantHealthII, InstantHealthII])
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(
 					game.components.find(
@@ -80,9 +69,9 @@ describe('Test Berry Bush Attach', () => {
 						query.row.index(2),
 					)?.health,
 				).toBe(20)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(
 					game.components.find(
@@ -91,9 +80,9 @@ describe('Test Berry Bush Attach', () => {
 						query.row.index(2),
 					)?.health,
 				).toBe(10)
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(
 					game.components.find(
@@ -109,27 +98,26 @@ describe('Test Berry Bush Attach', () => {
 		})
 	})
 
-	test('Berry Bush cannot be moved by Ladder', () => {
-		testGame({
+	test('Berry Bush cannot be moved by Ladder', async () => {
+		await testGame({
 			playerOneDeck: [EthosLabCommon, EthosLabCommon, Ladder],
 			playerTwoDeck: [EthosLabCommon, BerryBush],
-			saga: function* (game) {
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-				yield* endTurn(game)
+			testGame: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(
-					game,
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(
 					BerryBush,
 					'hermit',
 					0,
 					game.opponentPlayerEntity,
 				)
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(game.getPickableSlots(Ladder.attachCondition)).toStrictEqual([])
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-				yield* playCardFromHand(game, Ladder, 'single_use')
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+				await test.playCardFromHand(Ladder, 'single_use')
 				expect(
 					game.components.filter(
 						SlotComponent,
@@ -143,30 +131,29 @@ describe('Test Berry Bush Attach', () => {
 						query.slot.rowIndex(2),
 					),
 				)
-				yield* removeEffect(game)
-				yield* changeActiveHermit(game, 0)
-				yield* endTurn(game)
+				await test.removeEffect()
+				await test.changeActiveHermit(0)
+				await test.endTurn()
 
-				yield* endTurn(game)
+				await test.endTurn()
 
 				expect(game.getPickableSlots(Ladder.attachCondition)).toStrictEqual([])
 			},
 		})
 	})
 
-	test('Berry Bush can be placed face down by Total Anonymity', () => {
-		testGame(
+	test('Berry Bush can be placed face down by Total Anonymity', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [WormManRare, BerryBush],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, WormManRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
-					yield* playCardFromHand(
-						game,
+					await test.playCardFromHand(WormManRare, 'hermit', 0)
+					await test.attack('secondary')
+					await test.playCardFromHand(
 						BerryBush,
 						'hermit',
 						1,
@@ -176,9 +163,9 @@ describe('Test Berry Bush Attach', () => {
 						game.components.find(CardComponent, query.card.is(BerryBush))
 							?.turnedOver,
 					).toBe(true)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 					expect(
 						game.components.find(CardComponent, query.card.is(BerryBush))
 							?.turnedOver,

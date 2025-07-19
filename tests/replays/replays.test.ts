@@ -7,14 +7,23 @@ import EvilXisumaRare from 'common/cards/hermits/evilxisuma_rare'
 import FalseSymmetryRare from 'common/cards/hermits/falsesymmetry-rare'
 import FarmerBeefRare from 'common/cards/hermits/farmerbeef-rare'
 import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
+import HelsknightRare from 'common/cards/hermits/helsknight-rare'
+import IJevinRare from 'common/cards/hermits/ijevin-rare'
+import JinglerRare from 'common/cards/hermits/jingler-rare'
 import RendogCommon from 'common/cards/hermits/rendog-common'
 import TangoTekRare from 'common/cards/hermits/tangotek-rare'
+import TinFoilChefRare from 'common/cards/hermits/tinfoilchef-rare'
 import VintageBeefRare from 'common/cards/hermits/vintagebeef-rare'
 import BalancedItem from 'common/cards/items/balanced-common'
 import BalancedDoubleItem from 'common/cards/items/balanced-rare'
 import BuilderItem from 'common/cards/items/builder-common'
 import FarmDoubleItem from 'common/cards/items/farm-rare'
 import MinerItem from 'common/cards/items/miner-common'
+import SpeedrunnerItem from 'common/cards/items/speedrunner-common'
+import SpeedrunnerDoubleItem from 'common/cards/items/speedrunner-rare'
+import Chest from 'common/cards/single-use/chest'
+import CurseOfBinding from 'common/cards/single-use/curse-of-binding'
+import FishingRod from 'common/cards/single-use/fishing-rod'
 import {DiamondSword} from 'common/cards/single-use/sword'
 import query from 'common/components/query'
 import {DragCards} from 'common/types/modal-requests'
@@ -24,32 +33,25 @@ import {
 	huffmanCompress,
 	huffmanDecompress,
 } from '../../server/src/utils/compression'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	finishModalRequest,
-	forfeit,
-	pick,
-	playCardFromHand,
-	testReplayGame,
-} from '../unit/game/utils'
+import {testReplayGame} from '../unit/game/utils'
 
-function* afterGame(con: GameController) {
+async function afterGame(con: GameController) {
 	const turnActionCompressor = new TurnActionCompressor()
 
-	const turnActionsBuffer = yield* turnActionCompressor.turnActionsToBuffer(con)
+	const turnActionsBuffer = await turnActionCompressor.turnActionsToBuffer(con)
 
-	console.log(turnActionsBuffer)
-
-	const turnActions = yield* turnActionCompressor.bufferToTurnActions(
+	const turnActions = await turnActionCompressor.bufferToTurnActions(
 		con.player1Defs,
 		con.player2Defs,
 		con.game.rngSeed,
 		con.props,
 		turnActionsBuffer,
+		con.game.id,
 	)
+
+	if (turnActions.invalid) {
+		throw new Error('Turn actions were invalid')
+	}
 
 	expect(con.game.turnActions.map((action) => action.action)).toStrictEqual(
 		turnActions.replay.map((action) => action.action),
@@ -62,29 +64,29 @@ function* afterGame(con: GameController) {
 
 describe('Test Replays', () => {
 	test('Test play card and attack actions', async () => {
-		testReplayGame({
+		await testReplayGame({
 			playerOneDeck: [BalancedDoubleItem, EthosLabCommon],
 			playerTwoDeck: [EthosLabCommon, BalancedDoubleItem],
-			gameSaga: function* (con) {
+			runGame: async (test, con) => {
 				const game = con.game
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 0)
-				yield* endTurn(game)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 0)
-				yield* attack(game, 'primary')
-				yield* endTurn(game)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
+				await test.attack('primary')
+				await test.endTurn()
 
-				yield* attack(game, 'primary')
-				yield* forfeit(game.currentPlayer.entity)
+				await test.attack('primary')
+				await test.forfeit(game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})
 	})
 
 	test('Test play card action for all card types', async () => {
-		testReplayGame({
+		await testReplayGame({
 			playerOneDeck: [
 				EthosLabCommon,
 				BalancedDoubleItem,
@@ -92,29 +94,29 @@ describe('Test Replays', () => {
 				DiamondArmor,
 			],
 			playerTwoDeck: [EthosLabCommon, BalancedDoubleItem],
-			gameSaga: function* (con) {
+			runGame: async (test, con) => {
 				const game = con.game
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 0)
-				yield* endTurn(game)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, DiamondSword, 'single_use')
-				yield* playCardFromHand(game, DiamondArmor, 'attach', 0)
+				await test.playCardFromHand(DiamondSword, 'single_use')
+				await test.playCardFromHand(DiamondArmor, 'attach', 0)
 
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
+				await test.attack('secondary')
+				await test.endTurn()
 
-				yield* forfeit(game.currentPlayer.entity)
+				await test.forfeit(game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})
 	})
 
-	test('Test drag cards modal', () => {
-		testReplayGame({
+	test('Test drag cards modal', async () => {
+		await testReplayGame({
 			playerOneDeck: [
 				EthosLabCommon,
 				Brush,
@@ -125,37 +127,68 @@ describe('Test Replays', () => {
 				Feather,
 			],
 			playerTwoDeck: [EthosLabCommon],
-			gameSaga: function* (con) {
-				yield* playCardFromHand(con.game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(con.game, Brush, 'single_use')
-				yield* applyEffect(con.game)
-				expect(
-					(
-						con.game.state.modalRequests[0].modal as DragCards.Data
-					).leftCards.map((entity) => con.game.components.get(entity)?.props),
-				).toStrictEqual([])
-				expect(
-					(
-						con.game.state.modalRequests[0].modal as DragCards.Data
-					).rightCards.map((entity) => con.game.components.get(entity)?.props),
-				).toStrictEqual([BalancedItem, BuilderItem])
+			runGame: async (test, con) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(Brush, 'single_use')
+				await test.applyEffect()
 				const cardEntities = (
 					con.game.state.modalRequests[0].modal as DragCards.Data
 				).rightCards
-				yield* finishModalRequest(con.game, {
+				await test.finishModalRequest({
 					result: true,
 					leftCards: [cardEntities[0]],
 					rightCards: [cardEntities[1]],
 				})
-				yield* endTurn(con.game)
-				yield* forfeit(con.game.currentPlayer.entity)
+				await test.endTurn()
+				await test.forfeit(con.game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})
 	})
 
-	test('Test that pick selects properly work', () => {
-		testReplayGame({
+	test('Test Chest', async () => {
+		await testReplayGame({
+			playerOneDeck: [
+				EthosLabCommon,
+				CurseOfBinding,
+				Chest,
+				...Array(5).fill(Feather),
+				BalancedItem,
+				BuilderItem,
+				MinerItem,
+				Feather,
+			],
+			playerTwoDeck: [EthosLabCommon],
+			runGame: async (test, con) => {
+				const game = con.game
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.endTurn()
+
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.endTurn()
+
+				await test.playCardFromHand(CurseOfBinding, 'single_use')
+				await test.applyEffect()
+				await test.endTurn()
+
+				await test.endTurn()
+
+				await test.playCardFromHand(Chest, 'single_use')
+				await test.applyEffect()
+				const discardedCard = game.currentPlayer.getDiscarded()[0].entity
+				await test.finishModalRequest({
+					result: true,
+					cards: [discardedCard],
+				})
+				await test.endTurn()
+				await test.forfeit(game.currentPlayer.entity)
+			},
+			afterGame: afterGame,
+		})
+	})
+
+	test('Test that pick selects properly work', async () => {
+		await testReplayGame({
 			playerOneDeck: [EthosLabCommon, GeminiTayCommon],
 			playerTwoDeck: [
 				TangoTekRare,
@@ -163,97 +196,161 @@ describe('Test Replays', () => {
 				FarmDoubleItem,
 				FarmDoubleItem,
 			],
-			gameSaga: function* (con) {
-				const game = con.game
-				yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-				yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 1)
+			runGame: async (test, con) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(GeminiTayCommon, 'hermit', 1)
 
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
-				yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 1)
-				yield* playCardFromHand(game, FarmDoubleItem, 'item', 0, 0)
-				yield* endTurn(game)
+				await test.playCardFromHand(TangoTekRare, 'hermit', 0)
+				await test.playCardFromHand(GeminiTayCommon, 'hermit', 1)
+				await test.playCardFromHand(FarmDoubleItem, 'item', 0, 0)
+				await test.endTurn()
 
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, FarmDoubleItem, 'item', 0, 1)
-				yield* attack(game, 'secondary')
+				await test.playCardFromHand(FarmDoubleItem, 'item', 0, 1)
+				await test.attack('secondary')
 
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.opponent,
 					query.slot.hermit,
 					query.slot.rowIndex(1),
 				)
 
-				yield* pick(
-					game,
+				await test.pick(
 					query.slot.currentPlayer,
 					query.slot.hermit,
 					query.slot.rowIndex(1),
 				)
 
-				yield* forfeit(con.game.currentPlayer.entity)
+				await test.forfeit(con.game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})
 	})
 
-	test('Test select attack modal works properly', () => {
-		testReplayGame({
+	test('Test Speedrunner Jevin', async () => {
+		await testReplayGame({
+			playerOneDeck: [
+				TinFoilChefRare,
+				MinerItem,
+				HelsknightRare,
+				...Array(40).fill(MinerItem),
+			],
+			playerTwoDeck: [
+				IJevinRare,
+				SpeedrunnerItem,
+				SpeedrunnerDoubleItem,
+				FishingRod,
+				JinglerRare,
+				...Array(40).fill(SpeedrunnerItem),
+			],
+			runGame: async (test, con) => {
+				const game = con.game
+				await test.playCardFromHand(TinFoilChefRare, 'hermit', 2)
+				await test.playCardFromHand(MinerItem, 'item', 2, 0)
+				await test.endTurn()
+
+				await test.playCardFromHand(IJevinRare, 'hermit', 4)
+				await test.playCardFromHand(SpeedrunnerItem, 'item', 4, 0)
+				await test.attack('primary')
+				await test.endTurn()
+
+				await test.playCardFromHand(MinerItem, 'item', 2, 1)
+				await test.playCardFromHand(HelsknightRare, 'hermit', 1)
+				await test.attack('secondary')
+				await test.endTurn()
+
+				await test.playCardFromHand(SpeedrunnerDoubleItem, 'item', 4, 1)
+				await test.playCardFromHand(FishingRod, 'single_use')
+				await test.applyEffect()
+				await test.playCardFromHand(JinglerRare, 'hermit', 3)
+
+				await test.attack('secondary')
+				await test.pick(
+					query.slot.opponent,
+					query.slot.hermit,
+					query.slot.rowIndex(1),
+				)
+				await test.endTurn()
+
+				await test.forfeit(game.currentPlayer.entity)
+			},
+			afterGame: afterGame,
+		})
+	})
+
+	test('Test select attack modal works properly', async () => {
+		await testReplayGame({
 			playerOneDeck: [FarmerBeefRare, FarmDoubleItem],
 			playerTwoDeck: [EvilXisumaRare, BalancedDoubleItem],
-			gameSaga: function* (con) {
-				const game = con.game
+			runGame: async (test, con) => {
+				await test.playCardFromHand(FarmerBeefRare, 'hermit', 0)
+				await test.playCardFromHand(FarmDoubleItem, 'item', 0, 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, FarmerBeefRare, 'hermit', 0)
-				yield* playCardFromHand(game, FarmDoubleItem, 'item', 0, 0)
-				yield* endTurn(game)
-
-				yield* playCardFromHand(game, EvilXisumaRare, 'hermit', 0)
-				yield* playCardFromHand(game, BalancedDoubleItem, 'item', 0, 0)
-				yield* attack(game, 'secondary')
-				yield* finishModalRequest(game, {
+				await test.playCardFromHand(EvilXisumaRare, 'hermit', 0)
+				await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
+				await test.attack('secondary')
+				await test.finishModalRequest({
 					pick: 'primary',
 				})
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* attack(game, 'secondary')
-				yield* endTurn(game)
+				await test.attack('secondary')
+				await test.endTurn()
 
-				yield* attack(game, 'secondary')
-				yield* finishModalRequest(game, {
+				await test.attack('secondary')
+				await test.finishModalRequest({
 					pick: 'secondary',
 				})
-				yield* endTurn(game)
+				await test.endTurn()
 
-				yield* attack(game, 'primary')
-				yield* endTurn(game)
+				await test.attack('primary')
+				await test.endTurn()
 
-				yield* forfeit(con.game.currentPlayer.entity)
+				await test.forfeit(con.game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})
 	})
 
-	test('Test change active Hermit action', () => {
-		testReplayGame({
+	test('Test change active Hermit action', async () => {
+		await testReplayGame({
 			playerOneDeck: [VintageBeefRare, FalseSymmetryRare],
 			playerTwoDeck: [RendogCommon],
-			gameSaga: function* (con) {
-				const game = con.game
+			runGame: async (test, con) => {
+				await test.playCardFromHand(VintageBeefRare, 'hermit', 0)
+				await test.playCardFromHand(FalseSymmetryRare, 'hermit', 1)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, VintageBeefRare, 'hermit', 0)
-				yield* playCardFromHand(game, FalseSymmetryRare, 'hermit', 1)
-				yield* endTurn(game)
+				await test.playCardFromHand(RendogCommon, 'hermit', 0)
+				await test.endTurn()
 
-				yield* playCardFromHand(game, RendogCommon, 'hermit', 0)
-				yield* endTurn(game)
+				await test.changeActiveHermit(1)
 
-				yield* changeActiveHermit(game, 1)
+				await test.forfeit(con.game.currentPlayer.entity)
+			},
+			afterGame: afterGame,
+		})
+	})
 
-				yield* forfeit(con.game.currentPlayer.entity)
+	test('Test disconnect action', async () => {
+		await testReplayGame({
+			playerOneDeck: [VintageBeefRare, FalseSymmetryRare],
+			playerTwoDeck: [RendogCommon],
+			runGame: async (test, con) => {
+				await test.playCardFromHand(VintageBeefRare, 'hermit', 0)
+				await test.playCardFromHand(FalseSymmetryRare, 'hermit', 1)
+				await test.endTurn()
+
+				await test.playCardFromHand(RendogCommon, 'hermit', 0)
+				await test.endTurn()
+
+				await test.changeActiveHermit(1)
+
+				await test.disconnect(con.game.currentPlayer.entity)
 			},
 			afterGame: afterGame,
 		})

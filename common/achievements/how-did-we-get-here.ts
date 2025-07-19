@@ -8,6 +8,7 @@ const HowDidWeGetHere: Achievement = {
 	...achievement,
 	numericId: 4,
 	id: 'how_did_we_get_here',
+	progressionMethod: 'best',
 	levels: [
 		{
 			name: 'How Did We Get Here?',
@@ -42,10 +43,11 @@ const HowDidWeGetHere: Achievement = {
 					if (statusEffects[target] === undefined) statusEffects[target] = []
 					statusEffects[target].push(statusEffect)
 				})
+			if (Object.values(statusEffects).length === 0) return
 			const bestAttempt = Math.max(
 				...Object.values(statusEffects).map((statuses) => statuses.length),
 			)
-			component.bestGoalProgress({goal: 0, progress: bestAttempt})
+			component.updateGoalProgress({goal: 0, progress: bestAttempt})
 		}
 
 		observer.subscribeWithPriority(

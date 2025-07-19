@@ -1,4 +1,5 @@
 import cn from 'classnames'
+import {CARDS} from 'common/cards'
 import {DEBUG_CONFIG} from 'common/config'
 import {PlayerEntity} from 'common/entities'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
@@ -220,7 +221,7 @@ function Hand({gameOver}: {gameOver: boolean}) {
 
 	const filteredCards = DEBUG_CONFIG.unlimitedCards
 		? gameState.hand.filter((c) =>
-				c.props.name.toLowerCase().includes(filter.toLowerCase()),
+				CARDS[c.id].name.toLowerCase().includes(filter.toLowerCase()),
 			)
 		: gameState.hand
 

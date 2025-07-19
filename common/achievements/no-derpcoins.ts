@@ -8,7 +8,8 @@ const NoDerpcoins: Achievement = {
 	...achievement,
 	numericId: 7,
 	id: 'no_derpcoins',
-	progressInBossGame: true,
+	evilXAchievement: true,
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'No Derpcoins Required',
@@ -17,7 +18,6 @@ const NoDerpcoins: Achievement = {
 		},
 	],
 	onGameStart(game, player, component, observer) {
-		if (!game.state.isEvilXBossGame) return
 		const cost = getDeckCost(
 			game.components
 				.filter(CardComponent, query.card.player(player.entity))
@@ -27,7 +27,7 @@ const NoDerpcoins: Achievement = {
 		observer.subscribe(game.hooks.onGameEnd, (outcome) => {
 			if (outcome.type !== 'player-won') return
 			if (outcome.winner !== player.entity) return
-			component.incrementGoalProgress({goal: 0})
+			component.updateGoalProgress({goal: 0})
 		})
 	},
 }

@@ -12,11 +12,7 @@ import {SingleUse} from '../../types'
 
 function getTargetHermits(game: GameModel) {
 	return game.components
-		.filter(
-			RowComponent,
-			query.row.opponentPlayer,
-			query.row.hermitSlotOccupied,
-		)
+		.filter(RowComponent, query.row.opponentPlayer, query.row.hasHermit)
 		.sort(
 			(a, b) =>
 				-Number(a.index === game.opponentPlayer.activeRow?.index) ||

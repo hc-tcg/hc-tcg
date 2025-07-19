@@ -454,6 +454,7 @@ function Cosmetics({setMenuSection, page}: Props) {
 			<Modal
 				setOpen={progressModalOpen}
 				onClose={() => setProgressModalOpen(false)}
+				title={'Advanced Progress'}
 			>
 				<div className={css.progressModal}>{progressModalText}</div>
 			</Modal>

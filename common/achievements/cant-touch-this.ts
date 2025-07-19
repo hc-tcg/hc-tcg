@@ -7,6 +7,7 @@ const CantTouchThis: Achievement = {
 	...achievement,
 	numericId: 11,
 	id: 'cant_touch_this',
+	progressionMethod: 'best',
 	levels: [
 		{
 			name: "Can't Touch This!",
@@ -47,7 +48,7 @@ const CantTouchThis: Achievement = {
 				return
 			}
 			missedAttacks += 1
-			component.bestGoalProgress({goal: 0, progress: missedAttacks})
+			component.updateGoalProgress({goal: 0, progress: missedAttacks})
 		})
 	},
 }

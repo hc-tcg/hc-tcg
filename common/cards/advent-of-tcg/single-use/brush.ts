@@ -21,7 +21,7 @@ const Brush: SingleUse = {
 	showConfirmationModal: true,
 	attachCondition: query.every(
 		singleUse.attachCondition,
-		(_game, pos) => pos.player.getDeck().length >= 3,
+		(_game, pos) => pos.player.getDrawPile().length >= 3,
 	),
 	log: (values) => values.defaultLog,
 	onAttach(
@@ -33,7 +33,7 @@ const Brush: SingleUse = {
 
 		observer.subscribe(player.hooks.onApply, () => {
 			const topCards = player
-				.getDeck()
+				.getDrawPile()
 				.sort(CardComponent.compareOrder)
 				.slice(0, 2)
 

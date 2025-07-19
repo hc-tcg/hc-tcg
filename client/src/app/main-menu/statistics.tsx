@@ -9,7 +9,6 @@ import {EXPANSIONS} from 'common/const/expansions'
 import {TypeT} from 'common/types/cards'
 import {GameHistory} from 'common/types/database'
 import {Tag} from 'common/types/deck'
-import {WithoutFunctions} from 'common/types/server-requests'
 import {sortCards} from 'common/utils/cards'
 import {getDeckTypes, parseDeckCards} from 'common/utils/decks'
 import Button from 'components/button'
@@ -164,12 +163,13 @@ function Statistics({setMenuSection}: Props) {
 	// Stats stuff
 	const databaseInfo = useSelector(getLocalDatabaseInfo)
 	const stats = databaseInfo.stats
-	const gameHistory = databaseInfo.gameHistory.filter((game) => game.hasReplay)
+	const gameHistory = databaseInfo.gameHistory
 	const settings = useSelector(getSettings)
 	const [tab, setTab] = useState<string>('Statistics')
 	const [showInvalidReplayModal, setShowInvalidReplayModal] =
 		useState<boolean>(false)
 	const [showOverviewModal, setShowOverviewModal] = useState<boolean>(false)
+	const [showReplayModal, setShowReplayModal] = useState<boolean>(false)
 	const [currentGame, setCurrentGame] = useState<GameHistory | null>(null)
 
 	const [filteredGames, setFilteredGames] =
@@ -197,15 +197,15 @@ function Statistics({setMenuSection}: Props) {
 		return games.filter((game) => {
 			const otherPlayer =
 				game.firstPlayer.uuid === databaseInfo.userId
-					? game.firstPlayer
-					: game.secondPlayer
+					? game.secondPlayer
+					: game.firstPlayer
 			return (
 				(!compareTag ||
 					game.usedDeck.tags?.find((tag) => tag.key === compareTag)) &&
 				(!compareType ||
 					compareType === 'any' ||
 					getDeckTypes(
-						game.usedDeck.cards.map((card) => card.props.id),
+						game.usedDeck.cards.map((card) => CARDS[card.id].id),
 					).includes(compareType)) &&
 				(!compareName ||
 					compareName === '' ||
@@ -214,7 +214,9 @@ function Statistics({setMenuSection}: Props) {
 						.includes(compareName.toLocaleLowerCase())) &&
 				(!compareOpponentName ||
 					compareOpponentName === '' ||
-					otherPlayer.name.includes(compareOpponentName))
+					otherPlayer.name
+						.toLocaleLowerCase()
+						.includes(compareOpponentName.toLocaleLowerCase()))
 			)
 		})
 	}
@@ -230,6 +232,7 @@ function Statistics({setMenuSection}: Props) {
 	}
 
 	const handleReplayGame = (game: GameHistory) => {
+		setShowReplayModal(true)
 		setCurrentGame(game)
 		dispatch({
 			type: localMessages.MATCHMAKING_REPLAY_GAME,
@@ -237,6 +240,7 @@ function Statistics({setMenuSection}: Props) {
 		})
 	}
 	const handleOverview = (game: GameHistory) => {
+		setShowOverviewModal(true)
 		setCurrentGame(game)
 		dispatch({
 			type: localMessages.OVERVIEW,
@@ -249,11 +253,9 @@ function Statistics({setMenuSection}: Props) {
 	const overviewFirstId = overview.length >= 1 ? overview[0].sender.id : ''
 
 	if (invalidReplay && !showInvalidReplayModal) {
+		setShowOverviewModal(false)
+		setShowReplayModal(false)
 		setShowInvalidReplayModal(true)
-	}
-
-	if (overview.length !== 0 && !showOverviewModal) {
-		setShowOverviewModal(true)
 	}
 
 	// Hall of fame stuff
@@ -494,7 +496,7 @@ function Statistics({setMenuSection}: Props) {
 										<td key={index}>
 											<CardComponent
 												displayTokenCost={false}
-												card={card as WithoutFunctions<CardType>}
+												card={card.numericId}
 											/>
 										</td>
 									)
@@ -909,11 +911,7 @@ function Statistics({setMenuSection}: Props) {
 						id={css.deck}
 						onClick={() => {
 							setScreenshotDeckModalContents(
-								sortCards(
-									parseDeckCards(
-										game.usedDeck.cards.map((card) => card.props.id),
-									),
-								),
+								sortCards(game.usedDeck.cards.map((card) => CARDS[card.id])),
 							)
 						}}
 					>
@@ -1062,6 +1060,15 @@ function Statistics({setMenuSection}: Props) {
 											<p className={css.statName}>Unique Players Encountered</p>
 											<p>{stats.uniquePlayersEncountered}</p>
 											<p></p>
+										</div>
+										<div className={css.stat}>
+											<p className={css.statName}>Time Spent in Games</p>
+											<p>
+												{/* Looks better to default to minutes under 120 minutes */}
+												{stats.playtime.hours >= 2
+													? `${stats.playtime.hours}.${Math.round((stats.playtime.minutes + stats.playtime.seconds / 60) / 0.6)} hours`
+													: `${stats.playtime.minutes}.${Math.round(stats.playtime.seconds / 0.6)} minutes`}
+											</p>
 										</div>
 									</div>
 									{/* Can't show when games are 0 bc a winrate makes no sense */}
@@ -1509,20 +1516,37 @@ function Statistics({setMenuSection}: Props) {
 					}}
 				>
 					<Modal.Description>
-						<div className={css.overview}>
-							{overview.map((line) => {
-								const isOpponent =
-									(currentGame?.firstPlayer.player === 'you') !==
-									(line.sender.id === overviewFirstId)
+						{overview.length === 0 ? (
+							<div>Loading Overview...</div>
+						) : (
+							<div className={css.overview}>
+								{overview.map((line) => {
+									const isOpponent =
+										currentGame?.firstPlayer.player === 'you'
+											? line.sender.id !== overviewFirstId
+											: line.sender.id === overviewFirstId
 
-								return FormattedText(line.message, {
-									isOpponent,
-									color: isOpponent ? 'orange' : 'blue',
-									isSelectable: true,
-									censorProfanity: false,
-								})
-							})}
-						</div>
+									return FormattedText(line.message, {
+										isOpponent,
+										color: isOpponent ? 'orange' : 'blue',
+										isSelectable: true,
+										censorProfanity: false,
+									})
+								})}
+							</div>
+						)}
+					</Modal.Description>
+				</Modal>
+			)}
+			{showReplayModal && (
+				<Modal
+					setOpen
+					title={'Loading Replay'}
+					onClose={() => null}
+					disableCloseButton={true}
+				>
+					<Modal.Description>
+						<div>Loading Replay...</div>
 					</Modal.Description>
 				</Modal>
 			)}

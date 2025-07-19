@@ -18,7 +18,7 @@ const Composter: SingleUse = {
 	log: (values) => `${values.defaultLog} to discard 2 cards and draw 2 cards`,
 	attachCondition: query.every(
 		singleUse.attachCondition,
-		(_game, pos) => pos.player.getHand().length >= 2,
+		(_game, pos) => pos.player.getHand().length > 2,
 	),
 	onAttach(
 		game: GameModel,
@@ -33,7 +33,11 @@ const Composter: SingleUse = {
 			player: player.entity,
 			id: component.entity,
 			message: 'Pick 2 cards from your hand',
-			canPick: query.every(query.slot.currentPlayer, query.slot.hand),
+			canPick: query.every(
+				query.slot.currentPlayer,
+				query.slot.hand,
+				query.not(query.slot.empty),
+			),
 			onResult(pickedSlot) {
 				firstPickedSlot = pickedSlot
 			},
@@ -49,6 +53,7 @@ const Composter: SingleUse = {
 					query.slot.currentPlayer,
 					query.slot.hand,
 					query.not(query.slot.entity(firstPickedSlot.entity)),
+					query.not(query.slot.empty),
 				)(game, pos)
 			},
 			onResult(pickedSlot) {

@@ -22,7 +22,7 @@ const Glowstone: SingleUse = {
 	attachCondition: query.every(
 		singleUse.attachCondition,
 		(_game, pos) =>
-			!!pos.opponentPlayer && pos.opponentPlayer.getDeck().length >= 3,
+			!!pos.opponentPlayer && pos.opponentPlayer.getDrawPile().length >= 3,
 	),
 	log: (values) => values.defaultLog,
 	onAttach(
@@ -34,7 +34,7 @@ const Glowstone: SingleUse = {
 
 		observer.subscribe(player.hooks.onApply, () => {
 			const topCards = opponentPlayer
-				.getDeck()
+				.getDrawPile()
 				.sort(CardComponent.compareOrder)
 				.slice(0, 3)
 

@@ -15,35 +15,26 @@ import {IronSword} from 'common/cards/single-use/sword'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {soulmateEffectDamage} from 'common/status-effects/soulmate'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test BigB Soulmate', () => {
-	test('Soulmate functionality', () => {
-		testGame(
+	test('Soulmate functionality', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, ChorusFruit],
 				playerTwoDeck: [BigBSt4tzRare, EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, BigBSt4tzRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(BigBSt4tzRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ChorusFruit, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(ChorusFruit, 'single_use')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -51,16 +42,15 @@ describe('Test BigB Soulmate', () => {
 							query.row.index(0),
 						)?.health,
 					).toBe(EthosLabCommon.health - BigBSt4tzRare.secondary.damage)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					// Manually set BigB health to trigger zone
 					game.components.find(
@@ -69,7 +59,7 @@ describe('Test BigB Soulmate', () => {
 						query.row.index(0),
 					)!.health = 10
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -87,19 +77,19 @@ describe('Test BigB Soulmate', () => {
 		)
 	})
 
-	test('Soulmate does not deal extra damage when revived by Totem', () => {
-		testGame(
+	test('Soulmate does not deal extra damage when revived by Totem', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [BigBSt4tzRare, Totem],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, BigBSt4tzRare, 'hermit', 0)
-					yield* playCardFromHand(game, Totem, 'attach', 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(BigBSt4tzRare, 'hermit', 0)
+					await test.playCardFromHand(Totem, 'attach', 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					// Manually set BigB health to trigger zone
 					game.components.find(
@@ -108,7 +98,7 @@ describe('Test BigB Soulmate', () => {
 						query.row.index(0),
 					)!.health = 10
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -122,20 +112,20 @@ describe('Test BigB Soulmate', () => {
 		)
 	})
 
-	test('Disabled Totem does not prevent extra Soulmate damage', () => {
-		testGame(
+	test('Disabled Totem does not prevent extra Soulmate damage', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, GoldenAxe],
 				playerTwoDeck: [BigBSt4tzRare, EthosLabCommon, Totem],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, BigBSt4tzRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Totem, 'attach', 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(BigBSt4tzRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(Totem, 'attach', 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					// Manually set BigB health to trigger zone
 					game.components.find(
@@ -144,8 +134,8 @@ describe('Test BigB Soulmate', () => {
 						query.row.index(0),
 					)!.health = 10
 
-					yield* playCardFromHand(game, GoldenAxe, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(GoldenAxe, 'single_use')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -163,21 +153,21 @@ describe('Test BigB Soulmate', () => {
 		)
 	})
 
-	test('Soulmate + Thorns does not knock-out hermit as it is revived', () => {
-		testGame(
+	test('Soulmate + Thorns does not knock-out hermit as it is revived', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, Totem],
 				playerTwoDeck: [BigBSt4tzRare, EthosLabCommon, Thorns],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, Totem, 'attach', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(Totem, 'attach', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, BigBSt4tzRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Thorns, 'attach', 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(BigBSt4tzRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(Thorns, 'attach', 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					// Manually set BigB health to trigger zone
 					game.components.find(
@@ -192,7 +182,7 @@ describe('Test BigB Soulmate', () => {
 						query.row.index(0),
 					)!.health = 10
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -206,8 +196,8 @@ describe('Test BigB Soulmate', () => {
 		)
 	})
 
-	test('Soulmate extra damage is not blocked by "Royal Protection"', () => {
-		testGame(
+	test('Soulmate extra damage is not blocked by "Royal Protection"', async () => {
+		await testGame(
 			{
 				playerOneDeck: [BigBSt4tzRare, EthosLabCommon],
 				playerTwoDeck: [
@@ -216,30 +206,28 @@ describe('Test BigB Soulmate', () => {
 					LavaBucket,
 					ChorusFruit,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, BigBSt4tzRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(BigBSt4tzRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, PrincessGemRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(PrincessGemRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(LavaBucket, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ChorusFruit, 'single_use')
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.playCardFromHand(ChorusFruit, 'single_use')
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -250,7 +238,7 @@ describe('Test BigB Soulmate', () => {
 						query.row.opponentPlayer,
 						query.row.index(0),
 					)!.health = 10
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health - soulmateEffectDamage,
@@ -261,20 +249,20 @@ describe('Test BigB Soulmate', () => {
 		)
 	})
 
-	test('Soulmate causing double knock-out when triggered by Burn', () => {
-		testGame(
+	test('Soulmate causing double knock-out when triggered by Burn', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, LavaBucket],
 				playerTwoDeck: [BigBSt4tzRare, EthosLabCommon, IronSword],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, BigBSt4tzRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(BigBSt4tzRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					// Manually set BigB health to trigger zone
 					game.components.find(
@@ -288,17 +276,17 @@ describe('Test BigB Soulmate', () => {
 						query.row.currentPlayer,
 						query.row.index(0),
 					)!.health = 10
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(LavaBucket, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
 					// TODO: Decide if this is desired behavior
 					expect(game.currentPlayer.activeRow).toBe(null)
 					expect(game.opponentPlayer.activeRow).toBe(null)
 
-					yield* changeActiveHermit(game, 1)
-					yield* playCardFromHand(game, IronSword, 'single_use')
-					yield* attack(game, 'secondary')
+					await test.changeActiveHermit(1)
+					await test.playCardFromHand(IronSword, 'single_use')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,
@@ -306,9 +294,9 @@ describe('Test BigB Soulmate', () => {
 							query.row.index(1),
 						)?.health,
 					).toBe(EthosLabCommon.health)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
@@ -316,8 +304,8 @@ describe('Test BigB Soulmate', () => {
 	})
 
 	// Test interactions with Grianch which allows two attacks in one turn
-	test('Soulmate does not deal extra damage when revived by Deathloop', () => {
-		testGame(
+	test('Soulmate does not deal extra damage when revived by Deathloop', async () => {
+		await testGame(
 			{
 				playerOneDeck: [GrianchRare, EthosLabCommon],
 				playerTwoDeck: [
@@ -326,38 +314,36 @@ describe('Test BigB Soulmate', () => {
 					GoodTimesWithScarRare,
 					BadOmen,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, GrianchRare, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(GrianchRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ZombieCleoRare, 'hermit', 0)
-					yield* playCardFromHand(game, BigBSt4tzRare, 'hermit', 1)
-					yield* playCardFromHand(game, GoodTimesWithScarRare, 'hermit', 2)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(ZombieCleoRare, 'hermit', 0)
+					await test.playCardFromHand(BigBSt4tzRare, 'hermit', 1)
+					await test.playCardFromHand(GoodTimesWithScarRare, 'hermit', 2)
+					await test.playCardFromHand(BadOmen, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.finishModalRequest({pick: 'secondary'})
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(2),
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
-					yield* endTurn(game)
+					await test.finishModalRequest({pick: 'secondary'})
+					await test.endTurn()
 
 					// Manually set BigB health to trigger zone
 					game.components.find(
@@ -365,7 +351,7 @@ describe('Test BigB Soulmate', () => {
 						query.row.opponentPlayer,
 						query.row.index(0),
 					)!.health = 10
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 					expect(
 						game.components.find(
 							RowComponent,

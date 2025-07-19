@@ -42,6 +42,11 @@ const defaultInfo: DatabaseInfo = {
 		forfeitLosses: 0,
 		topCards: [],
 		uniquePlayersEncountered: 0,
+		playtime: {
+			hours: 0,
+			minutes: 0,
+			seconds: 0,
+		},
 	},
 	currentImport: null,
 	invalidReplay: false,

@@ -59,6 +59,7 @@ export const serverMessages = messages('serverMessages', {
 	AFTER_GAME_INFO: null,
 	CURRENT_IMPORT_RECIEVED: null,
 	DATABASE_FAILURE: null,
+	TOAST_SEND: null,
 })
 
 export type ServerMessages = [
@@ -86,7 +87,7 @@ export type ServerMessages = [
 		type: typeof serverMessages.GAME_END
 		gameState: LocalGameState | null
 		outcome: GameOutcome
-		earnedAchievements: Array<EarnedAchievement>
+		earnedAchievements: Array<EarnedAchievement> | null
 		gameEndTime: number
 	},
 	{
@@ -151,6 +152,12 @@ export type ServerMessages = [
 	{type: typeof serverMessages.REMATCH_DENIED},
 	{type: typeof serverMessages.CREATE_REMATCH_SUCCESS},
 	{type: typeof serverMessages.CREATE_REMATCH_FAILURE},
+	{
+		type: typeof serverMessages.TOAST_SEND
+		title: string
+		description: string
+		image?: string
+	},
 ]
 
 export type ServerMessage = Message<ServerMessages>

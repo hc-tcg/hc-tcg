@@ -112,6 +112,7 @@ const loginReducer = (
 		case localMessages.INSERT_DECK:
 		case localMessages.UPDATE_DECK:
 		case localMessages.SELECT_DECK:
+			localStorage.setItem('activeDeck', action.deck.code)
 			return {
 				...state,
 				playerDeck: action.deck.code,

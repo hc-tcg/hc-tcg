@@ -1,5 +1,5 @@
+import {Appearance} from 'common/cosmetics/types'
 import {PlayerId} from 'common/models/player-model'
-import {ClientMessage} from 'common/socket-messages/client-messages'
 import {LocalMessage, localMessages} from 'logic/messages'
 import {newSocket} from 'socket'
 
@@ -11,21 +11,14 @@ export type SocketType = {
 		playerId?: PlayerId
 		playerUuid: string
 		playerSecret: string
+		appearance: Appearance
 	}
 	connected: boolean
 	connect: () => void
 	disconnect: () => void
 	on: (t: string, f: () => any) => void
 	off: (t: string, f: () => any) => void
-	emit: (
-		m: ClientMessage['type'],
-		payload: {
-			type: ClientMessage['type']
-			payload: any
-			playerId: PlayerId
-			playerSecret: string
-		},
-	) => void
+	emit: (type: string, bytes: Uint8Array) => void
 } | null
 
 type SocketState = {

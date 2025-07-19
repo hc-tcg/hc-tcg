@@ -12,6 +12,8 @@ import type {StatusEffectComponent} from './status-effect-component'
  * time out.
  */
 export class ObserverComponent {
+	public static table = 'observers'
+
 	readonly game: GameModel
 	readonly entity: ObserverEntity
 	readonly wrappingEntity: Entity<
@@ -46,7 +48,7 @@ export class ObserverComponent {
 	 */
 	public subscribe<Args extends (...any: any) => any>(
 		hook: Hook<ObserverEntity, Args> | WaterfallHook<Args>,
-		fun: Args,
+		fun: NoInfer<Args>,
 	) {
 		hook.add(this.entity, fun)
 		this.hooks.push(hook)
@@ -57,7 +59,7 @@ export class ObserverComponent {
 	 */
 	public subscribeBefore<Args extends (...any: any) => any>(
 		hook: Hook<ObserverEntity, Args> | WaterfallHook<Args>,
-		fun: Args,
+		fun: NoInfer<Args>,
 	) {
 		hook.addBefore(this.entity, fun)
 		this.hooks.push(hook)
@@ -70,7 +72,7 @@ export class ObserverComponent {
 	>(
 		hook: PriorityHook<Args, PriorityDict<Priorities>, Priorities>,
 		priority: Priority<Priorities>,
-		fun: Args,
+		fun: NoInfer<Args>,
 	) {
 		hook.add(this.entity, priority, fun)
 		this.hooks.push(hook)

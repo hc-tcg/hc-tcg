@@ -73,6 +73,7 @@ export type GameSettings = {
 	logErrorsToStderr: boolean
 	verboseLogging: boolean
 	disableRewardCards: boolean
+	gameTimeout: number
 }
 
 export function gameSettingsFromEnv(): GameSettings {
@@ -95,6 +96,7 @@ export function gameSettingsFromEnv(): GameSettings {
 		logErrorsToStderr: DEBUG_CONFIG.logErrorsToStderr,
 		verboseLogging: DEBUG_CONFIG.verboseLogging,
 		disableRewardCards: DEBUG_CONFIG.disableRewardCards,
+		gameTimeout: CONFIG.limits.gameTimeout,
 	}
 }
 
@@ -179,7 +181,7 @@ export class GameModel {
 		},
 	) {
 		options = options ?? {}
-		this.id = options.id || `game_${Math.random()}`
+		this.id = options.id || Math.random().toString(16).slice(3, 11)
 
 		if (options?.publishBattleLog) {
 			this.publishBattleLog = options.publishBattleLog
@@ -389,21 +391,26 @@ export class GameModel {
 		}
 	}
 
-	public addCopyAttackModalRequest(
+	public addPickAttackModalRequest(
 		newRequest: Omit<CopyAttack.Request, 'modal'> & {
 			modal: Omit<CopyAttack.Request['modal'], 'availableAttacks'>
 		},
+		mode: 'copy' | 'disable',
 		before = false,
 	) {
 		let modal = newRequest.modal
 		let hermitCard = this.components.get(modal.hermitCard)!
-		let blockedActions = hermitCard.player.hooks.blockedActions.callSome(
-			[[]],
-			(observerEntity) => {
-				let observer = this.components.get(observerEntity)
-				return observer?.wrappingEntity === hermitCard.entity
-			},
-		)
+		/** If true, prevents picking attacks that are unable to be used */
+		const excludeDisabledAttacks = mode === 'copy'
+		let blockedActions = excludeDisabledAttacks
+			? hermitCard.player.hooks.blockedActions.callSome(
+					[[]],
+					(observerEntity) => {
+						let observer = this.components.get(observerEntity)
+						return observer?.wrappingEntity === hermitCard.entity
+					},
+				)
+			: []
 
 		/* Due to an issue with the blocked actions system, we have to check if our target has thier action
 		 * blocked by status effects here.
@@ -443,6 +450,7 @@ export class GameModel {
 		}
 
 		if (
+			excludeDisabledAttacks &&
 			this.components.exists(
 				StatusEffectComponent,
 				query.effect.is(TimeSkipDisabledEffect),

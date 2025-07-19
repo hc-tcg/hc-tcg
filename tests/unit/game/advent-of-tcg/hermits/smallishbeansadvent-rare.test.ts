@@ -5,18 +5,11 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import PvPDoubleItem from 'common/cards/items/pvp-rare'
 import WildItem from 'common/cards/items/wild-common'
 import Efficiency from 'common/cards/single-use/efficiency'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	playCardFromHand,
-	testGame,
-} from '../../utils'
+import {testGame} from '../../utils'
 
 describe('Test Stratos Joel', () => {
-	test('Lore functionality', () => {
-		testGame(
+	test('Lore functionality', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, String],
 				playerTwoDeck: [
@@ -25,36 +18,35 @@ describe('Test Stratos Joel', () => {
 					Efficiency,
 					PvPDoubleItem,
 				],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, SmallishbeansAdventRare, 'hermit', 0)
-					yield* playCardFromHand(game, WildItem, 'item', 0, 0)
-					yield* playCardFromHand(game, Efficiency, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(SmallishbeansAdventRare, 'hermit', 0)
+					await test.playCardFromHand(WildItem, 'item', 0, 0)
+					await test.playCardFromHand(Efficiency, 'single_use')
+					await test.applyEffect()
+					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health -
 							SmallishbeansAdventRare.secondary.damage -
 							20 /** 1 attached Wild Item */,
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(
-						game,
+					await test.playCardFromHand(
 						String,
 						'item',
 						0,
 						1,
 						game.opponentPlayerEntity,
 					)
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, PvPDoubleItem, 'item', 0, 2)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(PvPDoubleItem, 'item', 0, 2)
+					await test.attack('secondary')
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						EthosLabCommon.health -
 							SmallishbeansAdventRare.secondary.damage -

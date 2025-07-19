@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import {CARDS} from 'common/cards'
 import BerryBush from 'common/cards/advent-of-tcg/attach/berry-bush'
 import Dropper from 'common/cards/advent-of-tcg/single-use/dropper'
 import Glowstone from 'common/cards/advent-of-tcg/single-use/glowstone'
@@ -20,7 +21,7 @@ import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
 import {CardEntity} from 'common/entities'
 import {Deck} from 'common/types/deck'
-import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
+import {LocalCardInstance} from 'common/types/server-requests'
 import {sortDecks} from 'common/utils/decks'
 import {validateDeck} from 'common/utils/validation'
 import Button from 'components/button'
@@ -37,7 +38,7 @@ import {
 } from 'logic/matchmaking/matchmaking-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getRematchData, getSession} from 'logic/session/session-selectors'
-import {useEffect, useRef, useState} from 'react'
+import {useEffect, useReducer, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CosmeticPreview} from './achievements'
 import css from './play-select.module.scss'
@@ -69,6 +70,9 @@ function PlaySelect({
 	const gameTypeButtonsRef = useRef<HTMLDivElement>(null)
 
 	const decks = databaseInfo?.decks
+
+	const [, _refresh] = useReducer((x) => x + 1, 0)
+
 	const [loadedDeck, setLoadedDeck] = useState<Deck | undefined>(
 		databaseInfo?.decks.find((deck) => deck.code === playerDeck),
 	)
@@ -131,7 +135,11 @@ function PlaySelect({
 		}
 	}
 
-	const mobileTop = gameTypeButtonsRef.current?.getBoundingClientRect().top || 0
+	// I am sorry but I couldn't get the refs to work when you go to a game mode button immediately on mobile
+	// This code is not great, but it basically works. Can't really see a difference on all display sizes I checked
+	const mobileTop =
+		gameTypeButtonsRef.current?.getBoundingClientRect().top ||
+		window.screen.height * 0.11
 
 	const checkForValidation = (): boolean => {
 		if (!playerDeck || !loadedDeck) {
@@ -144,7 +152,9 @@ function PlaySelect({
 			})
 			return false
 		}
-		const validation = validateDeck(loadedDeck.cards.map((card) => card.props))
+		const validation = validateDeck(
+			loadedDeck.cards.map((card) => CARDS[card.id]),
+		)
 		if (validation.valid) return true
 		dispatch({
 			type: localMessages.TOAST_OPEN,
@@ -205,7 +215,7 @@ function PlaySelect({
 	/* Boss game stuff */
 	function createUICardInstance(card: Card): LocalCardInstance {
 		return {
-			props: WithoutFunctions(card),
+			id: card.numericId,
 			entity: card.id as CardEntity,
 			slot: null,
 			turnedOver: false,

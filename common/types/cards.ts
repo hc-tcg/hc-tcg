@@ -1,9 +1,15 @@
 import {GameModel} from '../models/game-model'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
-export type TokenCostT = -1 | 0 | 1 | 2 | 3 | 4 | 5 | 'wild'
+export type TokenCostT = -1 | 0 | 1 | 2 | 3 | 4 | 5 | 'wild' | 'etho-ur'
 
-export type RankT = 'stone' | 'iron' | 'gold' | 'emerald' | 'diamond'
+export type RankT =
+	| 'stone'
+	| 'iron'
+	| 'gold'
+	| 'emerald'
+	| 'diamond'
+	| 'obsidian'
 
 export type TypeT =
 	| 'balanced'

@@ -1,24 +1,24 @@
 import cn from 'classnames'
 import classNames from 'classnames'
+import {CARDS} from 'common/cards'
 import {getRenderedCardImage} from 'common/cards/card'
-import {Card as CardObject} from 'common/cards/types'
+import {Attach, Hermit, Item, SingleUse} from 'common/cards/types'
 import debugConfig from 'common/config/debug-config'
 import serverConfig from 'common/config/server-config'
 import {EXPANSIONS} from 'common/const/expansions'
-import {WithoutFunctions} from 'common/types/server-requests'
 import Tooltip from 'components/tooltip'
 import CardInstanceTooltip from './card-tooltip'
 import css from './card.module.scss'
-import EffectCardModule, {EffectCardProps} from './effect-card-svg'
-import HermitCardModule, {HermitCardProps} from './hermit-card-svg'
-import ItemCardModule, {ItemCardProps} from './item-card-svg'
+import EffectCardModule from './effect-card-svg'
+import HermitCardModule from './hermit-card-svg'
+import ItemCardModule from './item-card-svg'
 
 interface CardReactProps
 	extends React.DetailedHTMLProps<
 		React.ButtonHTMLAttributes<HTMLButtonElement>,
 		HTMLButtonElement
 	> {
-	card: WithoutFunctions<CardObject>
+	card: number
 	displayTokenCost: boolean
 	selected?: boolean
 	picked?: boolean
@@ -28,51 +28,45 @@ interface CardReactProps
 }
 
 const Card = (props: CardReactProps) => {
-	const {
-		onClick,
-		selected,
-		picked,
-		unpickable,
-		displayTokenCost,
-		...otherProps
-	} = props
+	const {onClick, selected, picked, unpickable, displayTokenCost} = props
 
-	const {category} = props.card
+	let cardProps = CARDS[props.card]
+	const {category} = cardProps
 
 	let card = null
 	if (category === 'hermit')
 		card = (
 			<HermitCardModule
-				{...(otherProps as HermitCardProps)}
+				card={cardProps as Hermit}
 				displayTokenCost={displayTokenCost}
 			/>
 		)
 	else if (category === 'item')
 		card = (
 			<ItemCardModule
-				{...(otherProps as ItemCardProps)}
+				card={cardProps as Item}
 				displayTokenCost={displayTokenCost}
 			/>
 		)
 	else if (['attach', 'single_use'].includes(category))
 		card = (
 			<EffectCardModule
-				{...(otherProps as EffectCardProps)}
+				card={cardProps as Attach | SingleUse}
 				displayTokenCost={displayTokenCost}
 			/>
 		)
 	else throw new Error('Unsupported card category: ' + category)
 
 	const disabled =
-		EXPANSIONS[props.card.expansion].disabled === true ||
-		serverConfig.limits.disabledCards.includes(props.card.id)
+		EXPANSIONS[cardProps.expansion].disabled === true ||
+		serverConfig.limits.disabledCards.includes(cardProps.id)
 			? 'disabled'
 			: 'enabled'
 
 	return (
 		<Tooltip
 			tooltip={
-				<CardInstanceTooltip card={props.card} showStatsOnTooltip={false} />
+				<CardInstanceTooltip card={cardProps} showStatsOnTooltip={false} />
 			}
 			showAboveModal={props.tooltipAboveModal}
 		>
@@ -100,7 +94,7 @@ const Card = (props: CardReactProps) => {
 					>
 						<img
 							className={css.renderedCardImage}
-							src={getRenderedCardImage(props.card, displayTokenCost)}
+							src={getRenderedCardImage(cardProps, displayTokenCost)}
 						/>
 					</div>
 				)}

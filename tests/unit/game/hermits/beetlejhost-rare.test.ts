@@ -5,37 +5,30 @@ import GeminiTayCommon from 'common/cards/hermits/geminitay-common'
 import BadOmen from 'common/cards/single-use/bad-omen'
 import EnderPearl from 'common/cards/single-use/ender-pearl'
 import InvisibilityPotion from 'common/cards/single-use/invisibility-potion'
+import Knockback from 'common/cards/single-use/knockback'
 import PotionOfWeakness from 'common/cards/single-use/potion-of-weakness'
 import {IronSword} from 'common/cards/single-use/sword'
 import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {WEAKNESS_DAMAGE} from 'common/const/damage'
 import ChromaKeyedEffect from 'common/status-effects/chroma-keyed'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Beetlejhost Rare', () => {
-	test('Test Jopacity damage is reduced', () => {
-		testGame(
+	test('Test Jopacity damage is reduced', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -44,11 +37,11 @@ describe('Test Beetlejhost Rare', () => {
 							query.row.index(0),
 						)?.health,
 					).toBe(EthosLabCommon.health - BeetlejhostRare.secondary.damage)
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -59,11 +52,11 @@ describe('Test Beetlejhost Rare', () => {
 					).toBe(
 						EthosLabCommon.health - (BeetlejhostRare.secondary.damage - 10),
 					)
-					yield* changeActiveHermit(game, 2)
-					yield* endTurn(game)
+					await test.changeActiveHermit(2)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -79,17 +72,17 @@ describe('Test Beetlejhost Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Attacking with primary removes Chroma Keyed', () => {
-		testGame(
+	test('Attacking with primary removes Chroma Keyed', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -99,10 +92,10 @@ describe('Test Beetlejhost Rare', () => {
 						),
 					).not.toBe(null)
 
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
-					yield* attack(game, 'primary')
+					await test.attack('primary')
 					expect(
 						game.components.find(
 							StatusEffectComponent,
@@ -115,31 +108,18 @@ describe('Test Beetlejhost Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Attacking with other hermit removes Chroma Keyed', () => {
-		testGame(
+	test('Attacking with other hermit removes Chroma Keyed', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare, GeminiTayCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
-					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 1)
-					yield* attack(game, 'secondary')
-
-					expect(
-						game.components.find(
-							StatusEffectComponent,
-							query.effect.is(ChromaKeyedEffect),
-							query.not(query.effect.targetEntity(null)),
-						),
-					).not.toBe(null)
-
-					yield* endTurn(game)
-					yield* endTurn(game)
-
-					yield* changeActiveHermit(game, 1)
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.playCardFromHand(GeminiTayCommon, 'hermit', 1)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -149,10 +129,23 @@ describe('Test Beetlejhost Rare', () => {
 						),
 					).not.toBe(null)
 
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.changeActiveHermit(1)
+
+					expect(
+						game.components.find(
+							StatusEffectComponent,
+							query.effect.is(ChromaKeyedEffect),
+							query.not(query.effect.targetEntity(null)),
+						),
+					).not.toBe(null)
+
+					await test.endTurn()
+					await test.endTurn()
+
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -166,24 +159,24 @@ describe('Test Beetlejhost Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Chroma Keyed is removed when doing nothing', () => {
-		testGame(
+	test('Chroma Keyed is removed when doing nothing', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.attack('secondary')
 
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
 					// Do nothing for a turn.
-					yield* endTurn(game)
-					yield* endTurn(game)
+					await test.endTurn()
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -197,34 +190,34 @@ describe('Test Beetlejhost Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test Jopacity with Invisibility tails', () => {
-		testGame(
+	test('Test Jopacity with Invisibility tails', async () => {
+		await testGame(
 			{
 				playerOneDeck: [GeminiTayCommon, InvisibilityPotion],
 				playerTwoDeck: [BeetlejhostRare, BadOmen],
-				saga: function* (game) {
-					yield* playCardFromHand(game, GeminiTayCommon, 'hermit', 0)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(GeminiTayCommon, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.playCardFromHand(BadOmen, 'single_use')
+					await test.applyEffect()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						GeminiTayCommon.health - BeetlejhostRare.secondary.damage,
 					)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, InvisibilityPotion, 'single_use')
-					yield* applyEffect(game)
+					await test.playCardFromHand(InvisibilityPotion, 'single_use')
+					await test.applyEffect()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(game.opponentPlayer.activeRow?.health).toBe(
 						GeminiTayCommon.health -
@@ -236,20 +229,20 @@ describe('Test Beetlejhost Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true, forceCoinFlip: true},
 		)
 	})
-	test('Chroma Keyed is not removed by single use damage', () => {
-		testGame(
+	test('Chroma Keyed is not removed by single use damage', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare, EnderPearl, IronSword],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -258,18 +251,17 @@ describe('Test Beetlejhost Rare', () => {
 							query.row.index(0),
 						)?.health,
 					).toBe(EthosLabCommon.health - BeetlejhostRare.secondary.damage)
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EnderPearl, 'single_use')
-					yield* pick(
-						game,
+					await test.playCardFromHand(EnderPearl, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -280,12 +272,12 @@ describe('Test Beetlejhost Rare', () => {
 					).toBe(
 						EthosLabCommon.health - (BeetlejhostRare.secondary.damage - 10),
 					)
-					yield* changeActiveHermit(game, 2)
-					yield* endTurn(game)
+					await test.changeActiveHermit(2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, IronSword, 'single_use')
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(IronSword, 'single_use')
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -308,21 +300,21 @@ describe('Test Beetlejhost Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Chroma Keyed is not removed by weakness damage', () => {
-		testGame(
+	test('Chroma Keyed is not removed by weakness damage', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [BeetlejhostRare, PotionOfWeakness, PotionOfWeakness],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, BeetlejhostRare, 'hermit', 0)
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
+					await test.applyEffect()
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -340,13 +332,13 @@ describe('Test Beetlejhost Rare', () => {
 							.getActiveHermit()
 							?.getStatusEffect(ChromaKeyedEffect)?.counter,
 					).toBe(1)
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, PotionOfWeakness, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(PotionOfWeakness, 'single_use')
+					await test.applyEffect()
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -364,6 +356,51 @@ describe('Test Beetlejhost Rare', () => {
 							.getActiveHermit()
 							?.getStatusEffect(ChromaKeyedEffect)?.counter,
 					).toBe(2)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+	test('Jopacity reduction is not shared between hermits', async () => {
+		await testGame(
+			{
+				playerOneDeck: [BeetlejhostRare, Knockback],
+				playerTwoDeck: [BeetlejhostRare, BeetlejhostRare],
+				testGame: async (test, game) => {
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.endTurn()
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 0)
+					await test.playCardFromHand(BeetlejhostRare, 'hermit', 1)
+					await test.attack('secondary')
+					await test.endTurn()
+					await test.playCardFromHand(Knockback, 'single_use')
+					await test.attack('secondary')
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						BeetlejhostRare.health - BeetlejhostRare.secondary.damage,
+					)
+					await test.pick(
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					await test.endTurn()
+					await test.attack('secondary')
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						BeetlejhostRare.health -
+							BeetlejhostRare.secondary.damage -
+							BeetlejhostRare.secondary.damage,
+					)
+					await test.endTurn()
+					expect(
+						game.opponentPlayer
+							.getActiveHermit()
+							?.getStatusEffect(ChromaKeyedEffect)?.counter,
+					).toBe(1)
+					expect(
+						game.currentPlayer
+							.getActiveHermit()
+							?.getStatusEffect(ChromaKeyedEffect)?.counter,
+					).toBe(1)
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},

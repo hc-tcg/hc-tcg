@@ -7,6 +7,7 @@ const HallOfAll: Achievement = {
 	...achievement,
 	numericId: 43,
 	id: 'hall-of-all',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Hall of All',
@@ -16,8 +17,10 @@ const HallOfAll: Achievement = {
 		},
 	],
 	onGameStart(game, player, component, observer) {
-		observer.subscribe(player.hooks.onAttach, () => {
+		observer.subscribe(player.hooks.onAttach, (card) => {
 			if (
+				!card.slot.inRow() ||
+				card.player.entity !== player.entity ||
 				game.components.find(
 					SlotComponent,
 					query.slot.player(player.entity),
@@ -26,7 +29,8 @@ const HallOfAll: Achievement = {
 				)
 			)
 				return
-			component.incrementGoalProgress({goal: 0})
+			component.updateGoalProgress({goal: 0})
+			observer.unsubscribeFromEverything()
 		})
 	},
 }

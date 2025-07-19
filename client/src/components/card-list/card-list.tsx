@@ -2,6 +2,7 @@ import cn from 'classnames'
 import CardComponent from 'components/card'
 import css from './card-list.module.scss'
 
+import {CARDS} from 'common/cards'
 import {
 	LocalCardInstance,
 	LocalStatusEffectInstance,
@@ -44,7 +45,7 @@ const CardList = (props: CardListProps) => {
 		const isPicked = !!picked?.find(
 			(pickedCard) => card.entity === pickedCard.entity,
 		)
-		const isDisabled = !!disabled?.find((id) => id == card.props.id)
+		const isDisabled = !!disabled?.find((id) => id == CARDS[card.id].id)
 		const isUnpickable = !!unpickable?.find(
 			(findCard) => findCard.entity === card.entity,
 		)
@@ -55,7 +56,7 @@ const CardList = (props: CardListProps) => {
 					[css.clickable]: !!onClick && !isDisabled,
 				})}
 				onClick={onClick && !isDisabled ? () => onClick(card) : undefined}
-				card={card.props}
+				card={card.id}
 				unpickable={isUnpickable}
 				disabled={isDisabled}
 				selected={isSelected}

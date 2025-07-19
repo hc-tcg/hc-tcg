@@ -9,6 +9,7 @@ const UselessMachine: Achievement = {
 	...achievement,
 	numericId: 21,
 	id: 'useless-machine',
+	progressionMethod: 'best',
 	levels: [
 		{
 			name: 'Useless Machine',
@@ -19,7 +20,8 @@ const UselessMachine: Achievement = {
 	onGameStart(game, player, component, observer) {
 		let playerHand: Array<string> = []
 
-		observer.subscribe(player.hooks.beforeApply, () => {
+		observer.subscribe(player.hooks.onAttach, (card) => {
+			if (card.slot.type !== 'single_use') return
 			playerHand = player.getHand().map((card) => card.props.id)
 		})
 
@@ -33,15 +35,16 @@ const UselessMachine: Achievement = {
 
 				let newPlayerHand = player.getHand().map((card) => card.props.id)
 
-				for (const card of newPlayerHand) {
-					let index = playerHand.indexOf(card)
-					playerHand.splice(index - 1, index + 1)
+				for (const card of playerHand) {
+					let index = newPlayerHand.indexOf(card)
+					if (index === -1) continue
+					newPlayerHand.splice(index, 1)
 				}
 
-				if (playerHand.length == 1) {
-					component.bestGoalProgress({goal: 0, progress: 1})
-				} else if (playerHand.length == 0) {
-					component.bestGoalProgress({goal: 0, progress: 2})
+				if (newPlayerHand.length == 1) {
+					component.updateGoalProgress({goal: 0, progress: 1})
+				} else if (newPlayerHand.length == 0) {
+					component.updateGoalProgress({goal: 0, progress: 2})
 				}
 			},
 		)

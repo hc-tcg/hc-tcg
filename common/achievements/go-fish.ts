@@ -10,6 +10,7 @@ const GoFish: Achievement = {
 	...achievement,
 	numericId: 20,
 	id: 'go-fish',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Go Fish',
@@ -39,7 +40,7 @@ const GoFish: Achievement = {
 					.filter((x) => x.props.id === Mending.id).length
 
 				if (numberOfMendingsBeforeUse < numberOfMendingsNow) {
-					component.incrementGoalProgress({goal: 0})
+					component.updateGoalProgress({goal: 0})
 				}
 			},
 		)

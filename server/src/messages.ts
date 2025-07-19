@@ -1,3 +1,4 @@
+import {Appearance} from 'common/cosmetics/types'
 import {PlayerEntity} from 'common/entities'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {Message, MessageTable, messages} from 'common/redux-messages'
@@ -23,6 +24,7 @@ type Messages = [
 		playerSecret: string
 		minecraftName: string
 		deck: Deck
+		appearance: Appearance
 		socket: any
 	},
 	{type: typeof localMessages.CLIENT_DISCONNECTED; socket: any},
@@ -32,8 +34,9 @@ type Messages = [
 	{type: typeof localMessages.PLAYER_REMOVED; player: PlayerModel},
 	{
 		type: typeof localMessages.GAME_TURN_ACTION
-		action: AnyTurnActionData
 		playerEntity: PlayerEntity
+		action: AnyTurnActionData
+		game: string
 	},
 ]
 

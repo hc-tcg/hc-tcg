@@ -50,10 +50,8 @@ const SmallAchievement = ({
 	const [init, setInit] = useState<boolean>(false)
 	const [offset, setOffset] = useState<number>(index)
 
-	const onMobile = window.screen.width <= 720
-
-	const ma = onMobile ? 85 : 75
-
+	const achievementSize = 100
+	const leftMargin = 2.5
 	const gap = 1
 
 	const setPosition = () => {
@@ -67,10 +65,10 @@ const SmallAchievement = ({
 			barRef.current?.animate(
 				{
 					left: [
-						`${12.5 + offset * (ma + gap)}%`,
-						`${12.5 + offset * (ma + gap)}%`,
-						`${12.5 + (offset - 1) * (ma + gap)}%`,
-						`${12.5 + (offset - 1) * (ma + gap)}%`,
+						`${leftMargin + offset * (achievementSize + gap)}%`,
+						`${leftMargin + offset * (achievementSize + gap)}%`,
+						`${leftMargin + (offset - 1) * (achievementSize + gap)}%`,
+						`${leftMargin + (offset - 1) * (achievementSize + gap)}%`,
 					],
 					offset: [0.0, 0.8, 0.99, 1.0],
 				},
@@ -131,7 +129,7 @@ const SmallAchievement = ({
 	return (
 		<div
 			className={css.smallAchievementBox}
-			style={{left: `${12.5 + index * (ma + gap)}%`}}
+			style={{left: `${leftMargin + index * (achievementSize + gap)}%`}}
 			ref={barRef}
 		>
 			<div className={css.nameAndProgress}>
@@ -308,14 +306,16 @@ const EndGameOverlay = ({
 				)}
 				<div className={css.achievementsOverview}>
 					{earnedAchievements.length > 0 ? (
-						earnedAchievements.map((a, i) => (
-							<SmallAchievement
-								achievement={a}
-								key={i}
-								index={i}
-								amount={earnedAchievements.length}
-							></SmallAchievement>
-						))
+						<div className={css.achievementsArea}>
+							{earnedAchievements.map((a, i) => (
+								<SmallAchievement
+									achievement={a}
+									key={i}
+									index={i}
+									amount={earnedAchievements.length}
+								></SmallAchievement>
+							))}
+						</div>
 					) : (
 						<div className={css.noAchievements}>You Earned No Achivements</div>
 					)}

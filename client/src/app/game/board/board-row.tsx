@@ -1,5 +1,6 @@
 import cn from 'classnames'
 import {PlayerEntity, RowEntity, SlotEntity} from 'common/entities'
+import {STATUS_EFFECTS} from 'common/status-effects'
 import {BoardSlotTypeT, SlotTypeT} from 'common/types/cards'
 import {LocalRowState} from 'common/types/game-state'
 import {LocalCardInstance} from 'common/types/server-requests'
@@ -144,7 +145,7 @@ const BoardRow = ({
 					(a) =>
 						a.target.type === 'card' &&
 						a.target.card === rowState.hermit.card?.entity &&
-						a.props.type === 'damage',
+						STATUS_EFFECTS[a.id].type === 'damage',
 				)}
 			/>
 			<div className={cn(css.effect, css.slot)}>

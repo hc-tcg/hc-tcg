@@ -47,6 +47,10 @@ jobs:
           with:
             fetch-depth: 0
 
+        - name: Update Message
+          run: |
+           curl https://hc-tcg.online/api/update --header "auth:${{ secrets.HC_TCG_TOKEN }}" --header "Content-Type: application/json" --data "{\"version\": \"$TAG_NAME\"}"
+
         - name: Post Message to Discord
           shell: bash
           run: |

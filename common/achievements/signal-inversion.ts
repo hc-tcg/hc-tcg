@@ -8,6 +8,7 @@ const SignalInversion: Achievement = {
 	...achievement,
 	numericId: 52,
 	id: 'signal-inversion',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Signal Inversion',
@@ -44,7 +45,7 @@ const SignalInversion: Achievement = {
 				if (!hasBadOmen) return
 				if (!player.hasStatusEffect(FortuneEffect)) return
 
-				component.incrementGoalProgress({goal: 0})
+				component.updateGoalProgress({goal: 0})
 				hasFlippedThisTurn = false
 			},
 		)

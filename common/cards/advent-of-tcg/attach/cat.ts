@@ -49,7 +49,7 @@ const Cat: Attach = {
 					return
 
 				let currentTopCard = player
-					.getDeck()
+					.getDrawPile()
 					.sort(CardComponent.compareOrder)[0]
 
 				const modal: SelectCards.Request = {
@@ -76,7 +76,7 @@ const Cat: Attach = {
 						if (!modalResult.result) return 'SUCCESS'
 
 						player
-							.getDeck()
+							.getDrawPile()
 							.sort(CardComponent.compareOrder)
 							.at(-1)
 							?.attach(
@@ -99,7 +99,7 @@ const Cat: Attach = {
 				const updateModal = () => {
 					newObserver.unsubscribe(currentTopCard.hooks.onChangeSlot)
 					const topCard = player
-						.getDeck()
+						.getDrawPile()
 						.sort(CardComponent.compareOrder)
 						.at(0)
 					if (!topCard) {

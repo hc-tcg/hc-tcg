@@ -6,22 +6,22 @@ import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import TurnSkippedEffect from 'common/status-effects/turn-skipped'
 import UsedClockEffect from 'common/status-effects/used-clock'
-import {applyEffect, endTurn, playCardFromHand, testGame} from '../utils'
+import {TestGameFixture, testGame} from '../utils'
 
-function* testClockHelperSaga(game: GameModel) {
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+async function testClockHelperSaga(test: TestGameFixture, game: GameModel) {
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-	yield* endTurn(game)
+	await test.endTurn()
 
-	yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+	await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
 	// Clock can not be played on turn one.
-	yield* endTurn(game)
-	yield* endTurn(game)
+	await test.endTurn()
+	await test.endTurn()
 
-	yield* playCardFromHand(game, Clock, 'single_use')
+	await test.playCardFromHand(Clock, 'single_use')
 
-	yield* applyEffect(game)
+	await test.applyEffect()
 
 	expect(
 		game.components.find(
@@ -40,10 +40,10 @@ function* testClockHelperSaga(game: GameModel) {
 }
 
 describe('Test Clock', () => {
-	test('Test Clock', () => {
-		testGame(
+	test('Test Clock', async () => {
+		await testGame(
 			{
-				saga: testClockHelperSaga,
+				testGame: testClockHelperSaga,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon, Clock],
 			},

@@ -109,6 +109,11 @@ function getNonDatabaseUser(): User {
 			forfeitLosses: 0,
 			uniquePlayersEncountered: 0,
 			topCards: [],
+			playtime: {
+				hours: 0,
+				minutes: 0,
+				seconds: 0,
+			},
 		},
 		gameHistory: [],
 		banned: false,
@@ -331,6 +336,7 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 					playerUuid: userResponse.uuid,
 					playerName: userResponse.username,
 					minecraftName: userResponse.minecraftName || userResponse.username,
+					appearance: defaultAppearance,
 					version: getClientVersion(),
 				}
 				yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
@@ -366,6 +372,16 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 				playerUuid: userResponse.uuid,
 				playerName: userResponse.username,
 				minecraftName: userResponse.minecraftName || userResponse.username,
+				appearance: {
+					title: TITLES[userResponse.title || ''] ?? defaultAppearance.title,
+					coin: COINS[userResponse.coin || ''] ?? defaultAppearance.coin,
+					heart: HEARTS[userResponse.heart || ''] ?? defaultAppearance.heart,
+					background:
+						BACKGROUNDS[userResponse.background || ''] ??
+						defaultAppearance.background,
+					border:
+						BORDERS[userResponse.border || ''] ?? defaultAppearance.border,
+				},
 				version: getClientVersion(),
 			}
 			yield* put<LocalMessage>({type: localMessages.SOCKET_CONNECTING})
@@ -798,6 +814,20 @@ export function* updatesSaga() {
 		type: localMessages.UPDATES_LOAD,
 		updates: result.updates,
 	})
+}
+
+export function* serverToastSaga() {
+	const socket = yield* select(getSocket)
+	while (true) {
+		const result = yield* call(receiveMsg(socket, serverMessages.TOAST_SEND))
+		yield put<LocalMessage>({
+			type: localMessages.TOAST_OPEN,
+			open: true,
+			title: result.title,
+			description: result.description,
+			image: result.image,
+		})
+	}
 }
 
 export function* cosmeticSaga() {

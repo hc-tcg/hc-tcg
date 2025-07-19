@@ -38,6 +38,14 @@ const CyberpunkImpulseRare: Hermit = {
 
 		observer.subscribe(player.hooks.availableEnergy, (availableEnergy) => {
 			if (!component.slot.inRow()) return availableEnergy
+
+			const activeRow = player.activeRow
+			if (
+				!activeRow ||
+				Math.abs(activeRow.index - component.slot.row.index) !== 1
+			)
+				return availableEnergy
+
 			game.components
 				.filter(
 					CardComponent,

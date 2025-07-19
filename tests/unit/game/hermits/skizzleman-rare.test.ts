@@ -8,31 +8,24 @@ import Anvil from 'common/cards/single-use/anvil'
 import LavaBucket from 'common/cards/single-use/lava-bucket'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	changeActiveHermit,
-	endTurn,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Skizzleman Rare', () => {
-	test('Gaslight works as intended', () => {
-		testGame(
+	test('Gaslight works as intended', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon],
 				playerTwoDeck: [SkizzlemanRare, Anvil],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 0)
+					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					// Use Anvil to trigger Skizz's bonus damage.
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -60,22 +53,22 @@ describe('Test Skizzleman Rare', () => {
 		)
 	})
 
-	test('Gaslight only triggers Thorns once', () => {
-		testGame(
+	test('Gaslight only triggers Thorns once', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, Thorns],
 				playerTwoDeck: [SkizzlemanRare, Anvil],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, Thorns, 'attach', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(Thorns, 'attach', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 0)
+					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					// Use Anvil to trigger Skizz's bonus damage.
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -89,22 +82,22 @@ describe('Test Skizzleman Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test("Gaslight doesn't trigger if the hermit takes no damage", () => {
-		testGame(
+	test("Gaslight doesn't trigger if the hermit takes no damage", async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, EthosLabCommon, GoldArmor],
 				playerTwoDeck: [SkizzlemanRare, Anvil],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, GoldArmor, 'attach', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(GoldArmor, 'attach', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 0)
+					await test.playCardFromHand(SkizzlemanRare, 'hermit', 0)
 					// Use anvil to trigger attack the afk hermit for zero damage
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(
@@ -119,8 +112,8 @@ describe('Test Skizzleman Rare', () => {
 		)
 	})
 
-	test('Totem keeps hermits alive when damaged by Gaslight and Burn at end of turn', () => {
-		testGame(
+	test('Totem keeps hermits alive when damaged by Gaslight and Burn at end of turn', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -130,28 +123,28 @@ describe('Test Skizzleman Rare', () => {
 					Totem,
 				],
 				playerTwoDeck: [SkizzlemanRare, LavaBucket, LavaBucket, Anvil],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
-					yield* playCardFromHand(game, Totem, 'attach', 0)
-					yield* playCardFromHand(game, Totem, 'attach', 2)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(Totem, 'attach', 0)
+					await test.playCardFromHand(Totem, 'attach', 2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, SkizzlemanRare, 'hermit', 1)
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(SkizzlemanRare, 'hermit', 1)
+					await test.playCardFromHand(LavaBucket, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 2)
-					yield* endTurn(game)
+					await test.changeActiveHermit(2)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, LavaBucket, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(LavaBucket, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
 					// Manually set Etho (1) health to trigger zone
 					game.components.find(
@@ -166,9 +159,9 @@ describe('Test Skizzleman Rare', () => {
 						query.row.index(2),
 					)!.health = 30
 
-					yield* playCardFromHand(game, Anvil, 'single_use')
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(Anvil, 'single_use')
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(
 						game.components.find(

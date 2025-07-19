@@ -6,44 +6,35 @@ import HumanCleoRare from 'common/cards/hermits/humancleo-rare'
 import TangoTekRare from 'common/cards/hermits/tangotek-rare'
 import CurseOfBinding from 'common/cards/single-use/curse-of-binding'
 import query from 'common/components/query'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Tango Extra Flee', () => {
-	test('Both players change active hermits', () => {
-		testGame(
+	test('Both players change active hermits', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, FarmerBeefCommon],
 				playerTwoDeck: [TangoTekRare, FarmerBeefRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefCommon, 'hermit', 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefCommon, 'hermit', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefRare, 'hermit', 1)
+					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefRare, 'hermit', 1)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toHaveLength(2)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
 					expect(game.opponentPlayer.activeRow?.index).toBe(1)
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -56,19 +47,19 @@ describe('Test Tango Extra Flee', () => {
 		)
 	})
 
-	test('Both players can not change active hermit with 0 afk', () => {
-		testGame(
+	test('Both players can not change active hermit with 0 afk', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [TangoTekRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
+					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toStrictEqual([])
 				},
@@ -77,25 +68,25 @@ describe('Test Tango Extra Flee', () => {
 		)
 	})
 
-	test('Curse of Binding prevents Tango from fleeing', () => {
-		testGame(
+	test('Curse of Binding prevents Tango from fleeing', async () => {
+		await testGame(
 			{
 				playerOneDeck: [TangoTekRare, FarmerBeefRare],
 				playerTwoDeck: [EthosLabCommon, CurseOfBinding],
-				saga: function* (game) {
-					yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefRare, 'hermit', 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefRare, 'hermit', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, CurseOfBinding, 'single_use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(CurseOfBinding, 'single_use')
 
-					yield* applyEffect(game)
+					await test.applyEffect()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(game.state.pickRequests).toStrictEqual([])
 				},
@@ -104,29 +95,28 @@ describe('Test Tango Extra Flee', () => {
 		)
 	})
 
-	test('Betrayal effect does not prevent Tango from fleeing', () => {
-		testGame(
+	test('Betrayal effect does not prevent Tango from fleeing', async () => {
+		await testGame(
 			{
 				playerOneDeck: [TangoTekRare, FarmerBeefRare],
 				playerTwoDeck: [HumanCleoRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, TangoTekRare, 'hermit', 0)
-					yield* playCardFromHand(game, FarmerBeefRare, 'hermit', 1)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(TangoTekRare, 'hermit', 0)
+					await test.playCardFromHand(FarmerBeefRare, 'hermit', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, HumanCleoRare, 'hermit', 0)
+					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					// First request should be for Betrayal target
 					expect(game.state.pickRequests).toHaveLength(1)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -134,8 +124,7 @@ describe('Test Tango Extra Flee', () => {
 
 					// Second request should be to switch active row
 					expect(game.state.pickRequests).toHaveLength(1)
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),

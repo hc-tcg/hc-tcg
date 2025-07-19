@@ -1,4 +1,5 @@
 import classNames from 'classnames'
+import {CARDS} from 'common/cards'
 import {ButtonVariant} from 'common/types/buttons'
 import {Deck, Tag} from 'common/types/deck'
 import {getDeckTypes} from 'common/utils/decks'
@@ -73,7 +74,7 @@ function GameModeButton({
 			: 0,
 	)
 
-	const onMobile = window.screen.width / window.screen.height <= 1
+	const onMobile = window.innerWidth <= window.innerHeight
 
 	const [buttonPosition, setButtonPosition] = useState<{
 		x: number
@@ -91,6 +92,7 @@ function GameModeButton({
 			reload()
 		} else {
 			const pos = buttonRef.current.getBoundingClientRect()
+			const onMobile = window.innerWidth <= window.innerHeight
 			setButtonPosition({x: pos.x, y: pos.y, h: pos.height, w: pos.width})
 
 			if (activeMode === mode) {
@@ -311,7 +313,13 @@ function GameModeButton({
 						)}
 					</div>
 				</div>
-				<div ref={rightOverlayRef} className={css.rightOverlay}>
+				<div
+					ref={rightOverlayRef}
+					className={classNames(
+						css.rightOverlay,
+						activeMode !== mode && css.disallowClicks,
+					)}
+				>
 					{activeMode === mode && children}
 				</div>
 			</div>
@@ -377,7 +385,7 @@ GameModeButton.ChooseDeck = ({
 				(!compareTag || deck.tags?.find((tag) => tag.key === compareTag)) &&
 				(!compareType ||
 					compareType === 'any' ||
-					getDeckTypes(deck.cards.map((card) => card.props.id)).includes(
+					getDeckTypes(deck.cards.map((card) => CARDS[card.id].id)).includes(
 						compareType,
 					)) &&
 				(!compareName ||

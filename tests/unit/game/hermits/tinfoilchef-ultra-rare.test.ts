@@ -8,29 +8,21 @@ import Chest from 'common/cards/single-use/chest'
 import Ladder from 'common/cards/single-use/ladder'
 import {CardComponent} from 'common/components'
 import query from 'common/components/query'
-import {
-	attack,
-	changeActiveHermit,
-	endTurn,
-	finishModalRequest,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Ultra Rare TFC "Take It Easy"', () => {
-	test('Can not discard two attach effects from the same hermit', () => {
-		testGame(
+	test('Can not discard two attach effects from the same hermit', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ChainmailArmor, ChainmailArmor],
 				playerTwoDeck: [TinFoilChefUltraRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -40,12 +32,12 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 						)?.props,
 					).toBe(ChainmailArmor)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
-					yield* endTurn(game)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -61,8 +53,8 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 		)
 	})
 
-	test('Can not discard twice after hermit swaps rows with Ladder', () => {
-		testGame(
+	test('Can not discard twice after hermit swaps rows with Ladder', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -72,15 +64,15 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					Ladder,
 				],
 				playerTwoDeck: [TinFoilChefUltraRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -90,18 +82,17 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 						)?.props,
 					).toBe(ChainmailArmor)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, Ladder, 'single_use')
-					yield* pick(
-						game,
+					await test.playCardFromHand(Ladder, 'single_use')
+					await test.pick(
 						query.slot.currentPlayer,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -117,8 +108,8 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 		)
 	})
 
-	test('Can discard from the same hermit after they are knocked-out', () => {
-		testGame(
+	test('Can discard from the same hermit after they are knocked-out', async () => {
+		await testGame(
 			{
 				playerOneDeck: [
 					EthosLabCommon,
@@ -128,14 +119,14 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 					ChainmailArmor,
 				],
 				playerTwoDeck: [TinFoilChefUltraRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -145,21 +136,21 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 						)?.props,
 					).toBe(ChainmailArmor)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* playCardFromHand(game, Chest, 'single_use')
-					yield* finishModalRequest(game, {
+					await test.changeActiveHermit(1)
+					await test.playCardFromHand(Chest, 'single_use')
+					await test.finishModalRequest({
 						result: true,
 						cards: game.components.filterEntities(
 							CardComponent,
@@ -169,12 +160,12 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 						),
 					})
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
-					yield* changeActiveHermit(game, 0)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
+					await test.changeActiveHermit(0)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -190,19 +181,19 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 		)
 	})
 
-	test('Can discard from the same hermit after TFC is knocked-out', () => {
-		testGame(
+	test('Can discard from the same hermit after TFC is knocked-out', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ChainmailArmor, ChainmailArmor],
 				playerTwoDeck: [TinFoilChefUltraRare, ArmorStand, Chest],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 0)
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 1)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
+					await test.playCardFromHand(ArmorStand, 'hermit', 1)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -211,24 +202,24 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 							query.card.slot(query.slot.discardPile),
 						)?.props,
 					).toBe(ChainmailArmor)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* playCardFromHand(game, Chest, 'single_use')
-					yield* finishModalRequest(game, {
+					await test.changeActiveHermit(1)
+					await test.playCardFromHand(Chest, 'single_use')
+					await test.finishModalRequest({
 						result: true,
 						cards: game.components.filterEntities(
 							CardComponent,
@@ -238,14 +229,14 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 						),
 					})
 
-					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 0)
-					yield* changeActiveHermit(game, 0)
-					yield* endTurn(game)
+					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
+					await test.changeActiveHermit(0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
-					yield* endTurn(game)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -261,19 +252,19 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 		)
 	})
 
-	test('Different TFC can discard from the same hermit', () => {
-		testGame(
+	test('Different TFC can discard from the same hermit', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, ChainmailArmor, ChainmailArmor],
 				playerTwoDeck: [TinFoilChefUltraRare, TinFoilChefUltraRare],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 0)
-					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 1)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
+					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 1)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -282,17 +273,17 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 							query.card.slot(query.slot.discardPile),
 						)?.props,
 					).toBe(ChainmailArmor)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
-					yield* endTurn(game)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
+					await test.endTurn()
 
-					yield* changeActiveHermit(game, 1)
-					yield* endTurn(game)
+					await test.changeActiveHermit(1)
+					await test.endTurn()
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -308,19 +299,19 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 		)
 	})
 
-	test('Can not discard twice when used by/facing Role Play', () => {
-		testGame(
+	test('Can not discard twice when used by/facing Role Play', async () => {
+		await testGame(
 			{
 				playerOneDeck: [RendogRare, ChainmailArmor, ChainmailArmor],
 				playerTwoDeck: [TinFoilChefUltraRare, ChainmailArmor, ChainmailArmor],
-				saga: function* (game) {
-					yield* playCardFromHand(game, RendogRare, 'hermit', 0)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(RendogRare, 'hermit', 0)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, TinFoilChefUltraRare, 'hermit', 0)
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(TinFoilChefUltraRare, 'hermit', 0)
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -329,17 +320,16 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 							query.card.slot(query.slot.discardPile),
 						)?.props,
 					).toBe(ChainmailArmor)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.opponent,
 						query.slot.active,
 						query.slot.hermit,
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 
 					expect(
 						game.components.find(
@@ -348,10 +338,10 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 							query.card.slot(query.slot.discardPile),
 						)?.props,
 					).toBe(ChainmailArmor)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, ChainmailArmor, 'attach', 0)
-					yield* attack(game, 'secondary')
+					await test.playCardFromHand(ChainmailArmor, 'attach', 0)
+					await test.attack('secondary')
 
 					expect(
 						game.components.find(
@@ -361,16 +351,15 @@ describe('Test Ultra Rare TFC "Take It Easy"', () => {
 							query.card.slot(query.slot.attach),
 						),
 					).not.toBe(null)
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* pick(
-						game,
+					await test.attack('secondary')
+					await test.pick(
 						query.slot.opponent,
 						query.slot.active,
 						query.slot.hermit,
 					)
-					yield* finishModalRequest(game, {pick: 'secondary'})
+					await test.finishModalRequest({pick: 'secondary'})
 
 					expect(
 						game.components.find(

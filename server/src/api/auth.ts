@@ -1,4 +1,16 @@
 import root from 'serverRoot'
+import {z} from 'zod'
+
+export const ApiKeyHeader = z.object({
+	auth: z.string(),
+})
+
+export async function authenticateApiKey(key: string) {
+	const body = await root.db.authenticateApiKey(key)
+	if (body.type !== 'success' || body.body === false) {
+		throw new Error('Authentication failed')
+	}
+}
 
 export async function authenticateUser(
 	userId: string | undefined,

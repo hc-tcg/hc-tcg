@@ -20,7 +20,6 @@ import {
 	LocalCardInstance,
 	LocalModalData,
 	LocalStatusEffectInstance,
-	WithoutFunctions,
 } from 'common/types/server-requests'
 import {GameViewer} from '../game-controller'
 
@@ -38,7 +37,7 @@ function getLocalStatusEffect(effect: StatusEffectComponent) {
 		return null
 	}
 	return {
-		props: WithoutFunctions(effect.props),
+		id: effect.props.id,
 		instance: effect.entity,
 		target:
 			effect.target instanceof CardComponent
@@ -59,7 +58,7 @@ export function getLocalCard<CardType extends Card>(
 	}
 
 	return {
-		props: card.props as WithoutFunctions<CardType>,
+		id: card.props.numericId,
 		entity: card.entity,
 		slot: card.slotEntity,
 		turnedOver: card.turnedOver,
@@ -144,11 +143,11 @@ function getLocalPlayerState(
 			.filter(RowComponent, query.row.player(playerState.entity))
 			.map((row) => {
 				const hermitCard = row.getHermit()
-				const hermitSlot = row.getHermitSlot()
+				const hermitSlot = row.hermitSlot
 				const attachCard = row.getAttach()
-				const attachSlot = row.getAttachSlot()
+				const attachSlot = row.attachSlot
 
-				const items = row.getItemSlots(true).map((itemSlot) => {
+				const items = row.itemSlots.map((itemSlot) => {
 					let itemCard = game.components.find(
 						CardComponent,
 						query.card.slotEntity(itemSlot.entity),

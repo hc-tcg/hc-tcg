@@ -1,7 +1,7 @@
 import {decode} from 'js-base64'
 import {CARDS} from '../cards'
 import {CardEntity} from '../entities'
-import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'
+import {LocalCardInstance} from '../types/server-requests'
 
 export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
 	try {
@@ -18,7 +18,7 @@ export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
 		)
 		if (!props) continue
 		deck.push({
-			props: WithoutFunctions(props),
+			id: props.numericId,
 			entity: Math.random().toString() as CardEntity,
 			slot: null,
 			turnedOver: false,

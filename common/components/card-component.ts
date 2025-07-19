@@ -36,6 +36,8 @@ import('../cards').then((mod) => (CARDS = mod.CARDS))
 
 /** A component that represents a card in the game. Cards can be in the player's hand, deck, board or discard pile. */
 export class CardComponent<CardType extends Card = Card> {
+	public static table = 'cards'
+
 	readonly game: GameModel
 	readonly props: CardType
 	readonly entity: CardEntity
@@ -75,21 +77,21 @@ export class CardComponent<CardType extends Card = Card> {
 		let slotComponent = game.components.getOrError(slot)
 		slotComponent.cardEntity = entity
 
-		if (this.slot.onBoard()) {
-			let observer = this.game.components.new(ObserverComponent, this.entity)
-			this.onAttach(observer)
-		}
-
-		this.turnedOver = false
-		this.prizeCard = false
-
 		this.hooks = {
 			onChangeSlot: new GameHook(),
 			getPrimaryCost: new GameHook(),
 			getSecondaryCost: new GameHook(),
 		}
 
+		this.turnedOver = false
+		this.prizeCard = false
+
 		this.props.onCreate(this.game, this)
+
+		if (this.slot.onBoard()) {
+			let observer = this.game.components.new(ObserverComponent, this.entity)
+			this.onAttach(observer)
+		}
 	}
 
 	/** A function that is used to order cards by thier slot's order.

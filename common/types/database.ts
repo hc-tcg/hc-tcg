@@ -36,6 +36,11 @@ export type Stats = {
 
 export type PlayerStats = Stats & {
 	uniquePlayersEncountered: number
+	playtime: {
+		hours: number
+		minutes: number
+		seconds: number
+	}
 	topCards: Array<string>
 }
 

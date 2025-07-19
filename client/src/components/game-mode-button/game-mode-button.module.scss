@@ -238,6 +238,10 @@ $expandedHeight: $mobileHeight * 3 + 1.5 * 3;
 	opacity: 0%;
 	height: 100%;
 	width: calc(100% - $width);
+
+	&.disallowClicks {
+		pointer-events: none;
+	}
 }
 
 .spacer {

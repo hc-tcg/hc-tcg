@@ -16,9 +16,9 @@ const MobileCardList = (props: CardListProps) => {
 
 	const cardsWithAmounts: Array<Array<LocalCardInstance>> = []
 	cards.forEach((card) => {
-		const item = cardsWithAmounts.find((c) => c[0].props.id === card.props.id)
+		const item = cardsWithAmounts.find((c) => c[0].id === card.id)
 		if (item) return
-		cardsWithAmounts.push(cards.filter((c) => c.props.id === card.props.id))
+		cardsWithAmounts.push(cards.filter((c) => c.id === card.id))
 	})
 
 	return (

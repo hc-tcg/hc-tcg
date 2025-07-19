@@ -5,7 +5,8 @@ const DefeatEvilX: Achievement = {
 	...achievement,
 	numericId: 6,
 	id: 'defeat_evil_x',
-	progressInBossGame: true,
+	evilXAchievement: true,
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Evil X-Terminator',
@@ -13,11 +14,10 @@ const DefeatEvilX: Achievement = {
 			steps: 1,
 		},
 	],
-	onGameEnd(game, player, component, outcome) {
-		if (!game.state.isEvilXBossGame) return
+	onGameEnd(_game, player, component, outcome) {
 		if (outcome.type !== 'player-won') return
 		if (outcome.winner !== player.entity) return
-		component.incrementGoalProgress({goal: 0})
+		component.updateGoalProgress({goal: 0})
 	},
 }
 

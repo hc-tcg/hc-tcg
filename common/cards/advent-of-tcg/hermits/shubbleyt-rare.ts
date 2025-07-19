@@ -47,7 +47,10 @@ const ShubbleYTRare: Hermit = {
 			(attack) => {
 				if (!attack.isAttacker(component.entity)) return
 				if (attack.type !== 'secondary') return
-				const topCard = player.getDeck().sort(CardComponent.compareOrder).at(0)
+				const topCard = player
+					.getDrawPile()
+					.sort(CardComponent.compareOrder)
+					.at(0)
 				if (!topCard) return
 				let currentTopCard: CardComponent = topCard
 
@@ -97,7 +100,7 @@ const ShubbleYTRare: Hermit = {
 				const updateModal = () => {
 					newObserver.unsubscribe(currentTopCard.hooks.onChangeSlot)
 					const topCard = player
-						.getDeck()
+						.getDrawPile()
 						.sort(CardComponent.compareOrder)
 						.at(0)
 					if (!topCard) {

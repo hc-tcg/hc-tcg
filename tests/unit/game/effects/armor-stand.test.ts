@@ -3,22 +3,22 @@ import ArmorStand from 'common/cards/attach/armor-stand'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {SlotComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 describe('Test Armor Stand', () => {
-	test("Armor stand doesn't give a prize card", () => {
-		testGame(
+	test("Armor stand doesn't give a prize card", async () => {
+		await testGame(
 			{
 				playerOneDeck: [ArmorStand, EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				saga: function* (game) {
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 1)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(ArmorStand, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.attack('secondary')
+					await test.endTurn()
 
 					expect(game.currentPlayer.lives).toBe(3)
 					expect(game.currentPlayer.activeRow).toBe(null)
@@ -27,13 +27,13 @@ describe('Test Armor Stand', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Armor stand disables correct slots', () => {
-		testGame(
+	test('Armor stand disables correct slots', async () => {
+		await testGame(
 			{
 				playerOneDeck: [ArmorStand],
 				playerTwoDeck: [],
-				saga: function* (game) {
-					yield* playCardFromHand(game, ArmorStand, 'hermit', 0)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(ArmorStand, 'hermit', 0)
 
 					for (const slot of game.components.filter(
 						SlotComponent,

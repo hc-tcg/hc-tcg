@@ -8,6 +8,7 @@ const GottaSchreep: Achievement = {
 	...achievement,
 	numericId: 54,
 	id: 'gotta_schreep',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Gotta Schreep',
@@ -29,7 +30,7 @@ const GottaSchreep: Achievement = {
 			.forEach((row) => {
 				observer.subscribe(row.hooks.onKnockOut, () => {
 					if (isSleeping) {
-						component.incrementGoalProgress({goal: 0})
+						component.updateGoalProgress({goal: 0})
 					}
 				})
 			})

@@ -130,10 +130,11 @@ export const entity = (
 }
 
 export const has = (...cards: Array<Card>): ComponentQuery<SlotComponent> => {
+	const ids = cards.map((x) => x.id)
 	return (_game, pos) => {
 		let card = pos.card
 		if (!card) return false
-		return cards.map((x) => x.id).includes(card.props.id)
+		return ids.includes(card.props.id)
 	}
 }
 

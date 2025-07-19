@@ -13,6 +13,8 @@ export const IgnoreAttachSlotEffect: StatusEffect<CardComponent> = {
 	applyCondition(_game, value) {
 		return (
 			value instanceof CardComponent &&
+			value.slot.inRow() &&
+			value.slot.row.getAttach() !== null &&
 			!value.getStatusEffect(IgnoreAttachSlotEffect)
 		)
 	},

@@ -49,9 +49,17 @@ const BdoubleO100Rare: Hermit = {
 			(attack) => {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
+
+				component.slot.inRow() && component.slot.row.fullHeal()
+
 				game.components
 					.new(StatusEffectComponent, SleepingEffect, component.entity)
 					.apply(component.entity)
+
+				game.battleLog.addEntry(
+					component.player.entity,
+					`$p${component.props.name}$ went to $eSleep$ and restored $gfull health$`,
+				)
 			},
 		)
 	},

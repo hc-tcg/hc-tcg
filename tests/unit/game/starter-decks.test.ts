@@ -5,7 +5,7 @@ import {getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
 
 describe('Test starter decks', () => {
-	test('Verify starter decks are valid.', () => {
+	test('Verify starter decks are valid.', async () => {
 		for (const deck of STARTER_DECKS) {
 			const validation = validateDeck(deck.cards)
 			assert(

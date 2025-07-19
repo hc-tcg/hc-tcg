@@ -4,37 +4,30 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import EthosLabUltraRare from 'common/cards/hermits/ethoslab-ultra-rare'
 import BadOmen from 'common/cards/single-use/bad-omen'
 import Fortune from 'common/cards/single-use/fortune'
-import {
-	applyEffect,
-	attack,
-	endTurn,
-	forfeit,
-	playCardFromHand,
-	testAchivement,
-} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test "Signal Inversion" achievement', () => {
-	test('"Signal Inversion" increments', () => {
-		testAchivement(
+	test('"Signal Inversion" increments', async () => {
+		await testAchivement(
 			{
 				achievement: SignalInversion,
 				playerOneDeck: [EthosLabUltraRare, Fortune],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabUltraRare, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabUltraRare, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(BadOmen, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* playCardFromHand(game, Fortune, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(Fortune, 'single_use')
+					await test.applyEffect()
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(SignalInversion.getProgress(achievement.goals)).toBe(1)
@@ -43,27 +36,27 @@ describe('Test "Signal Inversion" achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('does not increment if there is no coin flip', () => {
-		testAchivement(
+	test('does not increment if there is no coin flip', async () => {
+		await testAchivement(
 			{
 				achievement: SignalInversion,
 				playerOneDeck: [EthosLabCommon, Fortune],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(BadOmen, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* playCardFromHand(game, Fortune, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(Fortune, 'single_use')
+					await test.applyEffect()
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(SignalInversion.getProgress(achievement.goals)).toBeFalsy()
@@ -72,25 +65,25 @@ describe('Test "Signal Inversion" achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('does not increment if there is no bad omen', () => {
-		testAchivement(
+	test('does not increment if there is no bad omen', async () => {
+		await testAchivement(
 			{
 				achievement: SignalInversion,
 				playerOneDeck: [EthosLabUltraRare, Fortune],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabUltraRare, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabUltraRare, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, Fortune, 'single_use')
-					yield* applyEffect(game)
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.playCardFromHand(Fortune, 'single_use')
+					await test.applyEffect()
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(SignalInversion.getProgress(achievement.goals)).toBeFalsy()
@@ -99,25 +92,25 @@ describe('Test "Signal Inversion" achievement', () => {
 			{noItemRequirements: true},
 		)
 	})
-	test('does not increment if there is no Fortune', () => {
-		testAchivement(
+	test('does not increment if there is no Fortune', async () => {
+		await testAchivement(
 			{
 				achievement: SignalInversion,
 				playerOneDeck: [EthosLabUltraRare],
 				playerTwoDeck: [EthosLabCommon, BadOmen],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabUltraRare, 'hermit', 0)
-					yield* endTurn(game)
+				playGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabUltraRare, 'hermit', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, BadOmen, 'single_use')
-					yield* applyEffect(game)
-					yield* endTurn(game)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(BadOmen, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
 
-					yield* attack(game, 'secondary')
-					yield* endTurn(game)
+					await test.attack('secondary')
+					await test.endTurn()
 
-					yield* forfeit(game.currentPlayer.entity)
+					await test.forfeit(game.currentPlayer.entity)
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(SignalInversion.getProgress(achievement.goals)).toBeFalsy()

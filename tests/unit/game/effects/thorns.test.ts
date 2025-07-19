@@ -4,7 +4,7 @@ import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {IronSword} from 'common/cards/single-use/sword'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
-import {attack, endTurn, playCardFromHand, testGame} from '../utils'
+import {testGame} from '../utils'
 
 let thornsMap = {
 	Thorns: {
@@ -24,19 +24,21 @@ let thornsMap = {
 type ThornsType = keyof typeof thornsMap
 
 function testThorns(thorns: ThornsType) {
-	test('Test ' + thorns + ' damage after attacks with effect card only', () => {
-		testGame(
+	test('Test ' +
+		thorns +
+		' damage after attacks with effect card only', async () => {
+		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, thornsMap[thorns].card],
 				playerTwoDeck: [EthosLabCommon, IronSword],
-				saga: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, thornsMap[thorns].card, 'attach', 0)
-					yield* endTurn(game)
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(thornsMap[thorns].card, 'attach', 0)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, IronSword, 'single_use')
-					yield* attack(game, 'single-use')
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(IronSword, 'single_use')
+					await test.attack('single-use')
 
 					expect(
 						game.components.find(

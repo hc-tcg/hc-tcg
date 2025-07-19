@@ -3,23 +3,23 @@ import AllCards from 'common/achievements/jack-of-all-cards'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import ShadEECommon from 'common/cards/hermits/shadee-common'
 import BalancedItem from 'common/cards/items/balanced-common'
-import {attack, endTurn, playCardFromHand, testAchivement} from '../utils'
+import {testAchivement} from '../utils'
 
 describe('Test Jack of All Cards achivement', () => {
-	test('Test Jack of All Cards increments progress on win for only default cards', () => {
-		testAchivement(
+	test('Test Jack of All Cards increments progress on win for only default cards', async () => {
+		await testAchivement(
 			{
 				achievement: AllCards,
 				playerOneDeck: [EthosLabCommon, ShadEECommon, BalancedItem],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, BalancedItem, 'item', 0, 0)
-					yield* playCardFromHand(game, ShadEECommon, 'hermit', 1)
-					yield* endTurn(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
-					yield* attack(game, 'secondary')
+				playGame: async (test, _game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
+					await test.playCardFromHand(ShadEECommon, 'hermit', 1)
+					await test.endTurn()
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(AllCards.getProgress(achievement.goals)).toEqual(2)
@@ -28,17 +28,17 @@ describe('Test Jack of All Cards achivement', () => {
 			{oneShotMode: true, noItemRequirements: true},
 		)
 	})
-	test('Test Jack of All Cards does not increment progress on loss', () => {
-		testAchivement(
+	test('Test Jack of All Cards does not increment progress on loss', async () => {
+		await testAchivement(
 			{
 				achievement: AllCards,
 				playerOneDeck: [EthosLabCommon],
 				playerTwoDeck: [EthosLabCommon],
-				playGame: function* (game) {
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* endTurn(game)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* attack(game, 'secondary')
+				playGame: async (test, _game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.attack('secondary')
 				},
 				checkAchivement(_game, achievement, _outcome) {
 					expect(AllCards.getProgress(achievement.goals)).toEqual(0)

@@ -1,6 +1,7 @@
 import cn from 'classnames'
 import {PlayerEntity} from 'common/entities'
 import {LocalPlayerState} from 'common/types/game-state'
+import Spinner from 'components/spinner'
 import {
 	getGameState,
 	getOpponentConnection,
@@ -81,7 +82,13 @@ function PlayerInfo({playerEntity, direction}: Props) {
 				src={`https://mc-heads.net/head/${player.minecraftName}/${headDirection}`}
 				alt="player head"
 			/>
-			<div className={cn(css.playerName, css[direction])}>
+			<div
+				className={cn(
+					css.playerName,
+					css[direction],
+					!connected && css.disconnected,
+				)}
+			>
 				<h1
 					className={cn({
 						[css.turnHighlight]:
@@ -91,10 +98,14 @@ function PlayerInfo({playerEntity, direction}: Props) {
 				>
 					{getName(player)}
 				</h1>
-				<p className={css.tag}>
-					{!connected ? 'Player Disconnected' : playerTag}
-				</p>
+				<p className={css.tag}>{playerTag}</p>
 			</div>
+			{!connected && (
+				<div className={css.disconnectedComponent}>
+					<Spinner></Spinner>
+					Player Disconnected
+				</div>
+			)}
 
 			<div className={cn(css.health, css[direction])}>
 				{health(player.lives)}
@@ -102,6 +113,7 @@ function PlayerInfo({playerEntity, direction}: Props) {
 			<div
 				className={cn(css.background, css[direction], {
 					[css.active]: thisPlayer,
+					[css.disconnected]: !connected,
 				})}
 				style={{}}
 			></div>

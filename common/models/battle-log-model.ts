@@ -331,7 +331,10 @@ export class BattleLogModel {
 		const cardName = hermitCard.props.name
 		let player = this.game.components.get(playerEntity)
 
-		const livesRemaining = player?.lives === 3 ? 'two lives' : 'one life'
+		const livesRemaining =
+			(player?.lives === 3 && 'two lives') ||
+			(player?.lives === 2 && 'one life') ||
+			(player?.lives === 1 && 'no lives')
 
 		this.logMessageQueue.push({
 			player: playerEntity,

@@ -7,6 +7,7 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {afterAttack, beforeAttack} from '../../../types/priorities'
+import {getSupportingItems} from '../../../utils/board'
 import {fisherYatesShuffle} from '../../../utils/fisher-yates'
 import {hermit} from '../../defaults'
 import {Hermit} from '../../types'
@@ -54,16 +55,18 @@ const DungeonTangoRare: Hermit = {
 				)
 					return
 
-				const activeRow = component.slot.inRow() ? component.slot.row : null
-				if (!activeRow) return
+				if (!component.slot.inRow()) return
 
-				const items = (activeRow.getItemSlots() as SlotComponent[]).filter(
-					(slot) => slot.card && !query.slot.frozen(game, slot),
+				const pickableSlots = getSupportingItems(
+					game,
+					component.slot.row,
+				).flatMap((card) =>
+					query.slot.frozen(game, card.slot) ? [] : [card.slot],
 				)
 				const pickCondition = (_game: GameModel, value: SlotComponent) =>
-					items.includes(value)
+					pickableSlots.includes(value)
 
-				if (!items.length) {
+				if (!pickableSlots.length) {
 					pickedCard = null
 					return
 				}
@@ -94,7 +97,7 @@ const DungeonTangoRare: Hermit = {
 				if (pickedCard === null) return
 
 				const hermitCard = player
-					.getDeck()
+					.getDrawPile()
 					.sort(CardComponent.compareOrder)
 					.find((card) => card.isHermit())
 				if (hermitCard) {
@@ -102,7 +105,7 @@ const DungeonTangoRare: Hermit = {
 					pickedCard.discard()
 				}
 
-				const deckCards = player.getDeck()
+				const deckCards = player.getDrawPile()
 				const newOrder = fisherYatesShuffle(
 					deckCards.map((card) => {
 						assert(card.slot.inDeck())

@@ -6,6 +6,7 @@ const GodsFavoritePrincess: Achievement = {
 	...achievement,
 	numericId: 51,
 	id: 'lucky-streak',
+	progressionMethod: 'best',
 	levels: [
 		{
 			name: "God's Favorite Princess",
@@ -21,7 +22,7 @@ const GodsFavoritePrincess: Achievement = {
 			onCoinFlip.ACHIEVEMENTS,
 			(_card, coinFlips) => {
 				heads += coinFlips.filter((c) => c.result === 'heads').length
-				component.bestGoalProgress({
+				component.updateGoalProgress({
 					goal: 0,
 					progress: heads,
 				})

@@ -31,6 +31,8 @@ export type PlayerDefs = {
 }
 
 export class PlayerComponent {
+	public static table = 'players'
+
 	readonly game: GameModel
 	readonly entity: PlayerEntity
 
@@ -180,16 +182,11 @@ export class PlayerComponent {
 
 	/** Get a player's active hermit. */
 	public getActiveHermit(): CardComponent | null {
-		return this.game.components.find(
-			CardComponent,
-			query.card.slot(query.slot.hermit),
-			query.card.active,
-			query.card.player(this.entity),
-		)
+		return this.activeRow?.getHermit() || null
 	}
 
-	/** Get a player's deck */
-	public getDeck(): Array<CardComponent> {
+	/** Get a player's draw pile */
+	public getDrawPile(): Array<CardComponent> {
 		return this.game.components.filter(
 			CardComponent,
 			query.card.player(this.entity),
@@ -217,7 +214,9 @@ export class PlayerComponent {
 
 	/** Draw cards from the top of a player's deck. Returns an array of the drawn cards. */
 	public draw(amount: number): Array<CardComponent> {
-		let cards = this.getDeck().sort(CardComponent.compareOrder).slice(0, amount)
+		let cards = this.getDrawPile()
+			.sort(CardComponent.compareOrder)
+			.slice(0, amount)
 		if (cards.length < amount) {
 			if (!this.disableDeckingOut) this.deckedOut = true
 		}
@@ -312,7 +311,11 @@ export class PlayerComponent {
 		return this.game.components
 			.filter(
 				CardComponent,
-				query.card.slot(query.slot.hand, query.slot.player(this.entity)),
+				query.card.slot(
+					query.slot.hand,
+					query.slot.player(this.entity),
+					query.not(query.slot.frozen),
+				),
 			)
 			.map(
 				(card) =>

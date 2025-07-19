@@ -10,37 +10,29 @@ import {RowComponent, StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import {IgnoreAttachSlotEffect} from 'common/status-effects/ignore-attach'
-import {
-	attack,
-	changeActiveHermit,
-	endTurn,
-	pick,
-	playCardFromHand,
-	testGame,
-} from '../utils'
+import {TestGameFixture, testGame} from '../utils'
 
 describe('Test Dwarf Impulse Rare', () => {
-	test('Test Dwarf Impulse with golden axe.', () => {
-		testGame(
+	test('Test Dwarf Impulse with golden axe.', async () => {
+		await testGame(
 			{
 				playerOneDeck: [DwarfImpulseRare, GoldenAxe],
 				playerTwoDeck: [EthosLabCommon, FiveAMPearlRare],
-				saga: function* (game: GameModel) {
-					yield* playCardFromHand(game, DwarfImpulseRare, 'hermit', 0)
+				testGame: async (test: TestGameFixture, game: GameModel) => {
+					await test.playCardFromHand(DwarfImpulseRare, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 0)
-					yield* playCardFromHand(game, FiveAMPearlRare, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(FiveAMPearlRare, 'hermit', 1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, GoldenAxe, 'single_use')
+					await test.playCardFromHand(GoldenAxe, 'single_use')
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
@@ -61,7 +53,7 @@ describe('Test Dwarf Impulse Rare', () => {
 						)!.health,
 					).toBe(FiveAMPearlRare.health - 40)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
 					expect(
 						game.components.filter(
@@ -75,8 +67,8 @@ describe('Test Dwarf Impulse Rare', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Test Dwarf Impulse works with lightning rod.', () => {
-		testGame(
+	test('Test Dwarf Impulse works with lightning rod.', async () => {
+		await testGame(
 			{
 				playerOneDeck: [DwarfImpulseRare, GoldenAxe],
 				playerTwoDeck: [
@@ -86,28 +78,27 @@ describe('Test Dwarf Impulse Rare', () => {
 					LightningRod,
 					Wolf,
 				],
-				saga: function* (game: GameModel) {
-					yield* playCardFromHand(game, DwarfImpulseRare, 'hermit', 0)
+				testGame: async (test: TestGameFixture, game: GameModel) => {
+					await test.playCardFromHand(DwarfImpulseRare, 'hermit', 0)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, FiveAMPearlRare, 'hermit', 0)
-					yield* playCardFromHand(game, TangoTekCommon, 'hermit', 1)
-					yield* playCardFromHand(game, EthosLabCommon, 'hermit', 2)
+					await test.playCardFromHand(FiveAMPearlRare, 'hermit', 0)
+					await test.playCardFromHand(TangoTekCommon, 'hermit', 1)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 2)
 
-					yield* playCardFromHand(game, Wolf, 'attach', 0)
-					yield* playCardFromHand(game, LightningRod, 'attach', 2)
+					await test.playCardFromHand(Wolf, 'attach', 0)
+					await test.playCardFromHand(LightningRod, 'attach', 2)
 
-					yield* changeActiveHermit(game, 1)
+					await test.changeActiveHermit(1)
 
-					yield* endTurn(game)
+					await test.endTurn()
 
-					yield* playCardFromHand(game, GoldenAxe, 'single_use')
+					await test.playCardFromHand(GoldenAxe, 'single_use')
 
-					yield* attack(game, 'secondary')
+					await test.attack('secondary')
 
-					yield* pick(
-						game,
+					await test.pick(
 						query.slot.hermit,
 						query.slot.opponent,
 						query.slot.rowIndex(0),
