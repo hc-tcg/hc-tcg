@@ -5,7 +5,7 @@ import {
 	SlotComponent,
 } from '../components'
 import query from '../components/query'
-import {DEBUG_CONFIG} from '../config'
+import {CONFIG} from '../config'
 import {
 	CardEntity,
 	PlayerEntity,
@@ -258,7 +258,7 @@ export class BattleLogModel {
 
 		if (log.length === 0) return
 
-		log += DEBUG_CONFIG.logAttackHistory
+		log += CONFIG.game.logAttackHistory
 			? attack.getHistory().reduce((reduce, hist) => {
 					return reduce + `\n\t${hist.source} → ${hist.type} ${hist.value}`
 				}, '')

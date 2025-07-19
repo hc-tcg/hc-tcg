@@ -1,6 +1,6 @@
 import cn from 'classnames'
 import {CARDS} from 'common/cards'
-import {DEBUG_CONFIG} from 'common/config'
+import {CONFIG} from 'common/config'
 import {PlayerEntity} from 'common/entities'
 import {LocalCardInstance, SlotInfo} from 'common/types/server-requests'
 import {equalCard} from 'common/utils/cards'
@@ -219,7 +219,7 @@ function Hand({gameOver}: {gameOver: boolean}) {
 		}
 	}
 
-	const filteredCards = DEBUG_CONFIG.unlimitedCards
+	const filteredCards = CONFIG.game.unlimitedCards
 		? gameState.hand.filter((c) =>
 				CARDS[c.id].name.toLowerCase().includes(filter.toLowerCase()),
 			)
@@ -227,7 +227,7 @@ function Hand({gameOver}: {gameOver: boolean}) {
 
 	// Search for cards when debug.unlimitedCards is enabled
 	const Filter = () => {
-		if (DEBUG_CONFIG.unlimitedCards) {
+		if (CONFIG.game.unlimitedCards) {
 			return (
 				<input
 					type="text"

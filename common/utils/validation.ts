@@ -1,6 +1,6 @@
 import ImmortalityBed from '../cards/bed-update/attach/immortality-bed'
 import {Card} from '../cards/types'
-import {CONFIG, DEBUG_CONFIG} from '../config'
+import {CONFIG} from '../config'
 import {EXPANSIONS} from '../const/expansions'
 import {getDeckCost} from './ranks'
 
@@ -14,7 +14,7 @@ type ValidateDeckResult =
 	  }
 
 export function validateDeck(deckCards: Array<Card>): ValidateDeckResult {
-	if (DEBUG_CONFIG.disableDeckValidation) return {valid: true}
+	if (CONFIG.game.disableDeckValidation) return {valid: true}
 
 	const limits = CONFIG.limits
 
