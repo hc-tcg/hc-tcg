@@ -1,4 +1,5 @@
 import assert from 'assert'
+import {CONFIG} from 'common/config'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -30,7 +31,6 @@ import {
 import {PlayerSetupDefs} from '../../../common/utils/state-gen'
 import {GameController, GameControllerProps} from '../game-controller'
 import runGame from './game'
-import {CONFIG} from 'common/config'
 
 const VARIABLE_BYTE_MAX = 1 // 0xFF
 const INVALID_REPLAY = 0x00

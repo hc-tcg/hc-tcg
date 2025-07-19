@@ -3,6 +3,7 @@ import classNames from 'classnames'
 import {CARDS} from 'common/cards'
 import {getRenderedCardImage} from 'common/cards/card'
 import {Attach, Hermit, Item, SingleUse} from 'common/cards/types'
+import {CONFIG} from 'common/config'
 import {EXPANSIONS} from 'common/const/expansions'
 import Tooltip from 'components/tooltip'
 import CardInstanceTooltip from './card-tooltip'
@@ -10,7 +11,6 @@ import css from './card.module.scss'
 import EffectCardModule from './effect-card-svg'
 import HermitCardModule from './hermit-card-svg'
 import ItemCardModule from './item-card-svg'
-import {CONFIG} from 'common/config'
 
 interface CardReactProps
 	extends React.DetailedHTMLProps<

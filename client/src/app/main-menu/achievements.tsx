@@ -1,6 +1,7 @@
 import classNames from 'classnames'
 import {ACHIEVEMENTS, ACHIEVEMENTS_LIST} from 'common/achievements'
 import {Achievement} from 'common/achievements/types'
+import {CONFIG} from 'common/config'
 import {ALL_COSMETICS} from 'common/cosmetics'
 import {COINS} from 'common/cosmetics/coins'
 import {
@@ -27,7 +28,6 @@ import {getSession} from 'logic/session/session-selectors'
 import {ReactNode, useRef, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './achievements.module.scss'
-import {CONFIG} from 'common/config'
 CONFIG
 type Pages = 'achievements' | 'rewards'
 

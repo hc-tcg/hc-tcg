@@ -1,4 +1,5 @@
 import cn from 'classnames'
+import {CONFIG} from 'common/config'
 import {PlayerEntity} from 'common/entities'
 import {EarnedAchievement} from 'common/types/achievements'
 import {RematchData} from 'common/types/app'
@@ -7,7 +8,6 @@ import Button from 'components/button'
 import {Modal} from 'components/modal'
 import {useEffect, useReducer, useRef, useState} from 'react'
 import css from './end-game-overlay.module.scss'
-import {CONFIG} from 'common/config'
 
 type Props = {
 	outcome: GameOutcome

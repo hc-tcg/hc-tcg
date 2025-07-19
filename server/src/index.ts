@@ -41,7 +41,9 @@ app.use(
 )
 
 app.get('/', (_req, res) => {
-	res.sendFile(path.join(__dirname, '../..', CONFIG.server.clientPath, 'index.html'))
+	res.sendFile(
+		path.join(__dirname, '../..', CONFIG.server.clientPath, 'index.html'),
+	)
 })
 
 addApi(app)

@@ -1,5 +1,5 @@
-import profanitySeed from './profanity-seed.js'
 import EXAMPLE_CONFIG from '../../config.example.js'
+import profanitySeed from './profanity-seed.js'
 
 let config = null
 try {

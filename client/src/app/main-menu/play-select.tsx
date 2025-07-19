@@ -17,6 +17,7 @@ import SplashPotionOfPoison from 'common/cards/single-use/splash-potion-of-poiso
 import Spyglass from 'common/cards/single-use/spyglass'
 import TargetBlock from 'common/cards/single-use/target-block'
 import {Card} from 'common/cards/types'
+import {CONFIG} from 'common/config'
 import {EXPANSIONS} from 'common/const/expansions'
 import {CardEntity} from 'common/entities'
 import {Deck} from 'common/types/deck'
@@ -41,7 +42,6 @@ import {useEffect, useReducer, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CosmeticPreview} from './achievements'
 import css from './play-select.module.scss'
-import { CONFIG } from 'common/config'
 
 type Props = {
 	setMenuSection: (section: string) => void
