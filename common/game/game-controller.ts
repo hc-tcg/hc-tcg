@@ -11,11 +11,10 @@ import {
 	gameSettingsFromEnv,
 } from '../models/game-model'
 import {PlayerId, PlayerModel} from '../models/player-model'
-import {ServerMessage, serverMessages} from '../socket-messages/server-messages'
+import {EarnedAchievement} from '../types/achievements'
 import {CurrentCoinFlip, Message} from '../types/game-state'
-import {PlayerSetupDefs} from './setup-game'
 import {TurnActionAndPlayer} from './run-game'
-import {getLocalGameState} from './make-local-state'
+import {PlayerSetupDefs} from './setup-game'
 
 export type GameControllerProps = {
 	gameCode?: string
@@ -188,14 +187,11 @@ export class GameController {
 							achievement.getProgress(
 								player.achievementProgress[achievement.numericId].goals,
 							) ?? 0
-						broadcast([player], {
-							type: serverMessages.ACHIEVEMENT_COMPLETE,
-							achievement: {
-								achievementId: achievement.numericId,
-								level,
-								newProgress,
-								originalProgress,
-							},
+						this.onAchievementComplete(player, {
+							achievementId: achievement.numericId,
+							level,
+							newProgress,
+							originalProgress,
 						})
 					},
 				)
@@ -208,6 +204,11 @@ export class GameController {
 			})
 		}
 	}
+
+	public onAchievementComplete(
+		_player: PlayerModel,
+		_achievement: EarnedAchievement,
+	) {}
 
 	public addViewer(viewer: GameViewerProps) {
 		let v = new GameViewer(this.game, viewer)
@@ -274,39 +275,9 @@ export class GameController {
 		})
 	}
 
-	private async publishBattleLog(logs: Array<Message>, timeout: number) {
-		// We skip waiting for the logs to send if there are no players. This is because
-		// the coin flip delay confuses jest. Additionally we don't want to wait longer
-		// than what is needed in tests.
-		if (this.getPlayers().length === 0) {
-			this.chat.push(...logs)
-			return
-		}
-
-		await new Promise((e) => setTimeout(e, timeout))
-
-		this.chat.push(...logs)
-		this.chatUpdate()
-	}
-
-	/** Send new chat messages to the viewers */
-	public chatUpdate() {
-		broadcast(this.getPlayers(), {
-			type: serverMessages.CHAT_UPDATE,
-			messages: this.chat,
-		})
-	}
+	public async publishBattleLog(_logs: Array<Message>, _timeout: number) {}
 
 	public broadcastState() {
-		this.viewers.forEach((viewer) => {
-			const localGameState = getLocalGameState(this.game, viewer)
-
-			broadcast([viewer.player], {
-				type: serverMessages.GAME_STATE,
-				localGameState,
-			})
-		})
-
 		this.game.voiceLineQueue = []
 	}
 
@@ -314,13 +285,6 @@ export class GameController {
 		return (
 			coinFlips.reduce((r, flip) => r + flip.delay, 0) +
 			(this.game.rng() * 500 + 500)
-		)
-	}
-
-	public broadcastToViewers(payload: ServerMessage) {
-		broadcast(
-			this.viewers.map((viewer) => viewer.player),
-			payload,
 		)
 	}
 }

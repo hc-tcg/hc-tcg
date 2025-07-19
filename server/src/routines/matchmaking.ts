@@ -12,6 +12,8 @@ import query from 'common/components/query'
 import serverConfig from 'common/config/server-config'
 import {COINS} from 'common/cosmetics/coins'
 import {defaultAppearance} from 'common/cosmetics/default'
+import {getLocalGameState} from 'common/game/make-local-state'
+import {OpponentDefs} from 'common/game/setup-game'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
@@ -22,7 +24,6 @@ import {AchievementProgress, EarnedAchievement} from 'common/types/achievements'
 import {Deck} from 'common/types/deck'
 import {GameOutcome} from 'common/types/game-state'
 import {formatText} from 'common/utils/formatting'
-import {OpponentDefs} from 'common/game/setup-game'
 import {validateDeck} from 'common/utils/validation'
 import {
 	addGame,
@@ -32,13 +33,12 @@ import {
 	sendAfterGameInfo,
 	updateAchievements,
 } from 'db/db-reciever'
-import {GameController} from 'common/game/game-controller'
 import {LocalMessageTable, localMessages} from 'messages'
+import {ServerSideGameController} from 'serverside-game-controller'
 import {all, call, delay, fork, race, take} from 'typed-redux-saga'
 import {safeCall} from 'utils'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
-import {getLocalGameState} from 'common/game/make-local-state'
 import runGame, {getTimerForSeconds} from './game'
 import {TurnActionCompressor} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
@@ -53,8 +53,8 @@ function setupGame(
 	gameCode?: string,
 	spectatorCode?: string,
 	apiSecret?: string,
-): GameController {
-	let con = new GameController(
+): ServerSideGameController {
+	let con = new ServerSideGameController(
 		{
 			model: player1,
 			deck: player1Deck.cards.map((card) => card.id).sort((a, b) => a - b),
@@ -88,7 +88,7 @@ function setupGame(
 	return con
 }
 
-function* gameManager(con: GameController) {
+function* gameManager(con: ServerSideGameController) {
 	// @TODO this one method needs cleanup still
 	const viewers = con.viewers
 	const playerIds = viewers.map((viewer) => viewer.player.id)
@@ -1089,11 +1089,15 @@ export function* createReplayGame(
 		return
 	}
 
-	const con = new GameController(replay.player1Defs, replay.player2Defs, {
-		randomSeed: replay.seed,
-		randomizeOrder: true,
-		gameId: msg.payload.id.toString(),
-	})
+	const con = new ServerSideGameController(
+		replay.player1Defs,
+		replay.player2Defs,
+		{
+			randomSeed: replay.seed,
+			randomizeOrder: true,
+			gameId: msg.payload.id.toString(),
+		},
+	)
 	root.addGame(con)
 	root.hooks.newGame.call(con)
 
@@ -1199,8 +1203,8 @@ function setupSolitareGame(
 	player: PlayerModel,
 	playerDeck: Deck,
 	opponent: OpponentDefs,
-): GameController {
-	const con = new GameController(
+): ServerSideGameController {
+	const con = new ServerSideGameController(
 		{
 			model: player,
 			deck: playerDeck.cards.map((card) => CARDS[card.id].numericId),
