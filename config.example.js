@@ -39,7 +39,7 @@ export default {
 		blockedActions: [],
 		availableActions: [],
 		shuffleDeck: true,
-		/* When false, crash on any error in the game code. When true, log the error then continue the game. */
+		/** When false, crash on any error in the game code. When true, log the error then continue the game. */
 		logErrorsToStderr: true,
 		verboseLogging: true,
 		showHooksState: {
