@@ -130,7 +130,8 @@ export class AttackModel {
 	/** Calculates the damage for this attack */
 	public calculateDamage() {
 		return Math.max(
-			this.damage * this.damageMultiplier - (this.trueDamage ? 0 : this.damageReduction),
+			this.damage * this.damageMultiplier -
+				(this.trueDamage ? 0 : this.damageReduction),
 			0,
 		)
 	}
