@@ -9,6 +9,7 @@ import {
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
+import {CONFIG} from 'common/config'
 import {COINS} from 'common/cosmetics/coins'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
@@ -41,7 +42,6 @@ import {getLocalGameState} from '../utils/state-gen'
 import runGame, {getTimerForSeconds} from './game'
 import {TurnActionCompressor} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
-import {CONFIG} from 'common/config'
 
 function setupGame(
 	player1: PlayerModel,
