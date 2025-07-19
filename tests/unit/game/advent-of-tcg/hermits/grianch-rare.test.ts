@@ -6,7 +6,7 @@ import BeetlejhostRare from 'common/cards/hermits/beetlejhost-rare'
 import BoomerBdubsRare from 'common/cards/hermits/boomerbdubs-rare'
 import DwarfImpulseRare from 'common/cards/hermits/dwarfimpulse-rare'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import EvilXisumaRare from 'common/cards/hermits/evilxisuma_rare'
+import EvilXisumaRare from 'common/cards/hermits/evilxisuma-rare'
 import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
 import HelsknightRare from 'common/cards/hermits/helsknight-rare'
 import HumanCleoRare from 'common/cards/hermits/humancleo-rare'
@@ -34,7 +34,7 @@ import {
 } from 'common/components'
 import query from 'common/components/query'
 import {WEAKNESS_DAMAGE} from 'common/const/damage'
-import BadOmenEffect from 'common/status-effects/badomen'
+import BadOmenEffect from 'common/status-effects/bad-omen'
 import ChromaKeyedEffect from 'common/status-effects/chroma-keyed'
 import {
 	PrimaryAttackDisabledEffect,

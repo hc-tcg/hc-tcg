@@ -4,7 +4,7 @@ import {GameModel} from '../../models/game-model'
 import {afterAttack} from '../../types/priorities'
 import {executeExtraAttacks} from '../../utils/attacks'
 import {applySingleUse} from '../../utils/board'
-import {flipCoin} from '../../utils/coinFlips'
+import {flipCoin} from '../../utils/coin-flips'
 import {singleUse} from '../defaults'
 import {SingleUse} from '../types'
 

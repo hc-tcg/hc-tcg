@@ -1,4 +1,4 @@
-import BadOmenEffect from '../status-effects/badomen'
+import BadOmenEffect from '../status-effects/bad-omen'
 import FortuneEffect from '../status-effects/fortune'
 import {afterAttack, onCoinFlip} from '../types/priorities'
 import {achievement} from './defaults'

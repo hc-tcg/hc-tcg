@@ -2,7 +2,7 @@ import {
 	AussiePingEffect as AussiePingEffect,
 	AussiePingImmuneEffect as AussiePingImmuneEffect,
 } from './aussie-ping'
-import BadOmenEffect from './badomen'
+import BadOmenEffect from './bad-omen'
 import BetrayedEffect from './betrayed'
 import ChromaKeyedEffect from './chroma-keyed'
 import CurseOfBindingEffect from './curse-of-binding'

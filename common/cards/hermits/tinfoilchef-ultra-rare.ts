@@ -8,7 +8,7 @@ import {RowEntity} from '../../entities'
 import {GameModel} from '../../models/game-model'
 import TFCDiscardedFromEffect from '../../status-effects/tfc-discarded-from'
 import {beforeAttack} from '../../types/priorities'
-import {flipCoin} from '../../utils/coinFlips'
+import {flipCoin} from '../../utils/coin-flips'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 

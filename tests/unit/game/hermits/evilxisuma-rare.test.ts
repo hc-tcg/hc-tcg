@@ -1,7 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import ArmorStand from 'common/cards/attach/armor-stand'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
-import EvilXisumaRare from 'common/cards/hermits/evilxisuma_rare'
+import EvilXisumaRare from 'common/cards/hermits/evilxisuma-rare'
 import JoeHillsRare from 'common/cards/hermits/joehills-rare'
 import ZombieCleoRare from 'common/cards/hermits/zombiecleo-rare'
 import ChorusFruit from 'common/cards/single-use/chorus-fruit'
