@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals'
-import TargetBlockEffect from 'common/cards/single-use/target-block'
 import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
+import TargetBlockEffect from 'common/cards/single-use/target-block'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {testGame} from '../utils'
@@ -71,7 +71,9 @@ describe('Test Target Block', () => {
 					await test.attack('secondary')
 
 					expect(
-						expect(game.currentPlayer.getCardsCanBePlacedIn()).not.toStrictEqual([])
+						expect(
+							game.currentPlayer.getCardsCanBePlacedIn(),
+						).not.toStrictEqual([]),
 					)
 
 					await test.endTurn()
@@ -79,17 +81,21 @@ describe('Test Target Block', () => {
 					await test.endTurn()
 
 					expect(
-						expect(game.currentPlayer.getCardsCanBePlacedIn()).toStrictEqual([])
+						expect(game.currentPlayer.getCardsCanBePlacedIn()).toStrictEqual(
+							[],
+						),
 					)
 
 					await test.attack('secondary')
 
 					expect(
-						expect(game.currentPlayer.getCardsCanBePlacedIn()).toStrictEqual([])
+						expect(game.currentPlayer.getCardsCanBePlacedIn()).toStrictEqual(
+							[],
+						),
 					)
 				},
 			},
-			{ startWithAllCards: true, noItemRequirements: true },
+			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
 })

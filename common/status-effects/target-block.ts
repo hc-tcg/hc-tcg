@@ -5,9 +5,9 @@ import {
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
-import SingleUseBlockedEffect from './single-use-blocked'
 import {beforeAttack, onTurnEnd} from '../types/priorities'
 import query from './../components/query'
+import SingleUseBlockedEffect from './single-use-blocked'
 import {Counter, systemStatusEffect} from './status-effect'
 
 export const TargetBlockEffect: Counter<CardComponent> = {

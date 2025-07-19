@@ -47,12 +47,12 @@ import PostInspectorEffect from './post-inspector'
 import ProtectedEffect from './protected'
 import RoyalProtectionEffect from './royal-protection'
 import SheepStareEffect from './sheep-stare'
+import SingleUseBlockedEffect from './single-use-blocked'
 import {
 	PrimaryAttackDisabledEffect,
 	SecondaryAttackDisabledEffect,
 } from './singleturn-attack-disabled'
 import SculkCatalystTriggeredEffect from './skulk-catalyst'
-import SingleUseBlockedEffect from './single-use-blocked'
 import SleepingEffect from './sleeping'
 import SlownessEffect from './slowness'
 import SmeltingEffect from './smelting'

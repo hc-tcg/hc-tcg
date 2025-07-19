@@ -1,6 +1,6 @@
 import {
-	PlayerComponent,
 	ObserverComponent,
+	PlayerComponent,
 	StatusEffectComponent,
 } from '../components'
 import {GameModel} from '../models/game-model'
@@ -14,7 +14,7 @@ const SingleUseBlockedEffect: StatusEffect<PlayerComponent> = {
 	id: 'single-use-blocked',
 	icon: 'single-use-blocked',
 	name: 'Single Use Blocked',
-	description: "You cannot play a single use effect card.",
+	description: 'You cannot play a single use effect card.',
 	applyCondition: (_game, value) => {
 		return (
 			value instanceof PlayerComponent &&
@@ -28,7 +28,10 @@ const SingleUseBlockedEffect: StatusEffect<PlayerComponent> = {
 		observer: ObserverComponent,
 	): void {
 		const player = target
-		const startBlocking = game.addBlockedActions(effect.entity, 'PLAY_SINGLE_USE_CARD')
+		const startBlocking = game.addBlockedActions(
+			effect.entity,
+			'PLAY_SINGLE_USE_CARD',
+		)
 		if (game.currentPlayer.entity === player.entity) startBlocking
 		else observer.subscribeBefore(player.hooks.onTurnStart, startBlocking)
 
