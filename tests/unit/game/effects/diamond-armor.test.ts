@@ -58,7 +58,7 @@ describe('Test Diamond Armor', () => {
 			{startWithAllCards: true, noItemRequirements: true},
 		)
 	})
-	test('Diamond Armor prevents a extra effect damage collectively', async () => {
+	test('Diamond Armor prevents extra effect damage collectively', async () => {
 		await testGame(
 			{
 				playerOneDeck: [EthosLabCommon, DiamondArmor],
@@ -79,7 +79,7 @@ describe('Test Diamond Armor', () => {
 							query.row.active,
 							query.row.opponentPlayer,
 						)?.health,
-					).toBe(EthosLabCommon.health - GeminiTayRare.secondary.damage) // (80[secondary] - 20[block]) - (20[ISword] - 20[eblock]) + 20[ISword] damage
+					).toBe(EthosLabCommon.health - GeminiTayRare.secondary.damage) // (80[secondary] - 20[block]) + (20[ISword] - 20[eblock]) + 20[ISword] damage
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
