@@ -16,12 +16,5 @@ COPY package.json package.json
 COPY package-lock.json package-lock.json
 RUN npm ci
 
-COPY common/config/debug-config.example.js common/config/debug-config.js
-COPY version.js version.js
-
-COPY common common
-COPY server server
-COPY client client
-
 CMD [ "npm", "run", "dev" ]
 
