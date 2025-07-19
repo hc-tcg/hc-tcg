@@ -13,7 +13,7 @@ import FireEffect from 'common/status-effects/fire'
 import {IgnoreAttachSlotEffect} from 'common/status-effects/ignore-attach'
 import {testGame} from '../utils'
 
-describe('Test Gemini Tay', () => {
+describe('Test GeminiTay', () => {
 	test('Test Axe Functions Until End Of Turn', async () => {
 		await testGame(
 			{
