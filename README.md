@@ -36,10 +36,10 @@ You can then use the following commands:
 ```sh
 npm ci               # install packages
 
+npm run dev          # start both the client and server
+
 npm run server:dev   # start the server and update automatically when you make changes
 npm run client:dev   # start the client and update automatically when you make changes
-
-npm run dev          # start both the client and server
 ```
 
 _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
