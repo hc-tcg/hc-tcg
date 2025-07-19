@@ -1,25 +1,21 @@
-import {ACHIEVEMENTS_LIST} from 'common/achievements'
+import {ACHIEVEMENTS_LIST} from '../achievements'
 import {
 	AchievementComponent,
 	ObserverComponent,
 	PlayerComponent,
-} from 'common/components'
-import {PlayerEntity} from 'common/entities'
+} from '../components'
+import {PlayerEntity} from '../entities'
 import {
 	GameModel,
 	GameSettings,
 	gameSettingsFromEnv,
-} from 'common/models/game-model'
-import {PlayerId, PlayerModel} from 'common/models/player-model'
-import {
-	ServerMessage,
-	serverMessages,
-} from 'common/socket-messages/server-messages'
-import {CurrentCoinFlip, Message} from 'common/types/game-state'
-import {PlayerSetupDefs} from 'common/utils/state-gen'
-import {TurnActionAndPlayer} from './routines/game'
-import {broadcast} from './utils/comm'
-import {getLocalGameState} from './utils/state-gen'
+} from '../models/game-model'
+import {PlayerId, PlayerModel} from '../models/player-model'
+import {ServerMessage, serverMessages} from '../socket-messages/server-messages'
+import {CurrentCoinFlip, Message} from '../types/game-state'
+import {PlayerSetupDefs} from './setup-game'
+import {TurnActionAndPlayer} from './run-game'
+import {getLocalGameState} from './make-local-state'
 
 export type GameControllerProps = {
 	gameCode?: string

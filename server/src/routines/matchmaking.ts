@@ -22,7 +22,7 @@ import {AchievementProgress, EarnedAchievement} from 'common/types/achievements'
 import {Deck} from 'common/types/deck'
 import {GameOutcome} from 'common/types/game-state'
 import {formatText} from 'common/utils/formatting'
-import {OpponentDefs} from 'common/utils/state-gen'
+import {OpponentDefs} from 'common/game/setup-game'
 import {validateDeck} from 'common/utils/validation'
 import {
 	addGame,
@@ -32,13 +32,13 @@ import {
 	sendAfterGameInfo,
 	updateAchievements,
 } from 'db/db-reciever'
-import {GameController} from 'game-controller'
+import {GameController} from 'common/game/game-controller'
 import {LocalMessageTable, localMessages} from 'messages'
 import {all, call, delay, fork, race, take} from 'typed-redux-saga'
 import {safeCall} from 'utils'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
-import {getLocalGameState} from '../utils/state-gen'
+import {getLocalGameState} from 'common/game/make-local-state'
 import runGame, {getTimerForSeconds} from './game'
 import {TurnActionCompressor} from './turn-action-compressor'
 import ExBossAI from './virtual/exboss-ai'
