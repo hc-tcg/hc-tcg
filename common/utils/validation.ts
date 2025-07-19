@@ -16,7 +16,7 @@ type ValidateDeckResult =
 export function validateDeck(deckCards: Array<Card>): ValidateDeckResult {
 	if (CONFIG.game.disableDeckValidation) return {valid: true}
 
-	const limits = CONFIG.limits
+	const limits = CONFIG.game.limits
 
 	// order validation by simplest problem first, so that a player can easily identify why their deck isn't valid
 

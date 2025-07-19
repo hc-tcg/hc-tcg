@@ -78,8 +78,8 @@ export type GameSettings = {
 
 export function gameSettingsFromEnv(): GameSettings {
 	return {
-		maxTurnTime: CONFIG.limits.maxTurnTime,
-		extraActionTime: CONFIG.limits.extraActionTime,
+		maxTurnTime: CONFIG.game.limits.maxTurnTime,
+		extraActionTime: CONFIG.game.limits.extraActionTime,
 		showHooksState: CONFIG.game.showHooksState,
 		blockedActions: CONFIG.game.blockedActions,
 		availableActions: CONFIG.game.availableActions,
@@ -96,7 +96,7 @@ export function gameSettingsFromEnv(): GameSettings {
 		logErrorsToStderr: CONFIG.game.logErrorsToStderr,
 		verboseLogging: CONFIG.game.verboseLogging,
 		disableRewardCards: CONFIG.game.disableRewardCards,
-		gameTimeout: CONFIG.limits.gameTimeout,
+		gameTimeout: CONFIG.game.limits.gameTimeout,
 	}
 }
 
