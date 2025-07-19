@@ -36,6 +36,7 @@ If you need to test code that interacts with the database, you can use our devel
 ```
 # docker-compose -f docker-compose-dev.yml up
 ```
+This docker image is set up to autoreload when you make changes to the source code.
 
 _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
 

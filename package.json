@@ -70,6 +70,7 @@
 		"clean": "rm -rf client/dist && rm -rf server/dist",
 		"build": "npm run client:build-dev && npm run server:build",
 		"server": "node --enable-source-maps server/dist/index.js",
+		"docker-dev": "docker-compose -f docker-compose-dev.yml up || docker compose -f docker-compose-dev.yml up",
 		"server:build": "npm run server:tsc && node esbuild.js",
 		"server:dev": "tsx watch --tsconfig server/tsconfig.json server/src",
 		"server:tsc": "tsc --p server/tsconfig.json",
