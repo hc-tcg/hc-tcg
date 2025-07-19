@@ -11,7 +11,6 @@ export default {
 			'https://testing.hc-tcg.online',
 		],
 		world: 'LTF42',
-		logoSubText: '10k games since 1.0!',
 	},
 	game: {
 		limits: {
@@ -53,4 +52,5 @@ export default {
 	},
 	unlockAllCosmetics: false,
 	statsUrl: null,
+	logoSubText: '10k games since 1.0!',
 }
