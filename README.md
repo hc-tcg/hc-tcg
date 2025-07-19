@@ -2,30 +2,32 @@
 
 An unofficial implementation of [Vintage Beef](https://www.youtube.com/@VintageBeef)'s Hermitcraft TCG!
 
-## Docker
-
-We recommend using docker for developement.
-
 ## Node.js
 
 Use Node.js 20+.
-If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh/nvm).
+If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh/nvm) or [asdf](https://asdf-vm.com/).
 
-## How to run Hermitcraft TCG
+## Set up dev environment
 
-```sh
-npm run docker-dev          # start the development docker file
-npm ci                      # install packages
-npm run build-dev           # build a developement build of the client
-npm run build-dev-windows   # build a developement build of the client on windows
-npm run server              # start the sever
+<details>
+<summary>Run Project With Docker (reccomended)</summary>
+<br>
+First you will need to create the debug config file. To do this, run `cp ./common/config/debug-config.example.js ./common/config/debug-config.js` on Linux, and `copy ./common/config/debug-config.example.js ./common/config/debug-config.js` on Windows.
+
+You can then use the following command:
+```
+npm run docker-dev          # start the docker development image
 ```
 
-_Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
+By default, the client is hosted on port 3002.
+</details>
+
+
+<details>
+<summary>Run project without docker</summary>
+<br>
 
 ## Running in your development environment
-
-Before you can run the game, with or without docker, you will need to create the debug config file. To do this, run `cp ./common/config/debug-config.example.js ./common/config/debug-config.js` on Linux, and `copy ./common/config/debug-config.example.js ./common/config/debug-config.js` on Windows.
 
 ```sh
 npm ci               # install packages
@@ -39,6 +41,8 @@ npm run dev          # start both the client and server
 _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
 
 By default, the client is hosted on port 3002.
+
+</details>
 
 ## How To & Architecture
 
@@ -116,9 +120,13 @@ npm run test:fuzz           # run fuzz tests (see tests/README.md for more detai
 # Building & Self Hosting
 
 To build you must run these commands:
+```sh
+npm ci                      # install packages
+npm run build-dev           # build a developement build of the client
+npm run build-dev-windows   # build a developement build of the client on windows
 ```
-npm run build
-```
+
+_Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
 
 To build the cards you must have `sh` and `imagemagick` installed along with the project dependencies.
 ```
@@ -140,3 +148,4 @@ docker-compose up -d
 ```
 
 By default, the server will listen to requests on port 9000.  The instance can be backed up by backing up the contents of /etc/hctcg (or whatever directory you specify).
+
