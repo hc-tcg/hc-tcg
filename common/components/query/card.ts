@@ -7,6 +7,7 @@ import {
 	StatusEffectComponent,
 } from '..'
 import {Card} from '../../cards/types'
+import {ExpansionT} from '../../const/expansions'
 import {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../../entities'
 import {StatusEffect} from '../../status-effects/status-effect'
 import {TypeT} from '../../types/cards'
@@ -77,6 +78,12 @@ export function player(player: PlayerEntity): ComponentQuery<CardComponent> {
 
 export function type(type: TypeT): ComponentQuery<CardComponent> {
 	return (_game, card) => card.isHermit() && card.props.type === type
+}
+
+export function expansion(
+	expansion: ExpansionT,
+): ComponentQuery<CardComponent> {
+	return (_game, card) => card.isHermit() && card.props.expansion === expansion
 }
 
 export const currentPlayer: ComponentQuery<CardComponent> = (game, pos) =>
