@@ -41,6 +41,7 @@ const Spyglass: SingleUse = {
 				)} from {$o${opponentPlayer.playerName}'s$|your} hand`
 			}
 
+			//@todo Redo spyglass entirely
 			game.addModalRequest({
 				player: player.entity,
 				modal: {

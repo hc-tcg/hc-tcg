@@ -284,7 +284,7 @@ export class GameController {
 	public getRandomDelayForAI(coinFlips: Array<CurrentCoinFlip>) {
 		return (
 			coinFlips.reduce((r, flip) => r + flip.delay, 0) +
-			(this.game.rng() * 500 + 500)
+			(this.game.coinFlipRng() * 500 + 500)
 		)
 	}
 }

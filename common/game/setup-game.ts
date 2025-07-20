@@ -133,18 +133,22 @@ function setupEcsForPlayer(
 		options.startWithAllCards || options.unlimitedCards ? cards.length : 7
 
 	if (options.shuffleDeck) {
-		fisherYatesShuffle(cards, game.rng).forEach((card, i) => {
-			if (card.slot.inDeck()) card.slot.order = i
-		})
+		fisherYatesShuffle(cards, game.usePlayerShuffleRNG(playerEntity)).forEach(
+			(card, i) => {
+				if (card.slot.inDeck()) card.slot.order = i
+			},
+		)
 
 		if (!cards.some((card) => card.isHermit())) return
 
 		while (
 			!cards.slice(0, amountOfStartingCards).some((card) => card.isHermit())
 		) {
-			fisherYatesShuffle(cards, game.rng).forEach((card, i) => {
-				if (card.slot.inDeck()) card.slot.order = i
-			})
+			fisherYatesShuffle(cards, game.usePlayerShuffleRNG(playerEntity)).forEach(
+				(card, i) => {
+					if (card.slot.inDeck()) card.slot.order = i
+				},
+			)
 		}
 	}
 

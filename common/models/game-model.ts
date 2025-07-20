@@ -102,6 +102,11 @@ export function gameSettingsFromEnv(): GameSettings {
 
 export class GameModel {
 	public rng: () => number
+
+	public playerOneShuffle: () => number
+	public playerTwoShuffle: () => number
+	public coinFlipRng: () => number
+
 	public nextEntity: () => number
 	private entityCount: number
 
@@ -191,8 +196,18 @@ export class GameModel {
 
 		this.settings = settings
 		assert(rngSeed.length < 16, 'Game RNG seed must be under 16 characters')
+
 		this.rngSeed = rngSeed
 		this.rng = newRandomNumberGenerator(rngSeed)
+
+		this.playerOneShuffle = newRandomNumberGenerator(
+			this.rng().toString().slice(2),
+		)
+		this.playerTwoShuffle = newRandomNumberGenerator(
+			this.rng().toString().slice(2),
+		)
+		this.coinFlipRng = newRandomNumberGenerator(this.rng().toString().slice(2))
+
 		this.entityCount = 0
 		this.nextEntity = newIncrementor()
 		const swapPlayers = this.rng()
@@ -237,6 +252,14 @@ export class GameModel {
 
 	public get logHeader() {
 		return `Game ${this.id}:`
+	}
+
+	public usePlayerShuffleRNG(entity: PlayerEntity) {
+		if (entity === this.state.order[0]) {
+			return this.playerOneShuffle
+		} else {
+			return this.playerTwoShuffle
+		}
 	}
 
 	public get currentPlayerEntity() {

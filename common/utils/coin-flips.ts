@@ -56,7 +56,8 @@ export function flipCoin(
 				forced: true,
 			})
 		} else {
-			const coinFlip: CoinFlipResult = game.rng() >= 0.5 ? 'heads' : 'tails'
+			const coinFlip: CoinFlipResult =
+				game.coinFlipRng() >= 0.5 ? 'heads' : 'tails'
 			coinFlips.push({
 				result: coinFlip,
 				forced: false,
@@ -67,12 +68,12 @@ export function flipCoin(
 	playerTossingCoin.hooks.onCoinFlip.call(card, coinFlips)
 
 	let coinFlipAmount =
-		COIN_FLIP_ARRAY[Math.floor(game.rng() * COIN_FLIP_ARRAY.length)]
+		COIN_FLIP_ARRAY[Math.floor(game.coinFlipRng() * COIN_FLIP_ARRAY.length)]
 
 	if (coinFlips.map((c) => c.forced).every((c) => c)) {
 		coinFlipAmount =
 			COIN_FLIP_FORCED_ARRAY[
-				Math.floor(game.rng() * COIN_FLIP_FORCED_ARRAY.length)
+				Math.floor(game.coinFlipRng() * COIN_FLIP_FORCED_ARRAY.length)
 			]
 	}
 

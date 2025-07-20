@@ -18,7 +18,7 @@ import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
 
 const fireDropper = (game: GameModel) => {
-	return Math.floor(game.rng() * 9)
+	return Math.floor(game.coinFlipRng() * 9)
 }
 
 function getBossAttack(player: PlayerComponent, game: GameModel) {
@@ -140,7 +140,8 @@ function getNextTurnAction(
 		query.effect.targetIsCardAnd(query.card.player(player.entity)),
 	)
 	if (nineEffect && nineEffect.counter === 0) {
-		const nineSpecial = game.rng() > 0.5 ? 'NINEDISCARD' : 'NINEATTACHED'
+		const nineSpecial =
+			game.coinFlipRng() > 0.5 ? 'NINEDISCARD' : 'NINEATTACHED'
 		supplyNineSpecial(nineEffect, nineSpecial)
 		game.voiceLineQueue.push(`/voice/${nineSpecial}.ogg`)
 		return [{type: 'DELAY', delay: 10600}, {type: 'END_TURN'}]
