@@ -1,7 +1,5 @@
-import {CardComponent, ObserverComponent, SlotComponent} from '../../components'
+import {SlotComponent} from '../../components'
 import query from '../../components/query'
-import {RowEntity} from '../../entities'
-import {GameModel} from '../../models/game-model'
 import {beforeAttack} from '../../types/priorities'
 import {applySingleUse} from '../../utils/board'
 import {singleUse} from '../defaults'
@@ -37,10 +35,8 @@ const Bow: SingleUse = {
 	onCreate(game, component, observer) {
 		observer.subscribe(component.player.hooks.getAttackRequests, () => {
 			if (!component.onGameBoard) return
-			const {player} = component
-
 			game.addPickRequest({
-				player: player.entity,
+				player: component.player.entity,
 				id: component.entity,
 				message: "Pick one of your opponent's AFK Hermits",
 				canPick: pickCondition,

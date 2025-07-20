@@ -86,9 +86,13 @@ export class CardComponent<CardType extends Card = Card> {
 
 		this.turnedOver = false
 		this.prizeCard = false
-		this.data = JSON.parse(JSON.stringify(this.props.data))
+		this.data = this.props.data()
 
-		this.props.onCreate(this.game, this)
+		this.props.onCreate(
+			this.game,
+			this,
+			game.components.new(ObserverComponent, this.entity),
+		)
 
 		if (this.slot.onBoard()) {
 			let observer = this.game.components.new(ObserverComponent, this.entity)
@@ -146,7 +150,7 @@ export class CardComponent<CardType extends Card = Card> {
 
 	/** Return if this card is on the board */
 	public get onGameBoard() {
-		return ['item', 'attach', 'hermit'].includes(this.slot.type)
+		return ['item', 'attach', 'hermit', 'single_use'].includes(this.slot.type)
 	}
 
 	public isItem(): this is CardComponent<Item> {

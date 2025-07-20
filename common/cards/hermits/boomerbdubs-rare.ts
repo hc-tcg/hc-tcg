@@ -15,8 +15,8 @@ import {InstancedValue} from '../card'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
 
-const flippedCoin = new InstancedValue<boolean>(() => false)
-const extraDamage = new InstancedValue<boolean>(() => 0)
+const _flippedCoin = new InstancedValue<boolean>(() => false)
+const _extraDamage = new InstancedValue<boolean>(() => 0)
 
 const BoomerBdubsRare: Hermit = {
 	...hermit,
