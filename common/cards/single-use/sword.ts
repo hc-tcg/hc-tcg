@@ -29,14 +29,16 @@ function getSword(
 		description: `Do ${amount}hp damage to your opponent's active Hermit.`,
 		hasAttack: true,
 		attackPreview: (_game) => `$A${amount}$`,
-		onAttach(
+		onCreate(
 			game: GameModel,
 			component: CardComponent,
 			observer: ObserverComponent,
 		) {
 			const {player, opponentPlayer} = component
 
-			observer.subscribe(player.hooks.getAttack, () => {
+			observer.subscribe(component.player.hooks.getAttack, () => {
+				if (!component.onGameBoard) return null
+
 				const swordAttack = game
 					.newAttack({
 						attacker: component.entity,
@@ -55,6 +57,7 @@ function getSword(
 				game.hooks.beforeAttack,
 				beforeAttack.APPLY_SINGLE_USE_ATTACK,
 				(attack) => {
+					if (!component.onGameBoard) return
 					if (!attack.isAttacker(component.entity)) return
 					applySingleUse(game)
 					observer.unsubscribeFromEverything()
@@ -63,6 +66,7 @@ function getSword(
 		},
 	}
 }
+
 export const IronSword = getSword(
 	{
 		id: 'iron_sword',
