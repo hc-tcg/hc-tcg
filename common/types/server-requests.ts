@@ -53,6 +53,8 @@ export type SlotInfo = {
 }
 
 export type PickRequest = {
+	/** The id of the component that created the pick request */
+	creator: Entity<any>
 	/** The id of the player to request the pick from */
 	player: PlayerEntity
 	/** The id of the card that called the pick request */
@@ -61,12 +63,13 @@ export type PickRequest = {
 	message: string
 	/** A function that returns if the card can be attached to a specific slot */
 	canPick: ComponentQuery<SlotComponent>
+
 	/** The function that will be called when we receive a pick result */
-	onResult: (pickedSlot: SlotComponent) => void
+	//onResult: (pickedSlot: SlotComponent) => void
 	/** Called when the pick request is cancelled. This can only occur with a single use card */
-	onCancel?: () => void
+	//onCancel?: () => void
 	/** Called when the pick request times out before being resolved successfully */
-	onTimeout?: () => void
+	//onTimeout?: () => void
 }
 
 export type LocalModalData =

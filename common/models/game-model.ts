@@ -146,10 +146,14 @@ export class GameModel {
 		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
 		/** Hook called when the game ends for achievements to check how the game ended */
 		onGameEnd: GameHook<(outcome: GameOutcome) => void>
-		/** Hook called when modal request is responded to by a player */
+		/** Hook called when pick request is responded to by a player */
 		onPickRequestResolve: GameHook<
 			(request: PickRequest, slot: SlotComponent) => void
 		>
+		/** Hook called when pick request times out */
+		onPickRequestTimeout: GameHook<(request: PickRequest) => void>
+		/** Hook called when modal request is responded to by a player */
+		onPickRequestCancel: GameHook<(request: PickRequest) => void>
 		/** Hook called when pick request is responded to by a player */
 		onModalRequestResolve: GameHook<
 			(request: ModalRequest, result: ModalResult) => void
@@ -227,6 +231,8 @@ export class GameModel {
 			onDragCardsModalResolve: new GameHook(),
 			onCopyAttackModalResolve: new GameHook(),
 			onPickRequestResolve: new GameHook(),
+			onPickRequestCancel: new GameHook(),
+			onPickRequestTimeout: new GameHook(),
 			afterGameEnd: new Hook(),
 		}
 
@@ -375,7 +381,7 @@ export class GameModel {
 		if (this.state.pickRequests[index] !== undefined) {
 			const request = this.state.pickRequests.splice(index, 1)[0]
 			if (timeout) {
-				request.onTimeout?.()
+				this.hooks.onPickRequestTimeout.call(request)
 			}
 		}
 	}
@@ -383,7 +389,7 @@ export class GameModel {
 		if (this.state.pickRequests[0]?.player === this.currentPlayer.entity) {
 			// Cancel and clear pick requests
 			for (let i = 0; i < this.state.pickRequests.length; i++) {
-				this.state.pickRequests[i].onCancel?.()
+				this.hooks.onPickRequestCancel.call(this.state.pickRequests[i])
 			}
 			this.state.pickRequests = []
 		}

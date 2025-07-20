@@ -95,7 +95,6 @@ const BoomerBdubsRare: Hermit = {
 				if (activeInstance.entity !== component.entity) return
 				// Only secondary attack
 				if (hermitAttackType !== 'secondary') return
-				component.data.blockRemoveEffect = true
 				game.addModalRequest(newModalRequest())
 			},
 		)

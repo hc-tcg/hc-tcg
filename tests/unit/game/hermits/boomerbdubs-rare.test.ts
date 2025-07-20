@@ -6,7 +6,6 @@ import Crossbow from 'common/cards/single-use/crossbow'
 import Fortune from 'common/cards/single-use/fortune'
 import query from 'common/components/query'
 import {testGame} from '../utils'
-import Bow from 'common/cards/single-use/bow'
 
 describe('Test Boomer Bdubs Watch This', () => {
 	test('Watch This adds 20hp damage per heads', async () => {
@@ -120,21 +119,20 @@ describe('Test Boomer Bdubs Watch This', () => {
 	test('Watch This can only be canceled if it has not flipped a coin', async () => {
 		await testGame(
 			{
-				playerOneDeck: [EthosLabCommon, EthosLabCommon],
-				playerTwoDeck: [BoomerBdubsRare, Bow],
+				playerOneDeck: [EthosLabCommon],
+				playerTwoDeck: [BoomerBdubsRare, Crossbow],
 				testGame: async (test, game) => {
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
 					await test.endTurn()
 
 					await test.playCardFromHand(BoomerBdubsRare, 'hermit', 0)
-					await test.playCardFromHand(Bow, 'single_use')
+					await test.playCardFromHand(Crossbow, 'single_use')
 					await test.attack('secondary')
 					// Flip 0 coins and cancel
 					await test.finishModalRequest({result: false, cards: null})
 					await test.removeEffect()
 					// Flip a coin and finish attack
-					await test.playCardFromHand(Bow, 'single_use')
+					await test.playCardFromHand(Crossbow, 'single_use')
 					await test.attack('secondary')
 					await test.finishModalRequest({result: true, cards: null})
 					await test.finishModalRequest({result: false, cards: null})
@@ -144,10 +142,12 @@ describe('Test Boomer Bdubs Watch This', () => {
 					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
-						query.not(query.slot.active),
+						query.slot.active,
 					)
 					expect(game.opponentPlayer.activeRow?.health).toBe(
-						EthosLabCommon.health - (BoomerBdubsRare.secondary.damage + 20),
+						EthosLabCommon.health -
+							(BoomerBdubsRare.secondary.damage + 20) -
+							20 /** Crossbow */,
 					)
 					await test.endTurn()
 				},
