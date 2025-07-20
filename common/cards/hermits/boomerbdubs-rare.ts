@@ -5,7 +5,6 @@ import {
 	StatusEffectComponent,
 } from '../../components'
 import query from '../../components/query'
-import {canBecomeActive} from '../../components/query/slot'
 import {GameModel} from '../../models/game-model'
 import FortuneEffect from '../../status-effects/fortune'
 import SpentFortuneEffect from '../../status-effects/spent-fortune'
@@ -45,6 +44,7 @@ const BoomerBdubsRare: Hermit = {
 		return {
 			extraDamage: 0,
 			flippedTalis: false,
+			hasFlippedCoin: false,
 			blockRemoveEffect: false,
 		}
 	},
@@ -55,27 +55,29 @@ const BoomerBdubsRare: Hermit = {
 	): void {
 		const {player} = component
 
-		let modalRequest = {
-			creator: component.entity,
-			player: player.entity,
-			modal: {
-				type: 'selectCards',
-				name: 'Boomer BDubs - Watch This',
-				description: 'Do you want to flip a coin for your attack?',
-				cards: [],
-				selectionSize: 0,
-				cancelable: false,
-				primaryButton: {
-					text: 'Yes',
-					variant: 'default',
+		const newModalRequest = () => {
+			return {
+				creator: component.entity,
+				player: player.entity,
+				modal: {
+					type: 'selectCards',
+					name: 'Boomer BDubs - Watch This',
+					description: 'Do you want to flip a coin for your attack?',
+					cards: [],
+					selectionSize: 0,
+					cancelable: component.data.hasFlippedCoin === true,
+					primaryButton: {
+						text: 'Yes',
+						variant: 'default',
+					},
+					secondaryButton: {
+						text: 'No',
+						variant: 'default',
+					},
 				},
-				secondaryButton: {
-					text: 'No',
-					variant: 'default',
-				},
-			},
-			onTimeout() {},
-		} satisfies ModalRequest
+				onTimeout() {},
+			} satisfies ModalRequest
+		}
 
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
@@ -95,7 +97,7 @@ const BoomerBdubsRare: Hermit = {
 				// Only secondary attack
 				if (hermitAttackType !== 'secondary') return
 
-				game.addModalRequest(modalRequest)
+				game.addModalRequest(newModalRequest())
 			},
 		)
 
@@ -111,6 +113,7 @@ const BoomerBdubsRare: Hermit = {
 				const flip = flipCoin(game, player, activeHermit)[0]
 
 				component.data.blockRemoveEffect = true
+				component.data.hasFlippedCoin = true
 
 				if (flip === 'tails') {
 					component.data.flippedTails = true
