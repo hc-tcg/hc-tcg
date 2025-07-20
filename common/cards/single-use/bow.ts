@@ -50,7 +50,7 @@ const Bow: SingleUse = {
 		})
 
 		observer.setupHook(component.player.hooks.getAttack, () => {
-			if (!component.onGameBoard) return
+			if (!component.onGameBoard) return null
 			const bowAttack = game
 				.newAttack({
 					attacker: component.entity,
