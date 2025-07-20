@@ -46,10 +46,14 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
-import {GameController, GameControllerProps} from 'common/game/game-controller'
+import {
+	GameController,
+	GameControllerProps,
+	GameViewer,
+} from 'common/game/game-controller'
 import {PlayerSetupDefs} from 'common/game/setup-game'
 import {getLocalGameState} from 'common/game/make-local-state'
-import {TurnActionAndPlayer} from 'common/game/run-game'
+import runGame, {TurnActionAndPlayer} from 'common/game/run-game'
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
@@ -64,129 +68,107 @@ export function* sendTurnAction(
 
 class ClientGameController extends GameController {}
 
-function startGameLocally(
+async function startGameLocally(
+	myPlayerEntity: PlayerEntity,
 	player1: PlayerSetupDefs,
 	player2: PlayerSetupDefs,
 	props: GameControllerProps,
 ) {
 	let game = new ClientGameController(player1, player2, props)
+	runGame(game)
+
+	await game.waitForTurnActionReady()
+
+	console.log(game.game.components)
+
+	console.log(myPlayerEntity)
+	game.addViewer(
+		{
+			spectator: false,
+			replayer: false,
+			playerOnLeft: myPlayerEntity,
+			player: null,
+		},
+	)
+
 	return game
 }
 
-function* turnActionRecieve(gameController: GameController) {
-	console.log('waiting for turn action')
-	const nextTurnAction = yield* race({
-		serverTurnAction: take<
-			ServerMessageTable[typeof serverMessages.GAME_TURN_ACTION]
-		>(serverMessages.GAME_TURN_ACTION),
-		localTurnAction: take<
-			LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
-		>(localMessages.GAME_TURN_ACTION),
-	})
-	console.log('recv:', nextTurnAction)
-
+function* putLocalGameState(gameController: GameController) {
 	const localGameState = getLocalGameState(
 		gameController.game,
 		gameController.viewers[0],
 	)
-
-	let turnAction: TurnActionAndPlayer | null = null
-
-	if (nextTurnAction.localTurnAction) {
-		turnAction = {
-			playerEntity: localGameState.playerEntity,
-			action: nextTurnAction.localTurnAction.action,
-		}
-	} else if (nextTurnAction.serverTurnAction) {
-		turnAction = nextTurnAction.serverTurnAction.action
-	}
-	if (!turnAction) throw new Error('Turn action should be defined')
 
 	yield* put({
 		type: localMessages.GAME_LOCAL_STATE_SET,
 		localGameState,
 		time: Date.now(),
 	})
-
-	gameController.sendTurnAction(turnAction)
-
-	// First show coin flips, if any
-	yield* call(coinFlipSaga, localGameState)
-
-	// Actually update the local state
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_LOCAL_STATE_SET,
-		localGameState: localGameState,
-		time: Date.now(),
-	})
-
-	yield* put<LocalMessage>({
-		type: localMessages.QUEUE_VOICE,
-		lines: localGameState.voiceLineQueue,
-	})
-
-	if (localGameState.turn.availableActions.includes('WAIT_FOR_TURN')) return
-	if (localGameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_ACTION'))
-		return
-
-	const logic = yield* fork(() =>
-		all([
-			fork(actionModalsSaga),
-			fork(slotSaga),
-			fork(actionLogicSaga, localGameState),
-			fork(endTurnSaga),
-			takeEvery(localMessages.GAME_ACTIONS_ATTACK, attackSaga),
-		]),
-	)
-
-	// Handle core funcionality
-	yield call(actionSaga, localGameState.playerEntity, gameController)
-
-	// After we send an action, disable logic till the next game state is received
-	yield cancel(logic)
 }
 
-function* actionSaga(
-	playerEntity: PlayerEntity,
-	gameController: GameController,
-) {
-	const turnAction = yield* take<
-		LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
-	>(localMessages.GAME_TURN_ACTION)
+function* turnActionRecieve(gameController: GameController) {
+	yield* call(() => gameController.waitForTurnActionReady())
 
-	gameController.sendTurnAction({
-		action: turnAction.action,
-		playerEntity: playerEntity,
-	})
-
-	if (
-		[
-			'PLAY_HERMIT_CARD',
-			'PLAY_ITEM_CARD',
-			'PLAY_EFFECT_CARD',
-			'PLAY_SINGLE_USE_CARD',
-		].includes(turnAction.action.type)
-	) {
-		// This is updated for the client in slot-saga
-		yield* call(sendTurnAction, playerEntity, turnAction.action)
-	} else if (turnAction.action.type === 'APPLY_EFFECT') {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
-	} else if (turnAction.action.type === 'REMOVE_EFFECT') {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
-	} else if (turnAction.action.type === 'PICK_REQUEST') {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
-	} else if (turnAction.action.type === 'MODAL_REQUEST') {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
-	} else if (
-		['SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK'].includes(
-			turnAction.action.type,
+	while (true) {
+		const localGameState = getLocalGameState(
+			gameController.game,
+			gameController.viewers[0],
 		)
-	) {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
-	} else if (turnAction.action.type === 'END_TURN') {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
-	} else if (turnAction.action.type === 'CHANGE_ACTIVE_HERMIT') {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
+
+		const logic = yield* fork(() =>
+			all([
+				fork(actionModalsSaga),
+				fork(slotSaga),
+				fork(actionLogicSaga, localGameState),
+				fork(endTurnSaga),
+				takeEvery(localMessages.GAME_ACTIONS_ATTACK, attackSaga),
+			]),
+		)
+
+		const nextTurnAction = yield* race({
+			serverTurnAction: take<
+				ServerMessageTable[typeof serverMessages.GAME_TURN_ACTION]
+			>(serverMessages.GAME_TURN_ACTION),
+			localTurnAction: take<
+				LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
+			>(localMessages.GAME_TURN_ACTION),
+		})
+
+		yield cancel(logic)
+		yield* putLocalGameState(gameController)
+
+		let turnAction: TurnActionAndPlayer | null = null
+
+		if (nextTurnAction.localTurnAction) {
+			turnAction = {
+				playerEntity: localGameState.playerEntity,
+				action: nextTurnAction.localTurnAction.action,
+			}
+		} else if (nextTurnAction.serverTurnAction) {
+			turnAction = nextTurnAction.serverTurnAction.action
+		}
+		if (!turnAction) throw new Error('Turn action should be defined')
+
+
+		gameController.sendTurnAction(turnAction)
+		yield* sendTurnAction(turnAction.playerEntity, turnAction.action)
+		yield* putLocalGameState(gameController)
+
+		// First show coin flips, if any
+		yield* call(coinFlipSaga, localGameState)
+
+		// Actually update the local state
+		yield* putLocalGameState(gameController)
+
+		yield* put<LocalMessage>({
+			type: localMessages.QUEUE_VOICE,
+			lines: localGameState.voiceLineQueue,
+		})
+
+		if (localGameState.turn.availableActions.includes('WAIT_FOR_TURN')) return
+		if (localGameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_ACTION'))
+			return
 	}
 }
 
@@ -241,6 +223,7 @@ function* handleForfeitAction() {
 
 type GameSagaProps = {
 	spectatorCode?: string
+	playerEntity: PlayerEntity
 	playerOneDefs: PlayerSetupDefs
 	playerTwoDefs: PlayerSetupDefs
 	props: GameControllerProps
@@ -248,12 +231,15 @@ type GameSagaProps = {
 
 function* gameSaga({
 	spectatorCode,
+	playerEntity,
 	playerOneDefs,
 	playerTwoDefs,
 	props,
 }: GameSagaProps) {
 	const socket = yield* select(getSocket)
-	const gameController = startGameLocally(playerOneDefs, playerTwoDefs, props)
+	const gameController = yield* call(() =>
+		startGameLocally(playerEntity, playerOneDefs, playerTwoDefs, props),
+	)
 	const backgroundTasks = yield* fork(() =>
 		all([
 			fork(opponentConnectionSaga),
@@ -271,6 +257,8 @@ function* gameSaga({
 			type: localMessages.GAME_START,
 			spectatorCode,
 		})
+
+		yield* putLocalGameState(gameController)
 
 		const result = yield* race({
 			gameEnd: call(receiveMsg(socket, serverMessages.GAME_END)),

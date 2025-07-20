@@ -1,7 +1,7 @@
-import assert from 'node:assert'
 import {ComponentQuery} from '../components/query'
 import {Entity, newEntity} from '../entities'
 import {GameModel} from '../models/game-model'
+import {assert} from '../utils/assert'
 
 export type Component = {
 	entity: Entity<any>

@@ -39,10 +39,11 @@ export class GameViewer {
 	game: GameModel
 	spectator: boolean
 	playerOnLeftEntity: PlayerEntity
-	player: PlayerModel
+	player: PlayerModel | undefined
 	replayer: boolean
 
 	public constructor(game: GameModel, props: GameViewerProps) {
+		console.log(props)
 		this.id = `${Math.random()}`
 		this.game = game
 		this.spectator = props.spectator
@@ -71,6 +72,8 @@ export class GameController {
 	chat: Array<Message>
 	task: Promise<any> | null
 	viewers: Array<GameViewer>
+	playerOne: PlayerComponent
+	playerTwo: PlayerComponent
 
 	readonly props: GameControllerProps
 	readonly player1Defs: PlayerSetupDefs
@@ -87,8 +90,10 @@ export class GameController {
 		this.chat = []
 		this.props = props
 
+		let randomSeed = props.randomSeed || GameModel.newGameSeed()
+
 		this.game = new GameModel(
-			props.randomSeed || GameModel.newGameSeed(),
+			randomSeed,
 			player1,
 			player2,
 			props.settings || gameSettingsFromEnv(),
@@ -136,10 +141,10 @@ export class GameController {
 			score: player2.score,
 		}
 
-		let playerOne = this.game.arePlayersSwapped
+		this.playerOne = this.game.arePlayersSwapped
 			? this.game.currentPlayer
 			: this.game.opponentPlayer
-		let playerTwo = this.game.arePlayersSwapped
+		this.playerTwo = this.game.arePlayersSwapped
 			? this.game.opponentPlayer
 			: this.game.currentPlayer
 
@@ -150,24 +155,24 @@ export class GameController {
 			if (this.player1Defs.model instanceof PlayerModel) {
 				console.log(
 					'Adding achievements',
-					playerOne.playerName,
+					this.playerOne.playerName,
 					this.player1Defs.model.name,
 				)
 				this.addAchievements(
 					this.player1Defs.model,
-					playerOne,
+					this.playerOne,
 					props.countAchievements,
 				)
 			}
 			if (this.player2Defs.model instanceof PlayerModel) {
 				console.log(
 					'Adding achievemnts',
-					playerTwo.playerName,
+					this.playerTwo.playerName,
 					this.player2Defs.model.name,
 				)
 				this.addAchievements(
 					this.player2Defs.model,
-					playerTwo,
+					this.playerTwo,
 					props.countAchievements,
 				)
 			}

@@ -1,7 +1,7 @@
-import assert from 'assert'
 import {CardComponent, PlayerComponent} from '../components'
 import {GameModel} from '../models/game-model'
 import {CoinFlipResult} from '../types/game-state'
+import {assert} from './assert'
 
 /* Array of [coin flip number, weight of coinflip number] */
 const COIN_FLIP_WEIGHTS = [

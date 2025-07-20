@@ -1,7 +1,7 @@
-import assert from 'assert'
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {assert} from '../../../utils/assert'
 import {fisherYatesShuffle} from '../../../utils/fisher-yates'
 import {singleUse} from '../../defaults'
 import {SingleUse} from '../../types'

@@ -104,12 +104,21 @@ function* gameManager(con: ServerSideGameController) {
 		root.getGameIds().length,
 	)
 
-	con.broadcastToViewers({
+	broadcast([con.getPlayers()[0]], {
 		type: serverMessages.GAME_START,
+		playerEntity: con.playerOne.entity,
 		spectatorCode: con.spectatorCode ?? undefined,
 		playerOneDefs: con.player1Defs,
 		playerTwoDefs: con.player2Defs,
-		props: con.props,
+		props: {...con.props, randomSeed: con.game.rngSeed, gameId: con.game.id},
+	})
+	broadcast([con.getPlayers()[1]], {
+		type: serverMessages.GAME_START,
+		playerEntity: con.playerTwo.entity,
+		spectatorCode: con.spectatorCode ?? undefined,
+		playerOneDefs: con.player1Defs,
+		playerTwoDefs: con.player2Defs,
+		props: {...con.props, randomSeed: con.game.rngSeed, gameId: con.game.id},
 	})
 
 	root.hooks.newGame.call(con)

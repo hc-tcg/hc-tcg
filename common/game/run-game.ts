@@ -19,10 +19,10 @@ import {
 	PickSlotActionData,
 	attackToAttackAction,
 } from '../types/turn-action-data'
+import {assert} from '../utils/assert'
 import {hasEnoughEnergy} from '../utils/attacks'
 import {printBoardState, printHooksState} from '../utils/game'
 
-import assert from 'assert'
 import {GameController} from './game-controller'
 import {
 	applyEffectAction,
@@ -595,10 +595,7 @@ async function turnActionsSaga(con: GameController) {
 					resolve({turnAction: action})
 				}),
 				new Promise((resolve) =>
-					setTimeout(
-						() => resolve({timeout: null}),
-						graceTime + remainingTime,
-					).unref(),
+					setTimeout(() => resolve({timeout: null}), graceTime + remainingTime),
 				),
 			])
 		}
@@ -878,7 +875,7 @@ async function runGame(con: GameController): Promise<GameOutcome> {
 				setTimeout(() => {
 					con.game.outcome = {type: 'timeout'}
 					resolve(null)
-				}, con.game.settings.gameTimeout).unref(),
+				}, con.game.settings.gameTimeout),
 			),
 		])
 	} catch (err) {

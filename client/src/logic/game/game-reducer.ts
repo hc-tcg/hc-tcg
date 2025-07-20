@@ -51,6 +51,7 @@ const gameReducer = (
 ): LocalGameRoot => {
 	switch (action.type) {
 		case localMessages.GAME_LOCAL_STATE_SET:
+			console.log("setting game state")
 			// I really don't know if its a good idea to automatically close modals besides the forfeit modal, but I am too scared
 			// too stop all modals from automatically closing.
 			let nextOpenedModal =

@@ -1,5 +1,6 @@
 import {PlayerDefs} from '../components/player-component'
 import {Appearance} from '../cosmetics/types'
+import {PlayerEntity} from '../entities'
 import {GameControllerProps} from '../game/game-controller'
 import {TurnActionAndPlayer} from '../game/run-game'
 import {PlayerSetupDefs} from '../game/setup-game'
@@ -89,6 +90,7 @@ export type ServerMessages = [
 	{type: typeof serverMessages.OPPONENT_CONNECTION; isConnected: boolean},
 	{
 		type: typeof serverMessages.GAME_START
+		playerEntity: PlayerEntity
 		playerOneDefs: PlayerSetupDefs
 		playerTwoDefs: PlayerSetupDefs
 		props: GameControllerProps

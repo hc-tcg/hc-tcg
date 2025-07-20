@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {Appearance} from '../cosmetics/types'
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
@@ -14,6 +13,7 @@ import type {
 } from '../types/game-state'
 import {GameHook, PriorityHook, WaterfallHook} from '../types/hooks'
 import {afterApply, onCoinFlip, onTurnEnd} from '../types/priorities'
+import { assert } from '../utils/assert'
 import {CardComponent} from './card-component'
 import query from './query'
 import {RowComponent} from './row-component'

@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {CardComponent} from 'common/components'
 import query from 'common/components/query'
 import {SlotEntity} from 'common/entities'
@@ -25,6 +24,7 @@ import {
 } from 'common/types/turn-action-data'
 import {executeAttacks} from 'common/utils/attacks'
 import {applySingleUse} from 'common/utils/board'
+import {assert} from '../utils/assert'
 
 function getAttack(
 	game: GameModel,

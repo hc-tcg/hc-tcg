@@ -178,11 +178,12 @@ function* joinPublicQueueSaga() {
 				type: localMessages.MATCHMAKING_JOIN_QUEUE_SUCCESS,
 			})
 
-			const {playerOneDefs, playerTwoDefs, props} = yield* call(
+			const {playerEntity, playerOneDefs, playerTwoDefs, props} = yield* call(
 				receiveMsg(socket, serverMessages.GAME_START),
 			)
 			yield call(() =>
 				gameSaga({
+					playerEntity,
 					playerOneDefs,
 					playerTwoDefs,
 					props,

@@ -184,7 +184,7 @@ function getLocalPlayerState(
 
 	const localPlayerState: LocalPlayerState = {
 		entity: playerState.entity,
-		playerId: viewer?.player.id,
+		playerId: viewer?.player?.id || viewer.playerOnLeft.entity,
 		playerName: playerState.playerName,
 		minecraftName: playerState.minecraftName,
 		censoredPlayerName: playerState.censoredPlayerName,
@@ -204,7 +204,7 @@ export function getLocalGameState(
 ): LocalGameState {
 	const playerState = game.components.find(
 		PlayerComponent,
-		(_game, player) => player.entity == viewer.playerOnLeft.entity,
+		(_game, player) => player.entity == viewer.playerOnLeftEntity,
 	)
 
 	const replay = viewer.replayer
