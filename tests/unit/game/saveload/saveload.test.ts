@@ -25,7 +25,6 @@ describe('Test Saving and Loading', () => {
 						CardComponent,
 						(_g, c) => c.props.id === Bow.id,
 					)!
-
 					let bowData = bowCard.save()
 					game.components.delete(bowCard.entity)
 					game.components.load(CardComponent, bowData)
