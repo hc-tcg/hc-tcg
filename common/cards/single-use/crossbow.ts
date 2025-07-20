@@ -48,18 +48,14 @@ const Crossbow: SingleUse = {
 	) {
 		const {player} = component
 
-		const pickRequest = {
-			creator: component.entity,
-			player: player.entity,
-			id: component.entity,
-		}
-
 		let addPickRequest = () => {
 			let remaining = component.data.targetsRemaining.toString()
 			if (component.data.targetsRemaining != component.data.totalTargets)
 				remaining += ' more'
 			const request: PickRequest = {
-				...pickRequest,
+				creator: component.entity,
+				player: player.entity,
+				id: component.entity,
 				canPick: query.every(
 					pickCondition,
 					...component.data.targets.map((row: RowEntity) =>
