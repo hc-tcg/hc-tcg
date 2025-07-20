@@ -1,5 +1,5 @@
 import {CardComponent} from '../components'
-import {CardEntity, PlayerEntity} from '../entities'
+import {CardEntity, Entity, PlayerEntity} from '../entities'
 
 export type ModalRequest =
 	| SelectCards.Request
@@ -13,11 +13,11 @@ export type ModalResult =
 
 export namespace SelectCards {
 	export type Request = {
+		/** The entity of the card component that created this modal request */
+		creator: Entity<any>
 		/** The id of the player to request the pick from */
 		player: PlayerEntity
 		modal: Data
-		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
-		onResult: (modalResult: Result) => void
 		/** Called when the modal request times out before being resolved successfully */
 		onTimeout: () => void
 	}
@@ -58,11 +58,11 @@ export namespace SelectCards {
 
 export namespace DragCards {
 	export type Request = {
+		/** The entity of the card component that created this modal request */
+		creator: Entity<any>
 		/** The id of the player to request the pick from */
 		player: PlayerEntity
 		modal: Data
-		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
-		onResult: (modalResult: Result) => void
 		/** Called when the modal request times out before being resolved successfully */
 		onTimeout: () => void
 	}
@@ -102,11 +102,11 @@ export namespace DragCards {
 
 export namespace CopyAttack {
 	export type Request = {
+		/** The entity of the card component that created this modal request */
+		creator: Entity<any>
 		/** The id of the player to request the pick from */
 		player: PlayerEntity
 		modal: Data
-		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
-		onResult: (modalResult: Result) => void
 		/** Called when the modal request times out before being resolved successfully */
 		onTimeout: () => void
 	}

@@ -313,7 +313,8 @@ export function modalRequestAction(
 				? modal.cards.map((entity) => game.components.get(entity)!)
 				: null,
 		} as SelectCards.Result
-		modalRequest_.onResult(modalResult)
+
+		game.hooks.onSelectCardsModalResolve.call(modalRequest_, modalResult)
 	} else if (modalRequest.modal.type === 'dragCards') {
 		let modalRequest_ = modalRequest as DragCards.Request
 		let modal = localModalResult as LocalDragCards.Result
@@ -326,7 +327,7 @@ export function modalRequestAction(
 				? modal.rightCards.map((entity) => game.components.get(entity)!)
 				: null,
 		} as DragCards.Result
-		modalRequest_.onResult(modalResult as DragCards.Result)
+		game.hooks.onDragCardsModalResolve.call(modalRequest_, modalResult)
 	} else if (modalRequest.modal.type === 'copyAttack') {
 		let modalRequest_ = modalRequest as CopyAttack.Request
 		modalResult = localModalResult as CopyAttack.Result
@@ -335,7 +336,7 @@ export function modalRequestAction(
 			!modal.pick || modalRequest.modal.availableAttacks.includes(modal.pick),
 			`Client picked an action that was not available to copy: ${modal.pick}`,
 		)
-		modalRequest_.onResult(modal)
+		game.hooks.onCopyAttackModalResolve.call(modalRequest_, modalResult)
 	} else throw Error('Unknown modal type')
 
 	game.hooks.onModalRequestResolve.call(modalRequest, modalResult)

@@ -154,6 +154,15 @@ export class GameModel {
 		onModalRequestResolve: GameHook<
 			(request: ModalRequest, result: ModalResult) => void
 		>
+		onSelectCardsModalResolve: GameHook<
+			(request: SelectCards.Request, result: SelectCards.Result) => void
+		>
+		onDragCardsModalResolve: GameHook<
+			(request: DragCards.Request, result: DragCards.Result) => void
+		>
+		onCopyAttackModalResolve: GameHook<
+			(request: CopyAttack.Request, result: CopyAttack.Result) => void
+		>
 		/** Hook called when the game ends for disposing references */
 		afterGameEnd: Hook<string, () => void>
 		/** Hook for reviving rows after all attacks are executed */
@@ -214,6 +223,9 @@ export class GameModel {
 			freezeSlots: new GameHook(),
 			onGameEnd: new GameHook(),
 			onModalRequestResolve: new GameHook(),
+			onSelectCardsModalResolve: new GameHook(),
+			onDragCardsModalResolve: new GameHook(),
+			onCopyAttackModalResolve: new GameHook(),
 			onPickRequestResolve: new GameHook(),
 			afterGameEnd: new Hook(),
 		}
