@@ -1,7 +1,5 @@
-import {CardComponent, ObserverComponent, SlotComponent} from '../../components'
+import {SlotComponent} from '../../components'
 import query from '../../components/query'
-import {RowEntity} from '../../entities'
-import {GameModel} from '../../models/game-model'
 import {beforeAttack} from '../../types/priorities'
 import {applySingleUse} from '../../utils/board'
 import {singleUse} from '../defaults'
@@ -29,34 +27,33 @@ const Bow: SingleUse = {
 		query.exists(SlotComponent, pickCondition),
 	),
 	attackPreview: (_game) => '$A40$',
-	onAttach(
-		game: GameModel,
-		component: CardComponent,
-		observer: ObserverComponent,
-	) {
-		const {player} = component
-
-		let pickedRow: RowEntity | null = null
-
-		observer.subscribe(player.hooks.getAttackRequests, () => {
+	data: () => {
+		return {
+			pickedRow: null,
+		}
+	},
+	onCreate(game, component, observer) {
+		observer.subscribe(component.player.hooks.getAttackRequests, () => {
+			if (!component.active) return
 			game.addPickRequest({
-				player: player.entity,
+				player: component.player.entity,
 				id: component.entity,
 				message: "Pick one of your opponent's AFK Hermits",
 				canPick: pickCondition,
 				onResult(pickedSlot) {
 					if (!pickedSlot.inRow()) return
-					pickedRow = pickedSlot.rowEntity
+					component.data.pickedRow = pickedSlot.rowEntity
 				},
 			})
 		})
 
-		observer.subscribe(player.hooks.getAttack, () => {
+		observer.subscribe(component.player.hooks.getAttack, () => {
+			if (!component.active) return null
 			const bowAttack = game
 				.newAttack({
 					attacker: component.entity,
-					player: player.entity,
-					target: pickedRow,
+					player: component.player.entity,
+					target: component.data.pickedRow,
 					type: 'effect',
 					log: (values) =>
 						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
@@ -70,9 +67,9 @@ const Bow: SingleUse = {
 			game.hooks.beforeAttack,
 			beforeAttack.APPLY_SINGLE_USE_ATTACK,
 			(attack) => {
+				if (!component.active) return
 				if (attack.attacker?.entity !== component.entity) return
 				applySingleUse(game, component.slot)
-				observer.unsubscribeFromEverything()
 			},
 		)
 	},

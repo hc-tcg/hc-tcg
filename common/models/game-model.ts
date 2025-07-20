@@ -146,14 +146,30 @@ export class GameModel {
 		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
 		/** Hook called when the game ends for achievements to check how the game ended */
 		onGameEnd: GameHook<(outcome: GameOutcome) => void>
-		/** Hook called when modal request is responded to by a player */
+		/** Hook called when pick request is responded to by a player */
 		onPickRequestResolve: GameHook<
 			(request: PickRequest, slot: SlotComponent) => void
 		>
+		/** Hook called when pick request times out */
+		onPickRequestTimeout: GameHook<(request: PickRequest) => void>
+		/** Hook called when modal request is responded to by a player */
+		onPickRequestCancel: GameHook<(request: PickRequest) => void>
 		/** Hook called when pick request is responded to by a player */
 		onModalRequestResolve: GameHook<
 			(request: ModalRequest, result: ModalResult) => void
 		>
+		onSelectCardsModalResolve: GameHook<
+			(request: SelectCards.Request, result: SelectCards.Result) => void
+		>
+		onDragCardsModalResolve: GameHook<
+			(request: DragCards.Request, result: DragCards.Result) => void
+		>
+		onCopyAttackModalResolve: GameHook<
+			(request: CopyAttack.Request, result: CopyAttack.Result) => void
+		>
+		onSelectCardsModalTimeout: GameHook<(request: SelectCards.Request) => void>
+		onDragCardsModalTimeout: GameHook<(request: DragCards.Request) => void>
+		onCopyAttackModalTimeout: GameHook<(request: CopyAttack.Request) => void>
 		/** Hook called when the game ends for disposing references */
 		afterGameEnd: Hook<string, () => void>
 		/** Hook for reviving rows after all attacks are executed */
@@ -214,7 +230,15 @@ export class GameModel {
 			freezeSlots: new GameHook(),
 			onGameEnd: new GameHook(),
 			onModalRequestResolve: new GameHook(),
+			onSelectCardsModalResolve: new GameHook(),
+			onDragCardsModalResolve: new GameHook(),
+			onCopyAttackModalResolve: new GameHook(),
+			onSelectCardsModalTimeout: new GameHook(),
+			onDragCardsModalTimeout: new GameHook(),
+			onCopyAttackModalTimeout: new GameHook(),
 			onPickRequestResolve: new GameHook(),
+			onPickRequestCancel: new GameHook(),
+			onPickRequestTimeout: new GameHook(),
 			afterGameEnd: new Hook(),
 		}
 
@@ -363,7 +387,7 @@ export class GameModel {
 		if (this.state.pickRequests[index] !== undefined) {
 			const request = this.state.pickRequests.splice(index, 1)[0]
 			if (timeout) {
-				request.onTimeout?.()
+				this.hooks.onPickRequestTimeout.call(request)
 			}
 		}
 	}
@@ -371,7 +395,7 @@ export class GameModel {
 		if (this.state.pickRequests[0]?.player === this.currentPlayer.entity) {
 			// Cancel and clear pick requests
 			for (let i = 0; i < this.state.pickRequests.length; i++) {
-				this.state.pickRequests[i].onCancel?.()
+				this.hooks.onPickRequestCancel.call(this.state.pickRequests[i])
 			}
 			this.state.pickRequests = []
 		}
@@ -480,7 +504,19 @@ export class GameModel {
 		if (this.state.modalRequests[index] !== undefined) {
 			const request = this.state.modalRequests.splice(index, 1)[0]
 			if (timeout) {
-				request.onTimeout()
+				if (request.modal.type === 'selectCards') {
+					this.hooks.onSelectCardsModalTimeout.call(
+						request as SelectCards.Request,
+					)
+				}
+				if (request.modal.type === 'dragCards') {
+					this.hooks.onDragCardsModalTimeout.call(request as DragCards.Request)
+				}
+				if (request.modal.type === 'copyAttack') {
+					this.hooks.onCopyAttackModalTimeout.call(
+						request as CopyAttack.Request,
+					)
+				}
 			}
 		}
 	}

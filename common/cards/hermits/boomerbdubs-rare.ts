@@ -8,7 +8,7 @@ import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
 import FortuneEffect from '../../status-effects/fortune'
 import SpentFortuneEffect from '../../status-effects/spent-fortune'
-import {SelectCards} from '../../types/modal-requests'
+import {ModalRequest} from '../../types/modal-requests'
 import {afterAttack, beforeAttack} from '../../types/priorities'
 import {flipCoin} from '../../utils/coin-flips'
 import {hermit} from '../defaults'
@@ -40,22 +40,48 @@ const BoomerBdubsRare: Hermit = {
 		power:
 			'Flip a coin as many times as you want.\nDo an additional 20hp damage for every heads, but if tails is flipped, this attack deals 0hp total damage.\nWhen this attack is used with Fortune, only the first coinflip will be affected.',
 	},
-	onAttach(
+	data: () => {
+		return {
+			extraDamage: 0,
+			flippedTalis: false,
+			blockRemoveEffect: false,
+		}
+	},
+	onCreate(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	): void {
 		const {player} = component
 
-		let extraDamage = 0
-		let flippedTails = false
+		const modalRequest = {
+			creator: component.entity,
+			player: player.entity,
+			modal: {
+				type: 'selectCards',
+				name: 'Boomer BDubs - Watch This',
+				description: 'Do you want to flip a coin for your attack?',
+				cards: [],
+				selectionSize: 0,
+				cancelable: false,
+				primaryButton: {
+					text: 'Yes',
+					variant: 'default',
+				},
+				secondaryButton: {
+					text: 'No',
+					variant: 'default',
+				},
+			},
+		} satisfies ModalRequest
 
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(_attack) => {
-				extraDamage = 0
-				flippedTails = false
+				component.data.extraDamage = 0
+				component.data.flippedTails = false
+				component.data.blockRemoveEffect = false
 			},
 		)
 
@@ -64,132 +90,70 @@ const BoomerBdubsRare: Hermit = {
 			(activeInstance, hermitAttackType) => {
 				// Make sure we are attacking
 				if (activeInstance.entity !== component.entity) return
-
 				// Only secondary attack
 				if (hermitAttackType !== 'secondary') return
-
-				const activeHermit = player.getActiveHermit()
-
-				if (!activeHermit) return
-
-				let fortune: StatusEffectComponent | null
-
-				const followUpModal = {
-					player: player.entity,
-					modal: {
-						type: 'selectCards',
-						name: 'Boomer BDubs - Watch This',
-						description: 'Do you want to flip another coin for your attack?',
-						cards: [],
-						selectionSize: 0,
-						cancelable: false,
-						primaryButton: {
-							text: 'Yes',
-							variant: 'default',
-						},
-						secondaryButton: {
-							text: 'No',
-							variant: 'default',
-						},
-					},
-					onResult(modalResult) {
-						if (!modalResult?.result) {
-							fortune?.apply(player.entity)
-							return
-						}
-
-						const flip = flipCoin(game, player, activeHermit)[0]
-
-						if (flip === 'tails') {
-							flippedTails = true
-							fortune?.apply(player.entity)
-							return 'SUCCESS'
-						}
-
-						extraDamage += 20
-
-						game.addModalRequest(followUpModal)
-					},
-					onTimeout() {
-						fortune?.apply(player.entity)
-					},
-				} satisfies SelectCards.Request
-
-				game.addModalRequest({
-					player: player.entity,
-					modal: {
-						type: 'selectCards',
-						name: 'Boomer BDubs - Watch This',
-						description: 'Do you want to flip a coin for your attack?',
-						cards: [],
-						selectionSize: 0,
-						cancelable: false,
-						primaryButton: {
-							text: 'Yes',
-							variant: 'default',
-						},
-						secondaryButton: {
-							text: 'No',
-							variant: 'default',
-						},
-					},
-					onResult(modalResult) {
-						if (!modalResult) return 'SUCCESS'
-						if (!modalResult.result) return 'SUCCESS'
-
-						const flip = flipCoin(game, player, activeHermit)[0]
-
-						observer.subscribe(
-							player.hooks.blockedActions,
-							(blockedActions) => {
-								if (!blockedActions.includes('REMOVE_EFFECT'))
-									blockedActions.push('REMOVE_EFFECT')
-								return blockedActions
-							},
-						)
-
-						if (flip === 'tails') {
-							flippedTails = true
-							return 'SUCCESS'
-						}
-
-						extraDamage += 20
-
-						game.addModalRequest(followUpModal)
-
-						// After the first coin flip we remove fortune to prevent infinite coin flips.
-						fortune = game.components.find(
-							StatusEffectComponent<PlayerComponent>,
-							query.effect.is(FortuneEffect, SpentFortuneEffect),
-							query.effect.targetIsPlayerAnd(
-								(_game, targetPlayer: PlayerComponent) =>
-									targetPlayer.entity === player.entity,
-							),
-						)
-						fortune?.remove()
-
-						return 'SUCCESS'
-					},
-					onTimeout() {},
-				})
+				game.addModalRequest(modalRequest)
 			},
 		)
+
+		observer.subscribe(
+			game.hooks.onSelectCardsModalResolve,
+			(modalRequest, modalResult) => {
+				if (modalRequest.creator !== component.entity) return
+				let activeHermit = component.player.getActiveHermit()
+				if (!activeHermit) return
+
+				// Cancel if player picks false
+				if (modalResult.result === false) return
+
+				const flip = flipCoin(game, player, activeHermit)[0]
+
+				component.data.blockRemoveEffect = true
+
+				if (flip === 'tails') {
+					component.data.flippedTails = true
+					return
+				}
+
+				component.data.extraDamage += 20
+
+				// After the first coin flip we remove fortune to prevent infinite coin flips.
+				const fortune = game.components.find(
+					StatusEffectComponent<PlayerComponent>,
+					query.effect.is(FortuneEffect, SpentFortuneEffect),
+					query.effect.targetIsPlayerAnd(
+						(_game, targetPlayer: PlayerComponent) =>
+							targetPlayer.entity === player.entity,
+					),
+				)
+				fortune?.remove()
+
+				game.addModalRequest(modalRequest)
+			},
+		)
+
+		observer.subscribe(player.hooks.blockedActions, (blockedActions) => {
+			if (!component.data.blockRemoveEffect) return blockedActions
+			if (!blockedActions.includes('REMOVE_EFFECT'))
+				blockedActions.push('REMOVE_EFFECT')
+			return blockedActions
+		})
 
 		observer.subscribeWithPriority(
 			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
+				if (!component.active) return
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
-				observer.unsubscribe(player.hooks.blockedActions)
-				if (flippedTails === true) {
+				if (component.data.flippedTails === true) {
 					attack
 						.multiplyDamage(component.entity, 0)
 						.lockDamage(component.entity)
 					return
 				}
 
-				attack.addDamage(component.entity, extraDamage)
+				attack.addDamage(component.entity, component.data.extraDamage)
 			},
 		)
 	},

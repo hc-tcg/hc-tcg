@@ -29,18 +29,18 @@ export type Card = {
 	tokens: TokenCostT
 	attachCondition: ComponentQuery<SlotComponent>
 	sidebarDescriptions?: Array<{type: string; name: string}>
+	data: () => Record<string, any>
 	/** The battle log attached to this card */
 	/** Set to string when the card should generate a log when played or applied, and null otherwise */
 	log?: (values: PlayCardLog) => string
-	onCreate(game: GameModel, component: CardComponent): void
-	onAttach(
+	onCreate(
 		game: GameModel,
-		component: CardComponent<any>,
+		component: CardComponent,
 		observer: ObserverComponent,
 	): void
-	onDetach(
+	onAttach(
 		game: GameModel,
-		component: CardComponent<any>,
+		component: CardComponent,
 		observer: ObserverComponent,
 	): void
 	getLog(values: PlayCardLog): string
