@@ -70,7 +70,7 @@ const Crossbow: SingleUse = {
 		observer.subscribe(
 			player.hooks.getAttackRequests,
 			(_activeInstance, _hermitAttackType) => {
-				if (!component.onGameBoard) return
+				if (!component.active) return
 				component.data.totalTargets = getTotalTargets(game)
 				component.data.targetsRemaining = component.data.totalTargets
 
@@ -90,7 +90,7 @@ const Crossbow: SingleUse = {
 		})
 
 		observer.subscribe(player.hooks.getAttack, () => {
-			if (!component.onGameBoard) return
+			if (!component.active) return
 			const attack = component.data.targets.reduce(
 				(r: null | AttackModel, target: RowEntity, i: number) => {
 					const newAttack = game
@@ -120,7 +120,7 @@ const Crossbow: SingleUse = {
 			game.hooks.beforeAttack,
 			beforeAttack.APPLY_SINGLE_USE_ATTACK,
 			(attack) => {
-				if (!component.onGameBoard) return
+				if (!component.active) return
 				if (!attack.isAttacker(component.entity)) return
 
 				applySingleUse(game)

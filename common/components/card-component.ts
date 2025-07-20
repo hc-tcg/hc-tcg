@@ -165,8 +165,11 @@ export class CardComponent<CardType extends Card = Card> {
 		)
 	}
 
-	/** Return if this card is on the board */
-	public get onGameBoard() {
+	/** Return if this card is on the board an unused if a sigle use card */
+	public get active() {
+		if (this.slot.type == 'single_use') {
+			return this.player.singleUseCardUsed == false
+		}
 		return ['item', 'attach', 'hermit', 'single_use'].includes(this.slot.type)
 	}
 

@@ -17,19 +17,18 @@ const TNT: SingleUse = {
 		"Do 60hp damage to your opponent's active Hermit. Your active Hermit also takes 20hp damage.",
 	hasAttack: true,
 	attackPreview: (_game) => '$A60$',
-	onAttach(
+	onCreate(
 		game: GameModel,
 		component: CardComponent,
 		observer: ObserverComponent,
 	) {
-		const {player, opponentPlayer} = component
-
-		observer.subscribe(player.hooks.getAttack, () => {
+		observer.subscribe(component.player.hooks.getAttack, () => {
+			if (!component.active) return null
 			const tntAttack = game
 				.newAttack({
 					attacker: component.entity,
-					player: player.entity,
-					target: opponentPlayer.activeRowEntity,
+					player: component.player.entity,
+					target: component.opponentPlayer.activeRowEntity,
 					type: 'effect',
 					log: (values) =>
 						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage `,
@@ -39,8 +38,8 @@ const TNT: SingleUse = {
 			const backlashAttack = game
 				.newAttack({
 					attacker: component.entity,
-					player: player.entity,
-					target: player.activeRowEntity,
+					player: component.player.entity,
+					target: component.player.activeRowEntity,
 					type: 'effect',
 					isBacklash: true,
 					log: (values) => `and took ${values.damage} backlash damage`,
@@ -56,9 +55,9 @@ const TNT: SingleUse = {
 			game.hooks.beforeAttack,
 			beforeAttack.APPLY_SINGLE_USE_ATTACK,
 			(attack) => {
+				if (!component.active) return
 				if (!attack.isAttacker(component.entity)) return
 				applySingleUse(game)
-				observer.unsubscribeFromEverything()
 			},
 		)
 	},

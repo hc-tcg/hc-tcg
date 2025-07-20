@@ -34,7 +34,7 @@ const Bow: SingleUse = {
 	},
 	onCreate(game, component, observer) {
 		observer.subscribe(component.player.hooks.getAttackRequests, () => {
-			if (!component.onGameBoard) return
+			if (!component.active) return
 			game.addPickRequest({
 				player: component.player.entity,
 				id: component.entity,
@@ -48,7 +48,7 @@ const Bow: SingleUse = {
 		})
 
 		observer.subscribe(component.player.hooks.getAttack, () => {
-			if (!component.onGameBoard) return null
+			if (!component.active) return null
 			const bowAttack = game
 				.newAttack({
 					attacker: component.entity,
@@ -67,7 +67,7 @@ const Bow: SingleUse = {
 			game.hooks.beforeAttack,
 			beforeAttack.APPLY_SINGLE_USE_ATTACK,
 			(attack) => {
-				if (!component.onGameBoard) return
+				if (!component.active) return
 				if (attack.attacker?.entity !== component.entity) return
 				applySingleUse(game, component.slot)
 			},

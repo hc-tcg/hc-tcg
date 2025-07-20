@@ -143,7 +143,7 @@ const BoomerBdubsRare: Hermit = {
 			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
-				if (!component.onGameBoard) return
+				if (!component.active) return
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 				if (component.data.flippedTails === true) {

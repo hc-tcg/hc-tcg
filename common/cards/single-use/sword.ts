@@ -37,7 +37,7 @@ function getSword(
 			const {player, opponentPlayer} = component
 
 			observer.subscribe(component.player.hooks.getAttack, () => {
-				if (!component.onGameBoard) return null
+				if (!component.active) return null
 
 				const swordAttack = game
 					.newAttack({
@@ -57,7 +57,7 @@ function getSword(
 				game.hooks.beforeAttack,
 				beforeAttack.APPLY_SINGLE_USE_ATTACK,
 				(attack) => {
-					if (!component.onGameBoard) return
+					if (!component.active) return
 					if (!attack.isAttacker(component.entity)) return
 					applySingleUse(game)
 					observer.unsubscribeFromEverything()
