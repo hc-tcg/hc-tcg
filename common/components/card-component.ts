@@ -114,6 +114,7 @@ export class CardComponent<CardType extends Card = Card> {
 	private onAttach(observer: ObserverComponent) {
 		this.observerEntity = observer.entity
 		this.player?.hooks.onAttach.call(this)
+		this.props.onAttach(this.game, this, observer)
 		if (isHermit(this.props)) {
 			observer.subscribe(this.hooks.getPrimaryCost, () => {
 				if (!isHermit(this.props)) return []

@@ -32,10 +32,9 @@ const Bow: SingleUse = {
 	data: {
 		pickedRow: null,
 	},
-	setupHooks(game, component) {
-		new Reaction(component.player.hooks.getAttackRequests, () => {
-			if (!component.onBoard) return
-
+	onCreate(game, component, observer) {
+		observer.setupHook(component.player.hooks.getAttackRequests, () => {
+			if (!component.onGameBoard) return
 			const {player} = component
 
 			game.addPickRequest({
@@ -48,11 +47,10 @@ const Bow: SingleUse = {
 					component.data.pickedRow = pickedSlot.rowEntity
 				},
 			})
-		}).subscribeIfNotSubscribed()
+		})
 
-		new Reaction(component.player.hooks.getAttack, () => {
-			if (!component.onBoard) return
-
+		observer.setupHook(component.player.hooks.getAttack, () => {
+			if (!component.onGameBoard) return
 			const bowAttack = game
 				.newAttack({
 					attacker: component.entity,
@@ -65,17 +63,17 @@ const Bow: SingleUse = {
 				.addDamage(component.entity, 40)
 
 			return bowAttack
-		}).subscribeIfNotSubscribed()
+		})
 
-		new Reaction(
+		observer.setupHookWithPriority(
 			game.hooks.beforeAttack,
 			beforeAttack.APPLY_SINGLE_USE_ATTACK,
 			(attack) => {
-				if (!component.onBoard) return
+				if (!component.onGameBoard) return
 				if (attack.attacker?.entity !== component.entity) return
 				applySingleUse(game, component.slot)
 			},
-		).subscribeIfNotSubscribed()
+		)
 	},
 }
 

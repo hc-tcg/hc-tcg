@@ -38,6 +38,11 @@ export type Card = {
 		component: CardComponent,
 		observer: ObserverComponent,
 	): void
+	onAttach(
+		game: GameModel,
+		component: CardComponent,
+		observer: ObserverComponent,
+	): void
 	getLog(values: PlayCardLog): string
 }
 

@@ -24,6 +24,8 @@ export class ObserverComponent {
 	>
 	private hooks: Array<Hook<any, any> | PriorityHook<any, any>>
 
+	knownHooks: any
+
 	constructor(
 		game: GameModel,
 		entity: ObserverEntity,
@@ -38,31 +40,37 @@ export class ObserverComponent {
 		this.entity = entity
 		this.wrappingEntity = wrappingEntity
 		this.hooks = []
+
+		this.knownHooks = {}
 	}
 
-	/** Subscribe to a hook with this observer. This hook will be removed when the observer is detroyed.
-	 * Cards and status effects will destoy their own observers, so you as the user do not need to
-	 * worry about this!
-	 * If you are looking for a hook that will be called after the observer is destoryed (the card is removed
-	 * from the board), please use a status effect or `oneShot` instead.
-	 */
+	public setupHook<Args extends (...any: any) => any>(
+		hook: Hook<ObserverEntity, Args> | WaterfallHook<Args>,
+		fun: NoInfer<Args>,
+	) {
+		this.knownHooks.push([[hook], fun])
+	}
+	public setupHookWithPriority<
+		Args extends (...any: any) => any,
+		Priorities extends PrioritiesT,
+	>(
+		hook: PriorityHook<Args, PriorityDict<Priorities>, Priorities>,
+		priority: Priority<Priorities>,
+		fun: NoInfer<Args>,
+	) {
+		this.knownHooks.push([[hook, priority], fun])
+	}
+
 	public subscribe<Args extends (...any: any) => any>(
 		hook: Hook<ObserverEntity, Args> | WaterfallHook<Args>,
-		fun: NoInfer<Args>,
 	) {
-		hook.add(this.entity, fun)
-		this.hooks.push(hook)
-	}
-
-	/** Subscribe a specific hook, and put this observer at the top of the queue. This hook will be
-	 * removed when the observer is destroyed.
-	 */
-	public subscribeBefore<Args extends (...any: any) => any>(
-		hook: Hook<ObserverEntity, Args> | WaterfallHook<Args>,
-		fun: NoInfer<Args>,
-	) {
-		hook.addBefore(this.entity, fun)
-		this.hooks.push(hook)
+		for (const [hookData, fun] of this.knownHooks) {
+			if (hookData[0] === hook) {
+				hook.add(this.entity, fun)
+				this.hooks.push(hook)
+				break
+			}
+		}
 	}
 
 	/** Subscribe to a priority hook with this observer. Functions similarly to `subscribe`. */
@@ -72,10 +80,14 @@ export class ObserverComponent {
 	>(
 		hook: PriorityHook<Args, PriorityDict<Priorities>, Priorities>,
 		priority: Priority<Priorities>,
-		fun: NoInfer<Args>,
 	) {
-		hook.add(this.entity, priority, fun)
-		this.hooks.push(hook)
+		for (const [hookData, fun] of this.knownHooks) {
+			if (hookData[0] === hook && hookData[1] === priority) {
+				hook.add(this.entity, priority, fun)
+				this.hooks.push(hook)
+				break
+			}
+		}
 	}
 
 	/** Stop listening to a specific hook */
