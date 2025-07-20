@@ -137,7 +137,13 @@ export function playCardAction(
 	const localCard = turnAction?.card
 	assert(slotEntity && localCard)
 
-	const card = game.components.get(localCard.entity)
+	// If the card is not secret, we can get it easily!
+	let card = game.components.get(localCard.entity)
+
+	if (!card) {
+		card = game.components.new(CardComponent, turnAction.card.id)
+	}
+
 	assert(card, 'You can not play a card that is not in the ECS')
 
 	const {currentPlayer} = game
