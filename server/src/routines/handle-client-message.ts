@@ -121,6 +121,7 @@ function* handler(message: RecievedClientMessage) {
 				type: localMessages.GAME_TURN_ACTION,
 				action: actionMessage.payload.action,
 				playerEntity: actionMessage.payload.playerEntity,
+				playerId: actionMessage.playerId,
 				game: game.id,
 			})
 		case clientMessages.GET_DECKS:

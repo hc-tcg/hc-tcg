@@ -136,13 +136,17 @@ function* gameManager(con: ServerSideGameController) {
 					action: action.action,
 					playerEntity: action.playerEntity,
 				})
-				con.broadcastToViewers({
-					type: serverMessages.GAME_TURN_ACTION,
-					action: {
-						action: action.action,
-						playerEntity: action.playerEntity,
-					},
-				})
+
+				for (const player of con.getPlayers()) {
+					if (player.id === action.playerId) continue
+					broadcast([player], {
+						type: serverMessages.GAME_TURN_ACTION,
+						action: {
+							action: action.action,
+							playerEntity: action.playerEntity,
+						},
+					})
+				}
 			}
 		}),
 		playerDisconnect: call(function* () {
