@@ -29,16 +29,15 @@ const Bow: SingleUse = {
 		query.exists(SlotComponent, pickCondition),
 	),
 	attackPreview: (_game) => '$A40$',
-	onAttach(
-		game: GameModel,
-		component: CardComponent,
-		observer: ObserverComponent,
-	) {
-		const {player} = component
+	data: {
+		pickedRow: null,
+	},
+	setupHooks(game, component) {
+		new Reaction(component.player.hooks.getAttackRequests, () => {
+			if (!component.onBoard) return
 
-		let pickedRow: RowEntity | null = null
+			const {player} = component
 
-		observer.subscribe(player.hooks.getAttackRequests, () => {
 			game.addPickRequest({
 				player: player.entity,
 				id: component.entity,
@@ -46,17 +45,19 @@ const Bow: SingleUse = {
 				canPick: pickCondition,
 				onResult(pickedSlot) {
 					if (!pickedSlot.inRow()) return
-					pickedRow = pickedSlot.rowEntity
+					component.data.pickedRow = pickedSlot.rowEntity
 				},
 			})
-		})
+		}).subscribeIfNotSubscribed()
 
-		observer.subscribe(player.hooks.getAttack, () => {
+		new Reaction(component.player.hooks.getAttack, () => {
+			if (!component.onBoard) return
+
 			const bowAttack = game
 				.newAttack({
 					attacker: component.entity,
-					player: player.entity,
-					target: pickedRow,
+					player: component.player.entity,
+					target: component.data.pickedRow,
 					type: 'effect',
 					log: (values) =>
 						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
@@ -64,17 +65,17 @@ const Bow: SingleUse = {
 				.addDamage(component.entity, 40)
 
 			return bowAttack
-		})
+		}).subscribeIfNotSubscribed()
 
-		observer.subscribeWithPriority(
+		new Reaction(
 			game.hooks.beforeAttack,
 			beforeAttack.APPLY_SINGLE_USE_ATTACK,
 			(attack) => {
+				if (!component.onBoard) return
 				if (attack.attacker?.entity !== component.entity) return
 				applySingleUse(game, component.slot)
-				observer.unsubscribeFromEverything()
 			},
-		)
+		).subscribeIfNotSubscribed()
 	},
 }
 

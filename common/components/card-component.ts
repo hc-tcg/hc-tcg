@@ -114,7 +114,6 @@ export class CardComponent<CardType extends Card = Card> {
 	private onAttach(observer: ObserverComponent) {
 		this.observerEntity = observer.entity
 		this.player?.hooks.onAttach.call(this)
-		this.props.onAttach(this.game, this, observer)
 		if (isHermit(this.props)) {
 			observer.subscribe(this.hooks.getPrimaryCost, () => {
 				if (!isHermit(this.props)) return []
@@ -142,6 +141,11 @@ export class CardComponent<CardType extends Card = Card> {
 		return this.game.components.getOrError(
 			this.game.otherPlayerEntity(this.slot?.player.entity),
 		)
+	}
+
+	/** Return if this card is on the board */
+	public get onGameBoard() {
+		return ['item', 'attach', 'hermit'].includes(this.slot.type)
 	}
 
 	public isItem(): this is CardComponent<Item> {

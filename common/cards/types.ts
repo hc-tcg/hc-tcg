@@ -33,15 +33,9 @@ export type Card = {
 	/** The battle log attached to this card */
 	/** Set to string when the card should generate a log when played or applied, and null otherwise */
 	log?: (values: PlayCardLog) => string
-	onCreate(game: GameModel, component: CardComponent): void
-	onAttach(
+	onCreate(
 		game: GameModel,
-		component: CardComponent<any>,
-		observer: ObserverComponent,
-	): void
-	onDetach(
-		game: GameModel,
-		component: CardComponent<any>,
+		component: CardComponent,
 		observer: ObserverComponent,
 	): void
 	getLog(values: PlayCardLog): string
