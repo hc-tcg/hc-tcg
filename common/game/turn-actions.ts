@@ -141,7 +141,12 @@ export function playCardAction(
 	let card = game.components.get(localCard.entity)
 
 	if (!card) {
-		card = game.components.newWithEntity(CardComponent, turnAction.entity, turnAction.card.id)
+		card = game.components.newWithEntity(
+			CardComponent,
+			turnAction.entity,
+			turnAction.card.id,
+			turnAction.card.slot,
+		)
 	}
 
 	assert(card, 'You can not play a card that is not in the ECS')

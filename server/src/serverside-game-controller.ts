@@ -9,19 +9,6 @@ import {Message} from 'common/types/game-state'
 import {broadcast} from './utils/comm'
 
 export class ServerSideGameController extends GameController {
-	override broadcastState() {
-		// this.viewers.forEach((viewer) => {
-		// 	const localGameState = getLocalGameState(this.game, viewer)
-
-		// 	broadcast([viewer.player], {
-		// 		type: serverMessages.GAME_STATE,
-		// 		localGameState,
-		// 	})
-		// })
-
-		this.game.voiceLineQueue = []
-	}
-
 	override async publishBattleLog(logs: Array<Message>, timeout: number) {
 		// We skip waiting for the logs to send if there are no players. This is because
 		// the coin flip delay confuses jest. Additionally we don't want to wait longer
