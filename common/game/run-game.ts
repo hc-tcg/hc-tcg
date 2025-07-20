@@ -1,4 +1,4 @@
-import {SingleUse} from 'common/cards/types'
+import {SingleUse} from '../cards/types'
 import {
 	CardComponent,
 	DiscardSlotComponent,
@@ -6,24 +6,24 @@ import {
 	PlayerComponent,
 	RowComponent,
 	SlotComponent,
-} from 'common/components'
-import {AIComponent} from 'common/components/ai-component'
-import query from 'common/components/query'
-import {PlayerEntity} from 'common/entities'
-import {GameModel} from 'common/models/game-model'
-import {TypeT} from 'common/types/cards'
-import {GameOutcome, TurnAction, TurnActions} from 'common/types/game-state'
+} from '../components'
+import {AIComponent} from '../components/ai-component'
+import query from '../components/query'
+import {PlayerEntity} from '../entities'
+import {GameModel} from '../models/game-model'
+import {TypeT} from '../types/cards'
+import {GameOutcome, TurnAction, TurnActions} from '../types/game-state'
 import {
 	AnyTurnActionData,
 	AttackActionData,
 	PickSlotActionData,
 	attackToAttackAction,
-} from 'common/types/turn-action-data'
-import {hasEnoughEnergy} from 'common/utils/attacks'
-import {printBoardState, printHooksState} from '../utils'
+} from '../types/turn-action-data'
+import {hasEnoughEnergy} from '../utils/attacks'
+import {printBoardState, printHooksState} from '../utils/game'
 
 import assert from 'assert'
-import {GameController} from '../game-controller'
+import {GameController} from './game-controller'
 import {
 	applyEffectAction,
 	attackAction,

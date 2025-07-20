@@ -1,8 +1,8 @@
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {getOpponentId} from 'common/utils/game'
 import {LocalMessageTable, localMessages} from 'messages'
 import {getGame} from 'selectors'
 import {select} from 'typed-redux-saga'
-import {getOpponentId} from '../../utils'
 import {broadcast} from '../../utils/comm'
 
 export function* statusChangedSaga(

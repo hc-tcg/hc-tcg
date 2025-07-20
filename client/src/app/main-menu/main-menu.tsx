@@ -1,5 +1,5 @@
 import {getCardTypeIcon} from 'common/cards/card'
-import {getIconPath} from 'common/utils/state-gen'
+import {getIconPath} from 'common/game/setup-game'
 import Beef from 'components/beef'
 import Button from 'components/button'
 import {VersionLinks} from 'components/link-container'

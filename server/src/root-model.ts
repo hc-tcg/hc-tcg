@@ -4,12 +4,12 @@ import {PlayerModel} from 'common/models/player-model'
 import {Update} from 'common/types/server-requests'
 import {Database} from 'db/db'
 import dotenv from 'dotenv'
-import {GameController} from 'game-controller'
+import {ServerSideGameController} from 'serverside-game-controller'
 import {Hook} from '../../common/types/hooks'
 
 export class RootModel {
 	public players: Record<string, PlayerModel> = {}
-	public games: Record<string, GameController> = {}
+	public games: Record<string, ServerSideGameController> = {}
 	public queue: Array<string> = []
 	public db: Database
 	/** Game code ->  time code was created, and info */
@@ -37,8 +37,8 @@ export class RootModel {
 		}
 	> = {}
 	public hooks = {
-		newGame: new Hook<string, (game: GameController) => void>(),
-		gameRemoved: new Hook<string, (game: GameController) => void>(),
+		newGame: new Hook<string, (game: ServerSideGameController) => void>(),
+		gameRemoved: new Hook<string, (game: ServerSideGameController) => void>(),
 		playerJoined: new Hook<string, (player: PlayerModel) => void>(),
 		playerLeft: new Hook<string, (player: PlayerModel) => void>(),
 		privateCancelled: new Hook<string, (code: string) => void>(),
@@ -91,7 +91,7 @@ export class RootModel {
 			`${date.toLocaleTimeString('it-IT')}: Player [${player.uuid}] has logged in.`,
 		)
 	}
-	public addGame(game: GameController) {
+	public addGame(game: ServerSideGameController) {
 		this.games[game.id] = game
 	}
 }

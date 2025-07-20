@@ -2,6 +2,8 @@ import {ACHIEVEMENTS} from 'common/achievements'
 import {DEBUG_CONFIG} from 'common/config'
 import {COSMETICS} from 'common/cosmetics'
 import {Background, Border, Coin, Heart, Title} from 'common/cosmetics/types'
+import {GameController} from 'common/game/game-controller'
+import {getLocalGameState} from 'common/game/make-local-state'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
@@ -16,11 +18,9 @@ import {
 	setMinecraftName,
 	setUsername,
 } from 'db/db-reciever'
-import {GameController} from 'game-controller'
 import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
 import {getGame} from 'selectors'
 import {delay, put, race, select, take} from 'typed-redux-saga'
-import {getLocalGameState} from 'utils/state-gen'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 
