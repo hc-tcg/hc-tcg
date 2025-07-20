@@ -1,5 +1,4 @@
 import {GameController} from 'common/game/game-controller'
-import {getLocalGameState} from 'common/game/make-local-state'
 import {PlayerModel} from 'common/models/player-model'
 import {
 	ServerMessage,

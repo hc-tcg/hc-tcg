@@ -1,4 +1,3 @@
-import {PlayerDefs} from '../components/player-component'
 import {Appearance} from '../cosmetics/types'
 import {PlayerEntity} from '../entities'
 import {GameControllerProps} from '../game/game-controller'
@@ -17,7 +16,6 @@ import {ApiDeck, Deck, Tag} from '../types/deck'
 import {GameOutcome, LocalGameState} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
 import {PlayerInfo, Update} from '../types/server-requests'
-import {AnyTurnActionData} from '../types/turn-action-data'
 
 export const serverMessages = messages('serverMessages', {
 	PLAYER_RECONNECTED: null,

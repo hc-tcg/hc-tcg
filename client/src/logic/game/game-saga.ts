@@ -1,21 +1,15 @@
 import {PlayerEntity} from 'common/entities'
+import {GameController, GameControllerProps} from 'common/game/game-controller'
+import {getLocalGameState} from 'common/game/make-local-state'
+import runGame, {TurnActionAndPlayer} from 'common/game/run-game'
+import {PlayerSetupDefs} from 'common/game/setup-game'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {
-	serverMessages,
 	ServerMessageTable,
+	serverMessages,
 } from 'common/socket-messages/server-messages'
-import {receiveMsg} from 'logic/socket/socket-saga'
-import {LocalGameState} from 'common/types/game-state'
-import {
-	AnyTurnActionData,
-	ChangeActiveHermitActionData,
-} from 'common/types/turn-action-data'
-import {
-	LocalMessage,
-	LocalMessageTable,
-	localMessages,
-	useMessageDispatch,
-} from 'logic/messages'
+import {AnyTurnActionData} from 'common/types/turn-action-data'
+import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {
@@ -28,16 +22,9 @@ import {
 	race,
 	take,
 	takeEvery,
-	takeLatest,
 } from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
 import {getEndGameOverlay, getPlayerEntity} from './game-selectors'
-import {
-	localApplyEffect,
-	localChangeActiveHermit,
-	localEndTurn,
-	localRemoveEffect,
-} from './local-state'
 import achievementSaga from './tasks/achievements'
 import actionLogicSaga from './tasks/action-logic-saga'
 import actionModalsSaga from './tasks/action-modals-saga'
@@ -47,14 +34,6 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
-import {
-	GameController,
-	GameControllerProps,
-	GameViewer,
-} from 'common/game/game-controller'
-import {PlayerSetupDefs} from 'common/game/setup-game'
-import {getLocalGameState} from 'common/game/make-local-state'
-import runGame, {TurnActionAndPlayer} from 'common/game/run-game'
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
@@ -80,13 +59,11 @@ async function startGameLocally(
 
 	await game.waitForTurnActionReady()
 
-	game.addViewer(
-		{
-			spectator: false,
-			replayer: false,
-			playerOnLeft: myPlayerEntity,
-		},
-	)
+	game.addViewer({
+		spectator: false,
+		replayer: false,
+		playerOnLeft: myPlayerEntity,
+	})
 
 	return game
 }
@@ -113,9 +90,12 @@ function* turnActionRecieve(gameController: GameController) {
 		)
 
 		const nextTurnAction = yield* race({
-			serverTurnAction: call(receiveMsg<
-				ServerMessageTable[typeof serverMessages.GAME_TURN_ACTION]
-			>(socket, serverMessages.GAME_TURN_ACTION)),
+			serverTurnAction: call(
+				receiveMsg<ServerMessageTable[typeof serverMessages.GAME_TURN_ACTION]>(
+					socket,
+					serverMessages.GAME_TURN_ACTION,
+				),
+			),
 			localTurnAction: take<
 				LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
 			>(localMessages.GAME_TURN_ACTION),
@@ -131,7 +111,10 @@ function* turnActionRecieve(gameController: GameController) {
 				playerEntity: localGameState.playerEntity,
 				action: nextTurnAction.localTurnAction.action,
 			}
-			yield* sendTurnAction(localGameState.playerEntity, nextTurnAction.localTurnAction.action)
+			yield* sendTurnAction(
+				localGameState.playerEntity,
+				nextTurnAction.localTurnAction.action,
+			)
 		} else if (nextTurnAction.serverTurnAction) {
 			turnAction = nextTurnAction.serverTurnAction.action
 		}
@@ -162,7 +145,9 @@ function* turnActionRecieve(gameController: GameController) {
 		})
 
 		if (localGameState.turn.availableActions.includes('WAIT_FOR_TURN')) continue
-		if (localGameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_ACTION'))
+		if (
+			localGameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_ACTION')
+		)
 			continue
 	}
 }
