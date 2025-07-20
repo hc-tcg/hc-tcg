@@ -88,11 +88,9 @@ export class CardComponent<CardType extends Card = Card> {
 		this.prizeCard = false
 		this.data = this.props.data()
 
-		this.props.onCreate(
-			this.game,
-			this,
-			game.components.new(ObserverComponent, this.entity),
-		)
+		let ob = game.components.new(ObserverComponent, this.entity)
+		this.props.onCreate(this.game, this, ob)
+		this.observerEntity = ob.entity
 
 		if (this.slot.onBoard()) {
 			let observer = this.game.components.new(ObserverComponent, this.entity)
@@ -115,8 +113,27 @@ export class CardComponent<CardType extends Card = Card> {
 		return (a.slot.order as number) - (b.slot.order as number)
 	}
 
+	public save(): any {
+		return {
+			entity: this.entity,
+			card: this.props.id,
+			slotEntity: this.slotEntity,
+			data: this.data,
+			turnedOver: this.turnedOver,
+			prizeCard: this.prizeCard,
+		}
+	}
+
+	static load(game: GameModel, data: any): CardComponent {
+		const c = new CardComponent(game, data.entity, data.card, data.slotEntity)
+		c.data = data.data
+		c.turnedOver = data.turnedOver
+		c.prizeCard = data.prizeCard
+		return c
+	}
+
 	private onAttach(observer: ObserverComponent) {
-		this.observerEntity = observer.entity
+		// this.observerEntity = observer.entity
 		this.player?.hooks.onAttach.call(this)
 		this.props.onAttach(this.game, this, observer)
 		if (isHermit(this.props)) {
@@ -151,6 +168,10 @@ export class CardComponent<CardType extends Card = Card> {
 	/** Return if this card is on the board */
 	public get onGameBoard() {
 		return ['item', 'attach', 'hermit', 'single_use'].includes(this.slot.type)
+	}
+
+	public get observer() {
+		return this.game.components.getOrError(this.observerEntity)
 	}
 
 	public isItem(): this is CardComponent<Item> {

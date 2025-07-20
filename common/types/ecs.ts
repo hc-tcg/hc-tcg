@@ -50,6 +50,8 @@ export default class ComponentTable {
 	 * mark the element as invalid instead.
 	 */
 	public delete(id: Entity<any>) {
+		const component = this.getOrError(id)
+		component.observer?.unsubscribeFromEverything()
 		let table = this.tableMap.get(id)
 		if (!table) return
 		this.tables.get(table)?.delete(id)
@@ -69,6 +71,23 @@ export default class ComponentTable {
 			newEntity<T['entity']>((newValue as any).table, this.game),
 			...args,
 		)
+		if (this.tables.get((newValue as any).table) === undefined) {
+			this.tables.set((newValue as any).table, new Map())
+		}
+		this.tableMap.set(value.entity, (newValue as any).table)
+		this.tables.get((newValue as any).table)?.set(value.entity, value)
+		return value
+	}
+
+	public load<T extends Component, Args extends Array<any>>(
+		newValue: new (game: GameModel, id: T['entity'], ...args: Args) => T,
+		data: any,
+	): T {
+		assert(
+			(newValue as any).table,
+			`Found component type \`${newValue.name}\` has undefined table`,
+		)
+		const value = newValue.load(this.game, data)
 		if (this.tables.get((newValue as any).table) === undefined) {
 			this.tables.set((newValue as any).table, new Map())
 		}
