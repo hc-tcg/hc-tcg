@@ -146,11 +146,9 @@ const BoomerBdubsRare: Hermit = {
 			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
-				console.log('modify damage')
 				if (!component.onGameBoard) return
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
-				component.data.blockRemoveEffect = false
 				if (component.data.flippedTails === true) {
 					attack
 						.multiplyDamage(component.entity, 0)
