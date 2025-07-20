@@ -133,6 +133,9 @@ export class GameModel {
 
 	public arePlayersSwapped: boolean
 
+	public playerOne?: PlayerEntity = undefined
+	public playerTwo?: PlayerEntity = undefined
+
 	public hooks: {
 		/** Hook called before the main attack loop, for every attack from any source */
 		beforeAttack: PriorityHook<
@@ -255,11 +258,12 @@ export class GameModel {
 	}
 
 	public usePlayerShuffleRNG(entity: PlayerEntity) {
-		if (entity === this.state.order[0]) {
+		if (entity === this.playerOne) {
 			return this.playerOneShuffle
-		} else {
+		} else if (entity === this.playerTwo) {
 			return this.playerTwoShuffle
 		}
+		throw new Error('Unknown player entity')
 	}
 
 	public get currentPlayerEntity() {

@@ -50,6 +50,9 @@ export function setupComponents(
 	let player1Component = components.new(PlayerComponent, player1.model)
 	let player2Component = components.new(PlayerComponent, player2.model)
 
+	game.playerOne = player1Component.entity
+	game.playerTwo = player2Component.entity
+
 	setupEcsForPlayer(
 		game,
 		components,
