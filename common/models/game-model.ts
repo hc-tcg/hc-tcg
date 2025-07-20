@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
 import JoeHillsRare from '../cards/hermits/joehills-rare'
 import {
@@ -46,6 +45,7 @@ import {
 import {afterAttack, beforeAttack} from '../types/priorities'
 import {rowRevive} from '../types/priorities'
 import {PickRequest} from '../types/server-requests'
+import {assert} from '../utils/assert'
 import {newIncrementor} from '../utils/game'
 import {newRandomNumberGenerator} from '../utils/random'
 import {AttackModel, ReadonlyAttackModel} from './attack-model'

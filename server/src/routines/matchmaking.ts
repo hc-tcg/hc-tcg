@@ -107,6 +107,9 @@ function* gameManager(con: ServerSideGameController) {
 	con.broadcastToViewers({
 		type: serverMessages.GAME_START,
 		spectatorCode: con.spectatorCode ?? undefined,
+		playerOneDefs: con.player1Defs,
+		playerTwoDefs: con.player2Defs,
+		props: con.props,
 	})
 
 	root.hooks.newGame.call(con)
@@ -123,6 +126,13 @@ function* gameManager(con: ServerSideGameController) {
 				con.sendTurnAction({
 					action: action.action,
 					playerEntity: action.playerEntity,
+				})
+				con.broadcastToViewers({
+					type: serverMessages.GAME_TURN_ACTION,
+					action: {
+						action: action.action,
+						playerEntity: action.playerEntity,
+					},
 				})
 			}
 		}),

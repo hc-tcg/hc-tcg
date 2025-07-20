@@ -111,8 +111,30 @@ export class GameController {
 		this.waitingForTurnActionList = []
 		this.turnActionListener = null
 
-		this.player1Defs = player1
-		this.player2Defs = player2
+		this.player1Defs = {
+			model: {
+				uuid: player1.model.uuid,
+				name: player1.model.name,
+				minecraftName: player1.model.minecraftName,
+				censoredName: player1.model.censoredName,
+				appearance: player1.model.appearance,
+				disableDeckingOut: player1.model.disableDeckingOut,
+			},
+			deck: player1.deck,
+			score: player1.score,
+		}
+		this.player2Defs = {
+			model: {
+				uuid: player2.model.uuid,
+				name: player2.model.name,
+				minecraftName: player2.model.minecraftName,
+				censoredName: player2.model.censoredName,
+				appearance: player2.model.appearance,
+				disableDeckingOut: player2.model.disableDeckingOut,
+			},
+			deck: player2.deck,
+			score: player2.score,
+		}
 
 		let playerOne = this.game.arePlayersSwapped
 			? this.game.currentPlayer

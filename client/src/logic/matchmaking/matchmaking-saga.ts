@@ -178,8 +178,16 @@ function* joinPublicQueueSaga() {
 				type: localMessages.MATCHMAKING_JOIN_QUEUE_SUCCESS,
 			})
 
-			yield call(receiveMsg(socket, serverMessages.GAME_START))
-			yield call(gameSaga, {})
+			const {playerOneDefs, playerTwoDefs, props} = yield* call(
+				receiveMsg(socket, serverMessages.GAME_START),
+			)
+			yield call(() =>
+				gameSaga({
+					playerOneDefs,
+					playerTwoDefs,
+					props,
+				}),
+			)
 		} catch (err) {
 			console.error('Game crashed: ', err)
 		} finally {

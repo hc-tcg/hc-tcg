@@ -11,14 +11,14 @@ import {broadcast} from './utils/comm'
 
 export class ServerSideGameController extends GameController {
 	override broadcastState() {
-		this.viewers.forEach((viewer) => {
-			const localGameState = getLocalGameState(this.game, viewer)
+		// this.viewers.forEach((viewer) => {
+		// 	const localGameState = getLocalGameState(this.game, viewer)
 
-			broadcast([viewer.player], {
-				type: serverMessages.GAME_STATE,
-				localGameState,
-			})
-		})
+		// 	broadcast([viewer.player], {
+		// 		type: serverMessages.GAME_STATE,
+		// 		localGameState,
+		// 	})
+		// })
 
 		this.game.voiceLineQueue = []
 	}
