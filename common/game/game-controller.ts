@@ -268,6 +268,7 @@ export class GameController {
 			await this.turnActionListener(action)
 			this.turnActionListener = null
 		}
+		await this.waitForTurnActionReady()
 	}
 
 	public async waitForTurnAction(): Promise<TurnActionAndPlayer> {

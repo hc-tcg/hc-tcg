@@ -48,7 +48,6 @@ function* pickWithSelectedSaga(
 		if (!actionType) return
 
 		if (pickInfo.card === null) {
-			console.log("Sending play card turn action")
 			yield* put<LocalMessage>({
 				type: localMessages.GAME_TURN_ACTION,
 				action: {
@@ -121,11 +120,9 @@ function* pickWithoutSelectedSaga(
 function* slotPickedSaga(
 	action: LocalMessageTable[typeof localMessages.GAME_SLOT_PICKED],
 ): SagaIterator {
-	console.log("HERE 1")
 	const availableActions = yield* select(getAvailableActions)
 	const selectedCard = yield* select(getSelectedCard)
 	if (availableActions.includes('WAIT_FOR_TURN')) return
-	console.log("HERE 2")
 
 	if (action.slotInfo.slotType === 'single_use') {
 		const playerState = yield* select(getPlayerState)
@@ -157,7 +154,6 @@ function* slotPickedSaga(
 }
 
 function* slotSaga(): SagaIterator {
-	console.log("slot saga started")
 	yield* takeLeading(localMessages.GAME_SLOT_PICKED, slotPickedSaga)
 }
 
