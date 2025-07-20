@@ -361,9 +361,11 @@ function* spectatePrivateGameSaga({
 
 			if (result.spectateSuccess) {
 				// Succesfully joined a game as spectator, start the game saga
-				yield* call(gameSaga, {
-					initialGameState: result.spectateSuccess.localGameState,
-				})
+				yield* call(() =>
+					gameSaga({
+						initialGameState: result.spectateSuccess.localGameState,
+					}),
+				)
 			} else if (result.spectateWaiting) {
 				// Succesfully joined as spectator, waiting for game to start
 				let result = yield* race({
@@ -475,7 +477,7 @@ function* createPrivateGameSaga() {
 				const queueResponse = yield* race({
 					gameStart: call(receiveMsg(socket, serverMessages.GAME_START)),
 					timeout: call(
-						receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT),
+						receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT)
 					),
 				})
 

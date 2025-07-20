@@ -31,7 +31,7 @@ type GameViewerProps = {
 	spectator: boolean
 	replayer: boolean
 	playerOnLeft: PlayerEntity
-	player: PlayerModel
+	player?: PlayerModel
 }
 
 export class GameViewer {
@@ -254,6 +254,7 @@ export class GameController {
 	public get players() {
 		return this.viewers.reduce(
 			(acc, viewer) => {
+				if (!viewer.player) return acc
 				acc[viewer.player.id] = viewer.player
 				return acc
 			},

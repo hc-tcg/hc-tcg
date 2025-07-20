@@ -184,7 +184,7 @@ function getLocalPlayerState(
 
 	const localPlayerState: LocalPlayerState = {
 		entity: playerState.entity,
-		playerId: viewer?.player?.id || viewer.playerOnLeft.entity,
+		playerId: viewer?.player?.id,
 		playerName: playerState.playerName,
 		minecraftName: playerState.minecraftName,
 		censoredPlayerName: playerState.censoredPlayerName,

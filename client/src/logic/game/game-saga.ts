@@ -91,7 +91,7 @@ function* turnActionRecieve(gameController: GameController) {
 
 		const nextTurnAction = yield* race({
 			serverTurnAction: call(
-				receiveMsg<ServerMessageTable[typeof serverMessages.GAME_TURN_ACTION]>(
+				receiveMsg<typeof serverMessages.GAME_TURN_ACTION>(
 					socket,
 					serverMessages.GAME_TURN_ACTION,
 				),
@@ -252,9 +252,7 @@ function* gameSaga({
 			spectatorLeave: take(localMessages.GAME_SPECTATOR_LEAVE),
 		})
 
-		if (result.game) {
-			throw new Error('Unexpected game ending')
-		} else if (result.gameEnd) {
+		if (result.gameEnd) {
 			const {
 				gameState: newGameState,
 				outcome,

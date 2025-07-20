@@ -43,7 +43,7 @@ export const getOpponentId = (controller: GameController, playerId: string) => {
 	const players = controller.viewers
 		.filter((viewer) => !viewer.spectator)
 		.map((viewer) => viewer.player)
-	return players.filter((p) => p.id !== playerId)[0]?.id || null
+	return players.filter((p) => p?.id !== playerId)[0]?.id || null
 }
 
 export function printHooksState(game: GameModel) {
