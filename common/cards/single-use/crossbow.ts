@@ -128,9 +128,6 @@ const Crossbow: SingleUse = {
 				if (!attack.isAttacker(component.entity)) return
 
 				applySingleUse(game)
-
-				// Do not apply single use more than once
-				observer.unsubscribeFromEverything()
 			},
 		)
 	},
