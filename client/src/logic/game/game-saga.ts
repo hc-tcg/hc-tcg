@@ -80,15 +80,11 @@ async function startGameLocally(
 
 	await game.waitForTurnActionReady()
 
-	console.log(game.game.components)
-
-	console.log(myPlayerEntity)
 	game.addViewer(
 		{
 			spectator: false,
 			replayer: false,
 			playerOnLeft: myPlayerEntity,
-			player: null,
 		},
 	)
 
@@ -151,11 +147,9 @@ function* turnActionRecieve(gameController: GameController) {
 		)
 
 		// First show coin flips, if any
-		console.log("here two")
 		yield* call(coinFlipSaga, localGameState)
 
 		// Actually update the local state
-		console.log("here three")
 		yield* putResolve<LocalMessage>({
 			type: localMessages.GAME_LOCAL_STATE_SET,
 			localGameState: localGameState,
