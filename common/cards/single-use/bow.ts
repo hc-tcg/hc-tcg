@@ -29,11 +29,13 @@ const Bow: SingleUse = {
 		query.exists(SlotComponent, pickCondition),
 	),
 	attackPreview: (_game) => '$A40$',
-	data: {
-		pickedRow: null,
+	data: () => {
+		return {
+			pickedRow: null,
+		}
 	},
 	onCreate(game, component, observer) {
-		observer.setupHook(component.player.hooks.getAttackRequests, () => {
+		observer.subscribe(component.player.hooks.getAttackRequests, () => {
 			if (!component.onGameBoard) return
 			const {player} = component
 
@@ -49,7 +51,7 @@ const Bow: SingleUse = {
 			})
 		})
 
-		observer.setupHook(component.player.hooks.getAttack, () => {
+		observer.subscribe(component.player.hooks.getAttack, () => {
 			if (!component.onGameBoard) return null
 			const bowAttack = game
 				.newAttack({
@@ -65,7 +67,7 @@ const Bow: SingleUse = {
 			return bowAttack
 		})
 
-		observer.setupHookWithPriority(
+		observer.subscribeWithPriority(
 			game.hooks.beforeAttack,
 			beforeAttack.APPLY_SINGLE_USE_ATTACK,
 			(attack) => {
