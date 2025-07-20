@@ -248,7 +248,7 @@ export class GameController {
 	}
 
 	public getPlayers() {
-		return this.viewers.map((viewer) => viewer.player)
+		return this.viewers.map((viewer) => viewer.player!)
 	}
 
 	public get players() {

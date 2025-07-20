@@ -99,24 +99,25 @@ function* gameManager(con: ServerSideGameController) {
 	console.info(
 		`${con.game.logHeader}`,
 		`${gameType} game started.`,
-		`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
+		`Players: ${viewers.map((viewer) => viewer.player?.name).join(' + ')}.`,
 		'Total games:',
 		root.getGameIds().length,
 	)
 
+	// To ensure cards are secret, we filter them out here
 	broadcast([con.getPlayers()[0]], {
 		type: serverMessages.GAME_START,
 		playerEntity: con.playerOne.entity,
 		spectatorCode: con.spectatorCode ?? undefined,
 		playerOneDefs: con.player1Defs,
-		playerTwoDefs: con.player2Defs,
+		playerTwoDefs: {...con.player2Defs, deck: []},
 		props: {...con.props, randomSeed: con.game.rngSeed, gameId: con.game.id},
 	})
 	broadcast([con.getPlayers()[1]], {
 		type: serverMessages.GAME_START,
 		playerEntity: con.playerTwo.entity,
 		spectatorCode: con.spectatorCode ?? undefined,
-		playerOneDefs: con.player1Defs,
+		playerOneDefs: {...con.player1Defs, deck: []},
 		playerTwoDefs: con.player2Defs,
 		props: {...con.props, randomSeed: con.game.rngSeed, gameId: con.game.id},
 	})
@@ -138,7 +139,7 @@ function* gameManager(con: ServerSideGameController) {
 				})
 
 				for (const player of con.getPlayers()) {
-					if (player.id === action.playerId) continue
+					if (player?.id === action.playerId) continue
 					broadcast([player], {
 						type: serverMessages.GAME_TURN_ACTION,
 						action: {
@@ -370,7 +371,7 @@ export function inGame(playerId: PlayerId) {
 	return root
 		.getGames()
 		.some(
-			(game) => !!game.viewers.find((viewer) => viewer.player.id === playerId),
+			(game) => !!game.viewers.find((viewer) => viewer.player?.id === playerId),
 		)
 }
 
