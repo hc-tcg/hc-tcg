@@ -18,8 +18,6 @@ export namespace SelectCards {
 		/** The id of the player to request the pick from */
 		player: PlayerEntity
 		modal: Data
-		/** Called when the modal request times out before being resolved successfully */
-		onTimeout: () => void
 	}
 
 	type ButtonVariant = 'default' | 'primary' | 'secondary' | 'error' | 'stone'

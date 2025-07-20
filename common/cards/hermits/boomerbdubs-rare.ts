@@ -54,29 +54,26 @@ const BoomerBdubsRare: Hermit = {
 	): void {
 		const {player} = component
 
-		const newModalRequest = () => {
-			return {
-				creator: component.entity,
-				player: player.entity,
-				modal: {
-					type: 'selectCards',
-					name: 'Boomer BDubs - Watch This',
-					description: 'Do you want to flip a coin for your attack?',
-					cards: [],
-					selectionSize: 0,
-					cancelable: false,
-					primaryButton: {
-						text: 'Yes',
-						variant: 'default',
-					},
-					secondaryButton: {
-						text: 'No',
-						variant: 'default',
-					},
+		const modalRequest = {
+			creator: component.entity,
+			player: player.entity,
+			modal: {
+				type: 'selectCards',
+				name: 'Boomer BDubs - Watch This',
+				description: 'Do you want to flip a coin for your attack?',
+				cards: [],
+				selectionSize: 0,
+				cancelable: false,
+				primaryButton: {
+					text: 'Yes',
+					variant: 'default',
 				},
-				onTimeout() {},
-			} satisfies ModalRequest
-		}
+				secondaryButton: {
+					text: 'No',
+					variant: 'default',
+				},
+			},
+		} satisfies ModalRequest
 
 		observer.subscribeWithPriority(
 			game.hooks.afterAttack,
@@ -95,7 +92,7 @@ const BoomerBdubsRare: Hermit = {
 				if (activeInstance.entity !== component.entity) return
 				// Only secondary attack
 				if (hermitAttackType !== 'secondary') return
-				game.addModalRequest(newModalRequest())
+				game.addModalRequest(modalRequest)
 			},
 		)
 
@@ -131,7 +128,7 @@ const BoomerBdubsRare: Hermit = {
 				)
 				fortune?.remove()
 
-				game.addModalRequest(newModalRequest())
+				game.addModalRequest(modalRequest)
 			},
 		)
 

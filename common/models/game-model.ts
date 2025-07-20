@@ -167,6 +167,9 @@ export class GameModel {
 		onCopyAttackModalResolve: GameHook<
 			(request: CopyAttack.Request, result: CopyAttack.Result) => void
 		>
+		onSelectCardsModalTimeout: GameHook<(request: SelectCards.Request) => void>
+		onDragCardsModalTimeout: GameHook<(request: DragCards.Request) => void>
+		onCopyAttackModalTimeout: GameHook<(request: CopyAttack.Request) => void>
 		/** Hook called when the game ends for disposing references */
 		afterGameEnd: Hook<string, () => void>
 		/** Hook for reviving rows after all attacks are executed */
@@ -498,7 +501,19 @@ export class GameModel {
 		if (this.state.modalRequests[index] !== undefined) {
 			const request = this.state.modalRequests.splice(index, 1)[0]
 			if (timeout) {
-				request.onTimeout()
+				if (request.modal.type === 'selectCards') {
+					this.hooks.onSelectCardsModalTimeout.call(
+						request as SelectCards.Request,
+					)
+				}
+				if (request.modal.type === 'dragCards') {
+					this.hooks.onDragCardsModalTimeout.call(request as DragCards.Request)
+				}
+				if (request.modal.type === 'copyAttack') {
+					this.hooks.onCopyAttackModalTimeout.call(
+						request as CopyAttack.Request,
+					)
+				}
 			}
 		}
 	}
