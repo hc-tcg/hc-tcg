@@ -44,7 +44,6 @@ const BoomerBdubsRare: Hermit = {
 		return {
 			extraDamage: 0,
 			flippedTalis: false,
-			hasFlippedCoin: false,
 			blockRemoveEffect: false,
 		}
 	},
@@ -65,7 +64,7 @@ const BoomerBdubsRare: Hermit = {
 					description: 'Do you want to flip a coin for your attack?',
 					cards: [],
 					selectionSize: 0,
-					cancelable: component.data.hasFlippedCoin === true,
+					cancelable: false,
 					primaryButton: {
 						text: 'Yes',
 						variant: 'default',
@@ -85,6 +84,7 @@ const BoomerBdubsRare: Hermit = {
 			(_attack) => {
 				component.data.extraDamage = 0
 				component.data.flippedTails = false
+				component.data.blockRemoveEffect = false
 			},
 		)
 
@@ -93,10 +93,8 @@ const BoomerBdubsRare: Hermit = {
 			(activeInstance, hermitAttackType) => {
 				// Make sure we are attacking
 				if (activeInstance.entity !== component.entity) return
-
 				// Only secondary attack
 				if (hermitAttackType !== 'secondary') return
-
 				game.addModalRequest(newModalRequest())
 			},
 		)
@@ -108,12 +106,12 @@ const BoomerBdubsRare: Hermit = {
 				let activeHermit = component.player.getActiveHermit()
 				if (!activeHermit) return
 
+				// Cancel if player picks false
 				if (modalResult.result === false) return
 
 				const flip = flipCoin(game, player, activeHermit)[0]
 
 				component.data.blockRemoveEffect = true
-				component.data.hasFlippedCoin = true
 
 				if (flip === 'tails') {
 					component.data.flippedTails = true
@@ -121,8 +119,6 @@ const BoomerBdubsRare: Hermit = {
 				}
 
 				component.data.extraDamage += 20
-
-				game.addModalRequest(modalRequest)
 
 				// After the first coin flip we remove fortune to prevent infinite coin flips.
 				const fortune = game.components.find(
@@ -134,6 +130,8 @@ const BoomerBdubsRare: Hermit = {
 					),
 				)
 				fortune?.remove()
+
+				game.addModalRequest(newModalRequest())
 			},
 		)
 
@@ -148,6 +146,7 @@ const BoomerBdubsRare: Hermit = {
 			game.hooks.beforeAttack,
 			beforeAttack.MODIFY_DAMAGE,
 			(attack) => {
+				console.log('modify damage')
 				if (!component.onGameBoard) return
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return

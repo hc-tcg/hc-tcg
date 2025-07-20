@@ -343,6 +343,7 @@ export function modalRequestAction(
 
 	// We completed the modal request, remove it
 	game.state.modalRequests.shift()
+	console.log(game.state.modalRequests)
 
 	if (!game.hasActiveRequests() && game.state.turn.currentAttack) {
 		// There are no active requests left, and we're in the middle of an attack. Execute it now.
