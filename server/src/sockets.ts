@@ -21,7 +21,7 @@ const isValidVersion = (clientVersion: string) => {
 function startSocketIO(server: any) {
 	const io = new Server(server, {
 		cors: {
-			origin: CONFIG.cors,
+			origin: CONFIG.server.cors,
 			methods: ['GET', 'POST'],
 		},
 	})
