@@ -94,6 +94,10 @@ export function getLocalModalData(
 			...modal,
 			hermitCard: getLocalCard(game, hermitCard),
 		}
+	} else if (modal.type === 'spyglass') {
+		return {
+			...modal,
+		}
 	}
 
 	throw new Error('Uknown modal type')

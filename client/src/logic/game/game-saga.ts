@@ -198,6 +198,15 @@ function* handleForfeitAction() {
 	yield* sendTurnAction(playerEntity, action.action)
 }
 
+function* requestCardsForSpyglass() {
+	while (true) {
+		yield* take(localMessages.SPYGLASS_REQUEST_CARDS)
+		yield* sendMsg({
+			type: clientMessages.SPYGLASS_REQUEST_CARDS,
+		})
+	}
+}
+
 function* recieveCardsForSpyglass() {
 	const socket = yield* select(getSocket)
 	while (true) {
@@ -243,6 +252,7 @@ function* gameSaga({
 			fork(achievementSaga),
 			fork(handleForfeitAction),
 			fork(turnActionRecieve, gameController),
+			fork(requestCardsForSpyglass),
 			fork(recieveCardsForSpyglass),
 		]),
 	)

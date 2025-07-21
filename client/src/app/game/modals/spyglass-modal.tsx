@@ -8,7 +8,7 @@ import {
 	getOpponentCardsForSpyglass,
 } from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
 
@@ -19,16 +19,21 @@ type Props = {
 function SpyglasssModal({closeModal}: Props) {
 	const dispatch = useMessageDispatch()
 	const cards = useSelector(getOpponentCardsForSpyglass)
+	const [selected, setSelected] = useState<Array<LocalCardInstance>>([])
+
+	useEffect(() => {
+		dispatch({type: localMessages.SPYGLASS_REQUEST_CARDS})
+	}, [])
 
 	const modalData: ModalData | null | undefined =
 		useSelector(getGameState)?.currentModalData
 	if (!modalData || modalData.type !== 'spyglass') return null
 
-	const [selected, setSelected] = useState<Array<LocalCardInstance>>([])
-
 	const maxSelectionSize = 1
 	const minSelectionSize = 1
 	const cancelable = true
+
+	const canDiscard = modalData.canDiscard
 
 	const handleSelection = (newSelected: LocalCardInstance) => {
 		setSelected((current) => {
@@ -82,7 +87,7 @@ function SpyglasssModal({closeModal}: Props) {
 			disableUserClose={!cancelable}
 		>
 			<Modal.Description>
-				{'Select a card to discard'}
+				{canDiscard && 'Select a card to discard'}
 				{cards !== undefined && (
 					<div className={css.cards}>
 						<div className={css.cardsListContainer}>
@@ -101,16 +106,18 @@ function SpyglasssModal({closeModal}: Props) {
 				)}
 				{cards === undefined && "Stealing your opponent's hand..."}
 			</Modal.Description>
-			<Modal.Options>
-				<Button
-					variant={'stone'}
-					size="medium"
-					onClick={handlePrimary}
-					disabled={selected.length < minSelectionSize}
-				>
-					{'Discard'}
-				</Button>
-			</Modal.Options>
+			{canDiscard && (
+				<Modal.Options>
+					<Button
+						variant={'stone'}
+						size="medium"
+						onClick={handlePrimary}
+						disabled={selected.length < minSelectionSize}
+					>
+						{'Discard'}
+					</Button>
+				</Modal.Options>
+			)}
 		</Modal>
 	)
 }

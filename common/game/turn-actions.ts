@@ -9,6 +9,7 @@ import {
 	DragCards,
 	ModalResult,
 	SelectCards,
+	SpyglassModal,
 } from '../types/modal-requests'
 import {
 	LocalCopyAttack,
@@ -356,6 +357,11 @@ export function modalRequestAction(
 			!modal.pick || modalRequest.modal.availableAttacks.includes(modal.pick),
 			`Client picked an action that was not available to copy: ${modal.pick}`,
 		)
+		modalRequest_.onResult(modal)
+	} else if (modalRequest.modal.type === 'spyglass') {
+		let modalRequest_ = modalRequest as SpyglassModal.Request
+		modalResult = localModalResult as SpyglassModal.Result
+		let modal = localModalResult as SpyglassModal.Result
 		modalRequest_.onResult(modal)
 	} else throw Error('Unknown modal type')
 

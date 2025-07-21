@@ -152,6 +152,7 @@ export namespace SpyglassModal {
 
 	export type Data = {
 		type: 'spyglass'
+		canDiscard: boolean
 	}
 
 	export type Result =

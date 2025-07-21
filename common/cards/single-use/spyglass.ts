@@ -46,6 +46,7 @@ const Spyglass: SingleUse = {
 				player: player.entity,
 				modal: {
 					type: 'spyglass',
+					canDiscard: canDiscard,
 				},
 				onResult(modalResult) {
 					if (!modalResult) return
@@ -59,8 +60,6 @@ const Spyglass: SingleUse = {
 					card.discard()
 
 					game.battleLog.addEntry(player.entity, getEntry(card))
-
-					return
 				},
 				onTimeout() {
 					if (canDiscard) {

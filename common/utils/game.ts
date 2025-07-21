@@ -6,6 +6,7 @@ import {
 } from '../components'
 import query from '../components/query'
 import {ObserverEntity} from '../entities'
+import {GameController} from '../game/game-controller'
 import {GameModel} from '../models/game-model'
 import {isCounter} from '../status-effects/status-effect'
 import {Hook, PriorityHook} from '../types/hooks'
@@ -36,6 +37,13 @@ export function newIncrementor() {
 		x += 1
 		return x
 	}
+}
+
+export const getOpponentId = (controller: GameController, playerId: string) => {
+	const players = controller.viewers
+		.filter((viewer) => !viewer.spectator)
+		.map((viewer) => viewer.player)
+	return players.filter((p) => p?.id !== playerId)[0]?.id || null
 }
 
 export function printHooksState(game: GameModel) {

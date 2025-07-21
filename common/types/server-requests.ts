@@ -159,6 +159,7 @@ export namespace LocalDragCards {
 export namespace LocalSpyglassModal {
 	export type Data = {
 		type: 'spyglass'
+		canDiscard: boolean
 	}
 
 	export type Result =
