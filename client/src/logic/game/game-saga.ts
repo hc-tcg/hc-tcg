@@ -4,10 +4,7 @@ import {getLocalGameState} from 'common/game/make-local-state'
 import runGame, {TurnActionAndPlayer} from 'common/game/run-game'
 import {PlayerSetupDefs} from 'common/game/setup-game'
 import {clientMessages} from 'common/socket-messages/client-messages'
-import {
-	ServerMessageTable,
-	serverMessages,
-} from 'common/socket-messages/server-messages'
+import {serverMessages} from 'common/socket-messages/server-messages'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'

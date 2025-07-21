@@ -21,7 +21,6 @@ import {
 } from '../cards/types'
 import type {
 	CardEntity,
-	Entity,
 	ObserverEntity,
 	PlayerEntity,
 	SlotEntity,

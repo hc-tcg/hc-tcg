@@ -22,9 +22,9 @@ import {
 	attackActionToAttack,
 	attackToAttackAction,
 } from '../types/turn-action-data'
+import {assert} from '../utils/assert'
 import {executeAttacks} from '../utils/attacks'
 import {applySingleUse} from '../utils/board'
-import {assert} from '../utils/assert'
 
 function getAttack(
 	game: GameModel,

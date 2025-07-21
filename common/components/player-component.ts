@@ -46,9 +46,9 @@ export class PlayerComponent {
 	lives: number
 	hasPlacedHermit: boolean
 	singleUseCardUsed: boolean
-	deckedOut: boolean
 	readonly disableDeckingOut: boolean
 	deckIsUnkown: boolean = false
+	cardsLeftInDeck: number
 
 	pickableSlots: Array<SlotEntity> | null
 
@@ -129,7 +129,12 @@ export class PlayerComponent {
 		blockKnockback: GameHook<() => boolean>
 	}
 
-	constructor(game: GameModel, entity: PlayerEntity, player: PlayerDefs) {
+	constructor(
+		game: GameModel,
+		entity: PlayerEntity,
+		player: PlayerDefs,
+		deckSize: number,
+	) {
 		this.game = game
 		this.entity = entity
 		this.uuid = player.uuid
@@ -141,10 +146,10 @@ export class PlayerComponent {
 		this.lives = 3
 		this.hasPlacedHermit = false
 		this.singleUseCardUsed = false
-		this.deckedOut = false
 		this.disableDeckingOut = !!player.disableDeckingOut
 		this.pickableSlots = null
 		this.activeRowEntity = null
+		this.cardsLeftInDeck = deckSize
 
 		this.hooks = {
 			availableEnergy: new WaterfallHook(),
@@ -218,11 +223,13 @@ export class PlayerComponent {
 		let cards = this.getDrawPile()
 			.sort(CardComponent.compareOrder)
 			.slice(0, amount)
-		if (cards.length < amount) {
-			if (!this.disableDeckingOut) this.deckedOut = true
-		}
 		cards.forEach((card) => card.draw())
+		this.cardsLeftInDeck -= amount
 		return cards
+	}
+
+	get deckedOut() {
+		return this.cardsLeftInDeck <= 0
 	}
 
 	public hasStatusEffect(effect: StatusEffect<PlayerComponent>) {

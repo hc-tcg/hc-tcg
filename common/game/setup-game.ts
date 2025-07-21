@@ -45,6 +45,15 @@ export type OpponentDefs = PlayerDefs & {
 	virtualAI: VirtualAI
 }
 
+function getDeckSize(
+	deck: {hidden: true; size: number} | {hidden: false; cards: Array<any>},
+): number {
+	if (deck.hidden) {
+		return deck.size
+	}
+	return deck.cards.length
+}
+
 /* Set up the components that will be referenced during the game. This includes:
  * - The player objects
  * - Board Slot
@@ -57,8 +66,16 @@ export function setupComponents(
 	player2: PlayerSetupDefs,
 	options: ComponentSetupOptions,
 ) {
-	let player1Component = components.new(PlayerComponent, player1.model)
-	let player2Component = components.new(PlayerComponent, player2.model)
+	let player1Component = components.new(
+		PlayerComponent,
+		player1.model,
+		getDeckSize(player1.deck),
+	)
+	let player2Component = components.new(
+		PlayerComponent,
+		player2.model,
+		getDeckSize(player1.deck),
+	)
 
 	game.playerOne = player1Component.entity
 	game.playerTwo = player2Component.entity

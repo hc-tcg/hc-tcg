@@ -477,7 +477,7 @@ function* createPrivateGameSaga() {
 				const queueResponse = yield* race({
 					gameStart: call(receiveMsg(socket, serverMessages.GAME_START)),
 					timeout: call(
-						receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT)
+						receiveMsg(socket, serverMessages.PRIVATE_GAME_TIMEOUT),
 					),
 				})
 

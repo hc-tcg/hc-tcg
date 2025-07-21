@@ -116,14 +116,20 @@ function* gameManager(con: ServerSideGameController) {
 		playerEntity: con.playerOne.entity,
 		spectatorCode: con.spectatorCode ?? undefined,
 		playerOneDefs: con.player1Defs,
-		playerTwoDefs: {...con.player2Defs, deck: {hidden: true, size: con.player2Defs.deck.cards.length}},
+		playerTwoDefs: {
+			...con.player2Defs,
+			deck: {hidden: true, size: con.player2Defs.deck.cards.length},
+		},
 		props: {...con.props, randomSeed: con.game.rngSeed, gameId: con.game.id},
 	})
 	broadcast([con.getPlayers()[1]], {
 		type: serverMessages.GAME_START,
 		playerEntity: con.playerTwo.entity,
 		spectatorCode: con.spectatorCode ?? undefined,
-		playerOneDefs: {...con.player1Defs, deck: {hidden: true, size: con.player1Defs.deck.cards.length}},
+		playerOneDefs: {
+			...con.player1Defs,
+			deck: {hidden: true, size: con.player1Defs.deck.cards.length},
+		},
 		playerTwoDefs: con.player2Defs,
 		props: {...con.props, randomSeed: con.game.rngSeed, gameId: con.game.id},
 	})
