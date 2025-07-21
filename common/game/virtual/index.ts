@@ -1,4 +1,4 @@
-import {VirtualAI} from 'common/types/virtual-ai'
+import {VirtualAI} from '../../types/virtual-ai'
 import ExBossAI from './exboss-ai'
 
 const aiClasses: Array<VirtualAI> = [ExBossAI]

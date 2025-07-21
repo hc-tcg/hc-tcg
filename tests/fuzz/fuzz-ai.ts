@@ -7,11 +7,11 @@ import {
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {CardEntity} from 'common/entities'
+import {getLocalCard} from 'common/game/make-local-state'
 import {GameModel} from 'common/models/game-model'
 import {TurnAction} from 'common/types/game-state'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {VirtualAI} from 'common/types/virtual-ai'
-import {getLocalCard} from 'server/utils/state-gen'
 import {choose, chooseN} from './utils'
 
 function cardIsPlayable(game: GameModel, card: CardComponent) {

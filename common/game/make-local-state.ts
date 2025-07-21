@@ -1,27 +1,27 @@
-import {Card} from 'common/cards/types'
+import {Card} from '../cards/types'
 import {
 	CardComponent,
 	PlayerComponent,
 	RowComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from 'common/components'
-import query from 'common/components/query'
-import {PlayerEntity} from 'common/entities'
-import {GameModel} from 'common/models/game-model'
+} from '../components'
+import query from '../components/query'
+import {PlayerEntity} from '../entities'
+import {GameModel} from '../models/game-model'
 import {
 	CurrentCoinFlip,
 	LocalCurrentCoinFlip,
 	LocalGameState,
 	LocalPlayerState,
-} from 'common/types/game-state'
-import {ModalData} from 'common/types/modal-requests'
+} from '../types/game-state'
+import {ModalData} from '../types/modal-requests'
 import {
 	LocalCardInstance,
 	LocalModalData,
 	LocalStatusEffectInstance,
-} from 'common/types/server-requests'
-import {GameViewer} from '../game-controller'
+} from '../types/server-requests'
+import {GameViewer} from './game-controller'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly

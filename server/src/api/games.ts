@@ -1,5 +1,5 @@
+import {GameController} from 'common/game/game-controller'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {GameController} from 'game-controller'
 import root from 'serverRoot'
 import {broadcast} from 'utils/comm'
 

@@ -15,7 +15,7 @@ import {Deck} from '../types/deck'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
 import {VirtualAI} from '../types/virtual-ai'
-import {fisherYatesShuffle} from './fisher-yates'
+import {fisherYatesShuffle} from '../utils/fisher-yates'
 
 export type PlayerSetupDefs = {
 	model: PlayerDefs

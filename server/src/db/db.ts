@@ -10,6 +10,7 @@ import {CARDS} from 'common/cards'
 import {getStarterPack} from 'common/cards/starter-decks'
 import {CONFIG} from 'common/config'
 import {defaultAppearance} from 'common/cosmetics/default'
+import {PlayerSetupDefs} from 'common/game/setup-game'
 import {AchievementProgress, EarnedAchievement} from 'common/types/achievements'
 import {TypeT} from 'common/types/cards'
 import {
@@ -29,7 +30,6 @@ import {
 import {GameOutcome, Message} from 'common/types/game-state'
 import {NumberOrNull, generateDatabaseCode} from 'common/utils/database-codes'
 import {newRandomNumberGenerator} from 'common/utils/random'
-import {PlayerSetupDefs} from 'common/utils/state-gen'
 import {huffmanCompress, huffmanDecompress} from '../../src/utils/compression'
 import {
 	ReplayActionData,
