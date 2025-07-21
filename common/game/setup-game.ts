@@ -7,6 +7,7 @@ import {
 	PlayerComponent,
 	RowComponent,
 } from '../components'
+import {AIComponent} from '../components/ai-component'
 import {HiddenCardComponent} from '../components/card-component'
 import {PlayerDefs} from '../components/player-component'
 import query from '../components/query'
@@ -31,6 +32,7 @@ export type PlayerSetupDefs = {
 				size: number
 		  }
 	score: number
+	ai?: string
 }
 
 type ComponentSetupOptions = {

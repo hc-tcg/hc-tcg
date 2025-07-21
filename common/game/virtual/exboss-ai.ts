@@ -1,21 +1,22 @@
 import EvilXisumaBoss, {
 	BOSS_ATTACK,
 	supplyBossAttack,
-} from 'common/cards/boss/hermits/evilxisuma_boss'
+} from '../../cards/boss/hermits/evilxisuma_boss'
 import {
 	BoardSlotComponent,
 	CardComponent,
 	PlayerComponent,
 	StatusEffectComponent,
-} from 'common/components'
-import {AIComponent} from 'common/components/ai-component'
-import query from 'common/components/query'
-import {GameModel} from 'common/models/game-model'
+} from '../../components'
+import {RowComponent} from '../../components'
+import {AIComponent} from '../../components/ai-component'
+import query from '../../components/query'
+import {GameModel} from '../../models/game-model'
 import ExBossNineEffect, {
 	supplyNineSpecial,
-} from 'common/status-effects/exboss-nine'
-import {AnyTurnActionData} from 'common/types/turn-action-data'
-import {VirtualAI} from 'common/types/virtual-ai'
+} from '../../status-effects/exboss-nine'
+import {AnyTurnActionData} from '../../types/turn-action-data'
+import {VirtualAI} from '../../types/virtual-ai'
 
 const fireDropper = (game: GameModel) => {
 	return Math.floor(game.coinFlipRng() * 9)
@@ -153,6 +154,44 @@ function getNextTurnAction(
 const ExBossAI: VirtualAI = {
 	id: 'evilxisuma_boss',
 
+	setup(game: GameModel) {
+		game.state.isEvilXBossGame = true
+
+		function destroyRow(row: RowComponent) {
+			game.components
+				.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
+				.forEach((slotEntity) => game.components.delete(slotEntity))
+			game.components.delete(row.entity)
+		}
+
+		// Remove challenger's rows other than indexes 0, 1, and 2
+		game.components
+			.filter(
+				RowComponent,
+				query.row.opponentPlayer,
+				(_game, row) => row.index > 2,
+			)
+			.forEach(destroyRow)
+		// Remove boss' rows other than index 0
+		game.components
+			.filter(
+				RowComponent,
+				query.row.currentPlayer,
+				query.not(query.row.index(0)),
+			)
+			.forEach(destroyRow)
+		// Remove boss' item slots
+		game.components
+			.filter(RowComponent, query.row.currentPlayer)
+			.forEach((row) => {
+				row.itemsSlotEntities?.forEach((slotEntity) =>
+					game.components.delete(slotEntity),
+				)
+				row.itemsSlotEntities = []
+			})
+
+		game.settings.disableRewardCards = true
+	},
 	getTurnActions: function* (game, component) {
 		while (true) {
 			yield* getNextTurnAction(game, component)

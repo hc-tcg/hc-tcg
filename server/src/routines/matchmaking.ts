@@ -1,13 +1,7 @@
 import assert from 'assert'
 import {CARDS} from 'common/cards'
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
-import {
-	AchievementComponent,
-	BoardSlotComponent,
-	PlayerComponent,
-	RowComponent,
-} from 'common/components'
-import {AIComponent} from 'common/components/ai-component'
+import {AchievementComponent, PlayerComponent} from 'common/components'
 import query from 'common/components/query'
 import {CONFIG} from 'common/config'
 import {COINS} from 'common/cosmetics/coins'
@@ -94,7 +88,10 @@ function setupGame(
 	return con
 }
 
-function* gameManager(con: ServerSideGameController) {
+function* gameManager(
+	con: ServerSideGameController,
+	{hideOpponentDeck = true}: {hideOpponentDeck: boolean},
+) {
 	// @TODO this one method needs cleanup still
 	const viewers = con.viewers
 	const playerIds = viewers.map((viewer) => viewer.player.id)
@@ -118,26 +115,32 @@ function* gameManager(con: ServerSideGameController) {
 		? con.player2Defs.deck.size
 		: con.player2Defs.deck.cards.length
 
+	console.log('should broadcast start game')
+
 	broadcast([con.getPlayers()[0]], {
 		type: serverMessages.GAME_START,
 		playerEntity: con.playerOne.entity,
 		spectatorCode: con.spectatorCode ?? undefined,
 		playerOneDefs: con.player1Defs,
-		playerTwoDefs: {
-			...con.player2Defs,
-			deck: {hidden: true, size: playerOneDeckLength},
-		},
+		playerTwoDefs: hideOpponentDeck
+			? {
+					...con.player2Defs,
+					deck: {hidden: true, size: playerOneDeckLength},
+				}
+			: {...con.player2Defs},
 		props: {...con.props, randomSeed: con.game.rngSeed, gameId: con.game.id},
 	})
 	broadcast([con.getPlayers()[1]], {
 		type: serverMessages.GAME_START,
 		playerEntity: con.playerTwo.entity,
 		spectatorCode: con.spectatorCode ?? undefined,
-		playerOneDefs: {
-			...con.player1Defs,
-			deck: {hidden: true, size: playerTwoDeckLength},
-		},
-		playerTwoDefs: con.player2Defs,
+		playerOneDefs: hideOpponentDeck
+			? {
+					...con.player1Defs,
+					deck: {hidden: true, size: playerTwoDeckLength},
+				}
+			: con.player1Defs,
+		playerTwoDefs: {...con.player2Defs},
 		props: {...con.props, randomSeed: con.game.rngSeed, gameId: con.game.id},
 	})
 
@@ -348,8 +351,8 @@ function* gameManager(con: ServerSideGameController) {
 
 	if (
 		con.game.state.isEvilXBossGame ||
-		!gamePlayers[0].id ||
-		!gamePlayers[1].id
+		!gamePlayers[0]?.id ||
+		!gamePlayers[1]?.id
 	) {
 		return
 	}
@@ -445,7 +448,7 @@ function* randomMatchmakingSaga() {
 					0,
 				)
 				root.addGame(newGame)
-				yield* safeCall(fork, gameManager, newGame)
+				yield* safeCall(fork, gameManager, newGame, {})
 			} else {
 				// Something went wrong, remove the undefined player from the queue
 				if (player1 === undefined) playersToRemove.push(player1Id)
@@ -700,7 +703,7 @@ export function* joinPrivateGame(
 			})
 		}
 
-		yield* safeCall(fork, gameManager, newGame)
+		yield* safeCall(fork, gameManager, newGame, {})
 	} else {
 		// Assign this player to the game
 		root.privateQueue[code].playerId = playerId
@@ -931,53 +934,18 @@ export function* createBossGame(
 		name: 'Evil Xisuma',
 		minecraftName: 'EvilXisuma',
 		censoredName: 'Evil Xisuma',
-		deck: [EvilXisumaBoss],
+		deck: [EvilXisumaBoss.id],
 		virtualAI: ExBossAI,
 		disableDeckingOut: true,
 		appearance: {...defaultAppearance, coin: COINS['evilx']},
 	})
-	newBossGameController.game.state.isEvilXBossGame = true
-
-	function destroyRow(row: RowComponent) {
-		newBossGameController.game.components
-			.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
-			.forEach((slotEntity) =>
-				newBossGameController.game.components.delete(slotEntity),
-			)
-		newBossGameController.game.components.delete(row.entity)
-	}
-
-	// Remove challenger's rows other than indexes 0, 1, and 2
-	newBossGameController.game.components
-		.filter(
-			RowComponent,
-			query.row.opponentPlayer,
-			(_game, row) => row.index > 2,
-		)
-		.forEach(destroyRow)
-	// Remove boss' rows other than index 0
-	newBossGameController.game.components
-		.filter(
-			RowComponent,
-			query.row.currentPlayer,
-			query.not(query.row.index(0)),
-		)
-		.forEach(destroyRow)
-	// Remove boss' item slots
-	newBossGameController.game.components
-		.filter(RowComponent, query.row.currentPlayer)
-		.forEach((row) => {
-			row.itemsSlotEntities?.forEach((slotEntity) =>
-				newBossGameController.game.components.delete(slotEntity),
-			)
-			row.itemsSlotEntities = []
-		})
-
-	newBossGameController.game.settings.disableRewardCards = true
 
 	root.addGame(newBossGameController)
+	console.log('setup game complete')
 
-	yield* safeCall(fork, gameManager, newBossGameController)
+	yield* safeCall(fork, gameManager, newBossGameController, {
+		hideOpponentDeck: false,
+	})
 }
 
 export function* createRematchGame(
@@ -1106,7 +1074,7 @@ export function* createRematchGame(
 		})
 	}
 
-	yield* safeCall(fork, gameManager, newGame)
+	yield* safeCall(fork, gameManager, newGame, {})
 }
 
 //@Todo fix games from just timing out when player leaves
@@ -1260,19 +1228,19 @@ function setupSolitareGame(
 			model: opponent,
 			deck: {hidden: false, cards: opponent.deck},
 			score: 0,
+			ai: EvilXisumaBoss.id,
 		},
 		{randomizeOrder: false, countAchievements: 'boss'},
 	)
 
-	const playerEntities = con.game.components.filterEntities(PlayerComponent)
+	let playerEntities = con.game.components.filterEntities(PlayerComponent)
+
 	con.addViewer({
-		player,
+		player: player,
 		playerOnLeft: playerEntities[0],
 		spectator: false,
 		replayer: false,
 	})
-
-	con.game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
 
 	return con
 }

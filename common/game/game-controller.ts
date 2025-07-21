@@ -1,4 +1,5 @@
 import {PlayerComponent} from '../components'
+import {AIComponent} from '../components/ai-component'
 import {PlayerEntity} from '../entities'
 import {
 	GameModel,
@@ -9,6 +10,7 @@ import {PlayerModel} from '../models/player-model'
 import {CurrentCoinFlip, Message} from '../types/game-state'
 import {TurnActionAndPlayer} from './run-game'
 import {PlayerSetupDefs} from './setup-game'
+import {AI_DEFINITIONS} from './virtual'
 
 export type GameControllerProps = {
 	gameCode?: string
@@ -131,6 +133,7 @@ export class GameController {
 			},
 			deck: player2.deck,
 			score: player2.score,
+			ai: player2.ai,
 		}
 
 		this.playerOne = this.game.arePlayersSwapped
@@ -139,6 +142,15 @@ export class GameController {
 		this.playerTwo = this.game.arePlayersSwapped
 			? this.game.opponentPlayer
 			: this.game.currentPlayer
+
+		if (this.player2Defs.ai) {
+			const component = this.game.components.new(
+				AIComponent,
+				this.game.currentPlayer.entity,
+				AI_DEFINITIONS[this.player2Defs.ai],
+			)
+			component.ai.setup(this.game)
+		}
 	}
 
 	public addViewer(viewer: GameViewerProps) {

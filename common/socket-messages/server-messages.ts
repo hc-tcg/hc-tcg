@@ -94,6 +94,8 @@ export type ServerMessages = [
 		playerTwoDefs: PlayerSetupDefs
 		props: GameControllerProps
 		spectatorCode?: string
+		/** History of turn actions, used for reconnects */
+		turnActionHistory?: Array<TurnActionAndPlayer>
 	},
 	{
 		type: typeof serverMessages.GAME_END

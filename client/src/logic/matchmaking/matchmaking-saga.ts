@@ -551,12 +551,21 @@ function* createBossGameSaga() {
 			return
 		}
 
-		yield* call(receiveMsg, socket, localMessages.GAME_START)
+		const {playerEntity, playerOneDefs, playerTwoDefs, props} = yield* call(
+			receiveMsg(socket, serverMessages.GAME_START),
+		)
 		yield* put<LocalMessage>({
 			type: localMessages.QUEUE_VOICE,
 			lines: ['/voice/EXSTART.ogg'],
 		})
-		yield* call(gameSaga, {})
+		yield call(() =>
+			gameSaga({
+				playerEntity,
+				playerOneDefs,
+				playerTwoDefs,
+				props,
+			}),
+		)
 	} catch (err) {
 		console.error('Game crashed: ', err)
 	} finally {
