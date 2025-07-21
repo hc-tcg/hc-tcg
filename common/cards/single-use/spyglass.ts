@@ -31,8 +31,7 @@ const Spyglass: SingleUse = {
 
 		observer.subscribe(player.hooks.onApply, () => {
 			const coinFlip = flipCoin(game, player, component)
-			const canDiscard =
-				coinFlip[0] === 'heads' && opponentPlayer.getHand().length > 0
+			const canDiscard = coinFlip[0] === 'heads'
 
 			const getEntry = (card: CardComponent): string => {
 				return `$p{You|${player.playerName}}$ discarded ${getFormattedName(
