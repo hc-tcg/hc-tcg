@@ -51,7 +51,8 @@ export default class ComponentTable {
 	 */
 	public delete(id: Entity<any>) {
 		let table = this.tableMap.get(id)
-		if (!table) return
+		this.tableMap.delete(id)
+		assert(table, 'Can not delete component not in ECS')
 		this.tables.get(table)?.delete(id)
 	}
 
@@ -62,7 +63,7 @@ export default class ComponentTable {
 	): T {
 		return this.newWithEntity(
 			newValue,
-			newEntity<T['entity']>((newValue as any).table, this.game),
+			newEntity<T>((newValue as any).table, this.game),
 			...args,
 		)
 	}
@@ -70,7 +71,7 @@ export default class ComponentTable {
 	/** Add a entity linked to a component and return the ID of the value */
 	public newWithEntity<T extends Component, Args extends Array<any>>(
 		newValue: new (game: GameModel, id: T['entity'], ...args: Args) => T,
-		entity: Entity<T['entity']>,
+		entity: Entity<T>,
 		...args: Args
 	): T {
 		assert(

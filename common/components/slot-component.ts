@@ -241,3 +241,13 @@ export class DiscardSlotComponent extends SlotComponent {
 		return true
 	}
 }
+
+export class UnknownDeckSlotComponent extends SlotComponent {
+	override inDeck(): this is DeckSlotComponent {
+		return true
+	}
+
+	constructor(game: GameModel, entity: SlotEntity, playerEntity: PlayerEntity) {
+		super(game, entity, {player: playerEntity, type: 'unknown'})
+	}
+}

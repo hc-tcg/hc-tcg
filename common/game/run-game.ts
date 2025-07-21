@@ -289,6 +289,15 @@ function getAvailableActions(
 		)
 	})
 
+	if (currentPlayer.deckIsUnkown) {
+		// Clients do not know  their opponent's decks, so lets assume they can play all cards.
+		// This is first verified by the server anyway.
+		filteredActions.push('PLAY_HERMIT_CARD')
+		filteredActions.push('PLAY_ITEM_CARD')
+		filteredActions.push('PLAY_EFFECT_CARD')
+		filteredActions.push('PLAY_SINGLE_USE_CARD')
+	}
+
 	// Force add change active hermit if the active row is null
 	if (activeRowId === null && hasOtherHermit) {
 		filteredActions.push('CHANGE_ACTIVE_HERMIT')
@@ -790,6 +799,8 @@ export async function turnSaga(con: GameController) {
 }
 
 function checkDeckedOut(game: GameModel) {
+	// @todo Allow this to work with cards being hidden
+	return []
 	if (
 		game.settings.disableDeckOut ||
 		game.settings.startWithAllCards ||

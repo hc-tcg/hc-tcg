@@ -7,8 +7,10 @@ import {
 	PlayerComponent,
 	RowComponent,
 } from '../components'
+import {HiddenCardComponent} from '../components/card-component'
 import {PlayerDefs} from '../components/player-component'
 import query from '../components/query'
+import {UnknownDeckSlotComponent} from '../components/slot-component'
 import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import {Deck} from '../types/deck'
@@ -19,7 +21,15 @@ import {fisherYatesShuffle} from '../utils/fisher-yates'
 
 export type PlayerSetupDefs = {
 	model: PlayerDefs
-	deck: Array<number | string | Card>
+	deck:
+		| {
+				hidden: false
+				cards: Array<number | string | Card>
+		  }
+		| {
+				hidden: true
+				size: number
+		  }
 	score: number
 }
 
@@ -74,14 +84,28 @@ function setupEcsForPlayer(
 	game: GameModel,
 	components: ComponentTable,
 	playerEntity: PlayerEntity,
-	deck: Array<number | string | Card>,
+	deck:
+		| {
+				hidden: false
+				cards: Array<number | string | Card>
+		  }
+		| {hidden: true; size: number},
 	options: ComponentSetupOptions,
 ) {
-	for (const card of deck) {
-		let slot = components.new(DeckSlotComponent, playerEntity, {
-			position: 'back',
-		})
-		components.new(CardComponent, card, slot.entity)
+	if (!deck.hidden) {
+		console.log(deck.cards.length)
+		for (const card of deck.cards) {
+			let slot = components.new(DeckSlotComponent, playerEntity, {
+				position: 'back',
+			})
+			components.new(CardComponent, card, slot.entity)
+		}
+	} else {
+		for (let i = 0; i < deck.size; i++) {
+			const slot = components.new(UnknownDeckSlotComponent, playerEntity)
+			components.new(HiddenCardComponent, slot.entity)
+		}
+		game.components.get(playerEntity)!.deckIsUnkown = true
 	}
 
 	for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
@@ -125,7 +149,6 @@ function setupEcsForPlayer(
 		row.attachSlotEntity = attachSlot.entity
 	}
 
-	// Ensure there is a hermit in the first 5 cards
 	const cards = components.filter(
 		CardComponent,
 		query.card.player(playerEntity),
@@ -135,6 +158,15 @@ function setupEcsForPlayer(
 	const amountOfStartingCards =
 		options.startWithAllCards || options.unlimitedCards ? cards.length : 7
 
+	// dont bother with shuffling if the deck is hidden
+	if (deck.hidden) {
+		// Keep numbers right for components
+		for (let i = 0; i < amountOfStartingCards; i++) {
+			game.components.new(UnknownDeckSlotComponent, playerEntity)
+		}
+	}
+
+	// Ensure there is a hermit in the first 5 cards
 	if (options.shuffleDeck) {
 		fisherYatesShuffle(cards, game.usePlayerShuffleRNG(playerEntity)).forEach(
 			(card, i) => {

@@ -57,12 +57,18 @@ function setupGame(
 	let con = new ServerSideGameController(
 		{
 			model: player1,
-			deck: player1Deck.cards.map((card) => card.id).sort((a, b) => a - b),
+			deck: {
+				hidden: false,
+				cards: player1Deck.cards.map((card) => card.id).sort((a, b) => a - b),
+			},
 			score: player1Score,
 		},
 		{
 			model: player2,
-			deck: player2Deck.cards.map((card) => card.id).sort((a, b) => a - b),
+			deck: {
+				hidden: false,
+				cards: player2Deck.cards.map((card) => card.id).sort((a, b) => a - b),
+			},
 			score: player2Score,
 		},
 		{gameCode, spectatorCode, apiSecret, countAchievements: 'all'},
@@ -110,14 +116,14 @@ function* gameManager(con: ServerSideGameController) {
 		playerEntity: con.playerOne.entity,
 		spectatorCode: con.spectatorCode ?? undefined,
 		playerOneDefs: con.player1Defs,
-		playerTwoDefs: {...con.player2Defs, deck: []},
+		playerTwoDefs: {...con.player2Defs, deck: {hidden: true, size: con.player2Defs.deck.cards.length}},
 		props: {...con.props, randomSeed: con.game.rngSeed, gameId: con.game.id},
 	})
 	broadcast([con.getPlayers()[1]], {
 		type: serverMessages.GAME_START,
 		playerEntity: con.playerTwo.entity,
 		spectatorCode: con.spectatorCode ?? undefined,
-		playerOneDefs: {...con.player1Defs, deck: []},
+		playerOneDefs: {...con.player1Defs, deck: {hidden: true, size: con.player1Defs.deck.cards.length}},
 		playerTwoDefs: con.player2Defs,
 		props: {...con.props, randomSeed: con.game.rngSeed, gameId: con.game.id},
 	})

@@ -21,6 +21,7 @@ import {
 } from '../cards/types'
 import type {
 	CardEntity,
+	Entity,
 	ObserverEntity,
 	PlayerEntity,
 	SlotEntity,
@@ -67,6 +68,7 @@ export class CardComponent<CardType extends Card = Card> {
 		this.game = game
 		this.entity = entity
 		this.observerEntity = null
+
 		if (card instanceof Object) {
 			this.props = card as CardType
 		} else {
@@ -245,5 +247,18 @@ export class CardComponent<CardType extends Card = Card> {
 			return this.hooks.getSecondaryCost.call().flat()
 		}
 		throw new Error("`attack` should be 'primary' or 'secondary'")
+	}
+}
+
+export class HiddenCardComponent {
+	public static table = 'hidden-cards'
+	readonly entity: CardEntity
+	public game: GameModel
+	public slotEntity: SlotEntity
+
+	constructor(game: GameModel, entity: CardEntity, slotEntity: SlotEntity) {
+		this.game = game
+		this.entity = entity
+		this.slotEntity = slotEntity
 	}
 }

@@ -32,6 +32,7 @@ export type SlotTypeT =
 	| 'hand'
 	| 'deck'
 	| 'discardPile'
+	| 'unknown'
 
 export type DamageT = {
 	target?: number

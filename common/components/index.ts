@@ -1,4 +1,4 @@
-export {CardComponent} from './card-component'
+export {CardComponent, HiddenCardComponent} from './card-component'
 export {
 	SlotComponent,
 	BoardSlotComponent,

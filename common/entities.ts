@@ -31,7 +31,6 @@ export type AchievementEntity = Entity<AchievementComponent>
 /** Create a new entity */
 export function newEntity<T>(entityName: string, game?: GameModel): Entity<T> {
 	if (game) {
-		//@todo workout how secret stuff wont break this
 		return `${game.id}-${game.nextEntity()}` as Entity<T>
 	}
 

@@ -1,29 +1,29 @@
-import {CardComponent} from 'common/components'
-import query from 'common/components/query'
-import {SlotEntity} from 'common/entities'
-import {AttackModel} from 'common/models/attack-model'
-import {GameModel} from 'common/models/game-model'
-import {HermitAttackType} from 'common/types/attack'
+import {CardComponent, HiddenCardComponent} from '../components'
+import query from '../components/query'
+import {SlotEntity} from '../entities'
+import {AttackModel} from '../models/attack-model'
+import {GameModel} from '../models/game-model'
+import {HermitAttackType} from '../types/attack'
 import {
 	CopyAttack,
 	DragCards,
 	ModalResult,
 	SelectCards,
-} from 'common/types/modal-requests'
+} from '../types/modal-requests'
 import {
 	LocalCopyAttack,
 	LocalDragCards,
 	LocalSelectCards,
-} from 'common/types/server-requests'
+} from '../types/server-requests'
 import {
 	AttackActionData,
 	ChangeActiveHermitActionData,
 	PlayCardActionData,
 	attackActionToAttack,
 	attackToAttackAction,
-} from 'common/types/turn-action-data'
-import {executeAttacks} from 'common/utils/attacks'
-import {applySingleUse} from 'common/utils/board'
+} from '../types/turn-action-data'
+import {executeAttacks} from '../utils/attacks'
+import {applySingleUse} from '../utils/board'
 import {assert} from '../utils/assert'
 
 function getAttack(
@@ -137,19 +137,20 @@ export function playCardAction(
 	const localCard = turnAction?.card
 	assert(slotEntity && localCard)
 
-	// If the card is not secret, we can get it easily!
-	let card = game.components.get(localCard.entity)
-
-	if (!card) {
-		card = game.components.newWithEntity(
-			CardComponent,
-			turnAction.entity,
-			turnAction.card.id,
-			turnAction.card.slot,
-		)
-	}
+	let card = game.components.get(turnAction.card.entity)
 
 	assert(card, 'You can not play a card that is not in the ECS')
+
+	if (card instanceof HiddenCardComponent) {
+		console.log('Was hidden')
+		game.components.delete(card.entity)
+		card = game.components.newWithEntity(
+			CardComponent,
+			card.entity,
+			localCard.id,
+			card.slotEntity,
+		)
+	}
 
 	const {currentPlayer} = game
 
@@ -174,7 +175,9 @@ export function playCardAction(
 	const player = pickedSlot.player
 
 	// Do we meet requirements to place the card
-	const canAttach = card?.props.attachCondition(game, pickedSlot) || false
+	console.log('What card is this?', card)
+	console.log('picked slot:', pickedSlot)
+	const canAttach = card.props.attachCondition(game, pickedSlot)
 
 	// It's the wrong kind of slot or does not satisfy the condition
 	assert(
@@ -196,6 +199,7 @@ export function playCardAction(
 
 		switch (pickedSlot.type) {
 			case 'hermit': {
+				console.log('attaching hermit')
 				currentPlayer.hasPlacedHermit = true
 				assert(
 					card.isHealth(),
@@ -203,6 +207,7 @@ export function playCardAction(
 						card.props.numericId,
 				)
 
+				console.log('running attach')
 				card.attach(pickedSlot)
 				pickedSlot.row.health = card.props.health
 
@@ -210,6 +215,7 @@ export function playCardAction(
 					currentPlayer.changeActiveRow(pickedSlot.row)
 				}
 
+				console.log('done')
 				break
 			}
 			case 'item': {
@@ -241,6 +247,8 @@ export function playCardAction(
 
 	// Call onAttach hook
 	currentPlayer.hooks.onAttach.call(card)
+
+	console.log('end of the function')
 }
 
 export function applyEffectAction(game: GameModel): void {

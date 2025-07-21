@@ -48,6 +48,7 @@ export class PlayerComponent {
 	singleUseCardUsed: boolean
 	deckedOut: boolean
 	readonly disableDeckingOut: boolean
+	deckIsUnkown: boolean = false
 
 	pickableSlots: Array<SlotEntity> | null
 
