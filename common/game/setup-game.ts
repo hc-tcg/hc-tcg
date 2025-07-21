@@ -181,6 +181,12 @@ function setupEcsForPlayer(
 		for (let i = 0; i < amountOfStartingCards; i++) {
 			game.components.new(UnknownDeckSlotComponent, playerEntity)
 		}
+		for (let i = 0; i < options.extraStartingCards.length; i++) {
+			const id = options.extraStartingCards[i]
+			let slot = components.new(UnknownDeckSlotComponent, playerEntity)
+			components.new(CardComponent, id, slot.entity)
+		}
+		return
 	}
 
 	// Ensure there is a hermit in the first 5 cards
