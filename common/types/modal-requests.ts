@@ -158,7 +158,7 @@ export namespace SpyglassModal {
 	export type Result =
 		| {
 				result: true
-				cards: null | Array<CardComponent>
+				cards: null | Array<CardEntity>
 		  }
 		| {
 				result: false

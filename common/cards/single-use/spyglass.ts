@@ -50,10 +50,17 @@ const Spyglass: SingleUse = {
 				onResult(modalResult) {
 					if (!modalResult) return
 					if (!canDiscard) return
-
 					if (!modalResult.cards || modalResult.cards.length !== 1) return
 
-					let card = game.components.get(modalResult.cards[0].entity)
+					console.log(
+						game.components.filter(
+							CardComponent,
+							query.card.opponentPlayer,
+							query.card.slot(query.slot.hand),
+						),
+					)
+
+					let card = game.components.find(CardComponent, query.card.entity(modalResult.cards[0]))
 					if (!card) return
 
 					card.discard()
@@ -61,16 +68,7 @@ const Spyglass: SingleUse = {
 					game.battleLog.addEntry(player.entity, getEntry(card))
 				},
 				onTimeout() {
-					if (canDiscard) {
-						// Discard a random card from the opponent's hand
-						let opponentHand = opponentPlayer.getHand()
-						const slotIndex = Math.floor(game.rng() * opponentHand.length)
-						game.battleLog.addEntry(
-							player.entity,
-							getEntry(opponentHand[slotIndex]),
-						)
-						opponentHand[slotIndex].discard()
-					}
+					// Do nothing, this is the easiest to implement
 				},
 			})
 		})

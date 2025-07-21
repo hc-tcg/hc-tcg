@@ -175,14 +175,15 @@ function setupEcsForPlayer(
 	const amountOfStartingCards =
 		options.startWithAllCards || options.unlimitedCards ? cards.length : 7
 
+	for (let i = 0; i < options.extraStartingCards.length; i++) {
+		const id = options.extraStartingCards[i]
+		let slot = components.new(HandSlotComponent, playerEntity)
+		components.new(CardComponent, id, slot.entity)
+	}
+
 	// dont bother with shuffling if the deck is hidden
 	if (deck.hidden) {
 		// Keep numbers right for components
-		for (let i = 0; i < options.extraStartingCards.length; i++) {
-			const id = options.extraStartingCards[i]
-			let slot = components.new(UnknownDeckSlotComponent, playerEntity)
-			components.new(CardComponent, id, slot.entity)
-		}
 		for (let i = 0; i < amountOfStartingCards; i++) {
 			game.components.new(UnknownDeckSlotComponent, playerEntity)
 		}
@@ -208,12 +209,6 @@ function setupEcsForPlayer(
 				},
 			)
 		}
-	}
-
-	for (let i = 0; i < options.extraStartingCards.length; i++) {
-		const id = options.extraStartingCards[i]
-		let slot = components.new(HandSlotComponent, playerEntity)
-		components.new(CardComponent, id, slot.entity)
 	}
 
 	cards.slice(0, amountOfStartingCards).forEach((card) => {
