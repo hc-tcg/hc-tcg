@@ -60,7 +60,10 @@ const Spyglass: SingleUse = {
 						),
 					)
 
-					let card = game.components.find(CardComponent, query.card.entity(modalResult.cards[0]))
+					let card = game.components.find(
+						CardComponent,
+						query.card.entity(modalResult.cards[0]),
+					)
 					if (!card) return
 
 					card.discard()

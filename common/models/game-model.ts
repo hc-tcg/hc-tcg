@@ -41,7 +41,7 @@ import {
 	ModalRequest,
 	ModalResult,
 	SelectCards,
-    SpyglassModal,
+	SpyglassModal,
 } from '../types/modal-requests'
 import {afterAttack, beforeAttack} from '../types/priorities'
 import {rowRevive} from '../types/priorities'
@@ -413,7 +413,10 @@ export class GameModel {
 	): void
 	public addModalRequest(newRequest: DragCards.Request, before?: boolean): void
 	public addModalRequest(newRequest: CopyAttack.Request, before?: boolean): void
-	public addModalRequest(newRequest: SpyglassModal.Request, before?: boolean): void
+	public addModalRequest(
+		newRequest: SpyglassModal.Request,
+		before?: boolean,
+	): void
 	public addModalRequest(newRequest: ModalRequest, before = false) {
 		if (before) {
 			this.state.modalRequests.unshift(newRequest)

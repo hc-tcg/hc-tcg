@@ -106,7 +106,7 @@ function SpyglasssModal({closeModal}: Props) {
 						</div>
 					</div>
 				)}
-				{cards === undefined && "Loading..."}
+				{cards === undefined && 'Loading...'}
 			</Modal.Description>
 			{canDiscard && (
 				<Modal.Options>
