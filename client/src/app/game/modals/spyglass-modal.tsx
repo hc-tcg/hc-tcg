@@ -35,7 +35,7 @@ function SpyglasssModal({closeModal}: Props) {
 	const minSelectionSize = 1
 	const cancelable = true
 
-	const canDiscard = modalData.canDiscard
+	const canDiscard = modalData.canDiscard && cards && cards.length > 0
 
 	const handleSelection = (newSelected: LocalCardInstance) => {
 		setSelected((current) => {
