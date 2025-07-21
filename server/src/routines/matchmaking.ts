@@ -111,6 +111,13 @@ function* gameManager(con: ServerSideGameController) {
 	)
 
 	// To ensure cards are secret, we filter them out here
+	const playerOneDeckLength = con.player1Defs.deck.hidden
+		? con.player1Defs.deck.size
+		: con.player1Defs.deck.cards.length
+	const playerTwoDeckLength = con.player2Defs.deck.hidden
+		? con.player2Defs.deck.size
+		: con.player2Defs.deck.cards.length
+
 	broadcast([con.getPlayers()[0]], {
 		type: serverMessages.GAME_START,
 		playerEntity: con.playerOne.entity,
@@ -118,7 +125,7 @@ function* gameManager(con: ServerSideGameController) {
 		playerOneDefs: con.player1Defs,
 		playerTwoDefs: {
 			...con.player2Defs,
-			deck: {hidden: true, size: con.player2Defs.deck.cards.length},
+			deck: {hidden: true, size: playerOneDeckLength},
 		},
 		props: {...con.props, randomSeed: con.game.rngSeed, gameId: con.game.id},
 	})
@@ -128,7 +135,7 @@ function* gameManager(con: ServerSideGameController) {
 		spectatorCode: con.spectatorCode ?? undefined,
 		playerOneDefs: {
 			...con.player1Defs,
-			deck: {hidden: true, size: con.player1Defs.deck.cards.length},
+			deck: {hidden: true, size: playerTwoDeckLength},
 		},
 		playerTwoDefs: con.player2Defs,
 		props: {...con.props, randomSeed: con.game.rngSeed, gameId: con.game.id},
@@ -1243,12 +1250,15 @@ function setupSolitareGame(
 	const con = new ServerSideGameController(
 		{
 			model: player,
-			deck: playerDeck.cards.map((card) => CARDS[card.id].numericId),
+			deck: {
+				hidden: false,
+				cards: playerDeck.cards.map((card) => CARDS[card.id].numericId),
+			},
 			score: 0,
 		},
 		{
 			model: opponent,
-			deck: opponent.deck,
+			deck: {hidden: false, cards: opponent.deck},
 			score: 0,
 		},
 		{randomizeOrder: false, countAchievements: 'boss'},

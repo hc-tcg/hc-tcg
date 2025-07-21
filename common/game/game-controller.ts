@@ -10,7 +10,7 @@ import {
 	GameSettings,
 	gameSettingsFromEnv,
 } from '../models/game-model'
-import {PlayerId, PlayerModel} from '../models/player-model'
+import {PlayerModel} from '../models/player-model'
 import {EarnedAchievement} from '../types/achievements'
 import {CurrentCoinFlip, Message} from '../types/game-state'
 import {TurnActionAndPlayer} from './run-game'
@@ -39,7 +39,6 @@ export class GameViewer {
 	game: GameModel
 	spectator: boolean
 	playerOnLeftEntity: PlayerEntity
-	player: PlayerModel | undefined
 	replayer: boolean
 
 	public constructor(game: GameModel, props: GameViewerProps) {
@@ -48,7 +47,6 @@ export class GameViewer {
 		this.game = game
 		this.spectator = props.spectator
 		this.playerOnLeftEntity = props.playerOnLeft
-		this.player = props.player
 		this.replayer = props.replayer
 	}
 
@@ -245,21 +243,6 @@ export class GameController {
 
 	public removeViewer(viewer: GameViewer) {
 		this.viewers = this.viewers.filter((v) => v.id !== viewer.id)
-	}
-
-	public getPlayers() {
-		return this.viewers.map((viewer) => viewer.player!)
-	}
-
-	public get players() {
-		return this.viewers.reduce(
-			(acc, viewer) => {
-				if (!viewer.player) return acc
-				acc[viewer.player.id] = viewer.player
-				return acc
-			},
-			{} as Record<PlayerId, PlayerModel>,
-		)
 	}
 
 	/* Wait until the game is ready to accept a turn action then send one */

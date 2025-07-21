@@ -5,11 +5,17 @@ export type ModalRequest =
 	| SelectCards.Request
 	| CopyAttack.Request
 	| DragCards.Request
-export type ModalData = SelectCards.Data | CopyAttack.Data | DragCards.Data
+	| SpyglassModal.Request
+export type ModalData =
+	| SelectCards.Data
+	| CopyAttack.Data
+	| DragCards.Data
+	| SpyglassModal.Data
 export type ModalResult =
 	| SelectCards.Result
 	| CopyAttack.Result
 	| DragCards.Result
+	| SpyglassModal.Result
 
 export namespace SelectCards {
 	export type Request = {
@@ -130,5 +136,31 @@ export namespace CopyAttack {
 		| {
 				cancel?: undefined
 				pick: 'primary' | 'secondary'
+		  }
+}
+
+export namespace SpyglassModal {
+	export type Request = {
+		/** The id of the player to request the pick from */
+		player: PlayerEntity
+		modal: Data
+		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
+		onResult: (modalResult: Result) => void
+		/** Called when the modal request times out before being resolved successfully */
+		onTimeout: () => void
+	}
+
+	export type Data = {
+		type: 'spyglass'
+	}
+
+	export type Result =
+		| {
+				result: true
+				cards: null | Array<CardComponent>
+		  }
+		| {
+				result: false
+				cards: null
 		  }
 }
