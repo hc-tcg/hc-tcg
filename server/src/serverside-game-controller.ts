@@ -1,8 +1,6 @@
-import {
-	GameController,
-	GameControllerProps,
-	GameViewer,
-} from 'common/game/game-controller'
+import {PlayerEntity} from 'common/entities'
+import {GameController, GameViewer} from 'common/game/game-controller'
+import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	ServerMessage,
@@ -11,8 +9,6 @@ import {
 import {EarnedAchievement} from 'common/types/achievements'
 import {Message} from 'common/types/game-state'
 import {broadcast} from './utils/comm'
-import {GameModel} from 'common/models/game-model'
-import {PlayerEntity} from 'common/entities'
 
 type ServerGameViewerProps = {
 	spectator: boolean

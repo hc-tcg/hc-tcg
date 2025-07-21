@@ -583,6 +583,7 @@ export class TurnActionCompressor {
 			hand: 0,
 			deck: 0,
 			discardPile: 0,
+			unknown: 0,
 		}
 
 		const slotType = slotTypeDict[slot.type]
