@@ -6,6 +6,7 @@ import {Modal} from 'components/modal'
 import {
 	getGameState,
 	getOpponentCardsForSpyglass,
+	getStatusEffects,
 } from 'logic/game/game-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {useEffect, useState} from 'react'
@@ -20,13 +21,14 @@ function SpyglasssModal({closeModal}: Props) {
 	const dispatch = useMessageDispatch()
 	const cards = useSelector(getOpponentCardsForSpyglass)
 	const [selected, setSelected] = useState<Array<LocalCardInstance>>([])
+	const modalData: ModalData | null | undefined =
+		useSelector(getGameState)?.currentModalData
+	const statusEffects = useSelector(getStatusEffects)
 
 	useEffect(() => {
 		dispatch({type: localMessages.SPYGLASS_REQUEST_CARDS})
 	}, [])
 
-	const modalData: ModalData | null | undefined =
-		useSelector(getGameState)?.currentModalData
 	if (!modalData || modalData.type !== 'spyglass') return null
 
 	const maxSelectionSize = 1
@@ -93,13 +95,13 @@ function SpyglasssModal({closeModal}: Props) {
 						<div className={css.cardsListContainer}>
 							<CardList
 								onClick={handleSelection}
+								disableAnimations
+								statusEffects={statusEffects}
 								displayTokenCost={false}
 								cards={cards}
 								selected={selected}
 								wrap={true}
 								tooltipAboveModal
-								disableAnimations
-								statusEffects={useSelector(getGameState)?.statusEffects}
 							/>
 						</div>
 					</div>

@@ -177,8 +177,6 @@ export function playCardAction(
 	const player = pickedSlot.player
 
 	// Do we meet requirements to place the card
-	console.log('What card is this?', card)
-	console.log('picked slot:', pickedSlot)
 	const canAttach = card.props.attachCondition(game, pickedSlot)
 
 	// It's the wrong kind of slot or does not satisfy the condition

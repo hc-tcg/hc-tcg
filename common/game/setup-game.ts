@@ -178,13 +178,13 @@ function setupEcsForPlayer(
 	// dont bother with shuffling if the deck is hidden
 	if (deck.hidden) {
 		// Keep numbers right for components
-		for (let i = 0; i < amountOfStartingCards; i++) {
-			game.components.new(UnknownDeckSlotComponent, playerEntity)
-		}
 		for (let i = 0; i < options.extraStartingCards.length; i++) {
 			const id = options.extraStartingCards[i]
 			let slot = components.new(UnknownDeckSlotComponent, playerEntity)
 			components.new(CardComponent, id, slot.entity)
+		}
+		for (let i = 0; i < amountOfStartingCards; i++) {
+			game.components.new(UnknownDeckSlotComponent, playerEntity)
 		}
 		return
 	}
