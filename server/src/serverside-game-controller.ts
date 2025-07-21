@@ -1,5 +1,9 @@
 import {PlayerEntity} from 'common/entities'
-import {GameController, GameViewer} from 'common/game/game-controller'
+import {
+	GameController,
+	GameControllerProps,
+	GameViewer,
+} from 'common/game/game-controller'
 import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
@@ -9,6 +13,13 @@ import {
 import {EarnedAchievement} from 'common/types/achievements'
 import {Message} from 'common/types/game-state'
 import {broadcast} from './utils/comm'
+import {PlayerSetupDefs} from 'common/game/setup-game'
+import {
+	AchievementComponent,
+	ObserverComponent,
+	PlayerComponent,
+} from 'common/components'
+import {ACHIEVEMENTS_LIST} from 'common/achievements'
 
 type ServerGameViewerProps = {
 	spectator: boolean
@@ -28,6 +39,99 @@ export class ServerGameViewer extends GameViewer {
 
 export class ServerSideGameController extends GameController {
 	override viewers: Array<ServerGameViewer> = []
+
+	constructor(
+		player1: PlayerSetupDefs,
+		player2: PlayerSetupDefs,
+		props: GameControllerProps,
+	) {
+		super(player1, player2, props)
+		if (
+			props.countAchievements === 'all' ||
+			props.countAchievements === 'boss'
+		) {
+			if (this.player1Defs.model instanceof PlayerModel) {
+				console.log(
+					'Adding achievements',
+					this.playerOne.playerName,
+					this.player1Defs.model.name,
+				)
+				this.addAchievements(
+					this.player1Defs.model,
+					this.playerOne,
+					props.countAchievements,
+				)
+			}
+			if (this.player2Defs.model instanceof PlayerModel) {
+				console.log(
+					'Adding achievemnts',
+					this.playerTwo.playerName,
+					this.player2Defs.model.name,
+				)
+				this.addAchievements(
+					this.player2Defs.model,
+					this.playerTwo,
+					props.countAchievements,
+				)
+			}
+		}
+	}
+
+	public addAchievements(
+		player: PlayerModel,
+		playerComponent: PlayerComponent,
+		restriction: 'all' | 'boss',
+	) {
+		if (player.achievementProgress) {
+			ACHIEVEMENTS_LIST.forEach((achievement) => {
+				if (restriction === 'boss' && !achievement.evilXAchievement) return
+				if (restriction == 'all' && achievement.evilXAchievement) return
+
+				if (!player.achievementProgress[achievement.numericId]) {
+					player.achievementProgress[achievement.numericId] = {
+						goals: {},
+						levels: Array(achievement.levels.length)
+							.fill(0)
+							.flatMap(() => [{}]),
+					}
+				}
+				const achievementComponent = this.game.components.new(
+					AchievementComponent,
+					achievement,
+					playerComponent.entity,
+					player.achievementProgress[achievement.numericId],
+				)
+				const achievementObserver = this.game.components.new(
+					ObserverComponent,
+					achievementComponent.entity,
+				)
+				achievementComponent.hooks.onComplete.add(
+					achievementObserver.entity,
+					(newProgress, level) => {
+						const originalProgress =
+							achievement.getProgress(
+								player.achievementProgress[achievement.numericId].goals,
+							) ?? 0
+						broadcast([player], {
+							type: serverMessages.ACHIEVEMENT_COMPLETE,
+							achievement: {
+								achievementId: achievement.numericId,
+								level,
+								newProgress,
+								originalProgress,
+							},
+						})
+					},
+				)
+				achievementComponent.props.onGameStart(
+					this.game,
+					playerComponent,
+					achievementComponent,
+					achievementObserver,
+				)
+			})
+		}
+	}
 
 	public getPlayers() {
 		return this.viewers.map((viewer) => viewer.player!)
@@ -75,16 +179,6 @@ export class ServerSideGameController extends GameController {
 		broadcast(this.getPlayers(), {
 			type: serverMessages.CHAT_UPDATE,
 			messages: this.chat,
-		})
-	}
-
-	override onAchievementComplete(
-		player: PlayerModel,
-		achievement: EarnedAchievement,
-	) {
-		broadcast([player], {
-			type: serverMessages.ACHIEVEMENT_COMPLETE,
-			achievement,
 		})
 	}
 
