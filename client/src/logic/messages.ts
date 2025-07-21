@@ -107,6 +107,7 @@ export const localMessages = messages('clientLocalMessages', {
 	COSMETICS_SET: null,
 	COSMETIC_UPDATE: null,
 	OVERVIEW: null,
+	SPYGLASS_SET_CARDS: null,
 	//Rematches
 	RECIEVE_REMATCH: null,
 	CANCEL_REMATCH: null,
@@ -295,6 +296,10 @@ type Messages = [
 		appearance: Appearance
 	},
 	{type: typeof localMessages.COSMETIC_UPDATE; cosmetic: Cosmetic},
+	{
+		type: typeof localMessages.SPYGLASS_SET_CARDS
+		cards: Array<LocalCardInstance>
+	},
 	{type: typeof localMessages.RECIEVE_REMATCH; rematch: RematchData | null},
 	{type: typeof localMessages.CANCEL_REMATCH},
 	{type: typeof localMessages.MATCHMAKING_REMATCH},

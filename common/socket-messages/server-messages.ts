@@ -15,7 +15,7 @@ import {
 import {ApiDeck, Deck, Tag} from '../types/deck'
 import {GameOutcome, LocalGameState} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
-import {PlayerInfo, Update} from '../types/server-requests'
+import {LocalCardInstance, PlayerInfo, Update} from '../types/server-requests'
 
 export const serverMessages = messages('serverMessages', {
 	PLAYER_RECONNECTED: null,
@@ -64,6 +64,7 @@ export const serverMessages = messages('serverMessages', {
 	CURRENT_IMPORT_RECIEVED: null,
 	DATABASE_FAILURE: null,
 	TOAST_SEND: null,
+	SPYGLASS_SEND_CARDS: null,
 })
 
 export type ServerMessages = [
@@ -168,6 +169,10 @@ export type ServerMessages = [
 		title: string
 		description: string
 		image?: string
+	},
+	{
+		type: typeof serverMessages.SPYGLASS_SEND_CARDS
+		cards: Array<LocalCardInstance>
 	},
 ]
 

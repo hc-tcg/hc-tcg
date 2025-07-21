@@ -112,7 +112,7 @@ function getLocalCoinFlip(
 function getLocalPlayerState(
 	game: GameModel,
 	playerState: PlayerComponent,
-	viewer: GameViewer,
+	_viewer: GameViewer,
 ): LocalPlayerState {
 	let singleUseSlot = game.components.find(
 		SlotComponent,
@@ -184,7 +184,6 @@ function getLocalPlayerState(
 
 	const localPlayerState: LocalPlayerState = {
 		entity: playerState.entity,
-		playerId: viewer?.player?.id,
 		playerName: playerState.playerName,
 		minecraftName: playerState.minecraftName,
 		censoredPlayerName: playerState.censoredPlayerName,

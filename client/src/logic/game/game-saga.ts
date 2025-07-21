@@ -198,6 +198,23 @@ function* handleForfeitAction() {
 	yield* sendTurnAction(playerEntity, action.action)
 }
 
+function* recieveCardsForSpyglass() {
+	const socket = yield* select(getSocket)
+	while (true) {
+		const spyglassCards = yield* call(
+			receiveMsg<typeof serverMessages.SPYGLASS_SEND_CARDS>(
+				socket,
+				serverMessages.SPYGLASS_SEND_CARDS,
+			),
+		)
+
+		yield* put<LocalMessage>({
+			type: localMessages.SPYGLASS_SET_CARDS,
+			cards: spyglassCards.cards,
+		})
+	}
+}
+
 type GameSagaProps = {
 	spectatorCode?: string
 	playerEntity: PlayerEntity
@@ -226,6 +243,7 @@ function* gameSaga({
 			fork(achievementSaga),
 			fork(handleForfeitAction),
 			fork(turnActionRecieve, gameController),
+			fork(recieveCardsForSpyglass),
 		]),
 	)
 

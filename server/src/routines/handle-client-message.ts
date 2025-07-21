@@ -1,12 +1,18 @@
 import assert from 'assert'
+import {CardComponent} from 'common/components/card-component'
+import query from 'common/components/query'
+import {getLocalCard} from 'common/game/make-local-state'
 import {
 	RecievedClientMessage,
 	clientMessages,
 } from 'common/socket-messages/client-messages'
+import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalMessage, localMessages} from 'messages'
 import {getGame} from 'selectors'
+import root from 'serverRoot'
 import {put, select, takeEvery} from 'typed-redux-saga'
 import {safeCall} from 'utils'
+import {broadcast} from 'utils/comm'
 import {
 	deleteDeck,
 	deleteTag,
@@ -172,6 +178,19 @@ function* handler(message: RecievedClientMessage) {
 			return yield* getOverview(
 				message as RecievedClientMessage<typeof message.type>,
 			)
+		case clientMessages.SPYGLASS_REQUEST_CARDS:
+			let actionMessage_ = message as RecievedClientMessage<typeof message.type>
+			let game_ = yield* select(getGame(actionMessage_.playerId))
+			assert(game_, 'Player should be in game if sending a turn action message')
+			let opponentHand = game_.game.components.filter(
+				CardComponent,
+				query.card.opponentPlayer,
+				query.card.slot(query.slot.hand),
+			)
+			broadcast([root.players[actionMessage_.playerId]], {
+				type: serverMessages.SPYGLASS_SEND_CARDS,
+				cards: opponentHand.map((c) => getLocalCard(game_.game, c)),
+			})
 	}
 }
 

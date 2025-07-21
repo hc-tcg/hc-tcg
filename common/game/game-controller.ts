@@ -1,9 +1,4 @@
-import {ACHIEVEMENTS_LIST} from '../achievements'
-import {
-	AchievementComponent,
-	ObserverComponent,
-	PlayerComponent,
-} from '../components'
+import {PlayerComponent} from '../components'
 import {PlayerEntity} from '../entities'
 import {
 	GameModel,
@@ -11,7 +6,6 @@ import {
 	gameSettingsFromEnv,
 } from '../models/game-model'
 import {PlayerModel} from '../models/player-model'
-import {EarnedAchievement} from '../types/achievements'
 import {CurrentCoinFlip, Message} from '../types/game-state'
 import {TurnActionAndPlayer} from './run-game'
 import {PlayerSetupDefs} from './setup-game'

@@ -73,10 +73,12 @@ export type LocalModalData =
 	| LocalSelectCards.Data
 	| LocalCopyAttack.Data
 	| LocalDragCards.Data
+	| LocalSpyglassModal.Data
 export type LocalModalResult =
 	| LocalSelectCards.Result
 	| LocalCopyAttack.Result
 	| LocalDragCards.Result
+	| LocalSpyglassModal.Result
 
 export namespace LocalSelectCards {
 	export type Data = {
@@ -151,6 +153,22 @@ export namespace LocalDragCards {
 				result: false
 				leftCards: null
 				rightCards: null
+		  }
+}
+
+export namespace LocalSpyglassModal {
+	export type Data = {
+		type: 'spyglass'
+	}
+
+	export type Result =
+		| {
+				result: true
+				cards: null | Array<CardEntity>
+		  }
+		| {
+				result: false
+				cards: null
 		  }
 }
 

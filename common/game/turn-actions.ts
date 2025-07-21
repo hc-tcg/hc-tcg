@@ -14,6 +14,7 @@ import {
 	LocalCopyAttack,
 	LocalDragCards,
 	LocalSelectCards,
+	LocalSpyglassModal,
 } from '../types/server-requests'
 import {
 	AttackActionData,
@@ -311,7 +312,8 @@ export function modalRequestAction(
 	localModalResult:
 		| LocalSelectCards.Result
 		| LocalCopyAttack.Result
-		| LocalDragCards.Result,
+		| LocalDragCards.Result
+		| LocalSpyglassModal.Result,
 ): void {
 	const modalRequest = game.state.modalRequests[0]
 

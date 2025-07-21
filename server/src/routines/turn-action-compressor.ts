@@ -338,6 +338,8 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 			if ('leftCards' in turnAction.modalResult)
 				return compressDragCards(turnAction.modalResult)
 			else throw Error('Invalid modal type was given')
+
+			// @todo compress spyglass
 		},
 		decompress(game, compressor, buffer): ModalResult {
 			function bufferToCards(cardsBuffer: Buffer) {

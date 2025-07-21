@@ -1,25 +1,24 @@
+import {ACHIEVEMENTS_LIST} from 'common/achievements'
+import {
+	AchievementComponent,
+	ObserverComponent,
+	PlayerComponent,
+} from 'common/components'
 import {PlayerEntity} from 'common/entities'
 import {
 	GameController,
 	GameControllerProps,
 	GameViewer,
 } from 'common/game/game-controller'
+import {PlayerSetupDefs} from 'common/game/setup-game'
 import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	ServerMessage,
 	serverMessages,
 } from 'common/socket-messages/server-messages'
-import {EarnedAchievement} from 'common/types/achievements'
 import {Message} from 'common/types/game-state'
 import {broadcast} from './utils/comm'
-import {PlayerSetupDefs} from 'common/game/setup-game'
-import {
-	AchievementComponent,
-	ObserverComponent,
-	PlayerComponent,
-} from 'common/components'
-import {ACHIEVEMENTS_LIST} from 'common/achievements'
 
 type ServerGameViewerProps = {
 	spectator: boolean
