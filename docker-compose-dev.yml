@@ -32,6 +32,7 @@ services:
       - ./server:/app/server
       - ./client:/app/client
       - ./version.js:/app/version.js
+      - ./config.js:/app/config.js
     environment:
       - DATABASE_URL=postgresql://hctcg:hctcg@db:5432/hctcg
 

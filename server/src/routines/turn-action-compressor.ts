@@ -1,5 +1,5 @@
 import assert from 'assert'
-import serverConfig from 'common/config/server-config'
+import {CONFIG} from 'common/config'
 import {GameControllerProps} from 'common/game/game-controller'
 import runGame from 'common/game/run-game'
 import {PlayerSetupDefs} from 'common/game/setup-game'
@@ -794,10 +794,7 @@ export class TurnActionCompressor {
 
 		this.currentAction = null
 
-		return Buffer.concat([
-			Buffer.from([serverConfig.replayVersion]),
-			...buffers,
-		])
+		return Buffer.concat([Buffer.from([CONFIG.game.replayVersion]), ...buffers])
 	}
 
 	public async bufferToTurnActions(

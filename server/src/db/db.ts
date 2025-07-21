@@ -8,7 +8,7 @@ import assert from 'assert'
 import {ACHIEVEMENTS} from 'common/achievements'
 import {CARDS} from 'common/cards'
 import {getStarterPack} from 'common/cards/starter-decks'
-import serverConfig from 'common/config/server-config'
+import {CONFIG} from 'common/config'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {PlayerSetupDefs} from 'common/game/setup-game'
 import {AchievementProgress, EarnedAchievement} from 'common/types/achievements'
@@ -975,7 +975,7 @@ export class Database {
 					const decompressedReplay = huffmanDecompress(replay)
 					if (
 						decompressedReplay &&
-						decompressedReplay.readUInt8(0) === serverConfig.replayVersion
+						decompressedReplay.readUInt8(0) === CONFIG.game.replayVersion
 					) {
 						hasReplay = true
 					}
@@ -1084,7 +1084,7 @@ export class Database {
 			if (
 				!decompressedReplay ||
 				decompressedReplay.length < 2 ||
-				decompressedReplay.readUintBE(0, 1) !== serverConfig.replayVersion
+				decompressedReplay.readUintBE(0, 1) !== CONFIG.game.replayVersion
 			) {
 				return {type: 'failure', reason: 'The game requested has no replay.'}
 			}

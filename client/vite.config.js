@@ -2,7 +2,7 @@ import path from 'path'
 import react from '@vitejs/plugin-react'
 import {defineConfig} from 'vite'
 import {ViteImageOptimizer} from 'vite-plugin-image-optimizer'
-import CONFIG from '../common/config/server-config.js'
+import {CONFIG} from '../common/config/index.js'
 import {getAppVersion} from '../version'
 
 let plugins = [react()]
@@ -16,8 +16,8 @@ export default defineConfig({
 	define: {
 		__ENV__: JSON.stringify(process.env.NODE_ENV),
 		__DEBUG_BUILD__: JSON.stringify(process.env.NODE_ENV !== 'production'),
-		__PORT__: JSON.stringify(CONFIG.port),
-		__LIMITS__: JSON.stringify(CONFIG.limits),
+		__PORT__: JSON.stringify(CONFIG.server.port),
+		__LIMITS__: JSON.stringify(CONFIG.game.limits),
 		__LOGO_SUBTEXT__: JSON.stringify(CONFIG.logoSubText),
 		__APP_VERSION__: `'${getAppVersion()}'`,
 	},

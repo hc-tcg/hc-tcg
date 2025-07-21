@@ -9,7 +9,7 @@ import {
 } from 'common/components'
 import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
-import serverConfig from 'common/config/server-config'
+import {CONFIG} from 'common/config'
 import {COINS} from 'common/cosmetics/coins'
 import {defaultAppearance} from 'common/cosmetics/default'
 import ExBossAI from 'common/game//virtual/exboss-ai'
@@ -379,7 +379,7 @@ function* gameManager(con: ServerSideGameController) {
 			opponentScore: player1Score,
 		},
 	})
-	yield* delay(serverConfig.limits.rematchTime)
+	yield* delay(CONFIG.game.limits.rematchTime)
 	broadcast(gamePlayers, {
 		type: serverMessages.SEND_REMATCH,
 		rematch: null,

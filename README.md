@@ -13,7 +13,7 @@ If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh
 <summary>Run project with docker (reccomended)</summary>
 <br>
 
-First you will need to create the debug config file. To do this, run `cp ./common/config/debug-config.example.js ./common/config/debug-config.js` on Linux, and `copy ./common/config/debug-config.example.js ./common/config/debug-config.js` on Windows.
+First you will need to create the debug config file.  To do this, run `cp ./config.example.js ./config.js` on Linux, and `copy ./config.example.js ./config.js` on Windows.
 
 You can then use the following command:
 ```
@@ -30,7 +30,7 @@ By default, the client is hosted on port 3002.
 
 ## Running in your development environment
 
-First you will need to create the debug config file. To do this, run `cp ./common/config/debug-config.example.js ./common/config/debug-config.js` on Linux, and `copy ./common/config/debug-config.example.js ./common/config/debug-config.js` on Windows.
+First you will need to create the debug config file.  To do this, run `cp ./config.example.js ./config.js` on Linux, and `copy ./config.example.js ./config.js` on Windows.
 You can then use the following commands:
 
 ```sh
@@ -54,44 +54,7 @@ See [docs/README.md](./docs/README.md).
 
 ## Configuration
 
-### Server Config
-
-Your instance can be configured using the `common/config/server-config.js` file.
-
-| Key           | Description                                                                         |
-| ------------- | ----------------------------------------------------------------------------------- |
-| port          | Server port                                                                         |
-| clientDevPort | Port for vite client server                                                         |
-| clientPath    | Path for the client build used                                                      |
-| cors          | Useful when testing on local network or when your server runs on a different domain |
-| world         | Identifier for your instance when tracking stats                                    |
-| limits        | Limits for players' decks                                                           |
-| logoSubText   | Animated text to show next to logo                                                  |
-| botUrl        | Url to report game results to                                                       |
-| version       | Version displayed on the client                                                     |
-
-### Debug Config
-
-You can configure debug settings using `common/config/debug-config.js`. See the developement environment section for instructions on how to creat this file.
-
-| Key                   | Description                                                                 |
-| --------------------- | --------------------------------------------------------------------------- |
-| disableDeckValidation | Disable deck validation                                                     |
-| extraStartingCards    | Add extra cards into your hand at the start of the game.                    |
-| noItemRequirements    | Remove item requirements for attacks.                                       |
-| forceCoinFlip         | Force coinflips to always roll heads.                                       |
-| oneShotMode           | All attacks will instantly knock out their target.                          |
-| disableDamage         | Disable attacks from dealing damage.                                        |
-| disableDeckOut        | Disable the deck out win condition.                                         |
-| startWithAllCards     | Start the game with every card in your deck. Also disables deck out.        |
-| unlimitedCards        | Start the game with every card in the game. Also disables deck out.         |
-| blockedActions        | Block specific actions every turn.                                          |
-| availableActions      | Make specific actions available every turn.                                 |
-| shuffleDeck           | Shuffe the player's decks at the start of the game.                         |
-| logErrorsToStderr     | Log assertion errors in turn acitons to stderr instead of throwing them.    |
-| showHooksState        | Show hooks in the console.                                                  |
-| autoEndTurn           | When you have no actions left, automatically switch to the opponent's turn. |
-| statsUrl              | URL to use for the Hall of Fame.                                            |
+See `./config.example.js`
 
 ### Formatting & coding style
 
