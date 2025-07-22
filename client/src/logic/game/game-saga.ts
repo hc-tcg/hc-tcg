@@ -31,6 +31,7 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
+import store from 'store'
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
@@ -43,7 +44,19 @@ export function* sendTurnAction(
 	})
 }
 
-class ClientGameController extends GameController {}
+class ClientGameController extends GameController {
+	public broadcastState(): void {
+		console.log('should broadcast state')
+
+		let localGameState = getLocalGameState(this.game, this.viewers[0])
+
+		store.dispatch({
+			type: localMessages.GAME_LOCAL_STATE_SET,
+			localGameState: localGameState,
+			time: Date.now(),
+		})
+	}
+}
 
 async function startGameLocally(
 	myPlayerEntity: PlayerEntity,
@@ -52,15 +65,16 @@ async function startGameLocally(
 	props: GameControllerProps,
 ) {
 	let game = new ClientGameController(player1, player2, props)
-	runGame(game)
-
-	await game.waitForTurnActionReady()
 
 	game.addViewer({
 		spectator: false,
 		replayer: false,
 		playerOnLeft: myPlayerEntity,
 	})
+
+	runGame(game)
+
+	await game.waitForTurnActionReady()
 
 	return game
 }
