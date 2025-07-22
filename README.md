@@ -20,7 +20,7 @@ You can then use the following command:
 npm run docker-dev          # start the docker development image
 ```
 
-By default, the client is hosted on port 3002.
+By default, the client is hosted on port 3002. This image will automatically setup postgresql for you.
 </details>
 
 
@@ -45,6 +45,9 @@ npm run client:dev   # start the client and update automatically when you make c
 _Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
 
 By default, the client is hosted on port 3002.
+
+Certain functions will not work if postgres is not installed. To develop parts of the game that interact with the database,
+either install [postgresql](https://www.postgresql.org/) or run the program with docker.
 
 </details>
 
