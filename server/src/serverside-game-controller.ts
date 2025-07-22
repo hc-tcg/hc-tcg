@@ -187,4 +187,11 @@ export class ServerSideGameController extends GameController {
 			payload,
 		)
 	}
+
+	public getOpponentId(playerId: PlayerId) {
+		const players = this.viewers
+			.filter((viewer) => !viewer.spectator)
+			.map((viewer) => viewer.player)
+		return players.filter((p) => p?.id !== playerId)[0]?.id || null
+	}
 }

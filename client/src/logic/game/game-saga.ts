@@ -173,15 +173,26 @@ function* opponentConnectionSaga() {
 	}
 }
 
-function* reconnectSaga() {
+function* reconnectSaga(gameController: ClientGameController) {
 	const socket = yield* select(getSocket)
 	while (true) {
 		const action = yield* call(
 			receiveMsg(socket, serverMessages.PLAYER_RECONNECTED),
 		)
 
-		// There should be a game state because the player is in a game.
-		if (!action.game) continue
+		// There should be a game history because the player is in a game.
+		if (!action.gameHistory) continue
+
+		const numberOfHandledTurnActions = gameController.game.turnActions.length
+
+		for (const turnAction of action.gameHistory.slice(
+			numberOfHandledTurnActions,
+		)) {
+			gameController.sendTurnAction({
+				action: turnAction.action,
+				playerEntity: turnAction.player,
+			})
+		}
 
 		if (action.messages) {
 			yield* put<LocalMessage>({
@@ -190,9 +201,14 @@ function* reconnectSaga() {
 			})
 		}
 
+		const localGameState = getLocalGameState(
+			gameController.game,
+			gameController.viewers[0],
+		)
+
 		yield* put<LocalMessage>({
 			type: localMessages.GAME_LOCAL_STATE_RECIEVED,
-			localGameState: action.game,
+			localGameState,
 			time: Date.now(),
 		})
 	}
@@ -259,7 +275,7 @@ function* gameSaga({
 			fork(opponentConnectionSaga),
 			fork(chatSaga),
 			fork(spectatorSaga),
-			fork(reconnectSaga),
+			fork(reconnectSaga, gameController),
 			fork(achievementSaga),
 			fork(handleForfeitAction),
 			fork(turnActionRecieve, gameController),

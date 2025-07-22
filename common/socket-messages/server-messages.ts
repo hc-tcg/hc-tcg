@@ -1,3 +1,4 @@
+import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
 import {Appearance} from '../cosmetics/types'
 import {PlayerEntity} from '../entities'
 import {GameControllerProps} from '../game/game-controller'
@@ -13,7 +14,7 @@ import {
 	User,
 } from '../types/database'
 import {ApiDeck, Deck, Tag} from '../types/deck'
-import {GameOutcome, LocalGameState} from '../types/game-state'
+import {GameOutcome, LocalGameState, TurnAction} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
 import {LocalCardInstance, PlayerInfo, Update} from '../types/server-requests'
 
@@ -70,7 +71,7 @@ export const serverMessages = messages('serverMessages', {
 export type ServerMessages = [
 	{
 		type: typeof serverMessages.PLAYER_RECONNECTED
-		game?: LocalGameState
+		gameHistory?: Array<ReplayActionData>
 		spectatorCode?: string
 		messages?: Array<ChatMessage>
 	},
