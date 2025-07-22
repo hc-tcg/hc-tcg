@@ -73,9 +73,6 @@ async function startGameLocally(
 	})
 
 	runGame(game)
-
-	await game.waitForTurnActionReady()
-
 	return game
 }
 
