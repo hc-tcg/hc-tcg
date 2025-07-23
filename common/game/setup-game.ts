@@ -7,11 +7,11 @@ import {
 	PlayerComponent,
 	RowComponent,
 } from '../components'
-import {HiddenCardComponent} from '../components/card-component'
+import {unknownCard} from '../components/card-component'
 import {PlayerDefs} from '../components/player-component'
 import query from '../components/query'
 import {UnknownDeckSlotComponent} from '../components/slot-component'
-import {PlayerEntity} from '../entities'
+import {CardEntity, PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import {Deck} from '../types/deck'
 import ComponentTable from '../types/ecs'
@@ -19,17 +19,27 @@ import {GameState} from '../types/game-state'
 import {VirtualAI} from '../types/virtual-ai'
 import {fisherYatesShuffle} from '../utils/fisher-yates'
 
+export type PlayerDeck =
+	| {
+			// This game knows the entire deck. This is used on the server.
+			type: 'visible'
+			cards: Array<number | string>
+	  }
+	| {
+			// On both clients we need to hide parts of the deck to prevent cheating.
+			// There should be sent in the shuffled order
+			type: 'hidden'
+			deck: Array<CardEntity>
+	  }
+	| {
+			type: 'partiallyHidden'
+			initialHand: Array<string>
+			entities: Array<CardEntity>
+	  }
+
 export type PlayerSetupDefs = {
 	model: PlayerDefs
-	deck:
-		| {
-				hidden: false
-				cards: Array<number | string | Card>
-		  }
-		| {
-				hidden: true
-				size: number
-		  }
+	deck: PlayerDeck
 	score: number
 	ai?: string
 }
@@ -98,34 +108,7 @@ export function setupComponents(
 	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
 }
 
-function setupEcsForPlayer(
-	game: GameModel,
-	components: ComponentTable,
-	playerEntity: PlayerEntity,
-	deck:
-		| {
-				hidden: false
-				cards: Array<number | string | Card>
-		  }
-		| {hidden: true; size: number},
-	options: ComponentSetupOptions,
-) {
-	if (!deck.hidden) {
-		console.log(deck.cards.length)
-		for (const card of deck.cards) {
-			let slot = components.new(DeckSlotComponent, playerEntity, {
-				position: 'back',
-			})
-			components.new(CardComponent, card, slot.entity)
-		}
-	} else {
-		for (let i = 0; i < deck.size; i++) {
-			const slot = components.new(UnknownDeckSlotComponent, playerEntity)
-			components.new(HiddenCardComponent, slot.entity)
-		}
-		game.components.get(playerEntity)!.deckIsUnkown = true
-	}
-
+function setupBoard(components: ComponentTable, playerEntity: PlayerEntity) {
 	for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
 		let row = components.new(RowComponent, playerEntity, rowIndex)
 
@@ -166,6 +149,30 @@ function setupEcsForPlayer(
 		row.hermitSlotEntity = hermitSlot.entity
 		row.attachSlotEntity = attachSlot.entity
 	}
+}
+
+function setupDeck(
+	game: GameModel,
+	components: ComponentTable,
+	playerEntity: PlayerEntity,
+	deck: PlayerDeck,
+	options: ComponentSetupOptions,
+) {
+	if (deck.type === 'hidden') {
+		for (const card of deck.cards) {
+			let slot = components.new(DeckSlotComponent, playerEntity, {
+				position: 'back',
+			})
+			components.new(CardComponent, card, slot.entity)
+		}
+	} else if (deck.type === 'partiallyHidden') {
+	} else {
+		for (let i = 0; i < deck.size; i++) {
+			const slot = components.new(UnknownDeckSlotComponent, playerEntity)
+			components.new(CardComponent, unknownCard, slot.entity)
+		}
+		game.components.get(playerEntity)!.deckIsUnkown = true
+	}
 
 	const cards = components.filter(
 		CardComponent,
@@ -180,15 +187,6 @@ function setupEcsForPlayer(
 		const id = options.extraStartingCards[i]
 		let slot = components.new(HandSlotComponent, playerEntity)
 		components.new(CardComponent, id, slot.entity)
-	}
-
-	// dont bother with shuffling if the deck is hidden
-	if (deck.hidden) {
-		// Keep numbers right for components
-		for (let i = 0; i < amountOfStartingCards; i++) {
-			game.components.new(UnknownDeckSlotComponent, playerEntity)
-		}
-		return
 	}
 
 	// Ensure there is a hermit in the first 5 cards
@@ -215,6 +213,17 @@ function setupEcsForPlayer(
 	cards.slice(0, amountOfStartingCards).forEach((card) => {
 		card.attach(components.new(HandSlotComponent, playerEntity))
 	})
+}
+
+function setupEcsForPlayer(
+	game: GameModel,
+	components: ComponentTable,
+	playerEntity: PlayerEntity,
+	deck: PlayerDeck,
+	options: ComponentSetupOptions,
+) {
+	setupBoard(components, playerEntity)
+	setupDeck(game, components, playerEntity, deck, options)
 }
 
 export function getGameState(game: GameModel, swapPlayers: boolean): GameState {

@@ -6,6 +6,7 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from '../components'
+import {unknownCard} from '../components/card-component'
 import query from '../components/query'
 import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
@@ -52,6 +53,17 @@ export function getLocalCard<CardType extends Card>(
 	game: GameModel,
 	card: CardComponent<CardType>,
 ): LocalCardInstance<CardType> {
+	if (card.props.id === unknownCard.id) {
+		return {
+			id: card.props.numericId,
+			entity: card.entity,
+			slot: card.slotEntity,
+			turnedOver: card.turnedOver,
+			prizeCard: card.prizeCard,
+			attackHint: null,
+		}
+	}
+
 	let attackPreview = null
 	if (card.isSingleUse() && card.props.hasAttack && card.props.attackPreview) {
 		attackPreview = card.props.attackPreview(game)

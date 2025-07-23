@@ -1,4 +1,6 @@
-import {CardComponent, HiddenCardComponent} from '../components'
+import {CARDS} from '../cards'
+import {CardComponent} from '../components'
+import {unknownCard} from '../components/card-component'
 import query from '../components/query'
 import {SlotEntity} from '../entities'
 import {AttackModel} from '../models/attack-model'
@@ -143,15 +145,9 @@ export function playCardAction(
 
 	assert(card, 'You can not play a card that is not in the ECS')
 
-	if (card instanceof HiddenCardComponent) {
+	if (card.props.id === unknownCard.id) {
 		console.log('Was hidden')
-		game.components.delete(card.entity)
-		card = game.components.newWithEntity(
-			CardComponent,
-			card.entity,
-			localCard.id,
-			card.slotEntity,
-		)
+		card.props = CARDS[localCard.id]
 	}
 
 	const {currentPlayer} = game

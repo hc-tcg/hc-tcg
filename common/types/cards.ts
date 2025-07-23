@@ -24,7 +24,12 @@ export type TypeT =
 	| 'explorer'
 	| 'any'
 
-export type CardCategoryT = 'item' | 'single_use' | 'attach' | 'hermit'
+export type CardCategoryT =
+	| 'item'
+	| 'single_use'
+	| 'attach'
+	| 'hermit'
+	| 'unknown'
 export type BoardSlotTypeT = 'item' | 'attach' | 'hermit'
 export type SlotTypeT =
 	| BoardSlotTypeT
