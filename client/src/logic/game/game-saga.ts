@@ -34,6 +34,7 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
+import {CurrentCoinFlip} from 'common/types/game-state'
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
@@ -57,6 +58,11 @@ class ClientGameController extends GameController {
 			localGameState: localGameState,
 			time: Date.now(),
 		})
+	}
+
+	public getRandomDelayForAI(coinFlips: Array<CurrentCoinFlip>) {
+		if (!this.readyToDisplay) return 0
+		return super.getRandomDelayForAI(coinFlips)
 	}
 }
 

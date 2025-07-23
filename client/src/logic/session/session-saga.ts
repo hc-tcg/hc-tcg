@@ -413,7 +413,6 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 	})
 
 	if (result.invalidPlayer || result.connectError) {
-		console.log('HERE')
 		yield* put<LocalMessage>({
 			type: localMessages.CONNECTING_MESSAGE,
 			message: 'Connection Error. Reloading',
