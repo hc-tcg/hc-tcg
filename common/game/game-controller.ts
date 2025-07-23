@@ -98,7 +98,7 @@ export class GameController {
 				randomizeOrder: props.randomizeOrder ?? true,
 				id: props.gameId,
 			},
-		id)
+		)
 
 		this.props.gameId = this.game.id
 
