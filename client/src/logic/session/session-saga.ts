@@ -475,15 +475,25 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 			type: localMessages.CONNECTED,
 		})
 
-		if (result.playerReconnected.game) {
+		if (result.playerReconnected.gameHistory) {
 			const matchmakingStatus = (yield* select(getMatchmaking)).status
 
 			// Only start a new game saga if the player is not in a game.
+			console.log('here')
+			console.log(matchmakingStatus)
 			if (matchmakingStatus !== 'in_game') {
-				yield* call(gameSaga, {
-					initialGameState: result.playerReconnected.game,
+				console.log(result.playerReconnected)
+				console.log('here2')
+				yield* gameSaga({
+					initialTurnActions: result.playerReconnected.gameHistory,
 					spectatorCode: result.playerReconnected.spectatorCode,
+					playerEntity: result.playerReconnected.playerEntity,
+					playerOneDefs: result.playerReconnected.playerOneDefs,
+					playerTwoDefs: result.playerReconnected.playerTwoDefs,
+					props: result.playerReconnected.props,
 				})
+
+				console.log('here3')
 				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
 			}
 		}

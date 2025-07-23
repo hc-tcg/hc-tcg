@@ -60,6 +60,7 @@ export type ReplayActionData = {
 	action: AnyTurnActionData
 	player: PlayerEntity
 	millisecondsSinceLastAction: number
+	realTime: number
 }
 
 const playCard: ReplayAction = {

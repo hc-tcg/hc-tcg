@@ -85,6 +85,7 @@ export class GameController {
 		this.props = props
 
 		let randomSeed = props.randomSeed || GameModel.newGameSeed()
+		this.props.randomSeed = randomSeed
 
 		this.game = new GameModel(
 			randomSeed,
@@ -98,6 +99,8 @@ export class GameController {
 				id: props.gameId,
 			},
 		)
+
+		this.props.gameId = this.game.id
 
 		this.createdTime = Date.now()
 		this.id = 'game-controller_' + Math.random().toString()

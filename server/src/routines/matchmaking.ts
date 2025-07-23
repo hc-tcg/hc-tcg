@@ -128,7 +128,7 @@ function* gameManager(
 					deck: {hidden: true, size: playerOneDeckLength},
 				}
 			: {...con.player2Defs},
-		props: {...con.props, randomSeed: con.game.rngSeed, gameId: con.game.id},
+		props: con.props,
 	})
 	broadcast([con.getPlayers()[1]], {
 		type: serverMessages.GAME_START,
@@ -141,7 +141,7 @@ function* gameManager(
 				}
 			: con.player1Defs,
 		playerTwoDefs: {...con.player2Defs},
-		props: {...con.props, randomSeed: con.game.rngSeed, gameId: con.game.id},
+		props: con.props,
 	})
 
 	root.hooks.newGame.call(con)
@@ -158,6 +158,7 @@ function* gameManager(
 				con.sendTurnAction({
 					action: action.action,
 					playerEntity: action.playerEntity,
+					realTime: Date.now(),
 				})
 
 				for (const player of con.getPlayers()) {
@@ -167,6 +168,7 @@ function* gameManager(
 						action: {
 							action: action.action,
 							playerEntity: action.playerEntity,
+							realTime: Date.now(),
 						},
 					})
 				}

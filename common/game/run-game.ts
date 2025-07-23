@@ -38,14 +38,16 @@ import {virtualPlayerActionSaga} from './virtual'
 export type TurnActionAndPlayer = {
 	action: AnyTurnActionData
 	playerEntity: PlayerEntity
+	realTime: number
 }
 
 export const getTimerForSeconds = (
 	game: GameModel,
 	seconds: number,
+	currentTime: number,
 ): number => {
 	const maxTime = game.settings.maxTurnTime * 1000
-	return Date.now() - maxTime + seconds * 1000
+	return currentTime - maxTime + seconds * 1000
 }
 
 export function getAvailableEnergy(game: GameModel) {
@@ -105,6 +107,7 @@ export function figureOutGameResult(game: GameModel): GameOutcome {
 function getAvailableActions(
 	game: GameModel,
 	availableEnergy: Array<TypeT>,
+	currentTime: number,
 ): TurnActions {
 	const {turn: turnState, pickRequests, modalRequests} = game.state
 	const {currentPlayer} = game
@@ -125,8 +128,8 @@ function getAvailableActions(
 		} else {
 			// Activate opponent action timer
 			if (game.state.timer.opponentActionStartTime === null) {
-				game.state.timer.turnStartTime = Date.now()
-				game.state.timer.opponentActionStartTime = Date.now()
+				game.state.timer.turnStartTime = currentTime
+				game.state.timer.opponentActionStartTime = currentTime
 			}
 			return ['WAIT_FOR_OPPONENT_ACTION']
 		}
@@ -144,8 +147,8 @@ function getAvailableActions(
 		} else {
 			// Activate opponent action timer
 			if (game.state.timer.opponentActionStartTime === null) {
-				game.state.timer.turnStartTime = Date.now()
-				game.state.timer.opponentActionStartTime = Date.now()
+				game.state.timer.turnStartTime = currentTime
+				game.state.timer.opponentActionStartTime = currentTime
 			}
 			return ['WAIT_FOR_OPPONENT_ACTION']
 		}
@@ -385,6 +388,8 @@ function checkHermitHealth(game: GameModel) {
 export function handleSingleTurnAction(
 	con: GameController,
 	turnAction: TurnActionAndPlayer,
+	currentTime: number,
+	aiPlayer: boolean,
 ) {
 	const actionType = turnAction.action.type
 
@@ -471,16 +476,18 @@ export function handleSingleTurnAction(
 				)
 		}
 
-		// If no error has been thown, add the action to the game's history
-		const currentTime = Date.now()
-		con.game.turnActions.push({
-			action: turnAction.action,
-			player: turnAction.playerEntity,
-			millisecondsSinceLastAction: con.game.lastActionTime
-				? currentTime - con.game.lastActionTime
-				: 0,
-		})
-		con.game.lastActionTime = currentTime
+		// If we add AI player turn actions, they will end up happening twice during replays.
+		if (!aiPlayer) {
+			// If no error has been thown, add the action to the game's history
+			con.game.turnActions.push({
+				action: turnAction.action,
+				player: turnAction.playerEntity,
+				millisecondsSinceLastAction: con.game.lastActionTime
+					? currentTime - con.game.lastActionTime
+					: 0,
+				realTime: currentTime,
+			})
+		}
 	} catch (e) {
 		if (con.game.settings.logErrorsToStderr) {
 			console.error(`${con.game.logHeader} ${(e as Error).stack}`.trimStart())
@@ -530,12 +537,18 @@ async function turnActionsSaga(con: GameController) {
 	const {opponentPlayer, currentPlayer} = con.game
 
 	while (true) {
+		const currentTime = con.game.lastActionTime || Date.now()
+
 		if (con.game.settings.showHooksState.enabled) printHooksState(con.game)
 
 		// Available actions code
 		const availableEnergy = getAvailableEnergy(con.game)
 		let blockedActions: Array<TurnAction> = []
-		let availableActions = getAvailableActions(con.game, availableEnergy)
+		let availableActions = getAvailableActions(
+			con.game,
+			availableEnergy,
+			currentTime,
+		)
 
 		// Get blocked actions from hooks
 		// @TODO this should also not really be a hook anymore
@@ -573,17 +586,17 @@ async function turnActionsSaga(con: GameController) {
 
 		// Timer calculation
 		con.game.state.timer.turnStartTime =
-			con.game.state.timer.turnStartTime || Date.now()
+			con.game.state.timer.turnStartTime || currentTime
 		let maxTime = con.game.settings.maxTurnTime * 1000
 		let remainingTime =
-			con.game.state.timer.turnStartTime + maxTime - Date.now()
+			con.game.state.timer.turnStartTime + maxTime - currentTime
 
 		if (availableActions.includes('WAIT_FOR_OPPONENT_ACTION')) {
 			con.game.state.timer.opponentActionStartTime =
-				con.game.state.timer.opponentActionStartTime || Date.now()
+				con.game.state.timer.opponentActionStartTime || currentTime
 			maxTime = con.game.settings.extraActionTime * 1000
 			remainingTime =
-				con.game.state.timer.opponentActionStartTime + maxTime - Date.now()
+				con.game.state.timer.opponentActionStartTime + maxTime - currentTime
 		}
 
 		const graceTime = 1000
@@ -654,7 +667,7 @@ async function turnActionsSaga(con: GameController) {
 				}
 
 				// Reset timer to max time
-				con.game.state.timer.turnStartTime = Date.now()
+				con.game.state.timer.turnStartTime = currentTime
 				con.game.state.timer.turnRemaining = con.game.settings.maxTurnTime
 
 				// Execute attack now if there's a current attack
@@ -679,17 +692,26 @@ async function turnActionsSaga(con: GameController) {
 			return 'GAME_END'
 		}
 
-		// Run action logic
-		const result = handleSingleTurnAction(con, raceResult.turnAction)
+		if (raceResult.turnAction) {
+			con.game.lastActionTime = raceResult.turnAction.realTime
 
-		if (result === 'END_TURN') {
-			break
-		} else if (result === 'FORFEIT') {
-			con.game.endInfo.victoryReason = 'forfeit'
-			return 'GAME_END'
-		} else if (result === 'DISCONNECT') {
-			con.game.endInfo.victoryReason = 'disconnect'
-			return 'GAME_END'
+			// Run action logic
+			const result = handleSingleTurnAction(
+				con,
+				raceResult.turnAction,
+				currentTime,
+				playerAI !== null,
+			)
+
+			if (result === 'END_TURN') {
+				break
+			} else if (result === 'FORFEIT') {
+				con.game.endInfo.victoryReason = 'forfeit'
+				return 'GAME_END'
+			} else if (result === 'DISCONNECT') {
+				con.game.endInfo.victoryReason = 'disconnect'
+				return 'GAME_END'
+			}
 		}
 	}
 }
@@ -705,7 +727,7 @@ export async function turnSaga(con: GameController) {
 	currentPlayer.singleUseCardUsed = false
 	opponentPlayer.singleUseCardUsed = false
 
-	con.game.state.timer.turnStartTime = Date.now()
+	con.game.state.timer.turnStartTime = con.game.lastActionTime || Date.now()
 	con.game.state.timer.turnRemaining = con.game.settings.maxTurnTime * 1000
 
 	con.game.battleLog.addTurnStartEntry()

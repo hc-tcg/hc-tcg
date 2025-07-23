@@ -6,9 +6,11 @@ import {PlayerSetupDefs} from 'common/game/setup-game'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
+import {assert} from 'common/utils/assert'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
+import {ReplayActionData} from 'server/src/routines/turn-action-compressor'
 import store from 'store'
 import {
 	all,
@@ -32,7 +34,6 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
-import {assert} from 'common/utils/assert'
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
@@ -46,11 +47,11 @@ export function* sendTurnAction(
 }
 
 class ClientGameController extends GameController {
+	readyToDisplay = false
+
 	public broadcastState(): void {
-		console.log('should broadcast state')
-
+		if (!this.readyToDisplay) return
 		let localGameState = getLocalGameState(this.game, this.viewers[0])
-
 		store.dispatch({
 			type: localMessages.GAME_LOCAL_STATE_SET,
 			localGameState: localGameState,
@@ -119,6 +120,7 @@ function* turnActionRecieve(gameController: GameController) {
 			turnAction = {
 				playerEntity: localGameState.playerEntity,
 				action: nextTurnAction.localTurnAction.action,
+				realTime: Date.now(),
 			}
 			yield* sendTurnAction(
 				localGameState.playerEntity,
@@ -174,32 +176,39 @@ function* opponentConnectionSaga() {
 	}
 }
 
+async function getGameSyncedUp(
+	gameController: ClientGameController,
+	gameHistory: Array<ReplayActionData>,
+) {
+	const numberOfHandledTurnActions = gameController.game.turnActions.length
+	for (const turnAction of gameHistory.slice(
+		numberOfHandledTurnActions,
+		gameHistory.length,
+	)) {
+		await gameController.sendTurnAction({
+			action: turnAction.action,
+			playerEntity: turnAction.player,
+			realTime: turnAction.realTime,
+		})
+	}
+}
+
 function* reconnectSaga(gameController: ClientGameController) {
 	const socket = yield* select(getSocket)
 	while (true) {
 		const action = yield* call(
 			receiveMsg(socket, serverMessages.PLAYER_RECONNECTED),
 		)
+		console.log('THIS IS RUNNING TOO')
 
-		const getGetSynedUp = async () => {
+		yield* call(() => {
 			assert(
 				action.gameHistory,
 				'There should be a game history because the player is in a game.',
 			)
 
-			const numberOfHandledTurnActions = gameController.game.turnActions.length
-
-			for (const turnAction of action.gameHistory.slice(
-				numberOfHandledTurnActions,
-			)) {
-				await gameController.sendTurnAction({
-					action: turnAction.action,
-					playerEntity: turnAction.player,
-				})
-			}
-		}
-
-		yield* call(getGetSynedUp)
+			return getGameSyncedUp(gameController, action.gameHistory)
+		})
 
 		if (action.messages) {
 			yield* put<LocalMessage>({
@@ -259,6 +268,7 @@ function* recieveCardsForSpyglass() {
 }
 
 type GameSagaProps = {
+	initialTurnActions?: Array<ReplayActionData>
 	spectatorCode?: string
 	playerEntity: PlayerEntity
 	playerOneDefs: PlayerSetupDefs
@@ -267,6 +277,7 @@ type GameSagaProps = {
 }
 
 function* gameSaga({
+	initialTurnActions,
 	spectatorCode,
 	playerEntity,
 	playerOneDefs,
@@ -274,9 +285,25 @@ function* gameSaga({
 	props,
 }: GameSagaProps) {
 	const socket = yield* select(getSocket)
+
 	const gameController = yield* call(() =>
 		startGameLocally(playerEntity, playerOneDefs, playerTwoDefs, props),
 	)
+
+	if (initialTurnActions) {
+		yield* call(() => getGameSyncedUp(gameController, initialTurnActions))
+		const localGameState = getLocalGameState(
+			gameController.game,
+			gameController.viewers[0],
+		)
+		yield* put<LocalMessage>({
+			type: localMessages.GAME_LOCAL_STATE_RECIEVED,
+			localGameState,
+			time: Date.now(),
+		})
+	}
+	gameController.readyToDisplay = true
+
 	const backgroundTasks = yield* fork(() =>
 		all([
 			fork(opponentConnectionSaga),

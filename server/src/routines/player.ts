@@ -2,15 +2,13 @@ import {ACHIEVEMENTS} from 'common/achievements'
 import {CONFIG} from 'common/config'
 import {COSMETICS} from 'common/cosmetics'
 import {Background, Border, Coin, Heart, Title} from 'common/cosmetics/types'
-import {GameController} from 'common/game/game-controller'
-import {getLocalGameState} from 'common/game/make-local-state'
-import {PlayerId, PlayerModel} from 'common/models/player-model'
+import {PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {LocalGameState} from 'common/types/game-state'
+import {assert} from 'common/utils/assert'
 import {censorString} from 'common/utils/formatting'
 import {
 	getAchievementProgress,
@@ -25,32 +23,6 @@ import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
-
-function getLocalGameStateForPlayer(
-	controller: GameController,
-	playerId: PlayerId,
-): LocalGameState | undefined {
-	const player = controller.players[playerId]
-
-	if (controller.game.state.timer.turnStartTime) {
-		const maxTime = controller.game.settings.maxTurnTime * 1000
-		const remainingTime =
-			controller.game.state.timer.turnStartTime + maxTime - Date.now()
-		const graceTime = 1000
-		controller.game.state.timer.turnRemaining = remainingTime + graceTime
-	}
-
-	let viewer = controller.viewers.find(
-		(viewer) => viewer.player.id === player.id,
-	)
-
-	if (!viewer) {
-		console.error('Player tried to connect with invalid player id')
-		return undefined
-	}
-
-	return getLocalGameState(controller.game, viewer)
-}
 
 export function* playerConnectedSaga(
 	action: LocalMessageTable[typeof localMessages.CLIENT_CONNECTED],
@@ -70,11 +42,18 @@ export function* playerConnectedSaga(
 				player: existingPlayer,
 			})
 			const game = yield* select(getGame(existingPlayer.id))
+			assert(game, 'If they are reconnecting, the player should be in a game')
+			console.log('broading reconnect to game info')
 			broadcast([existingPlayer], {
 				type: serverMessages.PLAYER_RECONNECTED,
-				gameHistory: game?.game.turnActions,
+				gameHistory: game.game.turnActions,
 				messages: game?.chat,
 				spectatorCode: game?.spectatorCode ?? undefined,
+				playerEntity: game.viewers.find((v) => v.player.id == existingPlayer.id)
+					?.playerOnLeftEntity!,
+				playerOneDefs: game.player1Defs,
+				playerTwoDefs: game.player2Defs,
+				props: game.props,
 			})
 		} else {
 			const time = Date.now()
