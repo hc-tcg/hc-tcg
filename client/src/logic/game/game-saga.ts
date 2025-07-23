@@ -32,6 +32,7 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
+import {assert} from 'common/utils/assert'
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
@@ -180,19 +181,25 @@ function* reconnectSaga(gameController: ClientGameController) {
 			receiveMsg(socket, serverMessages.PLAYER_RECONNECTED),
 		)
 
-		// There should be a game history because the player is in a game.
-		if (!action.gameHistory) continue
+		const getGetSynedUp = async () => {
+			assert(
+				action.gameHistory,
+				'There should be a game history because the player is in a game.',
+			)
 
-		const numberOfHandledTurnActions = gameController.game.turnActions.length
+			const numberOfHandledTurnActions = gameController.game.turnActions.length
 
-		for (const turnAction of action.gameHistory.slice(
-			numberOfHandledTurnActions,
-		)) {
-			gameController.sendTurnAction({
-				action: turnAction.action,
-				playerEntity: turnAction.player,
-			})
+			for (const turnAction of action.gameHistory.slice(
+				numberOfHandledTurnActions,
+			)) {
+				await gameController.sendTurnAction({
+					action: turnAction.action,
+					playerEntity: turnAction.player,
+				})
+			}
 		}
+
+		yield* call(getGetSynedUp)
 
 		if (action.messages) {
 			yield* put<LocalMessage>({
