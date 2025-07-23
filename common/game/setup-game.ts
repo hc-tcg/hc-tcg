@@ -1,3 +1,4 @@
+import {CARDS} from '../cards'
 import {Card} from '../cards/types'
 import {
 	BoardSlotComponent,
@@ -17,6 +18,7 @@ import {Deck} from '../types/deck'
 import ComponentTable from '../types/ecs'
 import {GameState} from '../types/game-state'
 import {VirtualAI} from '../types/virtual-ai'
+import {assert} from '../utils/assert'
 import {fisherYatesShuffle} from '../utils/fisher-yates'
 
 export type PlayerDeck =
@@ -29,11 +31,7 @@ export type PlayerDeck =
 			// On both clients we need to hide parts of the deck to prevent cheating.
 			// There should be sent in the shuffled order
 			type: 'hidden'
-			deck: Array<CardEntity>
-	  }
-	| {
-			type: 'partiallyHidden'
-			initialHand: Array<string>
+			initialHand?: Array<string>
 			entities: Array<CardEntity>
 	  }
 
@@ -56,11 +54,9 @@ export type OpponentDefs = PlayerDefs & {
 	virtualAI: VirtualAI
 }
 
-function getDeckSize(
-	deck: {hidden: true; size: number} | {hidden: false; cards: Array<any>},
-): number {
-	if (deck.hidden) {
-		return deck.size
+export function getDeckSize(deck: PlayerDeck): number {
+	if (deck.type === 'hidden') {
+		return deck.entities.length
 	}
 	return deck.cards.length
 }
@@ -159,60 +155,82 @@ function setupDeck(
 	options: ComponentSetupOptions,
 ) {
 	if (deck.type === 'hidden') {
-		for (const card of deck.cards) {
+		for (let i = 0; i < getDeckSize(deck); i++) {
 			let slot = components.new(DeckSlotComponent, playerEntity, {
 				position: 'back',
 			})
-			components.new(CardComponent, card, slot.entity)
+			components.new(CardComponent, unknownCard, slot.entity)
 		}
-	} else if (deck.type === 'partiallyHidden') {
+
+		deck.entities.forEach((entity, i) => {
+			const card = components.getOrError(entity)
+			const slot = card.slot
+			assert(slot.inDeck())
+			slot.order = i
+		})
+
+		const initialHand = game.components
+			.filter(CardComponent, query.card.player(playerEntity))
+			.sort(CardComponent.compareOrder)
+			.slice(deck.initialHand.length)
+
+		deck.initialHand.forEach((card, i) => {
+			// Players additionally know each card in their initial hand.
+			if (initialHand) {
+				initialHand[i].props = CARDS[card]
+			}
+
+			// We always put the player's cards in their hand.
+			initialHand[i].attach(components.new(HandSlotComponent, playerEntity))
+		})
 	} else {
-		for (let i = 0; i < deck.size; i++) {
+		for (let i = 0; i < getDeckSize(deck); i++) {
 			const slot = components.new(UnknownDeckSlotComponent, playerEntity)
 			components.new(CardComponent, unknownCard, slot.entity)
 		}
 		game.components.get(playerEntity)!.deckIsUnkown = true
-	}
 
-	const cards = components.filter(
-		CardComponent,
-		query.card.player(playerEntity),
-		query.card.slot(query.slot.deck),
-	)
-
-	const amountOfStartingCards =
-		options.startWithAllCards || options.unlimitedCards ? cards.length : 7
-
-	for (let i = 0; i < options.extraStartingCards.length; i++) {
-		const id = options.extraStartingCards[i]
-		let slot = components.new(HandSlotComponent, playerEntity)
-		components.new(CardComponent, id, slot.entity)
-	}
-
-	// Ensure there is a hermit in the first 5 cards
-	if (options.shuffleDeck) {
-		fisherYatesShuffle(cards, game.usePlayerShuffleRNG(playerEntity)).forEach(
-			(card, i) => {
-				if (card.slot.inDeck()) card.slot.order = i
-			},
+		const cards = components.filter(
+			CardComponent,
+			query.card.player(playerEntity),
+			query.card.slot(query.slot.deck),
 		)
 
-		if (!cards.some((card) => card.isHermit())) return
+		const amountOfStartingCards =
+			options.startWithAllCards || options.unlimitedCards ? cards.length : 7
 
-		while (
-			!cards.slice(0, amountOfStartingCards).some((card) => card.isHermit())
-		) {
+		for (let i = 0; i < options.extraStartingCards.length; i++) {
+			const id = options.extraStartingCards[i]
+			let slot = components.new(HandSlotComponent, playerEntity)
+			components.new(CardComponent, id, slot.entity)
+		}
+
+		// Ensure there is a hermit in the first 5 cards
+		if (options.shuffleDeck) {
 			fisherYatesShuffle(cards, game.usePlayerShuffleRNG(playerEntity)).forEach(
 				(card, i) => {
 					if (card.slot.inDeck()) card.slot.order = i
 				},
 			)
-		}
-	}
 
-	cards.slice(0, amountOfStartingCards).forEach((card) => {
-		card.attach(components.new(HandSlotComponent, playerEntity))
-	})
+			if (!cards.some((card) => card.isHermit())) return
+
+			while (
+				!cards.slice(0, amountOfStartingCards).some((card) => card.isHermit())
+			) {
+				fisherYatesShuffle(
+					cards,
+					game.usePlayerShuffleRNG(playerEntity),
+				).forEach((card, i) => {
+					if (card.slot.inDeck()) card.slot.order = i
+				})
+			}
+		}
+
+		cards.slice(0, amountOfStartingCards).forEach((card) => {
+			card.attach(components.new(HandSlotComponent, playerEntity))
+		})
+	}
 }
 
 function setupEcsForPlayer(

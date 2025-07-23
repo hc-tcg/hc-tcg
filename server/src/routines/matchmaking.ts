@@ -1,7 +1,11 @@
 import assert from 'assert'
 import {CARDS} from 'common/cards'
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
-import {AchievementComponent, PlayerComponent} from 'common/components'
+import {
+	AchievementComponent,
+	CardComponent,
+	PlayerComponent,
+} from 'common/components'
 import query from 'common/components/query'
 import {CONFIG} from 'common/config'
 import {COINS} from 'common/cosmetics/coins'
@@ -9,7 +13,7 @@ import {defaultAppearance} from 'common/cosmetics/default'
 import ExBossAI from 'common/game//virtual/exboss-ai'
 import {getLocalGameState} from 'common/game/make-local-state'
 import runGame, {getTimerForSeconds} from 'common/game/run-game'
-import {OpponentDefs} from 'common/game/setup-game'
+import {getDeckSize, OpponentDefs} from 'common/game/setup-game'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
@@ -52,7 +56,7 @@ function setupGame(
 		{
 			model: player1,
 			deck: {
-				hidden: false,
+				type: 'visible',
 				cards: player1Deck.cards.map((card) => card.id).sort((a, b) => a - b),
 			},
 			score: player1Score,
@@ -60,7 +64,7 @@ function setupGame(
 		{
 			model: player2,
 			deck: {
-				hidden: false,
+				type: 'visible',
 				cards: player2Deck.cards.map((card) => card.id).sort((a, b) => a - b),
 			},
 			score: player2Score,
@@ -108,24 +112,68 @@ function* gameManager(
 	)
 
 	// To ensure cards are secret, we filter them out here
-	const playerOneDeckLength = con.player1Defs.deck.hidden
-		? con.player1Defs.deck.size
-		: con.player1Defs.deck.cards.length
-	const playerTwoDeckLength = con.player2Defs.deck.hidden
-		? con.player2Defs.deck.size
-		: con.player2Defs.deck.cards.length
+	const playerOneDeckLength = getDeckSize(con.player1Defs.deck)
+	const playerTwoDeckLength = getDeckSize(con.player2Defs.deck)
 
 	console.log('should broadcast start game')
+
+	assert(con.game.playerOne)
+	assert(con.game.playerTwo)
+
+	const playerOneHand = con.game.components
+		.filter(
+			CardComponent,
+			query.card.player(con.game.playerOne),
+			query.card.slot(query.slot.hand),
+		)
+		.sort(CardComponent.compareOrder)
+	const playerTwoHand = con.game.components
+		.filter(
+			CardComponent,
+			query.card.player(con.game.playerTwo),
+			query.card.slot(query.slot.hand),
+		)
+		.sort(CardComponent.compareOrder)
+	const playerOneDeck = con.game.components
+		.filter(
+			CardComponent,
+			query.card.player(con.game.playerOne),
+			query.card.slot(query.slot.deck),
+		)
+		.sort(CardComponent.compareOrder)
+	const playerTwoDeck = con.game.components
+		.filter(
+			CardComponent,
+			query.card.player(con.game.playerTwo),
+			query.card.slot(query.slot.deck),
+		)
+		.sort(CardComponent.compareOrder)
 
 	broadcast([con.getPlayers()[0]], {
 		type: serverMessages.GAME_START,
 		playerEntity: con.playerOne.entity,
 		spectatorCode: con.spectatorCode ?? undefined,
-		playerOneDefs: con.player1Defs,
+		playerOneDefs: {
+			...con.player2Defs,
+			deck: {
+				type: 'hidden',
+				entities: [
+					...playerOneHand.map((c) => c.entity),
+					...playerOneHand.map((c) => c.entity),
+				],
+				initialHand: playerOneHand.map((c) => c.props.id),
+			},
+		},
 		playerTwoDefs: hideOpponentDeck
 			? {
 					...con.player2Defs,
-					deck: {hidden: true, size: playerOneDeckLength},
+					deck: {
+						type: 'hidden',
+						entities: [
+							...playerTwoHand.map((c) => c.entity),
+							...playerTwoHand.map((c) => c.entity),
+						],
+					},
 				}
 			: {...con.player2Defs},
 		props: con.props,
@@ -134,13 +182,27 @@ function* gameManager(
 		type: serverMessages.GAME_START,
 		playerEntity: con.playerTwo.entity,
 		spectatorCode: con.spectatorCode ?? undefined,
-		playerOneDefs: hideOpponentDeck
-			? {
-					...con.player1Defs,
-					deck: {hidden: true, size: playerTwoDeckLength},
-				}
-			: con.player1Defs,
-		playerTwoDefs: {...con.player2Defs},
+		playerOneDefs: {
+			...con.player2Defs,
+			deck: {
+				type: 'hidden',
+				entities: [
+					...playerOneHand.map((c) => c.entity),
+					...playerOneHand.map((c) => c.entity),
+				],
+			},
+		},
+		playerTwoDefs: {
+			...con.player2Defs,
+			deck: {
+				type: 'hidden',
+				entities: [
+					...playerTwoHand.map((c) => c.entity),
+					...playerTwoDeck.map((c) => c.entity),
+				],
+				initialHand: playerTwoHand.map((c) => c.props.id),
+			},
+		},
 		props: con.props,
 	})
 
@@ -199,6 +261,7 @@ function* gameManager(
 						player: playerEntity,
 					},
 					playerEntity: playerEntity,
+					realTime: Date.now(),
 				})
 			}
 		}),

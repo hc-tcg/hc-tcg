@@ -12,3 +12,13 @@ The following items are visible on the server but hidden for one or more players
 Cards are added to the ECS for the clients when they are revealed to both players. The same entity will be used for all
 components for the same card.
 
+### Revealing cards
+Cards will have the properties of "unknownCard" when they are hidden.
+We always know the order of the entites to make drawing easy.
+When the client recieves an unknownCard it will ask the server what the card is.
+To prevent cheating, the server will additionally keep track of what cards are allowed to be revealed.
+
+The following actions can reveal cards:
+- Drawing a card from your deck
+- Using a spyglass to reveal the opponent's hand.
+
