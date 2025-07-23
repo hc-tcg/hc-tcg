@@ -159,7 +159,7 @@ function* gameManager(
 				type: 'hidden',
 				entities: [
 					...playerOneHand.map((c) => c.entity),
-					...playerOneHand.map((c) => c.entity),
+					...playerOneDeck.map((c) => c.entity),
 				],
 				initialHand: playerOneHand.map((c) => c.props.id),
 			},
@@ -171,7 +171,7 @@ function* gameManager(
 						type: 'hidden',
 						entities: [
 							...playerTwoHand.map((c) => c.entity),
-							...playerTwoHand.map((c) => c.entity),
+							...playerTwoDeck.map((c) => c.entity),
 						],
 					},
 				}
@@ -188,7 +188,7 @@ function* gameManager(
 				type: 'hidden',
 				entities: [
 					...playerOneHand.map((c) => c.entity),
-					...playerOneHand.map((c) => c.entity),
+					...playerOneDeck.map((c) => c.entity),
 				],
 			},
 		},

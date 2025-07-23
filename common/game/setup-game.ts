@@ -155,6 +155,7 @@ function setupDeck(
 	options: ComponentSetupOptions,
 ) {
 	if (deck.type === 'hidden') {
+		game.components.get(playerEntity)!.deckIsUnkown = true
 		for (let i = 0; i < getDeckSize(deck); i++) {
 			let slot = components.new(DeckSlotComponent, playerEntity, {
 				position: 'back',
@@ -164,31 +165,38 @@ function setupDeck(
 
 		deck.entities.forEach((entity, i) => {
 			const card = components.getOrError(entity)
+			console.log(card)
 			const slot = card.slot
 			assert(slot.inDeck())
 			slot.order = i
 		})
 
+		const amountOfStartingCards =
+			options.startWithAllCards || options.unlimitedCards
+				? getDeckSize(deck)
+				: 7
+
 		const initialHand = game.components
 			.filter(CardComponent, query.card.player(playerEntity))
 			.sort(CardComponent.compareOrder)
-			.slice(deck.initialHand.length)
+			.slice(0, amountOfStartingCards)
 
-		deck.initialHand.forEach((card, i) => {
+		for (let i = 0; i < amountOfStartingCards; i++) {
 			// Players additionally know each card in their initial hand.
-			if (initialHand) {
-				initialHand[i].props = CARDS[card]
+			if (deck.initialHand) {
+				initialHand[i].props = CARDS[deck.initialHand[i]]
 			}
 
 			// We always put the player's cards in their hand.
 			initialHand[i].attach(components.new(HandSlotComponent, playerEntity))
-		})
+		}
 	} else {
 		for (let i = 0; i < getDeckSize(deck); i++) {
-			const slot = components.new(UnknownDeckSlotComponent, playerEntity)
-			components.new(CardComponent, unknownCard, slot.entity)
+			const slot = components.new(DeckSlotComponent, playerEntity, {
+				position: 'back',
+			})
+			components.new(CardComponent, CARDS[deck.cards[i]], slot.entity)
 		}
-		game.components.get(playerEntity)!.deckIsUnkown = true
 
 		const cards = components.filter(
 			CardComponent,
@@ -199,11 +207,11 @@ function setupDeck(
 		const amountOfStartingCards =
 			options.startWithAllCards || options.unlimitedCards ? cards.length : 7
 
-		for (let i = 0; i < options.extraStartingCards.length; i++) {
-			const id = options.extraStartingCards[i]
-			let slot = components.new(HandSlotComponent, playerEntity)
-			components.new(CardComponent, id, slot.entity)
-		}
+		//for (let i = 0; i < options.extraStartingCards.length; i++) {
+		//	const id = options.extraStartingCards[i]
+		//	let slot = components.new(HandSlotComponent, playerEntity)
+		//	components.new(CardComponent, id, slot.entity)
+		//}
 
 		// Ensure there is a hermit in the first 5 cards
 		if (options.shuffleDeck) {
