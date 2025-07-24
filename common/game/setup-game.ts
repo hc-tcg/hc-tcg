@@ -11,7 +11,6 @@ import {
 import {unknownCard} from '../components/card-component'
 import {PlayerDefs} from '../components/player-component'
 import query from '../components/query'
-import {UnknownDeckSlotComponent} from '../components/slot-component'
 import {CardEntity, PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import {Deck} from '../types/deck'
@@ -155,7 +154,6 @@ function setupDeck(
 	options: ComponentSetupOptions,
 ) {
 	if (deck.type === 'hidden') {
-		game.components.get(playerEntity)!.deckIsUnkown = true
 		for (let i = 0; i < getDeckSize(deck); i++) {
 			let slot = components.new(DeckSlotComponent, playerEntity, {
 				position: 'back',
@@ -165,7 +163,6 @@ function setupDeck(
 
 		deck.entities.forEach((entity, i) => {
 			const card = components.getOrError(entity)
-			console.log(card)
 			const slot = card.slot
 			assert(slot.inDeck())
 			slot.order = i

@@ -121,15 +121,12 @@ const Slot = ({
 		>
 			{card ? (
 				<div className={css.cardWrapper}>
-					{card.turnedOver ? (
-						<img src="/images/card-back.jpg" className={css.cardBack} />
-					) : (
-						<Card
-							disabled={!!gameOver}
-							card={card.id}
-							displayTokenCost={false}
-						/>
-					)}
+					<Card
+						disabled={!!gameOver}
+						card={card.id}
+						displayTokenCost={false}
+						turnedOver={card.turnedOver}
+					/>
 				</div>
 			) : (
 				<img draggable="false" className={css.frame} src={frameImg} />

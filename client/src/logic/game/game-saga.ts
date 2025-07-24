@@ -35,6 +35,8 @@ import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
 import {CurrentCoinFlip} from 'common/types/game-state'
+import {PlayerComponent} from 'common/components'
+import query from 'common/components/query'
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
@@ -79,6 +81,10 @@ async function startGameLocally(
 		replayer: false,
 		playerOnLeft: myPlayerEntity,
 	})
+
+	game.game.components
+		.filter(PlayerComponent, query.not(query.player.entity(myPlayerEntity)))
+		.map((p) => (p.deckIsUnkown = true))
 
 	runGame(game)
 	return game

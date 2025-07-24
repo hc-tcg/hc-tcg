@@ -54,11 +54,12 @@ export function getLocalCard<CardType extends Card>(
 	card: CardComponent<CardType>,
 ): LocalCardInstance<CardType> {
 	if (card.props.id === unknownCard.id) {
+		console.log('hidden card detected')
 		return {
-			id: card.props.numericId,
+			id: 0,
 			entity: card.entity,
 			slot: card.slotEntity,
-			turnedOver: card.turnedOver,
+			turnedOver: true,
 			prizeCard: card.prizeCard,
 			attackHint: null,
 		}
