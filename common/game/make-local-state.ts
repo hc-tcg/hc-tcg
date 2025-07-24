@@ -56,7 +56,7 @@ export function getLocalCard<CardType extends Card>(
 	if (card.props.id === unknownCard.id) {
 		console.log('hidden card detected')
 		return {
-			id: 0,
+			id: card.props.numericId,
 			entity: card.entity,
 			slot: card.slotEntity,
 			turnedOver: true,

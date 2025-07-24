@@ -1,18 +1,12 @@
 import assert from 'assert'
-import {CardComponent} from 'common/components/card-component'
-import query from 'common/components/query'
-import {getLocalCard} from 'common/game/make-local-state'
 import {
 	RecievedClientMessage,
 	clientMessages,
 } from 'common/socket-messages/client-messages'
-import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalMessage, localMessages} from 'messages'
 import {getGame} from 'selectors'
-import root from 'serverRoot'
 import {put, select, takeEvery} from 'typed-redux-saga'
 import {safeCall} from 'utils'
-import {broadcast} from 'utils/comm'
 import {
 	deleteDeck,
 	deleteTag,
@@ -28,6 +22,7 @@ import {
 } from '../db/db-reciever'
 import {chatMessage} from './background/chat'
 import spectatorLeaveSaga from './background/spectators'
+import {hiddenCardRequest, spyglassRequestCards} from './handle-game-messages'
 import {
 	cancelPrivateGame,
 	cancelRematch,
@@ -48,7 +43,6 @@ import {
 	updateMinecraftNameSaga,
 	updateUsernameSaga,
 } from './player'
-import {hiddenCardRequest, spyglassRequestCards} from './handle-game-messages'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
@@ -184,7 +178,10 @@ function* handler(message: RecievedClientMessage) {
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.HIDDEN_CARD_REQUEST:
-			hiddenCardRequest(message as RecievedClientMessage<typeof message.type>)
+			console.log('HERE')
+			return yield* hiddenCardRequest(
+				message as RecievedClientMessage<typeof message.type>,
+			)
 	}
 }
 

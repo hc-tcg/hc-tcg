@@ -13,7 +13,7 @@ import {defaultAppearance} from 'common/cosmetics/default'
 import ExBossAI from 'common/game//virtual/exboss-ai'
 import {getLocalGameState} from 'common/game/make-local-state'
 import runGame, {getTimerForSeconds} from 'common/game/run-game'
-import {getDeckSize, OpponentDefs} from 'common/game/setup-game'
+import {OpponentDefs, getDeckSize} from 'common/game/setup-game'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
@@ -112,8 +112,8 @@ function* gameManager(
 	)
 
 	// To ensure cards are secret, we filter them out here
-	const playerOneDeckLength = getDeckSize(con.player1Defs.deck)
-	const playerTwoDeckLength = getDeckSize(con.player2Defs.deck)
+	const _playerOneDeckLength = getDeckSize(con.player1Defs.deck)
+	const _playerTwoDeckLength = getDeckSize(con.player2Defs.deck)
 
 	console.log('should broadcast start game')
 

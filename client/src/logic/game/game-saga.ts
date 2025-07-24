@@ -1,3 +1,6 @@
+import {CARDS} from 'common/cards'
+import {PlayerComponent} from 'common/components'
+import query from 'common/components/query'
 import {PlayerEntity} from 'common/entities'
 import {GameController, GameControllerProps} from 'common/game/game-controller'
 import {getLocalGameState} from 'common/game/make-local-state'
@@ -5,9 +8,11 @@ import runGame, {TurnActionAndPlayer} from 'common/game/run-game'
 import {PlayerSetupDefs} from 'common/game/setup-game'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
+import {CurrentCoinFlip} from 'common/types/game-state'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {assert} from 'common/utils/assert'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
+import {requestHiddenInfo} from 'logic/request-hidden-info'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {ReplayActionData} from 'server/src/routines/turn-action-compressor'
@@ -34,11 +39,6 @@ import coinFlipSaga from './tasks/coin-flips-saga'
 import endTurnSaga from './tasks/end-turn-saga'
 import slotSaga from './tasks/slot-saga'
 import spectatorSaga from './tasks/spectators'
-import {CurrentCoinFlip} from 'common/types/game-state'
-import {PlayerComponent} from 'common/components'
-import query from 'common/components/query'
-import {CARDS} from 'common/cards'
-import {requestHiddenInfo} from 'logic/request-hidden-info'
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
@@ -303,8 +303,17 @@ function* hiddenCardReveal(gameController: ClientGameController) {
 		for (const card of revealedCards.cards) {
 			const component = gameController.game.components.get(card.entity)
 			if (!component) continue
-			component.props == CARDS[card.id]
+			component.props = CARDS[card.id]
 		}
+
+		yield* putResolve<LocalMessage>({
+			type: localMessages.GAME_LOCAL_STATE_SET,
+			localGameState: getLocalGameState(
+				gameController.game,
+				gameController.viewers[0],
+			),
+			time: Date.now(),
+		})
 	}
 }
 

@@ -9,7 +9,6 @@ import {
 import {LocalCardInstance} from 'common/types/server-requests'
 import {LocalMessage, localMessages} from 'logic/messages'
 import {ModalVariant} from './tasks/action-modals-saga'
-import { requestHiddenInfo } from 'logic/request-hidden-info'
 
 type LocalGameRoot = {
 	localGameState: LocalGameState | null

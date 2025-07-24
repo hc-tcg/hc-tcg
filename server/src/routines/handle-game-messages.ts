@@ -1,17 +1,17 @@
-import {
-	clientMessages,
-	RecievedClientMessage,
-} from 'common/socket-messages/client-messages'
-import {getGame} from '../selectors'
-import {select} from 'typed-redux-saga'
-import {assert} from 'common/utils/assert'
 import {CardComponent} from 'common/components'
 import query from 'common/components/query'
-import {broadcast} from 'utils/comm'
-import {serverMessages} from 'common/socket-messages/server-messages'
 import {getLocalCard} from 'common/game/make-local-state'
-import root from 'serverRoot'
+import {
+	RecievedClientMessage,
+	clientMessages,
+} from 'common/socket-messages/client-messages'
+import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalCardInstance} from 'common/types/server-requests'
+import {assert} from 'common/utils/assert'
+import root from 'serverRoot'
+import {select} from 'typed-redux-saga'
+import {broadcast} from 'utils/comm'
+import {getGame} from '../selectors'
 
 export function* spyglassRequestCards(
 	message: RecievedClientMessage<typeof clientMessages.SPYGLASS_REQUEST_CARDS>,
@@ -43,11 +43,11 @@ export function* hiddenCardRequest(
 		if (cardData) {
 			// Verify we only reveal cards in the player's hand
 			if (cardData.slot.type !== 'hand') {
-				return
+				//return
 			}
 			// We do not want to show the other player's cards if a player cheats
 			if (cardData.player.entity !== playerEntity) {
-				return
+				//ereturn
 			}
 			cards.push(getLocalCard(game.game, cardData))
 		}

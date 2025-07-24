@@ -1,5 +1,5 @@
 import {Cosmetic} from '../cosmetics/types'
-import {CardEntity, Entity, PlayerEntity} from '../entities'
+import {CardEntity, PlayerEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {RematchData} from '../types/app'
