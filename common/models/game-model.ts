@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
 import JoeHillsRare from '../cards/hermits/joehills-rare'
 import {
@@ -42,10 +41,12 @@ import {
 	ModalRequest,
 	ModalResult,
 	SelectCards,
+	SpyglassModal,
 } from '../types/modal-requests'
 import {afterAttack, beforeAttack} from '../types/priorities'
 import {rowRevive} from '../types/priorities'
 import {PickRequest} from '../types/server-requests'
+import {assert} from '../utils/assert'
 import {newIncrementor} from '../utils/game'
 import {newRandomNumberGenerator} from '../utils/random'
 import {AttackModel, ReadonlyAttackModel} from './attack-model'
@@ -104,6 +105,11 @@ export function gameSettingsFromEnv(): GameSettings {
 
 export class GameModel {
 	public rng: () => number
+
+	public playerOneShuffle: () => number
+	public playerTwoShuffle: () => number
+	public coinFlipRng: () => number
+
 	public nextEntity: () => number
 	private entityCount: number
 
@@ -129,6 +135,9 @@ export class GameModel {
 	public components: ComponentTable
 
 	public arePlayersSwapped: boolean
+
+	public playerOne?: PlayerEntity = undefined
+	public playerTwo?: PlayerEntity = undefined
 
 	public hooks: {
 		/** Hook called before the main attack loop, for every attack from any source */
@@ -193,8 +202,18 @@ export class GameModel {
 
 		this.settings = settings
 		assert(rngSeed.length < 16, 'Game RNG seed must be under 16 characters')
+
 		this.rngSeed = rngSeed
 		this.rng = newRandomNumberGenerator(rngSeed)
+
+		this.playerOneShuffle = newRandomNumberGenerator(
+			this.rng().toString().slice(2),
+		)
+		this.playerTwoShuffle = newRandomNumberGenerator(
+			this.rng().toString().slice(2),
+		)
+		this.coinFlipRng = newRandomNumberGenerator(this.rng().toString().slice(2))
+
 		this.entityCount = 0
 		this.nextEntity = newIncrementor()
 		const swapPlayers = this.rng()
@@ -239,6 +258,15 @@ export class GameModel {
 
 	public get logHeader() {
 		return `Game ${this.id}:`
+	}
+
+	public usePlayerShuffleRNG(entity: PlayerEntity) {
+		if (entity === this.playerOne) {
+			return this.playerOneShuffle
+		} else if (entity === this.playerTwo) {
+			return this.playerTwoShuffle
+		}
+		throw new Error('Unknown player entity')
 	}
 
 	public get currentPlayerEntity() {
@@ -385,6 +413,10 @@ export class GameModel {
 	): void
 	public addModalRequest(newRequest: DragCards.Request, before?: boolean): void
 	public addModalRequest(newRequest: CopyAttack.Request, before?: boolean): void
+	public addModalRequest(
+		newRequest: SpyglassModal.Request,
+		before?: boolean,
+	): void
 	public addModalRequest(newRequest: ModalRequest, before = false) {
 		if (before) {
 			this.state.modalRequests.unshift(newRequest)

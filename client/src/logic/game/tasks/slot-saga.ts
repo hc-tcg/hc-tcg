@@ -14,7 +14,6 @@ import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {SagaIterator} from 'redux-saga'
 import {call, put, putResolve, take, takeLeading} from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
-import {localPutCardInSlot} from '../local-state'
 
 function* pickForPickRequestSaga(
 	action: LocalMessageTable[typeof localMessages.GAME_SLOT_PICKED],
@@ -46,8 +45,6 @@ function* pickWithSelectedSaga(
 	if (pickInfo.slotType !== 'hand') {
 		const actionType = slotToPlayCardAction[CARDS[selectedCard.id].category]
 		if (!actionType) return
-
-		yield* localPutCardInSlot(action, selectedCard)
 
 		if (pickInfo.card === null) {
 			yield* put<LocalMessage>({

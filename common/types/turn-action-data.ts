@@ -21,7 +21,6 @@ export const attackActionToAttack: Record<AttackAction, HermitAttackType> = {
 	SECONDARY_ATTACK: 'secondary',
 }
 
-// @TODO long term all data types that can be sent to server should be here
 export type PlayCardActionData = {
 	type: PlayCardAction
 	slot: SlotEntity

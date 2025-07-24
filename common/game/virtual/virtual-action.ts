@@ -14,5 +14,6 @@ export default async function handleVirtualPlayerAction(
 	return {
 		action: action,
 		playerEntity: component.playerEntity,
+		realTime: Date.now(),
 	}
 }

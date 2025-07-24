@@ -1,5 +1,4 @@
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {getOpponentId} from 'common/utils/game'
 import {LocalMessageTable, localMessages} from 'messages'
 import {getGame} from 'selectors'
 import {select} from 'typed-redux-saga'
@@ -14,7 +13,7 @@ export function* statusChangedSaga(
 	if (!game) return
 
 	const playerId = action.player.id
-	const opponentId = getOpponentId(game, playerId)
+	const opponentId = game.getOpponentId(playerId)
 	const connectionStatus = game.players[playerId]?.socket.connected
 
 	if (!opponentId || !game.players[opponentId]) return

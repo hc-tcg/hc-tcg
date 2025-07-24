@@ -6,6 +6,7 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from '../components'
+import {unknownCard} from '../components/card-component'
 import query from '../components/query'
 import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
@@ -52,6 +53,18 @@ export function getLocalCard<CardType extends Card>(
 	game: GameModel,
 	card: CardComponent<CardType>,
 ): LocalCardInstance<CardType> {
+	if (card.props.id === unknownCard.id) {
+		console.log('hidden card detected')
+		return {
+			id: card.props.numericId,
+			entity: card.entity,
+			slot: card.slotEntity,
+			turnedOver: true,
+			prizeCard: card.prizeCard,
+			attackHint: null,
+		}
+	}
+
 	let attackPreview = null
 	if (card.isSingleUse() && card.props.hasAttack && card.props.attackPreview) {
 		attackPreview = card.props.attackPreview(game)
@@ -94,6 +107,10 @@ export function getLocalModalData(
 			...modal,
 			hermitCard: getLocalCard(game, hermitCard),
 		}
+	} else if (modal.type === 'spyglass') {
+		return {
+			...modal,
+		}
 	}
 
 	throw new Error('Uknown modal type')
@@ -112,7 +129,7 @@ function getLocalCoinFlip(
 function getLocalPlayerState(
 	game: GameModel,
 	playerState: PlayerComponent,
-	viewer: GameViewer,
+	_viewer: GameViewer,
 ): LocalPlayerState {
 	let singleUseSlot = game.components.find(
 		SlotComponent,
@@ -184,7 +201,6 @@ function getLocalPlayerState(
 
 	const localPlayerState: LocalPlayerState = {
 		entity: playerState.entity,
-		playerId: viewer?.player.id,
 		playerName: playerState.playerName,
 		minecraftName: playerState.minecraftName,
 		censoredPlayerName: playerState.censoredPlayerName,
@@ -204,7 +220,7 @@ export function getLocalGameState(
 ): LocalGameState {
 	const playerState = game.components.find(
 		PlayerComponent,
-		(_game, player) => player.entity == viewer.playerOnLeft.entity,
+		(_game, player) => player.entity == viewer.playerOnLeftEntity,
 	)
 
 	const replay = viewer.replayer

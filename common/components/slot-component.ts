@@ -156,7 +156,9 @@ function findDeckPosition(
 
 	if (position.position === 'random') {
 		let numberOfPossibleSpots = deckPositionsWithCards.length + 1
-		let targetPosition = Math.floor(game.rng() * numberOfPossibleSpots)
+		let targetPosition = Math.floor(
+			game.usePlayerShuffleRNG(player)() * numberOfPossibleSpots,
+		)
 
 		if (targetPosition === 0) {
 			return findDeckPosition(game, player, {position: 'front'})
@@ -237,5 +239,15 @@ export class DiscardSlotComponent extends SlotComponent {
 
 	override inDiscardPile(): this is DiscardSlotComponent {
 		return true
+	}
+}
+
+export class UnknownDeckSlotComponent extends SlotComponent {
+	override inDeck(): this is DeckSlotComponent {
+		return true
+	}
+
+	constructor(game: GameModel, entity: SlotEntity, playerEntity: PlayerEntity) {
+		super(game, entity, {player: playerEntity, type: 'unknown'})
 	}
 }

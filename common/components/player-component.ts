@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {Appearance} from '../cosmetics/types'
 import type {PlayerEntity, RowEntity, SlotEntity} from '../entities'
 import type {AttackModel} from '../models/attack-model'
@@ -14,6 +13,7 @@ import type {
 } from '../types/game-state'
 import {GameHook, PriorityHook, WaterfallHook} from '../types/hooks'
 import {afterApply, onCoinFlip, onTurnEnd} from '../types/priorities'
+import {assert} from '../utils/assert'
 import {CardComponent} from './card-component'
 import query from './query'
 import {RowComponent} from './row-component'
@@ -46,8 +46,9 @@ export class PlayerComponent {
 	lives: number
 	hasPlacedHermit: boolean
 	singleUseCardUsed: boolean
-	deckedOut: boolean
 	readonly disableDeckingOut: boolean
+	deckIsUnkown: boolean = false
+	cardsLeftInDeck: number
 
 	pickableSlots: Array<SlotEntity> | null
 
@@ -128,7 +129,12 @@ export class PlayerComponent {
 		blockKnockback: GameHook<() => boolean>
 	}
 
-	constructor(game: GameModel, entity: PlayerEntity, player: PlayerDefs) {
+	constructor(
+		game: GameModel,
+		entity: PlayerEntity,
+		player: PlayerDefs,
+		deckSize: number,
+	) {
 		this.game = game
 		this.entity = entity
 		this.uuid = player.uuid
@@ -140,10 +146,10 @@ export class PlayerComponent {
 		this.lives = 3
 		this.hasPlacedHermit = false
 		this.singleUseCardUsed = false
-		this.deckedOut = false
 		this.disableDeckingOut = !!player.disableDeckingOut
 		this.pickableSlots = null
 		this.activeRowEntity = null
+		this.cardsLeftInDeck = deckSize
 
 		this.hooks = {
 			availableEnergy: new WaterfallHook(),
@@ -217,11 +223,13 @@ export class PlayerComponent {
 		let cards = this.getDrawPile()
 			.sort(CardComponent.compareOrder)
 			.slice(0, amount)
-		if (cards.length < amount) {
-			if (!this.disableDeckingOut) this.deckedOut = true
-		}
 		cards.forEach((card) => card.draw())
+		this.cardsLeftInDeck -= amount
 		return cards
+	}
+
+	get deckedOut() {
+		return this.cardsLeftInDeck <= 0
 	}
 
 	public hasStatusEffect(effect: StatusEffect<PlayerComponent>) {

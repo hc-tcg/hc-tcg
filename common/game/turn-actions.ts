@@ -1,30 +1,34 @@
-import assert from 'assert'
-import {CardComponent} from 'common/components'
-import query from 'common/components/query'
-import {SlotEntity} from 'common/entities'
-import {AttackModel} from 'common/models/attack-model'
-import {GameModel} from 'common/models/game-model'
-import {HermitAttackType} from 'common/types/attack'
+import {CARDS} from '../cards'
+import {CardComponent} from '../components'
+import {unknownCard} from '../components/card-component'
+import query from '../components/query'
+import {SlotEntity} from '../entities'
+import {AttackModel} from '../models/attack-model'
+import {GameModel} from '../models/game-model'
+import {HermitAttackType} from '../types/attack'
 import {
 	CopyAttack,
 	DragCards,
 	ModalResult,
 	SelectCards,
-} from 'common/types/modal-requests'
+	SpyglassModal,
+} from '../types/modal-requests'
 import {
 	LocalCopyAttack,
 	LocalDragCards,
 	LocalSelectCards,
-} from 'common/types/server-requests'
+	LocalSpyglassModal,
+} from '../types/server-requests'
 import {
 	AttackActionData,
 	ChangeActiveHermitActionData,
 	PlayCardActionData,
 	attackActionToAttack,
 	attackToAttackAction,
-} from 'common/types/turn-action-data'
-import {executeAttacks} from 'common/utils/attacks'
-import {applySingleUse} from 'common/utils/board'
+} from '../types/turn-action-data'
+import {assert} from '../utils/assert'
+import {executeAttacks} from '../utils/attacks'
+import {applySingleUse} from '../utils/board'
 
 function getAttack(
 	game: GameModel,
@@ -137,8 +141,14 @@ export function playCardAction(
 	const localCard = turnAction?.card
 	assert(slotEntity && localCard)
 
-	const card = game.components.get(localCard.entity)
+	let card = game.components.get(turnAction.card.entity)
+
 	assert(card, 'You can not play a card that is not in the ECS')
+
+	if (card.props.id === unknownCard.id) {
+		console.log('Was hidden')
+		card.props = CARDS[localCard.id]
+	}
 
 	const {currentPlayer} = game
 
@@ -163,7 +173,7 @@ export function playCardAction(
 	const player = pickedSlot.player
 
 	// Do we meet requirements to place the card
-	const canAttach = card?.props.attachCondition(game, pickedSlot) || false
+	const canAttach = card.props.attachCondition(game, pickedSlot)
 
 	// It's the wrong kind of slot or does not satisfy the condition
 	assert(
@@ -185,6 +195,7 @@ export function playCardAction(
 
 		switch (pickedSlot.type) {
 			case 'hermit': {
+				console.log('attaching hermit')
 				currentPlayer.hasPlacedHermit = true
 				assert(
 					card.isHealth(),
@@ -192,6 +203,7 @@ export function playCardAction(
 						card.props.numericId,
 				)
 
+				console.log('running attach')
 				card.attach(pickedSlot)
 				pickedSlot.row.health = card.props.health
 
@@ -199,6 +211,7 @@ export function playCardAction(
 					currentPlayer.changeActiveRow(pickedSlot.row)
 				}
 
+				console.log('done')
 				break
 			}
 			case 'item': {
@@ -230,6 +243,8 @@ export function playCardAction(
 
 	// Call onAttach hook
 	currentPlayer.hooks.onAttach.call(card)
+
+	console.log('end of the function')
 }
 
 export function applyEffectAction(game: GameModel): void {
@@ -292,7 +307,8 @@ export function modalRequestAction(
 	localModalResult:
 		| LocalSelectCards.Result
 		| LocalCopyAttack.Result
-		| LocalDragCards.Result,
+		| LocalDragCards.Result
+		| LocalSpyglassModal.Result,
 ): void {
 	const modalRequest = game.state.modalRequests[0]
 
@@ -335,6 +351,11 @@ export function modalRequestAction(
 			!modal.pick || modalRequest.modal.availableAttacks.includes(modal.pick),
 			`Client picked an action that was not available to copy: ${modal.pick}`,
 		)
+		modalRequest_.onResult(modal)
+	} else if (modalRequest.modal.type === 'spyglass') {
+		let modalRequest_ = modalRequest as SpyglassModal.Request
+		modalResult = localModalResult as SpyglassModal.Result
+		let modal = localModalResult as SpyglassModal.Result
 		modalRequest_.onResult(modal)
 	} else throw Error('Unknown modal type')
 

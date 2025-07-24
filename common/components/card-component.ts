@@ -6,6 +6,7 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from '.'
+import {card} from '../cards/defaults'
 import {
 	type Attach,
 	type Card,
@@ -34,14 +35,26 @@ import query from './query'
 let CARDS: Record<any, Card>
 import('../cards').then((mod) => (CARDS = mod.CARDS))
 
+export let unknownCard: Card = {
+	name: 'Unknown Card',
+	attachCondition: (_game, _card) => false,
+	id: 'unknown',
+	numericId: -1,
+	category: 'unknown',
+	expansion: 'default',
+	rarity: 'common',
+	tokens: 0,
+	...card,
+}
+
 /** A component that represents a card in the game. Cards can be in the player's hand, deck, board or discard pile. */
 export class CardComponent<CardType extends Card = Card> {
 	public static table = 'cards'
 
 	readonly game: GameModel
-	readonly props: CardType
 	readonly entity: CardEntity
 
+	props: CardType
 	slotEntity: SlotEntity
 	observerEntity: ObserverEntity | null
 
@@ -67,6 +80,7 @@ export class CardComponent<CardType extends Card = Card> {
 		this.game = game
 		this.entity = entity
 		this.observerEntity = null
+
 		if (card instanceof Object) {
 			this.props = card as CardType
 		} else {

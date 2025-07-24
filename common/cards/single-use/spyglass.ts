@@ -31,8 +31,7 @@ const Spyglass: SingleUse = {
 
 		observer.subscribe(player.hooks.onApply, () => {
 			const coinFlip = flipCoin(game, player, component)
-			const canDiscard =
-				coinFlip[0] === 'heads' && opponentPlayer.getHand().length > 0
+			const canDiscard = coinFlip[0] === 'heads'
 
 			const getEntry = (card: CardComponent): string => {
 				return `$p{You|${player.playerName}}$ discarded ${getFormattedName(
@@ -41,46 +40,38 @@ const Spyglass: SingleUse = {
 				)} from {$o${opponentPlayer.playerName}'s$|your} hand`
 			}
 
+			//@todo Redo spyglass entirely
 			game.addModalRequest({
 				player: player.entity,
 				modal: {
-					type: 'selectCards',
-					name: 'Spyglass',
-					description: canDiscard ? 'Select 1 card to discard' : '',
-					cards: opponentPlayer.getHand().map((card) => card.entity),
-					selectionSize: canDiscard ? 1 : 0,
-					cancelable: true,
-					primaryButton: {
-						text: canDiscard ? 'Confirm Selection' : 'Close',
-						variant: 'default',
-					},
+					type: 'spyglass',
+					canDiscard: canDiscard,
 				},
 				onResult(modalResult) {
 					if (!modalResult) return
 					if (!canDiscard) return
-
 					if (!modalResult.cards || modalResult.cards.length !== 1) return
 
-					let card = game.components.get(modalResult.cards[0].entity)
+					console.log(
+						game.components.filter(
+							CardComponent,
+							query.card.opponentPlayer,
+							query.card.slot(query.slot.hand),
+						),
+					)
+
+					let card = game.components.find(
+						CardComponent,
+						query.card.entity(modalResult.cards[0]),
+					)
 					if (!card) return
 
 					card.discard()
 
 					game.battleLog.addEntry(player.entity, getEntry(card))
-
-					return
 				},
 				onTimeout() {
-					if (canDiscard) {
-						// Discard a random card from the opponent's hand
-						let opponentHand = opponentPlayer.getHand()
-						const slotIndex = Math.floor(game.rng() * opponentHand.length)
-						game.battleLog.addEntry(
-							player.entity,
-							getEntry(opponentHand[slotIndex]),
-						)
-						opponentHand[slotIndex].discard()
-					}
+					// Do nothing, this is the easiest to implement
 				},
 			})
 		})

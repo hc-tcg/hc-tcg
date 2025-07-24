@@ -12,6 +12,7 @@ import {
 	ForfeitModal,
 	SelectCardsModal,
 	SingleUseConfirmModal,
+	SpyglasssModal,
 } from '../../../app/game/modals'
 
 export const MODAL_COMPONENTS = {
@@ -26,6 +27,7 @@ export const MODAL_COMPONENTS = {
 	copyAttack: CopyAttackModal,
 	selectCards: SelectCardsModal,
 	dragCards: DragCardsModal,
+	spyglass: SpyglasssModal,
 }
 
 export type ModalVariant = keyof typeof MODAL_COMPONENTS

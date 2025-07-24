@@ -142,7 +142,6 @@ export type GameVictoryReason =
 
 export type LocalPlayerState = {
 	entity: PlayerEntity
-	playerId?: PlayerId
 	playerName: string
 	minecraftName: string
 	censoredPlayerName: string
