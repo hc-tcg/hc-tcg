@@ -66,6 +66,7 @@ export const serverMessages = messages('serverMessages', {
 	DATABASE_FAILURE: null,
 	TOAST_SEND: null,
 	SPYGLASS_SEND_CARDS: null,
+	HIDDEN_CARD_REVEAL: null,
 })
 
 export type ServerMessages = [
@@ -179,6 +180,10 @@ export type ServerMessages = [
 	},
 	{
 		type: typeof serverMessages.SPYGLASS_SEND_CARDS
+		cards: Array<LocalCardInstance>
+	},
+	{
+		type: typeof serverMessages.HIDDEN_CARD_REVEAL
 		cards: Array<LocalCardInstance>
 	},
 ]

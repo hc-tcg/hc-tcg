@@ -194,4 +194,9 @@ export class ServerSideGameController extends GameController {
 			.map((viewer) => viewer.player)
 		return players.filter((p) => p?.id !== playerId)[0]?.id || null
 	}
+
+	public getPlayerEntity(id: PlayerId) {
+		let viewer = this.viewers.find((v) => v.id === id && !v.spectator)
+		return viewer?.playerOnLeftEntity
+	}
 }

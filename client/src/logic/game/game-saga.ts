@@ -37,6 +37,8 @@ import spectatorSaga from './tasks/spectators'
 import {CurrentCoinFlip} from 'common/types/game-state'
 import {PlayerComponent} from 'common/components'
 import query from 'common/components/query'
+import {CARDS} from 'common/cards'
+import {requestHiddenInfo} from 'logic/request-hidden-info'
 
 export function* sendTurnAction(
 	entity: PlayerEntity,
@@ -279,6 +281,33 @@ function* recieveCardsForSpyglass() {
 	}
 }
 
+function* requestHiddenInfoSaga() {
+	while (true) {
+		const action = yield* take<
+			LocalMessageTable[typeof localMessages.GAME_LOCAL_STATE_SET]
+		>(localMessages.GAME_LOCAL_STATE_SET)
+		yield* requestHiddenInfo(action.localGameState)
+	}
+}
+
+function* hiddenCardReveal(gameController: ClientGameController) {
+	const socket = yield* select(getSocket)
+	while (true) {
+		const revealedCards = yield* call(
+			receiveMsg<typeof serverMessages.HIDDEN_CARD_REVEAL>(
+				socket,
+				serverMessages.HIDDEN_CARD_REVEAL,
+			),
+		)
+
+		for (const card of revealedCards.cards) {
+			const component = gameController.game.components.get(card.entity)
+			if (!component) continue
+			component.props == CARDS[card.id]
+		}
+	}
+}
+
 type GameSagaProps = {
 	initialTurnActions?: Array<ReplayActionData>
 	spectatorCode?: string
@@ -326,7 +355,9 @@ function* gameSaga({
 			fork(handleForfeitAction),
 			fork(turnActionRecieve, gameController),
 			fork(requestCardsForSpyglass),
+			fork(requestHiddenInfoSaga),
 			fork(recieveCardsForSpyglass),
+			fork(hiddenCardReveal, gameController),
 		]),
 	)
 

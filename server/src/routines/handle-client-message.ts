@@ -48,6 +48,7 @@ import {
 	updateMinecraftNameSaga,
 	updateUsernameSaga,
 } from './player'
+import {hiddenCardRequest, spyglassRequestCards} from './handle-game-messages'
 
 function* handler(message: RecievedClientMessage) {
 	switch (message.type) {
@@ -179,18 +180,11 @@ function* handler(message: RecievedClientMessage) {
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.SPYGLASS_REQUEST_CARDS:
-			let actionMessage_ = message as RecievedClientMessage<typeof message.type>
-			let game_ = yield* select(getGame(actionMessage_.playerId))
-			assert(game_, 'Player should be in game if sending a turn action message')
-			let opponentHand = game_.game.components.filter(
-				CardComponent,
-				query.card.opponentPlayer,
-				query.card.slot(query.slot.hand),
+			return yield* spyglassRequestCards(
+				message as RecievedClientMessage<typeof message.type>,
 			)
-			broadcast([root.players[actionMessage_.playerId]], {
-				type: serverMessages.SPYGLASS_SEND_CARDS,
-				cards: opponentHand.map((c) => getLocalCard(game_.game, c)),
-			})
+		case clientMessages.HIDDEN_CARD_REQUEST:
+			hiddenCardRequest(message as RecievedClientMessage<typeof message.type>)
 	}
 }
 

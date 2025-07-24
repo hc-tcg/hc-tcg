@@ -9,6 +9,7 @@ import {
 import {LocalCardInstance} from 'common/types/server-requests'
 import {LocalMessage, localMessages} from 'logic/messages'
 import {ModalVariant} from './tasks/action-modals-saga'
+import { requestHiddenInfo } from 'logic/request-hidden-info'
 
 type LocalGameRoot = {
 	localGameState: LocalGameState | null
@@ -70,6 +71,7 @@ const gameReducer = (
 						(card) => card.entity === state.selectedCard?.entity,
 					) || null,
 			}
+
 			if (
 				state.localGameState?.turn.currentPlayerEntity ===
 				action.localGameState?.turn.currentPlayerEntity
