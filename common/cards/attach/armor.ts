@@ -18,8 +18,7 @@ function blockDamage(
 		game.hooks.beforeAttack,
 		beforeAttack.EFFECT_REDUCE_DAMAGE,
 		(attack) => {
-			if (!attack.isTargeting(component) || attack.isType('status-effect'))
-				return
+			if (!attack.isTargeting(component)) return
 
 			if (damageBlocked < amount) {
 				const damageReduction = Math.min(
