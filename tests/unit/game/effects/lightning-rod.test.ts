@@ -80,12 +80,16 @@ describe('Test Lightning Rod', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+
 					await test.playCardFromHand(TargetBlock, 'single_use')
 					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
 						query.slot.rowIndex(1),
 					)
+					await test.endTurn()
+					await test.endTurn()
+					
 					await test.attack('primary')
 
 					expect(

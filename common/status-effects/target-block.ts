@@ -7,11 +7,16 @@ import {
 import {GameModel} from '../models/game-model'
 import {beforeAttack, onTurnEnd} from '../types/priorities'
 import query from './../components/query'
-import {Counter, statusEffect, StatusEffect, systemStatusEffect} from './status-effect'
+import {
+	Counter,
+	StatusEffect,
+	statusEffect,
+	systemStatusEffect,
+} from './status-effect'
 
 export const TargetBlockPrepareEffect: Counter<CardComponent> = {
 	...statusEffect,
-	id:'target-block-prepare',
+	id: 'target-block-prepare',
 	icon: 'target-block',
 	name: 'Take aim',
 	description: 'Next turn, this hermit will take all damage.',

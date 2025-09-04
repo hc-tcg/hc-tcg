@@ -50,7 +50,11 @@ const TargetBlock: SingleUse = {
 				// Apply the card
 				applySingleUse(game, pickedSlot)
 				game.components
-					.new(StatusEffectComponent, TargetBlockPrepareEffect, component.entity)
+					.new(
+						StatusEffectComponent,
+						TargetBlockPrepareEffect,
+						component.entity,
+					)
 					.apply(pickedSlot.card?.entity)
 			},
 		})

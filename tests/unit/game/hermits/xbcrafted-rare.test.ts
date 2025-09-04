@@ -142,12 +142,16 @@ describe('Test xB', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(XBCraftedRare, 'hermit', 0)
+					
 					await test.playCardFromHand(TargetBlock, 'single_use')
 					await test.pick(
 						query.slot.rowIndex(1),
 						query.slot.opponent,
 						query.slot.hermit,
 					)
+					await test.endTurn()
+					await test.endTurn()
+
 					await test.attack('secondary')
 					await test.endTurn()
 

@@ -72,6 +72,9 @@ describe('Test Rare Worm Man', () => {
 						query.slot.hermit,
 						query.slot.rowIndex(0),
 					)
+					await test.endTurn()
+					await test.endTurn()
+					
 					await test.attack('secondary')
 					expect(
 						game.components.find(
