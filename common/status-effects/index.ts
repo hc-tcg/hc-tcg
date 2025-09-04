@@ -59,7 +59,7 @@ import SmithingTableEffect from './smithing-table'
 import SoulmateEffect from './soulmate'
 import SpentFortuneEffect from './spent-fortune'
 import {StatusEffect} from './status-effect'
-import {TargetBlockEffect} from './target-block'
+import {TargetBlockEffect, TargetBlockPrepareEffect} from './target-block'
 import TFCDiscardedFromEffect from './tfc-discarded-from'
 import TimeSkipDisabledEffect from './time-skip-disabled'
 import {TrapHoleEffect} from './trap-hole'
@@ -101,6 +101,7 @@ export const STATUS_EFFECTS_LIST: Array<StatusEffect> = [
 	ChromaKeyedEffect,
 	GoMiningEffect,
 	TargetBlockEffect,
+	TargetBlockPrepareEffect,
 	GasLightTriggeredEffect,
 	IgnoreAttachSlotEffect,
 	EfficiencyEffect,

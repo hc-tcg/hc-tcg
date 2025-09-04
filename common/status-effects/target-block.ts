@@ -7,7 +7,32 @@ import {
 import {GameModel} from '../models/game-model'
 import {beforeAttack, onTurnEnd} from '../types/priorities'
 import query from './../components/query'
-import {StatusEffect, systemStatusEffect} from './status-effect'
+import {Counter, statusEffect, StatusEffect, systemStatusEffect} from './status-effect'
+
+export const TargetBlockPrepareEffect: Counter<CardComponent> = {
+	...statusEffect,
+	id:'target-block-prepare',
+	icon: 'target-block',
+	name: 'Take aim',
+	description: 'Next turn, this hermit will take all damage.',
+	counter: 1,
+	counterType: 'number',
+	onApply(_game, effect, target, observer) {
+		const {opponentPlayer} = target
+
+		observer.subscribe(opponentPlayer.hooks.onTurnStart, () => {
+			if (!effect.counter) return
+			effect.counter--
+
+			if (effect.counter === 0) effect.remove()
+		})
+	},
+	onRemoval(game, effect, target, _observer) {
+		game.components
+			.new(StatusEffectComponent, TargetBlockEffect, effect.creatorEntity)
+			.apply(target.entity)
+	},
+}
 
 export const TargetBlockEffect: StatusEffect<CardComponent> = {
 	...systemStatusEffect,

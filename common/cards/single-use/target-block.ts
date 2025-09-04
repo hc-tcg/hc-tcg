@@ -6,7 +6,7 @@ import {
 } from '../../components'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
-import {TargetBlockEffect} from '../../status-effects/target-block'
+import {TargetBlockPrepareEffect} from '../../status-effects/target-block'
 import {applySingleUse} from '../../utils/board'
 import {singleUse} from '../defaults'
 import {SingleUse} from '../types'
@@ -27,7 +27,7 @@ const TargetBlock: SingleUse = {
 	rarity: 'rare',
 	tokens: 4,
 	description:
-		"Choose one of your opponent's AFK Hermits to take all damage done during this turn.",
+		"Choose one of your opponent's AFK Hermits to take all damage done on your next turn.",
 	attachCondition: query.every(
 		singleUse.attachCondition,
 		query.exists(SlotComponent, pickCondition),
@@ -50,7 +50,7 @@ const TargetBlock: SingleUse = {
 				// Apply the card
 				applySingleUse(game, pickedSlot)
 				game.components
-					.new(StatusEffectComponent, TargetBlockEffect, component.entity)
+					.new(StatusEffectComponent, TargetBlockPrepareEffect, component.entity)
 					.apply(pickedSlot.card?.entity)
 			},
 		})
