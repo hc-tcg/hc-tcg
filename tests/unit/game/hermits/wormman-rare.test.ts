@@ -74,7 +74,7 @@ describe('Test Rare Worm Man', () => {
 					)
 					await test.endTurn()
 					await test.endTurn()
-					
+
 					await test.attack('secondary')
 					expect(
 						game.components.find(

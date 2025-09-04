@@ -97,7 +97,7 @@ describe('Test Netherite Armor', () => {
 					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					
+
 					await test.playCardFromHand(TargetBlock, 'single_use')
 					await test.pick(
 						query.slot.opponent,

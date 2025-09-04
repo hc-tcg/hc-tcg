@@ -89,7 +89,7 @@ describe('Test Lightning Rod', () => {
 					)
 					await test.endTurn()
 					await test.endTurn()
-					
+
 					await test.attack('primary')
 
 					expect(

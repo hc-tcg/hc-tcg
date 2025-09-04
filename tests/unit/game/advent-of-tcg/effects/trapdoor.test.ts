@@ -389,7 +389,7 @@ describe('Test Trapdoor', () => {
 					)
 					await test.endTurn()
 					await test.endTurn()
-					
+
 					await test.attack('primary')
 					expect(
 						game.components.find(
