@@ -19,6 +19,7 @@ describe('Test Poison', () => {
 
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.playCardFromHand(SplashPotionOfPoison, 'single_use')
+					await test.applyEffect()
 					await test.endTurn()
 
 					expect(

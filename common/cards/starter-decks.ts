@@ -15,6 +15,7 @@ import BdoubleO100Common from './hermits/bdoubleo100-common'
 import BeetlejhostCommon from './hermits/beetlejhost-common'
 import BeetlejhostRare from './hermits/beetlejhost-rare'
 import BoomerBdubsCommon from './hermits/boomerbdubs-common'
+import BoomerBdubsRare from './hermits/boomerbdubs-rare'
 import Cubfan135Rare from './hermits/cubfan135-rare'
 import EthosLabCommon from './hermits/ethoslab-common'
 import EthosLabRare from './hermits/ethoslab-rare'
@@ -57,6 +58,7 @@ import BalancedItem from './items/balanced-common'
 import BalancedDoubleItem from './items/balanced-rare'
 import BuilderItem from './items/builder-common'
 import PranksterItem from './items/prankster-common'
+import PranksterDoubleItem from './items/prankster-rare'
 import PvPItem from './items/pvp-common'
 import PvPDoubleItem from './items/pvp-rare'
 import RedstoneItem from './items/redstone-common'
@@ -93,7 +95,7 @@ import Mending from './single-use/mending'
 import Piston from './single-use/piston'
 import PotionOfWeakness from './single-use/potion-of-weakness'
 import SplashPotionOfPoison from './single-use/splash-potion-of-poison'
-import {DiamondSword} from './single-use/sword'
+import {DiamondSword, NetheriteSword} from './single-use/sword'
 import TargetBlock from './single-use/target-block'
 import TNT from './single-use/tnt'
 import {Attach, Hermit, Item, SingleUse} from './types'
@@ -132,7 +134,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			Emerald,
 			FishingRod,
 			FishingRod,
-			GoldenAxe,
+			NetheriteSword,
 			InstantHealthII,
 			TargetBlock,
 			Clock,
@@ -216,7 +218,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			EvilXisumaRare,
 			DiamondArmor,
 			DiamondArmor,
-			DiamondArmor,
+			NetheriteArmor,
 			Composter,
 			Composter,
 			InstantHealth,
@@ -438,7 +440,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			PranksterItem,
 			PranksterItem,
 			PranksterItem,
-			PranksterItem,
+			PranksterDoubleItem,
 		],
 	},
 	{
@@ -459,7 +461,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			WildItem,
 			WildItem,
 			BalancedDoubleItem,
-			BalancedItem,
+			BalancedDoubleItem,
 			BalancedItem,
 			BalancedItem,
 			BalancedItem,
@@ -496,7 +498,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			TurtleShell,
 			BdoubleO100Common,
 			ImpulseSVRare,
-			TangoTekCommon,
+			BoomerBdubsRare,
 			ImpulseSVRare,
 			TurtleShell,
 			BdoubleO100Common,
@@ -512,7 +514,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			BuilderItem,
 			RedstoneDoubleItem,
 			BdoubleO100Common,
-			RedstoneItem,
+			RedstoneDoubleItem,
 			Clock,
 			RedstoneItem,
 			Clock,
@@ -548,7 +550,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			InstantHealthII,
 			FishingRod,
 			FishingRod,
-			Composter,
+			FishingRod,
 			Chest,
 			Chest,
 			MumboJumboRare,
@@ -582,7 +584,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			PranksterItem,
 			BoomerBdubsCommon,
 			PranksterItem,
-			DiamondSword,
+			GoldenAxe,
 		],
 	},
 	{
@@ -606,7 +608,7 @@ export const STARTER_DECKS: Array<StarterDeck> = [
 			PvPItem,
 			PvPItem,
 			PvPItem,
-			PvPItem,
+			PvPDoubleItem,
 			TargetBlock,
 			TargetBlock,
 			FishingRod,
