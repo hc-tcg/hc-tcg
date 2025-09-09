@@ -1,10 +1,10 @@
 import {describe, expect, test} from '@jest/globals'
 import SculkCatalyst from 'common/cards/advent-of-tcg/attach/sculk-catalyst'
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
+import BdoubleO100Common from 'common/cards/hermits/bdoubleo100-common'
 import ImpulseSVRare from 'common/cards/hermits/impulsesv-rare'
 import TangoTekCommon from 'common/cards/hermits/tangotek-common'
 import {testBossFight} from '../../utils'
-import BdoubleO100Common from 'common/cards/hermits/bdoubleo100-common'
 
 describe('Test Sculk Catalyst', () => {
 	test('Sculk Catalyst triggers when Evil X boss loses a life', async () => {
