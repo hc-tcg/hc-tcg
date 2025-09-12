@@ -1,21 +1,21 @@
 import EvilXisumaBoss, {
 	BOSS_ATTACK,
 	supplyBossAttack,
-} from 'common/cards/boss/hermits/evilxisuma_boss'
+} from '../../cards/boss/hermits/evilxisuma_boss'
 import {
 	BoardSlotComponent,
 	CardComponent,
 	PlayerComponent,
 	StatusEffectComponent,
-} from 'common/components'
-import {AIComponent} from 'common/components/ai-component'
-import query from 'common/components/query'
-import {GameModel} from 'common/models/game-model'
+} from '../../components'
+import {AIComponent} from '../../components/ai-component'
+import query from '../../components/query'
+import {GameModel} from '../../models/game-model'
 import ExBossNineEffect, {
 	supplyNineSpecial,
-} from 'common/status-effects/exboss-nine'
-import {AnyTurnActionData} from 'common/types/turn-action-data'
-import {VirtualAI} from 'common/types/virtual-ai'
+} from '../../status-effects/exboss-nine'
+import {AnyTurnActionData} from '../../types/turn-action-data'
+import {VirtualAI} from '../../types/virtual-ai'
 
 const fireDropper = (game: GameModel) => {
 	return Math.floor(game.rng() * 9)
