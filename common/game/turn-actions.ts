@@ -1,30 +1,30 @@
 import assert from 'assert'
-import {CardComponent} from 'common/components'
-import query from 'common/components/query'
-import {SlotEntity} from 'common/entities'
-import {AttackModel} from 'common/models/attack-model'
-import {GameModel} from 'common/models/game-model'
-import {HermitAttackType} from 'common/types/attack'
+import {CardComponent} from '../components'
+import query from '../components/query'
+import {SlotEntity} from '../entities'
+import {AttackModel} from '../models/attack-model'
+import {GameModel} from '../models/game-model'
+import {HermitAttackType} from '../types/attack'
 import {
 	CopyAttack,
 	DragCards,
 	ModalResult,
 	SelectCards,
-} from 'common/types/modal-requests'
+} from '../types/modal-requests'
 import {
 	LocalCopyAttack,
 	LocalDragCards,
 	LocalSelectCards,
-} from 'common/types/server-requests'
+} from '../types/server-requests'
 import {
 	AttackActionData,
 	ChangeActiveHermitActionData,
 	PlayCardActionData,
 	attackActionToAttack,
 	attackToAttackAction,
-} from 'common/types/turn-action-data'
-import {executeAttacks} from 'common/utils/attacks'
-import {applySingleUse} from 'common/utils/board'
+} from '../types/turn-action-data'
+import {executeAttacks} from '../utils/attacks'
+import {applySingleUse} from '../utils/board'
 
 function getAttack(
 	game: GameModel,
