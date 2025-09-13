@@ -13,8 +13,7 @@ WORKDIR /app
 
 RUN apt-get install imagemagick
 
-# Card renders are not copied to ensure the Docker build is always up to date
-COPY --exclude=client/public/images/cards/** . .
+COPY . .
 
 COPY config.example.js config.js
 
