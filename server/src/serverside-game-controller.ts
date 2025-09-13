@@ -1,6 +1,7 @@
 import {ACHIEVEMENTS_LIST} from 'common/achievements'
 import {
 	AchievementComponent,
+	CardComponent,
 	ObserverComponent,
 	PlayerComponent,
 } from 'common/components'
@@ -19,6 +20,8 @@ import {
 } from 'common/socket-messages/server-messages'
 import {Message} from 'common/types/game-state'
 import {broadcast} from './utils/comm'
+import query from 'common/components/query'
+import assert from 'assert'
 
 type ServerGameViewerProps = {
 	spectator: boolean
@@ -198,5 +201,85 @@ export class ServerSideGameController extends GameController {
 	public getPlayerEntity(id: PlayerId) {
 		let viewer = this.viewers.find((v) => v.id === id && !v.spectator)
 		return viewer?.playerOnLeftEntity
+	}
+
+	/** Gets the game props to send to a player.
+	 * This function should be used for reconnects. It will reveal all cards that need to be visible for the reconnect to work.
+	 */
+	public getGamePropsForPlayer(player: PlayerId) {
+		let playerEntity = this.getPlayerEntity(player)
+		assert(playerEntity)
+
+		const myHandCards = this.game.components
+			.filter(
+				CardComponent,
+				query.card.player(playerEntity),
+				query.card.slot(query.slot.hand),
+			)
+			.sort(CardComponent.compareOrder)
+		const myDeckCards = this.game.components
+			.filter(
+				CardComponent,
+				query.card.player(playerEntity),
+				query.card.slot(query.slot.deck),
+			)
+			.sort(CardComponent.compareOrder)
+		const opponentHandCards = this.game.components
+			.filter(
+				CardComponent,
+				query.not(query.card.player(playerEntity)),
+				query.card.slot(query.slot.hand),
+			)
+			.sort(CardComponent.compareOrder)
+		const opponentDeckCards = this.game.components
+			.filter(
+				CardComponent,
+				query.not(query.card.player(playerEntity)),
+				query.card.slot(query.slot.deck),
+			)
+			.sort(CardComponent.compareOrder)
+
+		let myDeck = {
+			type: 'hidden',
+			entities: [
+				...myHandCards.map((c) => c.entity),
+				...myDeckCards.map((c) => c.entity),
+			],
+			initialHand: myHandCards.map((c) => c.props.id),
+		}
+
+		let opponentDeck = {
+			type: 'hidden',
+			entities: [
+				...opponentHandCards.map((c) => c.entity),
+				...opponentDeckCards.map((c) => c.entity),
+			],
+		}
+
+		return {
+			playerEntity: this.playerOne.entity,
+			spectatorCode: this.spectatorCode ?? undefined,
+			playerOneDefs:
+				playerEntity == this.game.playerOne
+					? {
+							...this.player1Defs,
+							deck: myDeck,
+						}
+					: {
+							...this.player2Defs,
+							deck: opponentDeck,
+						},
+			playerTwoDefs:
+				playerEntity == this.game.playerOne
+					? {
+							...this.player2Defs,
+							deck: opponentDeck,
+						}
+					: {
+							...this.player2Defs,
+							deck: myDeck,
+						},
+			props: this.props,
+		}
 	}
 }
