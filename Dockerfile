@@ -19,8 +19,6 @@ COPY config.example.js config.js
 
 RUN npm ci
 
-RUN npx playwright install --with-deps firefox
-RUN npm run client:render-cards
 RUN npm run build
 
 # Remove the build-time dependencies to keep the image small and enable node optimizations.
