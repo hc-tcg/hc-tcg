@@ -19,6 +19,9 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 2
 
+      - name: Install Image Magick
+        run: apt install imagemagick -y
+
       - name: Install Playwright Browsers
         run: |
           npm install
