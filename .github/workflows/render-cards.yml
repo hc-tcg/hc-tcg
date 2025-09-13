@@ -20,7 +20,7 @@ jobs:
           fetch-depth: 2
 
       - name: Install Image Magick
-        run: apt install imagemagick -y
+        run: sudo apt-get install imagemagick -y
 
       - name: Install Playwright Browsers
         run: |
