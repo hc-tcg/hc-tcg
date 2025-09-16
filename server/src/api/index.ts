@@ -13,6 +13,7 @@ import {
 	authenticateApiKey,
 	authenticateUser,
 	createUser,
+	resetSecret,
 } from './auth'
 import {cards, deckCost, getDeckInformation, ranks, types} from './cards'
 import {
@@ -50,6 +51,14 @@ export function addApi(app: Express) {
 	app.post('/api/createUser/', async (req, res) => {
 		const username = req.get('username')
 		let ret = await createUser(username)
+		res.statusCode = ret[0]
+		res.send(ret[1])
+	})
+
+	app.get('/api/resetSecret/', async (req, res) => {
+		const userId = req.get('userId')
+		const secret = req.get('secret')
+		let ret = await resetSecret(userId, secret)
 		res.statusCode = ret[0]
 		res.send(ret[1])
 	})
