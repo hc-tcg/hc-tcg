@@ -1,6 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
-import TargetBlockEffect from 'common/cards/single-use/target-block'
+import FishingRod from 'common/cards/single-use/fishing-rod'
+import TargetBlock from 'common/cards/single-use/target-block'
 import {RowComponent} from 'common/components'
 import query from 'common/components/query'
 import {TurnAction} from 'common/types/game-state'
@@ -11,14 +12,14 @@ describe('Test Target Block', () => {
 		await testGame(
 			{
 				playerOneDeck: [GeminiTayRare, GeminiTayRare],
-				playerTwoDeck: [GeminiTayRare, TargetBlockEffect],
+				playerTwoDeck: [GeminiTayRare, TargetBlock, FishingRod],
 				testGame: async (test, game) => {
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 1)
 					await test.endTurn()
 
 					await test.playCardFromHand(GeminiTayRare, 'hermit', 0)
-					await test.playCardFromHand(TargetBlockEffect, 'single_use')
+					await test.playCardFromHand(TargetBlock, 'single_use')
 					await test.pick(
 						query.slot.opponent,
 						query.slot.hermit,
