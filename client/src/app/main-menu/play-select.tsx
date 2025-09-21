@@ -38,7 +38,7 @@ import {
 } from 'logic/matchmaking/matchmaking-selectors'
 import {localMessages, useMessageDispatch} from 'logic/messages'
 import {getRematchData, getSession} from 'logic/session/session-selectors'
-import {useEffect, useReducer, useRef, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {CosmeticPreview} from './achievements'
 import css from './play-select.module.scss'
@@ -70,8 +70,6 @@ function PlaySelect({
 	const gameTypeButtonsRef = useRef<HTMLDivElement>(null)
 
 	const decks = databaseInfo?.decks
-
-	const [, _refresh] = useReducer((x) => x + 1, 0)
 
 	const [loadedDeck, setLoadedDeck] = useState<Deck | undefined>(
 		databaseInfo?.decks.find((deck) => deck.code === playerDeck),

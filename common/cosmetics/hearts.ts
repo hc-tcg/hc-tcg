@@ -1,7 +1,10 @@
 import CantTouchThis from '../achievements/cant-touch-this'
 import Channeling from '../achievements/channeling'
 import DeckedOut from '../achievements/decked-out'
+import iBuy from '../achievements/ibuy'
 import SUStainable from '../achievements/sustainable'
+import TerribleTrades from '../achievements/terrible-trades'
+import UseLikeAHermit from '../achievements/use-like-a-hermit'
 import Win from '../achievements/wins'
 import {Heart} from './types'
 
@@ -11,9 +14,34 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		name: 'Default',
 	},
 	{
+		id: 'amethyst',
+		name: 'Amethyst',
+		requires: undefined,
+	},
+	{
+		id: 'blue_terracotta',
+		name: 'Blue G.T.',
+		requires: undefined,
+	},
+	{
 		id: 'copper',
 		name: 'Copper',
 		requires: {achievement: Channeling.id},
+	},
+	{
+		id: 'emerald',
+		name: 'Emerald',
+		requires: {achievement: TerribleTrades.id},
+	},
+	{
+		id: 'ender',
+		name: 'Ender Pearl',
+		requires: undefined,
+	},
+	{
+		id: 'plant',
+		name: 'Flower',
+		requires: {achievement: SUStainable.id},
 	},
 	{
 		id: 'gold',
@@ -21,9 +49,48 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		requires: {achievement: Win.id, level: 4},
 	},
 	{
-		id: 'plant',
-		name: 'Flower',
-		requires: {achievement: SUStainable.id},
+		id: 'hardcore',
+		name: 'Hardcore',
+		requires: undefined,
+	},
+	{
+		id: 'honeycomb',
+		name: 'Honeycomb',
+		requires: undefined,
+	},
+	{
+		id: 'hunger',
+		name: 'Haunch',
+		offVariantName: 'hunger_empty',
+		requires: undefined,
+	},
+	{
+		id: 'wooden',
+		name: 'Heart Stand',
+		offVariantName: 'wooden_empty',
+		requires: {achievement: UseLikeAHermit.id},
+	},
+	{
+		id: 'lamp',
+		name: 'Lamp',
+		offVariantName: 'lamp_off',
+		requires: {achievement: iBuy.id},
+	},
+	{
+		id: 'magenta',
+		name: 'Magenta G.T.',
+		requires: undefined,
+	},
+	{
+		id: 'potion',
+		name: 'Potion',
+		offVariantName: 'potion_empty',
+		requires: undefined,
+	},
+	{
+		id: 'quartz',
+		name: 'Quartz',
+		requires: undefined,
 	},
 	{
 		id: 'silver_heart',
@@ -34,6 +101,16 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		id: 'soulflame',
 		name: 'Soulflame',
 		requires: {achievement: DeckedOut.id},
+	},
+	{
+		id: 'slime_hearts',
+		name: 'Slime',
+		requires: undefined,
+	},
+	{
+		id: 'web',
+		name: 'Web',
+		requires: undefined,
 	},
 ]
 
