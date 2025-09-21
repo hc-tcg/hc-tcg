@@ -90,9 +90,25 @@
 	height: 5.5vh;
 }
 
-.viewSecretButton {
+.secretButton {
 	height: 100%;
 	width: 20%;
+}
+
+.viewModal {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	gap: 0.5vh;
+	margin: 0.5vh;
+}
+
+.viewModalDescription {
+	padding: 1vh;
+}
+
+.viewModalButton {
+	width: 50%;
 }
 
 .resetModal {
@@ -118,6 +134,7 @@
 	padding: 1vh 2vh;
 	display: flex;
 	flex-direction: row;
+	gap: 1vh;
 }
 
 .dbItem {
@@ -197,7 +214,7 @@
 		display: none;
 	}
 
-	.viewSecretButton {
+	.secretButton {
 		width: 60%;
 	}
 

@@ -20,7 +20,7 @@ import {
 } from 'db/db-reciever'
 import {LocalMessage, LocalMessageTable, localMessages} from 'messages'
 import {getGame} from 'selectors'
-import {delay, put, race, select, take} from 'typed-redux-saga'
+import {call, delay, put, race, select, take} from 'typed-redux-saga'
 import root from '../serverRoot'
 import {broadcast} from '../utils/comm'
 
@@ -222,5 +222,30 @@ export function* updateCosmeticSaga(
 	broadcast([player], {
 		type: serverMessages.COSMETICS_UPDATE,
 		appearance: player.appearance,
+	})
+}
+
+export function* resetSecret(
+	action: RecievedClientMessage<typeof clientMessages.RESET_SECRET>,
+) {
+	const player = root.players[action.playerId]
+	const {uuid} = player
+
+	const secret = yield* call([root.db, root.db.resetSecret], uuid)
+
+	if (secret.type === 'failure') {
+		broadcast([player], {
+			type: serverMessages.TOAST_SEND,
+			title: 'Could not reset',
+			description:
+				'Failed to reset user secret, try logging out and then back in.',
+			image: 'images/icons/warning_icon.png',
+		})
+		return
+	}
+
+	broadcast([player], {
+		type: serverMessages.SECRET_RESET,
+		...secret.body,
 	})
 }

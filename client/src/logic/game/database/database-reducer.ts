@@ -81,6 +81,8 @@ const databaseReducer = (
 			return {...state, userId: action.userId, secret: action.secret}
 		case localMessages.RESET_ID_AND_SECRET:
 			return {...state, userId: null, secret: null}
+		case localMessages.RESET_SECRET:
+			return {...state, secret: null}
 		case localMessages.COSMETICS_SET:
 			return {...state, appearance: action.appearance}
 		case localMessages.DATABASE_SET:

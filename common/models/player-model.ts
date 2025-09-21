@@ -78,4 +78,9 @@ export class PlayerModel {
 	updateAchievementProgress(achievements: AchievementProgress) {
 		this.achievementProgress = {...this.achievementProgress, ...achievements}
 	}
+
+	/** Set the user secret, should only be used when the secret is changed in the database. */
+	setSecret(secret: string) {
+		this.internalSecret = secret
+	}
 }

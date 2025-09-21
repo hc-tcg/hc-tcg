@@ -40,6 +40,7 @@ export const clientMessages = messages('clientMessages', {
 	DELETE_DECK: null,
 	DELETE_TAG: null,
 	SET_COSMETIC: null,
+	RESET_SECRET: null,
 })
 
 export type ClientMessages = [
@@ -165,6 +166,7 @@ export type ClientMessages = [
 	{type: typeof clientMessages.SET_COSMETIC; cosmetic: Cosmetic['id']},
 	{type: typeof clientMessages.REPLAY_OVERVIEW; id: number},
 	{type: typeof clientMessages.CANCEL_REMATCH; rematch: RematchData},
+	{type: typeof clientMessages.RESET_SECRET},
 ]
 
 export type ClientMessage = Message<ClientMessages>
