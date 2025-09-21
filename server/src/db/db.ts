@@ -2281,7 +2281,7 @@ export class Database {
 		}
 	}
 
-	public async regenerateSecret(
+	public async resetSecret(
 		uuid: string,
 	): Promise<DatabaseResult<{secret: string}>> {
 		try {

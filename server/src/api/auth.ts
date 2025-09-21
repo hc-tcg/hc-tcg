@@ -102,7 +102,7 @@ export async function resetSecret(
 
 	const {uuid} = userInfo.body
 
-	const newSecretInfo = await root.db.regenerateSecret(uuid)
+	const newSecretInfo = await root.db.resetSecret(uuid)
 
 	if (newSecretInfo.type === 'failure') {
 		return [500, 'Could not generate new secret.']

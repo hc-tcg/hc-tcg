@@ -673,6 +673,7 @@ export function* logoutSaga() {
 	])
 	clearSession()
 	socket.disconnect()
+	delete socket.auth.playerId
 	yield put<LocalMessage>({type: localMessages.DISCONNECT})
 }
 

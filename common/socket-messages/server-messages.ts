@@ -60,6 +60,7 @@ export const serverMessages = messages('serverMessages', {
 	CURRENT_IMPORT_RECIEVED: null,
 	DATABASE_FAILURE: null,
 	TOAST_SEND: null,
+	SECRET_RESET: null,
 })
 
 export type ServerMessages = [
@@ -158,6 +159,10 @@ export type ServerMessages = [
 		description: string
 		image?: string
 	},
+	{
+		type: typeof serverMessages.SECRET_RESET,
+		secret: string,
+	}
 ]
 
 export type ServerMessage = Message<ServerMessages>

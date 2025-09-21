@@ -88,6 +88,7 @@ export const localMessages = messages('clientLocalMessages', {
 	QUEUE_VOICE: null,
 	SET_ID_AND_SECRET: null,
 	RESET_ID_AND_SECRET: null,
+	RESET_SECRET: null,
 	DATABASE_SET: null,
 	INSERT_DECK: null,
 	UPDATE_DECK: null,
@@ -254,6 +255,7 @@ type Messages = [
 		secret: string
 	},
 	{type: typeof localMessages.RESET_ID_AND_SECRET},
+	{type: typeof localMessages.RESET_SECRET},
 	{type: typeof localMessages.DATABASE_SET; data: LocalDatabase},
 	{type: typeof localMessages.INSERT_DECK; deck: Deck},
 	{type: typeof localMessages.UPDATE_DECK; deck: Deck},

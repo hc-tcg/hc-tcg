@@ -209,7 +209,7 @@ function Settings({setMenuSection}: Props) {
 	}
 
 	const resetSecret = () => {
-		
+		dispatch({type: localMessages.RESET_SECRET})
 	}
 
 	const handleReset = (
