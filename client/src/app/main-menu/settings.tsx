@@ -481,8 +481,8 @@ function Settings({setMenuSection}: Props) {
 														<b>⚠ This will log you out of all devices.</b>
 													</p>
 													<p className={css.warning}>
-														Only reset this when you believe someone else
-														knows your secret.
+														Only reset this when you believe someone else knows
+														your secret.
 													</p>
 													<div className={css.resetModal}>
 														<Button

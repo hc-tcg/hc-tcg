@@ -225,20 +225,20 @@ export function* updateCosmeticSaga(
 	})
 }
 
-export function* resetSecret(action: RecievedClientMessage<typeof clientMessages.RESET_SECRET>) {
+export function* resetSecret(
+	action: RecievedClientMessage<typeof clientMessages.RESET_SECRET>,
+) {
 	const player = root.players[action.playerId]
 	const {uuid} = player
 
-	const secret = yield* call(
-		[root.db, root.db.resetSecret],
-		uuid,
-	)
+	const secret = yield* call([root.db, root.db.resetSecret], uuid)
 
 	if (secret.type === 'failure') {
 		broadcast([player], {
 			type: serverMessages.TOAST_SEND,
 			title: 'Could not reset',
-			description: 'Failed to reset user secret, try logging out and then back in.',
+			description:
+				'Failed to reset user secret, try logging out and then back in.',
 			image: 'images/icons/warning_icon.png',
 		})
 		return

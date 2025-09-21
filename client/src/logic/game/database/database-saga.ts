@@ -1,11 +1,11 @@
-import { clientMessages } from 'common/socket-messages/client-messages'
-import { serverMessages } from 'common/socket-messages/server-messages'
+import {clientMessages} from 'common/socket-messages/client-messages'
+import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
-import { receiveMsg, sendMsg } from 'logic/socket/socket-saga'
-import { getSocket } from 'logic/socket/socket-selectors'
+import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
+import {getSocket} from 'logic/socket/socket-selectors'
 import {SagaIterator} from 'redux-saga'
 import {call, takeEvery} from 'redux-saga/effects'
-import { put, select } from 'typed-redux-saga'
+import {put, select} from 'typed-redux-saga'
 
 function* setDatabaseKeysSaga(
 	action: LocalMessageTable[typeof localMessages.SET_ID_AND_SECRET],

@@ -160,9 +160,9 @@ export type ServerMessages = [
 		image?: string
 	},
 	{
-		type: typeof serverMessages.SECRET_RESET,
-		secret: string,
-	}
+		type: typeof serverMessages.SECRET_RESET
+		secret: string
+	},
 ]
 
 export type ServerMessage = Message<ServerMessages>
