@@ -7,6 +7,7 @@ import FullySaturated from '../achievements/fully-saturated'
 import iBuy from '../achievements/ibuy'
 import PistonExtender from '../achievements/piston-extender'
 import {PotionDecks} from '../achievements/su-decks'
+import SpaceRace from '../achievements/space-race'
 import SUStainable from '../achievements/sustainable'
 import TurtleMaster from '../achievements/turtle-master'
 import UltraHardcore from '../achievements/ultra-hardcore'
@@ -42,7 +43,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'ender',
 		name: 'Ender Pearl',
-		requires: undefined,
+		requires: {achievement: SpaceRace.id},
 	},
 	{
 		id: 'plant',
