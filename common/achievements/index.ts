@@ -75,12 +75,12 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	PackOfWolves,
 	FreeAndSteel,
 	SUStainable,
+	MCCFishing,
 	iBuy,
 
 	// effect card - challenge/combo
 	UselessMachine,
 	GoFish,
-	MCCFishing,
 	CertifiedZombie,
 	UseLikeAHermit,
 	Channeling,
