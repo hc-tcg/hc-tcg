@@ -28,6 +28,7 @@ import NoDerpcoins from './no-derpcoins'
 import OreSnatcher from './ore-snatcher'
 import PackOfWolves from './pack-of-wolves'
 import PeskyBird from './pesky-bird'
+import PistonExtender from './piston-extender'
 import PoePoeEnforcer from './poe-poe-enforcer'
 import ServerLag from './server-lag'
 import SignalInversion from './signal-inversion'
@@ -82,6 +83,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	CertifiedZombie,
 	UseLikeAHermit,
 	Channeling,
+	PistonExtender,
 
 	// Effect card / status effect - Challenge/Combo
 	GottaSchreep,
