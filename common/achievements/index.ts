@@ -31,6 +31,7 @@ import PeskyBird from './pesky-bird'
 import PoePoeEnforcer from './poe-poe-enforcer'
 import ServerLag from './server-lag'
 import SignalInversion from './signal-inversion'
+import {BookDecks, PotionDecks} from './su-decks'
 import SUStainable from './sustainable'
 import TeamStar from './team-star'
 import TerribleTrades from './terrible-trades'
@@ -74,6 +75,8 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	PackOfWolves,
 	FreeAndSteel,
 	SUStainable,
+	PotionDecks,
+	BookDecks,
 	iBuy,
 
 	// effect card - challenge/combo

@@ -2,6 +2,7 @@ import CantTouchThis from '../achievements/cant-touch-this'
 import Channeling from '../achievements/channeling'
 import DeckedOut from '../achievements/decked-out'
 import iBuy from '../achievements/ibuy'
+import {PotionDecks} from '../achievements/su-decks'
 import SUStainable from '../achievements/sustainable'
 import TerribleTrades from '../achievements/terrible-trades'
 import UseLikeAHermit from '../achievements/use-like-a-hermit'
@@ -85,7 +86,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		id: 'potion',
 		name: 'Potion',
 		offVariantName: 'potion_empty',
-		requires: undefined,
+		requires: {achievement: PotionDecks.id},
 	},
 	{
 		id: 'quartz',
