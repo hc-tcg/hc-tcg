@@ -4,6 +4,7 @@ import DeckedOut from '../achievements/decked-out'
 import iBuy from '../achievements/ibuy'
 import SUStainable from '../achievements/sustainable'
 import TerribleTrades from '../achievements/terrible-trades'
+import UltraHardcore from '../achievements/ultra-hardcore'
 import UseLikeAHermit from '../achievements/use-like-a-hermit'
 import Win from '../achievements/wins'
 import {Heart} from './types'
@@ -51,7 +52,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'hardcore',
 		name: 'Hardcore',
-		requires: undefined,
+		requires: {achievement: UltraHardcore.id},
 	},
 	{
 		id: 'honeycomb',
