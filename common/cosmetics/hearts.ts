@@ -1,6 +1,7 @@
 import CantTouchThis from '../achievements/cant-touch-this'
 import Channeling from '../achievements/channeling'
 import DeckedOut from '../achievements/decked-out'
+import DoubleEmerald from '../achievements/double-emerald'
 import iBuy from '../achievements/ibuy'
 import SUStainable from '../achievements/sustainable'
 import TerribleTrades from '../achievements/terrible-trades'
@@ -31,7 +32,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'emerald',
 		name: 'Emerald',
-		requires: {achievement: TerribleTrades.id},
+		requires: {achievement: DoubleEmerald.id},
 	},
 	{
 		id: 'ender',
