@@ -75,8 +75,6 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	PackOfWolves,
 	FreeAndSteel,
 	SUStainable,
-	PotionDecks,
-	BookDecks,
 	iBuy,
 
 	// effect card - challenge/combo
@@ -112,6 +110,8 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	Ethogirl,
 	TeamStar,
 	NewTeamCanada,
+	PotionDecks,
+	BookDecks,
 
 	// Typemaster
 	BalancedWins,
