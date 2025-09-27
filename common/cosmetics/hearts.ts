@@ -1,6 +1,7 @@
 import CantTouchThis from '../achievements/cant-touch-this'
 import Channeling from '../achievements/channeling'
 import DeckedOut from '../achievements/decked-out'
+import FullySaturated from '../achievements/fully-saturated'
 import iBuy from '../achievements/ibuy'
 import SUStainable from '../achievements/sustainable'
 import TerribleTrades from '../achievements/terrible-trades'
@@ -62,7 +63,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		id: 'hunger',
 		name: 'Haunch',
 		offVariantName: 'hunger_empty',
-		requires: undefined,
+		requires: {achievement: FullySaturated.id},
 	},
 	{
 		id: 'wooden',

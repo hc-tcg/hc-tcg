@@ -28,6 +28,8 @@ export class RowComponent {
 	hooks: {
 		/** Hook called when card in the health slot in this row is knocked out */
 		onKnockOut: GameHook<(card: CardComponent<HasHealth>) => void>
+		/** Hook called when card in the health slot in this row is healed */
+		onHealed: GameHook<(card: CardComponent<HasHealth>, amount: number) => void>
 	}
 
 	constructor(
@@ -43,6 +45,7 @@ export class RowComponent {
 		this.health = null
 		this.hooks = {
 			onKnockOut: new GameHook(),
+			onHealed: new GameHook(),
 		}
 	}
 
@@ -101,6 +104,7 @@ export class RowComponent {
 		)
 		if (this.health === null) return
 		if (!hermit?.isHealth()) return
+		const initialHealth = this.health
 		const overhealed = this.game.components.exists(
 			StatusEffectComponent,
 			query.effect.targetIsCardAnd(query.card.entity(hermit.entity)),
@@ -109,12 +113,14 @@ export class RowComponent {
 		if (overhealed) {
 			//@TODO Make this less hacky.
 			this.health = this.health + amount
+			this.hooks.onHealed.call(hermit, this.health - initialHealth)
 			return
 		}
 		this.health = Math.min(
 			this.health + amount,
 			Math.max(this.health, hermit.props.health),
 		)
+		this.hooks.onHealed.call(hermit, this.health - initialHealth)
 	}
 
 	public fullHeal() {
