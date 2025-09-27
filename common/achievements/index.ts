@@ -127,6 +127,9 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	// Hermit - challenge
 	SpaceRace,
 
+	// Hermit - challenge
+	SpaceRace,
+
 	// Deck - challenge
 	Inneffective,
 	TerribleTrades,
