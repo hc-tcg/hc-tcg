@@ -47,6 +47,7 @@ import {
 	TerraformWins,
 } from './type-wins'
 import {Achievement} from './types'
+import UltraHardcore from './ultra-hardcore'
 import UseLikeAHermit from './use-like-a-hermit'
 import UselessMachine from './useless-machine'
 import Win from './wins'
@@ -98,6 +99,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	CantTouchThis,
 	RedKing,
 	HallOfAll,
+	UltraHardcore,
 	Wipeout,
 	ServerLag,
 
