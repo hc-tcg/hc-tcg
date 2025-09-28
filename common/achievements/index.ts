@@ -5,6 +5,7 @@ import Channeling from './channeling'
 import RedKing from './close-call'
 import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
+import Demise from './demise'
 import Ethogirl from './ethogirl'
 import EyeOfTheSpider from './eye-of-the-spider'
 import FreeAndSteel from './free-and-steel'
@@ -58,6 +59,9 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	// Log term - card exploration
 	AllCards,
 	HermitsAndCrafting,
+
+	// Long term
+	Demise,
 
 	// Evil X
 	DefeatEvilX,
