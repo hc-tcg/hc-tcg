@@ -2,6 +2,7 @@ import CantTouchThis from '../achievements/cant-touch-this'
 import Channeling from '../achievements/channeling'
 import DeckedOut from '../achievements/decked-out'
 import iBuy from '../achievements/ibuy'
+import SpiderFarm from '../achievements/spider-farm'
 import SUStainable from '../achievements/sustainable'
 import TerribleTrades from '../achievements/terrible-trades'
 import UseLikeAHermit from '../achievements/use-like-a-hermit'
@@ -110,7 +111,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'web',
 		name: 'Web',
-		requires: undefined,
+		requires: {achievement: SpiderFarm.id},
 	},
 ]
 
