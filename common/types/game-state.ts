@@ -29,6 +29,14 @@ export type CoinFlip = {
 	forced: boolean
 }
 
+export type IncompleteCoinFlip = {
+	card: CardEntity
+	opponentFlip: boolean
+	name: string
+	amount: number
+	headImage: Coin['id']
+}
+
 export type CurrentCoinFlip = {
 	card: CardEntity
 	opponentFlip: boolean

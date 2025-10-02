@@ -27,6 +27,8 @@ import TimeSkipDisabledEffect from '../status-effects/time-skip-disabled'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
+	CoinFlipResult,
+	IncompleteCoinFlip,
 	GameOutcome,
 	GameState,
 	GameVictoryReason,
@@ -113,6 +115,11 @@ export class GameModel {
 	public nextEntity: () => number
 	private entityCount: number
 
+	public startCoinFlip: (
+		coinFlip: IncompleteCoinFlip,
+		callback: (result: Array<'heads' | 'tails'>) => any,
+	) => any
+
 	public readonly id: string
 	public readonly settings: GameSettings
 	public publishBattleLog: (logs: Array<Message>, timeout: number) => void
@@ -185,14 +192,19 @@ export class GameModel {
 		player1: PlayerSetupDefs,
 		player2: PlayerSetupDefs,
 		settings: GameSettings,
-		options?: {
+		options: {
+			startCoinFlip: (
+				coinFlip: IncompleteCoinFlip,
+				callback: (result: Array<'heads' | 'tails'>) => any,
+			) => any
 			randomizeOrder?: boolean
 			id?: string
 			publishBattleLog?: (logs: Array<Message>, timeout: number) => void
 		},
 	) {
-		options = options ?? {}
 		this.id = options.id || Math.random().toString(16).slice(3, 11)
+
+		this.startCoinFlip = options?.startCoinFlip
 
 		if (options?.publishBattleLog) {
 			this.publishBattleLog = options.publishBattleLog

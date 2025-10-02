@@ -3,12 +3,16 @@ import {PlayerComponent} from 'common/components'
 import query from 'common/components/query'
 import {PlayerEntity} from 'common/entities'
 import {GameController, GameControllerProps} from 'common/game/game-controller'
-import {getLocalGameState} from 'common/game/make-local-state'
+import {getLocalCard, getLocalGameState} from 'common/game/make-local-state'
 import runGame, {TurnActionAndPlayer} from 'common/game/run-game'
 import {PlayerSetupDefs} from 'common/game/setup-game'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {CurrentCoinFlip} from 'common/types/game-state'
+import {
+	CurrentCoinFlip,
+	CoinFlipResult,
+	IncompleteCoinFlip,
+} from 'common/types/game-state'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {assert} from 'common/utils/assert'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
@@ -53,6 +57,7 @@ export function* sendTurnAction(
 
 class ClientGameController extends GameController {
 	readyToDisplay = false
+	waitingForCoinFlip?: (result: Array<'heads' | 'tails'>) => any
 
 	public broadcastState(): void {
 		if (!this.readyToDisplay) return
@@ -67,6 +72,33 @@ class ClientGameController extends GameController {
 	public getRandomDelayForAI(coinFlips: Array<CurrentCoinFlip>) {
 		if (!this.readyToDisplay) return 0
 		return super.getRandomDelayForAI(coinFlips)
+	}
+
+	public override startCoinFlip(
+		coinFlip: IncompleteCoinFlip,
+		callback: (result: Array<CoinFlipResult>) => any,
+	) {
+		console.log('starting mock')
+		store.dispatch({
+			type: localMessages.GAME_COIN_FLIP_SET,
+			coinFlip: {
+				card: getLocalCard(this.game, this.game.components.get(coinFlip.card)!),
+				opponentFlip: coinFlip.opponentFlip,
+				name: coinFlip.name,
+				tosses: Array(coinFlip.amount).map(() => {
+					return {result: 'heads', forced: false}
+				}),
+				amount: coinFlip.amount,
+				delay: 999999,
+				headImage: coinFlip.headImage,
+			},
+		})
+		this.waitingForCoinFlip = (result: Array<'heads' | 'tails'>) => {
+			this.waitingForCoinFlip = undefined
+			assert(coinFlip.amount == result.length)
+			callback(result)
+			console.log("finished")
+		}
 	}
 }
 
@@ -317,6 +349,22 @@ function* hiddenCardReveal(gameController: ClientGameController) {
 	}
 }
 
+function* handleCoinFlipResult(gameController: ClientGameController) {
+	const socket = yield* select(getSocket)
+
+	while (true) {
+		let action = yield* call(
+			receiveMsg<typeof serverMessages.GAME_SEND_COIN_FLIP>(
+				socket,
+				serverMessages.GAME_SEND_COIN_FLIP,
+			),
+		)
+
+		assert(gameController.waitingForCoinFlip)
+		gameController.waitingForCoinFlip(action.result)
+	}
+}
+
 type GameSagaProps = {
 	initialTurnActions?: Array<ReplayActionData>
 	spectatorCode?: string
@@ -367,6 +415,7 @@ function* gameSaga({
 			fork(requestHiddenInfoSaga),
 			fork(recieveCardsForSpyglass),
 			fork(hiddenCardReveal, gameController),
+			fork(handleCoinFlipResult, gameController),
 		]),
 	)
 

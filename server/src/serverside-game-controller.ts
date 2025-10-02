@@ -18,7 +18,7 @@ import {
 	ServerMessage,
 	serverMessages,
 } from 'common/socket-messages/server-messages'
-import {Message} from 'common/types/game-state'
+import {IncompleteCoinFlip, Message} from 'common/types/game-state'
 import {broadcast} from './utils/comm'
 import query from 'common/components/query'
 import assert from 'assert'
@@ -281,5 +281,24 @@ export class ServerSideGameController extends GameController {
 						},
 			props: this.props,
 		}
+	}
+
+	public override startCoinFlip(
+		coinFlip: IncompleteCoinFlip,
+		callback: (result: Array<'heads' | 'tails'>) => any,
+	) {
+		const coinFlips: Array<'heads' | 'tails'> = []
+		for (let i = 0; i < coinFlip.amount; i++) {
+			const coinFlip = this.game.coinFlipRng() >= 0.5 ? 'heads' : 'tails'
+			coinFlips.push(coinFlip)
+		}
+
+		console.log("sending coin flip")
+		this.broadcastToViewers({
+			type: serverMessages.GAME_SEND_COIN_FLIP,
+			result: coinFlips,
+		})
+
+		callback(coinFlips)
 	}
 }

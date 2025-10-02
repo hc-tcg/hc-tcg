@@ -7,7 +7,7 @@ import {
 	gameSettingsFromEnv,
 } from '../models/game-model'
 import {PlayerModel} from '../models/player-model'
-import {CurrentCoinFlip, Message} from '../types/game-state'
+import {CurrentCoinFlip, IncompleteCoinFlip, Message} from '../types/game-state'
 import {TurnActionAndPlayer} from './run-game'
 import {PlayerSetupDefs} from './setup-game'
 import {AI_DEFINITIONS} from './virtual'
@@ -97,6 +97,8 @@ export class GameController {
 					this.publishBattleLog(logs, timeout),
 				randomizeOrder: props.randomizeOrder ?? true,
 				id: props.gameId,
+				startCoinFlip: (coinFlip, result) =>
+					this.startCoinFlip(coinFlip, result),
 			},
 		)
 
@@ -206,6 +208,18 @@ export class GameController {
 				resolve(null)
 			})
 		})
+	}
+
+	public startCoinFlip(
+		coinFlip: IncompleteCoinFlip,
+		callback: (result: Array<'heads' | 'tails'>) => any,
+	) {
+		const coinFlips: Array<'heads' | 'tails'> = []
+		for (let i = 0; i < coinFlip.amount; i++) {
+			const coinFlip = this.game.coinFlipRng() >= 0.5 ? 'heads' : 'tails'
+			coinFlips.push(coinFlip)
+		}
+		callback(coinFlips)
 	}
 
 	public async publishBattleLog(_logs: Array<Message>, _timeout: number) {}

@@ -46,6 +46,7 @@ export const serverMessages = messages('serverMessages', {
 	PRIVATE_GAME_CANCELLED: null,
 	GAME_OVER_STAT: null,
 	GAME_TURN_ACTION: null,
+	GAME_SEND_COIN_FLIP: null,
 	CHAT_UPDATE: null,
 	COSMETICS_INVALID: null,
 	COSMETICS_UPDATE: null,
@@ -143,6 +144,10 @@ export type ServerMessages = [
 		won: boolean
 	},
 	{type: typeof serverMessages.GAME_TURN_ACTION; action: TurnActionAndPlayer},
+	{
+		type: typeof serverMessages.GAME_SEND_COIN_FLIP
+		result: Array<'heads' | 'tails'>
+	},
 	{type: typeof serverMessages.CHAT_UPDATE; messages: Array<ChatMessage>},
 	{type: typeof serverMessages.AUTHENTICATED; user: User},
 	{type: typeof serverMessages.AUTHENTICATION_FAIL},
