@@ -59,18 +59,24 @@ const MonkeyfarmRare: Hermit = {
 
 				if (!game.components.exists(SlotComponent, pickCondition)) return
 
-				const coinFlip = flipCoin(game, player, component)
-				if (coinFlip[0] !== 'heads') return
+				flipCoin(
+					(coinFlip) => {
+						if (coinFlip[0] !== 'heads') return
 
-				game.addPickRequest({
-					player: player.entity,
-					id: component.entity,
-					message: "Pick one of your opponent's AFK Hermit's item cards",
-					canPick: pickCondition,
-					onResult(pickedSlot) {
-						pickedSlot.card?.discard()
+						game.addPickRequest({
+							player: player.entity,
+							id: component.entity,
+							message: "Pick one of your opponent's AFK Hermit's item cards",
+							canPick: pickCondition,
+							onResult(pickedSlot) {
+								pickedSlot.card?.discard()
+							},
+						})
 					},
-				})
+					game,
+					player,
+					component,
+				)
 			},
 		)
 	},

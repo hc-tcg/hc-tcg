@@ -8,15 +8,15 @@ import css from './coin-flip.module.scss'
 export type Props = {
 	name: string
 	headImage: Coin['id']
-	tosses: Array<CoinFlip>
+	tosses?: Array<CoinFlip>
 	amount: number
 }
 
 const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
-	const longestFlipIndex = Math.floor(Math.random() * tosses.length)
+	const longestFlipIndex = Math.floor(Math.random() * amount)
 	const coin = COINS[headImage]
 
-	const coins = tosses.map((face, index) => {
+	const coins = Array(amount).fill(null).map((index) => {
 		const coinPics = [
 			<img src={`/images/cosmetics/coin/${COSMETICS[headImage].id}.png`} />,
 			<img src={'/images/cosmetics/coin/tails.png'} />,
@@ -25,18 +25,20 @@ const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
 		const flipOffset =
 			index === longestFlipIndex
 				? 0
-				: Math.floor(Math.random() * (tosses.length + 1))
-		const evenIterations = Math.floor((amount - flipOffset) / 2)
+				: Math.floor(Math.random() * (amount + 1))
+		let evenIterations = Math.floor((amount - flipOffset) / 2)
 		const extraFlip = (amount - flipOffset) % 2 !== 0
 
-		if ((face.result === 'tails') !== extraFlip) {
-			coinPics.reverse()
-		}
+		// if ((face.result === 'tails') !== extraFlip) {
+		//	coinPics.reverse()
+		//}
 
 		const faceStyle = {
 			borderColor: `${coin.borderColor}`,
 			boxShadow: `0 0 4px ${coin.borderColor}`,
 		}
+
+		evenIterations = 1000
 
 		return (
 			<div

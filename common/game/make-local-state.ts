@@ -15,6 +15,7 @@ import {
 	LocalCurrentCoinFlip,
 	LocalGameState,
 	LocalPlayerState,
+	IncompleteCoinFlip,
 } from '../types/game-state'
 import {ModalData} from '../types/modal-requests'
 import {
@@ -118,7 +119,7 @@ export function getLocalModalData(
 
 function getLocalCoinFlip(
 	game: GameModel,
-	coinFlip: CurrentCoinFlip,
+	coinFlip: CurrentCoinFlip | IncompleteCoinFlip,
 ): LocalCurrentCoinFlip {
 	return {
 		...coinFlip,

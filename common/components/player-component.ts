@@ -8,6 +8,7 @@ import type {TypeT} from '../types/cards'
 import type {
 	CoinFlip,
 	CurrentCoinFlip,
+	IncompleteCoinFlip,
 	TurnActions,
 	UsedHermitAttackInfo,
 } from '../types/game-state'
@@ -42,7 +43,7 @@ export class PlayerComponent {
 	readonly censoredPlayerName: string
 	readonly appearance: Appearance
 
-	coinFlips: Array<CurrentCoinFlip>
+	coinFlips: Array<CurrentCoinFlip | IncompleteCoinFlip>
 	lives: number
 	hasPlacedHermit: boolean
 	singleUseCardUsed: boolean

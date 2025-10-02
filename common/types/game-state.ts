@@ -51,10 +51,10 @@ export type LocalCurrentCoinFlip = {
 	card: LocalCardInstance
 	opponentFlip: boolean
 	name: string
-	tosses: Array<CoinFlip>
 	amount: number
-	delay: number
 	headImage: Coin['id']
+	delay?: number
+	tosses?: Array<CoinFlip>
 }
 
 export type BattleLogT = {

@@ -15,7 +15,11 @@ function* coinFlipSaga(gameState: LocalGameState): SagaIterator {
 		gameState.players[gameState.turn.currentPlayerEntity].coinFlips
 	for (const coinFlip of coinFlips) {
 		yield* put<LocalMessage>({type: localMessages.GAME_COIN_FLIP_SET, coinFlip})
-		yield delay(coinFlip.delay)
+		console.log("starting wait")
+		if (coinFlip.delay) {
+			yield delay(coinFlip.delay)
+		}
+		console.log("ending wait")
 	}
 
 	yield* put<LocalMessage>({

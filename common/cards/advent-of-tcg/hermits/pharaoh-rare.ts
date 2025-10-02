@@ -116,29 +116,35 @@ const PharaohRare: Hermit = {
 				)
 				if (!game.components.exists(SlotComponent, pickCondition)) return
 
-				const coinFlip = flipCoin(game, player, component)
-				if (coinFlip[0] === 'tails') return
+				flipCoin(
+					(coinFlip) => {
+						if (coinFlip[0] === 'tails') return
 
-				game.addPickRequest({
-					player: player.entity,
-					id: component.entity,
-					message: 'Pick an AFK Hermit from either side of the board',
-					canPick: pickCondition,
-					onResult(pickedSlot) {
-						if (!pickedSlot.inRow()) return
-						pickedSlot.row.heal(healAmount)
-						const healedHermit = pickedSlot.card
-						game.battleLog.addEntry(
-							player.entity,
-							`$${healedHermit?.player === component.player ? 'p' : 'o'}${healedHermit?.props.name} (${
-								pickedSlot.row.index + 1
-							})$ was healed $g${healAmount}hp$ by $p${component.props.name}$`,
-						)
+						game.addPickRequest({
+							player: player.entity,
+							id: component.entity,
+							message: 'Pick an AFK Hermit from either side of the board',
+							canPick: pickCondition,
+							onResult(pickedSlot) {
+								if (!pickedSlot.inRow()) return
+								pickedSlot.row.heal(healAmount)
+								const healedHermit = pickedSlot.card
+								game.battleLog.addEntry(
+									player.entity,
+									`$${healedHermit?.player === component.player ? 'p' : 'o'}${healedHermit?.props.name} (${
+										pickedSlot.row.index + 1
+									})$ was healed $g${healAmount}hp$ by $p${component.props.name}$`,
+								)
+							},
+							onTimeout() {
+								// We didn't pick anyone to heal, so heal no one
+							},
+						})
 					},
-					onTimeout() {
-						// We didn't pick anyone to heal, so heal no one
-					},
-				})
+					game,
+					player,
+					component,
+				)
 			},
 		)
 	},

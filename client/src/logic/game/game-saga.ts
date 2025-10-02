@@ -85,11 +85,7 @@ class ClientGameController extends GameController {
 				card: getLocalCard(this.game, this.game.components.get(coinFlip.card)!),
 				opponentFlip: coinFlip.opponentFlip,
 				name: coinFlip.name,
-				tosses: Array(coinFlip.amount).map(() => {
-					return {result: 'heads', forced: false}
-				}),
 				amount: coinFlip.amount,
-				delay: 999999,
 				headImage: coinFlip.headImage,
 			},
 		})
@@ -181,6 +177,7 @@ function* turnActionRecieve(gameController: GameController) {
 
 		yield* call(() => gameController.sendTurnAction(turnAction))
 
+		/* Likely need to move the logic when there is a coin flip */
 		localGameState = getLocalGameState(
 			gameController.game,
 			gameController.viewers[0],

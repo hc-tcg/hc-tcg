@@ -103,10 +103,12 @@ export class BattleLogModel {
 			}
 		}
 
-		const timeout = this.game.currentPlayer.coinFlips.reduce(
-			(r, flip) => r + flip.delay,
-			0,
-		)
+		const timeout = this.game.currentPlayer.coinFlips.reduce((r, flip) => {
+			if ('delay' in flip) {
+				return r + flip.delay
+			}
+			return 0
+		}, 0)
 		this.game.publishBattleLog(logs, timeout)
 	}
 

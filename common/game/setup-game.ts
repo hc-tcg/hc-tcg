@@ -179,6 +179,7 @@ function setupDeck(
 			.slice(0, amountOfStartingCards)
 
 		for (let i = 0; i < amountOfStartingCards; i++) {
+			if (initialHand[i] === undefined) continue
 			// Players additionally know each card in their initial hand.
 			if (deck.initialHand) {
 				initialHand[i].props = CARDS[deck.initialHand[i]]

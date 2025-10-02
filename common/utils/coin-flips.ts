@@ -50,6 +50,16 @@ export function flipCoin(
 	const name = card.props.name
 	const player = currentPlayer || playerTossingCoin
 
+	const i = player.coinFlips.length
+
+	player.coinFlips.push({
+		card: card.entity,
+		opponentFlip: currentPlayer !== null,
+		name: !currentPlayer ? name : 'Opponent ' + name,
+		amount: times,
+		headImage: player.appearance.coin.id,
+	})
+
 	game.startCoinFlip(
 		{
 			card: card.entity,
@@ -84,7 +94,7 @@ export function flipCoin(
 			}
 
 			const result = coinFlips.map((f) => f.result)
-			player.coinFlips.push({
+			player.coinFlips[i] = {
 				card: card.entity,
 				opponentFlip: currentPlayer !== null,
 				name: !currentPlayer ? name : 'Opponent ' + name,
@@ -92,7 +102,7 @@ export function flipCoin(
 				amount: coinFlipAmount,
 				delay: coinFlipAmount * 350 + 1000,
 				headImage: player.appearance.coin.id,
-			})
+			}
 
 			resultCallback(result)
 		},
