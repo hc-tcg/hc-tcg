@@ -30,11 +30,11 @@ import PackOfWolves from './pack-of-wolves'
 import PeskyBird from './pesky-bird'
 import PoePoeEnforcer from './poe-poe-enforcer'
 import ServerLag from './server-lag'
-import TurtleMaster from './turtle-master'
 import SignalInversion from './signal-inversion'
 import SUStainable from './sustainable'
 import TeamStar from './team-star'
 import TerribleTrades from './terrible-trades'
+import TurtleMaster from './turtle-master'
 import {
 	BalancedWins,
 	BuilderWins,
