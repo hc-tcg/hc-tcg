@@ -24,14 +24,14 @@ const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
 			]
 
 			let evenIterations = Math.floor(amount / 2)
-			let extraFlip = amount % 2
+			let extraFlip = amount % 2 !== 0
 
 			if (tosses === undefined) {
 				evenIterations = 10000
 			} else {
 				let face = tosses[index]
-				if (face.result === 'tails') {
-					extraFlip = Number(!extraFlip)
+				if ((face.result === 'tails') !== extraFlip) {
+					coinPics.reverse()
 				}
 			}
 
