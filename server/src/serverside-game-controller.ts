@@ -301,7 +301,7 @@ export class ServerSideGameController extends GameController {
 				type: serverMessages.GAME_SEND_COIN_FLIP,
 				result: coinFlips,
 			})
-		}, 2000)
+		}, 200)
 
 		callback(coinFlips)
 	}

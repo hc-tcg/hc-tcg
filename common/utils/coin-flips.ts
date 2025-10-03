@@ -73,6 +73,7 @@ export function flipCoin(
 			name: !currentPlayer ? name : 'Opponent ' + name,
 			amount: times,
 			headImage: player.appearance.coin.id,
+			delay: coinFlipAmount * 350 + 1000,
 		},
 		(results) => {
 			let coinFlips: Array<{

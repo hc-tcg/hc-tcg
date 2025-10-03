@@ -12,6 +12,8 @@ import {
 	CurrentCoinFlip,
 	CoinFlipResult,
 	IncompleteCoinFlip,
+	CoinFlip,
+	LocalCurrentCoinFlip,
 } from 'common/types/game-state'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
 import {assert} from 'common/utils/assert'
@@ -79,20 +81,50 @@ class ClientGameController extends GameController {
 		coinFlip: IncompleteCoinFlip,
 		callback: (result: Array<CoinFlipResult>) => any,
 	) {
+		let startTime = Date.now()
+
+		let coinFlipData: LocalCurrentCoinFlip = {
+			card: getLocalCard(this.game, this.game.components.get(coinFlip.card)!),
+			opponentFlip: coinFlip.opponentFlip,
+			name: coinFlip.name,
+			amount: coinFlip.amount,
+			headImage: coinFlip.headImage,
+			delay: coinFlip.delay,
+		}
+
 		store.dispatch({
 			type: localMessages.GAME_COIN_FLIP_SET,
-			coinFlip: {
-				card: getLocalCard(this.game, this.game.components.get(coinFlip.card)!),
-				opponentFlip: coinFlip.opponentFlip,
-				name: coinFlip.name,
-				amount: coinFlip.amount,
-				headImage: coinFlip.headImage,
-			},
+			coinFlip: coinFlipData,
 		})
 		this.waitingForCoinFlip = (result: Array<'heads' | 'tails'>) => {
 			this.waitingForCoinFlip = undefined
 			assert(coinFlip.amount == result.length)
-			callback(result)
+
+			let completeFlip: LocalCurrentCoinFlip = {
+				...coinFlipData,
+				tosses: result.map((result) => {
+					return {forced: false, result}
+				}),
+			}
+			store.dispatch({
+				type: localMessages.GAME_COIN_FLIP_SET,
+				coinFlip: completeFlip,
+			})
+
+			let ping = Date.now() - startTime
+			let waitFor = coinFlip.delay - ping
+
+			if (waitFor < 100) {
+				waitFor = 100
+			}
+
+			setTimeout(() => {
+				callback(result)
+				store.dispatch({
+					type: localMessages.GAME_COIN_FLIP_SET,
+					coinFlip: null,
+				})
+			}, coinFlip.delay - ping)
 		}
 	}
 }
@@ -176,14 +208,10 @@ function* turnActionRecieve(gameController: GameController) {
 
 		yield* call(() => gameController.sendTurnAction(turnAction))
 
-		/* Likely need to move the logic when there is a coin flip */
 		localGameState = getLocalGameState(
 			gameController.game,
 			gameController.viewers[0],
 		)
-
-		// First show coin flips, if any
-		yield* call(coinFlipSaga, localGameState)
 
 		// Actually update the local state
 		yield* putResolve<LocalMessage>({

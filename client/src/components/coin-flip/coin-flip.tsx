@@ -23,18 +23,16 @@ const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
 				<img src={'/images/cosmetics/coin/tails.png'} />,
 			]
 
-			let evenIterations = 3
+			let evenIterations = 1
 			let extraFlip = false
 
 			if (tosses === undefined) {
 				evenIterations = 10000
 			} else {
-				console.log(tosses, index)
 				let face = tosses[index]
-				console.log(face)
-				//if (face.result === 'tails') {
-				//	extraFlip = !extraFlip
-				//}
+				if (face.result === 'tails') {
+					extraFlip = !extraFlip
+				}
 			}
 
 			const faceStyle = {

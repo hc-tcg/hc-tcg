@@ -35,6 +35,7 @@ export type IncompleteCoinFlip = {
 	name: string
 	amount: number
 	headImage: Coin['id']
+	delay: number
 }
 
 export type CurrentCoinFlip = {
