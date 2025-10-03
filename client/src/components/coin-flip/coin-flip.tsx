@@ -29,10 +29,12 @@ const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
 			if (tosses === undefined) {
 				evenIterations = 10000
 			} else {
+				console.log(tosses, index)
 				let face = tosses[index]
-				if (face.result === 'tails') {
-					extraFlip = !extraFlip
-				}
+				console.log(face)
+				//if (face.result === 'tails') {
+				//	extraFlip = !extraFlip
+				//}
 			}
 
 			const faceStyle = {

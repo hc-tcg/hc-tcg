@@ -23,27 +23,14 @@ function* coinFlipSaga(gameState: LocalGameState): SagaIterator {
 	coinFlips = gameState.players[gameState.turn.currentPlayerEntity].coinFlips
 
 	for (const coinFlip of coinFlips) {
-		let serverCoinFlips = yield* call(
-			receiveMsg<typeof serverMessages.GAME_SEND_COIN_FLIP>(
-				socket,
-				serverMessages.GAME_SEND_COIN_FLIP,
-			),
-		)
-
-		const completeFlip = {
-			...coinFlip,
-			tosses: serverCoinFlips.result.map((r) => {
-				return {
-					result: r,
-					forced: false,
-				}
-			}),
-		}
+		console.log(coinFlip)
 		yield* put<LocalMessage>({
 			type: localMessages.GAME_COIN_FLIP_SET,
-			coinFlip: completeFlip,
+			coinFlip: coinFlip,
 		})
 
+		console.log(coinFlip.delay)
+		console.log("delaying")
 		if (coinFlip.delay) {
 			yield delay(coinFlip.delay)
 		}

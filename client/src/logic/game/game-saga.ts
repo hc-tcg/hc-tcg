@@ -25,6 +25,7 @@ import {
 	all,
 	call,
 	cancel,
+	delay,
 	fork,
 	put,
 	putResolve,
@@ -78,7 +79,6 @@ class ClientGameController extends GameController {
 		coinFlip: IncompleteCoinFlip,
 		callback: (result: Array<CoinFlipResult>) => any,
 	) {
-		console.log('starting mock')
 		store.dispatch({
 			type: localMessages.GAME_COIN_FLIP_SET,
 			coinFlip: {
@@ -93,7 +93,6 @@ class ClientGameController extends GameController {
 			this.waitingForCoinFlip = undefined
 			assert(coinFlip.amount == result.length)
 			callback(result)
-			console.log("finished and retrieved")
 		}
 	}
 }
