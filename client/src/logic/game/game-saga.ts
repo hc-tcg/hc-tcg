@@ -60,7 +60,8 @@ export function* sendTurnAction(
 
 class ClientGameController extends GameController {
 	readyToDisplay = false
-	waitingForCoinFlip?: (result: Array<'heads' | 'tails'>) => any
+	waitingForCoinFlip?: (result: Array<CoinFlipResult>) => any
+	unprocessedCoinFlips: Array<Array<CoinFlipResult>> = []
 
 	public broadcastState(): void {
 		if (!this.readyToDisplay) return
@@ -75,6 +76,13 @@ class ClientGameController extends GameController {
 	public getRandomDelayForAI(coinFlips: Array<CurrentCoinFlip>) {
 		if (!this.readyToDisplay) return 0
 		return super.getRandomDelayForAI(coinFlips)
+	}
+
+	public newCoinFlipRecieved() {
+		if (this.waitingForCoinFlip) {
+			this.waitingForCoinFlip(this.unprocessedCoinFlips.shift()!)
+			this.waitingForCoinFlip = undefined
+		}
 	}
 
 	public override startCoinFlip(
@@ -96,7 +104,8 @@ class ClientGameController extends GameController {
 			type: localMessages.GAME_COIN_FLIP_SET,
 			coinFlip: coinFlipData,
 		})
-		this.waitingForCoinFlip = (result: Array<'heads' | 'tails'>) => {
+
+		let onCoinFlip = (result: Array<'heads' | 'tails'>) => {
 			this.waitingForCoinFlip = undefined
 			assert(coinFlip.amount == result.length)
 
@@ -125,6 +134,12 @@ class ClientGameController extends GameController {
 					coinFlip: null,
 				})
 			}, coinFlip.delay - ping)
+		}
+
+		if (this.unprocessedCoinFlips.length === 0) {
+			this.waitingForCoinFlip = onCoinFlip
+		} else {
+			onCoinFlip(this.unprocessedCoinFlips.shift()!)
 		}
 	}
 }
@@ -384,8 +399,8 @@ function* handleCoinFlipResult(gameController: ClientGameController) {
 			),
 		)
 
-		assert(gameController.waitingForCoinFlip)
-		gameController.waitingForCoinFlip(action.result)
+		gameController.unprocessedCoinFlips.push(action.result)
+		gameController.newCoinFlipRecieved()
 	}
 }
 
