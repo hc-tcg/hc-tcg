@@ -40,7 +40,6 @@ const CoinFlipComponent = ({
 			if (tosses === undefined) {
 				evenIterations = 10000
 			} else {
-				console.log(tosses)
 				let face = tosses[index]
 				if (face.result === 'tails') {
 					extraFlip = !extraFlip

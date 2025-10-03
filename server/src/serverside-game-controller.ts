@@ -293,14 +293,10 @@ export class ServerSideGameController extends GameController {
 			coinFlips.push(coinFlip)
 		}
 
-		// @todo REMOVE THIS TIMEOUT BEFORE MERGING
-		setTimeout(() => {
-			console.log(coinFlips)
-			this.broadcastToViewers({
-				type: serverMessages.GAME_SEND_COIN_FLIP,
-				result: coinFlips,
-			})
-		}, 200)
+		this.broadcastToViewers({
+			type: serverMessages.GAME_SEND_COIN_FLIP,
+			result: coinFlips,
+		})
 
 		callback(coinFlips)
 	}
