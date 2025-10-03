@@ -33,7 +33,8 @@ export type IncompleteCoinFlip = {
 	card: CardEntity
 	opponentFlip: boolean
 	name: string
-	amount: number
+	numberOfCoins: number
+	flipAmounts: Array<number>
 	headImage: Coin['id']
 	delay: number
 }
@@ -43,7 +44,8 @@ export type CurrentCoinFlip = {
 	opponentFlip: boolean
 	name: string
 	tosses: Array<CoinFlip>
-	amount: number
+	numberOfCoins: number
+	flipAmounts: Array<number>
 	delay: number
 	headImage: Coin['id']
 }
@@ -52,7 +54,8 @@ export type LocalCurrentCoinFlip = {
 	card: LocalCardInstance
 	opponentFlip: boolean
 	name: string
-	amount: number
+	numberOfCoins: number
+	flipAmounts: Array<number>
 	headImage: Coin['id']
 	delay?: number
 	tosses?: Array<CoinFlip>

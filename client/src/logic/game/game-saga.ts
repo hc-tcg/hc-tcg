@@ -95,7 +95,8 @@ class ClientGameController extends GameController {
 			card: getLocalCard(this.game, this.game.components.get(coinFlip.card)!),
 			opponentFlip: coinFlip.opponentFlip,
 			name: coinFlip.name,
-			amount: coinFlip.amount,
+			numberOfCoins: coinFlip.numberOfCoins,
+			flipAmounts: coinFlip.flipAmounts,
 			headImage: coinFlip.headImage,
 			delay: coinFlip.delay,
 		}
@@ -107,7 +108,7 @@ class ClientGameController extends GameController {
 
 		let onCoinFlip = (result: Array<'heads' | 'tails'>) => {
 			this.waitingForCoinFlip = undefined
-			assert(coinFlip.amount == result.length)
+			console.log("result", result)
 
 			let completeFlip: LocalCurrentCoinFlip = {
 				...coinFlipData,
@@ -399,6 +400,7 @@ function* handleCoinFlipResult(gameController: ClientGameController) {
 			),
 		)
 
+		console.log("action", action.result)
 		gameController.unprocessedCoinFlips.push(action.result)
 		gameController.newCoinFlipRecieved()
 	}

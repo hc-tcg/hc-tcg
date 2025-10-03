@@ -9,13 +9,20 @@ export type Props = {
 	name: string
 	headImage: Coin['id']
 	tosses?: Array<CoinFlip>
-	amount: number
+	flipAmounts: Array<number>
+	numberOfCoins: number
 }
 
-const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
+const CoinFlipComponent = ({
+	name,
+	headImage,
+	tosses,
+	flipAmounts,
+	numberOfCoins,
+}: Props) => {
 	const coin = COINS[headImage]
 
-	const coins = Array(amount)
+	const coins = Array(numberOfCoins)
 		.fill(null)
 		.map((_, index) => {
 			const coinPics = [
@@ -23,15 +30,16 @@ const CoinFlipComponent = ({name, headImage, tosses, amount}: Props) => {
 				<img src={'/images/cosmetics/coin/tails.png'} />,
 			]
 
-			let evenIterations = Math.floor(amount / 2)
-			let extraFlip = amount % 2 !== 0
+			let evenIterations = Math.floor(flipAmounts[index] / 2)
+			let extraFlip = flipAmounts[index] % 2 !== 0
 
 			if (tosses === undefined) {
 				evenIterations = 10000
 			} else {
+				console.log(tosses)
 				let face = tosses[index]
-				if ((face.result === 'tails') !== extraFlip) {
-					coinPics.reverse()
+				if (face.result === 'tails') {
+					extraFlip = !extraFlip
 				}
 			}
 

@@ -66,7 +66,8 @@ const Actions = ({onClick, id, gameOver, gameEndButton}: Props) => {
 					<CoinFlip
 						key={currentCoinFlip.name}
 						{...currentCoinFlip}
-						amount={currentCoinFlip.amount}
+						numberOfCoins={currentCoinFlip.numberOfCoins}
+						flipAmounts={currentCoinFlip.flipAmounts}
 						headImage={currentCoinFlip.headImage}
 					/>
 				</div>

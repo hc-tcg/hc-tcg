@@ -288,11 +288,10 @@ export class ServerSideGameController extends GameController {
 		callback: (result: Array<'heads' | 'tails'>) => any,
 	) {
 		const coinFlips: Array<'heads' | 'tails'> = []
-		for (let i = 0; i < coinFlip.amount; i++) {
+		for (let i = 0; i < coinFlip.numberOfCoins; i++) {
 			const coinFlip = Math.random() >= 0.5 ? 'heads' : 'tails'
 			coinFlips.push(coinFlip)
 		}
-
 
 		// @todo REMOVE THIS TIMEOUT BEFORE MERGING
 		setTimeout(() => {

@@ -52,14 +52,23 @@ export function flipCoin(
 
 	const i = player.coinFlips.length
 
-	let coinFlipAmount =
-		COIN_FLIP_ARRAY[Math.floor(game.coinFlipRng() * COIN_FLIP_ARRAY.length)]
+	let flipAmounts = Array(times)
+		.fill(null)
+		.map(
+			(_) =>
+				COIN_FLIP_ARRAY[
+					Math.floor(game.coinFlipRng() * COIN_FLIP_ARRAY.length)
+				],
+		)
+
+	const coinFlipAmount = flipAmounts.sort((a, b) => b - a)[0]
 
 	player.coinFlips.push({
 		card: card.entity,
 		opponentFlip: currentPlayer !== null,
 		name: !currentPlayer ? name : 'Opponent ' + name,
-		amount: times,
+		numberOfCoins: times,
+		flipAmounts: flipAmounts,
 		delay: coinFlipAmount * 350 + 1000,
 		headImage: player.appearance.coin.id,
 	})
@@ -71,7 +80,8 @@ export function flipCoin(
 			card: card.entity,
 			opponentFlip: currentPlayer !== null,
 			name: !currentPlayer ? name : 'Opponent ' + name,
-			amount: times,
+			numberOfCoins: times,
+			flipAmounts: flipAmounts,
 			headImage: player.appearance.coin.id,
 			delay: coinFlipAmount * 350 + 1000,
 		},
@@ -103,7 +113,8 @@ export function flipCoin(
 				opponentFlip: currentPlayer !== null,
 				name: !currentPlayer ? name : 'Opponent ' + name,
 				tosses: coinFlips,
-				amount: coinFlipAmount,
+				numberOfCoins: times,
+				flipAmounts: flipAmounts,
 				delay: coinFlipAmount * 350 + 1000,
 				headImage: player.appearance.coin.id,
 			}
