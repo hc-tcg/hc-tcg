@@ -111,6 +111,7 @@ export class GameModel {
 	public playerOneShuffle: () => number
 	public playerTwoShuffle: () => number
 	public coinFlipRng: () => number
+	public bossRng: () => number
 
 	public nextEntity: () => number
 	private entityCount: number
@@ -227,6 +228,7 @@ export class GameModel {
 			this.rng().toString().slice(2),
 		)
 		this.coinFlipRng = newRandomNumberGenerator(this.rng().toString().slice(2))
+		this.bossRng = newRandomNumberGenerator(this.rng().toString().slice(2))
 
 		this.entityCount = 0
 		this.nextEntity = newIncrementor()
@@ -320,11 +322,12 @@ export class GameModel {
 			}
 			this.waitingForCoinFlips = []
 		}
-		console.log("Coin flips all resolved")
+		console.log('Coin flips all resolved')
 	}
 
 	public async waitForCoinFlips() {
-		new Promise((resolve) => {
+		if (this.coinFlipsInProgress === 0) return
+		await new Promise((resolve) => {
 			this.waitingForCoinFlips.push(resolve)
 		})
 	}

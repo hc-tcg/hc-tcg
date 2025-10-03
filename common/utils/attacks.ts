@@ -32,7 +32,9 @@ async function runBeforeAttackHooks(
 				return !shouldIgnoreCard(attack, game, entity)
 			return true
 		})
+		console.log("coin flips in progress", game.coinFlipsInProgress)
 		await game.waitForCoinFlips()
+		console.log("coin flips in progress", game.coinFlipsInProgress)
 	}
 }
 
@@ -95,7 +97,7 @@ export async function executeAttacks(
 
 	while (attacks.length > 0) {
 		// STEP 1 - Call before attack and defence for all attacks
-		runBeforeAttackHooks(game, attacks)
+		await runBeforeAttackHooks(game, attacks)
 
 		const nextAttacks: Array<AttackModel> = []
 		// STEP 3 - Execute all attacks

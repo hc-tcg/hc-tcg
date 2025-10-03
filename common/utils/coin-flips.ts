@@ -52,11 +52,15 @@ export function flipCoin(
 
 	const i = player.coinFlips.length
 
+	let coinFlipAmount =
+		COIN_FLIP_ARRAY[Math.floor(game.coinFlipRng() * COIN_FLIP_ARRAY.length)]
+
 	player.coinFlips.push({
 		card: card.entity,
 		opponentFlip: currentPlayer !== null,
 		name: !currentPlayer ? name : 'Opponent ' + name,
 		amount: times,
+		delay: coinFlipAmount * 350 + 1000,
 		headImage: player.appearance.coin.id,
 	})
 
@@ -85,9 +89,6 @@ export function flipCoin(
 			}
 			playerTossingCoin.hooks.onCoinFlip.call(card, coinFlips)
 
-			let coinFlipAmount =
-				COIN_FLIP_ARRAY[Math.floor(game.coinFlipRng() * COIN_FLIP_ARRAY.length)]
-
 			if (coinFlips.map((c) => c.forced).every((c) => c)) {
 				coinFlipAmount =
 					COIN_FLIP_FORCED_ARRAY[
@@ -106,8 +107,8 @@ export function flipCoin(
 				headImage: player.appearance.coin.id,
 			}
 
-			game.onCoinFlipEnd()
 			resultCallback(result)
+			game.onCoinFlipEnd()
 		},
 	)
 }

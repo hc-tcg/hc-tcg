@@ -289,15 +289,17 @@ export class ServerSideGameController extends GameController {
 	) {
 		const coinFlips: Array<'heads' | 'tails'> = []
 		for (let i = 0; i < coinFlip.amount; i++) {
-			const coinFlip = this.game.coinFlipRng() >= 0.5 ? 'heads' : 'tails'
+			const coinFlip = Math.random() >= 0.5 ? 'heads' : 'tails'
 			coinFlips.push(coinFlip)
 		}
 
-		console.log("sending coin flip")
-		this.broadcastToViewers({
-			type: serverMessages.GAME_SEND_COIN_FLIP,
-			result: coinFlips,
-		})
+		setTimeout(() => {
+			console.log(coinFlips)
+			this.broadcastToViewers({
+				type: serverMessages.GAME_SEND_COIN_FLIP,
+				result: coinFlips,
+			})
+		}, 2000)
 
 		callback(coinFlips)
 	}

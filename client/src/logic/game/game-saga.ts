@@ -93,7 +93,7 @@ class ClientGameController extends GameController {
 			this.waitingForCoinFlip = undefined
 			assert(coinFlip.amount == result.length)
 			callback(result)
-			console.log("finished")
+			console.log("finished and retrieved")
 		}
 	}
 }

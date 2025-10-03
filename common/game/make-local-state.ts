@@ -117,7 +117,7 @@ export function getLocalModalData(
 	throw new Error('Uknown modal type')
 }
 
-function getLocalCoinFlip(
+export function getLocalCoinFlip(
 	game: GameModel,
 	coinFlip: CurrentCoinFlip | IncompleteCoinFlip,
 ): LocalCurrentCoinFlip {

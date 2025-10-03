@@ -118,14 +118,15 @@ export async function attackAction(
 
 	// Run all the code stuff
 	await executeAttacks(game, attacks)
+	await game.waitForCoinFlips()
 
-	attacks.forEach((attack) => {
-		game.battleLog.addAttackEntry(
-			attack,
-			game.currentPlayer.coinFlips,
-			thisAttackSU,
-		)
-	})
+	// attacks.forEach((attack) => {
+	// 	game.battleLog.addAttackEntry(
+	// 		attack,
+	// 		game.currentPlayer.coinFlips,
+	// 		thisAttackSU,
+	// 	)
+	// })
 
 	game.battleLog.opponentCoinFlipEntry(currentPlayer.coinFlips)
 
