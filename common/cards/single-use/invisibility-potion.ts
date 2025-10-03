@@ -38,23 +38,30 @@ const InvisibilityPotion: SingleUse = {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onApply, () => {
-			if (flipCoin(game, player, component)[0] === 'heads') {
-				game.components
-					.new(
-						StatusEffectComponent,
-						InvisibilityPotionHeadsEffect,
-						component.entity,
-					)
-					.apply(player.entity)
-			} else {
-				game.components
-					.new(
-						StatusEffectComponent,
-						InvisibilityPotionTailsEffect,
-						component.entity,
-					)
-					.apply(player.entity)
-			}
+			flipCoin(
+				(coinFlip) => {
+					if (coinFlip[0] === 'heads') {
+						game.components
+							.new(
+								StatusEffectComponent,
+								InvisibilityPotionHeadsEffect,
+								component.entity,
+							)
+							.apply(player.entity)
+					} else {
+						game.components
+							.new(
+								StatusEffectComponent,
+								InvisibilityPotionTailsEffect,
+								component.entity,
+							)
+							.apply(player.entity)
+					}
+				},
+				game,
+				player,
+				component,
+			)
 		})
 	},
 }

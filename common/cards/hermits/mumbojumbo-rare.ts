@@ -46,17 +46,26 @@ const MumboJumboRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				const coinFlip = flipCoin(game, player, component, 2)
-				const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-				const pranksterAmount = game.components.filter(
-					CardComponent,
-					query.card.currentPlayer,
-					query.card.afk,
-					query.card.type('prankster'),
-				).length
+				flipCoin(
+					(coinFlip) => {
+						const headsAmount = coinFlip.filter(
+							(flip) => flip === 'heads',
+						).length
+						const pranksterAmount = game.components.filter(
+							CardComponent,
+							query.card.currentPlayer,
+							query.card.afk,
+							query.card.type('prankster'),
+						).length
 
-				attack.addDamage(component.entity, headsAmount * 20)
-				if (pranksterAmount > 0) attack.multiplyDamage(component.entity, 2)
+						attack.addDamage(component.entity, headsAmount * 20)
+						if (pranksterAmount > 0) attack.multiplyDamage(component.entity, 2)
+					},
+					game,
+					player,
+					component,
+					2,
+				)
 			},
 		)
 	},

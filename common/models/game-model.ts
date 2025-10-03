@@ -119,6 +119,8 @@ export class GameModel {
 		coinFlip: IncompleteCoinFlip,
 		callback: (result: Array<'heads' | 'tails'>) => any,
 	) => any
+	public coinFlipsInProgress = 0
+	public waitingForCoinFlips: Array<any> = []
 
 	public readonly id: string
 	public readonly settings: GameSettings
@@ -307,6 +309,24 @@ export class GameModel {
 				'Can not query for other before because both player components are created',
 			)
 		return otherPlayer
+	}
+
+	public onCoinFlipEnd() {
+		this.coinFlipsInProgress -= 1
+
+		if (this.coinFlipsInProgress == 0) {
+			for (let coinFlip of this.waitingForCoinFlips) {
+				coinFlip()
+			}
+			this.waitingForCoinFlips = []
+		}
+		console.log("Coin flips all resolved")
+	}
+
+	public async waitForCoinFlips() {
+		new Promise((resolve) => {
+			this.waitingForCoinFlips.push(resolve)
+		})
 	}
 
 	// Functions

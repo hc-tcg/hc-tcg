@@ -44,9 +44,18 @@ const FrenchralisRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				const coinFlip = flipCoin(game, player, component, 3 - player.lives)
-				const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-				attack.addDamage(component.entity, headsAmount * 40)
+				flipCoin(
+					(coinFlip) => {
+						const headsAmount = coinFlip.filter(
+							(flip) => flip === 'heads',
+						).length
+						attack.addDamage(component.entity, headsAmount * 40)
+					},
+					game,
+					player,
+					component,
+					3 - player.lives,
+				)
 			},
 		)
 	},

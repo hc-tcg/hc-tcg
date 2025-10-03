@@ -98,17 +98,22 @@ const BoomerBdubsRare: Hermit = {
 							return
 						}
 
-						const flip = flipCoin(game, player, activeHermit)[0]
+						flipCoin(
+							(flip) => {
+								if (flip[0] === 'tails') {
+									flippedTails = true
+									fortune?.apply(player.entity)
+									return 'SUCCESS'
+								}
 
-						if (flip === 'tails') {
-							flippedTails = true
-							fortune?.apply(player.entity)
-							return 'SUCCESS'
-						}
+								extraDamage += 20
 
-						extraDamage += 20
-
-						game.addModalRequest(followUpModal)
+								game.addModalRequest(followUpModal)
+							},
+							game,
+							player,
+							activeHermit,
+						)
 					},
 					onTimeout() {
 						fortune?.apply(player.entity)
@@ -137,36 +142,41 @@ const BoomerBdubsRare: Hermit = {
 						if (!modalResult) return 'SUCCESS'
 						if (!modalResult.result) return 'SUCCESS'
 
-						const flip = flipCoin(game, player, activeHermit)[0]
+						flipCoin(
+							(flip) => {
+								observer.subscribe(
+									player.hooks.blockedActions,
+									(blockedActions) => {
+										if (!blockedActions.includes('REMOVE_EFFECT'))
+											blockedActions.push('REMOVE_EFFECT')
+										return blockedActions
+									},
+								)
 
-						observer.subscribe(
-							player.hooks.blockedActions,
-							(blockedActions) => {
-								if (!blockedActions.includes('REMOVE_EFFECT'))
-									blockedActions.push('REMOVE_EFFECT')
-								return blockedActions
+								if (flip[0] === 'tails') {
+									flippedTails = true
+									return 'SUCCESS'
+								}
+
+								extraDamage += 20
+
+								game.addModalRequest(followUpModal)
+
+								// After the first coin flip we remove fortune to prevent infinite coin flips.
+								fortune = game.components.find(
+									StatusEffectComponent<PlayerComponent>,
+									query.effect.is(FortuneEffect, SpentFortuneEffect),
+									query.effect.targetIsPlayerAnd(
+										(_game, targetPlayer: PlayerComponent) =>
+											targetPlayer.entity === player.entity,
+									),
+								)
+								fortune?.remove()
 							},
+							game,
+							player,
+							activeHermit,
 						)
-
-						if (flip === 'tails') {
-							flippedTails = true
-							return 'SUCCESS'
-						}
-
-						extraDamage += 20
-
-						game.addModalRequest(followUpModal)
-
-						// After the first coin flip we remove fortune to prevent infinite coin flips.
-						fortune = game.components.find(
-							StatusEffectComponent<PlayerComponent>,
-							query.effect.is(FortuneEffect, SpentFortuneEffect),
-							query.effect.targetIsPlayerAnd(
-								(_game, targetPlayer: PlayerComponent) =>
-									targetPlayer.entity === player.entity,
-							),
-						)
-						fortune?.remove()
 
 						return 'SUCCESS'
 					},

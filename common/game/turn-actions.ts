@@ -30,11 +30,11 @@ import {assert} from '../utils/assert'
 import {executeAttacks} from '../utils/attacks'
 import {applySingleUse} from '../utils/board'
 
-function getAttack(
+async function getAttack(
 	game: GameModel,
 	creator: CardComponent,
 	hermitAttackType: HermitAttackType,
-): Array<AttackModel> {
+): Promise<Array<AttackModel>> {
 	const {currentPlayer} = game
 	const attacks: Array<AttackModel> = []
 
@@ -48,6 +48,7 @@ function getAttack(
 
 	// all other attacks
 	const otherAttacks = currentPlayer.hooks.getAttack.call()
+	await game.waitForCoinFlips()
 	otherAttacks.forEach((otherAttack) => {
 		if (otherAttack) attacks.push(otherAttack)
 	})
@@ -61,11 +62,11 @@ function getAttack(
 	return attacks
 }
 
-export function attackAction(
+export async function attackAction(
 	game: GameModel,
 	turnAction: AttackActionData,
 	checkForRequests = true,
-): void {
+) {
 	const hermitAttackType = attackActionToAttack[turnAction.type]
 	const {currentPlayer, state} = game
 	const activeInstance = game.currentPlayer.activeRow?.getHermit()
@@ -75,6 +76,7 @@ export function attackAction(
 	if (checkForRequests) {
 		// First allow cards to add attack requests
 		currentPlayer.hooks.getAttackRequests.call(activeInstance, hermitAttackType)
+		await game.waitForCoinFlips()
 
 		if (game.hasActiveRequests()) {
 			// We have some pick/modal requests that we want to execute before the attack
@@ -85,7 +87,7 @@ export function attackAction(
 	}
 
 	// Get initial attacks
-	let attacks: Array<AttackModel> = getAttack(
+	let attacks: Array<AttackModel> = await getAttack(
 		game,
 		activeInstance,
 		hermitAttackType,
@@ -115,7 +117,7 @@ export function attackAction(
 	)
 
 	// Run all the code stuff
-	executeAttacks(game, attacks)
+	await executeAttacks(game, attacks)
 
 	attacks.forEach((attack) => {
 		game.battleLog.addAttackEntry(
@@ -132,10 +134,10 @@ export function attackAction(
 	}
 }
 
-export function playCardAction(
+export async function playCardAction(
 	game: GameModel,
 	turnAction: PlayCardActionData,
-): void {
+) {
 	// Make sure data sent from client is correct
 	const slotEntity = turnAction?.slot
 	const localCard = turnAction?.card
@@ -243,15 +245,16 @@ export function playCardAction(
 
 	// Call onAttach hook
 	currentPlayer.hooks.onAttach.call(card)
+	await game.waitForCoinFlips()
 
 	console.log('end of the function')
 }
 
-export function applyEffectAction(game: GameModel): void {
+export async function applyEffectAction(game: GameModel): void {
 	applySingleUse(game, null)
 }
 
-export function removeEffectAction(game: GameModel): void {
+export async function removeEffectAction(game: GameModel): void {
 	let singleUseCard = game.components.find(
 		CardComponent,
 		query.card.slot(query.slot.singleUse),
@@ -267,10 +270,10 @@ export function removeEffectAction(game: GameModel): void {
 	singleUseCard?.draw()
 }
 
-export function changeActiveHermitAction(
+export async function changeActiveHermitAction(
 	game: GameModel,
 	turnAction: ChangeActiveHermitActionData,
-): void {
+) {
 	const {currentPlayer} = game
 
 	// Find the row we are trying to change to
@@ -302,14 +305,14 @@ export function changeActiveHermitAction(
 	}
 }
 
-export function modalRequestAction(
+export async function modalRequestAction(
 	game: GameModel,
 	localModalResult:
 		| LocalSelectCards.Result
 		| LocalCopyAttack.Result
 		| LocalDragCards.Result
 		| LocalSpyglassModal.Result,
-): void {
+) {
 	const modalRequest = game.state.modalRequests[0]
 
 	assert(
@@ -360,6 +363,7 @@ export function modalRequestAction(
 	} else throw Error('Unknown modal type')
 
 	game.hooks.onModalRequestResolve.call(modalRequest, modalResult)
+	await game.waitForCoinFlips()
 
 	// We completed the modal request, remove it
 	game.state.modalRequests.shift()
@@ -375,10 +379,10 @@ export function modalRequestAction(
 	}
 }
 
-export function pickRequestAction(
+export async function pickRequestAction(
 	game: GameModel,
 	pickResult?: SlotEntity,
-): void {
+) {
 	// First validate data sent from client
 	assert(pickResult, 'Pick results cannot have an emtpy body.')
 
@@ -408,6 +412,7 @@ export function pickRequestAction(
 	if (player) player.pickableSlots = null
 
 	game.hooks.onPickRequestResolve.call(pickRequest, slotInfo)
+	await game.waitForCoinFlips()
 
 	// We completed this pick request, remove it
 	game.state.pickRequests.shift()

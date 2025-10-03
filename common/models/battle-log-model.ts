@@ -271,7 +271,7 @@ export class BattleLogModel {
 		})
 	}
 
-	public opponentCoinFlipEntry(coinFlips: Array<CurrentCoinFlip>) {
+	public opponentCoinFlipEntry(coinFlips: Array<CurrentCoinFlip | IncompleteCoinFlip>) {
 		const player = this.game.currentPlayer
 		// Opponent coin flips
 		coinFlips.forEach((coinFlip) => {

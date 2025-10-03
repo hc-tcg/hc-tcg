@@ -385,7 +385,7 @@ function checkHermitHealth(game: GameModel) {
 	return deadPlayers
 }
 
-export function handleSingleTurnAction(
+export async function handleSingleTurnAction(
 	con: GameController,
 	turnAction: TurnActionAndPlayer,
 	currentTime: number,
@@ -424,21 +424,21 @@ export function handleSingleTurnAction(
 			case 'PLAY_ITEM_CARD':
 			case 'PLAY_EFFECT_CARD':
 			case 'PLAY_SINGLE_USE_CARD':
-				playCardAction(con.game, turnAction.action)
+				await playCardAction(con.game, turnAction.action)
 				break
 			case 'SINGLE_USE_ATTACK':
 			case 'PRIMARY_ATTACK':
 			case 'SECONDARY_ATTACK':
-				attackAction(con.game, turnAction.action)
+				await attackAction(con.game, turnAction.action)
 				break
 			case 'CHANGE_ACTIVE_HERMIT':
-				changeActiveHermitAction(con.game, turnAction.action)
+				await changeActiveHermitAction(con.game, turnAction.action)
 				break
 			case 'APPLY_EFFECT':
-				applyEffectAction(con.game)
+				await applyEffectAction(con.game)
 				break
 			case 'REMOVE_EFFECT':
-				removeEffectAction(con.game)
+				await removeEffectAction(con.game)
 				break
 			case 'PICK_REQUEST':
 				pickRequestAction(
@@ -447,7 +447,7 @@ export function handleSingleTurnAction(
 				)
 				break
 			case 'MODAL_REQUEST':
-				modalRequestAction(con.game, turnAction?.action?.modalResult)
+				await modalRequestAction(con.game, turnAction?.action?.modalResult)
 				break
 			case 'END_TURN':
 				endTurn = true
@@ -696,7 +696,7 @@ async function turnActionsSaga(con: GameController) {
 			con.game.lastActionTime = raceResult.turnAction.realTime
 
 			// Run action logic
-			const result = handleSingleTurnAction(
+			const result = await handleSingleTurnAction(
 				con,
 				raceResult.turnAction,
 				currentTime,

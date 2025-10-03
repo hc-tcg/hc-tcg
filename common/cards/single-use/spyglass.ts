@@ -30,50 +30,56 @@ const Spyglass: SingleUse = {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.onApply, () => {
-			const coinFlip = flipCoin(game, player, component)
-			const canDiscard = coinFlip[0] === 'heads'
+			flipCoin(
+				(coinFlip) => {
+					const canDiscard = coinFlip[0] === 'heads'
 
-			const getEntry = (card: CardComponent): string => {
-				return `$p{You|${player.playerName}}$ discarded ${getFormattedName(
-					card.props.id,
-					true,
-				)} from {$o${opponentPlayer.playerName}'s$|your} hand`
-			}
+					const getEntry = (card: CardComponent): string => {
+						return `$p{You|${player.playerName}}$ discarded ${getFormattedName(
+							card.props.id,
+							true,
+						)} from {$o${opponentPlayer.playerName}'s$|your} hand`
+					}
 
-			//@todo Redo spyglass entirely
-			game.addModalRequest({
-				player: player.entity,
-				modal: {
-					type: 'spyglass',
-					canDiscard: canDiscard,
+					//@todo Redo spyglass entirely
+					game.addModalRequest({
+						player: player.entity,
+						modal: {
+							type: 'spyglass',
+							canDiscard: canDiscard,
+						},
+						onResult(modalResult) {
+							if (!modalResult) return
+							if (!canDiscard) return
+							if (!modalResult.cards || modalResult.cards.length !== 1) return
+
+							console.log(
+								game.components.filter(
+									CardComponent,
+									query.card.opponentPlayer,
+									query.card.slot(query.slot.hand),
+								),
+							)
+
+							let card = game.components.find(
+								CardComponent,
+								query.card.entity(modalResult.cards[0]),
+							)
+							if (!card) return
+
+							card.discard()
+
+							game.battleLog.addEntry(player.entity, getEntry(card))
+						},
+						onTimeout() {
+							// Do nothing, this is the easiest to implement
+						},
+					})
 				},
-				onResult(modalResult) {
-					if (!modalResult) return
-					if (!canDiscard) return
-					if (!modalResult.cards || modalResult.cards.length !== 1) return
-
-					console.log(
-						game.components.filter(
-							CardComponent,
-							query.card.opponentPlayer,
-							query.card.slot(query.slot.hand),
-						),
-					)
-
-					let card = game.components.find(
-						CardComponent,
-						query.card.entity(modalResult.cards[0]),
-					)
-					if (!card) return
-
-					card.discard()
-
-					game.battleLog.addEntry(player.entity, getEntry(card))
-				},
-				onTimeout() {
-					// Do nothing, this is the easiest to implement
-				},
-			})
+				game,
+				player,
+				component,
+			)
 		})
 	},
 }

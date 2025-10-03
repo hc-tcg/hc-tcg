@@ -41,15 +41,20 @@ const FalseSymmetryRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				const coinFlip = flipCoin(game, player, component)[0]
+				flipCoin(
+					(coinFlip) => {
+						if (coinFlip[0] === 'tails') return
 
-				if (coinFlip === 'tails') return
-
-				// Heal 40hp
-				component.slot.inRow() && component.slot.row.heal(40)
-				game.battleLog.addEntry(
-					player.entity,
-					`$p${component.props.name}$ healed $g40hp$`,
+						// Heal 40hp
+						component.slot.inRow() && component.slot.row.heal(40)
+						game.battleLog.addEntry(
+							player.entity,
+							`$p${component.props.name}$ healed $g40hp$`,
+						)
+					},
+					game,
+					player,
+					component,
 				)
 			},
 		)

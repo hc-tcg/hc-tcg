@@ -60,6 +60,8 @@ export function flipCoin(
 		headImage: player.appearance.coin.id,
 	})
 
+	game.coinFlipsInProgress += 1
+
 	game.startCoinFlip(
 		{
 			card: card.entity,
@@ -104,6 +106,7 @@ export function flipCoin(
 				headImage: player.appearance.coin.id,
 			}
 
+			game.onCoinFlipEnd()
 			resultCallback(result)
 		},
 	)
