@@ -33,6 +33,10 @@ const CoinFlipComponent = ({
 			let evenIterations = Math.floor(flipAmounts[index] / 2)
 			let extraFlip = flipAmounts[index] % 2 !== 0
 
+			if (extraFlip) {
+				coinPics.reverse()
+			}
+
 			if (tosses === undefined) {
 				evenIterations = 10000
 			} else {
