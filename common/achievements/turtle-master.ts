@@ -1,11 +1,13 @@
+import assert from 'assert'
 import TurtleShell from '../cards/attach/turtle-shell'
 import {CardComponent, StatusEffectComponent} from '../components'
 import query from '../components/query'
 import {CardEntity} from '../entities'
 import LooseShellEffect from '../status-effects/loose-shell'
-import {onTurnEnd} from '../types/priorities'
+import {afterApply, onTurnEnd} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
+import Ladder from '../cards/single-use/ladder'
 
 const TurtleMaster: Achievement = {
 	...achievement,
@@ -23,11 +25,13 @@ const TurtleMaster: Achievement = {
 	onGameStart(game, player, component, observer) {
 		const looseShells: Set<CardEntity> = new Set()
 
+		// Detects when Turtle Shell is attached to an already active hermit
 		observer.subscribe(player.hooks.onAttach, (card) => {
 			if (card.props.id !== TurtleShell.id) return
 			if (card.player.entity !== player.entity) return
 
 			observer.subscribe(card.hooks.onChangeSlot, () => {
+				observer.unsubscribe(card.hooks.onChangeSlot)
 				if (
 					game.components.exists(
 						StatusEffectComponent,
@@ -40,6 +44,37 @@ const TurtleMaster: Achievement = {
 			})
 		})
 
+		observer.subscribeWithPriority(
+			player.hooks.afterApply,
+			afterApply.CHECK_BOARD_STATE,
+			() => {
+				const su = game.components.find(
+					CardComponent,
+					query.card.slot(query.slot.singleUse),
+				)
+
+				assert(
+					su,
+					'There should be a single use card in the single use slot if a sigle use card is applied',
+				)
+
+				if (su.props.id !== Ladder.id) return
+
+				observer.subscribe(
+					player.hooks.onActiveRowChange,
+					(_oldHermit, newHermit) => {
+						observer.unsubscribe(player.hooks.onActiveRowChange)
+
+						const looseShell = newHermit.getStatusEffect(LooseShellEffect)
+						if (!looseShell) return
+
+						looseShells.add(looseShell.creatorEntity)
+					},
+				)
+			},
+		)
+
+		// If the Turtle Shell is removed from the board, or given to other player, it no longer counts
 		observer.subscribe(player.hooks.onDetach, (card) => {
 			looseShells.delete(card.entity)
 		})
