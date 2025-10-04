@@ -124,57 +124,54 @@ describe('Test Turtle Master Achievement', () => {
 	})
 
 	test('Test achievement does not progress if loose shell was discarded before activation', async () => {
-		await testAchivement(
-			{
-				achievement: TurtleMaster,
-				playerOneDeck: [
-					EthosLabCommon,
-					EthosLabCommon,
-					TurtleShell,
-					Ladder,
-					Chest,
-				],
-				playerTwoDeck: [EthosLabCommon, CurseOfVanishing],
-				playGame: async (test, game) => {
-					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
-					await test.playCardFromHand(TurtleShell, 'attach', 1)
-					await test.endTurn()
+		await testAchivement({
+			achievement: TurtleMaster,
+			playerOneDeck: [
+				EthosLabCommon,
+				EthosLabCommon,
+				TurtleShell,
+				Ladder,
+				Chest,
+			],
+			playerTwoDeck: [EthosLabCommon, CurseOfVanishing],
+			playGame: async (test, game) => {
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+				await test.playCardFromHand(TurtleShell, 'attach', 1)
+				await test.endTurn()
 
-					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
-					await test.endTurn()
+				await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+				await test.endTurn()
 
-					await test.playCardFromHand(Ladder, 'single_use')
-					await test.pick(
-						query.slot.currentPlayer,
-						query.slot.hermit,
-						query.slot.rowIndex(1),
-					)
-					await test.endTurn()
+				await test.playCardFromHand(Ladder, 'single_use')
+				await test.pick(
+					query.slot.currentPlayer,
+					query.slot.hermit,
+					query.slot.rowIndex(1),
+				)
+				await test.endTurn()
 
-					await test.playCardFromHand(CurseOfVanishing, 'single_use')
-					await test.applyEffect()
-					await test.endTurn()
+				await test.playCardFromHand(CurseOfVanishing, 'single_use')
+				await test.applyEffect()
+				await test.endTurn()
 
-					await test.playCardFromHand(Chest, 'single_use')
-					await test.finishModalRequest({
-						result: true,
-						cards: game.components.filterEntities(
-							CardComponent,
-							query.card.is(TurtleShell),
-						),
-					})
-					await test.playCardFromHand(TurtleShell, 'attach', 0)
-					await test.changeActiveHermit(0)
-					await test.endTurn()
+				await test.playCardFromHand(Chest, 'single_use')
+				await test.finishModalRequest({
+					result: true,
+					cards: game.components.filterEntities(
+						CardComponent,
+						query.card.is(TurtleShell),
+					),
+				})
+				await test.playCardFromHand(TurtleShell, 'attach', 0)
+				await test.changeActiveHermit(0)
+				await test.endTurn()
 
-					await test.forfeit(game.currentPlayerEntity)
-				},
-				checkAchivement(_game, achievement, _outcome) {
-					expect(TurtleMaster.getProgress(achievement.goals)).toBeFalsy()
-				},
+				await test.forfeit(game.currentPlayerEntity)
 			},
-			{verboseLogging: true},
-		)
+			checkAchivement(_game, achievement, _outcome) {
+				expect(TurtleMaster.getProgress(achievement.goals)).toBeFalsy()
+			},
+		})
 	})
 })
