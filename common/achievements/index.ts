@@ -34,6 +34,7 @@ import SignalInversion from './signal-inversion'
 import SUStainable from './sustainable'
 import TeamStar from './team-star'
 import TerribleTrades from './terrible-trades'
+import TurtleMaster from './turtle-master'
 import {
 	BalancedWins,
 	BuilderWins,
@@ -82,6 +83,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	CertifiedZombie,
 	UseLikeAHermit,
 	Channeling,
+	TurtleMaster,
 
 	// Effect card / status effect - Challenge/Combo
 	GottaSchreep,
