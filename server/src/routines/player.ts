@@ -46,14 +46,7 @@ export function* playerConnectedSaga(
 			console.log('broading reconnect to game info')
 			broadcast([existingPlayer], {
 				type: serverMessages.PLAYER_RECONNECTED,
-				gameHistory: game.game.turnActions,
-				messages: game?.chat,
-				spectatorCode: game?.spectatorCode ?? undefined,
-				playerEntity: game.viewers.find((v) => v.player.id == existingPlayer.id)
-					?.playerOnLeftEntity!,
-				playerOneDefs: game.player1Defs,
-				playerTwoDefs: game.player2Defs,
-				props: game.props,
+				...game.getGamePropsForPlayer(existingPlayer.id)
 			})
 		} else {
 			const time = Date.now()

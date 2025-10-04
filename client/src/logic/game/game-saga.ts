@@ -108,7 +108,7 @@ class ClientGameController extends GameController {
 
 		let onCoinFlip = (result: Array<'heads' | 'tails'>) => {
 			this.waitingForCoinFlip = undefined
-			console.log("result", result)
+			console.log('result', result)
 
 			let completeFlip: LocalCurrentCoinFlip = {
 				...coinFlipData,
@@ -400,7 +400,7 @@ function* handleCoinFlipResult(gameController: ClientGameController) {
 			),
 		)
 
-		console.log("action", action.result)
+		console.log('action', action.result)
 		gameController.unprocessedCoinFlips.push(action.result)
 		gameController.newCoinFlipRecieved()
 	}
@@ -413,6 +413,7 @@ type GameSagaProps = {
 	playerOneDefs: PlayerSetupDefs
 	playerTwoDefs: PlayerSetupDefs
 	props: GameControllerProps
+	coinFlipHistory: Array<Array<CoinFlipResult>>
 }
 
 function* gameSaga({
@@ -422,12 +423,15 @@ function* gameSaga({
 	playerOneDefs,
 	playerTwoDefs,
 	props,
+	coinFlipHistory = [],
 }: GameSagaProps) {
 	const socket = yield* select(getSocket)
 
 	const gameController = yield* call(() =>
 		startGameLocally(playerEntity, playerOneDefs, playerTwoDefs, props),
 	)
+
+	gameController.unprocessedCoinFlips = coinFlipHistory
 
 	if (initialTurnActions) {
 		yield* call(() => getGameSyncedUp(gameController, initialTurnActions))

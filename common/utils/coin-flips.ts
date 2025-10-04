@@ -100,14 +100,10 @@ export function flipCoin(
 			}
 			playerTossingCoin.hooks.onCoinFlip.call(card, coinFlips)
 
-			if (coinFlips.map((c) => c.forced).every((c) => c)) {
-				coinFlipAmount =
-					COIN_FLIP_FORCED_ARRAY[
-						Math.floor(game.coinFlipRng() * COIN_FLIP_FORCED_ARRAY.length)
-					]
-			}
-
 			const result = coinFlips.map((f) => f.result)
+
+			game.coinFlipHistory.push(result)
+
 			player.coinFlips[i] = {
 				card: card.entity,
 				opponentFlip: currentPlayer !== null,

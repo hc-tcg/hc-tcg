@@ -14,7 +14,7 @@ import {
 	User,
 } from '../types/database'
 import {ApiDeck, Deck, Tag} from '../types/deck'
-import {GameOutcome, LocalGameState} from '../types/game-state'
+import {CoinFlipResult, GameOutcome, LocalGameState} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
 import {LocalCardInstance, PlayerInfo, Update} from '../types/server-requests'
 
@@ -80,6 +80,8 @@ export type ServerMessages = [
 		playerOneDefs: PlayerSetupDefs
 		playerTwoDefs: PlayerSetupDefs
 		props: GameControllerProps
+		/** Coin flip results, used for reconnects */
+		coinFlipHistory: Array<Array<CoinFlipResult>>
 	},
 	{type: typeof serverMessages.INVALID_PLAYER},
 	{

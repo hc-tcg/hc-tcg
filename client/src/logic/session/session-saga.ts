@@ -481,8 +481,6 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 			console.log('here')
 			console.log(matchmakingStatus)
 			if (matchmakingStatus !== 'in_game') {
-				console.log(result.playerReconnected)
-				console.log('here2')
 				yield* gameSaga({
 					initialTurnActions: result.playerReconnected.gameHistory,
 					spectatorCode: result.playerReconnected.spectatorCode,
@@ -490,6 +488,7 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 					playerOneDefs: result.playerReconnected.playerOneDefs,
 					playerTwoDefs: result.playerReconnected.playerTwoDefs,
 					props: result.playerReconnected.props,
+					coinFlipHistory: result.playerReconnected.coinFlipHistory,
 				})
 
 				console.log('here3')

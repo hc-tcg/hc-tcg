@@ -122,6 +122,7 @@ export class GameModel {
 	) => any
 	public coinFlipsInProgress = 0
 	public waitingForCoinFlips: Array<any> = []
+	public coinFlipHistory: Array<Array<CoinFlipResult>> = []
 
 	public readonly id: string
 	public readonly settings: GameSettings

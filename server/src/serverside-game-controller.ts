@@ -279,6 +279,7 @@ export class ServerSideGameController extends GameController {
 							...this.player2Defs,
 							deck: myDeck,
 						},
+			coinFlipHistory: this.game.coinFlipHistory,
 			props: this.props,
 		}
 	}
