@@ -4,6 +4,7 @@ import DeckedOut from '../achievements/decked-out'
 import iBuy from '../achievements/ibuy'
 import SUStainable from '../achievements/sustainable'
 import TerribleTrades from '../achievements/terrible-trades'
+import TurtleMaster from '../achievements/turtle-master'
 import UseLikeAHermit from '../achievements/use-like-a-hermit'
 import Win from '../achievements/wins'
 import {Heart} from './types'
@@ -21,7 +22,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'blue_terracotta',
 		name: 'Blue G.T.',
-		requires: undefined,
+		requires: {achievement: TurtleMaster.id},
 	},
 	{
 		id: 'copper',
