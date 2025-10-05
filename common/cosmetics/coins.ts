@@ -8,6 +8,7 @@ import NoDerpcoins from '../achievements/no-derpcoins'
 import PackOfWolves from '../achievements/pack-of-wolves'
 import ServerLag from '../achievements/server-lag'
 import UselessMachine from '../achievements/useless-machine'
+import WashedUp from '../achievements/washed-up'
 import Win from '../achievements/wins'
 import Wipeout from '../achievements/wipeout'
 import {Coin} from './types'
@@ -89,6 +90,12 @@ const CoinDefinitions: Omit<Coin, 'type'>[] = [
 		name: 'Zombie',
 		borderColor: '#1A1A1A',
 		requires: {achievement: HurtinHermits.id},
+	},
+	{
+		id: 'etho',
+		name: 'Etho',
+		borderColor: '#2b313f',
+		requires: {achievement: WashedUp.id},
 	},
 ]
 

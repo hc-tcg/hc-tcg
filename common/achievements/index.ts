@@ -50,6 +50,7 @@ import {
 import {Achievement} from './types'
 import UseLikeAHermit from './use-like-a-hermit'
 import UselessMachine from './useless-machine'
+import WashedUp from './washed-up'
 import Win from './wins'
 import Wipeout from './wipeout'
 
@@ -102,6 +103,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	HallOfAll,
 	Wipeout,
 	ServerLag,
+	WashedUp,
 
 	// Deck - challenge
 	Inneffective,
