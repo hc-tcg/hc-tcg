@@ -31,6 +31,7 @@ import PeskyBird from './pesky-bird'
 import PoePoeEnforcer from './poe-poe-enforcer'
 import ServerLag from './server-lag'
 import SignalInversion from './signal-inversion'
+import SpaceRace from './space-race'
 import SUStainable from './sustainable'
 import TeamStar from './team-star'
 import TerribleTrades from './terrible-trades'
@@ -102,6 +103,9 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	HallOfAll,
 	Wipeout,
 	ServerLag,
+
+	// Hermit - challenge
+	SpaceRace,
 
 	// Deck - challenge
 	Inneffective,

@@ -2,6 +2,7 @@ import CantTouchThis from '../achievements/cant-touch-this'
 import Channeling from '../achievements/channeling'
 import DeckedOut from '../achievements/decked-out'
 import iBuy from '../achievements/ibuy'
+import SpaceRace from '../achievements/space-race'
 import SUStainable from '../achievements/sustainable'
 import TerribleTrades from '../achievements/terrible-trades'
 import TurtleMaster from '../achievements/turtle-master'
@@ -37,7 +38,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'ender',
 		name: 'Ender Pearl',
-		requires: undefined,
+		requires: {achievement: SpaceRace.id},
 	},
 	{
 		id: 'plant',
