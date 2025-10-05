@@ -2,6 +2,7 @@ import HotTake from '../achievements/hot-take'
 import Innefective from '../achievements/inneffective'
 import LoyaltyIII from '../achievements/loyalty-iii'
 import SignalInversion from '../achievements/signal-inversion'
+import {BookDecks} from '../achievements/su-decks'
 import Win from '../achievements/wins'
 import {Border} from './types'
 
@@ -28,7 +29,7 @@ const BorderDefinitions: Omit<Border, 'type'>[] = [
 	{
 		id: 'lapis_border',
 		name: 'Lapis',
-		requires: undefined,
+		requires: {achievement: BookDecks.id},
 	},
 	{
 		id: 'magenta_border',
