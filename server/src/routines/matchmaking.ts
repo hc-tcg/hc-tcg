@@ -347,7 +347,10 @@ export function inGame(playerId: PlayerId) {
 	return root
 		.getGames()
 		.some(
-			(game) => !!game.viewers.find((viewer) => viewer.player.id === playerId),
+			(game) =>
+				!!game.viewers.find(
+					(viewer) => viewer.player && viewer.player.id === playerId,
+				),
 		)
 }
 
@@ -630,6 +633,7 @@ export function* joinPrivateGame(
 		}
 
 		for (const playerId of root.privateQueue[code].spectatorsWaiting) {
+			if (root.players[playerId] === undefined) continue
 			const viewer = newGame.addViewer({
 				player: root.players[playerId],
 				spectator: true,
