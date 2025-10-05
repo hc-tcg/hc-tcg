@@ -8,6 +8,7 @@ import DefeatEvilX from './defeat-evil-x'
 import Ethogirl from './ethogirl'
 import EyeOfTheSpider from './eye-of-the-spider'
 import FreeAndSteel from './free-and-steel'
+import FullySaturated from './fully-saturated'
 import GoFish from './go-fish'
 import GodsFavoritePrincess from './gods-favorite-princess'
 import GottaSchreep from './gotta-schreep'
@@ -102,6 +103,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	HallOfAll,
 	Wipeout,
 	ServerLag,
+	FullySaturated,
 
 	// Deck - challenge
 	Inneffective,
