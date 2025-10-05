@@ -478,7 +478,7 @@ function Settings({setMenuSection}: Props) {
 													onClose={closeModal}
 												>
 													<p className={css.warning}>
-														<b>⚠ This will log you out of all devices.</b>
+														<b>⚠ This will log you out of all other devices.</b>
 													</p>
 													<p className={css.warning}>
 														Only reset this when you believe someone else knows
