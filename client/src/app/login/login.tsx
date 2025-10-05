@@ -10,11 +10,13 @@ import {ConnectionError} from 'logic/session/session-reducer'
 import {
 	getConnecting,
 	getConnectingMessage,
+	getCorrupted,
 	getErrorType,
 } from 'logic/session/session-selectors'
 import React, {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './login.module.scss'
+import CorruptionBed from 'common/cards/bed-update/attach/corruption-bed'
 
 const getLoginError = (errorType: ConnectionError) => {
 	if (!errorType) return null
@@ -36,6 +38,7 @@ const Login = () => {
 	const dispatch = useMessageDispatch()
 	let connecting = useSelector(getConnecting)
 	let errorType = useSelector(getErrorType)
+	let corrupted = useSelector(getCorrupted)
 	const connectingMessage = useSelector(getConnectingMessage)
 
 	const [syncing, setSyncing] = useState<boolean>(false)
@@ -79,6 +82,40 @@ const Login = () => {
 					</div>
 					<div className={css.errorBanner}>
 						{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
+					</div>
+					<Button
+						className={css.loginButton}
+						type="submit"
+						onClick={() => {
+							window.location.reload()
+						}}
+					>
+						Reload Page
+					</Button>
+				</div>
+			</div>
+		)
+	}
+
+	if (corrupted) {
+		return (
+			<div className={css.loginBackground}>
+				<div className={css.loginContainer}>
+					<div className={classNames(css.logo, syncing && css.hideOnMobile)}>
+						<TcgLogo />
+					</div>
+					<div className={css.errorBanner}>
+						<ErrorBanner>
+							Something went very wrong when logging in. Either your token or
+							secret is invalid.
+							<br />
+							Please contact a developer with the following information:
+							<br />
+							<br />
+							Token: {localStorage.getItem('databaseInfo:userId')}
+							<br />
+							Secret: {localStorage.getItem('databaseInfo:secret')}
+						</ErrorBanner>
 					</div>
 					<Button
 						className={css.loginButton}

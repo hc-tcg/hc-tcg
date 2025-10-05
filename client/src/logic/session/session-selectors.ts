@@ -36,6 +36,10 @@ export const getErrorType = (state: RootState) => {
 	return getSession(state).errorType
 }
 
+export const getCorrupted = (state: RootState) => {
+	return getSession(state).corrupted
+}
+
 export const getToast = (state: RootState) => {
 	return getSession(state).toast
 }
