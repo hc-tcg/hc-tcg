@@ -31,6 +31,7 @@ import PeskyBird from './pesky-bird'
 import PoePoeEnforcer from './poe-poe-enforcer'
 import ServerLag from './server-lag'
 import SignalInversion from './signal-inversion'
+import SpiderFarm from './spider-farm'
 import SUStainable from './sustainable'
 import TeamStar from './team-star'
 import TerribleTrades from './terrible-trades'
@@ -76,6 +77,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	FreeAndSteel,
 	SUStainable,
 	iBuy,
+	SpiderFarm,
 
 	// effect card - challenge/combo
 	UselessMachine,
