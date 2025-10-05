@@ -208,6 +208,10 @@ function Settings({setMenuSection}: Props) {
 		setModal(<UpdatesModal onClose={closeModal} />)
 	}
 
+	const resetSecret = () => {
+		dispatch({type: localMessages.RESET_SECRET})
+	}
+
 	const handleReset = (
 		title: string,
 		prompt: string,
@@ -252,7 +256,7 @@ function Settings({setMenuSection}: Props) {
 							variant="default"
 							onClick={() => setModal(null)}
 						>
-							Nevermind
+							Never mind
 						</Button>
 					</div>
 				</Modal>,
@@ -464,7 +468,46 @@ function Settings({setMenuSection}: Props) {
 								<div className={css.dbInfo}>
 									<div className={classNames(css.dbItem, css.left)}>Secret</div>
 									<Button
-										className={css.viewSecretButton}
+										className={css.secretButton}
+										variant="default"
+										onClick={() =>
+											setModal(
+												<Modal
+													setOpen
+													title={'Reset secret?'}
+													onClose={closeModal}
+												>
+													<p className={css.warning}>
+														<b>⚠ This will log you out of all other devices.</b>
+													</p>
+													<p className={css.warning}>
+														Only reset this when you believe someone else knows
+														your secret.
+													</p>
+													<div className={css.resetModal}>
+														<Button
+															className={css.resetModalButton}
+															variant="error"
+															onClick={resetSecret}
+														>
+															Reset
+														</Button>
+														<Button
+															className={css.resetModalButton}
+															variant="default"
+															onClick={closeModal}
+														>
+															Never mind
+														</Button>
+													</div>
+												</Modal>,
+											)
+										}
+									>
+										Reset Secret
+									</Button>
+									<Button
+										className={css.secretButton}
 										variant="default"
 										onClick={() =>
 											setModal(
@@ -505,9 +548,9 @@ function Settings({setMenuSection}: Props) {
 															{CopyIcon()}
 														</button>
 													</div>
-													<div className={css.resetModal}>
+													<div className={css.viewModal}>
 														<Button
-															className={css.resetModalButton}
+															className={css.viewModalButton}
 															variant="default"
 															onClick={closeModal}
 														>

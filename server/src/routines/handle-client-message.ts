@@ -38,6 +38,7 @@ import {
 } from './matchmaking'
 import {
 	loadUpdatesSaga,
+	resetSecret,
 	updateCosmeticSaga,
 	updateMinecraftNameSaga,
 	updateUsernameSaga,
@@ -169,6 +170,10 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.REPLAY_OVERVIEW:
 			return yield* getOverview(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.RESET_SECRET:
+			return yield* resetSecret(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 	}
