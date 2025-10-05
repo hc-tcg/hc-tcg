@@ -32,6 +32,7 @@ import PoePoeEnforcer from './poe-poe-enforcer'
 import ServerLag from './server-lag'
 import SignalInversion from './signal-inversion'
 import SUStainable from './sustainable'
+import TagTeam from './tag-team'
 import TeamStar from './team-star'
 import TerribleTrades from './terrible-trades'
 import TurtleMaster from './turtle-master'
@@ -102,6 +103,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	HallOfAll,
 	Wipeout,
 	ServerLag,
+	TagTeam,
 
 	// Deck - challenge
 	Inneffective,
