@@ -104,7 +104,7 @@ const Login = () => {
 	}
 
 	if (errorType === 'invalid_session') {
-		errorType = undefined
+		errorType = null
 		connecting = true
 	}
 
