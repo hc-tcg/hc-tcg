@@ -92,10 +92,11 @@ const Login = () => {
 						className={css.loginButton}
 						type="submit"
 						onClick={() => {
+							localStorage.clear()
 							window.location.reload()
 						}}
 					>
-						Reload Page
+						Clear local storage and reload
 					</Button>
 				</div>
 			</div>
