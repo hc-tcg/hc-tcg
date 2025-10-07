@@ -62,13 +62,6 @@ const matchmakingReducer = (
 				gameCode: null,
 				spectatorCode: null,
 			}
-		case localMessages.CORRUPTED:
-			return {
-				...state,
-				status: null,
-				gameCode: null,
-				spectatorCode: null,
-			}
 		case localMessages.GAME_START:
 			return {
 				...state,

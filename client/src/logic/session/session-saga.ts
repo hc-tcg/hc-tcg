@@ -37,6 +37,7 @@ import {call, delay, put, race, select, take, takeEvery} from 'typed-redux-saga'
 import {BASE_URL} from '../../constants'
 import {ConnectionError} from './session-reducer'
 import {getFips} from 'node:crypto'
+import assert from 'node:assert'
 export const NO_SOCKET_ASSERT =
 	'The socket should be be defined as soon as the page is opened.'
 
@@ -560,6 +561,7 @@ export function* loginSaga() {
 		// Otherwise the login failed really bad, so lets send a message
 		yield put<LocalMessage>({
 			type: localMessages.CORRUPTED,
+			reason: result.reason,
 		})
 		break
 	}

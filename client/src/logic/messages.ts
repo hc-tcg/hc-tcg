@@ -141,7 +141,10 @@ type Messages = [
 	{type: typeof localMessages.CONNECTED},
 	{type: typeof localMessages.CONNECTING_MESSAGE; message: string},
 	{type: typeof localMessages.DISCONNECT; errorMessage?: ConnectionError},
-	{type: typeof localMessages.CORRUPTED},
+	{
+		type: typeof localMessages.CORRUPTED
+		reason: ConnectionError
+	},
 	{type: typeof localMessages.LOGOUT},
 	{type: typeof localMessages.UPDATES_LOAD; updates: Array<Update>},
 	{

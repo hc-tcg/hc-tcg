@@ -16,7 +16,6 @@ import {
 import React, {useState} from 'react'
 import {useSelector} from 'react-redux'
 import css from './login.module.scss'
-import CorruptionBed from 'common/cards/bed-update/attach/corruption-bed'
 
 const getLoginError = (errorType: ConnectionError) => {
 	if (!errorType) return null
@@ -37,8 +36,8 @@ const getLoginError = (errorType: ConnectionError) => {
 const Login = () => {
 	const dispatch = useMessageDispatch()
 	let connecting = useSelector(getConnecting)
-	let errorType = useSelector(getErrorType)
 	let corrupted = useSelector(getCorrupted)
+	let errorType = useSelector(getErrorType) || corrupted
 	const connectingMessage = useSelector(getConnectingMessage)
 
 	const [syncing, setSyncing] = useState<boolean>(false)
@@ -67,13 +66,7 @@ const Login = () => {
 				secret: secret,
 			})
 	}
-
-	if (errorType === 'invalid_session') {
-		errorType = undefined
-		connecting = true
-	}
-
-	if (errorType) {
+	if (corrupted == 'bad_auth') {
 		return (
 			<div className={css.loginBackground}>
 				<div className={css.loginContainer}>
@@ -81,7 +74,19 @@ const Login = () => {
 						<TcgLogo />
 					</div>
 					<div className={css.errorBanner}>
-						{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
+						<ErrorBanner>
+							Something went very wrong when logging in. Either your token or
+							secret is invalid.
+							<br />
+							If you are a developer, clear your local storage and reload the
+							page.
+							<br />
+							Otherwise, please contact a developer with the following
+							information:
+							<br />
+							<br />
+							Token: {localStorage.getItem('databaseInfo:userId')}
+						</ErrorBanner>
 					</div>
 					<Button
 						className={css.loginButton}
@@ -97,7 +102,12 @@ const Login = () => {
 		)
 	}
 
-	if (corrupted) {
+	if (errorType === 'invalid_session') {
+		errorType = undefined
+		connecting = true
+	}
+
+	if (errorType) {
 		return (
 			<div className={css.loginBackground}>
 				<div className={css.loginContainer}>
@@ -105,17 +115,7 @@ const Login = () => {
 						<TcgLogo />
 					</div>
 					<div className={css.errorBanner}>
-						<ErrorBanner>
-							Something went very wrong when logging in. Either your token or
-							secret is invalid.
-							<br />
-							Please contact a developer with the following information:
-							<br />
-							<br />
-							Token: {localStorage.getItem('databaseInfo:userId')}
-							<br />
-							Secret: {localStorage.getItem('databaseInfo:secret')}
-						</ErrorBanner>
+						{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
 					</div>
 					<Button
 						className={css.loginButton}
