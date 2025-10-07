@@ -36,8 +36,6 @@ import {eventChannel} from 'redux-saga'
 import {call, delay, put, race, select, take, takeEvery} from 'typed-redux-saga'
 import {BASE_URL} from '../../constants'
 import {ConnectionError} from './session-reducer'
-import {getFips} from 'node:crypto'
-import assert from 'node:assert'
 export const NO_SOCKET_ASSERT =
 	'The socket should be be defined as soon as the page is opened.'
 
@@ -71,7 +69,7 @@ const clearSession = () => {
 	sessionStorage.removeItem('playerSecret')
 }
 
-const clearFailedConnectionAttemps = () => {
+const _clearFailedConnectionAttemps = () => {
 	sessionStorage.removeItem('connectionAttempts')
 }
 
