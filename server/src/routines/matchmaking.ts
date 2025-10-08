@@ -154,7 +154,7 @@ function* gameManager(
 		playerEntity: con.playerOne.entity,
 		spectatorCode: con.spectatorCode ?? undefined,
 		playerOneDefs: {
-			...con.player2Defs,
+			...con.player1Defs,
 			deck: {
 				type: 'hidden',
 				entities: [

@@ -240,7 +240,7 @@ export class ServerSideGameController extends GameController {
 			.sort(CardComponent.compareOrder)
 
 		let myDeck = {
-			type: 'hidden',
+			type: 'hidden' as 'hidden',
 			entities: [
 				...myHandCards.map((c) => c.entity),
 				...myDeckCards.map((c) => c.entity),
@@ -249,7 +249,7 @@ export class ServerSideGameController extends GameController {
 		}
 
 		let opponentDeck = {
-			type: 'hidden',
+			type: 'hidden' as 'hidden',
 			entities: [
 				...opponentHandCards.map((c) => c.entity),
 				...opponentDeckCards.map((c) => c.entity),
@@ -276,7 +276,7 @@ export class ServerSideGameController extends GameController {
 							deck: opponentDeck,
 						}
 					: {
-							...this.player2Defs,
+							...this.player1Defs,
 							deck: myDeck,
 						},
 			coinFlipHistory: this.game.coinFlipHistory,

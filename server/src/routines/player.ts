@@ -43,7 +43,7 @@ export function* playerConnectedSaga(
 			})
 			const game = yield* select(getGame(existingPlayer.id))
 			assert(game, 'If they are reconnecting, the player should be in a game')
-			console.log('broading reconnect to game info')
+			console.log('broadcasting reconnect to game info')
 			broadcast([existingPlayer], {
 				type: serverMessages.PLAYER_RECONNECTED,
 				...game.getGamePropsForPlayer(existingPlayer.id)

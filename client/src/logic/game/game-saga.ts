@@ -108,7 +108,6 @@ class ClientGameController extends GameController {
 
 		let onCoinFlip = (result: Array<'heads' | 'tails'>) => {
 			this.waitingForCoinFlip = undefined
-			console.log('result', result)
 
 			let completeFlip: LocalCurrentCoinFlip = {
 				...coinFlipData,

@@ -59,8 +59,8 @@ const Actions = ({onClick, id, gameOver, gameEndButton}: Props) => {
 		const endTurn = availableActions.includes('END_TURN')
 		const changeHermit = availableActions.includes('CHANGE_ACTIVE_HERMIT')
 
-		// TODO: Show coin flip results for longer amount of time
 		if (currentCoinFlip) {
+			console.log("current coin flip", currentCoinFlip)
 			return (
 				<div id={css.status}>
 					<CoinFlip
