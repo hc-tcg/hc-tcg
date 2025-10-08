@@ -5,7 +5,7 @@ import {
 	ObserverComponent,
 	PlayerComponent,
 } from 'common/components'
-import {PlayerEntity} from 'common/entities'
+import {CardEntity, PlayerEntity} from 'common/entities'
 import {
 	GameController,
 	GameControllerProps,
@@ -23,6 +23,8 @@ import {IncompleteCoinFlip, Message} from 'common/types/game-state'
 import {broadcast} from './utils/comm'
 import query from 'common/components/query'
 import assert from 'assert'
+import {unknownCard} from 'common/components/card-component'
+import {Card} from 'common/cards/types'
 
 type ServerGameViewerProps = {
 	spectator: boolean
@@ -211,79 +213,20 @@ export class ServerSideGameController extends GameController {
 		let playerEntity = this.getPlayerEntity(player)
 		assert(playerEntity)
 
-		const myHandCards = this.game.components
-			.filter(
-				CardComponent,
-				query.card.player(playerEntity),
-				query.card.slot(query.slot.hand),
-			)
-			.sort(CardComponent.compareOrder)
-		const myDeckCards = this.game.components
-			.filter(
-				CardComponent,
-				query.card.player(playerEntity),
-				query.card.slot(query.slot.deck),
-			)
-			.sort(CardComponent.compareOrder)
-		const opponentHandCards = this.game.components
-			.filter(
-				CardComponent,
-				query.not(query.card.player(playerEntity)),
-				query.card.slot(query.slot.hand),
-			)
-			.sort(CardComponent.compareOrder)
-		const opponentDeckCards = this.game.components
-			.filter(
-				CardComponent,
-				query.not(query.card.player(playerEntity)),
-				query.card.slot(query.slot.deck),
-			)
-			.sort(CardComponent.compareOrder)
-
-		let myDeck = {
-			type: 'hidden' as 'hidden',
-			entities: [
-				...myHandCards.map((c) => c.entity),
-				...myDeckCards.map((c) => c.entity),
-			],
-			initialHand: myHandCards.map((c) => c.props.id),
-		}
-
-		let opponentDeck = {
-			type: 'hidden' as 'hidden',
-			entities: [
-				...opponentHandCards.map((c) => c.entity),
-				...opponentDeckCards.map((c) => c.entity),
-			],
-		}
+		let revealedCards: Array<[CardEntity, Card['id']]> = this.game.components
+			.filter(CardComponent, query.not(query.card.is(unknownCard)))
+			.map((card) => [card.entity, card.props.id])
 
 		return {
 			playerEntity: this.playerOne.entity,
 			spectatorCode: this.spectatorCode ?? undefined,
-			playerOneDefs:
-				playerEntity == this.game.playerOne
-					? {
-							...this.player1Defs,
-							deck: myDeck,
-						}
-					: {
-							...this.player2Defs,
-							deck: opponentDeck,
-						},
-			playerTwoDefs:
-				playerEntity == this.game.playerOne
-					? {
-							...this.player2Defs,
-							deck: opponentDeck,
-						}
-					: {
-							...this.player1Defs,
-							deck: myDeck,
-						},
+			playerOneDefs: this.player1Defs,
+			playerTwoDefs: this.player2Defs,
 			coinFlipHistory: this.game.coinFlipHistory,
 			props: this.props,
 			messages: this.chat,
 			gameHistory: this.game.turnActions,
+			revealedCards,
 		}
 	}
 

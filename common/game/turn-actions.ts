@@ -149,7 +149,6 @@ export async function playCardAction(
 	assert(card, 'You can not play a card that is not in the ECS')
 
 	if (card.props.id === unknownCard.id) {
-		console.log('Was hidden')
 		card.props = CARDS[localCard.id]
 	}
 
@@ -251,11 +250,11 @@ export async function playCardAction(
 	console.log('end of the function')
 }
 
-export async function applyEffectAction(game: GameModel): void {
+export async function applyEffectAction(game: GameModel) {
 	applySingleUse(game, null)
 }
 
-export async function removeEffectAction(game: GameModel): void {
+export async function removeEffectAction(game: GameModel) {
 	let singleUseCard = game.components.find(
 		CardComponent,
 		query.card.slot(query.slot.singleUse),

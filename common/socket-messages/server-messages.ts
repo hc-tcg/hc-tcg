@@ -1,6 +1,7 @@
 import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
+import {Card} from '../cards/types'
 import {Appearance} from '../cosmetics/types'
-import {PlayerEntity} from '../entities'
+import {CardEntity, PlayerEntity} from '../entities'
 import {GameControllerProps} from '../game/game-controller'
 import {TurnActionAndPlayer} from '../game/run-game'
 import {PlayerSetupDefs} from '../game/setup-game'
@@ -80,6 +81,7 @@ export type ReconnectProps = {
 	props: GameControllerProps
 	/** Coin flip results, used for reconnects */
 	coinFlipHistory: Array<Array<CoinFlipResult>>
+	revealedCards: Array<[CardEntity, Card['id']]>
 }
 
 export type ServerMessages = [
