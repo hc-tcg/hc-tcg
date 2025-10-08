@@ -475,13 +475,10 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 		})
 
 		if (result.playerReconnected.reconnectProps) {
-			console.log("reconnect props sent")
 			const matchmakingStatus = (yield* select(getMatchmaking)).status
 
 			// Only start a new game saga if the player is not in a game.
-			console.log('Reconnecting', matchmakingStatus)
 			if (matchmakingStatus !== 'in_game') {
-				console.log("HERE")
 				yield* gameSaga({
 					initialTurnActions:
 						result.playerReconnected.reconnectProps.gameHistory,

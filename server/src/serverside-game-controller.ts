@@ -213,10 +213,6 @@ export class ServerSideGameController extends GameController {
 		let playerEntity = this.getPlayerEntity(player)
 		assert(playerEntity)
 
-		let revealedCards: Array<[CardEntity, Card['id']]> = this.game.components
-			.filter(CardComponent, query.not(query.card.is(unknownCard)))
-			.map((card) => [card.entity, card.props.id])
-
 		return {
 			playerEntity: this.playerOne.entity,
 			spectatorCode: this.spectatorCode ?? undefined,
@@ -226,7 +222,6 @@ export class ServerSideGameController extends GameController {
 			props: this.props,
 			messages: this.chat,
 			gameHistory: this.game.turnActions,
-			revealedCards,
 		}
 	}
 

@@ -12,7 +12,6 @@ import {
 	CurrentCoinFlip,
 	CoinFlipResult,
 	IncompleteCoinFlip,
-	CoinFlip,
 	LocalCurrentCoinFlip,
 } from 'common/types/game-state'
 import {AnyTurnActionData} from 'common/types/turn-action-data'
@@ -27,7 +26,6 @@ import {
 	all,
 	call,
 	cancel,
-	delay,
 	fork,
 	put,
 	putResolve,
@@ -101,10 +99,12 @@ class ClientGameController extends GameController {
 			delay: coinFlip.delay,
 		}
 
-		store.dispatch({
-			type: localMessages.GAME_COIN_FLIP_SET,
-			coinFlip: coinFlipData,
-		})
+		if (this.readyToDisplay) {
+			store.dispatch({
+				type: localMessages.GAME_COIN_FLIP_SET,
+				coinFlip: coinFlipData,
+			})
+		}
 
 		let onCoinFlip = (result: Array<'heads' | 'tails'>) => {
 			this.waitingForCoinFlip = undefined
@@ -115,10 +115,13 @@ class ClientGameController extends GameController {
 					return {forced: false, result}
 				}),
 			}
-			store.dispatch({
-				type: localMessages.GAME_COIN_FLIP_SET,
-				coinFlip: completeFlip,
-			})
+
+			if (this.readyToDisplay) {
+				store.dispatch({
+					type: localMessages.GAME_COIN_FLIP_SET,
+					coinFlip: completeFlip,
+				})
+			}
 
 			let ping = Date.now() - startTime
 			let waitFor = coinFlip.delay - ping
@@ -127,13 +130,17 @@ class ClientGameController extends GameController {
 				waitFor = 100
 			}
 
+			if (this.readyToDisplay != true) {
+				waitFor = 0
+			}
+
 			setTimeout(() => {
 				callback(result)
 				store.dispatch({
 					type: localMessages.GAME_COIN_FLIP_SET,
 					coinFlip: null,
 				})
-			}, coinFlip.delay - ping)
+			}, waitFor)
 		}
 
 		if (this.unprocessedCoinFlips.length === 0) {
@@ -284,7 +291,6 @@ function* reconnectSaga(gameController: ClientGameController) {
 		const action = yield* call(
 			receiveMsg(socket, serverMessages.PLAYER_RECONNECTED),
 		)
-		console.log('THIS IS RUNNING TOO')
 
 		assert(action.reconnectProps)
 		let reconnectProps = action.reconnectProps
@@ -435,6 +441,20 @@ function* gameSaga({
 
 	gameController.unprocessedCoinFlips = coinFlipHistory
 
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_START,
+		spectatorCode,
+	})
+
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_LOCAL_STATE_SET,
+		localGameState: getLocalGameState(
+			gameController.game,
+			gameController.viewers[0],
+		),
+		time: Date.now(),
+	})
+
 	if (initialTurnActions) {
 		yield* call(() => getGameSyncedUp(gameController, initialTurnActions))
 		const localGameState = getLocalGameState(
@@ -447,6 +467,7 @@ function* gameSaga({
 			time: Date.now(),
 		})
 	}
+
 	gameController.readyToDisplay = true
 
 	const backgroundTasks = yield* fork(() =>
@@ -467,11 +488,6 @@ function* gameSaga({
 	)
 
 	try {
-		yield* put<LocalMessage>({
-			type: localMessages.GAME_START,
-			spectatorCode,
-		})
-
 		yield* put<LocalMessage>({
 			type: localMessages.GAME_LOCAL_STATE_SET,
 			localGameState: getLocalGameState(

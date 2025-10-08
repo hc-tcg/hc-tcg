@@ -81,7 +81,6 @@ export type ReconnectProps = {
 	props: GameControllerProps
 	/** Coin flip results, used for reconnects */
 	coinFlipHistory: Array<Array<CoinFlipResult>>
-	revealedCards: Array<[CardEntity, Card['id']]>
 }
 
 export type ServerMessages = [
