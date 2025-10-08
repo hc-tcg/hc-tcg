@@ -70,18 +70,22 @@ export const serverMessages = messages('serverMessages', {
 	HIDDEN_CARD_REVEAL: null,
 })
 
+export type ReconnectProps = {
+	gameHistory: Array<ReplayActionData>
+	spectatorCode?: string
+	messages: Array<ChatMessage>
+	playerEntity: PlayerEntity
+	playerOneDefs: PlayerSetupDefs
+	playerTwoDefs: PlayerSetupDefs
+	props: GameControllerProps
+	/** Coin flip results, used for reconnects */
+	coinFlipHistory: Array<Array<CoinFlipResult>>
+}
+
 export type ServerMessages = [
 	{
 		type: typeof serverMessages.PLAYER_RECONNECTED
-		gameHistory?: Array<ReplayActionData>
-		spectatorCode?: string
-		messages?: Array<ChatMessage>
-		playerEntity: PlayerEntity
-		playerOneDefs: PlayerSetupDefs
-		playerTwoDefs: PlayerSetupDefs
-		props: GameControllerProps
-		/** Coin flip results, used for reconnects */
-		coinFlipHistory: Array<Array<CoinFlipResult>>
+		reconnectProps?: ReconnectProps
 	},
 	{type: typeof serverMessages.INVALID_PLAYER},
 	{

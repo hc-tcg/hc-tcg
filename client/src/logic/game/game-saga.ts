@@ -286,19 +286,22 @@ function* reconnectSaga(gameController: ClientGameController) {
 		)
 		console.log('THIS IS RUNNING TOO')
 
+		assert(action.reconnectProps)
+		let reconnectProps = action.reconnectProps
+
 		yield* call(() => {
 			assert(
-				action.gameHistory,
+				reconnectProps.gameHistory,
 				'There should be a game history because the player is in a game.',
 			)
 
-			return getGameSyncedUp(gameController, action.gameHistory)
+			return getGameSyncedUp(gameController, reconnectProps.gameHistory)
 		})
 
-		if (action.messages) {
+		if (reconnectProps.messages) {
 			yield* put<LocalMessage>({
 				type: localMessages.CHAT_UPDATE,
-				messages: action.messages,
+				messages: reconnectProps.messages,
 			})
 		}
 
@@ -412,7 +415,7 @@ type GameSagaProps = {
 	playerOneDefs: PlayerSetupDefs
 	playerTwoDefs: PlayerSetupDefs
 	props: GameControllerProps
-	coinFlipHistory: Array<Array<CoinFlipResult>>
+	coinFlipHistory?: Array<Array<CoinFlipResult>>
 }
 
 function* gameSaga({

@@ -15,6 +15,7 @@ import {PlayerSetupDefs} from 'common/game/setup-game'
 import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
+	ReconnectProps,
 	ServerMessage,
 	serverMessages,
 } from 'common/socket-messages/server-messages'
@@ -199,14 +200,14 @@ export class ServerSideGameController extends GameController {
 	}
 
 	public getPlayerEntity(id: PlayerId) {
-		let viewer = this.viewers.find((v) => v.id === id && !v.spectator)
+		let viewer = this.viewers.find((v) => v.player.id === id && !v.spectator)
 		return viewer?.playerOnLeftEntity
 	}
 
 	/** Gets the game props to send to a player.
 	 * This function should be used for reconnects. It will reveal all cards that need to be visible for the reconnect to work.
 	 */
-	public getGamePropsForPlayer(player: PlayerId) {
+	public getGamePropsForPlayer(player: PlayerId): ReconnectProps {
 		let playerEntity = this.getPlayerEntity(player)
 		assert(playerEntity)
 
@@ -281,6 +282,8 @@ export class ServerSideGameController extends GameController {
 						},
 			coinFlipHistory: this.game.coinFlipHistory,
 			props: this.props,
+			messages: this.chat,
+			gameHistory: this.game.turnActions,
 		}
 	}
 

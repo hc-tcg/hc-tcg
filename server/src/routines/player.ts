@@ -42,12 +42,17 @@ export function* playerConnectedSaga(
 				player: existingPlayer,
 			})
 			const game = yield* select(getGame(existingPlayer.id))
-			assert(game, 'If they are reconnecting, the player should be in a game')
-			console.log('broadcasting reconnect to game info')
-			broadcast([existingPlayer], {
-				type: serverMessages.PLAYER_RECONNECTED,
-				...game.getGamePropsForPlayer(existingPlayer.id)
-			})
+			if (game) {
+				console.log('broadcasting reconnect to game info')
+				broadcast([existingPlayer], {
+					type: serverMessages.PLAYER_RECONNECTED,
+					reconnectProps: game.getGamePropsForPlayer(existingPlayer.id),
+				})
+			} else {
+				broadcast([existingPlayer], {
+					type: serverMessages.PLAYER_RECONNECTED,
+				})
+			}
 		} else {
 			const time = Date.now()
 			const date = new Date(time)
