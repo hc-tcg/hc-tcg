@@ -17,14 +17,15 @@ const PistonExtender: Achievement = {
 		},
 	],
 	onGameStart(_game, player, component, observer) {
-		const attachCounts: Record<CardEntity, RowEntity[]> = {}
+		const attachCounts: Record<CardEntity, CardEntity[]> = {}
 
 		function noteCardAttached(card: CardComponent) {
 			if (!card.slot.inRow()) return
-            if (!player.activeRowEntity) return
-            if (attachCounts[card.entity].includes(player.activeRowEntity)) return
+            if (!player.activeRow?.hermitSlot?.cardEntity) return
+            if (attachCounts[card.entity].includes(player.activeRow.hermitSlot.cardEntity)) return
+			if (!card.slot.row.hermitSlot.cardEntity) return
 			if (!attachCounts[card.entity]) attachCounts[card.entity] = []
-			attachCounts[card.entity].push(card.slot.row.entity)
+			attachCounts[card.entity].push(card.slot.row.hermitSlot.cardEntity)
 
 			component.updateGoalProgress({
 				goal: 0,
