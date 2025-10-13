@@ -1,4 +1,4 @@
 {
-    "key": "SECRET_KEY",
+    "auth": "SECRET_KEY"
 }
 

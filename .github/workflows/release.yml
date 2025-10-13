@@ -72,10 +72,9 @@ jobs:
         - name: Wait
           run: sleep 14m 30s
 
-        - uses: superfly/flyctl-actions/setup-flyctl@master
-        - run: flyctl deploy --remote-only
-          env:
-            FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        - name: Deploy
+          run: |
+           curl https://restart.hc-tcg.online -H "auth:${{ secrets.RESTART_AUTH_TOKEN }}"
 
         - name: Post Release Up Message to Discord
           shell: bash
