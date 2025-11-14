@@ -77,7 +77,15 @@ const HypnotizdRare: Hermit = {
 
 				// Betrayed ignores the slot that you pick in this pick request, so we skip this pick request
 				// to make the game easier to follow.
-				if (player.hasStatusEffect(BetrayedEffect)) return
+				if (
+					player.hasStatusEffect(BetrayedEffect) &&
+					game.components.exists(
+						CardComponent,
+						query.card.currentPlayer,
+						query.card.afk,
+					)
+				)
+					return
 
 				if (
 					!game.components.exists(
