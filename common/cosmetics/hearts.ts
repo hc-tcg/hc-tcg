@@ -3,6 +3,7 @@ import Channeling from '../achievements/channeling'
 import DeckedOut from '../achievements/decked-out'
 import FullySaturated from '../achievements/fully-saturated'
 import iBuy from '../achievements/ibuy'
+import {PotionDecks} from '../achievements/su-decks'
 import SUStainable from '../achievements/sustainable'
 import TerribleTrades from '../achievements/terrible-trades'
 import TurtleMaster from '../achievements/turtle-master'
@@ -87,7 +88,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		id: 'potion',
 		name: 'Potion',
 		offVariantName: 'potion_empty',
-		requires: undefined,
+		requires: {achievement: PotionDecks.id},
 	},
 	{
 		id: 'quartz',
