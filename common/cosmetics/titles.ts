@@ -24,6 +24,7 @@ import {
 	SpeedrunnerWins,
 	TerraformWins,
 } from '../achievements/type-wins'
+import WashedUp from '../achievements/washed-up'
 import Win from '../achievements/wins'
 import WorldEater from '../achievements/world-eater'
 import {Title} from './types'
@@ -107,6 +108,11 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		id: 'team_canada',
 		name: 'Team Canada',
 		requires: {achievement: NewTeamCanada.id},
+	},
+	{
+		id: 'washed_up',
+		name: 'Washed Up',
+		requires: {achievement: WashedUp.id},
 	},
 	{
 		id: 'builder_title',
