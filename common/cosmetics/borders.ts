@@ -3,6 +3,7 @@ import Innefective from '../achievements/inneffective'
 import LoyaltyIII from '../achievements/loyalty-iii'
 import SignalInversion from '../achievements/signal-inversion'
 import {BookDecks} from '../achievements/su-decks'
+import TerribleTrades from '../achievements/terrible-trades'
 import Win from '../achievements/wins'
 import {Border} from './types'
 
@@ -55,6 +56,11 @@ const BorderDefinitions: Omit<Border, 'type'>[] = [
 		id: 'silver_border',
 		name: 'Silver',
 		requires: {achievement: Win.id, level: 1},
+	},
+	{
+		id: 'quartz_border',
+		name: 'Quartz',
+		requires: {achievement: TerribleTrades.id},
 	},
 ]
 

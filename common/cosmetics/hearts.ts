@@ -1,11 +1,11 @@
 import CantTouchThis from '../achievements/cant-touch-this'
 import Channeling from '../achievements/channeling'
 import DeckedOut from '../achievements/decked-out'
+import DoubleEmerald from '../achievements/double-emerald'
 import FullySaturated from '../achievements/fully-saturated'
 import iBuy from '../achievements/ibuy'
 import {PotionDecks} from '../achievements/su-decks'
 import SUStainable from '../achievements/sustainable'
-import TerribleTrades from '../achievements/terrible-trades'
 import TurtleMaster from '../achievements/turtle-master'
 import UltraHardcore from '../achievements/ultra-hardcore'
 import UseLikeAHermit from '../achievements/use-like-a-hermit'
@@ -35,7 +35,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'emerald',
 		name: 'Emerald',
-		requires: {achievement: TerribleTrades.id},
+		requires: {achievement: DoubleEmerald.id},
 	},
 	{
 		id: 'ender',

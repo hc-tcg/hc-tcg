@@ -5,6 +5,7 @@ import Channeling from './channeling'
 import RedKing from './close-call'
 import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
+import DoubleEmerald from './double-emerald'
 import Ethogirl from './ethogirl'
 import EyeOfTheSpider from './eye-of-the-spider'
 import FreeAndSteel from './free-and-steel'
@@ -87,6 +88,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	CertifiedZombie,
 	UseLikeAHermit,
 	Channeling,
+	DoubleEmerald,
 	TurtleMaster,
 
 	// Effect card / status effect - Challenge/Combo
