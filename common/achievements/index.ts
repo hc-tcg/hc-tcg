@@ -54,6 +54,7 @@ import UseLikeAHermit from './use-like-a-hermit'
 import UselessMachine from './useless-machine'
 import Win from './wins'
 import Wipeout from './wipeout'
+import WorldEater from './world-eater'
 
 export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	// Log term - wins
@@ -104,6 +105,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	HallOfAll,
 	Wipeout,
 	ServerLag,
+	WorldEater,
 	FullySaturated,
 
 	// Deck - challenge
