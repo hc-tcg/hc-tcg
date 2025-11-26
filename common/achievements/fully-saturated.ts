@@ -16,13 +16,15 @@ const FullySaturated: Achievement = {
 		},
 	],
 	onGameStart(game, player, component, observer) {
-		game.components.filter(RowComponent, query.row.player(player.entity)).forEach((row) => {
-            observer.subscribe(row.hooks.onHealed, (_card, amount) => {
-                if (amount <= 0) return
+		game.components
+			.filter(RowComponent, query.row.player(player.entity))
+			.forEach((row) => {
+				observer.subscribe(row.hooks.onHealed, (_card, amount) => {
+					if (amount <= 0) return
 
-                component.updateGoalProgress({goal: 0, progress: amount})
-            })
-        })
+					component.updateGoalProgress({goal: 0, progress: amount})
+				})
+			})
 	},
 }
 
