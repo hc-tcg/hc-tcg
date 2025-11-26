@@ -24,7 +24,7 @@ const PistonExtender: Achievement = {
 			if (!player.activeRow?.hermitSlot?.cardEntity) return
 			if (
 				attachCounts[card.entity].includes(
-					player.activeRow.hermitSlot.cardEntity
+					player.activeRow.hermitSlot.cardEntity,
 				)
 			)
 				return
