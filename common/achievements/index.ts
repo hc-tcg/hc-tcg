@@ -4,6 +4,7 @@ import CantTouchThis from './cant-touch-this'
 import CertifiedZombie from './certified-zombie'
 import Channeling from './channeling'
 import RedKing from './close-call'
+import CostumeParty from './costume-party'
 import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
 import Demise from './demise'
@@ -128,6 +129,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	Ethogirl,
 	TeamStar,
 	NewTeamCanada,
+	CostumeParty,
 	PotionDecks,
 	BookDecks,
 

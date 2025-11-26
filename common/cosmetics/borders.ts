@@ -1,4 +1,5 @@
 import BlastProtection from '../achievements/blast-protection'
+import CostumeParty from '../achievements/costume-party'
 import HotTake from '../achievements/hot-take'
 import Innefective from '../achievements/inneffective'
 import LoyaltyIII from '../achievements/loyalty-iii'
@@ -36,7 +37,7 @@ const BorderDefinitions: Omit<Border, 'type'>[] = [
 	{
 		id: 'magenta_border',
 		name: 'Magenta',
-		requires: undefined,
+		requires: {achievement: CostumeParty.id},
 	},
 	{
 		id: 'dark_border',
