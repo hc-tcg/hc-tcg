@@ -5,6 +5,7 @@ import Demise from '../achievements/demise'
 import DoubleEmerald from '../achievements/double-emerald'
 import FullySaturated from '../achievements/fully-saturated'
 import iBuy from '../achievements/ibuy'
+import PistonExtender from '../achievements/piston-extender'
 import {PotionDecks} from '../achievements/su-decks'
 import SUStainable from '../achievements/sustainable'
 import TurtleMaster from '../achievements/turtle-master'
@@ -110,7 +111,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'slime_hearts',
 		name: 'Slime',
-		requires: undefined,
+		requires: {achievement: PistonExtender.id},
 	},
 	{
 		id: 'web',
