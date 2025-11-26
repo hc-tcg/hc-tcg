@@ -8,6 +8,7 @@ const UseLikeAHermit: Achievement = {
 	...achievement,
 	numericId: 48,
 	id: 'use_like_a_hermit',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'Use Like a Hermit...?',
@@ -26,7 +27,7 @@ const UseLikeAHermit: Achievement = {
 				query.card.active,
 			)
 		) {
-			component.incrementGoalProgress({goal: 0})
+			component.updateGoalProgress({goal: 0})
 		}
 	},
 }

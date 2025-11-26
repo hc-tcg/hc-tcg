@@ -9,6 +9,7 @@ const iBuy: Achievement = {
 	...achievement,
 	numericId: 50,
 	id: 'ibuy',
+	progressionMethod: 'sum',
 	levels: [
 		{
 			name: 'iBuy',
@@ -52,7 +53,7 @@ const iBuy: Achievement = {
 			onTurnEnd.BOARD_STATE,
 			(drawCards) => {
 				if (drawCards.find((card) => card?.props.id === newCardId)) {
-					component.incrementGoalProgress({goal: 0})
+					component.updateGoalProgress({goal: 0})
 				}
 				newCardId = null
 			},
