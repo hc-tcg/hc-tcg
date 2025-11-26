@@ -1,11 +1,11 @@
-import {CardComponent, SlotComponent} from '../components'
-import {CardEntity, RowEntity} from '../entities'
+import {CardComponent} from '../components'
+import {CardEntity} from '../entities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
 const PistonExtender: Achievement = {
 	...achievement,
-	numericId: 20,
+	numericId: 57,
 	id: 'piston-extender',
 	progressionMethod: 'best',
 	levels: [
@@ -21,8 +21,13 @@ const PistonExtender: Achievement = {
 
 		function noteCardAttached(card: CardComponent) {
 			if (!card.slot.inRow()) return
-            if (!player.activeRow?.hermitSlot?.cardEntity) return
-            if (attachCounts[card.entity].includes(player.activeRow.hermitSlot.cardEntity)) return
+			if (!player.activeRow?.hermitSlot?.cardEntity) return
+			if (
+				attachCounts[card.entity].includes(
+					player.activeRow.hermitSlot.cardEntity
+				)
+			)
+				return
 			if (!card.slot.row.hermitSlot.cardEntity) return
 			if (!attachCounts[card.entity]) attachCounts[card.entity] = []
 			attachCounts[card.entity].push(card.slot.row.hermitSlot.cardEntity)
