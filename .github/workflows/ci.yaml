@@ -4,11 +4,11 @@ on:
     push:
         branches:
             - master
-            - ux-rework
+            - achievements-batch-two
     pull_request:
         branches:
             - master
-            - ux-rework
+            - achievements-batch-two
 
 permissions:
     checks: write
