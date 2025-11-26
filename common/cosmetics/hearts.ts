@@ -1,6 +1,7 @@
 import CantTouchThis from '../achievements/cant-touch-this'
 import Channeling from '../achievements/channeling'
 import DeckedOut from '../achievements/decked-out'
+import Demise from '../achievements/demise'
 import DoubleEmerald from '../achievements/double-emerald'
 import FullySaturated from '../achievements/fully-saturated'
 import iBuy from '../achievements/ibuy'
@@ -20,7 +21,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'amethyst',
 		name: 'Amethyst',
-		requires: undefined,
+		requires: {achievement: Demise.id},
 	},
 	{
 		id: 'blue_terracotta',
