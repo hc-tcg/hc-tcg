@@ -1,3 +1,4 @@
+import BlastProtection from '../achievements/blast-protection'
 import HotTake from '../achievements/hot-take'
 import Innefective from '../achievements/inneffective'
 import LoyaltyIII from '../achievements/loyalty-iii'
@@ -40,7 +41,7 @@ const BorderDefinitions: Omit<Border, 'type'>[] = [
 	{
 		id: 'dark_border',
 		name: 'Netherite',
-		requires: undefined,
+		requires: {achievement: BlastProtection.id},
 	},
 	{
 		id: 'red_border',
