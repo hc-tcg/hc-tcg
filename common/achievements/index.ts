@@ -1,3 +1,4 @@
+import BlastProtection from './blast-protection'
 import British from './british'
 import CantTouchThis from './cant-touch-this'
 import CertifiedZombie from './certified-zombie'
@@ -89,6 +90,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	UseLikeAHermit,
 	Channeling,
 	DoubleEmerald,
+	BlastProtection,
 	TurtleMaster,
 
 	// Effect card / status effect - Challenge/Combo
