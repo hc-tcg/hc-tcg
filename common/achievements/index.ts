@@ -56,6 +56,7 @@ import {Achievement} from './types'
 import UltraHardcore from './ultra-hardcore'
 import UseLikeAHermit from './use-like-a-hermit'
 import UselessMachine from './useless-machine'
+import WashedUp from './washed-up'
 import Win from './wins'
 import Wipeout from './wipeout'
 import WorldEater from './world-eater'
@@ -115,6 +116,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	UltraHardcore,
 	Wipeout,
 	ServerLag,
+	WashedUp,
 	WorldEater,
 	FullySaturated,
 
