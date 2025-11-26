@@ -25,6 +25,7 @@ import {
 	TerraformWins,
 } from '../achievements/type-wins'
 import Win from '../achievements/wins'
+import WorldEater from '../achievements/world-eater'
 import {Title} from './types'
 
 const TitleDefinitions: Omit<Title, 'type'>[] = [
@@ -156,6 +157,11 @@ const TitleDefinitions: Omit<Title, 'type'>[] = [
 		id: 'terraform_title',
 		name: 'Terraform Master',
 		requires: {achievement: TerraformWins.id, level: 1},
+	},
+	{
+		id: 'world_eater',
+		name: 'World Eater',
+		requires: {achievement: WorldEater.id},
 	},
 ]
 
