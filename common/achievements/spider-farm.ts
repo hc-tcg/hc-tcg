@@ -26,10 +26,13 @@ const SpiderFarm: Achievement = {
 			if (!card.slot.inRow()) return
 			const hermit = card.slot.row.getHermit()
 			if (!hermit?.isHermit()) return
+			if (!hermit.slot.inRow()) return
 
+			const actualActiveRow = opponent.activeRowEntity
+			opponent.activeRowEntity = hermit.slot.rowEntity
 			const energy =
 				(hermit.slot.inRow() &&
-					player.hooks.availableEnergy.call(
+					opponent.hooks.availableEnergy.call(
 						hermit.slot.row.itemSlots.flatMap((slot) => {
 							if (!slot.card) return ['any', 'any']
 							if (slot.card?.isItem()) return slot.card.props.energy
@@ -37,8 +40,9 @@ const SpiderFarm: Achievement = {
 						}),
 					)) ||
 				[]
+			opponent.activeRowEntity = actualActiveRow
 
-			if (!hasEnoughEnergy(
+			if (hasEnoughEnergy(
 				energy,
 				hermit.getAttackCost('secondary'),
 				game.settings.noItemRequirements,
