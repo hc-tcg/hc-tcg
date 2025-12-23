@@ -1,6 +1,7 @@
 import HotTake from '../achievements/hot-take'
 import Innefective from '../achievements/inneffective'
 import LoyaltyIII from '../achievements/loyalty-iii'
+import MCCFishing from '../achievements/mcc-fishing'
 import SignalInversion from '../achievements/signal-inversion'
 import Win from '../achievements/wins'
 import {Border} from './types'
@@ -54,6 +55,11 @@ const BorderDefinitions: Omit<Border, 'type'>[] = [
 		id: 'silver_border',
 		name: 'Silver',
 		requires: {achievement: Win.id, level: 1},
+	},
+	{
+		id: 'ocean_border',
+		name: 'Ocean',
+		requires: {achievement: MCCFishing.id}
 	},
 ]
 
