@@ -26,7 +26,7 @@ const MCCFishing: Achievement = {
 				if (!su) return
 				if (su.props.id !== FishingRod.id) return
 
-				component.updateGoalProgress({goal: 0, progress: 3})
+				component.updateGoalProgress({goal: 0, progress: 2})
 			},
 		)
 	},
