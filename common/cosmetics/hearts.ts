@@ -10,6 +10,8 @@ import {PotionDecks} from '../achievements/su-decks'
 import SUStainable from '../achievements/sustainable'
 import TurtleMaster from '../achievements/turtle-master'
 import UltraHardcore from '../achievements/ultra-hardcore'
+import TagTeam from '../achievements/tag-team'
+import TerribleTrades from '../achievements/terrible-trades'
 import UseLikeAHermit from '../achievements/use-like-a-hermit'
 import Win from '../achievements/wins'
 import {Heart} from './types'
@@ -62,7 +64,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'honeycomb',
 		name: 'Honeycomb',
-		requires: undefined,
+		requires: {achievement: TagTeam.id},
 	},
 	{
 		id: 'hunger',
