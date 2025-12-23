@@ -64,8 +64,8 @@ const BorderDefinitions: Omit<Border, 'type'>[] = [
 		id: 'ocean_border',
 		name: 'Ocean',
 		requires: {achievement: MCCFishing.id},
-  },
-  {
+	},
+	{
 		id: 'quartz_border',
 		name: 'Quartz',
 		requires: {achievement: TerribleTrades.id},
