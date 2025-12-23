@@ -22,7 +22,7 @@ const SpiderFarm: Achievement = {
 
 		observer.subscribe(opponent.hooks.onAttach, (card) => {
 			if (game.currentPlayerEntity !== player.entity) return // It has to be an action by us, so on our turn
-			if (!card.slot.inRow()) return
+			if (!card.slot.inRow() || card.slot.type !== 'item') return
 			const hermit = card.slot.row.getHermit()
 			if (!hermit?.isHermit()) return
 			if (!hermit.slot.inRow()) return
