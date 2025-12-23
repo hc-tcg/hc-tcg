@@ -39,6 +39,7 @@ import ServerLag from './server-lag'
 import SignalInversion from './signal-inversion'
 import {BookDecks, PotionDecks} from './su-decks'
 import SUStainable from './sustainable'
+import TagTeam from './tag-team'
 import TeamStar from './team-star'
 import TerribleTrades from './terrible-trades'
 import TurtleMaster from './turtle-master'
@@ -122,6 +123,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	WashedUp,
 	WorldEater,
 	FullySaturated,
+	TagTeam,
 
 	// Deck - challenge
 	Inneffective,
