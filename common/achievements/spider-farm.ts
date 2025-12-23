@@ -1,11 +1,10 @@
-import {TypeT} from '../types/cards'
 import {hasEnoughEnergy} from '../utils/attacks'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
 const SpiderFarm: Achievement = {
 	...achievement,
-	numericId: 50,
+	numericId: 61,
 	id: 'spider-farm',
 	progressionMethod: 'sum',
 	levels: [
@@ -42,11 +41,14 @@ const SpiderFarm: Achievement = {
 				[]
 			opponent.activeRowEntity = actualActiveRow
 
-			if (hasEnoughEnergy(
-				energy,
-				hermit.getAttackCost('secondary'),
-				game.settings.noItemRequirements,
-			)) return
+			if (
+				hasEnoughEnergy(
+					energy,
+					hermit.getAttackCost('secondary'),
+					game.settings.noItemRequirements,
+				)
+			)
+				return
 
 			component.updateGoalProgress({goal: 0})
 		})

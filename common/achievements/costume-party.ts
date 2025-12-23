@@ -1,4 +1,4 @@
-import {CardComponent, RowComponent} from '../components'
+import {CardComponent} from '../components'
 import query from '../components/query'
 import {achievement} from './defaults'
 import {Achievement} from './types'
