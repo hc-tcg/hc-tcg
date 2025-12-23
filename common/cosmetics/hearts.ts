@@ -6,6 +6,7 @@ import DoubleEmerald from '../achievements/double-emerald'
 import FullySaturated from '../achievements/fully-saturated'
 import iBuy from '../achievements/ibuy'
 import PistonExtender from '../achievements/piston-extender'
+import SpiderFarm from '../achievements/spider-farm'
 import {PotionDecks} from '../achievements/su-decks'
 import SUStainable from '../achievements/sustainable'
 import TagTeam from '../achievements/tag-team'
@@ -117,7 +118,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'web',
 		name: 'Web',
-		requires: undefined,
+		requires: {achievement: SpiderFarm.id},
 	},
 ]
 

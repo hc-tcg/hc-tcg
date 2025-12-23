@@ -38,6 +38,7 @@ import PistonExtender from './piston-extender'
 import PoePoeEnforcer from './poe-poe-enforcer'
 import ServerLag from './server-lag'
 import SignalInversion from './signal-inversion'
+import SpiderFarm from './spider-farm'
 import {BookDecks, PotionDecks} from './su-decks'
 import SUStainable from './sustainable'
 import TagTeam from './tag-team'
@@ -92,6 +93,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	SUStainable,
 	MCCFishing,
 	iBuy,
+	SpiderFarm,
 
 	// effect card - challenge/combo
 	UselessMachine,
