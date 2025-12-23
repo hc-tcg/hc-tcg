@@ -1,13 +1,18 @@
+import BlastProtection from './blast-protection'
 import British from './british'
 import CantTouchThis from './cant-touch-this'
 import CertifiedZombie from './certified-zombie'
 import Channeling from './channeling'
 import RedKing from './close-call'
+import CostumeParty from './costume-party'
 import DeckedOut from './decked-out'
 import DefeatEvilX from './defeat-evil-x'
+import Demise from './demise'
+import DoubleEmerald from './double-emerald'
 import Ethogirl from './ethogirl'
 import EyeOfTheSpider from './eye-of-the-spider'
 import FreeAndSteel from './free-and-steel'
+import FullySaturated from './fully-saturated'
 import GoFish from './go-fish'
 import GodsFavoritePrincess from './gods-favorite-princess'
 import GottaSchreep from './gotta-schreep'
@@ -29,12 +34,15 @@ import NoDerpcoins from './no-derpcoins'
 import OreSnatcher from './ore-snatcher'
 import PackOfWolves from './pack-of-wolves'
 import PeskyBird from './pesky-bird'
+import PistonExtender from './piston-extender'
 import PoePoeEnforcer from './poe-poe-enforcer'
 import ServerLag from './server-lag'
 import SignalInversion from './signal-inversion'
+import {BookDecks, PotionDecks} from './su-decks'
 import SUStainable from './sustainable'
 import TeamStar from './team-star'
 import TerribleTrades from './terrible-trades'
+import TurtleMaster from './turtle-master'
 import {
 	BalancedWins,
 	BuilderWins,
@@ -48,10 +56,13 @@ import {
 	TerraformWins,
 } from './type-wins'
 import {Achievement} from './types'
+import UltraHardcore from './ultra-hardcore'
 import UseLikeAHermit from './use-like-a-hermit'
 import UselessMachine from './useless-machine'
+import WashedUp from './washed-up'
 import Win from './wins'
 import Wipeout from './wipeout'
+import WorldEater from './world-eater'
 
 export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	// Log term - wins
@@ -59,6 +70,9 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	// Log term - card exploration
 	AllCards,
 	HermitsAndCrafting,
+
+	// Long term
+	Demise,
 
 	// Evil X
 	DefeatEvilX,
@@ -84,6 +98,10 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	CertifiedZombie,
 	UseLikeAHermit,
 	Channeling,
+	PistonExtender,
+	DoubleEmerald,
+	BlastProtection,
+	TurtleMaster,
 
 	// Effect card / status effect - Challenge/Combo
 	GottaSchreep,
@@ -100,8 +118,12 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	CantTouchThis,
 	RedKing,
 	HallOfAll,
+	UltraHardcore,
 	Wipeout,
 	ServerLag,
+	WashedUp,
+	WorldEater,
+	FullySaturated,
 
 	// Deck - challenge
 	Inneffective,
@@ -111,6 +133,9 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	Ethogirl,
 	TeamStar,
 	NewTeamCanada,
+	CostumeParty,
+	PotionDecks,
+	BookDecks,
 
 	// Typemaster
 	BalancedWins,

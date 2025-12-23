@@ -1,9 +1,15 @@
 import CantTouchThis from '../achievements/cant-touch-this'
 import Channeling from '../achievements/channeling'
 import DeckedOut from '../achievements/decked-out'
+import Demise from '../achievements/demise'
+import DoubleEmerald from '../achievements/double-emerald'
+import FullySaturated from '../achievements/fully-saturated'
 import iBuy from '../achievements/ibuy'
+import PistonExtender from '../achievements/piston-extender'
+import {PotionDecks} from '../achievements/su-decks'
 import SUStainable from '../achievements/sustainable'
-import TerribleTrades from '../achievements/terrible-trades'
+import TurtleMaster from '../achievements/turtle-master'
+import UltraHardcore from '../achievements/ultra-hardcore'
 import UseLikeAHermit from '../achievements/use-like-a-hermit'
 import Win from '../achievements/wins'
 import {Heart} from './types'
@@ -16,12 +22,12 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'amethyst',
 		name: 'Amethyst',
-		requires: undefined,
+		requires: {achievement: Demise.id},
 	},
 	{
 		id: 'blue_terracotta',
 		name: 'Blue G.T.',
-		requires: undefined,
+		requires: {achievement: TurtleMaster.id},
 	},
 	{
 		id: 'copper',
@@ -31,7 +37,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'emerald',
 		name: 'Emerald',
-		requires: {achievement: TerribleTrades.id},
+		requires: {achievement: DoubleEmerald.id},
 	},
 	{
 		id: 'ender',
@@ -51,7 +57,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'hardcore',
 		name: 'Hardcore',
-		requires: undefined,
+		requires: {achievement: UltraHardcore.id},
 	},
 	{
 		id: 'honeycomb',
@@ -62,7 +68,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		id: 'hunger',
 		name: 'Haunch',
 		offVariantName: 'hunger_empty',
-		requires: undefined,
+		requires: {achievement: FullySaturated.id},
 	},
 	{
 		id: 'wooden',
@@ -85,7 +91,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		id: 'potion',
 		name: 'Potion',
 		offVariantName: 'potion_empty',
-		requires: undefined,
+		requires: {achievement: PotionDecks.id},
 	},
 	{
 		id: 'quartz',
@@ -105,7 +111,7 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 	{
 		id: 'slime_hearts',
 		name: 'Slime',
-		requires: undefined,
+		requires: {achievement: PistonExtender.id},
 	},
 	{
 		id: 'web',
