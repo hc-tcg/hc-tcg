@@ -27,6 +27,7 @@ import IsGreat from './is-great'
 import AllCards from './jack-of-all-cards'
 import LoyaltyIII from './loyalty-iii'
 import MasterOfPuppets from './master-of-puppets'
+import MCCFishing from './mcc-fishing'
 import NakedAndScared from './naked-and-scared'
 import NewTeamCanada from './new-team-canada'
 import NoDerpcoins from './no-derpcoins'
@@ -89,6 +90,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	PackOfWolves,
 	FreeAndSteel,
 	SUStainable,
+	MCCFishing,
 	iBuy,
 
 	// effect card - challenge/combo
