@@ -16,7 +16,8 @@ const TagTeam: Achievement = {
 	onGameStart(game, player, component, observer) {
 		let activeRowChangedNumber = -1
 
-		observer.subscribe(player.hooks.onActiveRowChange, () => {
+		observer.subscribe(player.hooks.onActiveRowChange, (oldHermit, newHermit) => {
+			if (!oldHermit || oldHermit === newHermit) return
 			activeRowChangedNumber += 1
 		})
 
