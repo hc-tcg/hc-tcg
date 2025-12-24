@@ -93,7 +93,7 @@ export async function attackAction(
 		hermitAttackType,
 	)
 
-	const thisAttackSU = game.components.find(
+	const _thisAttackSU = game.components.find(
 		CardComponent,
 		query.card.slot(query.slot.singleUse),
 	)

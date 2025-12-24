@@ -60,7 +60,7 @@ const Actions = ({onClick, id, gameOver, gameEndButton}: Props) => {
 		const changeHermit = availableActions.includes('CHANGE_ACTIVE_HERMIT')
 
 		if (currentCoinFlip) {
-			console.log("current coin flip", currentCoinFlip)
+			console.log('current coin flip', currentCoinFlip)
 			return (
 				<div id={css.status}>
 					<CoinFlip

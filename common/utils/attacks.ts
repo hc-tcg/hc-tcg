@@ -32,9 +32,9 @@ async function runBeforeAttackHooks(
 				return !shouldIgnoreCard(attack, game, entity)
 			return true
 		})
-		console.log("coin flips in progress", game.coinFlipsInProgress)
+		console.log('coin flips in progress', game.coinFlipsInProgress)
 		await game.waitForCoinFlips()
-		console.log("coin flips in progress", game.coinFlipsInProgress)
+		console.log('coin flips in progress', game.coinFlipsInProgress)
 	}
 }
 

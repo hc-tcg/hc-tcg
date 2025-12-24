@@ -12,10 +12,10 @@ import {PlayerEntity} from '../entities'
 import {GameModel} from '../models/game-model'
 import {
 	CurrentCoinFlip,
+	IncompleteCoinFlip,
 	LocalCurrentCoinFlip,
 	LocalGameState,
 	LocalPlayerState,
-	IncompleteCoinFlip,
 } from '../types/game-state'
 import {ModalData} from '../types/modal-requests'
 import {

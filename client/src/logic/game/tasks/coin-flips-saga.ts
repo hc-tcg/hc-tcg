@@ -1,14 +1,12 @@
-import {serverMessages} from 'common/socket-messages/server-messages'
 import {LocalGameState} from 'common/types/game-state'
 import {LocalMessage, localMessages} from 'logic/messages'
-import {receiveMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
 import {SagaIterator} from 'redux-saga'
 import {delay} from 'redux-saga/effects'
-import {call, put, select} from 'typed-redux-saga'
+import {put, select} from 'typed-redux-saga'
 
 function* coinFlipSaga(gameState: LocalGameState): SagaIterator {
-	const socket = yield* select(getSocket)
+	const _socket = yield* select(getSocket)
 
 	// Get new coin flips
 	let coinFlips =
@@ -30,7 +28,7 @@ function* coinFlipSaga(gameState: LocalGameState): SagaIterator {
 		})
 
 		console.log(coinFlip.delay)
-		console.log("delaying")
+		console.log('delaying')
 		if (coinFlip.delay) {
 			yield delay(coinFlip.delay)
 		}

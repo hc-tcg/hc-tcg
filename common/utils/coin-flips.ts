@@ -23,7 +23,7 @@ const COIN_FLIP_ARRAY = COIN_FLIP_WEIGHTS.reduce((acc, [count, weight]) => {
 }, [])
 
 // @todo Probably will not work with the new system
-const COIN_FLIP_FORCED_ARRAY = COIN_FORCED_WEIGHTS.reduce(
+const _COIN_FLIP_FORCED_ARRAY = COIN_FORCED_WEIGHTS.reduce(
 	(acc, [count, weight]) => {
 		acc.push(...new Array(weight).fill(count))
 		return acc
@@ -47,7 +47,7 @@ export function flipCoin(
 		return []
 	}
 
-	console.log("Coin flip heads", playerTossingCoin)
+	console.log('Coin flip heads', playerTossingCoin)
 
 	const forceHeads = playerTossingCoin.game.settings.forceCoinFlip
 	const name = card.props.name

@@ -28,10 +28,10 @@ import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
 	CoinFlipResult,
-	IncompleteCoinFlip,
 	GameOutcome,
 	GameState,
 	GameVictoryReason,
+	IncompleteCoinFlip,
 	Message,
 	TurnAction,
 	TurnActions,

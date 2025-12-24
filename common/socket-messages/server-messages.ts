@@ -1,7 +1,6 @@
 import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
-import {Card} from '../cards/types'
 import {Appearance} from '../cosmetics/types'
-import {CardEntity, PlayerEntity} from '../entities'
+import {PlayerEntity} from '../entities'
 import {GameControllerProps} from '../game/game-controller'
 import {TurnActionAndPlayer} from '../game/run-game'
 import {PlayerSetupDefs} from '../game/setup-game'

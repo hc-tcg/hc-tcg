@@ -8,7 +8,6 @@ import {
 	clientMessages,
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {assert} from 'common/utils/assert'
 import {censorString} from 'common/utils/formatting'
 import {
 	getAchievementProgress,

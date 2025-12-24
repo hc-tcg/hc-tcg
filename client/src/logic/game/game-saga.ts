@@ -9,8 +9,8 @@ import {PlayerSetupDefs} from 'common/game/setup-game'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {
-	CurrentCoinFlip,
 	CoinFlipResult,
+	CurrentCoinFlip,
 	IncompleteCoinFlip,
 	LocalCurrentCoinFlip,
 } from 'common/types/game-state'

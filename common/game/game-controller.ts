@@ -1,11 +1,6 @@
-import {AIComponent} from '../components/ai-component'
 import assert from 'assert'
-import {ACHIEVEMENTS_LIST} from '../achievements'
-import {
-	AchievementComponent,
-	ObserverComponent,
-	PlayerComponent,
-} from '../components'
+import {PlayerComponent} from '../components'
+import {AIComponent} from '../components/ai-component'
 import {PlayerEntity} from '../entities'
 import {
 	GameModel,
