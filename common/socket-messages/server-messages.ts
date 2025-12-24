@@ -69,6 +69,7 @@ export const serverMessages = messages('serverMessages', {
 	TOAST_SEND: null,
 	SPYGLASS_SEND_CARDS: null,
 	HIDDEN_CARD_REVEAL: null,
+	SECRET_RESET: null,
 })
 
 export type ReconnectProps = {
@@ -197,6 +198,10 @@ export type ServerMessages = [
 	{
 		type: typeof serverMessages.HIDDEN_CARD_REVEAL
 		cards: Array<LocalCardInstance>
+	},
+	{
+		type: typeof serverMessages.SECRET_RESET
+		secret: string
 	},
 ]
 

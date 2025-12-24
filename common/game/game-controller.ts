@@ -1,5 +1,11 @@
-import {PlayerComponent} from '../components'
 import {AIComponent} from '../components/ai-component'
+import assert from 'assert'
+import {ACHIEVEMENTS_LIST} from '../achievements'
+import {
+	AchievementComponent,
+	ObserverComponent,
+	PlayerComponent,
+} from '../components'
 import {PlayerEntity} from '../entities'
 import {
 	GameModel,
@@ -159,6 +165,10 @@ export class GameController {
 	}
 
 	public addViewer(viewer: GameViewerProps) {
+		assert(
+			viewer.player,
+			'Found player was undefined when trying to add a viewer',
+		)
 		let v = new GameViewer(this.game, viewer)
 		this.viewers.push(v)
 		return v

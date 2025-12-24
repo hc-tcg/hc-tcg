@@ -20,7 +20,7 @@ You can then use the following command:
 npm run docker-dev          # start the docker development image
 ```
 
-By default, the client is hosted on port 3002.
+By default, the client is hosted on port 3002. This image will automatically setup the postgres database for you.
 </details>
 
 
@@ -29,6 +29,9 @@ By default, the client is hosted on port 3002.
 <br>
 
 ## Running in your development environment
+
+Certain functions will not work if postgres is not installed. To develop parts of the game that interact with the database,
+install [postgresql](https://www.postgresql.org/). You will then need to setup a postgres user named `hctcg`.
 
 First you will need to create the debug config file.  To do this, run `cp ./config.example.js ./config.js` on Linux, and `copy ./config.example.js ./config.js` on Windows.
 You can then use the following commands:

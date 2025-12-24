@@ -42,6 +42,7 @@ export const clientMessages = messages('clientMessages', {
 	SET_COSMETIC: null,
 	SPYGLASS_REQUEST_CARDS: null,
 	HIDDEN_CARD_REQUEST: null,
+	RESET_SECRET: null,
 })
 
 export type ClientMessages = [
@@ -169,6 +170,7 @@ export type ClientMessages = [
 	{type: typeof clientMessages.CANCEL_REMATCH; rematch: RematchData},
 	{type: typeof clientMessages.SPYGLASS_REQUEST_CARDS},
 	{type: typeof clientMessages.HIDDEN_CARD_REQUEST; cards: Array<CardEntity>},
+	{type: typeof clientMessages.RESET_SECRET},
 ]
 
 export type ClientMessage = Message<ClientMessages>

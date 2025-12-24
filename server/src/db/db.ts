@@ -2280,4 +2280,40 @@ export class Database {
 			}
 		}
 	}
+
+	public async resetSecret(
+		uuid: string,
+	): Promise<DatabaseResult<{secret: string}>> {
+		try {
+			const secret = (await this.pool.query('SELECT * FROM uuid_generate_v4()'))
+				.rows[0]['uuid_generate_v4']
+
+			const result = await this.pool.query(
+				`
+					UPDATE users
+					SET secret = crypt($2, gen_salt('bf', $3))
+					WHERE user_id = $1;
+				`,
+				[uuid, secret, this.bfDepth],
+			)
+
+			if (result.rowCount !== 1) {
+				return {
+					type: 'failure',
+				}
+			}
+
+			return {
+				type: 'success',
+				body: {
+					secret: secret,
+				},
+			}
+		} catch (e) {
+			console.log(e)
+			return {
+				type: 'failure',
+			}
+		}
+	}
 }

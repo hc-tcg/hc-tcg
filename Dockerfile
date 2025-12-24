@@ -13,15 +13,12 @@ WORKDIR /app
 
 RUN apt-get install imagemagick
 
-# Card renders are not copied to ensure the Docker build is always up to date
-COPY --exclude=client/public/images/cards/** . .
+COPY . .
 
 COPY config.example.js config.js
 
 RUN npm ci
 
-RUN npx playwright install --with-deps firefox
-RUN npm run client:render-cards
 RUN npm run build
 
 # Remove the build-time dependencies to keep the image small and enable node optimizations.

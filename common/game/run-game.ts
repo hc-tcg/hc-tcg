@@ -629,7 +629,7 @@ async function turnActionsSaga(con: GameController) {
 		opponentPlayer.coinFlips = []
 
 		// Handle timeout
-		if (raceResult.timeout) {
+		if (raceResult.timeout || !raceResult.turnAction) {
 			// @TODO this works, but could be cleaned
 			const currentAttack = con.game.state.turn.currentAttack
 			let reset = false

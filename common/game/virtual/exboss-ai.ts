@@ -141,8 +141,7 @@ function getNextTurnAction(
 		query.effect.targetIsCardAnd(query.card.player(player.entity)),
 	)
 	if (nineEffect && nineEffect.counter === 0) {
-		const nineSpecial =
-			game.bossRng() > 0.5 ? 'NINEDISCARD' : 'NINEATTACHED'
+		const nineSpecial = game.bossRng() > 0.5 ? 'NINEDISCARD' : 'NINEATTACHED'
 		supplyNineSpecial(nineEffect, nineSpecial)
 		game.voiceLineQueue.push(`/voice/${nineSpecial}.ogg`)
 		return [{type: 'DELAY', delay: 10600}, {type: 'END_TURN'}]
