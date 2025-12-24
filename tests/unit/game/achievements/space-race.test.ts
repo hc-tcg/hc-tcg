@@ -35,10 +35,9 @@ describe('Test Space Race', () => {
 						query.slot.hermit,
 					)
 					await test.attack('secondary')
-					await test.endTurn()
 				},
 				checkAchivement(_game, achievement, _outcome) {
-					expect(SpaceRace.getProgress(achievement.goals)).toBeTruthy()
+					expect(SpaceRace.getProgress(achievement.goals)).toBe(2)
 				},
 			},
 			{noItemRequirements: true, oneShotMode: true},
