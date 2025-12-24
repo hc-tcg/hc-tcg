@@ -1,5 +1,4 @@
 import SplashPotionOfHarming from '../cards/advent-of-tcg/single-use/splash-potion-of-harming'
-import WindBurst from '../cards/advent-of-tcg/single-use/wind-burst'
 import CurseOfBinding from '../cards/single-use/curse-of-binding'
 import CurseOfVanishing from '../cards/single-use/curse-of-vanishing'
 import Efficiency from '../cards/single-use/efficiency'
@@ -41,7 +40,6 @@ const books = [
 	Fortune,
 	Mending,
 	SweepingEdge,
-	WindBurst,
 ]
 
 function getExclusiveSingleUseAchievement(
@@ -60,7 +58,7 @@ function getExclusiveSingleUseAchievement(
 		levels: [
 			{
 				name: name,
-				description: `Win 5 games using decks that only include ${typeName} SUs`,
+				description: `Win 5 games using a deck that includes ${typeName} single use cards, and no other types of single use cards.`,
 				steps: 5,
 			},
 		],

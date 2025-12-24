@@ -12,7 +12,7 @@ const TerribleTrades: Achievement = {
 		{
 			name: 'Terrible Trades',
 			description:
-				'Win 5 games without using a deck that includes cards worth 3 tokens or more.',
+				'Win 5 games using a deck that does not include cards worth 3 tokens or more.',
 			steps: 5,
 		},
 	],

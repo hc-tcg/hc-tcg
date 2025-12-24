@@ -11,8 +11,7 @@ const PistonExtender: Achievement = {
 	levels: [
 		{
 			name: 'Double piston extender',
-			description:
-				'Have an item card be attached to 3 different active hermits.',
+			description: 'Attach the same item card to 3 different active Hermits.',
 			steps: 3,
 		},
 	],

@@ -11,7 +11,7 @@ const Demise: Achievement = {
 	levels: [
 		{
 			name: 'Demise',
-			description: 'Knockout 300 hermits.',
+			description: 'Knock out 300 hermits.',
 			steps: 300,
 		},
 	],
