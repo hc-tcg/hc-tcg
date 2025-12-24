@@ -1,17 +1,17 @@
-import { RowComponent } from "../components";
-import query from "../components/query";
-import { achievement } from "./defaults";
-import { Achievement } from "./types";
+import {RowComponent} from '../components'
+import query from '../components/query'
+import {achievement} from './defaults'
+import {Achievement} from './types'
 
 const FullySaturated: Achievement = {
 	...achievement,
 	numericId: 65,
-	id: "fully-saturated",
-	progressionMethod: "sum",
+	id: 'fully-saturated',
+	progressionMethod: 'sum',
 	levels: [
 		{
-			name: "Fully Saturated",
-			description: "Heal 1500 HP.",
+			name: 'Fully Saturated',
+			description: 'Heal 1500 HP.',
 			steps: 1500,
 		},
 	],
@@ -20,12 +20,12 @@ const FullySaturated: Achievement = {
 			.filter(RowComponent, query.row.player(player.entity))
 			.forEach((row) => {
 				observer.subscribe(row.hooks.onHealed, (_card, amount) => {
-					if (amount <= 0) return;
+					if (amount <= 0) return
 
-					component.updateGoalProgress({ goal: 0, progress: amount });
-				});
-			});
+					component.updateGoalProgress({goal: 0, progress: amount})
+				})
+			})
 	},
-};
+}
 
-export default FullySaturated;
+export default FullySaturated
