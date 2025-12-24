@@ -38,6 +38,7 @@ import PistonExtender from './piston-extender'
 import PoePoeEnforcer from './poe-poe-enforcer'
 import ServerLag from './server-lag'
 import SignalInversion from './signal-inversion'
+import SpaceRace from './space-race'
 import SpiderFarm from './spider-farm'
 import {BookDecks, PotionDecks} from './su-decks'
 import SUStainable from './sustainable'
@@ -128,6 +129,9 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	WorldEater,
 	FullySaturated,
 	TagTeam,
+
+	// Hermit - challenge
+	SpaceRace,
 
 	// Deck - challenge
 	Inneffective,
