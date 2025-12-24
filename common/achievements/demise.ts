@@ -12,7 +12,7 @@ const Demise: Achievement = {
 		{
 			name: 'Demise',
 			description: 'Knockout 300 hermits.',
-			steps: 1,
+			steps: 300,
 		},
 	],
 	onGameStart(game, player, component, observer) {
