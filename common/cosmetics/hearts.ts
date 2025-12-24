@@ -85,22 +85,22 @@ const HeartDefinitions: Omit<Heart, 'type'>[] = [
 		offVariantName: 'lamp_off',
 		requires: {achievement: iBuy.id},
 	},
-	{
-		id: 'magenta',
-		name: 'Magenta G.T.',
-		requires: undefined,
-	},
+	// {
+	// 	id: 'magenta',
+	// 	name: 'Magenta G.T.',
+	// 	requires: undefined,
+	// },
 	{
 		id: 'potion',
 		name: 'Potion',
 		offVariantName: 'potion_empty',
 		requires: {achievement: PotionDecks.id},
 	},
-	{
-		id: 'quartz',
-		name: 'Quartz',
-		requires: undefined,
-	},
+	// {
+	// 	id: 'quartz',
+	// 	name: 'Quartz',
+	// 	requires: undefined,
+	// },
 	{
 		id: 'silver_heart',
 		name: 'Silver',
