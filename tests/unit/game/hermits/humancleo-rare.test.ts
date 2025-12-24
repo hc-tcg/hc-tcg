@@ -3,8 +3,10 @@ import ArmorStand from 'common/cards/attach/armor-stand'
 import CommandBlock from 'common/cards/attach/command-block'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import HumanCleoRare from 'common/cards/hermits/humancleo-rare'
+import HypnotizdRare from 'common/cards/hermits/hypnotizd-rare'
 import VintageBeefCommon from 'common/cards/hermits/vintagebeef-common'
 import BalancedDoubleItem from 'common/cards/items/balanced-rare'
+import MinerDoubleItem from 'common/cards/items/miner-rare'
 import Clock from 'common/cards/single-use/clock'
 import Crossbow from 'common/cards/single-use/crossbow'
 import Efficiency from 'common/cards/single-use/efficiency'
@@ -224,6 +226,49 @@ describe('Test Human Cleo Betrayal', () => {
 					await test.changeActiveHermit(1)
 					expect(game.state.turn.availableActions).toContain('END_TURN')
 					await test.endTurn()
+				},
+			},
+			{noItemRequirements: false, forceCoinFlip: true},
+		)
+	})
+
+	test("Test Rare Hypno can target opponent's AFK hermit when Betrayed flips heads and the current player has no AFK hermits", async () => {
+		await testGame(
+			{
+				playerOneDeck: [HypnotizdRare, MinerDoubleItem],
+				playerTwoDeck: [HumanCleoRare, EthosLabCommon, Efficiency],
+				testGame: async (test, game) => {
+					await test.playCardFromHand(HypnotizdRare, 'hermit', 0)
+					await test.playCardFromHand(MinerDoubleItem, 'item', 0, 0)
+					await test.endTurn()
+
+					await test.playCardFromHand(HumanCleoRare, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.playCardFromHand(Efficiency, 'single_use')
+					await test.applyEffect()
+					await test.attack('secondary')
+					await test.endTurn()
+
+					await test.attack('secondary')
+					expect(game.state.pickRequests).toHaveLength(1)
+					await test.pick(
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					await test.pick(
+						query.slot.currentPlayer,
+						query.slot.active,
+						query.slot.index(0),
+					)
+
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(1),
+						)?.health,
+					).toBe(EthosLabCommon.health - HypnotizdRare.secondary.damage)
 				},
 			},
 			{noItemRequirements: false, forceCoinFlip: true},
