@@ -22,7 +22,7 @@ const TurtleMaster: Achievement = {
 		{
 			name: 'Turtle Master',
 			description:
-				'Activate a turtle shell that formerly had the loose shell status effect',
+				'Activate a turtle shell that formerly had the loose shell status effect.',
 			steps: 1,
 		},
 	],

@@ -12,7 +12,7 @@ const UseLikeAHermit: Achievement = {
 	levels: [
 		{
 			name: 'Use Like a Hermit...?',
-			description: 'Win a game while armor stand is your active Hermit.',
+			description: 'Win a game while Armour Stand is your active Hermit.',
 			steps: 1,
 		},
 	],

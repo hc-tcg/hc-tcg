@@ -11,7 +11,7 @@ const FullySaturated: Achievement = {
 	levels: [
 		{
 			name: 'Fully Saturated',
-			description: 'Heal 1500 HP',
+			description: 'Heal 1500 HP.',
 			steps: 1500,
 		},
 	],
