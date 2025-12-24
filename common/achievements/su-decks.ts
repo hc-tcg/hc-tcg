@@ -1,26 +1,25 @@
-import SplashPotionOfHarming from '../cards/advent-of-tcg/single-use/splash-potion-of-harming'
-import WindBurst from '../cards/advent-of-tcg/single-use/wind-burst'
-import CurseOfBinding from '../cards/single-use/curse-of-binding'
-import CurseOfVanishing from '../cards/single-use/curse-of-vanishing'
-import Efficiency from '../cards/single-use/efficiency'
-import Fortune from '../cards/single-use/fortune'
-import InvisibilityPotion from '../cards/single-use/invisibility-potion'
-import Knockback from '../cards/single-use/knockback'
-import Looting from '../cards/single-use/looting'
-import Mending from '../cards/single-use/mending'
-import PotionOfSlowness from '../cards/single-use/potion-of-slowness'
-import PotionOfWeakness from '../cards/single-use/potion-of-weakness'
+import SplashPotionOfHarming from "../cards/advent-of-tcg/single-use/splash-potion-of-harming";
+import CurseOfBinding from "../cards/single-use/curse-of-binding";
+import CurseOfVanishing from "../cards/single-use/curse-of-vanishing";
+import Efficiency from "../cards/single-use/efficiency";
+import Fortune from "../cards/single-use/fortune";
+import InvisibilityPotion from "../cards/single-use/invisibility-potion";
+import Knockback from "../cards/single-use/knockback";
+import Looting from "../cards/single-use/looting";
+import Mending from "../cards/single-use/mending";
+import PotionOfSlowness from "../cards/single-use/potion-of-slowness";
+import PotionOfWeakness from "../cards/single-use/potion-of-weakness";
 import {
 	SplashPotionOfHealing,
 	SplashPotionOfHealingII,
-} from '../cards/single-use/splash-potion-of-healing'
-import SplashPotionOfPoison from '../cards/single-use/splash-potion-of-poison'
-import SweepingEdge from '../cards/single-use/sweeping-edge'
-import {SingleUse} from '../cards/types'
-import {CardComponent} from '../components'
-import query from '../components/query'
-import {achievement} from './defaults'
-import {Achievement} from './types'
+} from "../cards/single-use/splash-potion-of-healing";
+import SplashPotionOfPoison from "../cards/single-use/splash-potion-of-poison";
+import SweepingEdge from "../cards/single-use/sweeping-edge";
+import { SingleUse } from "../cards/types";
+import { CardComponent } from "../components";
+import query from "../components/query";
+import { achievement } from "./defaults";
+import { Achievement } from "./types";
 
 const potions = [
 	PotionOfSlowness,
@@ -30,7 +29,7 @@ const potions = [
 	SplashPotionOfHealingII,
 	SplashPotionOfPoison,
 	InvisibilityPotion,
-]
+];
 
 const books = [
 	CurseOfBinding,
@@ -41,8 +40,7 @@ const books = [
 	Fortune,
 	Mending,
 	SweepingEdge,
-	WindBurst,
-]
+];
 
 function getExclusiveSingleUseAchievement(
 	name: string,
@@ -50,17 +48,17 @@ function getExclusiveSingleUseAchievement(
 	typeName: string,
 	allowed: SingleUse[],
 ) {
-	const allowedIds = allowed.map((card) => card.id)
+	const allowedIds = allowed.map((card) => card.id);
 
 	const suAchievement: Achievement = {
 		...achievement,
 		numericId,
-		id: typeName.replace(' ', '-').toLowerCase() + '-decks',
-		progressionMethod: 'best',
+		id: typeName.replace(" ", "-").toLowerCase() + "-decks",
+		progressionMethod: "best",
 		levels: [
 			{
 				name: name,
-				description: `Win 5 games using decks that only include ${typeName} SUs`,
+				description: `Win 5 games using a deck that includes ${typeName} single use cards, and no other types of single use cards.`,
 				steps: 5,
 			},
 		],
@@ -71,35 +69,35 @@ function getExclusiveSingleUseAchievement(
 					query.card.isSingleUse,
 					query.card.player(player.entity),
 				)
-				.map((card) => card.props.id)
+				.map((card) => card.props.id);
 
 			const containsAtLeastOne = playerDeck.some((card) =>
 				allowedIds.includes(card),
-			)
+			);
 			const containsNoOthers = playerDeck.every((card) =>
 				allowedIds.includes(card),
-			)
-			if (!containsAtLeastOne || !containsNoOthers) return
+			);
+			if (!containsAtLeastOne || !containsNoOthers) return;
 
 			observer.subscribe(game.hooks.onGameEnd, (outcome) => {
-				if (outcome.type !== 'player-won') return
-				if (outcome.winner !== player.entity) return
-				component.updateGoalProgress({goal: 0})
-			})
+				if (outcome.type !== "player-won") return;
+				if (outcome.winner !== player.entity) return;
+				component.updateGoalProgress({ goal: 0 });
+			});
 		},
-	}
-	return suAchievement
+	};
+	return suAchievement;
 }
 
 export const PotionDecks = getExclusiveSingleUseAchievement(
-	'Mega Brewery',
+	"Mega Brewery",
 	66,
-	'potion',
+	"potion",
 	potions,
-)
+);
 export const BookDecks = getExclusiveSingleUseAchievement(
-	'Lookie Lookie At My Bookie',
+	"Lookie Lookie At My Bookie",
 	67,
-	'enchanted book',
+	"enchanted book",
 	books,
-)
+);
