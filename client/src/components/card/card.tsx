@@ -21,15 +21,21 @@ interface CardReactProps
 	displayTokenCost: boolean
 	selected?: boolean
 	picked?: boolean
-	turnedOver: boolean
+	turnedOver?: boolean
 	unpickable?: boolean
 	tooltipAboveModal?: boolean
 	onClick?: () => void
 }
 
 const Card = (props: CardReactProps) => {
-	const {onClick, turnedOver, selected, picked, unpickable, displayTokenCost} =
-		props
+	const {
+		onClick,
+		turnedOver = false,
+		selected,
+		picked,
+		unpickable,
+		displayTokenCost,
+	} = props
 
 	let cardProps = CARDS[props.card]
 	const {category} = cardProps
