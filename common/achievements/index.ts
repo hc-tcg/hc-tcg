@@ -27,6 +27,7 @@ import IsGreat from './is-great'
 import AllCards from './jack-of-all-cards'
 import LoyaltyIII from './loyalty-iii'
 import MasterOfPuppets from './master-of-puppets'
+import MCCFishing from './mcc-fishing'
 import NakedAndScared from './naked-and-scared'
 import NewTeamCanada from './new-team-canada'
 import NoDerpcoins from './no-derpcoins'
@@ -38,8 +39,10 @@ import PoePoeEnforcer from './poe-poe-enforcer'
 import ServerLag from './server-lag'
 import SignalInversion from './signal-inversion'
 import SpaceRace from './space-race'
+import SpiderFarm from './spider-farm'
 import {BookDecks, PotionDecks} from './su-decks'
 import SUStainable from './sustainable'
+import TagTeam from './tag-team'
 import TeamStar from './team-star'
 import TerribleTrades from './terrible-trades'
 import TurtleMaster from './turtle-master'
@@ -89,7 +92,9 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	PackOfWolves,
 	FreeAndSteel,
 	SUStainable,
+	MCCFishing,
 	iBuy,
+	SpiderFarm,
 
 	// effect card - challenge/combo
 	UselessMachine,
@@ -123,6 +128,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	WashedUp,
 	WorldEater,
 	FullySaturated,
+	TagTeam,
 
 	// Hermit - challenge
 	SpaceRace,
