@@ -27,6 +27,7 @@ const SpaceRace: Achievement = {
 			afterAttack.ACHIEVEMENTS,
 			(attack) => {
 				if (attack.player.entity !== player.entity) return
+				if (!['secondary', 'primary'].includes(attack.type)) return
 				if (!attack.target) return
 				let targetHermit = attack.target?.getHermit()
 				if (!targetHermit) return
