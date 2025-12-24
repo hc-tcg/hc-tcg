@@ -1,4 +1,5 @@
 import SplashPotionOfHarming from '../cards/advent-of-tcg/single-use/splash-potion-of-harming'
+import WindBurst from '../cards/advent-of-tcg/single-use/wind-burst'
 import CurseOfBinding from '../cards/single-use/curse-of-binding'
 import CurseOfVanishing from '../cards/single-use/curse-of-vanishing'
 import Efficiency from '../cards/single-use/efficiency'
@@ -40,6 +41,7 @@ const books = [
 	Fortune,
 	Mending,
 	SweepingEdge,
+	WindBurst,
 ]
 
 function getExclusiveSingleUseAchievement(

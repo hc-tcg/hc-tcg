@@ -76,6 +76,7 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 
 	// Long term
 	Demise,
+	FullySaturated,
 
 	// Evil X
 	DefeatEvilX,
@@ -93,15 +94,15 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	FreeAndSteel,
 	SUStainable,
 	MCCFishing,
-	iBuy,
 	SpiderFarm,
 
 	// effect card - challenge/combo
 	UselessMachine,
 	GoFish,
 	CertifiedZombie,
-	UseLikeAHermit,
 	Channeling,
+	UseLikeAHermit,
+	iBuy,
 	PistonExtender,
 	DoubleEmerald,
 	BlastProtection,
@@ -122,25 +123,24 @@ export const ACHIEVEMENTS_LIST: Array<Achievement> = [
 	CantTouchThis,
 	RedKing,
 	HallOfAll,
-	UltraHardcore,
 	Wipeout,
 	ServerLag,
+	TagTeam,
 	WashedUp,
 	WorldEater,
-	FullySaturated,
-	TagTeam,
+	UltraHardcore,
 
 	// Hermit - challenge
 	SpaceRace,
 
 	// Deck - challenge
 	Inneffective,
-	TerribleTrades,
 	NakedAndScared,
 	IsGreat,
 	Ethogirl,
 	TeamStar,
 	NewTeamCanada,
+	TerribleTrades,
 	CostumeParty,
 	PotionDecks,
 	BookDecks,
