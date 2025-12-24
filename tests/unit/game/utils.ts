@@ -38,7 +38,7 @@ function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 			appearance: defaultAppearance,
 			uuid: '',
 		},
-		deck,
+		deck: {type: 'visible', cards: deck.map((x) => x.id)},
 		score: 0,
 	}
 }
@@ -364,7 +364,7 @@ export async function testBossFight(
 				uuid: '',
 				disableDeckingOut: true,
 			},
-			deck: [EvilXisumaBoss],
+			deck: {type: 'visible', cards: [EvilXisumaBoss.id]},
 			score: 0,
 		},
 		{
