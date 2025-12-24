@@ -43,3 +43,6 @@ tsconfig.buildinfo
 
 /card-prerender/render/
 
+# Restart env
+auth.json
+
