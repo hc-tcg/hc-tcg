@@ -441,7 +441,7 @@ export async function handleSingleTurnAction(
 				await removeEffectAction(con.game)
 				break
 			case 'PICK_REQUEST':
-				pickRequestAction(
+				await pickRequestAction(
 					con.game,
 					(turnAction.action as PickSlotActionData)?.entity,
 				)

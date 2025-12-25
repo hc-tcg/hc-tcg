@@ -249,7 +249,8 @@ function Statistics({setMenuSection}: Props) {
 
 	const invalidReplay = databaseInfo.invalidReplay
 	const overview = databaseInfo.replayOverview
-	const overviewFirstId = overview.length >= 1 ? overview[0].sender.entityOrId : ''
+	const overviewFirstId =
+		overview.length >= 1 ? overview[0].sender.entityOrId : ''
 
 	if (invalidReplay && !showInvalidReplayModal) {
 		setShowOverviewModal(false)
@@ -1523,7 +1524,7 @@ function Statistics({setMenuSection}: Props) {
 									const isOpponent =
 										currentGame?.firstPlayer.player === 'you'
 											? line.sender.entityOrId !== overviewFirstId
-											: line.sender.entityOrId== overviewFirstId
+											: line.sender.entityOrId == overviewFirstId
 
 									return FormattedText(line.message, {
 										isOpponent,

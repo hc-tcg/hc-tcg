@@ -131,6 +131,7 @@ export async function attackAction(
 			thisAttackSU,
 		)
 	})
+	console.log('after attack entry added')
 
 	game.battleLog.opponentCoinFlipEntry(currentPlayer.coinFlips)
 
@@ -415,8 +416,8 @@ export async function pickRequestAction(
 	let player = game.components.get(pickRequest.player)
 	if (player) player.pickableSlots = null
 
-	game.hooks.onPickRequestResolve.call(pickRequest, slotInfo)
 	await game.waitForCoinFlips()
+	game.hooks.onPickRequestResolve.call(pickRequest, slotInfo)
 
 	// We completed this pick request, remove it
 	game.state.pickRequests.shift()
@@ -426,10 +427,8 @@ export async function pickRequestAction(
 		const turnAction: AttackActionData = {
 			type: attackToAttackAction[game.state.turn.currentAttack],
 		}
-		attackAction(game, turnAction, false)
-
+		await attackAction(game, turnAction, false)
 		game.state.turn.currentAttack = null
-
 		return
 	}
 

@@ -53,7 +53,7 @@ const MumboJumboRare: Hermit = {
 							query.card.currentPlayer,
 							query.card.afk,
 							query.card.type('prankster'),
-							query.card.type('prankster'),
+							query.card.expansion('default'),
 						).length
 
 						attack.addDamage(component.entity, headsAmount * 20)

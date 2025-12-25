@@ -6,9 +6,7 @@ import {STRENGTHS} from '../const/strengths'
 import {AttackModel} from '../models/attack-model'
 import {GameModel} from '../models/game-model'
 import {TypeT} from '../types/cards'
-import {CurrentCoinFlip} from '../types/game-state'
 import {afterAttack, onTurnEnd} from '../types/priorities'
-import {assert} from './assert'
 
 /**
  * Call before attack hooks for each attack that has an attacker
@@ -34,9 +32,7 @@ async function runBeforeAttackHooks(
 				return !shouldIgnoreCard(attack, game, entity)
 			return true
 		})
-		console.log('coin flips in progress', game.coinFlipsInProgress)
 		await game.waitForCoinFlips()
-		console.log('coin flips in progress', game.coinFlipsInProgress)
 	}
 }
 
@@ -129,11 +125,7 @@ export function executeExtraAttacks(
 	executeAttacks(game, attacks)
 
 	attacks.forEach((attack) => {
-		game.battleLog.addAttackEntry(
-			attack,
-			game.currentPlayer.coinFlips,
-			null,
-		)
+		game.battleLog.addAttackEntry(attack, game.currentPlayer.coinFlips, null)
 	})
 
 	game.battleLog.sendLogs()

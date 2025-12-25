@@ -8,7 +8,6 @@ import {
 } from '../models/game-model'
 import {PlayerModel} from '../models/player-model'
 import {CurrentCoinFlip, IncompleteCoinFlip, Message} from '../types/game-state'
-import {assert} from '../utils/assert'
 import {TurnActionAndPlayer} from './run-game'
 import {PlayerSetupDefs} from './setup-game'
 import {AI_DEFINITIONS} from './virtual'

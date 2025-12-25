@@ -77,7 +77,7 @@ function Chat({gameOver}: {gameOver: boolean}) {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 	const chatMessages = settings.chatEnabled ? useSelector(getChatMessages) : []
-	const playerId = useSelector(getPlayerId)
+	const _playerId = useSelector(getPlayerId)
 	const playerEntity = useSelector(getPlayerEntity)
 	const playerName = useSelector(getPlayerName)
 	const opponentName = useSelector(getOpponentName)
