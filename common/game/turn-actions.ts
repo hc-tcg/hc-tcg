@@ -49,9 +49,13 @@ async function getAttack(
 	// all other attacks
 	const otherAttacks = currentPlayer.hooks.getAttack.call()
 	await game.waitForCoinFlips()
-	otherAttacks.forEach((otherAttack) => {
-		if (otherAttack) attacks.push(otherAttack)
-	})
+	await Promise.all(
+		otherAttacks.map(async (otherAttack) => {
+			if (otherAttack) {
+				attacks.push(await Promise.resolve(otherAttack))
+			}
+		}),
+	)
 
 	if (game.settings.oneShotMode) {
 		for (let i = 0; i < attacks.length; i++) {

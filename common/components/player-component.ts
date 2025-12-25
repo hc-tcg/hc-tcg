@@ -90,7 +90,7 @@ export class PlayerComponent {
 		>
 
 		/** Hook that returns attacks to execute */
-		getAttack: GameHook<() => AttackModel | null>
+		getAttack: GameHook<() => AttackModel | Promise<AttackModel> | null>
 
 		/**
 		 * Hook called at the start of the turn

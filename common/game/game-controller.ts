@@ -220,7 +220,7 @@ export class GameController {
 		callback: (result: Array<'heads' | 'tails'>) => any,
 	) {
 		const coinFlips: Array<'heads' | 'tails'> = []
-		for (let i = 0; i < coinFlip.amount; i++) {
+		for (let i = 0; i < coinFlip.numberOfCoins; i++) {
 			const coinFlip = this.game.coinFlipRng() >= 0.5 ? 'heads' : 'tails'
 			coinFlips.push(coinFlip)
 		}

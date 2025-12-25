@@ -33,21 +33,23 @@ const _COIN_FLIP_FORCED_ARRAY = COIN_FORCED_WEIGHTS.reduce(
 
 // If we are the server, generate a value and send it.
 // If we are a client, we wait for the server to give us the value.
-export function flipCoin(
-	resultCallback: (result: CoinFlipResult[]) => any,
+export async function flipCoin<T>(
+	resultCallback: (result: CoinFlipResult[]) => T,
 	game: GameModel,
 	playerTossingCoin: PlayerComponent,
 	card: CardComponent,
 	times: number = 1,
 	currentPlayer: PlayerComponent | null = null,
-) {
+): Promise<T> {
 	assert(times >= 0, 'You can not flip a negative amount of coins')
 
 	if (times === 0) {
-		return []
+		return resultCallback([])
 	}
 
 	console.log('Coin flip heads', playerTossingCoin)
+
+	let {promise, resolve, reject} = Promise.withResolvers<T>()
 
 	const forceHeads = playerTossingCoin.game.settings.forceCoinFlip
 	const name = card.props.name
@@ -118,8 +120,11 @@ export function flipCoin(
 				headImage: player.appearance.coin.id,
 			}
 
-			resultCallback(result)
+			let res = resultCallback(result)
 			game.onCoinFlipEnd()
+			resolve(res)
 		},
 	)
+
+	return await promise
 }
