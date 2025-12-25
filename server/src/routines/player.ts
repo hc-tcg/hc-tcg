@@ -59,6 +59,7 @@ export function* playerConnectedSaga(
 		action
 
 	if (action.playerId) {
+		console.info('Preparing recconnect info for player', playerUuid)
 		const existingPlayer = root.players[action.playerId]
 		const validPlayer = existingPlayer?.secret === action.playerSecret
 
@@ -70,6 +71,7 @@ export function* playerConnectedSaga(
 				player: existingPlayer,
 			})
 			const game = yield* select(getGame(existingPlayer.id))
+			console.info('Sending recconnect info for player', playerUuid)
 			broadcast([existingPlayer], {
 				type: serverMessages.PLAYER_RECONNECTED,
 				game: game && getLocalGameStateForPlayer(game, existingPlayer.id),
@@ -77,6 +79,11 @@ export function* playerConnectedSaga(
 				spectatorCode: game?.spectatorCode ?? undefined,
 			})
 		} else {
+			console.info(
+				'Player',
+				playerUuid,
+				'is not a valid player. Requesting client to reload.',
+			)
 			const time = Date.now()
 			const date = new Date(time)
 			console.info(
@@ -87,12 +94,13 @@ export function* playerConnectedSaga(
 		return
 	}
 
+	console.info('Player', playerUuid, 'is new connection. Preparing info...')
 
-	console.info("Fetching achievement progress for player", playerUuid)
+	console.info('Fetching achievement progress for player', playerUuid)
 	const achievementProgress = root.db.connected
 		? yield* getAchievementProgress(playerUuid)
 		: {}
-	console.info("Finished fetching achievement progress for", playerUuid)
+	console.info('Finished fetching achievement progress for', playerUuid)
 
 	const newPlayer = new PlayerModel(
 		playerName,
@@ -102,19 +110,25 @@ export function* playerConnectedSaga(
 		achievementProgress,
 		socket,
 	)
+
+	console.info('Setting player deck for player', playerUuid, '...')
 	if (deck) newPlayer.setPlayerDeck(deck)
 	root.addPlayer(newPlayer)
 
+	console.info('Calling new player hooks for player', playerUuid, '...')
 	root.hooks.playerJoined.call(newPlayer)
+
 	yield* put<LocalMessage>({
 		type: localMessages.PLAYER_CONNECTED,
 		player: newPlayer,
 	})
 
+	console.info('Sending PLAYER_INFO to player', playerUuid, '...')
 	broadcast([newPlayer], {
 		type: serverMessages.PLAYER_INFO,
 		player: newPlayer.getPlayerInfo(),
 	})
+	console.info('Player', playerUuid, 'should now be connected!')
 }
 
 export function* playerDisconnectedSaga(
