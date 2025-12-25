@@ -41,6 +41,7 @@ type SessionState = {
 	updates: Array<Update>
 	rematch: RematchData | null
 	newPlayer: boolean //If the account was created this session
+	corrupted: ConnectionError | null
 }
 
 const defaultState: SessionState = {
@@ -58,6 +59,7 @@ const defaultState: SessionState = {
 	updates: [],
 	rematch: null,
 	newPlayer: false,
+	corrupted: null,
 }
 
 const loginReducer = (
@@ -78,6 +80,15 @@ const loginReducer = (
 				playerSecret: '',
 				playerDeck: state.playerDeck,
 				errorType: action.errorMessage,
+			}
+		case localMessages.CORRUPTED:
+			return {
+				...state,
+				connecting: false,
+				connected: false,
+				playerName: '',
+				minecraftName: '',
+				corrupted: action.reason,
 			}
 		case localMessages.PLAYER_INFO_SET:
 		case localMessages.PLAYER_SESSION_SET:
