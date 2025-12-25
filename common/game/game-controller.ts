@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {PlayerComponent} from '../components'
 import {AIComponent} from '../components/ai-component'
 import {PlayerEntity} from '../entities'
@@ -9,6 +8,7 @@ import {
 } from '../models/game-model'
 import {PlayerModel} from '../models/player-model'
 import {CurrentCoinFlip, IncompleteCoinFlip, Message} from '../types/game-state'
+import {assert} from '../utils/assert'
 import {TurnActionAndPlayer} from './run-game'
 import {PlayerSetupDefs} from './setup-game'
 import {AI_DEFINITIONS} from './virtual'
@@ -160,10 +160,6 @@ export class GameController {
 	}
 
 	public addViewer(viewer: GameViewerProps) {
-		assert(
-			viewer.player,
-			'Found player was undefined when trying to add a viewer',
-		)
 		let v = new GameViewer(this.game, viewer)
 		this.viewers.push(v)
 		return v
