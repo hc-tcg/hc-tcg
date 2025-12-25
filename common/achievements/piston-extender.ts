@@ -20,6 +20,7 @@ const PistonExtender: Achievement = {
 
 		function noteCardAttached(card: CardComponent) {
 			if (!card.slot.inRow()) return
+			if (!attachCounts[card.entity]) attachCounts[card.entity] = []
 			if (!player.activeRow?.hermitSlot?.cardEntity) return
 			if (
 				attachCounts[card.entity].includes(
@@ -28,7 +29,6 @@ const PistonExtender: Achievement = {
 			)
 				return
 			if (!card.slot.row.hermitSlot.cardEntity) return
-			if (!attachCounts[card.entity]) attachCounts[card.entity] = []
 			attachCounts[card.entity].push(card.slot.row.hermitSlot.cardEntity)
 
 			component.updateGoalProgress({
