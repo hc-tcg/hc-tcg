@@ -274,7 +274,11 @@ function* gameManager(
 		const gameState = getLocalGameState(con.game, viewer)
 		if (gameState) {
 			gameState.timer.turnRemaining = 0
-			gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
+			gameState.timer.turnStartTime = getTimerForSeconds(
+				con.game,
+				0,
+				Date.now(),
+			)
 			if (!con.game.endInfo.victoryReason) {
 				// Remove coin flips from state if game was terminated before game end to prevent
 				// clients replaying animations after a forfeit, disconnect, or excessive game duration
@@ -331,7 +335,11 @@ function* gameManager(
 		const gameState = getLocalGameState(con.game, viewer)
 		if (gameState) {
 			gameState.timer.turnRemaining = 0
-			gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
+			gameState.timer.turnStartTime = getTimerForSeconds(
+				con.game,
+				0,
+				Date.now(),
+			)
 			if (!con.game.endInfo.victoryReason) {
 				// Remove coin flips from state if game was terminated before game end to prevent
 				// clients replaying animations after a forfeit, disconnect, or excessive game duration
@@ -732,8 +740,8 @@ export function* joinPrivateGame(
 			const player = root.players[playerId]
 			newGame.chat.push({
 				sender: {
-					type: 'viewer',
-					id: player.id,
+					type: 'spectator',
+					entityOrId: player.id,
 				},
 				message: formatText(`$s${player.name}$ $ystarted spectating$`),
 				createdAt: Date.now(),
@@ -821,8 +829,8 @@ export function* spectatePrivateGame(
 
 		spectatorGame.chat.push({
 			sender: {
-				type: 'viewer',
-				id: player.id,
+				type: 'spectator',
+				entityOrId: player.id,
 			},
 			message: formatText(`$s${player.name}$ $ystarted spectating$`),
 			createdAt: Date.now(),
@@ -1117,8 +1125,8 @@ export function* createRematchGame(
 		const player = root.players[playerId]
 		newGame.chat.push({
 			sender: {
-				type: 'viewer',
-				id: player.id,
+				type: 'spectator',
+				entityOrId: player.id,
 			},
 			message: formatText(`$s${player.name}$ $ystarted spectating$`),
 			createdAt: Date.now(),
@@ -1216,14 +1224,17 @@ export function* createReplayGame(
 		const action = replayActions[i]
 
 		yield* delay(action.millisecondsSinceLastAction)
-		yield call([con, con.sendTurnAction], {
-			action: action.action,
-			playerEntity: action.player,
-		})
+		yield call(() =>
+			con.sendTurnAction({
+				action: action.action,
+				playerEntity: action.player,
+				realTime: Date.now(),
+			}),
+		)
 	}
 
 	gameState.timer.turnRemaining = 0
-	gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
+	gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0, Date.now())
 	if (!con.game.endInfo.victoryReason) {
 		// Remove coin flips from state if game was terminated before game end to prevent
 		// clients replaying animations after a forfeit, disconnect, or excessive game duration
@@ -1285,14 +1296,21 @@ function setupSolitareGame(
 		{
 			model: player,
 			deck: {
-				hidden: false,
+				type: 'visible',
 				cards: playerDeck.cards.map((card) => CARDS[card.id].numericId),
 			},
 			score: 0,
 		},
 		{
 			model: opponent,
-			deck: {hidden: false, cards: opponent.deck},
+			deck: {
+				type: 'visible',
+				cards: opponent.deck.map((card) => {
+					if (typeof card == 'number') return card
+					if (typeof card == 'string') return card
+					return card.id
+				}),
+			},
 			score: 0,
 			ai: EvilXisumaBoss.id,
 		},
