@@ -35,8 +35,8 @@ export type IncompleteCoinFlip = {
 	name: string
 	numberOfCoins: number
 	flipAmounts: Array<number>
-	headImage: Coin['id']
 	delay: number
+	headImage: Coin['id']
 }
 
 export type CurrentCoinFlip = {
@@ -206,12 +206,16 @@ export type LocalGameState = {
 
 type MessageSender =
 	| {
-			type: 'viewer'
-			id: PlayerId
+			type: 'player'
+			entityOrId: PlayerEntity
+	  }
+	| {
+			type: 'spectator'
+			entityOrId: PlayerId
 	  }
 	| {
 			type: 'system'
-			id: PlayerEntity
+			entityOrId: PlayerEntity
 	  }
 
 export type Message = {

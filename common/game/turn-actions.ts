@@ -97,7 +97,7 @@ export async function attackAction(
 		hermitAttackType,
 	)
 
-	const _thisAttackSU = game.components.find(
+	const thisAttackSU = game.components.find(
 		CardComponent,
 		query.card.slot(query.slot.singleUse),
 	)
@@ -124,13 +124,13 @@ export async function attackAction(
 	await executeAttacks(game, attacks)
 	await game.waitForCoinFlips()
 
-	// attacks.forEach((attack) => {
-	// 	game.battleLog.addAttackEntry(
-	// 		attack,
-	// 		game.currentPlayer.coinFlips,
-	// 		thisAttackSU,
-	// 	)
-	// })
+	attacks.forEach((attack) => {
+		game.battleLog.addAttackEntry(
+			attack,
+			game.currentPlayer.coinFlips,
+			thisAttackSU,
+		)
+	})
 
 	game.battleLog.opponentCoinFlipEntry(currentPlayer.coinFlips)
 

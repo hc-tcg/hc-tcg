@@ -786,6 +786,7 @@ export class TurnActionCompressor {
 				await newGameController.sendTurnAction({
 					playerEntity: action.player,
 					action: action.action,
+					realTime: Date.now(),
 				})
 			}
 		} catch (e) {
@@ -869,6 +870,7 @@ export class TurnActionCompressor {
 					action: turnAction,
 					player: actionPlayer,
 					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
+					realTime: Date.now(),
 				})
 			} else {
 				const byteAmount = actionsBuffer.readUInt8(cursor)
@@ -884,12 +886,14 @@ export class TurnActionCompressor {
 					action: turnAction,
 					player: actionPlayer,
 					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
+					realTime: Date.now(),
 				})
 			}
 
 			await con.sendTurnAction({
 				playerEntity: con.game.currentPlayer.entity,
 				action: turnAction,
+				realTime: Date.now(),
 			})
 		}
 

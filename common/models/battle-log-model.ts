@@ -12,7 +12,12 @@ import {
 	StatusEffectEntity,
 } from '../entities'
 import {StatusEffectLog} from '../status-effects/status-effect'
-import {BattleLogT, CurrentCoinFlip, Message} from '../types/game-state'
+import {
+	BattleLogT,
+	CurrentCoinFlip,
+	IncompleteCoinFlip,
+	Message,
+} from '../types/game-state'
 import {LineNode, formatText} from '../utils/formatting'
 import {AttackModel} from './attack-model'
 import {GameModel} from './game-model'
@@ -34,7 +39,12 @@ export class BattleLogModel {
 		return `$p{You|${currentPlayer}}$ used $e${card.props.name}$`
 	}
 
-	private generateCoinFlipDescription(coinFlip: CurrentCoinFlip): string {
+	private generateCoinFlipDescription(
+		coinFlip: CurrentCoinFlip | IncompleteCoinFlip,
+	): string {
+		if (!('tosses' in coinFlip)) {
+			return 'Error, coin flip not complete'
+		}
 		const heads = coinFlip.tosses.filter(
 			(flip) => flip.result === 'heads',
 		).length
@@ -55,7 +65,7 @@ export class BattleLogModel {
 
 	private generateCoinFlipMessage(
 		attack: AttackModel,
-		coinFlips: Array<CurrentCoinFlip>,
+		coinFlips: Array<CurrentCoinFlip | IncompleteCoinFlip>,
 	): string | null {
 		const entry = coinFlips.reduce((r: string | null, coinFlip) => {
 			const description = this.generateCoinFlipDescription(coinFlip)
@@ -86,7 +96,7 @@ export class BattleLogModel {
 			logs.push({
 				sender: {
 					type: 'system',
-					id: playerEntity,
+					entityOrId: playerEntity,
 				},
 				createdAt: Date.now(),
 				message: formatText(firstEntry.description, {censor: true}),
@@ -135,7 +145,7 @@ export class BattleLogModel {
 
 	public addPlayCardEntry(
 		card: CardComponent,
-		coinFlips: Array<CurrentCoinFlip>,
+		coinFlips: Array<CurrentCoinFlip | IncompleteCoinFlip>,
 		pickedSlot: SlotComponent | null,
 	) {
 		let {player, opponentPlayer} = card
@@ -191,7 +201,7 @@ export class BattleLogModel {
 
 	public addAttackEntry(
 		attack: AttackModel,
-		coinFlips: Array<CurrentCoinFlip>,
+		coinFlips: Array<CurrentCoinFlip | IncompleteCoinFlip>,
 		singleUse: CardComponent | null,
 	) {
 		if (!attack.attacker) return
@@ -352,7 +362,7 @@ export class BattleLogModel {
 				{
 					sender: {
 						type: 'system',
-						id: this.game.currentPlayer.entity,
+						entityOrId: this.game.currentPlayer.entity,
 					},
 					createdAt: Date.now(),
 					message: LineNode(),

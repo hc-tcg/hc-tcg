@@ -233,7 +233,9 @@ export class GameController {
 		this.game.voiceLineQueue = []
 	}
 
-	public getRandomDelayForAI(coinFlips: Array<CurrentCoinFlip>) {
+	public getRandomDelayForAI(
+		coinFlips: Array<CurrentCoinFlip | IncompleteCoinFlip>,
+	) {
 		return (
 			coinFlips.reduce((r, flip) => r + flip.delay, 0) +
 			(this.game.coinFlipRng() * 500 + 500)
