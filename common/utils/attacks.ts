@@ -11,7 +11,10 @@ import {afterAttack, onTurnEnd} from '../types/priorities'
 /**
  * Call before attack hooks for each attack that has an attacker
  */
-function runBeforeAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
+async function runBeforeAttackHooks(
+	game: GameModel,
+	attacks: Array<AttackModel>,
+) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
 		if (!attack.attacker) return
@@ -29,10 +32,11 @@ function runBeforeAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 				return !shouldIgnoreCard(attack, game, entity)
 			return true
 		})
+		await game.waitForCoinFlips()
 	}
 }
 
-function runRowReviveHooks(game: GameModel, attacks: Array<AttackModel>) {
+async function runRowReviveHooks(game: GameModel, attacks: Array<AttackModel>) {
 	for (let i = 0; i < attacks.length; i++) {
 		const attack = attacks[i]
 
@@ -45,10 +49,14 @@ function runRowReviveHooks(game: GameModel, attacks: Array<AttackModel>) {
 				return !shouldIgnoreCard(attack, game, entity)
 			return true
 		})
+		await game.waitForCoinFlips()
 	}
 }
 
-function runAfterAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
+async function runAfterAttackHooks(
+	game: GameModel,
+	attacks: Array<AttackModel>,
+) {
 	for (let i = 0; i < attacks.length; i++) {
 		const attack = attacks[i]
 
@@ -62,6 +70,7 @@ function runAfterAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 			return true
 		})
 	}
+	await game.waitForCoinFlips()
 }
 
 function shouldIgnoreCard(
@@ -78,12 +87,15 @@ function shouldIgnoreCard(
 }
 
 /** Executes a complete attack cycle (without creating attack logs) */
-export function executeAttacks(game: GameModel, attacks: Array<AttackModel>) {
+export async function executeAttacks(
+	game: GameModel,
+	attacks: Array<AttackModel>,
+) {
 	const allAttacks: Array<AttackModel> = []
 
 	while (attacks.length > 0) {
 		// STEP 1 - Call before attack and defence for all attacks
-		runBeforeAttackHooks(game, attacks)
+		await runBeforeAttackHooks(game, attacks)
 
 		const nextAttacks: Array<AttackModel> = []
 		// STEP 3 - Execute all attacks
@@ -101,8 +113,8 @@ export function executeAttacks(game: GameModel, attacks: Array<AttackModel>) {
 	}
 
 	// STEP 6 - After all attacks have been executed, call after attack hooks
-	runRowReviveHooks(game, allAttacks)
-	runAfterAttackHooks(game, allAttacks)
+	await runRowReviveHooks(game, allAttacks)
+	await runAfterAttackHooks(game, allAttacks)
 }
 
 /** Executes a complete attack cycle and automatically sends attack logs */
@@ -207,6 +219,7 @@ export function setupMockCard(
 
 	mocking.props.onAttach(game, component, observer)
 
+	// Check if any coin flip cards are broken
 	player.hooks.getAttackRequests.callSome(
 		[component, attackType],
 		(observerEntity) => observerEntity === observer.entity,

@@ -54,19 +54,23 @@ const EthosLabRare: Hermit = {
 					return
 				if (!(attack.attacker instanceof CardComponent)) return
 
-				const coinFlip = flipCoin(game, player, attack.attacker)
-
-				if (coinFlip[0] !== 'heads') return
-
-				let opponentActiveHermit = game.components.find(
-					CardComponent,
-					query.card.opponentPlayer,
-					query.card.active,
-					query.card.slot(query.slot.hermit),
+				flipCoin(
+					(coinFlip) => {
+						if (coinFlip[0] !== 'heads') return
+						let opponentActiveHermit = game.components.find(
+							CardComponent,
+							query.card.opponentPlayer,
+							query.card.active,
+							query.card.slot(query.slot.hermit),
+						)
+						game.components
+							.new(StatusEffectComponent, FireEffect, component.entity)
+							.apply(opponentActiveHermit?.entity)
+					},
+					game,
+					player,
+					attack.attacker,
 				)
-				game.components
-					.new(StatusEffectComponent, FireEffect, component.entity)
-					.apply(opponentActiveHermit?.entity)
 			},
 		)
 	},

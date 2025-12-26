@@ -35,6 +35,7 @@ type Messages = [
 	{
 		type: typeof localMessages.GAME_TURN_ACTION
 		playerEntity: PlayerEntity
+		playerId: string
 		action: AnyTurnActionData
 		game: string
 	},

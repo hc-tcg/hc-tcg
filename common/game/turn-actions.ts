@@ -1,5 +1,6 @@
-import assert from 'assert'
+import {CARDS} from '../cards'
 import {CardComponent} from '../components'
+import {unknownCard} from '../components/card-component'
 import query from '../components/query'
 import {SlotEntity} from '../entities'
 import {AttackModel} from '../models/attack-model'
@@ -10,11 +11,13 @@ import {
 	DragCards,
 	ModalResult,
 	SelectCards,
+	SpyglassModal,
 } from '../types/modal-requests'
 import {
 	LocalCopyAttack,
 	LocalDragCards,
 	LocalSelectCards,
+	LocalSpyglassModal,
 } from '../types/server-requests'
 import {
 	AttackActionData,
@@ -23,14 +26,15 @@ import {
 	attackActionToAttack,
 	attackToAttackAction,
 } from '../types/turn-action-data'
+import {assert} from '../utils/assert'
 import {executeAttacks} from '../utils/attacks'
 import {applySingleUse} from '../utils/board'
 
-function getAttack(
+async function getAttack(
 	game: GameModel,
 	creator: CardComponent,
 	hermitAttackType: HermitAttackType,
-): Array<AttackModel> {
+): Promise<Array<AttackModel>> {
 	const {currentPlayer} = game
 	const attacks: Array<AttackModel> = []
 
@@ -44,9 +48,14 @@ function getAttack(
 
 	// all other attacks
 	const otherAttacks = currentPlayer.hooks.getAttack.call()
-	otherAttacks.forEach((otherAttack) => {
-		if (otherAttack) attacks.push(otherAttack)
-	})
+	await game.waitForCoinFlips()
+	await Promise.all(
+		otherAttacks.map(async (otherAttack) => {
+			if (otherAttack) {
+				attacks.push(await Promise.resolve(otherAttack))
+			}
+		}),
+	)
 
 	if (game.settings.oneShotMode) {
 		for (let i = 0; i < attacks.length; i++) {
@@ -57,11 +66,11 @@ function getAttack(
 	return attacks
 }
 
-export function attackAction(
+export async function attackAction(
 	game: GameModel,
 	turnAction: AttackActionData,
 	checkForRequests = true,
-): void {
+) {
 	const hermitAttackType = attackActionToAttack[turnAction.type]
 	const {currentPlayer, state} = game
 	const activeInstance = game.currentPlayer.activeRow?.getHermit()
@@ -71,6 +80,7 @@ export function attackAction(
 	if (checkForRequests) {
 		// First allow cards to add attack requests
 		currentPlayer.hooks.getAttackRequests.call(activeInstance, hermitAttackType)
+		await game.waitForCoinFlips()
 
 		if (game.hasActiveRequests()) {
 			// We have some pick/modal requests that we want to execute before the attack
@@ -81,7 +91,7 @@ export function attackAction(
 	}
 
 	// Get initial attacks
-	let attacks: Array<AttackModel> = getAttack(
+	let attacks: Array<AttackModel> = await getAttack(
 		game,
 		activeInstance,
 		hermitAttackType,
@@ -111,7 +121,8 @@ export function attackAction(
 	)
 
 	// Run all the code stuff
-	executeAttacks(game, attacks)
+	await executeAttacks(game, attacks)
+	await game.waitForCoinFlips()
 
 	attacks.forEach((attack) => {
 		game.battleLog.addAttackEntry(
@@ -128,17 +139,22 @@ export function attackAction(
 	}
 }
 
-export function playCardAction(
+export async function playCardAction(
 	game: GameModel,
 	turnAction: PlayCardActionData,
-): void {
+) {
 	// Make sure data sent from client is correct
 	const slotEntity = turnAction?.slot
 	const localCard = turnAction?.card
 	assert(slotEntity && localCard)
 
-	const card = game.components.get(localCard.entity)
+	let card = game.components.get(turnAction.card.entity)
+
 	assert(card, 'You can not play a card that is not in the ECS')
+
+	if (card.props.id === unknownCard.id) {
+		card.props = CARDS[localCard.id]
+	}
 
 	const {currentPlayer} = game
 
@@ -163,7 +179,7 @@ export function playCardAction(
 	const player = pickedSlot.player
 
 	// Do we meet requirements to place the card
-	const canAttach = card?.props.attachCondition(game, pickedSlot) || false
+	const canAttach = card.props.attachCondition(game, pickedSlot)
 
 	// It's the wrong kind of slot or does not satisfy the condition
 	assert(
@@ -185,6 +201,7 @@ export function playCardAction(
 
 		switch (pickedSlot.type) {
 			case 'hermit': {
+				console.log('attaching hermit')
 				currentPlayer.hasPlacedHermit = true
 				assert(
 					card.isHealth(),
@@ -192,6 +209,7 @@ export function playCardAction(
 						card.props.numericId,
 				)
 
+				console.log('running attach')
 				card.attach(pickedSlot)
 				pickedSlot.row.health = card.props.health
 
@@ -199,6 +217,7 @@ export function playCardAction(
 					currentPlayer.changeActiveRow(pickedSlot.row)
 				}
 
+				console.log('done')
 				break
 			}
 			case 'item': {
@@ -230,13 +249,16 @@ export function playCardAction(
 
 	// Call onAttach hook
 	currentPlayer.hooks.onAttach.call(card)
+	await game.waitForCoinFlips()
+
+	console.log('end of the function')
 }
 
-export function applyEffectAction(game: GameModel): void {
+export async function applyEffectAction(game: GameModel) {
 	applySingleUse(game, null)
 }
 
-export function removeEffectAction(game: GameModel): void {
+export async function removeEffectAction(game: GameModel) {
 	let singleUseCard = game.components.find(
 		CardComponent,
 		query.card.slot(query.slot.singleUse),
@@ -252,10 +274,10 @@ export function removeEffectAction(game: GameModel): void {
 	singleUseCard?.draw()
 }
 
-export function changeActiveHermitAction(
+export async function changeActiveHermitAction(
 	game: GameModel,
 	turnAction: ChangeActiveHermitActionData,
-): void {
+) {
 	const {currentPlayer} = game
 
 	// Find the row we are trying to change to
@@ -287,13 +309,14 @@ export function changeActiveHermitAction(
 	}
 }
 
-export function modalRequestAction(
+export async function modalRequestAction(
 	game: GameModel,
 	localModalResult:
 		| LocalSelectCards.Result
 		| LocalCopyAttack.Result
-		| LocalDragCards.Result,
-): void {
+		| LocalDragCards.Result
+		| LocalSpyglassModal.Result,
+) {
 	const modalRequest = game.state.modalRequests[0]
 
 	assert(
@@ -336,9 +359,15 @@ export function modalRequestAction(
 			`Client picked an action that was not available to copy: ${modal.pick}`,
 		)
 		modalRequest_.onResult(modal)
+	} else if (modalRequest.modal.type === 'spyglass') {
+		let modalRequest_ = modalRequest as SpyglassModal.Request
+		modalResult = localModalResult as SpyglassModal.Result
+		let modal = localModalResult as SpyglassModal.Result
+		modalRequest_.onResult(modal)
 	} else throw Error('Unknown modal type')
 
 	game.hooks.onModalRequestResolve.call(modalRequest, modalResult)
+	await game.waitForCoinFlips()
 
 	// We completed the modal request, remove it
 	game.state.modalRequests.shift()
@@ -348,16 +377,16 @@ export function modalRequestAction(
 		const turnAction: AttackActionData = {
 			type: attackToAttackAction[game.state.turn.currentAttack],
 		}
-		attackAction(game, turnAction, false)
+		await attackAction(game, turnAction, false)
 
 		game.state.turn.currentAttack = null
 	}
 }
 
-export function pickRequestAction(
+export async function pickRequestAction(
 	game: GameModel,
 	pickResult?: SlotEntity,
-): void {
+) {
 	// First validate data sent from client
 	assert(pickResult, 'Pick results cannot have an emtpy body.')
 
@@ -386,6 +415,7 @@ export function pickRequestAction(
 	let player = game.components.get(pickRequest.player)
 	if (player) player.pickableSlots = null
 
+	await game.waitForCoinFlips()
 	game.hooks.onPickRequestResolve.call(pickRequest, slotInfo)
 
 	// We completed this pick request, remove it
@@ -396,11 +426,8 @@ export function pickRequestAction(
 		const turnAction: AttackActionData = {
 			type: attackToAttackAction[game.state.turn.currentAttack],
 		}
-		attackAction(game, turnAction, false)
-
+		await attackAction(game, turnAction, false)
 		game.state.turn.currentAttack = null
-
-		return
 	}
 
 	return

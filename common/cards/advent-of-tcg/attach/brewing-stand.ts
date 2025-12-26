@@ -29,26 +29,32 @@ const BrewingStand: Attach = {
 			if (component.slot.row.entity !== player.activeRowEntity) return
 
 			/** @todo This flip does not get logged, may have to be added manually */
-			const flip = flipCoin(game, player, component)[0]
-			if (flip !== 'heads') return
+			flipCoin(
+				(flip) => {
+					if (flip[0] !== 'heads') return
 
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: 'Pick an item card to discard',
-				canPick: query.every(
-					query.slot.currentPlayer,
-					query.slot.item,
-					query.not(query.slot.empty),
-					query.slot.active,
-				),
-				onResult(pickedSlot) {
-					if (!pickedSlot.inRow()) return
+					game.addPickRequest({
+						player: player.entity,
+						id: component.entity,
+						message: 'Pick an item card to discard',
+						canPick: query.every(
+							query.slot.currentPlayer,
+							query.slot.item,
+							query.not(query.slot.empty),
+							query.slot.active,
+						),
+						onResult(pickedSlot) {
+							if (!pickedSlot.inRow()) return
 
-					pickedSlot.row.heal(50)
-					pickedSlot.card?.discard()
+							pickedSlot.row.heal(50)
+							pickedSlot.card?.discard()
+						},
+					})
 				},
-			})
+				game,
+				player,
+				component,
+			)
 		})
 	},
 }

@@ -44,39 +44,45 @@ const GoatfatherRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				let coinFlip = flipCoin(game, player, component)[0]
+				flipCoin(
+					(coinFlip) => {
+						if (coinFlip[0] !== 'heads') return
 
-				if (coinFlip !== 'heads') return
+						let opponentActiveHermit = opponentPlayer.getActiveHermit()
+						if (!opponentActiveHermit?.slot.inRow()) return
 
-				let opponentActiveHermit = opponentPlayer.getActiveHermit()
-				if (!opponentActiveHermit?.slot.inRow()) return
+						attack.addDamage(component.entity, 30)
 
-				attack.addDamage(component.entity, 30)
-
-				game.components
-					.filter(
-						RowComponent,
-						query.row.opponentPlayer,
-						query.row.hasHermit,
-						(_game, row) =>
-							opponentActiveHermit !== null &&
-							opponentActiveHermit.slot.inRow() &&
-							row.index > opponentActiveHermit.slot.row.index,
-					)
-					.sort((a, b) => a.index - b.index)
-					.forEach((row) => {
-						const newAttack = game.newAttack({
-							attacker: component.entity,
-							target: row.entity,
-							type: 'secondary',
-							log: (values) => `, ${values.target} for ${values.damage} damage`,
-						})
-						newAttack.addDamage(component.entity, 10)
-						newAttack.shouldIgnoreCards.push(
-							query.card.entity(component.entity),
-						)
-						attack.addNewAttack(newAttack)
-					})
+						game.components
+							.filter(
+								RowComponent,
+								query.row.opponentPlayer,
+								query.row.hasHermit,
+								(_game, row) =>
+									opponentActiveHermit !== null &&
+									opponentActiveHermit.slot.inRow() &&
+									row.index > opponentActiveHermit.slot.row.index,
+							)
+							.sort((a, b) => a.index - b.index)
+							.forEach((row) => {
+								const newAttack = game.newAttack({
+									attacker: component.entity,
+									target: row.entity,
+									type: 'secondary',
+									log: (values) =>
+										`, ${values.target} for ${values.damage} damage`,
+								})
+								newAttack.addDamage(component.entity, 10)
+								newAttack.shouldIgnoreCards.push(
+									query.card.entity(component.entity),
+								)
+								attack.addNewAttack(newAttack)
+							})
+					},
+					game,
+					player,
+					component,
+				)
 			},
 		)
 	},

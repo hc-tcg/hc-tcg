@@ -67,42 +67,52 @@ const GrianchRare: Hermit = {
 				} else if (attack.type === 'secondary') {
 					const spentFortune = player.hasStatusEffect(SpentFortuneEffect)
 					spentFortune?.remove()
-					const coinFlip = flipCoin(game, player, component)
-					spentFortune?.apply(player.entity)
+					flipCoin(
+						(coinFlip) => {
+							spentFortune?.apply(player.entity)
 
-					if (coinFlip[0] === 'tails') {
-						game.components
-							.new(StatusEffectComponent, NaughtyRegiftEffect, component.entity)
-							.apply(opponentPlayer.entity)
-						return
-					}
+							if (coinFlip[0] === 'tails') {
+								game.components
+									.new(
+										StatusEffectComponent,
+										NaughtyRegiftEffect,
+										component.entity,
+									)
+									.apply(opponentPlayer.entity)
+								return
+							}
 
-					const fortune = game.components.find(
-						StatusEffectComponent,
-						query.effect.is(FortuneEffect),
-						query.effect.targetEntity(player.entity),
-					)
-					if (fortune) {
-						fortune.remove()
-						game.components
-							.new(
+							const fortune = game.components.find(
 								StatusEffectComponent,
-								SpentFortuneEffect,
-								fortune.creatorEntity,
+								query.effect.is(FortuneEffect),
+								query.effect.targetEntity(player.entity),
 							)
-							.apply(player.entity)
-					}
+							if (fortune) {
+								fortune.remove()
+								game.components
+									.new(
+										StatusEffectComponent,
+										SpentFortuneEffect,
+										fortune.creatorEntity,
+									)
+									.apply(player.entity)
+							}
 
-					game.removeCompletedActions(
-						'PRIMARY_ATTACK',
-						'SECONDARY_ATTACK',
-						'SINGLE_USE_ATTACK',
-					)
-					game.removeBlockedActions(
-						'game',
-						'PRIMARY_ATTACK',
-						'SECONDARY_ATTACK',
-						'SINGLE_USE_ATTACK',
+							game.removeCompletedActions(
+								'PRIMARY_ATTACK',
+								'SECONDARY_ATTACK',
+								'SINGLE_USE_ATTACK',
+							)
+							game.removeBlockedActions(
+								'game',
+								'PRIMARY_ATTACK',
+								'SECONDARY_ATTACK',
+								'SINGLE_USE_ATTACK',
+							)
+						},
+						game,
+						player,
+						component,
 					)
 				}
 			},

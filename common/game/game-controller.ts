@@ -1,21 +1,16 @@
-import assert from 'assert'
-import {ACHIEVEMENTS_LIST} from '../achievements'
-import {
-	AchievementComponent,
-	ObserverComponent,
-	PlayerComponent,
-} from '../components'
+import {PlayerComponent} from '../components'
+import {AIComponent} from '../components/ai-component'
 import {PlayerEntity} from '../entities'
 import {
 	GameModel,
 	GameSettings,
 	gameSettingsFromEnv,
 } from '../models/game-model'
-import {PlayerId, PlayerModel} from '../models/player-model'
-import {EarnedAchievement} from '../types/achievements'
-import {CurrentCoinFlip, Message} from '../types/game-state'
+import {PlayerModel} from '../models/player-model'
+import {CurrentCoinFlip, IncompleteCoinFlip, Message} from '../types/game-state'
 import {TurnActionAndPlayer} from './run-game'
 import {PlayerSetupDefs} from './setup-game'
+import {AI_DEFINITIONS} from './virtual'
 
 export type GameControllerProps = {
 	gameCode?: string
@@ -32,7 +27,7 @@ type GameViewerProps = {
 	spectator: boolean
 	replayer: boolean
 	playerOnLeft: PlayerEntity
-	player: PlayerModel
+	player?: PlayerModel
 }
 
 export class GameViewer {
@@ -40,15 +35,14 @@ export class GameViewer {
 	game: GameModel
 	spectator: boolean
 	playerOnLeftEntity: PlayerEntity
-	player: PlayerModel
 	replayer: boolean
 
 	public constructor(game: GameModel, props: GameViewerProps) {
+		console.log(props)
 		this.id = `${Math.random()}`
 		this.game = game
 		this.spectator = props.spectator
 		this.playerOnLeftEntity = props.playerOnLeft
-		this.player = props.player
 		this.replayer = props.replayer
 	}
 
@@ -72,6 +66,8 @@ export class GameController {
 	chat: Array<Message>
 	task: Promise<any> | null
 	viewers: Array<GameViewer>
+	playerOne: PlayerComponent
+	playerTwo: PlayerComponent
 
 	readonly props: GameControllerProps
 	readonly player1Defs: PlayerSetupDefs
@@ -88,8 +84,11 @@ export class GameController {
 		this.chat = []
 		this.props = props
 
+		let randomSeed = props.randomSeed || GameModel.newGameSeed()
+		this.props.randomSeed = randomSeed
+
 		this.game = new GameModel(
-			props.randomSeed || GameModel.newGameSeed(),
+			randomSeed,
 			player1,
 			player2,
 			props.settings || gameSettingsFromEnv(),
@@ -98,8 +97,12 @@ export class GameController {
 					this.publishBattleLog(logs, timeout),
 				randomizeOrder: props.randomizeOrder ?? true,
 				id: props.gameId,
+				startCoinFlip: (coinFlip, result) =>
+					this.startCoinFlip(coinFlip, result),
 			},
 		)
+
+		this.props.gameId = this.game.id
 
 		this.createdTime = Date.now()
 		this.id = 'game-controller_' + Math.random().toString()
@@ -112,110 +115,50 @@ export class GameController {
 		this.waitingForTurnActionList = []
 		this.turnActionListener = null
 
-		this.player1Defs = player1
-		this.player2Defs = player2
+		this.player1Defs = {
+			model: {
+				uuid: player1.model.uuid,
+				name: player1.model.name,
+				minecraftName: player1.model.minecraftName,
+				censoredName: player1.model.censoredName,
+				appearance: player1.model.appearance,
+				disableDeckingOut: player1.model.disableDeckingOut,
+			},
+			deck: player1.deck,
+			score: player1.score,
+		}
+		this.player2Defs = {
+			model: {
+				uuid: player2.model.uuid,
+				name: player2.model.name,
+				minecraftName: player2.model.minecraftName,
+				censoredName: player2.model.censoredName,
+				appearance: player2.model.appearance,
+				disableDeckingOut: player2.model.disableDeckingOut,
+			},
+			deck: player2.deck,
+			score: player2.score,
+			ai: player2.ai,
+		}
 
-		let playerOne = this.game.arePlayersSwapped
+		this.playerOne = this.game.arePlayersSwapped
 			? this.game.currentPlayer
 			: this.game.opponentPlayer
-		let playerTwo = this.game.arePlayersSwapped
+		this.playerTwo = this.game.arePlayersSwapped
 			? this.game.opponentPlayer
 			: this.game.currentPlayer
 
-		if (
-			props.countAchievements === 'all' ||
-			props.countAchievements === 'boss'
-		) {
-			if (this.player1Defs.model instanceof PlayerModel) {
-				console.log(
-					'Adding achievements',
-					playerOne.playerName,
-					this.player1Defs.model.name,
-				)
-				this.addAchievements(
-					this.player1Defs.model,
-					playerOne,
-					props.countAchievements,
-				)
-			}
-			if (this.player2Defs.model instanceof PlayerModel) {
-				console.log(
-					'Adding achievemnts',
-					playerTwo.playerName,
-					this.player2Defs.model.name,
-				)
-				this.addAchievements(
-					this.player2Defs.model,
-					playerTwo,
-					props.countAchievements,
-				)
-			}
+		if (this.player2Defs.ai) {
+			const component = this.game.components.new(
+				AIComponent,
+				this.game.currentPlayer.entity,
+				AI_DEFINITIONS[this.player2Defs.ai],
+			)
+			component.ai.setup(this.game)
 		}
 	}
-
-	public addAchievements(
-		player: PlayerModel,
-		playerComponent: PlayerComponent,
-		restriction: 'all' | 'boss',
-	) {
-		if (player.achievementProgress) {
-			ACHIEVEMENTS_LIST.forEach((achievement) => {
-				if (restriction === 'boss' && !achievement.evilXAchievement) return
-				if (restriction == 'all' && achievement.evilXAchievement) return
-
-				if (!player.achievementProgress[achievement.numericId]) {
-					player.achievementProgress[achievement.numericId] = {
-						goals: {},
-						levels: Array(achievement.levels.length)
-							.fill(0)
-							.flatMap(() => [{}]),
-					}
-				}
-				const achievementComponent = this.game.components.new(
-					AchievementComponent,
-					achievement,
-					playerComponent.entity,
-					player.achievementProgress[achievement.numericId],
-				)
-				const achievementObserver = this.game.components.new(
-					ObserverComponent,
-					achievementComponent.entity,
-				)
-				achievementComponent.hooks.onComplete.add(
-					achievementObserver.entity,
-					(newProgress, level) => {
-						const originalProgress =
-							achievement.getProgress(
-								player.achievementProgress[achievement.numericId].goals,
-							) ?? 0
-						this.onAchievementComplete(player, {
-							achievementId: achievement.numericId,
-							level,
-							newProgress,
-							originalProgress,
-						})
-					},
-				)
-				achievementComponent.props.onGameStart(
-					this.game,
-					playerComponent,
-					achievementComponent,
-					achievementObserver,
-				)
-			})
-		}
-	}
-
-	public onAchievementComplete(
-		_player: PlayerModel,
-		_achievement: EarnedAchievement,
-	) {}
 
 	public addViewer(viewer: GameViewerProps) {
-		assert(
-			viewer.player,
-			'Found player was undefined when trying to add a viewer',
-		)
 		let v = new GameViewer(this.game, viewer)
 		this.viewers.push(v)
 		return v
@@ -225,20 +168,6 @@ export class GameController {
 		this.viewers = this.viewers.filter((v) => v.id !== viewer.id)
 	}
 
-	public getPlayers() {
-		return this.viewers.map((viewer) => viewer.player)
-	}
-
-	public get players() {
-		return this.viewers.reduce(
-			(acc, viewer) => {
-				acc[viewer.player.id] = viewer.player
-				return acc
-			},
-			{} as Record<PlayerId, PlayerModel>,
-		)
-	}
-
 	/* Wait until the game is ready to accept a turn action then send one */
 	public async sendTurnAction(action: TurnActionAndPlayer) {
 		await this.waitForTurnActionReady()
@@ -246,6 +175,7 @@ export class GameController {
 			await this.turnActionListener(action)
 			this.turnActionListener = null
 		}
+		await this.waitForTurnActionReady()
 	}
 
 	public async waitForTurnAction(): Promise<TurnActionAndPlayer> {
@@ -280,16 +210,30 @@ export class GameController {
 		})
 	}
 
+	public startCoinFlip(
+		coinFlip: IncompleteCoinFlip,
+		callback: (result: Array<'heads' | 'tails'>) => any,
+	) {
+		const coinFlips: Array<'heads' | 'tails'> = []
+		for (let i = 0; i < coinFlip.numberOfCoins; i++) {
+			const coinFlip = this.game.coinFlipRng() >= 0.5 ? 'heads' : 'tails'
+			coinFlips.push(coinFlip)
+		}
+		callback(coinFlips)
+	}
+
 	public async publishBattleLog(_logs: Array<Message>, _timeout: number) {}
 
 	public broadcastState() {
 		this.game.voiceLineQueue = []
 	}
 
-	public getRandomDelayForAI(coinFlips: Array<CurrentCoinFlip>) {
+	public getRandomDelayForAI(
+		coinFlips: Array<CurrentCoinFlip | IncompleteCoinFlip>,
+	) {
 		return (
 			coinFlips.reduce((r, flip) => r + flip.delay, 0) +
-			(this.game.rng() * 500 + 500)
+			(this.game.coinFlipRng() * 500 + 500)
 		)
 	}
 }

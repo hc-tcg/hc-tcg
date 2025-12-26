@@ -31,8 +31,8 @@ export function* chatMessage(
 
 	game.chat.push({
 		sender: {
-			type: 'viewer',
-			id: playerId,
+			type: 'spectator',
+			entityOrId: playerId,
 		},
 		message: concatFormattedTextNodes(
 			FormatNode(

@@ -413,7 +413,6 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 	})
 
 	if (result.invalidPlayer || result.connectError) {
-		console.log('HERE')
 		yield* put<LocalMessage>({
 			type: localMessages.CONNECTING_MESSAGE,
 			message: 'Connection Error. Reloading',
@@ -475,14 +474,21 @@ function* trySingleLoginAttempt(): Generator<any, LoginResult, any> {
 			type: localMessages.CONNECTED,
 		})
 
-		if (result.playerReconnected.game) {
+		if (result.playerReconnected.reconnectProps) {
 			const matchmakingStatus = (yield* select(getMatchmaking)).status
 
 			// Only start a new game saga if the player is not in a game.
 			if (matchmakingStatus !== 'in_game') {
-				yield* call(gameSaga, {
-					initialGameState: result.playerReconnected.game,
-					spectatorCode: result.playerReconnected.spectatorCode,
+				yield* gameSaga({
+					initialTurnActions:
+						result.playerReconnected.reconnectProps.gameHistory,
+					spectatorCode: result.playerReconnected.reconnectProps.spectatorCode,
+					playerEntity: result.playerReconnected.reconnectProps.playerEntity,
+					playerOneDefs: result.playerReconnected.reconnectProps.playerOneDefs,
+					playerTwoDefs: result.playerReconnected.reconnectProps.playerTwoDefs,
+					props: result.playerReconnected.reconnectProps.props,
+					coinFlipHistory:
+						result.playerReconnected.reconnectProps.coinFlipHistory,
 				})
 				yield* put<LocalMessage>({type: localMessages.MATCHMAKING_LEAVE})
 			}

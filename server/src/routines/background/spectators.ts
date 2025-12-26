@@ -18,8 +18,8 @@ function* spectatorLeaveSaga(
 
 	con.chat.push({
 		sender: {
-			type: 'viewer',
-			id: action.playerId,
+			type: 'spectator',
+			entityOrId: action.playerId,
 		},
 		message: formatText(`$s${viewer?.player.name}$ $ystopped spectating$`),
 		createdAt: Date.now(),

@@ -66,23 +66,33 @@ const JoeHillsRare: Hermit = {
 					return
 				}
 
-				const coinFlip = flipCoin(game, player, component)
-				if (coinFlip[0] !== 'heads') return
+				flipCoin(
+					(coinFlip) => {
+						if (coinFlip[0] !== 'heads') return
 
-				attack.updateLog(
-					(values) =>
-						` ${values.previousLog}, then skipped {$o${values.opponent}'s$|your} turn`,
+						attack.updateLog(
+							(values) =>
+								` ${values.previousLog}, then skipped {$o${values.opponent}'s$|your} turn`,
+						)
+
+						game.components
+							.new(StatusEffectComponent, TurnSkippedEffect, component.entity)
+							.apply(opponentPlayer.entity)
+						game.components
+							.new(StatusEffectComponent, UsedClockEffect, component.entity)
+							.apply(player.entity)
+						game.components
+							.new(
+								StatusEffectComponent,
+								TimeSkipDisabledEffect,
+								component.entity,
+							)
+							.apply(player.entity)
+					},
+					game,
+					player,
+					component,
 				)
-
-				game.components
-					.new(StatusEffectComponent, TurnSkippedEffect, component.entity)
-					.apply(opponentPlayer.entity)
-				game.components
-					.new(StatusEffectComponent, UsedClockEffect, component.entity)
-					.apply(player.entity)
-				game.components
-					.new(StatusEffectComponent, TimeSkipDisabledEffect, component.entity)
-					.apply(player.entity)
 			},
 		)
 

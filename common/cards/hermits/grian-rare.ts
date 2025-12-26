@@ -51,60 +51,65 @@ const GrianRare: Hermit = {
 				)
 				if (!opponentAttachCard) return
 
-				const coinFlip = flipCoin(game, player, component)
+				flipCoin(
+					(coinFlip) => {
+						if (coinFlip[0] === 'tails') return
 
-				if (coinFlip[0] === 'tails') return
+						const attachSlot = game.components.find(
+							SlotComponent,
+							query.slot.currentPlayer,
+							query.slot.active,
+							query.slot.attach,
+						)
+						const canAttach =
+							component.isAlive() &&
+							game.components.exists(
+								SlotComponent,
+								query.slot.currentPlayer,
+								query.not(query.slot.frozen),
+								query.slot.attach,
+								query.slot.active,
+								query.slot.empty,
+							)
 
-				const attachSlot = game.components.find(
-					SlotComponent,
-					query.slot.currentPlayer,
-					query.slot.active,
-					query.slot.attach,
-				)
-				const canAttach =
-					component.isAlive() &&
-					game.components.exists(
-						SlotComponent,
-						query.slot.currentPlayer,
-						query.not(query.slot.frozen),
-						query.slot.attach,
-						query.slot.active,
-						query.slot.empty,
-					)
-
-				game.addModalRequest({
-					player: player.entity,
-					modal: {
-						type: 'selectCards',
-						name: 'Grian - Borrow',
-						description: `Would you like to attach or discard your opponent's ${opponentAttachCard.props.name} card?`,
-						cards: [opponentAttachCard.entity],
-						selectionSize: 0,
-						cancelable: false,
-						primaryButton: canAttach
-							? {
-									text: 'Attach',
+						game.addModalRequest({
+							player: player.entity,
+							modal: {
+								type: 'selectCards',
+								name: 'Grian - Borrow',
+								description: `Would you like to attach or discard your opponent's ${opponentAttachCard.props.name} card?`,
+								cards: [opponentAttachCard.entity],
+								selectionSize: 0,
+								cancelable: false,
+								primaryButton: canAttach
+									? {
+											text: 'Attach',
+											variant: 'default',
+										}
+									: null,
+								secondaryButton: {
+									text: 'Discard',
 									variant: 'default',
+								},
+							},
+							onResult(modalResult) {
+								if (modalResult.result && canAttach && attachSlot) {
+									opponentAttachCard.attach(attachSlot)
+								} else {
+									opponentAttachCard.discard(component.player.entity)
 								}
-							: null,
-						secondaryButton: {
-							text: 'Discard',
-							variant: 'default',
-						},
-					},
-					onResult(modalResult) {
-						if (modalResult.result && canAttach && attachSlot) {
-							opponentAttachCard.attach(attachSlot)
-						} else {
-							opponentAttachCard.discard(component.player.entity)
-						}
 
-						return
+								return
+							},
+							onTimeout() {
+								opponentAttachCard.discard(component.player.entity)
+							},
+						})
 					},
-					onTimeout() {
-						opponentAttachCard.discard(component.player.entity)
-					},
-				})
+					game,
+					player,
+					component,
+				)
 			},
 		)
 	},

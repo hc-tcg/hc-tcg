@@ -100,33 +100,35 @@ export const AussiePingEffect: StatusEffect<PlayerComponent> = {
 
 				// No need to flip a coin for multiple attacks
 				if (!coinFlipResult) {
-					const coinFlip = flipCoin(
+					flipCoin(
+						(coinFlip) => {
+							coinFlipResult = coinFlip[0]
+							game.components
+								.filter(
+									StatusEffectComponent<CardComponent>,
+									query.effect.is(
+										GasLightEffect,
+										GasLightTriggeredEffect,
+										GasLightPotentialEffect,
+									),
+									query.effect.targetIsCardAnd(query.card.opponentPlayer),
+								)
+								.forEach((effect) => {
+									if (effect.target.slot.inRow()) {
+										gasLightRecord.push([
+											effect,
+											effect.target,
+											effect.counter || 0,
+										])
+									}
+								})
+						},
 						game,
 						player.opponentPlayer,
 						effect.creator,
 						1,
 						player,
 					)
-					coinFlipResult = coinFlip[0]
-					game.components
-						.filter(
-							StatusEffectComponent<CardComponent>,
-							query.effect.is(
-								GasLightEffect,
-								GasLightTriggeredEffect,
-								GasLightPotentialEffect,
-							),
-							query.effect.targetIsCardAnd(query.card.opponentPlayer),
-						)
-						.forEach((effect) => {
-							if (effect.target.slot.inRow()) {
-								gasLightRecord.push([
-									effect,
-									effect.target,
-									effect.counter || 0,
-								])
-							}
-						})
 				}
 
 				if (coinFlipResult === 'heads') {

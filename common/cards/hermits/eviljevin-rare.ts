@@ -57,42 +57,49 @@ const EvilJevinRare: Hermit = {
 
 				if (pickableCards.length === 0) return
 
-				const coinFlip = flipCoin(game, player, component, 1)
-				if (coinFlip[0] !== 'heads') return
+				flipCoin(
+					(coinFlip) => {
+						if (coinFlip[0] !== 'heads') return
 
-				game.addModalRequest({
-					player: player.entity,
-					modal: {
-						type: 'selectCards',
-						name: 'Evil Jevin - Emerge',
-						description:
-							'Choose a Hermit card to retrieve from your discard pile.',
-						cards: pickableCards,
-						selectionSize: 1,
-						cancelable: false,
-						primaryButton: {
-							text: 'Draw Card',
-							variant: 'default',
-						},
-						secondaryButton: {
-							text: 'Do Nothing',
-							variant: 'default',
-						},
-					},
-					onResult(modalResult) {
-						if (!modalResult?.result) return
-						if (!modalResult.cards) return
-						if (modalResult.cards.length !== 1) return
+						game.addModalRequest({
+							player: player.entity,
+							modal: {
+								type: 'selectCards',
+								name: 'Evil Jevin - Emerge',
+								description:
+									'Choose a Hermit card to retrieve from your discard pile.',
+								cards: pickableCards,
+								selectionSize: 1,
+								cancelable: false,
+								primaryButton: {
+									text: 'Draw Card',
+									variant: 'default',
+								},
+								secondaryButton: {
+									text: 'Do Nothing',
+									variant: 'default',
+								},
+							},
+							onResult(modalResult) {
+								if (!modalResult?.result) return
+								if (!modalResult.cards) return
+								if (modalResult.cards.length !== 1) return
 
-						let card = game.components.get(modalResult.cards[0].entity)
-						card?.draw()
+								let card = game.components.get(modalResult.cards[0].entity)
+								card?.draw()
 
-						return 'SUCCESS'
+								return 'SUCCESS'
+							},
+							onTimeout() {
+								// Do nothing
+							},
+						})
 					},
-					onTimeout() {
-						// Do nothing
-					},
-				})
+					game,
+					player,
+					component,
+					1,
+				)
 			},
 		)
 	},

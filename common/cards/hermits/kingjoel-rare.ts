@@ -65,30 +65,35 @@ const KingJoelRare: Hermit = {
 				if (!game.components.exists(SlotComponent, firstPickCondition)) return
 				if (!game.components.exists(SlotComponent, secondPickCondition)) return
 
-				const coinFlip = flipCoin(game, player, component)
+				flipCoin(
+					(coinFlip) => {
+						if (coinFlip[0] === 'tails') return
 
-				if (coinFlip[0] === 'tails') return
+						game.addPickRequest({
+							player: player.entity,
+							id: component.entity,
+							message: "Pick an item card from your opponent's AFK Hermits",
+							canPick: firstPickCondition,
+							onResult(pickedSlot) {
+								firstPickedCard = pickedSlot.card
+							},
+						})
 
-				game.addPickRequest({
-					player: player.entity,
-					id: component.entity,
-					message: "Pick an item card from your opponent's AFK Hermits",
-					canPick: firstPickCondition,
-					onResult(pickedSlot) {
-						firstPickedCard = pickedSlot.card
+						game.addPickRequest({
+							player: player.entity,
+							id: component.entity,
+							message: 'Pick a slot to place the item card',
+							canPick: secondPickCondition,
+							onResult(pickedSlot) {
+								if (!firstPickedCard) return
+								firstPickedCard.attach(pickedSlot)
+							},
+						})
 					},
-				})
-
-				game.addPickRequest({
-					player: player.entity,
-					id: component.entity,
-					message: 'Pick a slot to place the item card',
-					canPick: secondPickCondition,
-					onResult(pickedSlot) {
-						if (!firstPickedCard) return
-						firstPickedCard.attach(pickedSlot)
-					},
-				})
+					game,
+					player,
+					component,
+				)
 			},
 		)
 	},

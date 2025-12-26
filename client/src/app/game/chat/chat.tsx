@@ -77,7 +77,7 @@ function Chat({gameOver}: {gameOver: boolean}) {
 	const dispatch = useMessageDispatch()
 	const settings = useSelector(getSettings)
 	const chatMessages = settings.chatEnabled ? useSelector(getChatMessages) : []
-	const playerId = useSelector(getPlayerId)
+	const _playerId = useSelector(getPlayerId)
 	const playerEntity = useSelector(getPlayerEntity)
 	const playerName = useSelector(getPlayerName)
 	const opponentName = useSelector(getOpponentName)
@@ -205,29 +205,20 @@ function Chat({gameOver}: {gameOver: boolean}) {
 			style={style}
 			onClick={resizeChat}
 			chatMessages={chatMessages.map((line) => {
-				let isOpponent: boolean
-				if (isSpectator) {
-					isOpponent =
-						!!players &&
-						[order[1], players[order[1]]?.playerId].includes(line.sender.id)
-				} else {
-					isOpponent = ![playerId, playerEntity].includes(line.sender.id)
-				}
+				let sender: 'playerOne' | 'playerTwo' | 'spectator'
 
-				let sender: 'playerOne' | 'playerTwo' | 'spectator' = isOpponent
-					? 'playerTwo'
-					: 'playerOne'
-
-				if (
-					!!players &&
-					![
-						order[1],
-						players[order[1]]?.playerId,
-						order[0],
-						players[order[0]]?.playerId,
-					].includes(line.sender.id)
-				) {
+				if (line.sender.type === 'spectator') {
 					sender = 'spectator'
+				} else {
+					let isOpponent: boolean
+
+					if (isSpectator) {
+						isOpponent = !!players && order[1] == line.sender.entityOrId
+					} else {
+						isOpponent = playerEntity != line.sender.entityOrId
+					}
+
+					sender = isOpponent ? 'playerOne' : 'playerTwo'
 				}
 
 				return {

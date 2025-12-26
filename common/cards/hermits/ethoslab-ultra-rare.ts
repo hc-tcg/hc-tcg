@@ -44,9 +44,18 @@ const EthosLabUltraRare: Hermit = {
 				if (!(attack.attacker instanceof CardComponent)) return
 				if (!attack.attacker.slot.inRow()) return
 
-				const coinFlip = flipCoin(game, player, attack.attacker, 3)
-				const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-				attack.addDamage(component.entity, headsAmount * 20)
+				flipCoin(
+					(coinFlip) => {
+						const headsAmount = coinFlip.filter(
+							(flip) => flip === 'heads',
+						).length
+						attack.addDamage(component.entity, headsAmount * 20)
+					},
+					game,
+					player,
+					attack.attacker,
+					3,
+				)
 			},
 		)
 	},

@@ -1126,7 +1126,7 @@ export class Database {
 					censoredName: firstPlayerRows[0].username,
 					appearance: defaultAppearance,
 				},
-				deck: player1Deck.sort((a, b) => a - b),
+				deck: {type: 'visible', cards: player1Deck.sort((a, b) => a - b)},
 				uuid: firstPlayerRows[0].user_id,
 				score: 0,
 			}
@@ -1139,7 +1139,7 @@ export class Database {
 					censoredName: secondPlayerRows[0].username,
 					appearance: defaultAppearance,
 				},
-				deck: player2Deck.sort((a, b) => a - b),
+				deck: {type: 'visible', cards: player2Deck.sort((a, b) => a - b)},
 				uuid: secondPlayerRows[0].user_id,
 				score: 0,
 			}

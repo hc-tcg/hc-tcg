@@ -1,8 +1,8 @@
-import assert from 'assert'
 import Composter from '../cards/single-use/composter'
 import {CardComponent} from '../components'
 import query from '../components/query'
 import {afterApply} from '../types/priorities'
+import {assert} from '../utils/assert'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 

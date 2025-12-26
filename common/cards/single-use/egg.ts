@@ -63,26 +63,32 @@ const Egg: SingleUse = {
 
 						opponentPlayer.knockback(afkHermitSlot.row)
 
-						const coinFlip = flipCoin(game, player, component)
-						if (coinFlip[0] === 'heads') {
-							const eggAttack = game
-								.newAttack({
-									attacker: component.entity,
-									player: player.entity,
-									target: afkHermitSlot?.row.entity,
-									log: (values) =>
-										`$p{You|${values.player}}$ flipped $gheads$ on $eEgg$ and did an additional ${values.damage} to ${values.target}`,
-									type: 'effect',
-								})
-								.addDamage(component.entity, 10)
+						flipCoin(
+							(coinFlip) => {
+								if (coinFlip[0] === 'heads') {
+									const eggAttack = game
+										.newAttack({
+											attacker: component.entity,
+											player: player.entity,
+											target: afkHermitSlot?.row.entity,
+											log: (values) =>
+												`$p{You|${values.player}}$ flipped $gheads$ on $eEgg$ and did an additional ${values.damage} to ${values.target}`,
+											type: 'effect',
+										})
+										.addDamage(component.entity, 10)
 
-							executeExtraAttacks(game, [eggAttack])
-						} else {
-							game.battleLog.addEntry(
-								player.entity,
-								`$p{You|${player.playerName}}$ flipped $btails$ on $eEgg$`,
-							)
-						}
+									executeExtraAttacks(game, [eggAttack])
+								} else {
+									game.battleLog.addEntry(
+										player.entity,
+										`$p{You|${player.playerName}}$ flipped $btails$ on $eEgg$`,
+									)
+								}
+							},
+							game,
+							player,
+							component,
+						)
 					},
 					onTimeout() {
 						// We didn't pick a target so do nothing

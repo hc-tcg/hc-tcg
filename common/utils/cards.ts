@@ -3,6 +3,7 @@ import {type Card, isHermit, isItem} from '../cards/types'
 import type {CardEntity} from '../entities'
 import type {CardCategoryT} from '../types/cards'
 import type {LocalCardInstance} from '../types/server-requests'
+import {assert} from './assert'
 
 /**
  * Returns true if the two cards are equal
@@ -53,6 +54,8 @@ const RARITY_ORDER = {
 }
 
 function orderCardProps(a: Card, b: Card) {
+	assert(a.category != 'unknown')
+	assert(b.category != 'unknown')
 	return (
 		[
 			TYPE_ORDER[a.category] - TYPE_ORDER[b.category],

@@ -1,7 +1,7 @@
-import assert from 'node:assert'
 import {ComponentQuery} from '../components/query'
 import {Entity, newEntity} from '../entities'
 import {GameModel} from '../models/game-model'
+import {assert} from '../utils/assert'
 
 export type Component = {
 	entity: Entity<any>
@@ -51,7 +51,8 @@ export default class ComponentTable {
 	 */
 	public delete(id: Entity<any>) {
 		let table = this.tableMap.get(id)
-		if (!table) return
+		this.tableMap.delete(id)
+		assert(table, 'Can not delete component not in ECS')
 		this.tables.get(table)?.delete(id)
 	}
 
@@ -60,15 +61,24 @@ export default class ComponentTable {
 		newValue: new (game: GameModel, id: T['entity'], ...args: Args) => T,
 		...args: Args
 	): T {
+		return this.newWithEntity(
+			newValue,
+			newEntity<T>((newValue as any).table, this.game),
+			...args,
+		)
+	}
+
+	/** Add a entity linked to a component and return the ID of the value */
+	public newWithEntity<T extends Component, Args extends Array<any>>(
+		newValue: new (game: GameModel, id: T['entity'], ...args: Args) => T,
+		entity: Entity<T>,
+		...args: Args
+	): T {
 		assert(
 			(newValue as any).table,
 			`Found component type \`${newValue.name}\` has undefined table`,
 		)
-		const value = new newValue(
-			this.game,
-			newEntity<T['entity']>((newValue as any).table, this.game),
-			...args,
-		)
+		const value = new newValue(this.game, entity, ...args)
 		if (this.tables.get((newValue as any).table) === undefined) {
 			this.tables.set((newValue as any).table, new Map())
 		}

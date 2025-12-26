@@ -69,14 +69,25 @@ const TinFoilChefUltraRare: Hermit = {
 				if (hasDiscardedFrom(opponentPlayer.activeRow.entity)) return
 				if (!game.components.exists(CardComponent, targetCardQuery)) return
 
-				const coinFlip = flipCoin(game, player, component)
-				if (coinFlip[0] === 'tails') return
+				flipCoin(
+					(coinFlip) => {
+						if (coinFlip[0] === 'tails') return
+						if (opponentPlayer.activeRow === null) return
 
-				game.components
-					.new(StatusEffectComponent, TFCDiscardedFromEffect, component.entity)
-					.apply(opponentPlayer.activeRow.getHermit()?.entity)
+						game.components
+							.new(
+								StatusEffectComponent,
+								TFCDiscardedFromEffect,
+								component.entity,
+							)
+							.apply(opponentPlayer.activeRow.getHermit()?.entity)
 
-				game.components.find(CardComponent, targetCardQuery)?.discard()
+						game.components.find(CardComponent, targetCardQuery)?.discard()
+					},
+					game,
+					player,
+					component,
+				)
 			},
 		)
 	},

@@ -43,13 +43,18 @@ const Docm77Rare: Hermit = {
 					return
 				if (!(attack.attacker instanceof CardComponent)) return
 
-				const coinFlip = flipCoin(game, player, attack.attacker)
-
-				if (coinFlip[0] === 'heads') {
-					attack.addDamage(component.entity, this.secondary.damage)
-				} else {
-					attack.removeDamage(component.entity, this.secondary.damage / 2)
-				}
+				flipCoin(
+					(coinFlip) => {
+						if (coinFlip[0] === 'heads') {
+							attack.addDamage(component.entity, this.secondary.damage)
+						} else {
+							attack.removeDamage(component.entity, this.secondary.damage / 2)
+						}
+					},
+					game,
+					player,
+					attack.attacker,
+				)
 			},
 		)
 	},

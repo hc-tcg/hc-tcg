@@ -52,13 +52,18 @@ const XisumavoidRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				const coinFlip = flipCoin(game, player, component)
+				flipCoin(
+					(coinFlip) => {
+						if (coinFlip[0] !== 'heads') return
 
-				if (coinFlip[0] !== 'heads') return
-
-				game.components
-					.new(StatusEffectComponent, PoisonEffect, component.entity)
-					.apply(opponentPlayer.getActiveHermit()?.entity)
+						game.components
+							.new(StatusEffectComponent, PoisonEffect, component.entity)
+							.apply(opponentPlayer.getActiveHermit()?.entity)
+					},
+					game,
+					player,
+					component,
+				)
 			},
 		)
 	},

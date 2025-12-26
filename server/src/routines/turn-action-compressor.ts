@@ -60,6 +60,7 @@ export type ReplayActionData = {
 	action: AnyTurnActionData
 	player: PlayerEntity
 	millisecondsSinceLastAction: number
+	realTime: number
 }
 
 const playCard: ReplayAction = {
@@ -338,6 +339,8 @@ export const replayActions: Record<TurnAction, ReplayAction> = {
 			if ('leftCards' in turnAction.modalResult)
 				return compressDragCards(turnAction.modalResult)
 			else throw Error('Invalid modal type was given')
+
+			// @todo compress spyglass
 		},
 		decompress(game, compressor, buffer): ModalResult {
 			function bufferToCards(cardsBuffer: Buffer) {
@@ -583,6 +586,7 @@ export class TurnActionCompressor {
 			hand: 0,
 			deck: 0,
 			discardPile: 0,
+			unknown: 0,
 		}
 
 		const slotType = slotTypeDict[slot.type]
@@ -782,6 +786,7 @@ export class TurnActionCompressor {
 				await newGameController.sendTurnAction({
 					playerEntity: action.player,
 					action: action.action,
+					realTime: Date.now(),
 				})
 			}
 		} catch (e) {
@@ -865,6 +870,7 @@ export class TurnActionCompressor {
 					action: turnAction,
 					player: actionPlayer,
 					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
+					realTime: Date.now(),
 				})
 			} else {
 				const byteAmount = actionsBuffer.readUInt8(cursor)
@@ -880,12 +886,14 @@ export class TurnActionCompressor {
 					action: turnAction,
 					player: actionPlayer,
 					millisecondsSinceLastAction: tenthsSinceLastAction * 100,
+					realTime: Date.now(),
 				})
 			}
 
 			await con.sendTurnAction({
 				playerEntity: con.game.currentPlayer.entity,
 				action: turnAction,
+				realTime: Date.now(),
 			})
 		}
 

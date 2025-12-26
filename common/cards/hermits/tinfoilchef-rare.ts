@@ -47,12 +47,18 @@ const TinFoilChefRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				const coinFlip = flipCoin(game, player, component)
-				if (coinFlip[0] === 'tails') return
+				flipCoin(
+					(coinFlip) => {
+						if (coinFlip[0] === 'tails') return
 
-				game.components
-					.new(StatusEffectComponent, GoMiningEffect, component.entity)
-					.apply(player.entity)
+						game.components
+							.new(StatusEffectComponent, GoMiningEffect, component.entity)
+							.apply(player.entity)
+					},
+					game,
+					player,
+					component,
+				)
 			},
 		)
 	},

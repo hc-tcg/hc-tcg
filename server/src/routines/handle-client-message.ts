@@ -22,6 +22,7 @@ import {
 } from '../db/db-reciever'
 import {chatMessage} from './background/chat'
 import spectatorLeaveSaga from './background/spectators'
+import {hiddenCardRequest, spyglassRequestCards} from './handle-game-messages'
 import {
 	cancelPrivateGame,
 	cancelRematch,
@@ -122,6 +123,7 @@ function* handler(message: RecievedClientMessage) {
 				type: localMessages.GAME_TURN_ACTION,
 				action: actionMessage.payload.action,
 				playerEntity: actionMessage.payload.playerEntity,
+				playerId: actionMessage.playerId,
 				game: game.id,
 			})
 		case clientMessages.GET_DECKS:
@@ -170,6 +172,15 @@ function* handler(message: RecievedClientMessage) {
 			)
 		case clientMessages.REPLAY_OVERVIEW:
 			return yield* getOverview(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.SPYGLASS_REQUEST_CARDS:
+			return yield* spyglassRequestCards(
+				message as RecievedClientMessage<typeof message.type>,
+			)
+		case clientMessages.HIDDEN_CARD_REQUEST:
+			console.log('HERE')
+			return yield* hiddenCardRequest(
 				message as RecievedClientMessage<typeof message.type>,
 			)
 		case clientMessages.RESET_SECRET:

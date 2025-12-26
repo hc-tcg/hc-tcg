@@ -37,21 +37,26 @@ const Looting: SingleUse = {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onApply, () => {
-			const coinFlip = flipCoin(game, player, component)
+			flipCoin(
+				(coinFlip) => {
+					if (coinFlip[0] === 'tails') return
 
-			if (coinFlip[0] === 'tails') return
-
-			game.addPickRequest({
-				player: player.entity,
-				id: component.entity,
-				message: 'Pick an item card to add to your hand',
-				canPick: pickCondition,
-				onResult(pickedSlot) {
-					const card = pickedSlot.card
-					if (!card) return
-					card.draw(player.entity)
+					game.addPickRequest({
+						player: player.entity,
+						id: component.entity,
+						message: 'Pick an item card to add to your hand',
+						canPick: pickCondition,
+						onResult(pickedSlot) {
+							const card = pickedSlot.card
+							if (!card) return
+							card.draw(player.entity)
+						},
+					})
 				},
-			})
+				game,
+				player,
+				component,
+			)
 		})
 	},
 }

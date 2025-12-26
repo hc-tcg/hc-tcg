@@ -1,4 +1,9 @@
+import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
 import {Appearance} from '../cosmetics/types'
+import {PlayerEntity} from '../entities'
+import {GameControllerProps} from '../game/game-controller'
+import {TurnActionAndPlayer} from '../game/run-game'
+import {PlayerSetupDefs} from '../game/setup-game'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {EarnedAchievement} from '../types/achievements'
 import {RematchData} from '../types/app'
@@ -9,9 +14,9 @@ import {
 	User,
 } from '../types/database'
 import {ApiDeck, Deck, Tag} from '../types/deck'
-import {GameOutcome, LocalGameState} from '../types/game-state'
+import {CoinFlipResult, GameOutcome, LocalGameState} from '../types/game-state'
 import {Message as ChatMessage} from '../types/game-state'
-import {PlayerInfo, Update} from '../types/server-requests'
+import {LocalCardInstance, PlayerInfo, Update} from '../types/server-requests'
 
 export const serverMessages = messages('serverMessages', {
 	PLAYER_RECONNECTED: null,
@@ -40,7 +45,8 @@ export const serverMessages = messages('serverMessages', {
 	INVALID_CODE: null,
 	PRIVATE_GAME_CANCELLED: null,
 	GAME_OVER_STAT: null,
-	GAME_STATE: null,
+	GAME_TURN_ACTION: null,
+	GAME_SEND_COIN_FLIP: null,
 	CHAT_UPDATE: null,
 	COSMETICS_INVALID: null,
 	COSMETICS_UPDATE: null,
@@ -60,15 +66,27 @@ export const serverMessages = messages('serverMessages', {
 	CURRENT_IMPORT_RECIEVED: null,
 	DATABASE_FAILURE: null,
 	TOAST_SEND: null,
+	SPYGLASS_SEND_CARDS: null,
+	HIDDEN_CARD_REVEAL: null,
 	SECRET_RESET: null,
 })
+
+export type ReconnectProps = {
+	gameHistory: Array<ReplayActionData>
+	spectatorCode?: string
+	messages: Array<ChatMessage>
+	playerEntity: PlayerEntity
+	playerOneDefs: PlayerSetupDefs
+	playerTwoDefs: PlayerSetupDefs
+	props: GameControllerProps
+	/** Coin flip results, used for reconnects */
+	coinFlipHistory: Array<Array<CoinFlipResult>>
+}
 
 export type ServerMessages = [
 	{
 		type: typeof serverMessages.PLAYER_RECONNECTED
-		game?: LocalGameState
-		spectatorCode?: string
-		messages?: Array<ChatMessage>
+		reconnectProps?: ReconnectProps
 	},
 	{type: typeof serverMessages.INVALID_PLAYER},
 	{
@@ -83,7 +101,16 @@ export type ServerMessages = [
 		updates: Array<Update>
 	},
 	{type: typeof serverMessages.OPPONENT_CONNECTION; isConnected: boolean},
-	{type: typeof serverMessages.GAME_START; spectatorCode?: string},
+	{
+		type: typeof serverMessages.GAME_START
+		playerEntity: PlayerEntity
+		playerOneDefs: PlayerSetupDefs
+		playerTwoDefs: PlayerSetupDefs
+		props: GameControllerProps
+		spectatorCode?: string
+		/** History of turn actions, used for reconnects */
+		turnActionHistory?: Array<TurnActionAndPlayer>
+	},
 	{
 		type: typeof serverMessages.GAME_END
 		gameState: LocalGameState | null
@@ -123,7 +150,11 @@ export type ServerMessages = [
 		outcome: GameOutcome
 		won: boolean
 	},
-	{type: typeof serverMessages.GAME_STATE; localGameState: LocalGameState},
+	{type: typeof serverMessages.GAME_TURN_ACTION; action: TurnActionAndPlayer},
+	{
+		type: typeof serverMessages.GAME_SEND_COIN_FLIP
+		result: Array<'heads' | 'tails'>
+	},
 	{type: typeof serverMessages.CHAT_UPDATE; messages: Array<ChatMessage>},
 	{type: typeof serverMessages.AUTHENTICATED; user: User},
 	{type: typeof serverMessages.AUTHENTICATION_FAIL},
@@ -158,6 +189,14 @@ export type ServerMessages = [
 		title: string
 		description: string
 		image?: string
+	},
+	{
+		type: typeof serverMessages.SPYGLASS_SEND_CARDS
+		cards: Array<LocalCardInstance>
+	},
+	{
+		type: typeof serverMessages.HIDDEN_CARD_REVEAL
+		cards: Array<LocalCardInstance>
 	},
 	{
 		type: typeof serverMessages.SECRET_RESET
