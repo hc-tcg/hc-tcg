@@ -821,8 +821,6 @@ export async function turnSaga(con: GameController) {
 }
 
 function checkDeckedOut(game: GameModel) {
-	// @todo Allow this to work with cards being hidden
-	return []
 	if (
 		game.settings.disableDeckOut ||
 		game.settings.startWithAllCards ||

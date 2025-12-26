@@ -131,7 +131,6 @@ export async function attackAction(
 			thisAttackSU,
 		)
 	})
-	console.log('after attack entry added')
 
 	game.battleLog.opponentCoinFlipEntry(currentPlayer.coinFlips)
 
@@ -378,7 +377,7 @@ export async function modalRequestAction(
 		const turnAction: AttackActionData = {
 			type: attackToAttackAction[game.state.turn.currentAttack],
 		}
-		attackAction(game, turnAction, false)
+		await attackAction(game, turnAction, false)
 
 		game.state.turn.currentAttack = null
 	}
@@ -429,7 +428,6 @@ export async function pickRequestAction(
 		}
 		await attackAction(game, turnAction, false)
 		game.state.turn.currentAttack = null
-		return
 	}
 
 	return
