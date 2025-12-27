@@ -1,4 +1,5 @@
 import {Achievement} from 'common/achievements/types'
+import {ACHIEVEMENTS_LIST} from 'common/achievements'
 import EvilXisumaBoss, {
 	BOSS_ATTACK,
 	supplyBossAttack,
@@ -525,4 +526,50 @@ export async function testReplayGame(options: {
 			await options.runGame(new BossGameTestFixture(controller), controller)
 		})(),
 	])
+}
+
+/** Test game with all achievements. Use very sparingly. */
+export async function mockGame(
+	options: {
+		mockGame: (test: TestGameFixture, game: GameModel) => any
+		playerOneDeck: Array<Card>
+		playerTwoDeck: Array<Card>
+	},
+	settings: Partial<GameSettings>={},
+) {
+	let mockTest = async (test: TestGameFixture, game: GameModel) => {
+		let player = game.currentPlayer
+		ACHIEVEMENTS_LIST.forEach((achievement) => {
+			let achievementProgress: Record<number, number>={}
+
+			let achievementComponent = game.components.new(
+				AchievementComponent,
+				achievement.numericId,
+				player.entity,
+				{goals: achievementProgress, levels: []},
+			)
+			const achievementObserver = game.components.new(
+				ObserverComponent,
+				achievementComponent.entity,
+			)
+
+			achievement.onGameStart(
+				game,
+				player,
+				achievementComponent,
+				achievementObserver,
+			)
+		})
+		
+		await options.mockGame(test, game)
+	}
+
+	await testGame(
+		{
+			testGame: mockTest,
+			playerOneDeck: options.playerOneDeck,
+			playerTwoDeck: options.playerTwoDeck,
+		},
+		settings,
+	)
 }

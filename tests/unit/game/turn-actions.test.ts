@@ -5,11 +5,11 @@ import BalancedItem from 'common/cards/items/balanced-common'
 import BalancedDoubleItem from 'common/cards/items/balanced-rare'
 import Fortune from 'common/cards/single-use/fortune'
 import {IronSword} from 'common/cards/single-use/sword'
-import {testGame} from './utils'
+import {mockGame} from './utils'
 
 describe('Test Standard Turn Actions', () => {
 	test('Test Starting Turn Actions & Play Item', async () => {
-		await testGame(
+		await mockGame(
 			{
 				playerOneDeck: [
 					VintageBeefCommon,
@@ -31,7 +31,7 @@ describe('Test Standard Turn Actions', () => {
 					BalancedItem,
 					BalancedItem,
 				],
-				testGame: async (test, game) => {
+				mockGame: async (test, game) => {
 					expect(game.state.turn.availableActions).toEqual(['PLAY_HERMIT_CARD'])
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
@@ -80,7 +80,7 @@ describe('Test Standard Turn Actions', () => {
 		)
 	})
 	test('Test Main Attacks Availability and Blocking', async () => {
-		await testGame(
+		await mockGame(
 			{
 				playerOneDeck: [
 					VintageBeefCommon,
@@ -104,7 +104,7 @@ describe('Test Standard Turn Actions', () => {
 					BalancedDoubleItem,
 					BalancedDoubleItem,
 				],
-				testGame: async (test, game) => {
+				mockGame: async (test, game) => {
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(BalancedItem, 'item', 0, 0)
@@ -178,7 +178,7 @@ describe('Test Standard Turn Actions', () => {
 		)
 	})
 	test('Test Hard Switch', async () => {
-		await testGame(
+		await mockGame(
 			{
 				playerOneDeck: [
 					VintageBeefCommon,
@@ -191,7 +191,7 @@ describe('Test Standard Turn Actions', () => {
 					BalancedDoubleItem,
 				],
 				playerTwoDeck: [VintageBeefCommon],
-				testGame: async (test, game) => {
+				mockGame: async (test, game) => {
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
@@ -215,7 +215,7 @@ describe('Test Standard Turn Actions', () => {
 		)
 	})
 	test('Test Apply Single Use', async () => {
-		await testGame(
+		await mockGame(
 			{
 				playerOneDeck: [
 					VintageBeefCommon,
@@ -229,7 +229,7 @@ describe('Test Standard Turn Actions', () => {
 					BalancedDoubleItem,
 				],
 				playerTwoDeck: [VintageBeefCommon],
-				testGame: async (test, game) => {
+				mockGame: async (test, game) => {
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
@@ -260,7 +260,7 @@ describe('Test Standard Turn Actions', () => {
 		)
 	})
 	test('Test Single Use Attack', async () => {
-		await testGame(
+		await mockGame(
 			{
 				playerOneDeck: [
 					VintageBeefCommon,
@@ -283,7 +283,7 @@ describe('Test Standard Turn Actions', () => {
 					Totem,
 					BalancedDoubleItem,
 				],
-				testGame: async (test, game) => {
+				mockGame: async (test, game) => {
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
@@ -325,7 +325,7 @@ describe('Test Standard Turn Actions', () => {
 		)
 	})
 	test('Test Attaching', async () => {
-		await testGame(
+		await mockGame(
 			{
 				playerOneDeck: [
 					VintageBeefCommon,
@@ -350,7 +350,7 @@ describe('Test Standard Turn Actions', () => {
 					BalancedDoubleItem,
 					BalancedDoubleItem,
 				],
-				testGame: async (test, game) => {
+				mockGame: async (test, game) => {
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
 					await test.playCardFromHand(BalancedDoubleItem, 'item', 0, 0)
@@ -409,7 +409,7 @@ describe('Test Standard Turn Actions', () => {
 		)
 	})
 	test('Test Knockout', async () => {
-		await testGame(
+		await mockGame(
 			{
 				playerOneDeck: [
 					VintageBeefCommon,
@@ -421,7 +421,7 @@ describe('Test Standard Turn Actions', () => {
 					BalancedDoubleItem,
 				],
 				playerTwoDeck: [VintageBeefCommon, BalancedDoubleItem],
-				testGame: async (test, game) => {
+				mockGame: async (test, game) => {
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 0)
 					await test.playCardFromHand(VintageBeefCommon, 'hermit', 1)
 					await test.endTurn()
