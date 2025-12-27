@@ -528,10 +528,11 @@ export async function testReplayGame(options: {
 	])
 }
 
-/** Test game with all achievements. Use very sparingly. */
+/** Test game with all achievements. */
 export async function mockGame(
 	options: {
 		mockGame: (test: TestGameFixture, game: GameModel) => any
+		then?: (game: GameModel, outcome: GameOutcome) => any
 		playerOneDeck: Array<Card>
 		playerTwoDeck: Array<Card>
 	},
@@ -564,9 +565,19 @@ export async function mockGame(
 		await options.mockGame(test, game)
 	}
 
+	if (!options.then) {
+		options.then = function (game: GameModel, outcome: GameOutcome) {
+			if (!outcome) return
+			if (outcome.type === 'game-crash') throw new Error('Unexpected Crash:\n' + outcome.error)
+			if (outcome.type === 'player-won') throw new Error('Unexpected Win: ' + outcome.victoryReason)
+			if (outcome.type === 'tie') throw new Error('Unexpected Tie')
+		}
+	}
+
 	await testGame(
 		{
 			testGame: mockTest,
+			then: options.then,
 			playerOneDeck: options.playerOneDeck,
 			playerTwoDeck: options.playerTwoDeck,
 		},
