@@ -1,5 +1,5 @@
-import {Achievement} from 'common/achievements/types'
 import {ACHIEVEMENTS_LIST} from 'common/achievements'
+import {Achievement} from 'common/achievements/types'
 import EvilXisumaBoss, {
 	BOSS_ATTACK,
 	supplyBossAttack,
@@ -536,12 +536,12 @@ export async function mockGame(
 		playerOneDeck: Array<Card>
 		playerTwoDeck: Array<Card>
 	},
-	settings: Partial<GameSettings>={},
+	settings: Partial<GameSettings> = {},
 ) {
 	let mockTest = async (test: TestGameFixture, game: GameModel) => {
 		let player = game.currentPlayer
 		ACHIEVEMENTS_LIST.forEach((achievement) => {
-			let achievementProgress: Record<number, number>={}
+			let achievementProgress: Record<number, number> = {}
 
 			let achievementComponent = game.components.new(
 				AchievementComponent,
@@ -561,15 +561,17 @@ export async function mockGame(
 				achievementObserver,
 			)
 		})
-		
+
 		await options.mockGame(test, game)
 	}
 
 	if (!options.then) {
 		options.then = function (game: GameModel, outcome: GameOutcome) {
 			if (!outcome) return
-			if (outcome.type === 'game-crash') throw new Error('Unexpected Crash:\n' + outcome.error)
-			if (outcome.type === 'player-won') throw new Error('Unexpected Win: ' + outcome.victoryReason)
+			if (outcome.type === 'game-crash')
+				throw new Error('Unexpected Crash:\n' + outcome.error)
+			if (outcome.type === 'player-won')
+				throw new Error('Unexpected Win: ' + outcome.victoryReason)
 			if (outcome.type === 'tie') throw new Error('Unexpected Tie')
 		}
 	}
