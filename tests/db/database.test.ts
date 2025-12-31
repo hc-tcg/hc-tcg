@@ -10,6 +10,7 @@ import {
 } from '@jest/globals'
 import {ACHIEVEMENTS_LIST} from 'common/achievements'
 import DefeatEvilX from 'common/achievements/defeat-evil-x'
+import {BalancedWins} from 'common/achievements/type-wins'
 import Win from 'common/achievements/wins'
 import {CARDS, CARDS_LIST} from 'common/cards'
 import BdoubleO100Common from 'common/cards/hermits/bdoubleo100-common'
@@ -695,14 +696,21 @@ describe('Test Database', () => {
 			player1.uuid,
 			{
 				// Default Evil X achievement
-				6: {goals: {0: 1}, levels: [{completionTime: completionTime}]},
+				[DefeatEvilX.numericId]: {
+					goals: {0: 1},
+					levels: [{completionTime: completionTime}],
+				},
 				// Win Achievement
-				26: {
+				[Win.numericId]: {
 					goals: {0: 11},
 					levels: [
 						{completionTime: completionTime},
 						{completionTime: completionTime},
 					],
+				},
+				[BalancedWins.numericId]: {
+					goals: {0: 10},
+					levels: [],
 				},
 			},
 			completionTime,
@@ -715,18 +723,20 @@ describe('Test Database', () => {
 		)
 		let achievements = results.body.achievementData
 
-		expect(achievements[6].goals).toStrictEqual({0: 1})
-		expect(achievements[6].levels).toStrictEqual([
+		expect(achievements[DefeatEvilX.numericId].goals).toStrictEqual({0: 1})
+		expect(achievements[DefeatEvilX.numericId].levels).toStrictEqual([
 			{completionTime: completionTime},
 		])
-		expect(achievements[26].goals).toStrictEqual({0: 11})
-		expect(achievements[26].levels).toStrictEqual([
+		expect(achievements[Win.numericId].goals).toStrictEqual({0: 11})
+		expect(achievements[Win.numericId].levels).toStrictEqual([
 			{completionTime: completionTime},
 			{completionTime: completionTime},
 			{},
 			{},
 			{},
 		])
+		expect(achievements[BalancedWins.numericId].goals).toStrictEqual({0: 10})
+		expect(achievements[BalancedWins.numericId].levels).toStrictEqual([{}, {}])
 
 		expect(
 			await database.getPlayerAchievementProgress(DefeatEvilX, player1.uuid),
@@ -735,10 +745,16 @@ describe('Test Database', () => {
 			await database.getPlayerAchievementProgress(Win, player1.uuid),
 		).toStrictEqual(playerProgress(11))
 		expect(
+			await database.getPlayerAchievementProgress(BalancedWins, player1.uuid),
+		).toStrictEqual(playerProgress(10))
+		expect(
 			await database.getPlayerAchievementProgress(DefeatEvilX, player2.uuid),
 		).toStrictEqual(playerProgress(0))
 		expect(
 			await database.getPlayerAchievementProgress(Win, player2.uuid),
+		).toStrictEqual(playerProgress(0))
+		expect(
+			await database.getPlayerAchievementProgress(BalancedWins, player2.uuid),
 		).toStrictEqual(playerProgress(0))
 
 		expect(
@@ -749,6 +765,9 @@ describe('Test Database', () => {
 		).toStrictEqual(globalProgress(1, 100))
 		expect(
 			await database.getAchievementPercentageCompletion(Win, 2),
+		).toStrictEqual(globalProgress(0, 0))
+		expect(
+			await database.getAchievementPercentageCompletion(BalancedWins, 0),
 		).toStrictEqual(globalProgress(0, 0))
 
 		expect(
