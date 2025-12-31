@@ -1,7 +1,7 @@
 import TNT from '../cards/single-use/tnt'
 import {SlotComponent} from '../components'
 import query from '../components/query'
-import {afterAttack, beforeAttack} from '../types/priorities'
+import {afterApply, afterAttack} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
 
@@ -21,8 +21,8 @@ const BlastProtection: Achievement = {
 		var initialHealth: number = 0
 
 		observer.subscribeWithPriority(
-			game.hooks.beforeAttack,
-			beforeAttack.APPLY_SINGLE_USE_ATTACK,
+			player.hooks.afterApply,
+			afterApply.CHECK_BOARD_STATE,
 			() => {
 				if (!player.activeRow?.health) return
 
