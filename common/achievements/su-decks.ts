@@ -74,10 +74,10 @@ function getExclusiveSingleUseAchievement(
 			const containsAtLeastOne = playerDeck.some((card) =>
 				allowedIds.includes(card),
 			)
-			const containsNoOthers = playerDeck.every((card) =>
+			const containsOthers = playerDeck.every((card) =>
 				allowedIds.includes(card),
 			)
-			if (!containsAtLeastOne || !containsNoOthers) return
+			if (!containsAtLeastOne || containsOthers) return
 
 			observer.subscribe(game.hooks.onGameEnd, (outcome) => {
 				if (outcome.type !== 'player-won') return
