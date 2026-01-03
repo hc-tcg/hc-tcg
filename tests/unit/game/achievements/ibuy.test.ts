@@ -1,13 +1,13 @@
 import {describe, expect, test} from '@jest/globals'
-import {testAchivement} from '../utils'
 import iBuy from 'common/achievements/ibuy'
-import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import {IronArmor} from 'common/cards/attach/armor'
-import Chest from 'common/cards/single-use/chest'
-import BalancedItem from 'common/cards/items/balanced-common'
-import CurseOfVanishing from 'common/cards/single-use/curse-of-vanishing'
-import OriginalXBRare from 'common/cards/hermits/originalxb-rare'
+import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
+import OriginalXBRare from 'common/cards/hermits/originalxb-rare'
+import BalancedItem from 'common/cards/items/balanced-common'
+import Chest from 'common/cards/single-use/chest'
+import CurseOfVanishing from 'common/cards/single-use/curse-of-vanishing'
+import {testAchivement} from '../utils'
 
 describe('Test iBuy Achievement', () => {
 	test('Test drawing a copy of an played Attach effect', async () => {
