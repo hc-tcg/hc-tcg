@@ -38,8 +38,8 @@ const GoMiningEffect: Counter<PlayerComponent> = {
 		observer.subscribeWithPriority(
 			player.hooks.onTurnEnd,
 			onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
-			() => {
-				if (effect.counter) player.draw(effect.counter)
+			(drawCards) => {
+				if (effect.counter) drawCards.push(...player.draw(effect.counter))
 				effect.remove()
 			},
 		)
