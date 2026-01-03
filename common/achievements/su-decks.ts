@@ -3,6 +3,7 @@ import CurseOfBinding from '../cards/single-use/curse-of-binding'
 import CurseOfVanishing from '../cards/single-use/curse-of-vanishing'
 import Efficiency from '../cards/single-use/efficiency'
 import Fortune from '../cards/single-use/fortune'
+import {InstantHealth, InstantHealthII} from '../cards/single-use/instant-health'
 import InvisibilityPotion from '../cards/single-use/invisibility-potion'
 import Knockback from '../cards/single-use/knockback'
 import Looting from '../cards/single-use/looting'
@@ -15,6 +16,7 @@ import {
 } from '../cards/single-use/splash-potion-of-healing'
 import SplashPotionOfPoison from '../cards/single-use/splash-potion-of-poison'
 import SweepingEdge from '../cards/single-use/sweeping-edge'
+import WindBurst from '../cards/advent-of-tcg/single-use/wind-burst'
 import {SingleUse} from '../cards/types'
 import {CardComponent} from '../components'
 import query from '../components/query'
@@ -29,6 +31,8 @@ const potions = [
 	SplashPotionOfHealingII,
 	SplashPotionOfPoison,
 	InvisibilityPotion,
+	InstantHealth,
+	InstantHealthII,
 ]
 
 const books = [
@@ -40,6 +44,7 @@ const books = [
 	Fortune,
 	Mending,
 	SweepingEdge,
+	WindBurst,
 ]
 
 function getExclusiveSingleUseAchievement(
@@ -74,10 +79,10 @@ function getExclusiveSingleUseAchievement(
 			const containsAtLeastOne = playerDeck.some((card) =>
 				allowedIds.includes(card),
 			)
-			const containsOthers = playerDeck.every((card) =>
+			const containsNoOthers = playerDeck.every((card) =>
 				allowedIds.includes(card),
 			)
-			if (!containsAtLeastOne || containsOthers) return
+			if (!containsAtLeastOne || !containsNoOthers) return
 
 			observer.subscribe(game.hooks.onGameEnd, (outcome) => {
 				if (outcome.type !== 'player-won') return
