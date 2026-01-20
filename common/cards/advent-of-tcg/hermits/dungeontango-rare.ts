@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -7,6 +6,7 @@ import {
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {afterAttack, beforeAttack} from '../../../types/priorities'
+import {assert} from '../../../utils/assert'
 import {getSupportingItems} from '../../../utils/board'
 import {fisherYatesShuffle} from '../../../utils/fisher-yates'
 import {hermit} from '../../defaults'
@@ -111,7 +111,7 @@ const DungeonTangoRare: Hermit = {
 						assert(card.slot.inDeck())
 						return card.slot.order
 					}),
-					game.rng,
+					game.usePlayerShuffleRNG(component.player.entity),
 				)
 				deckCards.forEach((card, i) => {
 					assert(card.slot.inDeck())

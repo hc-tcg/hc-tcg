@@ -3,11 +3,9 @@ import {CARDS} from 'common/cards'
 import EvilXisumaBoss from 'common/cards/boss/hermits/evilxisuma_boss'
 import {
 	AchievementComponent,
-	BoardSlotComponent,
+	CardComponent,
 	PlayerComponent,
-	RowComponent,
 } from 'common/components'
-import {AIComponent} from 'common/components/ai-component'
 import query from 'common/components/query'
 import {CONFIG} from 'common/config'
 import {COINS} from 'common/cosmetics/coins'
@@ -15,7 +13,7 @@ import {defaultAppearance} from 'common/cosmetics/default'
 import ExBossAI from 'common/game//virtual/exboss-ai'
 import {getLocalGameState} from 'common/game/make-local-state'
 import runGame, {getTimerForSeconds} from 'common/game/run-game'
-import {OpponentDefs} from 'common/game/setup-game'
+import {OpponentDefs, getDeckSize} from 'common/game/setup-game'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,
@@ -57,12 +55,18 @@ function setupGame(
 	let con = new ServerSideGameController(
 		{
 			model: player1,
-			deck: player1Deck.cards.map((card) => card.id).sort((a, b) => a - b),
+			deck: {
+				type: 'visible',
+				cards: player1Deck.cards.map((card) => card.id).sort((a, b) => a - b),
+			},
 			score: player1Score,
 		},
 		{
 			model: player2,
-			deck: player2Deck.cards.map((card) => card.id).sort((a, b) => a - b),
+			deck: {
+				type: 'visible',
+				cards: player2Deck.cards.map((card) => card.id).sort((a, b) => a - b),
+			},
 			score: player2Score,
 		},
 		{gameCode, spectatorCode, apiSecret, countAchievements: 'all'},
@@ -88,7 +92,10 @@ function setupGame(
 	return con
 }
 
-function* gameManager(con: ServerSideGameController) {
+function* gameManager(
+	con: ServerSideGameController,
+	{hideOpponentDeck = true}: {hideOpponentDeck: boolean},
+) {
 	// @TODO this one method needs cleanup still
 	const viewers = con.viewers
 	const playerIds = viewers.map((viewer) => viewer.player.id)
@@ -99,14 +106,104 @@ function* gameManager(con: ServerSideGameController) {
 	console.info(
 		`${con.game.logHeader}`,
 		`${gameType} game started.`,
-		`Players: ${viewers.map((viewer) => viewer.player.name).join(' + ')}.`,
+		`Players: ${viewers.map((viewer) => viewer.player?.name).join(' + ')}.`,
 		'Total games:',
 		root.getGameIds().length,
 	)
 
-	con.broadcastToViewers({
+	// To ensure cards are secret, we filter them out here
+	const _playerOneDeckLength = getDeckSize(con.player1Defs.deck)
+	const _playerTwoDeckLength = getDeckSize(con.player2Defs.deck)
+
+	console.log('should broadcast start game')
+
+	assert(con.game.playerOne)
+	assert(con.game.playerTwo)
+
+	const playerOneHand = con.game.components
+		.filter(
+			CardComponent,
+			query.card.player(con.game.playerOne),
+			query.card.slot(query.slot.hand),
+		)
+		.sort(CardComponent.compareOrder)
+	const playerTwoHand = con.game.components
+		.filter(
+			CardComponent,
+			query.card.player(con.game.playerTwo),
+			query.card.slot(query.slot.hand),
+		)
+		.sort(CardComponent.compareOrder)
+	const playerOneDeck = con.game.components
+		.filter(
+			CardComponent,
+			query.card.player(con.game.playerOne),
+			query.card.slot(query.slot.deck),
+		)
+		.sort(CardComponent.compareOrder)
+	const playerTwoDeck = con.game.components
+		.filter(
+			CardComponent,
+			query.card.player(con.game.playerTwo),
+			query.card.slot(query.slot.deck),
+		)
+		.sort(CardComponent.compareOrder)
+
+	broadcast([con.getPlayers()[0]], {
 		type: serverMessages.GAME_START,
+		playerEntity: con.playerOne.entity,
 		spectatorCode: con.spectatorCode ?? undefined,
+		playerOneDefs: {
+			...con.player1Defs,
+			deck: {
+				type: 'hidden',
+				entities: [
+					...playerOneHand.map((c) => c.entity),
+					...playerOneDeck.map((c) => c.entity),
+				],
+				initialHand: playerOneHand.map((c) => c.props.id),
+			},
+		},
+		playerTwoDefs: hideOpponentDeck
+			? {
+					...con.player2Defs,
+					deck: {
+						type: 'hidden',
+						entities: [
+							...playerTwoHand.map((c) => c.entity),
+							...playerTwoDeck.map((c) => c.entity),
+						],
+					},
+				}
+			: {...con.player2Defs},
+		props: con.props,
+	})
+	broadcast([con.getPlayers()[1]], {
+		type: serverMessages.GAME_START,
+		playerEntity: con.playerTwo.entity,
+		spectatorCode: con.spectatorCode ?? undefined,
+		playerOneDefs: {
+			...con.player2Defs,
+			deck: {
+				type: 'hidden',
+				entities: [
+					...playerOneHand.map((c) => c.entity),
+					...playerOneDeck.map((c) => c.entity),
+				],
+			},
+		},
+		playerTwoDefs: {
+			...con.player2Defs,
+			deck: {
+				type: 'hidden',
+				entities: [
+					...playerTwoHand.map((c) => c.entity),
+					...playerTwoDeck.map((c) => c.entity),
+				],
+				initialHand: playerTwoHand.map((c) => c.props.id),
+			},
+		},
+		props: con.props,
 	})
 
 	root.hooks.newGame.call(con)
@@ -123,7 +220,20 @@ function* gameManager(con: ServerSideGameController) {
 				con.sendTurnAction({
 					action: action.action,
 					playerEntity: action.playerEntity,
+					realTime: Date.now(),
 				})
+
+				for (const player of con.getPlayers()) {
+					if (player?.id === action.playerId) continue
+					broadcast([player], {
+						type: serverMessages.GAME_TURN_ACTION,
+						action: {
+							action: action.action,
+							playerEntity: action.playerEntity,
+							realTime: Date.now(),
+						},
+					})
+				}
 			}
 		}),
 		playerDisconnect: call(function* () {
@@ -151,6 +261,7 @@ function* gameManager(con: ServerSideGameController) {
 						player: playerEntity,
 					},
 					playerEntity: playerEntity,
+					realTime: Date.now(),
 				})
 			}
 		}),
@@ -163,7 +274,11 @@ function* gameManager(con: ServerSideGameController) {
 		const gameState = getLocalGameState(con.game, viewer)
 		if (gameState) {
 			gameState.timer.turnRemaining = 0
-			gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
+			gameState.timer.turnStartTime = getTimerForSeconds(
+				con.game,
+				0,
+				Date.now(),
+			)
 			if (!con.game.endInfo.victoryReason) {
 				// Remove coin flips from state if game was terminated before game end to prevent
 				// clients replaying animations after a forfeit, disconnect, or excessive game duration
@@ -220,7 +335,11 @@ function* gameManager(con: ServerSideGameController) {
 		const gameState = getLocalGameState(con.game, viewer)
 		if (gameState) {
 			gameState.timer.turnRemaining = 0
-			gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
+			gameState.timer.turnStartTime = getTimerForSeconds(
+				con.game,
+				0,
+				Date.now(),
+			)
 			if (!con.game.endInfo.victoryReason) {
 				// Remove coin flips from state if game was terminated before game end to prevent
 				// clients replaying animations after a forfeit, disconnect, or excessive game duration
@@ -305,8 +424,8 @@ function* gameManager(con: ServerSideGameController) {
 
 	if (
 		con.game.state.isEvilXBossGame ||
-		!gamePlayers[0].id ||
-		!gamePlayers[1].id
+		!gamePlayers[0]?.id ||
+		!gamePlayers[1]?.id
 	) {
 		return
 	}
@@ -347,10 +466,7 @@ export function inGame(playerId: PlayerId) {
 	return root
 		.getGames()
 		.some(
-			(game) =>
-				!!game.viewers.find(
-					(viewer) => viewer.player && viewer.player.id === playerId,
-				),
+			(game) => !!game.viewers.find((viewer) => viewer.player?.id === playerId),
 		)
 }
 
@@ -405,7 +521,7 @@ function* randomMatchmakingSaga() {
 					0,
 				)
 				root.addGame(newGame)
-				yield* safeCall(fork, gameManager, newGame)
+				yield* safeCall(fork, gameManager, newGame, {})
 			} else {
 				// Something went wrong, remove the undefined player from the queue
 				if (player1 === undefined) playersToRemove.push(player1Id)
@@ -624,8 +740,8 @@ export function* joinPrivateGame(
 			const player = root.players[playerId]
 			newGame.chat.push({
 				sender: {
-					type: 'viewer',
-					id: player.id,
+					type: 'spectator',
+					entityOrId: player.id,
 				},
 				message: formatText(`$s${player.name}$ $ystarted spectating$`),
 				createdAt: Date.now(),
@@ -661,7 +777,7 @@ export function* joinPrivateGame(
 			})
 		}
 
-		yield* safeCall(fork, gameManager, newGame)
+		yield* safeCall(fork, gameManager, newGame, {})
 	} else {
 		// Assign this player to the game
 		root.privateQueue[code].playerId = playerId
@@ -713,8 +829,8 @@ export function* spectatePrivateGame(
 
 		spectatorGame.chat.push({
 			sender: {
-				type: 'viewer',
-				id: player.id,
+				type: 'spectator',
+				entityOrId: player.id,
 			},
 			message: formatText(`$s${player.name}$ $ystarted spectating$`),
 			createdAt: Date.now(),
@@ -892,53 +1008,18 @@ export function* createBossGame(
 		name: 'Evil Xisuma',
 		minecraftName: 'EvilXisuma',
 		censoredName: 'Evil Xisuma',
-		deck: [EvilXisumaBoss],
+		deck: [EvilXisumaBoss.id],
 		virtualAI: ExBossAI,
 		disableDeckingOut: true,
 		appearance: {...defaultAppearance, coin: COINS['evilx']},
 	})
-	newBossGameController.game.state.isEvilXBossGame = true
-
-	function destroyRow(row: RowComponent) {
-		newBossGameController.game.components
-			.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
-			.forEach((slotEntity) =>
-				newBossGameController.game.components.delete(slotEntity),
-			)
-		newBossGameController.game.components.delete(row.entity)
-	}
-
-	// Remove challenger's rows other than indexes 0, 1, and 2
-	newBossGameController.game.components
-		.filter(
-			RowComponent,
-			query.row.opponentPlayer,
-			(_game, row) => row.index > 2,
-		)
-		.forEach(destroyRow)
-	// Remove boss' rows other than index 0
-	newBossGameController.game.components
-		.filter(
-			RowComponent,
-			query.row.currentPlayer,
-			query.not(query.row.index(0)),
-		)
-		.forEach(destroyRow)
-	// Remove boss' item slots
-	newBossGameController.game.components
-		.filter(RowComponent, query.row.currentPlayer)
-		.forEach((row) => {
-			row.itemsSlotEntities?.forEach((slotEntity) =>
-				newBossGameController.game.components.delete(slotEntity),
-			)
-			row.itemsSlotEntities = []
-		})
-
-	newBossGameController.game.settings.disableRewardCards = true
 
 	root.addGame(newBossGameController)
+	console.log('setup game complete')
 
-	yield* safeCall(fork, gameManager, newBossGameController)
+	yield* safeCall(fork, gameManager, newBossGameController, {
+		hideOpponentDeck: false,
+	})
 }
 
 export function* createRematchGame(
@@ -1044,8 +1125,8 @@ export function* createRematchGame(
 		const player = root.players[playerId]
 		newGame.chat.push({
 			sender: {
-				type: 'viewer',
-				id: player.id,
+				type: 'spectator',
+				entityOrId: player.id,
 			},
 			message: formatText(`$s${player.name}$ $ystarted spectating$`),
 			createdAt: Date.now(),
@@ -1067,7 +1148,7 @@ export function* createRematchGame(
 		})
 	}
 
-	yield* safeCall(fork, gameManager, newGame)
+	yield* safeCall(fork, gameManager, newGame, {})
 }
 
 //@Todo fix games from just timing out when player leaves
@@ -1143,14 +1224,17 @@ export function* createReplayGame(
 		const action = replayActions[i]
 
 		yield* delay(action.millisecondsSinceLastAction)
-		yield call([con, con.sendTurnAction], {
-			action: action.action,
-			playerEntity: action.player,
-		})
+		yield call(() =>
+			con.sendTurnAction({
+				action: action.action,
+				playerEntity: action.player,
+				realTime: Date.now(),
+			}),
+		)
 	}
 
 	gameState.timer.turnRemaining = 0
-	gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0)
+	gameState.timer.turnStartTime = getTimerForSeconds(con.game, 0, Date.now())
 	if (!con.game.endInfo.victoryReason) {
 		// Remove coin flips from state if game was terminated before game end to prevent
 		// clients replaying animations after a forfeit, disconnect, or excessive game duration
@@ -1211,26 +1295,36 @@ function setupSolitareGame(
 	const con = new ServerSideGameController(
 		{
 			model: player,
-			deck: playerDeck.cards.map((card) => CARDS[card.id].numericId),
+			deck: {
+				type: 'visible',
+				cards: playerDeck.cards.map((card) => CARDS[card.id].numericId),
+			},
 			score: 0,
 		},
 		{
 			model: opponent,
-			deck: opponent.deck,
+			deck: {
+				type: 'visible',
+				cards: opponent.deck.map((card) => {
+					if (typeof card == 'number') return card
+					if (typeof card == 'string') return card
+					return card.id
+				}),
+			},
 			score: 0,
+			ai: EvilXisumaBoss.id,
 		},
 		{randomizeOrder: false, countAchievements: 'boss'},
 	)
 
-	const playerEntities = con.game.components.filterEntities(PlayerComponent)
+	let playerEntities = con.game.components.filterEntities(PlayerComponent)
+
 	con.addViewer({
-		player,
+		player: player,
 		playerOnLeft: playerEntities[0],
 		spectator: false,
 		replayer: false,
 	})
-
-	con.game.components.new(AIComponent, playerEntities[1], opponent.virtualAI)
 
 	return con
 }

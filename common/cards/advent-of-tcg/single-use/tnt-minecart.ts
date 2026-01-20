@@ -25,32 +25,36 @@ const MinecartWithTNT: SingleUse = {
 		const {player, opponentPlayer} = component
 
 		observer.subscribe(player.hooks.getAttack, () => {
-			const coinFlip = flipCoin(game, player, component)
-
-			if (coinFlip[0] === 'heads') {
-				return game
-					.newAttack({
-						attacker: component.entity,
-						player: player.entity,
-						target: opponentPlayer.activeRowEntity,
-						type: 'effect',
-						log: (values) =>
-							`${values.defaultLog}, and ${values.coinFlip} to attack ${values.target} for ${values.damage} damage `,
-					})
-					.addDamage(component.entity, 100)
-			} else {
-				return game
-					.newAttack({
-						attacker: component.entity,
-						player: player.entity,
-						target: player.activeRowEntity,
-						type: 'effect',
-						isBacklash: true,
-						log: (values) =>
-							`${values.defaultLog}, and ${values.coinFlip} so ${values.target} took ${values.damage} backlash damage`,
-					})
-					.addDamage(component.entity, 40)
-			}
+			return flipCoin(
+				(coinFlip) => {
+					if (coinFlip[0] === 'heads') {
+						return game
+							.newAttack({
+								attacker: component.entity,
+								player: player.entity,
+								target: opponentPlayer.activeRowEntity,
+								type: 'effect',
+								log: (values) =>
+									`${values.defaultLog}, and ${values.coinFlip} to attack ${values.target} for ${values.damage} damage `,
+							})
+							.addDamage(component.entity, 100)
+					}
+					return game
+						.newAttack({
+							attacker: component.entity,
+							player: player.entity,
+							target: player.activeRowEntity,
+							type: 'effect',
+							isBacklash: true,
+							log: (values) =>
+								`${values.defaultLog}, and ${values.coinFlip} so ${values.target} took ${values.damage} backlash damage`,
+						})
+						.addDamage(component.entity, 40)
+				},
+				game,
+				player,
+				component,
+			)
 		})
 
 		observer.subscribeWithPriority(

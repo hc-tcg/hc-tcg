@@ -1,14 +1,27 @@
+import {CARDS} from 'common/cards'
+import {PlayerComponent} from 'common/components'
+import query from 'common/components/query'
 import {PlayerEntity} from 'common/entities'
+import {GameController, GameControllerProps} from 'common/game/game-controller'
+import {getLocalCard, getLocalGameState} from 'common/game/make-local-state'
+import runGame, {TurnActionAndPlayer} from 'common/game/run-game'
+import {PlayerSetupDefs} from 'common/game/setup-game'
 import {clientMessages} from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
-import {LocalGameState} from 'common/types/game-state'
 import {
-	AnyTurnActionData,
-	ChangeActiveHermitActionData,
-} from 'common/types/turn-action-data'
+	CoinFlipResult,
+	CurrentCoinFlip,
+	IncompleteCoinFlip,
+	LocalCurrentCoinFlip,
+} from 'common/types/game-state'
+import {AnyTurnActionData} from 'common/types/turn-action-data'
+import {assert} from 'common/utils/assert'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
+import {requestHiddenInfo} from 'logic/request-hidden-info'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import {getSocket} from 'logic/socket/socket-selectors'
+import {ReplayActionData} from 'server/src/routines/turn-action-compressor'
+import store from 'store'
 import {
 	all,
 	call,
@@ -19,16 +32,9 @@ import {
 	race,
 	take,
 	takeEvery,
-	takeLatest,
 } from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
 import {getEndGameOverlay, getPlayerEntity} from './game-selectors'
-import {
-	localApplyEffect,
-	localChangeActiveHermit,
-	localEndTurn,
-	localRemoveEffect,
-} from './local-state'
 import achievementSaga from './tasks/achievements'
 import actionLogicSaga from './tasks/action-logic-saga'
 import actionModalsSaga from './tasks/action-modals-saga'
@@ -50,118 +56,202 @@ export function* sendTurnAction(
 	})
 }
 
-function* actionSaga(playerEntity: PlayerEntity) {
-	const turnAction = yield* take<
-		LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
-	>(localMessages.GAME_TURN_ACTION)
+class ClientGameController extends GameController {
+	readyToDisplay = false
+	waitingForCoinFlip?: (result: Array<CoinFlipResult>) => any
+	unprocessedCoinFlips: Array<Array<CoinFlipResult>> = []
 
-	if (
-		[
-			'PLAY_HERMIT_CARD',
-			'PLAY_ITEM_CARD',
-			'PLAY_EFFECT_CARD',
-			'PLAY_SINGLE_USE_CARD',
-		].includes(turnAction.action.type)
-	) {
-		// This is updated for the client in slot-saga
-		yield* call(sendTurnAction, playerEntity, turnAction.action)
-	} else if (turnAction.action.type === 'APPLY_EFFECT') {
-		yield* localApplyEffect()
-		yield call(sendTurnAction, playerEntity, turnAction.action)
-	} else if (turnAction.action.type === 'REMOVE_EFFECT') {
-		yield* localRemoveEffect()
-		yield call(sendTurnAction, playerEntity, turnAction.action)
-	} else if (turnAction.action.type === 'PICK_REQUEST') {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
-	} else if (turnAction.action.type === 'MODAL_REQUEST') {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
-	} else if (
-		['SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK'].includes(
-			turnAction.action.type,
-		)
-	) {
-		yield call(sendTurnAction, playerEntity, turnAction.action)
-	} else if (turnAction.action.type === 'END_TURN') {
-		yield* localEndTurn()
-		yield call(sendTurnAction, playerEntity, turnAction.action)
-	} else if (turnAction.action.type === 'CHANGE_ACTIVE_HERMIT') {
-		yield* localChangeActiveHermit(
-			turnAction.action as ChangeActiveHermitActionData,
-		)
-		yield call(sendTurnAction, playerEntity, turnAction.action)
-	}
-}
-
-function* gameStateSaga(
-	action: LocalMessageTable[typeof localMessages.GAME_LOCAL_STATE_RECIEVED],
-) {
-	const gameState: LocalGameState = action.localGameState
-
-	// First show coin flips, if any
-	yield* call(coinFlipSaga, gameState)
-
-	// Actually update the local state
-	yield* put<LocalMessage>({
-		type: localMessages.GAME_LOCAL_STATE_SET,
-		localGameState: gameState,
-		time: action.time,
-	})
-
-	yield* put<LocalMessage>({
-		type: localMessages.QUEUE_VOICE,
-		lines: gameState.voiceLineQueue,
-	})
-
-	if (gameState.turn.availableActions.includes('WAIT_FOR_TURN')) return
-	if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_ACTION'))
-		return
-
-	const logic = yield* fork(() =>
-		all([
-			fork(actionModalsSaga),
-			fork(slotSaga),
-			fork(actionLogicSaga, gameState),
-			fork(endTurnSaga),
-			takeEvery(localMessages.GAME_ACTIONS_ATTACK, attackSaga),
-		]),
-	)
-
-	// Handle core funcionality
-	yield call(actionSaga, gameState.playerEntity)
-
-	// After we send an action, disable logic till the next game state is received
-	yield cancel(logic)
-}
-
-function* gameStateReceiver() {
-	// constantly forward GAME_STATE messages from the server to the store
-	const socket = yield* select(getSocket)
-	while (true) {
-		const {localGameState} = yield* call(
-			receiveMsg(socket, serverMessages.GAME_STATE),
-		)
-		yield* put<LocalMessage>({
-			type: localMessages.GAME_LOCAL_STATE_RECIEVED,
+	public broadcastState(): void {
+		if (!this.readyToDisplay) return
+		let localGameState = getLocalGameState(this.game, this.viewers[0])
+		store.dispatch({
+			type: localMessages.GAME_LOCAL_STATE_SET,
 			localGameState: localGameState,
 			time: Date.now(),
 		})
 	}
+
+	public getRandomDelayForAI(coinFlips: Array<CurrentCoinFlip>) {
+		if (!this.readyToDisplay) return 0
+		return super.getRandomDelayForAI(coinFlips)
+	}
+
+	public newCoinFlipRecieved() {
+		if (this.waitingForCoinFlip) {
+			this.waitingForCoinFlip(this.unprocessedCoinFlips.shift()!)
+			this.waitingForCoinFlip = undefined
+		}
+	}
+
+	public override startCoinFlip(
+		coinFlip: IncompleteCoinFlip,
+		callback: (result: Array<CoinFlipResult>) => any,
+	) {
+		let startTime = Date.now()
+
+		let coinFlipData: LocalCurrentCoinFlip = {
+			card: getLocalCard(this.game, this.game.components.get(coinFlip.card)!),
+			opponentFlip: coinFlip.opponentFlip,
+			name: coinFlip.name,
+			numberOfCoins: coinFlip.numberOfCoins,
+			flipAmounts: coinFlip.flipAmounts,
+			headImage: coinFlip.headImage,
+			delay: coinFlip.delay,
+		}
+
+		if (this.readyToDisplay) {
+			store.dispatch({
+				type: localMessages.GAME_COIN_FLIP_SET,
+				coinFlip: coinFlipData,
+			})
+		}
+
+		let onCoinFlip = (result: Array<'heads' | 'tails'>) => {
+			this.waitingForCoinFlip = undefined
+
+			let completeFlip: LocalCurrentCoinFlip = {
+				...coinFlipData,
+				tosses: result.map((result) => {
+					return {forced: false, result}
+				}),
+			}
+
+			if (this.readyToDisplay) {
+				store.dispatch({
+					type: localMessages.GAME_COIN_FLIP_SET,
+					coinFlip: completeFlip,
+				})
+			}
+
+			let ping = Date.now() - startTime
+			let waitFor = coinFlip.delay - ping
+
+			if (waitFor < 100) {
+				waitFor = 100
+			}
+
+			if (this.readyToDisplay != true) {
+				waitFor = 0
+			}
+
+			setTimeout(() => {
+				callback(result)
+				store.dispatch({
+					type: localMessages.GAME_COIN_FLIP_SET,
+					coinFlip: null,
+				})
+			}, waitFor)
+		}
+
+		if (this.unprocessedCoinFlips.length === 0) {
+			this.waitingForCoinFlip = onCoinFlip
+		} else {
+			onCoinFlip(this.unprocessedCoinFlips.shift()!)
+		}
+	}
 }
 
-function* gameActionsSaga(initialGameState?: LocalGameState) {
-	yield* fork(() =>
-		all([
-			fork(gameStateReceiver),
-			takeLatest(localMessages.GAME_LOCAL_STATE_RECIEVED, gameStateSaga),
-		]),
+async function startGameLocally(
+	myPlayerEntity: PlayerEntity,
+	player1: PlayerSetupDefs,
+	player2: PlayerSetupDefs,
+	props: GameControllerProps,
+) {
+	let game = new ClientGameController(player1, player2, props)
+
+	game.addViewer({
+		spectator: false,
+		replayer: false,
+		playerOnLeft: myPlayerEntity,
+	})
+
+	game.game.components
+		.filter(PlayerComponent, query.not(query.player.entity(myPlayerEntity)))
+		.map((p) => (p.deckIsUnkown = true))
+
+	runGame(game)
+	return game
+}
+
+function* turnActionRecieve(gameController: GameController) {
+	const socket = yield* select(getSocket)
+
+	yield* call(() => gameController.waitForTurnActionReady())
+
+	let localGameState = getLocalGameState(
+		gameController.game,
+		gameController.viewers[0],
 	)
 
-	if (initialGameState) {
-		yield put<LocalMessage>({
-			type: localMessages.GAME_LOCAL_STATE_RECIEVED,
-			localGameState: initialGameState,
+	while (true) {
+		const logic = yield* fork(() =>
+			all([
+				fork(actionModalsSaga),
+				fork(slotSaga),
+				fork(actionLogicSaga, localGameState),
+				fork(endTurnSaga),
+				takeEvery(localMessages.GAME_ACTIONS_ATTACK, attackSaga),
+			]),
+		)
+
+		const nextTurnAction = yield* race({
+			serverTurnAction: call(
+				receiveMsg<typeof serverMessages.GAME_TURN_ACTION>(
+					socket,
+					serverMessages.GAME_TURN_ACTION,
+				),
+			),
+			localTurnAction: take<
+				LocalMessageTable[typeof localMessages.GAME_TURN_ACTION]
+			>(localMessages.GAME_TURN_ACTION),
+		})
+
+		// After we send an action, disable logic till the next game state is received
+		yield cancel(logic)
+
+		let turnAction: TurnActionAndPlayer | null = null
+
+		if (nextTurnAction.localTurnAction) {
+			turnAction = {
+				playerEntity: localGameState.playerEntity,
+				action: nextTurnAction.localTurnAction.action,
+				realTime: Date.now(),
+			}
+			yield* sendTurnAction(
+				localGameState.playerEntity,
+				nextTurnAction.localTurnAction.action,
+			)
+		} else if (nextTurnAction.serverTurnAction) {
+			turnAction = nextTurnAction.serverTurnAction.action
+		}
+		if (!turnAction) throw new Error('Turn action should be defined')
+
+		console.log(turnAction)
+
+		yield* call(() => gameController.sendTurnAction(turnAction))
+
+		localGameState = getLocalGameState(
+			gameController.game,
+			gameController.viewers[0],
+		)
+
+		// Actually update the local state
+		yield* putResolve<LocalMessage>({
+			type: localMessages.GAME_LOCAL_STATE_SET,
+			localGameState: localGameState,
 			time: Date.now(),
 		})
+
+		yield* put<LocalMessage>({
+			type: localMessages.QUEUE_VOICE,
+			lines: localGameState.voiceLineQueue,
+		})
+
+		if (localGameState.turn.availableActions.includes('WAIT_FOR_TURN')) continue
+		if (
+			localGameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_ACTION')
+		)
+			continue
 	}
 }
 
@@ -178,26 +268,57 @@ function* opponentConnectionSaga() {
 	}
 }
 
-function* reconnectSaga() {
+async function getGameSyncedUp(
+	gameController: ClientGameController,
+	gameHistory: Array<ReplayActionData>,
+) {
+	const numberOfHandledTurnActions = gameController.game.turnActions.length
+	for (const turnAction of gameHistory.slice(
+		numberOfHandledTurnActions,
+		gameHistory.length,
+	)) {
+		await gameController.sendTurnAction({
+			action: turnAction.action,
+			playerEntity: turnAction.player,
+			realTime: turnAction.realTime,
+		})
+	}
+}
+
+function* reconnectSaga(gameController: ClientGameController) {
 	const socket = yield* select(getSocket)
 	while (true) {
 		const action = yield* call(
 			receiveMsg(socket, serverMessages.PLAYER_RECONNECTED),
 		)
 
-		// There should be a game state because the player is in a game.
-		if (!action.game) continue
+		assert(action.reconnectProps)
+		let reconnectProps = action.reconnectProps
 
-		if (action.messages) {
+		yield* call(() => {
+			assert(
+				reconnectProps.gameHistory,
+				'There should be a game history because the player is in a game.',
+			)
+
+			return getGameSyncedUp(gameController, reconnectProps.gameHistory)
+		})
+
+		if (reconnectProps.messages) {
 			yield* put<LocalMessage>({
 				type: localMessages.CHAT_UPDATE,
-				messages: action.messages,
+				messages: reconnectProps.messages,
 			})
 		}
 
+		const localGameState = getLocalGameState(
+			gameController.game,
+			gameController.viewers[0],
+		)
+
 		yield* put<LocalMessage>({
 			type: localMessages.GAME_LOCAL_STATE_RECIEVED,
-			localGameState: action.game,
+			localGameState,
 			time: Date.now(),
 		})
 	}
@@ -214,39 +335,174 @@ function* handleForfeitAction() {
 	yield* sendTurnAction(playerEntity, action.action)
 }
 
-type GameSagaProps = {
-	spectatorCode?: string
-	initialGameState?: LocalGameState
+function* requestCardsForSpyglass() {
+	while (true) {
+		yield* take(localMessages.SPYGLASS_REQUEST_CARDS)
+		yield* sendMsg({
+			type: clientMessages.SPYGLASS_REQUEST_CARDS,
+		})
+	}
 }
 
-function* gameSaga({initialGameState, spectatorCode}: GameSagaProps) {
+function* recieveCardsForSpyglass() {
 	const socket = yield* select(getSocket)
+	while (true) {
+		const spyglassCards = yield* call(
+			receiveMsg<typeof serverMessages.SPYGLASS_SEND_CARDS>(
+				socket,
+				serverMessages.SPYGLASS_SEND_CARDS,
+			),
+		)
+
+		yield* put<LocalMessage>({
+			type: localMessages.SPYGLASS_SET_CARDS,
+			cards: spyglassCards.cards,
+		})
+	}
+}
+
+function* requestHiddenInfoSaga() {
+	while (true) {
+		const action = yield* take<
+			LocalMessageTable[typeof localMessages.GAME_LOCAL_STATE_SET]
+		>(localMessages.GAME_LOCAL_STATE_SET)
+		yield* requestHiddenInfo(action.localGameState)
+	}
+}
+
+function* hiddenCardReveal(gameController: ClientGameController) {
+	const socket = yield* select(getSocket)
+	while (true) {
+		const revealedCards = yield* call(
+			receiveMsg<typeof serverMessages.HIDDEN_CARD_REVEAL>(
+				socket,
+				serverMessages.HIDDEN_CARD_REVEAL,
+			),
+		)
+
+		for (const card of revealedCards.cards) {
+			const component = gameController.game.components.get(card.entity)
+			if (!component) continue
+			component.props = CARDS[card.id]
+		}
+
+		yield* putResolve<LocalMessage>({
+			type: localMessages.GAME_LOCAL_STATE_SET,
+			localGameState: getLocalGameState(
+				gameController.game,
+				gameController.viewers[0],
+			),
+			time: Date.now(),
+		})
+	}
+}
+
+function* handleCoinFlipResult(gameController: ClientGameController) {
+	const socket = yield* select(getSocket)
+
+	while (true) {
+		let action = yield* call(
+			receiveMsg<typeof serverMessages.GAME_SEND_COIN_FLIP>(
+				socket,
+				serverMessages.GAME_SEND_COIN_FLIP,
+			),
+		)
+
+		console.log('action', action.result)
+		gameController.unprocessedCoinFlips.push(action.result)
+		gameController.newCoinFlipRecieved()
+	}
+}
+
+type GameSagaProps = {
+	initialTurnActions?: Array<ReplayActionData>
+	spectatorCode?: string
+	playerEntity: PlayerEntity
+	playerOneDefs: PlayerSetupDefs
+	playerTwoDefs: PlayerSetupDefs
+	props: GameControllerProps
+	coinFlipHistory?: Array<Array<CoinFlipResult>>
+}
+
+function* gameSaga({
+	initialTurnActions,
+	spectatorCode,
+	playerEntity,
+	playerOneDefs,
+	playerTwoDefs,
+	props,
+	coinFlipHistory = [],
+}: GameSagaProps) {
+	const socket = yield* select(getSocket)
+
+	const gameController = yield* call(() =>
+		startGameLocally(playerEntity, playerOneDefs, playerTwoDefs, props),
+	)
+
+	gameController.unprocessedCoinFlips = coinFlipHistory
+
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_START,
+		spectatorCode,
+	})
+
+	yield* put<LocalMessage>({
+		type: localMessages.GAME_LOCAL_STATE_SET,
+		localGameState: getLocalGameState(
+			gameController.game,
+			gameController.viewers[0],
+		),
+		time: Date.now(),
+	})
+
+	if (initialTurnActions) {
+		yield* call(() => getGameSyncedUp(gameController, initialTurnActions))
+		const localGameState = getLocalGameState(
+			gameController.game,
+			gameController.viewers[0],
+		)
+		yield* put<LocalMessage>({
+			type: localMessages.GAME_LOCAL_STATE_RECIEVED,
+			localGameState,
+			time: Date.now(),
+		})
+	}
+
+	gameController.readyToDisplay = true
+
 	const backgroundTasks = yield* fork(() =>
 		all([
 			fork(opponentConnectionSaga),
 			fork(chatSaga),
 			fork(spectatorSaga),
-			fork(reconnectSaga),
+			fork(reconnectSaga, gameController),
 			fork(achievementSaga),
 			fork(handleForfeitAction),
+			fork(turnActionRecieve, gameController),
+			fork(requestCardsForSpyglass),
+			fork(requestHiddenInfoSaga),
+			fork(recieveCardsForSpyglass),
+			fork(hiddenCardReveal, gameController),
+			fork(handleCoinFlipResult, gameController),
 		]),
 	)
 
 	try {
 		yield* put<LocalMessage>({
-			type: localMessages.GAME_START,
-			spectatorCode,
+			type: localMessages.GAME_LOCAL_STATE_SET,
+			localGameState: getLocalGameState(
+				gameController.game,
+				gameController.viewers[0],
+			),
+			time: Date.now(),
 		})
 
 		const result = yield* race({
-			game: call(gameActionsSaga, initialGameState),
 			gameEnd: call(receiveMsg(socket, serverMessages.GAME_END)),
 			spectatorLeave: take(localMessages.GAME_SPECTATOR_LEAVE),
 		})
 
-		if (result.game) {
-			throw new Error('Unexpected game ending')
-		} else if (result.gameEnd) {
+		if (result.gameEnd) {
 			const {
 				gameState: newGameState,
 				outcome,

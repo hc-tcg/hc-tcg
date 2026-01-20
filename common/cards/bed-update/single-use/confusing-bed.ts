@@ -17,7 +17,7 @@ const ConfusingBed: SingleUse = {
 		const {player} = component
 
 		observer.subscribe(player.hooks.onApply, () => {
-			const shuffledRows = fisherYatesShuffle([0, 1, 2, 3, 4], game.rng)
+			const shuffledRows = fisherYatesShuffle([0, 1, 2, 3, 4], game.coinFlipRng)
 			game.components.filter(RowComponent).forEach((row) => {
 				if (row.playerId !== player.entity) return
 				row.index = shuffledRows[row.index]

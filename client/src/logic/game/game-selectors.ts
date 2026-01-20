@@ -156,3 +156,7 @@ export const getBattleLog = (state: RootState) => {
 export const getOpponentConnection = (state: RootState) => {
 	return getGame(state).opponentConnected
 }
+
+export const getOpponentCardsForSpyglass = (state: RootState) => {
+	return getGame(state).opponentCardsForSpyglass
+}

@@ -28,6 +28,7 @@ import {
 	attackToAttackAction,
 	slotToPlayCardAction,
 } from 'common/types/turn-action-data'
+import {assert} from 'common/utils/assert'
 
 function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 	return {
@@ -38,7 +39,7 @@ function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 			appearance: defaultAppearance,
 			uuid: '',
 		},
-		deck,
+		deck: {type: 'visible', cards: deck.map((x) => x.id)},
 		score: 0,
 	}
 }
@@ -79,6 +80,7 @@ export class TestGameFixture {
 			action: {
 				type: 'END_TURN',
 			},
+			realTime: Date.now(),
 		})
 		await this.con.waitForTurnActionReady()
 	}
@@ -124,6 +126,8 @@ export class TestGameFixture {
 			(_game, slot) => slot.type === slotType,
 		)!
 
+		assert(cardComponent.props.category !== 'unknown')
+
 		await this.con.sendTurnAction({
 			playerEntity: this.game.currentPlayer.entity,
 			action: {
@@ -131,6 +135,7 @@ export class TestGameFixture {
 				card: getLocalCard(this.game, cardComponent),
 				slot: slot.entity,
 			},
+			realTime: Date.now(),
 		})
 		await this.con.waitForTurnActionReady()
 	}
@@ -142,6 +147,7 @@ export class TestGameFixture {
 			action: {
 				type: 'APPLY_EFFECT',
 			},
+			realTime: Date.now(),
 		})
 		await this.con.waitForTurnActionReady()
 	}
@@ -153,6 +159,7 @@ export class TestGameFixture {
 			action: {
 				type: 'REMOVE_EFFECT',
 			},
+			realTime: Date.now(),
 		})
 		await this.con.waitForTurnActionReady()
 	}
@@ -164,6 +171,7 @@ export class TestGameFixture {
 			action: {
 				type: attackToAttackAction[attack],
 			},
+			realTime: Date.now(),
 		})
 		await this.con.waitForTurnActionReady()
 	}
@@ -180,6 +188,7 @@ export class TestGameFixture {
 					query.slot.rowIndex(index),
 				)!,
 			},
+			realTime: Date.now(),
 		})
 		await this.con.waitForTurnActionReady()
 	}
@@ -192,6 +201,7 @@ export class TestGameFixture {
 				type: 'PICK_REQUEST',
 				entity: this.game.components.find(SlotComponent, ...slot)!.entity,
 			},
+			realTime: Date.now(),
 		})
 		await this.con.waitForTurnActionReady()
 	}
@@ -204,6 +214,7 @@ export class TestGameFixture {
 				type: 'MODAL_REQUEST',
 				modalResult,
 			},
+			realTime: Date.now(),
 		})
 		await this.con.waitForTurnActionReady()
 	}
@@ -216,6 +227,7 @@ export class TestGameFixture {
 				type: 'FORFEIT',
 				player,
 			},
+			realTime: Date.now(),
 		})
 		await this.con.waitForTurnActionReady()
 	}
@@ -228,6 +240,7 @@ export class TestGameFixture {
 				type: 'DISCONNECT',
 				player,
 			},
+			realTime: Date.now(),
 		})
 		await this.con.waitForTurnActionReady()
 	}
@@ -252,6 +265,7 @@ export class BossGameTestFixture extends TestGameFixture {
 			action: {
 				type: attackType,
 			},
+			realTime: Date.now(),
 		})
 		await this.con.waitForTurnActionReady()
 	}
@@ -364,7 +378,7 @@ export async function testBossFight(
 				uuid: '',
 				disableDeckingOut: true,
 			},
-			deck: [EvilXisumaBoss],
+			deck: {type: 'visible', cards: [EvilXisumaBoss.id]},
 			score: 0,
 		},
 		{

@@ -35,26 +35,27 @@ export const TrapHoleEffect: StatusEffect<PlayerComponent> = {
 				)
 				if (!singleUseCard) return
 
-				const coinFlip = flipCoin(
+				flipCoin(
+					(coinFlip) => {
+						if (coinFlip[0] == 'heads') {
+							game.battleLog.addEntry(
+								player.entity,
+								`$o${effect.creator.props.name}$ flipped $pheads$ and took $e${singleUseCard.props.name}$`,
+							)
+							singleUseCard.draw(player.opponentPlayer.entity)
+						} else {
+							game.battleLog.addEntry(
+								player.entity,
+								`$o${effect.creator.props.name}$ flipped $btails$`,
+							)
+						}
+					},
 					game,
 					player.opponentPlayer,
 					effect.creator,
 					1,
 					player,
 				)
-
-				if (coinFlip[0] == 'heads') {
-					game.battleLog.addEntry(
-						player.entity,
-						`$o${effect.creator.props.name}$ flipped $pheads$ and took $e${singleUseCard.props.name}$`,
-					)
-					singleUseCard.draw(player.opponentPlayer.entity)
-				} else {
-					game.battleLog.addEntry(
-						player.entity,
-						`$o${effect.creator.props.name}$ flipped $btails$`,
-					)
-				}
 			},
 		)
 		observer.subscribeWithPriority(

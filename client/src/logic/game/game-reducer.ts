@@ -29,6 +29,7 @@ type LocalGameRoot = {
 	currentCoinFlip: LocalCurrentCoinFlip | null
 	opponentConnected: boolean
 	spectatorCode: string | null
+	opponentCardsForSpyglass?: Array<LocalCardInstance>
 }
 
 const defaultState: LocalGameRoot = {
@@ -43,6 +44,7 @@ const defaultState: LocalGameRoot = {
 	currentCoinFlip: null,
 	opponentConnected: true,
 	spectatorCode: null,
+	opponentCardsForSpyglass: undefined,
 }
 
 const gameReducer = (
@@ -68,6 +70,7 @@ const gameReducer = (
 						(card) => card.entity === state.selectedCard?.entity,
 					) || null,
 			}
+
 			if (
 				state.localGameState?.turn.currentPlayerEntity ===
 				action.localGameState?.turn.currentPlayerEntity
@@ -127,6 +130,11 @@ const gameReducer = (
 			return {
 				...state,
 				currentCoinFlip: action.coinFlip,
+			}
+		case localMessages.SPYGLASS_SET_CARDS:
+			return {
+				...state,
+				opponentCardsForSpyglass: action.cards,
 			}
 
 		// Update the board for the current player. This is used to put cards on the board before the

@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {ReplayActionData} from '../../server/src/routines/turn-action-compressor'
 import JoeHillsRare from '../cards/hermits/joehills-rare'
 import {
@@ -28,9 +27,11 @@ import TimeSkipDisabledEffect from '../status-effects/time-skip-disabled'
 import {AttackDefs} from '../types/attack'
 import ComponentTable from '../types/ecs'
 import {
+	CoinFlipResult,
 	GameOutcome,
 	GameState,
 	GameVictoryReason,
+	IncompleteCoinFlip,
 	Message,
 	TurnAction,
 	TurnActions,
@@ -42,10 +43,12 @@ import {
 	ModalRequest,
 	ModalResult,
 	SelectCards,
+	SpyglassModal,
 } from '../types/modal-requests'
 import {afterAttack, beforeAttack} from '../types/priorities'
 import {rowRevive} from '../types/priorities'
 import {PickRequest} from '../types/server-requests'
+import {assert} from '../utils/assert'
 import {newIncrementor} from '../utils/game'
 import {newRandomNumberGenerator} from '../utils/random'
 import {AttackModel, ReadonlyAttackModel} from './attack-model'
@@ -104,8 +107,22 @@ export function gameSettingsFromEnv(): GameSettings {
 
 export class GameModel {
 	public rng: () => number
+
+	public playerOneShuffle: () => number
+	public playerTwoShuffle: () => number
+	public coinFlipRng: () => number
+	public bossRng: () => number
+
 	public nextEntity: () => number
 	private entityCount: number
+
+	public startCoinFlip: (
+		coinFlip: IncompleteCoinFlip,
+		callback: (result: Array<'heads' | 'tails'>) => any,
+	) => any
+	public coinFlipsInProgress = 0
+	public waitingForCoinFlips: Array<any> = []
+	public coinFlipHistory: Array<Array<CoinFlipResult>> = []
 
 	public readonly id: string
 	public readonly settings: GameSettings
@@ -129,6 +146,9 @@ export class GameModel {
 	public components: ComponentTable
 
 	public arePlayersSwapped: boolean
+
+	public playerOne?: PlayerEntity = undefined
+	public playerTwo?: PlayerEntity = undefined
 
 	public hooks: {
 		/** Hook called before the main attack loop, for every attack from any source */
@@ -176,14 +196,19 @@ export class GameModel {
 		player1: PlayerSetupDefs,
 		player2: PlayerSetupDefs,
 		settings: GameSettings,
-		options?: {
+		options: {
+			startCoinFlip: (
+				coinFlip: IncompleteCoinFlip,
+				callback: (result: Array<'heads' | 'tails'>) => any,
+			) => any
 			randomizeOrder?: boolean
 			id?: string
 			publishBattleLog?: (logs: Array<Message>, timeout: number) => void
 		},
 	) {
-		options = options ?? {}
 		this.id = options.id || Math.random().toString(16).slice(3, 11)
+
+		this.startCoinFlip = options?.startCoinFlip
 
 		if (options?.publishBattleLog) {
 			this.publishBattleLog = options.publishBattleLog
@@ -193,8 +218,19 @@ export class GameModel {
 
 		this.settings = settings
 		assert(rngSeed.length < 16, 'Game RNG seed must be under 16 characters')
+
 		this.rngSeed = rngSeed
 		this.rng = newRandomNumberGenerator(rngSeed)
+
+		this.playerOneShuffle = newRandomNumberGenerator(
+			this.rng().toString().slice(2),
+		)
+		this.playerTwoShuffle = newRandomNumberGenerator(
+			this.rng().toString().slice(2),
+		)
+		this.coinFlipRng = newRandomNumberGenerator(this.rng().toString().slice(2))
+		this.bossRng = newRandomNumberGenerator(this.rng().toString().slice(2))
+
 		this.entityCount = 0
 		this.nextEntity = newIncrementor()
 		const swapPlayers = this.rng()
@@ -241,6 +277,15 @@ export class GameModel {
 		return `Game ${this.id}:`
 	}
 
+	public usePlayerShuffleRNG(entity: PlayerEntity) {
+		if (entity === this.playerOne) {
+			return this.playerOneShuffle
+		} else if (entity === this.playerTwo) {
+			return this.playerTwoShuffle
+		}
+		throw new Error('Unknown player entity')
+	}
+
 	public get currentPlayerEntity() {
 		return this.state.order[(this.state.turn.turnNumber + 1) % 2]
 	}
@@ -267,6 +312,25 @@ export class GameModel {
 				'Can not query for other before because both player components are created',
 			)
 		return otherPlayer
+	}
+
+	public onCoinFlipEnd() {
+		this.coinFlipsInProgress -= 1
+
+		if (this.coinFlipsInProgress == 0) {
+			for (let coinFlip of this.waitingForCoinFlips) {
+				coinFlip()
+			}
+			this.waitingForCoinFlips = []
+		}
+		console.log('Coin flips all resolved')
+	}
+
+	public async waitForCoinFlips() {
+		if (this.coinFlipsInProgress === 0) return
+		await new Promise((resolve) => {
+			this.waitingForCoinFlips.push(resolve)
+		})
 	}
 
 	// Functions
@@ -385,6 +449,10 @@ export class GameModel {
 	): void
 	public addModalRequest(newRequest: DragCards.Request, before?: boolean): void
 	public addModalRequest(newRequest: CopyAttack.Request, before?: boolean): void
+	public addModalRequest(
+		newRequest: SpyglassModal.Request,
+		before?: boolean,
+	): void
 	public addModalRequest(newRequest: ModalRequest, before = false) {
 		if (before) {
 			this.state.modalRequests.unshift(newRequest)

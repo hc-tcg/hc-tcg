@@ -21,13 +21,21 @@ interface CardReactProps
 	displayTokenCost: boolean
 	selected?: boolean
 	picked?: boolean
+	turnedOver?: boolean
 	unpickable?: boolean
 	tooltipAboveModal?: boolean
 	onClick?: () => void
 }
 
 const Card = (props: CardReactProps) => {
-	const {onClick, selected, picked, unpickable, displayTokenCost} = props
+	const {
+		onClick,
+		turnedOver = false,
+		selected,
+		picked,
+		unpickable,
+		displayTokenCost,
+	} = props
 
 	let cardProps = CARDS[props.card]
 	const {category} = cardProps
@@ -61,6 +69,33 @@ const Card = (props: CardReactProps) => {
 		CONFIG.game.limits.disabledCards.includes(cardProps.id)
 			? 'disabled'
 			: 'enabled'
+
+	if (turnedOver) {
+		return (
+			<button
+				className={cn(
+					props.className,
+					!CONFIG.game.renderCardsDynamically && css.cardImage,
+					{
+						[css.selected]: selected,
+						[css.picked]: picked,
+						[css.unpickable]: unpickable,
+						[css.clickable]: !!props.disabled,
+					},
+				)}
+				onClick={unpickable ? () => {} : onClick}
+			>
+				<div
+					className={classNames(
+						css.cardImageContainer,
+						disabled === 'disabled' && css.disabled,
+					)}
+				>
+					<img className={css.renderedCardImage} src="/images/card-back.jpg" />
+				</div>
+			</button>
+		)
+	}
 
 	return (
 		<Tooltip

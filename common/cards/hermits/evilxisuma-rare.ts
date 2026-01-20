@@ -1,4 +1,3 @@
-import assert from 'assert'
 import {
 	CardComponent,
 	ObserverComponent,
@@ -11,6 +10,7 @@ import {
 	SecondaryAttackDisabledEffect,
 } from '../../status-effects/singleturn-attack-disabled'
 import {afterAttack} from '../../types/priorities'
+import {assert} from '../../utils/assert'
 import {flipCoin} from '../../utils/coin-flips'
 import {hermit} from '../defaults'
 import {Hermit} from '../types'
@@ -60,53 +60,58 @@ const EvilXisumaRare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				const coinFlip = flipCoin(game, player, component)
+				flipCoin(
+					(coinFlip) => {
+						if (coinFlip[0] !== 'heads') return
 
-				if (coinFlip[0] !== 'heads') return
+						let opponentActiveHermit = game.components.find(
+							CardComponent,
+							opponentActiveHermitQuery,
+						)
+						if (!opponentActiveHermit?.isAlive()) return
 
-				let opponentActiveHermit = game.components.find(
-					CardComponent,
-					opponentActiveHermitQuery,
-				)
-				if (!opponentActiveHermit?.isAlive()) return
+						game.addPickAttackModalRequest(
+							{
+								player: player.entity,
+								modal: {
+									type: 'copyAttack',
+									name: 'Evil X: Disable an attack for 1 turn',
+									description:
+										"Which of the opponent's attacks do you want to disable?",
+									hermitCard: opponentActiveHermit.entity,
+									cancelable: false,
+								},
+								onResult(modalResult) {
+									assert(modalResult.pick)
 
-				game.addPickAttackModalRequest(
-					{
-						player: player.entity,
-						modal: {
-							type: 'copyAttack',
-							name: 'Evil X: Disable an attack for 1 turn',
-							description:
-								"Which of the opponent's attacks do you want to disable?",
-							hermitCard: opponentActiveHermit.entity,
-							cancelable: false,
-						},
-						onResult(modalResult) {
-							assert(modalResult.pick)
+									const actionToBlock =
+										modalResult.pick === 'primary'
+											? PrimaryAttackDisabledEffect
+											: SecondaryAttackDisabledEffect
 
-							const actionToBlock =
-								modalResult.pick === 'primary'
-									? PrimaryAttackDisabledEffect
-									: SecondaryAttackDisabledEffect
-
-							// This will add a blocked action for the duration of their turn
-							game.components
-								.new(StatusEffectComponent, actionToBlock, component.entity)
-								.apply(opponentPlayer.getActiveHermit()?.entity)
-							return
-						},
-						onTimeout() {
-							// Disable the secondary attack if we didn't choose one
-							game.components
-								.new(
-									StatusEffectComponent,
-									SecondaryAttackDisabledEffect,
-									component.entity,
-								)
-								.apply(opponentPlayer.getActiveHermit()?.entity)
-						},
+									// This will add a blocked action for the duration of their turn
+									game.components
+										.new(StatusEffectComponent, actionToBlock, component.entity)
+										.apply(opponentPlayer.getActiveHermit()?.entity)
+									return
+								},
+								onTimeout() {
+									// Disable the secondary attack if we didn't choose one
+									game.components
+										.new(
+											StatusEffectComponent,
+											SecondaryAttackDisabledEffect,
+											component.entity,
+										)
+										.apply(opponentPlayer.getActiveHermit()?.entity)
+								},
+							},
+							'disable',
+						)
 					},
-					'disable',
+					game,
+					player,
+					component,
 				)
 			},
 		)

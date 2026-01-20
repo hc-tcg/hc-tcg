@@ -29,12 +29,23 @@ export type CoinFlip = {
 	forced: boolean
 }
 
+export type IncompleteCoinFlip = {
+	card: CardEntity
+	opponentFlip: boolean
+	name: string
+	numberOfCoins: number
+	flipAmounts: Array<number>
+	delay: number
+	headImage: Coin['id']
+}
+
 export type CurrentCoinFlip = {
 	card: CardEntity
 	opponentFlip: boolean
 	name: string
 	tosses: Array<CoinFlip>
-	amount: number
+	numberOfCoins: number
+	flipAmounts: Array<number>
 	delay: number
 	headImage: Coin['id']
 }
@@ -43,10 +54,11 @@ export type LocalCurrentCoinFlip = {
 	card: LocalCardInstance
 	opponentFlip: boolean
 	name: string
-	tosses: Array<CoinFlip>
-	amount: number
-	delay: number
+	numberOfCoins: number
+	flipAmounts: Array<number>
 	headImage: Coin['id']
+	delay?: number
+	tosses?: Array<CoinFlip>
 }
 
 export type BattleLogT = {
@@ -142,7 +154,6 @@ export type GameVictoryReason =
 
 export type LocalPlayerState = {
 	entity: PlayerEntity
-	playerId?: PlayerId
 	playerName: string
 	minecraftName: string
 	censoredPlayerName: string
@@ -195,12 +206,16 @@ export type LocalGameState = {
 
 type MessageSender =
 	| {
-			type: 'viewer'
-			id: PlayerId
+			type: 'player'
+			entityOrId: PlayerEntity
+	  }
+	| {
+			type: 'spectator'
+			entityOrId: PlayerId
 	  }
 	| {
 			type: 'system'
-			id: PlayerEntity
+			entityOrId: PlayerEntity
 	  }
 
 export type Message = {

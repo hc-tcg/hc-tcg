@@ -4,6 +4,7 @@ import {
 } from 'common/socket-messages/client-messages'
 import {serverMessages} from 'common/socket-messages/server-messages'
 import {Deck} from 'common/types/deck'
+import {assert} from 'common/utils/assert'
 import {getLocalDatabaseInfo} from 'logic/game/database/database-selectors'
 import gameSaga from 'logic/game/game-saga'
 import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
@@ -178,8 +179,17 @@ function* joinPublicQueueSaga() {
 				type: localMessages.MATCHMAKING_JOIN_QUEUE_SUCCESS,
 			})
 
-			yield call(receiveMsg(socket, serverMessages.GAME_START))
-			yield call(gameSaga, {})
+			const {playerEntity, playerOneDefs, playerTwoDefs, props} = yield* call(
+				receiveMsg(socket, serverMessages.GAME_START),
+			)
+			yield call(() =>
+				gameSaga({
+					playerEntity,
+					playerOneDefs,
+					playerTwoDefs,
+					props,
+				}),
+			)
 		} catch (err) {
 			console.error('Game crashed: ', err)
 		} finally {
@@ -254,9 +264,16 @@ function* joinPrivateQueueSaga({
 			})
 
 			if (queueResponse.gameStart) {
-				yield* call(gameSaga, {
-					spectatorCode: queueResponse.gameStart?.spectatorCode,
-				})
+				const {playerEntity, playerOneDefs, playerTwoDefs, props} =
+					queueResponse.gameStart
+				yield* call(() =>
+					gameSaga({
+						playerEntity,
+						playerOneDefs,
+						playerTwoDefs,
+						props,
+					}),
+				)
 				return
 			}
 
@@ -352,8 +369,12 @@ function* spectatePrivateGameSaga({
 
 			if (result.spectateSuccess) {
 				// Succesfully joined a game as spectator, start the game saga
-				yield* call(gameSaga, {
-					initialGameState: result.spectateSuccess.localGameState,
+				yield* call(() => {
+					assert(result.spectateSuccess)
+					// @todo
+					//	gameSaga({
+					//		initialGameState: result.spectateSuccess.localGameState,
+					//	})
 				})
 			} else if (result.spectateWaiting) {
 				// Succesfully joined as spectator, waiting for game to start
@@ -369,9 +390,10 @@ function* spectatePrivateGameSaga({
 					),
 				})
 				if (result.spectatePrivateGame) {
-					yield* call(gameSaga, {
-						initialGameState: result.spectatePrivateGame.localGameState,
-					})
+					// @todo
+					//yield* call(gameSaga, {
+					//	initialGameState: result.spectatePrivateGame.localGameState,
+					//})
 					return
 				}
 				if (result.cancelled) {
@@ -471,9 +493,16 @@ function* createPrivateGameSaga() {
 				})
 
 				if (queueResponse.gameStart) {
-					yield* call(gameSaga, {
-						spectatorCode: queueResponse.gameStart.spectatorCode,
-					})
+					const {playerEntity, playerOneDefs, playerTwoDefs, props} =
+						queueResponse.gameStart
+					yield* call(() =>
+						gameSaga({
+							playerEntity,
+							playerOneDefs,
+							playerTwoDefs,
+							props,
+						}),
+					)
 					return
 				}
 
@@ -540,12 +569,21 @@ function* createBossGameSaga() {
 			return
 		}
 
-		yield* call(receiveMsg, socket, localMessages.GAME_START)
+		const {playerEntity, playerOneDefs, playerTwoDefs, props} = yield* call(
+			receiveMsg(socket, serverMessages.GAME_START),
+		)
 		yield* put<LocalMessage>({
 			type: localMessages.QUEUE_VOICE,
 			lines: ['/voice/EXSTART.ogg'],
 		})
-		yield* call(gameSaga, {})
+		yield call(() =>
+			gameSaga({
+				playerEntity,
+				playerOneDefs,
+				playerTwoDefs,
+				props,
+			}),
+		)
 	} catch (err) {
 		console.error('Game crashed: ', err)
 	} finally {
@@ -599,11 +637,17 @@ function* createRematchSaga() {
 				type: localMessages.MATCHMAKING_JOIN_QUEUE_SUCCESS,
 			})
 
-			const gameStart = yield* call(
+			const {playerEntity, playerOneDefs, playerTwoDefs, props} = yield* call(
 				receiveMsg(socket, serverMessages.GAME_START),
 			)
-			console.log(gameStart)
-			yield call(gameSaga, {spectatorCode: gameStart.spectatorCode})
+			yield call(() =>
+				gameSaga({
+					playerEntity,
+					playerOneDefs,
+					playerTwoDefs,
+					props,
+				}),
+			)
 		} catch (err) {
 			console.error('Game crashed: ', err)
 		} finally {
@@ -664,7 +708,8 @@ function* createReplayGameSaga(
 			return
 		} else if (result.success) {
 			// Start replay game
-			yield* call(gameSaga, {initialGameState: result.success.localGameState})
+			// @todo get replays working
+			// yield* call(gameSaga, {initialGameState: result.success.localGameState})
 		}
 	} catch (err) {
 		console.error('Game crashed: ', err)

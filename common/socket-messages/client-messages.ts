@@ -1,5 +1,5 @@
 import {Cosmetic} from '../cosmetics/types'
-import {PlayerEntity} from '../entities'
+import {CardEntity, PlayerEntity} from '../entities'
 import {PlayerId} from '../models/player-model'
 import {Message, MessageTable, messages} from '../redux-messages'
 import {RematchData} from '../types/app'
@@ -40,6 +40,8 @@ export const clientMessages = messages('clientMessages', {
 	DELETE_DECK: null,
 	DELETE_TAG: null,
 	SET_COSMETIC: null,
+	SPYGLASS_REQUEST_CARDS: null,
+	HIDDEN_CARD_REQUEST: null,
 	RESET_SECRET: null,
 })
 
@@ -166,6 +168,8 @@ export type ClientMessages = [
 	{type: typeof clientMessages.SET_COSMETIC; cosmetic: Cosmetic['id']},
 	{type: typeof clientMessages.REPLAY_OVERVIEW; id: number},
 	{type: typeof clientMessages.CANCEL_REMATCH; rematch: RematchData},
+	{type: typeof clientMessages.SPYGLASS_REQUEST_CARDS},
+	{type: typeof clientMessages.HIDDEN_CARD_REQUEST; cards: Array<CardEntity>},
 	{type: typeof clientMessages.RESET_SECRET},
 ]
 

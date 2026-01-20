@@ -50,14 +50,22 @@ const HumanCleoRare: Hermit = {
 					return
 				if (opponentPlayer.hasStatusEffect(BetrayedEffect)) return
 
-				const coinFlip = flipCoin(game, player, component, 2)
+				flipCoin(
+					(coinFlip) => {
+						const headsAmount = coinFlip.filter(
+							(flip) => flip === 'heads',
+						).length
+						if (headsAmount < 2) return
 
-				const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-				if (headsAmount < 2) return
-
-				game.components
-					.new(StatusEffectComponent, BetrayedEffect, component.entity)
-					.apply(opponentPlayer.entity)
+						game.components
+							.new(StatusEffectComponent, BetrayedEffect, component.entity)
+							.apply(opponentPlayer.entity)
+					},
+					game,
+					player,
+					component,
+					2,
+				)
 			},
 		)
 	},

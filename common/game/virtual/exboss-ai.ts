@@ -8,6 +8,7 @@ import {
 	PlayerComponent,
 	StatusEffectComponent,
 } from '../../components'
+import {RowComponent} from '../../components'
 import {AIComponent} from '../../components/ai-component'
 import query from '../../components/query'
 import {GameModel} from '../../models/game-model'
@@ -18,7 +19,7 @@ import {AnyTurnActionData} from '../../types/turn-action-data'
 import {VirtualAI} from '../../types/virtual-ai'
 
 const fireDropper = (game: GameModel) => {
-	return Math.floor(game.rng() * 9)
+	return Math.floor(game.bossRng() * 9)
 }
 
 function getBossAttack(player: PlayerComponent, game: GameModel) {
@@ -67,7 +68,10 @@ function getNextTurnAction(
 	const {player} = component
 
 	if (game.state.modalRequests.length) {
-		if (['Allay', 'Lantern'].includes(game.state.modalRequests[0].modal.name)) {
+		if (
+			game.state.modalRequests[0].modal.type === 'selectCards' &&
+			['Allay', 'Lantern'].includes(game.state.modalRequests[0].modal.name)
+		) {
 			// Handles when challenger reveals card(s) to boss
 			return [
 				{
@@ -140,7 +144,7 @@ function getNextTurnAction(
 		query.effect.targetIsCardAnd(query.card.player(player.entity)),
 	)
 	if (nineEffect && nineEffect.counter === 0) {
-		const nineSpecial = game.rng() > 0.5 ? 'NINEDISCARD' : 'NINEATTACHED'
+		const nineSpecial = game.bossRng() > 0.5 ? 'NINEDISCARD' : 'NINEATTACHED'
 		supplyNineSpecial(nineEffect, nineSpecial)
 		game.voiceLineQueue.push(`/voice/${nineSpecial}.ogg`)
 		return [{type: 'DELAY', delay: 10600}, {type: 'END_TURN'}]
@@ -152,6 +156,44 @@ function getNextTurnAction(
 const ExBossAI: VirtualAI = {
 	id: 'evilxisuma_boss',
 
+	setup(game: GameModel) {
+		game.state.isEvilXBossGame = true
+
+		function destroyRow(row: RowComponent) {
+			game.components
+				.filterEntities(BoardSlotComponent, query.slot.rowIs(row.entity))
+				.forEach((slotEntity) => game.components.delete(slotEntity))
+			game.components.delete(row.entity)
+		}
+
+		// Remove challenger's rows other than indexes 0, 1, and 2
+		game.components
+			.filter(
+				RowComponent,
+				query.row.opponentPlayer,
+				(_game, row) => row.index > 2,
+			)
+			.forEach(destroyRow)
+		// Remove boss' rows other than index 0
+		game.components
+			.filter(
+				RowComponent,
+				query.row.currentPlayer,
+				query.not(query.row.index(0)),
+			)
+			.forEach(destroyRow)
+		// Remove boss' item slots
+		game.components
+			.filter(RowComponent, query.row.currentPlayer)
+			.forEach((row) => {
+				row.itemsSlotEntities?.forEach((slotEntity) =>
+					game.components.delete(slotEntity),
+				)
+				row.itemsSlotEntities = []
+			})
+
+		game.settings.disableRewardCards = true
+	},
 	getTurnActions: function* (game, component) {
 		while (true) {
 			yield* getNextTurnAction(game, component)

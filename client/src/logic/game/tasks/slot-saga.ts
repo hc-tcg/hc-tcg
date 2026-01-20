@@ -2,6 +2,7 @@ import {CARDS} from 'common/cards'
 import FrozenEffect from 'common/status-effects/frozen'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {slotToPlayCardAction} from 'common/types/turn-action-data'
+import {assert} from 'common/utils/assert'
 import {
 	getAvailableActions,
 	getCurrentPickMessage,
@@ -14,7 +15,6 @@ import {LocalMessage, LocalMessageTable, localMessages} from 'logic/messages'
 import {SagaIterator} from 'redux-saga'
 import {call, put, putResolve, take, takeLeading} from 'typed-redux-saga'
 import {select} from 'typed-redux-saga'
-import {localPutCardInSlot} from '../local-state'
 
 function* pickForPickRequestSaga(
 	action: LocalMessageTable[typeof localMessages.GAME_SLOT_PICKED],
@@ -44,10 +44,13 @@ function* pickWithSelectedSaga(
 
 	// If the hand is clicked don't send data
 	if (pickInfo.slotType !== 'hand') {
-		const actionType = slotToPlayCardAction[CARDS[selectedCard.id].category]
+		const cardCategory = CARDS[selectedCard.id].category
+		assert(
+			cardCategory != 'unknown',
+			'Card types should be known by the time you can play them',
+		)
+		const actionType = slotToPlayCardAction[cardCategory]
 		if (!actionType) return
-
-		yield* localPutCardInSlot(action, selectedCard)
 
 		if (pickInfo.card === null) {
 			yield* put<LocalMessage>({

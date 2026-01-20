@@ -1,7 +1,7 @@
-import assert from 'assert'
 import {CardComponent, ObserverComponent} from '../../../components'
 import query from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
+import {assert} from '../../../utils/assert'
 import {fisherYatesShuffle} from '../../../utils/fisher-yates'
 import {singleUse} from '../../defaults'
 import {SingleUse} from '../../types'
@@ -36,7 +36,7 @@ const Candle: SingleUse = {
 					assert(card.slot.inDeck())
 					return card.slot.order
 				}),
-				game.rng,
+				game.usePlayerShuffleRNG(component.player.entity),
 			)
 			deckCards.forEach((card, i) => {
 				assert(card.slot.inDeck())

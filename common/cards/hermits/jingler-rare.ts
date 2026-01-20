@@ -47,31 +47,37 @@ const JinglerRare: Hermit = {
 
 				if (opponentPlayer.getHand().length === 0) return
 
-				const coinFlip = flipCoin(game, player, component)
-				if (coinFlip[0] === 'tails') return
+				flipCoin(
+					(coinFlip) => {
+						if (coinFlip[0] === 'tails') return
 
-				game.addPickRequest({
-					player: opponentPlayer.entity,
-					id: component.entity,
-					message: 'Pick 1 card from your hand to discard',
-					canPick: query.every(
-						query.slot.opponent,
-						query.slot.hand,
-						query.not(query.slot.empty),
-					),
-					onResult(pickedSlot) {
-						pickedSlot.card?.discard()
+						game.addPickRequest({
+							player: opponentPlayer.entity,
+							id: component.entity,
+							message: 'Pick 1 card from your hand to discard',
+							canPick: query.every(
+								query.slot.opponent,
+								query.slot.hand,
+								query.not(query.slot.empty),
+							),
+							onResult(pickedSlot) {
+								pickedSlot.card?.discard()
+							},
+							onTimeout() {
+								game.components
+									.find(
+										CardComponent,
+										query.card.slot(query.slot.hand),
+										query.card.opponentPlayer,
+									)
+									?.discard()
+							},
+						})
 					},
-					onTimeout() {
-						game.components
-							.find(
-								CardComponent,
-								query.card.slot(query.slot.hand),
-								query.card.opponentPlayer,
-							)
-							?.discard()
-					},
-				})
+					game,
+					player,
+					component,
+				)
 			},
 		)
 	},
