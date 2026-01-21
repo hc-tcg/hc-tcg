@@ -69,6 +69,20 @@ const clearSession = () => {
 	sessionStorage.removeItem('playerSecret')
 }
 
+const _clearFailedConnectionAttemps = () => {
+	sessionStorage.removeItem('connectionAttempts')
+}
+
+const addFailedConnectionAttempt = () => {
+	const attempts = getFailedConnectionAttempts() + 1
+	sessionStorage.setItem('connectionAttempts', `${attempts}`)
+}
+
+const getFailedConnectionAttempts = () => {
+	const attempts = sessionStorage.getItem('connectionAttempts') || 0
+	return Number(attempts)
+}
+
 const getClientVersion = (): string => {
 	return VERSION || 'dev'
 }
@@ -524,19 +538,30 @@ export function* loginSaga() {
 		}
 
 		// This is a bit janky, but this reloads the client if the version happens to be out of date
-		if (
-			result.reason === 'invalid_session' ||
-			result.reason === 'bad_auth' ||
-			result.reason === 'timeout'
-		) {
-			window.location.reload()
+		// We only try one time, otherwise we will kick the user back to the title screen instead.
+		addFailedConnectionAttempt()
+		if (getFailedConnectionAttempts() <= 1) {
+			if (
+				result.reason === 'invalid_session' ||
+				result.reason === 'bad_auth' ||
+				result.reason === 'timeout'
+			) {
+				window.location.reload()
+			}
+			// Notify user with message
+			yield put<LocalMessage>({
+				type: localMessages.DISCONNECT,
+				errorMessage: result.reason,
+			})
+			continue
 		}
 
-		// Otherwise the login failed, so lets send a toast and try again
+		// Otherwise the login failed really bad, so lets send a message
 		yield put<LocalMessage>({
-			type: localMessages.DISCONNECT,
-			errorMessage: result.reason,
+			type: localMessages.CORRUPTED,
+			reason: result.reason,
 		})
+		break
 	}
 }
 
