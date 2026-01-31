@@ -1,8 +1,13 @@
 import SplashPotionOfHarming from '../cards/advent-of-tcg/single-use/splash-potion-of-harming'
+import WindBurst from '../cards/advent-of-tcg/single-use/wind-burst'
 import CurseOfBinding from '../cards/single-use/curse-of-binding'
 import CurseOfVanishing from '../cards/single-use/curse-of-vanishing'
 import Efficiency from '../cards/single-use/efficiency'
 import Fortune from '../cards/single-use/fortune'
+import {
+	InstantHealth,
+	InstantHealthII,
+} from '../cards/single-use/instant-health'
 import InvisibilityPotion from '../cards/single-use/invisibility-potion'
 import Knockback from '../cards/single-use/knockback'
 import Looting from '../cards/single-use/looting'
@@ -29,6 +34,8 @@ const potions = [
 	SplashPotionOfHealingII,
 	SplashPotionOfPoison,
 	InvisibilityPotion,
+	InstantHealth,
+	InstantHealthII,
 ]
 
 const books = [
@@ -40,6 +47,7 @@ const books = [
 	Fortune,
 	Mending,
 	SweepingEdge,
+	WindBurst,
 ]
 
 function getExclusiveSingleUseAchievement(
