@@ -1,4 +1,4 @@
-import {RowComponent} from '../components'
+import {CardComponent, RowComponent} from '../components'
 import query from '../components/query'
 import {achievement} from './defaults'
 import {Achievement} from './types'
@@ -21,7 +21,19 @@ const UltraHardcore: Achievement = {
 		game.components
 			.filter(RowComponent, query.row.player(player.opponentPlayer.entity))
 			.forEach((row) => {
-				observer.subscribe(row.hooks.onKnockOut, () => {
+				observer.subscribe(row.hooks.onKnockOut, (card) => {
+					if (!card.isHermit()) return
+					if (
+						game.components.exists(
+							CardComponent,
+							query.card.isHermit,
+							query.card.player(player.entity),
+							query.card.slot(query.slot.empty),
+						)
+					) {
+						observer.unsubscribeFromEverything()
+						return
+					}
 					knockouts += 1
 					component.updateGoalProgress({goal: 0, progress: knockouts})
 				})
@@ -30,7 +42,8 @@ const UltraHardcore: Achievement = {
 		game.components
 			.filter(RowComponent, query.row.player(player.entity))
 			.forEach((row) => {
-				observer.subscribe(row.hooks.onKnockOut, () => {
+				observer.subscribe(row.hooks.onKnockOut, (card) => {
+					if (!card.isHermit()) return
 					observer.unsubscribeFromEverything()
 				})
 			})

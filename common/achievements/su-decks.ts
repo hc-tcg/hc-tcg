@@ -62,7 +62,7 @@ function getExclusiveSingleUseAchievement(
 		...achievement,
 		numericId,
 		id: typeName.replace(' ', '-').toLowerCase() + '-decks',
-		progressionMethod: 'best',
+		progressionMethod: 'sum',
 		levels: [
 			{
 				name: name,

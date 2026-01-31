@@ -1,6 +1,7 @@
 import Chest from '../cards/single-use/chest'
 import {SlotComponent} from '../components'
 import query from '../components/query'
+import {CardEntity} from '../entities'
 import {afterApply, onTurnEnd} from '../types/priorities'
 import {achievement} from './defaults'
 import {Achievement} from './types'
@@ -19,12 +20,12 @@ const iBuy: Achievement = {
 		},
 	],
 	onGameStart(game, player, component, observer) {
-		let playerHand: Array<string> = []
-		let newCardId: string | null = null
+		let playerHand: Array<CardEntity> = []
+		let newCardIds: Array<string> = []
 
 		observer.subscribe(player.hooks.onAttach, (slot) => {
 			if (!slot.isSingleUse()) return
-			playerHand = player.getHand().map((card) => card.props.id)
+			playerHand = player.getHand().map((card) => card.entity)
 		})
 
 		observer.subscribeWithPriority(
@@ -38,13 +39,11 @@ const iBuy: Achievement = {
 				if (!su) return
 				if (su.props.id !== Chest.id) return
 
-				const newPlayerHand = player.getHand().map((card) => card.props.id)
+				const chestedCard = player
+					.getHand()
+					.find((card) => !playerHand.includes(card.entity))
 
-				for (const card of playerHand) {
-					let index = newPlayerHand.indexOf(card)
-					if (index >= 0) return
-					newCardId = card
-				}
+				if (chestedCard) newCardIds.push(chestedCard.props.id)
 			},
 		)
 
@@ -52,10 +51,12 @@ const iBuy: Achievement = {
 			player.hooks.onTurnEnd,
 			onTurnEnd.BOARD_STATE,
 			(drawCards) => {
-				if (drawCards.find((card) => card?.props.id === newCardId)) {
+				if (
+					drawCards.some((card) => card && newCardIds.includes(card.props.id))
+				) {
 					component.updateGoalProgress({goal: 0})
 				}
-				newCardId = null
+				newCardIds = []
 			},
 		)
 	},
