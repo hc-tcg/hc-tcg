@@ -1,3 +1,4 @@
+import {ACHIEVEMENTS_LIST} from 'common/achievements'
 import {Achievement} from 'common/achievements/types'
 import EvilXisumaBoss, {
 	BOSS_ATTACK,
@@ -525,4 +526,63 @@ export async function testReplayGame(options: {
 			await options.runGame(new BossGameTestFixture(controller), controller)
 		})(),
 	])
+}
+
+/** Test game with all achievements. */
+export async function mockGame(
+	options: {
+		mockGame: (test: TestGameFixture, game: GameModel) => any
+		then?: (game: GameModel, outcome: GameOutcome) => any
+		playerOneDeck: Array<Card>
+		playerTwoDeck: Array<Card>
+	},
+	settings: Partial<GameSettings> = {},
+) {
+	let mockTest = async (test: TestGameFixture, game: GameModel) => {
+		let player = game.currentPlayer
+		ACHIEVEMENTS_LIST.forEach((achievement) => {
+			let achievementProgress: Record<number, number> = {}
+
+			let achievementComponent = game.components.new(
+				AchievementComponent,
+				achievement.numericId,
+				player.entity,
+				{goals: achievementProgress, levels: []},
+			)
+			const achievementObserver = game.components.new(
+				ObserverComponent,
+				achievementComponent.entity,
+			)
+
+			achievement.onGameStart(
+				game,
+				player,
+				achievementComponent,
+				achievementObserver,
+			)
+		})
+
+		await options.mockGame(test, game)
+	}
+
+	if (!options.then) {
+		options.then = function (game: GameModel, outcome: GameOutcome) {
+			if (!outcome) return
+			if (outcome.type === 'game-crash')
+				throw new Error('Unexpected Crash:\n' + outcome.error)
+			if (outcome.type === 'player-won')
+				throw new Error('Unexpected Win: ' + outcome.victoryReason)
+			if (outcome.type === 'tie') throw new Error('Unexpected Tie')
+		}
+	}
+
+	await testGame(
+		{
+			testGame: mockTest,
+			then: options.then,
+			playerOneDeck: options.playerOneDeck,
+			playerTwoDeck: options.playerTwoDeck,
+		},
+		settings,
+	)
 }
