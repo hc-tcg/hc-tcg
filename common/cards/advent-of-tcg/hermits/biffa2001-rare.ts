@@ -79,8 +79,8 @@ const Biffa2001Rare: Hermit = {
 			newObserver.subscribe(player.hooks.onAttach, (cardInstance) => {
 				const handSize = player.getHand().length
 				if (handSize === oldHandSize) return
-				oldHandSize = handSize
 				if (cardInstance.slot.type === 'single_use') return
+				oldHandSize = handSize
 				const record = cardsPlayed.get(game)
 				const value = (record[player.entity] || 0) + 1
 				record[player.entity] = value
