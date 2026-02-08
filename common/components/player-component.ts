@@ -369,7 +369,6 @@ export class PlayerComponent {
 			query.slot.hermit,
 			query.not(query.slot.active),
 			query.not(query.slot.empty),
-			query.not(query.slot.frozen),
 			query.slot.canBecomeActive,
 		)
 
