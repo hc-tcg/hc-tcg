@@ -25,6 +25,7 @@ const BerryBush: Attach & HasHealth = {
 		query.slot.opponent,
 		query.slot.hermit,
 		query.slot.empty,
+		query.actionAvailable('PLAY_HERMIT_CARD'),
 		query.slot.playerHasActiveHermit,
 		query.slot.opponentHasActiveHermit,
 		query.not(query.slot.frozen),
