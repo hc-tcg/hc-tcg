@@ -1,6 +1,7 @@
 import {describe, expect, test} from '@jest/globals'
 import GrianchRare from 'common/cards/advent-of-tcg/hermits/grianch-rare'
 import PixlriffsRare from 'common/cards/advent-of-tcg/hermits/pixlriffs-rare'
+import WindBurst from 'common/cards/advent-of-tcg/single-use/wind-burst'
 import {Thorns} from 'common/cards/attach/thorns'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import GeminiTayRare from 'common/cards/hermits/geminitay-rare'
@@ -382,6 +383,84 @@ describe('Test Pixl World Build', () => {
 					).toBe(
 						GrianchRare.health -
 							PoePoeSkizzRare.secondary.damage -
+							PixlriffsRare.secondary.damage -
+							40,
+					)
+				},
+			},
+			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test('Deals extra damage when hermit moves and returns to same row using Wind Burst + Ender Pearl', async () => {
+		await testGame(
+			{
+				playerOneDeck: [GrianchRare, PixlriffsRare, GeminiTayRare],
+				playerTwoDeck: [RendogRare, BadOmen, WindBurst, EnderPearl],
+				testGame: async (test, game) => {
+					await test.playCardFromHand(GrianchRare, 'hermit', 0)
+					await test.playCardFromHand(PixlriffsRare, 'hermit', 1)
+					await test.playCardFromHand(GeminiTayRare, 'hermit', 2)
+					await test.endTurn()
+
+					await test.playCardFromHand(RendogRare, 'hermit', 0)
+					await test.playCardFromHand(BadOmen, 'single_use')
+					await test.applyEffect()
+					await test.endTurn()
+
+					await test.attack('secondary')
+					await test.endTurn()
+
+					await test.playCardFromHand(WindBurst, 'single_use')
+
+					await test.attack('secondary')
+					await test.pick(
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(2),
+					)
+					await test.finishModalRequest({pick: 'secondary'})
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(0),
+						)?.health,
+					).toBe(GrianchRare.health - GeminiTayRare.secondary.damage)
+					await test.pick(
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(3),
+					)
+					await test.pick(
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+
+					await test.playCardFromHand(EnderPearl, 'single_use')
+					await test.pick(
+						query.slot.currentPlayer,
+						query.slot.hermit,
+						query.slot.rowIndex(0),
+					)
+
+					await test.attack('secondary')
+					await test.pick(
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					await test.finishModalRequest({pick: 'secondary'})
+					expect(
+						game.components.find(
+							RowComponent,
+							query.row.opponentPlayer,
+							query.row.index(3),
+						)?.health,
+					).toBe(
+						GrianchRare.health -
+							GeminiTayRare.secondary.damage -
 							PixlriffsRare.secondary.damage -
 							40,
 					)
