@@ -65,6 +65,7 @@ export type TurnState = {
 	blockedActions: Record<string, TurnActions>
 
 	currentAttack: HermitAttackType | null
+	cardsPlayed: number
 }
 
 export type LocalTurnState = {

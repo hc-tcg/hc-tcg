@@ -22,6 +22,7 @@ export function applySingleUse(
 	currentPlayer.hooks.beforeApply.call()
 
 	currentPlayer.singleUseCardUsed = true
+	game.state.turn.cardsPlayed++
 
 	currentPlayer.hooks.onApply.call()
 

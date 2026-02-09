@@ -2,6 +2,8 @@ import {describe, expect, test} from '@jest/globals'
 import Biffa2001Rare from 'common/cards/advent-of-tcg/hermits/biffa2001-rare'
 import GrianchRare from 'common/cards/advent-of-tcg/hermits/grianch-rare'
 import Allay from 'common/cards/advent-of-tcg/single-use/allay'
+import Candle from 'common/cards/advent-of-tcg/single-use/candle'
+import Lantern from 'common/cards/advent-of-tcg/single-use/lantern'
 import {IronArmor} from 'common/cards/attach/armor'
 import ArmorStand from 'common/cards/attach/armor-stand'
 import Totem from 'common/cards/attach/totem'
@@ -14,11 +16,13 @@ import Chest from 'common/cards/single-use/chest'
 import FlintAndSteel from 'common/cards/single-use/flint-and-steel'
 import {InstantHealth} from 'common/cards/single-use/instant-health'
 import Knockback from 'common/cards/single-use/knockback'
+import Looting from 'common/cards/single-use/looting'
 import PotionOfSlowness from 'common/cards/single-use/potion-of-slowness'
 import {IronSword} from 'common/cards/single-use/sword'
 import Trident from 'common/cards/single-use/trident'
 import {CardComponent, RowComponent} from 'common/components'
 import query from 'common/components/query'
+import {SelectCards} from 'common/types/modal-requests'
 import {testGame} from '../../utils'
 
 describe('Test Biffa Secondary', () => {
@@ -176,6 +180,41 @@ describe('Test Biffa Secondary', () => {
 		)
 	})
 
+	test("Biffa's Museum counts playing a card after using Looting", async () => {
+		await testGame(
+			{
+				playerOneDeck: [Biffa2001Rare, Looting],
+				playerTwoDeck: [EthosLabCommon, MinerDoubleItem],
+				testGame: async (test, game) => {
+					await test.playCardFromHand(Biffa2001Rare, 'hermit', 0)
+					await test.endTurn()
+
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(MinerDoubleItem, 'item', 0, 0)
+					await test.endTurn()
+
+					await test.playCardFromHand(Looting, 'single_use')
+					await test.applyEffect()
+					await test.pick(
+						query.slot.opponent,
+						query.slot.item,
+						query.slot.rowIndex(0),
+						query.slot.index(0),
+					)
+					await test.playCardFromHand(MinerDoubleItem, 'item', 0, 0)
+					await test.attack('secondary')
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						EthosLabCommon.health -
+							Biffa2001Rare.secondary.damage -
+							40 /** used 1 Single Use and placed 1 Item card */,
+					)
+					await test.endTurn()
+				},
+			},
+			{startWithAllCards: true, forceCoinFlip: true},
+		)
+	})
+
 	test("Biffa's Museum counts playing a card after using Flint & Steel", async () => {
 		await testGame(
 			{
@@ -187,11 +226,6 @@ describe('Test Biffa Secondary', () => {
 				playerTwoDeck: [EthosLabCommon],
 				testGame: async (test, game) => {
 					await test.playCardFromHand(Biffa2001Rare, 'hermit', 0)
-					game.currentPlayer
-						.getHand()
-						.sort(CardComponent.compareOrder)
-						.slice(2)
-						.forEach((card) => card.discard())
 					await test.endTurn()
 
 					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
@@ -245,6 +279,72 @@ describe('Test Biffa Secondary', () => {
 				},
 			},
 			{startWithAllCards: true, noItemRequirements: true},
+		)
+	})
+
+	test("Biffa's Museum counts playing a card after using Lantern", async () => {
+		await testGame(
+			{
+				playerOneDeck: [Biffa2001Rare, Lantern, ...Array(11).fill(ArmorStand)],
+				playerTwoDeck: [EthosLabCommon],
+				testGame: async (test, game) => {
+					await test.playCardFromHand(Biffa2001Rare, 'hermit', 0)
+					await test.endTurn()
+
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
+
+					await test.playCardFromHand(Lantern, 'single_use')
+					await test.applyEffect()
+					await test.finishModalRequest({
+						result: true,
+						cards: (
+							game.state.modalRequests[0] as SelectCards.Request
+						).modal.cards.slice(2),
+					})
+					await test.finishModalRequest({result: true, cards: []})
+					await test.playCardFromHand(ArmorStand, 'hermit', 1)
+					await test.attack('secondary')
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						EthosLabCommon.health -
+							Biffa2001Rare.secondary.damage -
+							40 /** used 1 Single Use and placed 1 Attach card */,
+					)
+				},
+			},
+			{startWithAllCards: false, noItemRequirements: true},
+		)
+	})
+
+	test("Biffa's Museum counts playing a card after using Candle", async () => {
+		await testGame(
+			{
+				playerOneDeck: [Biffa2001Rare, Candle, ...Array(9).fill(ArmorStand)],
+				playerTwoDeck: [EthosLabCommon],
+				testGame: async (test, game) => {
+					await test.playCardFromHand(Biffa2001Rare, 'hermit', 0)
+					await test.endTurn()
+
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.endTurn()
+
+					await test.playCardFromHand(Candle, 'single_use')
+					await test.applyEffect()
+					await test.finishModalRequest({
+						result: true,
+						cards: (game.state.modalRequests[0] as SelectCards.Request).modal
+							.cards,
+					})
+					await test.playCardFromHand(ArmorStand, 'hermit', 1)
+					await test.attack('secondary')
+					expect(game.opponentPlayer.activeRow?.health).toBe(
+						EthosLabCommon.health -
+							Biffa2001Rare.secondary.damage -
+							40 /** used 1 Single Use and placed 1 Attach card */,
+					)
+				},
+			},
+			{startWithAllCards: false, noItemRequirements: true},
 		)
 	})
 

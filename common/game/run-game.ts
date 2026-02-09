@@ -865,6 +865,7 @@ async function runGame(con: GameController): Promise<GameOutcome> {
 			(async () => {
 				while (true) {
 					con.game.state.turn.turnNumber++
+					con.game.state.turn.cardsPlayed = 0
 					const result = await turnSaga(con)
 					if (result === 'GAME_END') break
 				}
