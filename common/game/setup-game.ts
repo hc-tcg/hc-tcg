@@ -174,6 +174,7 @@ export function getGameState(game: GameModel, swapPlayers: boolean): GameState {
 			completedActions: [],
 			blockedActions: {},
 			currentAttack: null,
+			cardsPlayed: 0,
 		},
 		order: playerEntities.map((x) => x.entity),
 
