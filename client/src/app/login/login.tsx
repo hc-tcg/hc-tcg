@@ -56,13 +56,20 @@ const Login = () => {
 		ev.preventDefault()
 		const uuid = ev.currentTarget.uuid.value.trim()
 		const secret = ev.currentTarget.secret.value.trim()
-		if (uuid.length > 0 && secret.length > 0)
+		if (uuid.length > 0 && secret.length > 0) {
+			dispatch({
+				type: localMessages.SET_ID_AND_SECRET,
+				userId: uuid,
+				secret: secret,
+			})
+
 			dispatch({
 				type: localMessages.LOGIN,
 				login_type: 'sync',
 				uuid: uuid,
 				secret: secret,
 			})
+		}
 	}
 
 	if (errorType === 'invalid_session') {
