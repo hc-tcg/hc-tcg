@@ -249,15 +249,9 @@ const EvilXisumaBoss: Hermit = {
 						case 'ABLAZE':
 							// Set opponent ablaze
 							if (damageDisabled.get(component)) break
-							const opponentActiveHermit = game.components.findEntity(
-								CardComponent,
-								query.card.isHermit,
-								query.card.row(query.row.active),
-							)
-							if (opponentActiveHermit)
-								game.components
-									.new(StatusEffectComponent, FireEffect, component.entity)
-									.apply(opponentActiveHermit)
+							game.components
+								.new(StatusEffectComponent, FireEffect, component.entity)
+								.apply(opponentPlayer.getActiveHermit()?.entity)
 							break
 					}
 				}
