@@ -192,6 +192,8 @@ export function playCardAction(
 						card.props.numericId,
 				)
 
+				game.state.turn.cardsPlayed++
+
 				card.attach(pickedSlot)
 				pickedSlot.row.health = card.props.health
 
@@ -204,6 +206,7 @@ export function playCardAction(
 			case 'item': {
 				if (card.props.category === 'item')
 					game.addCompletedActions('PLAY_ITEM_CARD')
+				game.state.turn.cardsPlayed++
 				card.attach(pickedSlot)
 				break
 			}
@@ -213,6 +216,7 @@ export function playCardAction(
 					'Attempted to add card that implement attach to an attach slot: ' +
 						card.props.numericId,
 				)
+				game.state.turn.cardsPlayed++
 				card.attach(pickedSlot)
 				break
 			}

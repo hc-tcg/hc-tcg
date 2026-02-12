@@ -5,19 +5,11 @@ import {
 	StatusEffectComponent,
 } from '../../../components'
 import query from '../../../components/query'
-import {PlayerEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
-import {GameValue} from '../../../models/game-value'
 import MuseumCollectionEffect from '../../../status-effects/museum-collection'
 import {afterApply, beforeAttack, onTurnEnd} from '../../../types/priorities'
 import {hermit} from '../../defaults'
 import {Hermit, SingleUse} from '../../types'
-
-const cardsPlayed = new GameValue<Record<PlayerEntity, number | undefined>>(
-	() => {
-		return {}
-	},
-)
 
 const Biffa2001Rare: Hermit = {
 	...hermit,
@@ -46,18 +38,12 @@ const Biffa2001Rare: Hermit = {
 	},
 
 	onCreate(game: GameModel, component: CardComponent) {
-		if (Object.hasOwn(cardsPlayed.values, game.id)) return
-		cardsPlayed.set(game, {})
-
 		const newObserver = game.components.new(ObserverComponent, component.entity)
 
 		game.components.filter(PlayerComponent).forEach((player) => {
 			let museumEffect: StatusEffectComponent | null = null
-			let oldHandSize = player.getHand().length
 
 			newObserver.subscribe(player.hooks.onTurnStart, () => {
-				cardsPlayed.get(game)[player.entity] = 0
-				oldHandSize = player.getHand().length
 				// Only display status effect if Biffa is on the board
 				if (
 					game.components.exists(
@@ -77,13 +63,7 @@ const Biffa2001Rare: Hermit = {
 			})
 
 			newObserver.subscribe(player.hooks.onAttach, (cardInstance) => {
-				const handSize = player.getHand().length
-				if (handSize === oldHandSize) return
-				oldHandSize = handSize
 				if (cardInstance.slot.type === 'single_use') return
-				const record = cardsPlayed.get(game)
-				const value = (record[player.entity] || 0) + 1
-				record[player.entity] = value
 				if (museumEffect === null) {
 					// Create display status effect if first Biffa is placed on board
 					if (!query.card.is(Biffa2001Rare)(game, cardInstance)) return
@@ -94,28 +74,14 @@ const Biffa2001Rare: Hermit = {
 					)
 					museumEffect.apply(player.entity)
 				}
-				museumEffect.counter = value
+				museumEffect.counter = game.state.turn.cardsPlayed
 			})
 
 			newObserver.subscribeWithPriority(
 				player.hooks.afterApply,
 				afterApply.CHECK_BOARD_STATE,
 				() => {
-					oldHandSize = player.getHand().length
-					const record = cardsPlayed.get(game)
-					const value = (record[player.entity] || 0) + 1
-					record[player.entity] = value
-					if (museumEffect) museumEffect.counter = value
-					const singleUse = game.components.find(
-						CardComponent,
-						query.card.slot(query.slot.singleUse),
-					)
-					if (!singleUse) return
-					newObserver.subscribe(singleUse.hooks.onChangeSlot, (newSlot) => {
-						newObserver.unsubscribe(singleUse.hooks.onChangeSlot)
-						if (newSlot.type === 'hand' && newSlot.player === player)
-							oldHandSize = player.getHand().length
-					})
+					if (museumEffect) museumEffect.counter = game.state.turn.cardsPlayed
 				},
 			)
 
@@ -123,7 +89,10 @@ const Biffa2001Rare: Hermit = {
 				player.hooks.onTurnEnd,
 				onTurnEnd.ON_STATUS_EFFECT_TIMEOUT,
 				() => {
-					museumEffect?.remove()
+					if (museumEffect) {
+						museumEffect.remove()
+						museumEffect = null
+					}
 				},
 			)
 		})
@@ -142,8 +111,7 @@ const Biffa2001Rare: Hermit = {
 				if (!attack.isAttacker(component.entity) || attack.type !== 'secondary')
 					return
 
-				let counter = cardsPlayed.get(game)[player.entity]
-				if (counter === undefined) return
+				let counter = game.state.turn.cardsPlayed
 
 				if (
 					!player.singleUseCardUsed &&

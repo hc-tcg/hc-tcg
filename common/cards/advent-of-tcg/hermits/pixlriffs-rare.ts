@@ -7,7 +7,7 @@ import query from '../../../components/query'
 import {CardEntity} from '../../../entities'
 import {GameModel} from '../../../models/game-model'
 import {GameValue} from '../../../models/game-value'
-import {afterAttack, beforeAttack} from '../../../types/priorities'
+import {afterApply, afterAttack, beforeAttack} from '../../../types/priorities'
 import {hermit} from '../../defaults'
 import {Hermit} from '../../types'
 
@@ -16,6 +16,15 @@ const hermitStartingRow = new GameValue<Record<CardEntity, number | undefined>>(
 		return {}
 	},
 )
+
+function updateMovement(game: GameModel) {
+	const record = hermitStartingRow.get(game)
+	Object.keys(record).forEach((entity) => {
+		const card = game.components.get(entity as CardEntity)
+		if (!card || !card.slot.inRow()) return
+		if (card.slot.row.index !== record[card.entity]) record[card.entity] = NaN
+	})
+}
 
 const PixlriffsRare: Hermit = {
 	...hermit,
@@ -80,19 +89,21 @@ const PixlriffsRare: Hermit = {
 				delete hermitStartingRow.get(game)[instance.entity]
 				newObserver.unsubscribe(instance.hooks.onChangeSlot)
 			})
+
+			newObserver.subscribeWithPriority(
+				player.hooks.afterApply,
+				afterApply.CHECK_BOARD_STATE,
+				() => {
+					updateMovement(game)
+				},
+			)
 		})
 
 		newObserver.subscribeWithPriority(
 			game.hooks.afterAttack,
 			afterAttack.UPDATE_POST_ATTACK_STATE,
 			(_attack) => {
-				const record = hermitStartingRow.get(game)
-				Object.keys(record).forEach((entity) => {
-					const card = game.components.get(entity as CardEntity)
-					if (!card || !card.slot.inRow()) return
-					if (card.slot.row.index !== record[card.entity])
-						record[card.entity] = NaN
-				})
+				updateMovement(game)
 			},
 		)
 	},
