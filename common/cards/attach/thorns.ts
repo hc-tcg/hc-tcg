@@ -105,7 +105,7 @@ export const Thorns = getThorns(
 	{
 		id: 'thorns',
 		numericId: 96,
-		name: 'Thorns',
+		name: 'Thorns​',
 		expansion: 'default',
 		rarity: 'common',
 		tokens: 2,
