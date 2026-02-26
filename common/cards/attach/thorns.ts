@@ -6,7 +6,13 @@ import {CardRarityT, TokenCostT} from '../../types/cards'
 import {beforeAttack, onTurnEnd} from '../../types/priorities'
 import {attach} from '../defaults'
 import {Attach} from '../types'
-import {DiamondArmor, GoldArmor, IronArmor, NetheriteArmor} from './armor'
+import {
+	ChainmailArmor,
+	DiamondArmor,
+	GoldArmor,
+	IronArmor,
+	NetheriteArmor,
+} from './armor'
 
 function getThorns(
 	props: {
@@ -71,7 +77,13 @@ function getThorns(
 						.addDamage(component.entity, amount)
 
 					backlashAttack.shouldIgnoreCards.push(
-						query.card.is(GoldArmor, IronArmor, DiamondArmor, NetheriteArmor),
+						query.card.is(
+							GoldArmor,
+							IronArmor,
+							DiamondArmor,
+							NetheriteArmor,
+							ChainmailArmor,
+						),
 					)
 
 					attack.addNewAttack(backlashAttack)
@@ -93,7 +105,7 @@ export const Thorns = getThorns(
 	{
 		id: 'thorns',
 		numericId: 96,
-		name: 'Thorns',
+		name: 'Thorns​',
 		expansion: 'default',
 		rarity: 'common',
 		tokens: 2,
