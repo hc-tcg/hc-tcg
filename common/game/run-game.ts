@@ -544,12 +544,13 @@ async function turnActionsSaga(con: GameController) {
 
 		// Set final actions in state
 		let opponentAction: TurnAction = 'WAIT_FOR_TURN'
-		if (con.game.state.pickRequests[0]?.player === opponentPlayer.entity) {
-			opponentAction = 'PICK_REQUEST'
+		if (con.game.state.modalRequests[0]) {
+			if (con.game.state.modalRequests[0].player === opponentPlayer.entity)
+				opponentAction = 'MODAL_REQUEST'
 		} else if (
-			con.game.state.modalRequests[0]?.player === opponentPlayer.entity
+			con.game.state.pickRequests[0]?.player === opponentPlayer.entity
 		) {
-			opponentAction = 'MODAL_REQUEST'
+			opponentAction = 'PICK_REQUEST'
 		}
 		con.game.state.turn.opponentAvailableActions = [opponentAction]
 		con.game.state.turn.availableActions = availableActions

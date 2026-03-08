@@ -2,7 +2,7 @@ import {describe, expect, test} from '@jest/globals'
 import EthosLabCommon from 'common/cards/hermits/ethoslab-common'
 import FarmerBeefCommon from 'common/cards/hermits/farmerbeef-common'
 import IJevinRare from 'common/cards/hermits/ijevin-rare'
-import {printBoardState} from 'server/utils'
+import {printBoardState} from 'common/utils/game'
 import {testGame} from '../utils'
 
 describe('Test iJevin Peace Out', () => {

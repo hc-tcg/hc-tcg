@@ -12,10 +12,10 @@ import query from 'common/components/query'
 import {CONFIG} from 'common/config'
 import {COINS} from 'common/cosmetics/coins'
 import {defaultAppearance} from 'common/cosmetics/default'
-import ExBossAI from 'common/game//virtual/exboss-ai'
 import {getLocalGameState} from 'common/game/make-local-state'
 import runGame, {getTimerForSeconds} from 'common/game/run-game'
 import {OpponentDefs} from 'common/game/setup-game'
+import ExBossAI from 'common/game/virtual/exboss-ai'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import {
 	RecievedClientMessage,

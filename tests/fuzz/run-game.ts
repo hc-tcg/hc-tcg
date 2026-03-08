@@ -2,11 +2,11 @@ import {Card} from 'common/cards/types'
 import {AIComponent} from 'common/components/ai-component'
 import {defaultAppearance} from 'common/cosmetics/default'
 import {GameController} from 'common/game/game-controller'
+import runGame from 'common/game/run-game'
 import {PlayerSetupDefs} from 'common/game/setup-game'
 import {GameSettings} from 'common/models/game-model'
 import {CurrentCoinFlip} from 'common/types/game-state'
 import {VirtualAI} from 'common/types/virtual-ai'
-import gameSaga from 'server/routines/game'
 
 class FuzzyGameController extends GameController {
 	public override getRandomDelayForAI(_flips: Array<CurrentCoinFlip>) {
@@ -31,6 +31,7 @@ function getTestPlayer(playerName: string, deck: Array<Card>): PlayerSetupDefs {
 const defaultGameSettings = {
 	maxTurnTime: 90 * 1000,
 	extraActionTime: 30 * 1000,
+	gameTimeout: 5000,
 	showHooksState: {
 		enabled: false,
 		clearConsole: false,
@@ -50,6 +51,7 @@ const defaultGameSettings = {
 	logErrorsToStderr: false,
 	verboseLogging: !!process.env.UNIT_VERBOSE,
 	disableRewardCards: false,
+	logAttackHistory: true,
 } satisfies GameSettings
 
 /**
@@ -94,7 +96,7 @@ export async function testGame(options: {
 		options.playerTwo.AI,
 	)
 
-	await gameSaga(controller)
+	await runGame(controller)
 
 	return controller.game.outcome!
 }
