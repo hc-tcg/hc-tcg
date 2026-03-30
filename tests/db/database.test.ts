@@ -10,6 +10,7 @@ import {
 } from '@jest/globals'
 import {ACHIEVEMENTS_LIST} from 'common/achievements'
 import DefeatEvilX from 'common/achievements/defeat-evil-x'
+import AllCards from 'common/achievements/jack-of-all-cards'
 import {BalancedWins} from 'common/achievements/type-wins'
 import Win from 'common/achievements/wins'
 import {CARDS, CARDS_LIST} from 'common/cards'
@@ -712,6 +713,10 @@ describe('Test Database', () => {
 					goals: {0: 10},
 					levels: [],
 				},
+				[AllCards.numericId]: {
+					goals: {0: AllCards.levels[0].steps},
+					levels: [],
+				},
 			},
 			completionTime,
 		)
@@ -737,6 +742,10 @@ describe('Test Database', () => {
 		])
 		expect(achievements[BalancedWins.numericId].goals).toStrictEqual({0: 10})
 		expect(achievements[BalancedWins.numericId].levels).toStrictEqual([{}, {}])
+		expect(achievements[AllCards.numericId].goals).toStrictEqual({
+			0: AllCards.levels[0].steps,
+		})
+		expect(achievements[AllCards.numericId].levels).toStrictEqual([{}])
 
 		expect(
 			await database.getPlayerAchievementProgress(DefeatEvilX, player1.uuid),
