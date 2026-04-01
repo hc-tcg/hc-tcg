@@ -10,6 +10,7 @@ import {ConnectionError} from 'logic/session/session-reducer'
 import {
 	getConnecting,
 	getConnectingMessage,
+	getCorrupted,
 	getErrorType,
 } from 'logic/session/session-selectors'
 import React, {useState} from 'react'
@@ -35,7 +36,8 @@ const getLoginError = (errorType: ConnectionError) => {
 const Login = () => {
 	const dispatch = useMessageDispatch()
 	let connecting = useSelector(getConnecting)
-	let errorType = useSelector(getErrorType)
+	let corrupted = useSelector(getCorrupted)
+	let errorType = useSelector(getErrorType) || corrupted
 	const connectingMessage = useSelector(getConnectingMessage)
 
 	const [syncing, setSyncing] = useState<boolean>(false)
@@ -71,9 +73,45 @@ const Login = () => {
 			})
 		}
 	}
+	if (corrupted == 'bad_auth') {
+		return (
+			<div className={css.loginBackground}>
+				<div className={css.loginContainer}>
+					<div className={classNames(css.logo, syncing && css.hideOnMobile)}>
+						<TcgLogo />
+					</div>
+					<div className={css.errorBanner}>
+						<ErrorBanner>
+							Something went very wrong when logging in. Either your token or
+							secret is invalid.
+							<br />
+							If you are a developer, clear your local storage and reload the
+							page.
+							<br />
+							Otherwise, please contact a developer with the following
+							information:
+							<br />
+							<br />
+							Token: {localStorage.getItem('databaseInfo:userId')}
+						</ErrorBanner>
+					</div>
+					<Button
+						className={css.loginButton}
+						type="submit"
+						onClick={() => {
+							localStorage.clear()
+							window.location.reload()
+						}}
+					>
+						Clear local storage and reload
+					</Button>
+				</div>
+			</div>
+		)
+	}
 
 	if (errorType === 'invalid_session') {
-		errorType = undefined
+		errorType = null
 		connecting = true
 	}
 
