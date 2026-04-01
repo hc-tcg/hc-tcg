@@ -20,6 +20,7 @@ const DoubleEmerald: Achievement = {
 		},
 	],
 	onGameStart(game, player, component, observer) {
+		const {opponentPlayer} = player
 		const sentCards: Set<CardEntity> = new Set()
 
 		observer.subscribeWithPriority(
@@ -33,17 +34,24 @@ const DoubleEmerald: Achievement = {
 				)
 				if (!SUSlot) return
 				if (SUSlot.card?.props !== Emerald) return
-				const sending = player.activeRow?.getAttach()
-				if (!sending) return
-				sentCards.add(sending.entity)
+				const attachEffect = opponentPlayer.activeRow?.getAttach()
+				if (!attachEffect || sentCards.has(attachEffect.entity)) return
+				sentCards.add(attachEffect.entity)
+				observer.subscribe(
+					attachEffect.hooks.onChangeSlot,
+					(newSlot, oldSlot) => {
+						if (
+							newSlot.player.entity !== player.entity ||
+							oldSlot.player.entity !== opponentPlayer.entity ||
+							game.currentPlayerEntity !== player.entity
+						)
+							return
+
+						component.updateGoalProgress({goal: 0})
+					},
+				)
 			},
 		)
-
-		observer.subscribe(player.hooks.onAttach, (card) => {
-			if (!sentCards.has(card.entity)) return
-
-			component.updateGoalProgress({goal: 0})
-		})
 	},
 }
 
