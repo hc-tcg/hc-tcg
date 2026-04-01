@@ -1923,12 +1923,15 @@ export class Database {
 
 				// If we add a new level of an achievement the user may have the goal complete but will not have the achievement.
 				// This code grants the user the level for the achievement the first time they log in after said update.
+				let achievementProgress =
+					achievement.getProgress(progress[row['achievement_id']].goals) || 0
 				for (const [i, level] of achievement.levels.entries()) {
 					if (
-						row['progress'] > level.steps &&
-						progress[row['achievement_id']].levels[row['level']]
-							?.completionTime === undefined
+						achievementProgress >= level.steps &&
+						progress[row['achievement_id']].levels[i].completionTime ===
+							undefined
 					) {
+						// TODO: The database should create an entry in 'user_goals' if one does not exist for the new level
 						progress[row['achievement_id']].levels[i].completionTime = new Date(
 							Date.now(),
 						)
