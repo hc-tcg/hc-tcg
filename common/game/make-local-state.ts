@@ -243,9 +243,10 @@ export function getLocalGameState(
 	const currentModalRequest =
 		viewer.spectator && !viewer.replayer ? null : game.state.modalRequests[0]
 
-	if (currentModalRequest?.player === viewer.playerOnLeft.entity) {
+	if (currentModalRequest) {
 		// We must send modal requests first, to stop pick requests from overwriting them.
-		currentModalData = getLocalModalData(game, currentModalRequest.modal)
+		if (currentModalRequest?.player === viewer.playerOnLeft.entity)
+			currentModalData = getLocalModalData(game, currentModalRequest.modal)
 	} else if (currentPickRequest?.player === viewer.playerOnLeft.entity) {
 		// Once there are no modal requests, send pick requests
 		currentPickMessage = currentPickRequest.message

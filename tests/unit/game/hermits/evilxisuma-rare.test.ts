@@ -5,6 +5,7 @@ import EvilXisumaRare from 'common/cards/hermits/evilxisuma-rare'
 import JoeHillsRare from 'common/cards/hermits/joehills-rare'
 import ZombieCleoRare from 'common/cards/hermits/zombiecleo-rare'
 import ChorusFruit from 'common/cards/single-use/chorus-fruit'
+import Knockback from 'common/cards/single-use/knockback'
 import {StatusEffectComponent} from 'common/components'
 import query from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
@@ -142,6 +143,58 @@ describe('Test Evil X', () => {
 							query.effect.targetIsCardAnd(query.card.currentPlayer),
 						),
 					).toBeTruthy()
+				},
+			},
+			{noItemRequirements: true, forceCoinFlip: true},
+		)
+	})
+	test('Test Evil X secondary disables original Hermit when used with Knockback', async () => {
+		await testGame(
+			{
+				playerOneDeck: [EthosLabCommon, EthosLabCommon],
+				playerTwoDeck: [EvilXisumaRare, Knockback],
+				testGame: async (test, game) => {
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 0)
+					await test.playCardFromHand(EthosLabCommon, 'hermit', 1)
+					await test.endTurn()
+
+					await test.playCardFromHand(EvilXisumaRare, 'hermit', 0)
+					await test.playCardFromHand(Knockback, 'single_use')
+					await test.attack('secondary')
+					expect(game.state.turn.availableActions).toStrictEqual([
+						'MODAL_REQUEST',
+					])
+					expect(game.state.turn.opponentAvailableActions).toStrictEqual([
+						'WAIT_FOR_TURN',
+					])
+
+					await test.finishModalRequest({pick: 'secondary'})
+					expect(
+						game.opponentPlayer
+							.getActiveHermit()
+							?.getStatusEffect(SecondaryAttackDisabledEffect),
+					).toBeTruthy()
+					expect(game.state.turn.availableActions).toStrictEqual([
+						'WAIT_FOR_OPPONENT_ACTION',
+					])
+					expect(game.state.turn.opponentAvailableActions).toStrictEqual([
+						'PICK_REQUEST',
+					])
+
+					await test.pick(
+						query.slot.opponent,
+						query.slot.hermit,
+						query.slot.rowIndex(1),
+					)
+					expect(
+						game.opponentPlayer
+							.getActiveHermit()
+							?.getStatusEffect(SecondaryAttackDisabledEffect),
+					).toBeFalsy()
+
+					await test.endTurn()
+
+					expect(game.state.turn.availableActions).toContain('SECONDARY_ATTACK')
 				},
 			},
 			{noItemRequirements: true, forceCoinFlip: true},
