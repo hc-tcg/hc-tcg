@@ -2,7 +2,7 @@
 	"port": 9000,
 	"clientDevPort": 3002,
 	"clientPath": "client/dist",
-	"cors": ["http://localhost:3002", "https://hc-tcg.fly.dev"],
+	"cors": ["http://localhost:3002", "https://hc-tcg.online"],
 	"world": "fly",
 	"limits": {
 		"maxTurnTime": 90,

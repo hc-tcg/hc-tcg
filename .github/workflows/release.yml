@@ -1,0 +1,93 @@
+name: Publish Docker image
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  push_to_registry:
+    name: Push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: benji42/hc-tcg
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            APP_VERSION=${{ github.ref_name }}
+
+  announce:
+    name: Annouce Release
+    runs-on: ubuntu-latest
+    steps:
+        - name: Check out repo
+          uses: actions/checkout@v3
+          with:
+            fetch-depth: 0
+
+        - name: Update Message
+          run: |
+           curl https://hc-tcg.online/api/update --header "auth:${{ secrets.HC_TCG_TOKEN }}" --header "Content-Type: application/json" --data "{\"version\": \"$TAG_NAME\"}"
+
+        - name: Post Message to Discord
+          shell: bash
+          run: |
+            MOST_RECENT_TAG=$(git describe --tags --abbrev=0 HEAD^1)
+            NEW_TAG=$(git describe --tags --abbrev=0 HEAD)
+            COMMIT_HISTORY="[View Development Log](<${{ github.server_url }}/${{ github.repository }}/compare/$MOST_RECENT_TAG...$NEW_TAG>)"
+            CLEAN_BODY=$(python -c "import sys; print(sys.argv[1].strip())" "$BODY")
+            CONTENT="<@&1076950211831803934> Release $TAG_NAME will be released in 15 minutes. Please finish your games.\n\n$CLEAN_BODY\n\n$COMMIT_HISTORY";
+            CONTENT=${CONTENT//$'\n'/\\n};
+            CONTENT=$(echo $CONTENT|tr -d '\r');
+            CONTENT=${CONTENT//$'"'/\\\"};
+            JSON="{\"content\": \"$CONTENT\", \"allowed_mentions\": {\"roles\": [\"1076950211831803934\"]}}";
+            printf '%s' "$JSON";
+            curl ${{ secrets.DISCORD_WEBHOOK }} --header "Content-Type: application/json" --data "$JSON"
+          env:
+            TAG_NAME: ${{ github.event.release.tag_name }}
+            BODY: ${{ github.event.release.body }}
+
+        - name: Wait
+          run: sleep 14m 30s
+
+        - name: Deploy
+          run: |
+           curl https://restart.hc-tcg.online -H "auth:${{ secrets.RESTART_AUTH_TOKEN }}"
+
+        - name: Post Release Up Message to Discord
+          shell: bash
+          run: |
+            HERMIT_EMOJI=$(echo """<:gem:1075864530770460794>
+            <:tango:1075864904885620836>
+            <:skizz:1252115228724822136>
+            <:doc:1075864526999797900>
+            <:etho:1075861454743404625>
+            <:bdubs:1075864519399706754>
+            <:keralis:1075864544410353755>
+            <:princessgem:1251820953537609819>""" | shuf -n1);
+            CONTENT="The release is now live $HERMIT_EMOJI";
+            JSON="{\"content\": \"$CONTENT\"}";
+            printf '%s' "$JSON";
+            curl ${{ secrets.DISCORD_WEBHOOK }} --header "Content-Type: application/json" --data "$JSON"
